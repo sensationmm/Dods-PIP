@@ -49,6 +49,7 @@ pipelines:
     deployment-to-staging:
       - step:
           name: Deploy to staging environment
+          image: gioatsomoglobal/devopstools:0.1.0
           deployment: Staging
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:latest

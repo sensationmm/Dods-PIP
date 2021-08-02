@@ -21,7 +21,7 @@ export default function Home() {
 
         <div className={styles.grid}>
           <a href="https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html" className={styles.card}>
-            <h2>Coming soon &rarr;</h2>
+            <h2>Coming soon ...</h2>
             <p>Authentication with Amazon Cognito</p>
           </a>
 
