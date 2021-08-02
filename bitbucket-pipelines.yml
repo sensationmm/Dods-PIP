@@ -13,7 +13,6 @@ pipelines:
         services:
           - docker
         script:
-          - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_BUILD_NUMBER}
           - cd ${FRONTEND_SRC}
           - yarn install
           - yarn lint
@@ -21,17 +20,18 @@ pipelines:
 
   pull-requests:
     # Pull requests to main branch will trigger a deployment to Test environment
-    main: 
+    master: 
       - step:
+          name: Test and Build Frontend 
           image: node:lts-alpine
           deployment: Test
           caches:
             - node
             - docker
-          condition:
-            changesets:
-              includePaths:
-                - "frontend/dods_pip/**"
+          # condition:
+          #   changesets:
+          #     includePaths:
+          #       - "frontend/dods_pip/**"
           services:
             - docker
           script:
