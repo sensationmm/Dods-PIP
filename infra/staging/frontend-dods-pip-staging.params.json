@@ -1,0 +1,24 @@
+{
+  "Parameters" : { 
+    "AppName": "dods-pip",
+    "EnvName": "staging",
+    "WorkloadName": "frontend-dods-pip",
+    "ContainerImage": "390773179818.dkr.ecr.eu-west-1.amazonaws.com/somo4dods:13",
+    "AddonsTemplateURL": "",
+    "TaskCPU": "256",
+    "TaskMemory": "512",
+    "TaskCount": "1",
+    "LogRetention": "30",
+    "ContainerPort": "3000",
+    "RulePath": "/",
+    "HTTPSEnabled": "false",
+    "TargetContainer": "frontend-dods-pip",
+    "TargetPort": "3000",
+    "Stickiness": "false"
+  },
+  "Tags": { 
+    "copilot-application": "dods-pip",
+    "copilot-environment": "staging",
+    "copilot-service": "frontend-dods-pip"
+  }
+}
