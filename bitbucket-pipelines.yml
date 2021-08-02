@@ -23,7 +23,7 @@ pipelines:
     master: 
       - step:
           name: Test, Build Frontend image
-          image: node:lts-alpine
+          image: gioatsomoglobal/devopstools:0.1.0
           caches:
             - node
             - docker
