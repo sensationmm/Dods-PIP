@@ -18,7 +18,7 @@ pipelines:
           - yarn lint
           - yarn test
 
-  pull-requests:
+  branches:
     # Pull requests to main branch will trigger a deployment to Test environment
     master: 
       - step:
@@ -28,10 +28,10 @@ pipelines:
           caches:
             - node
             - docker
-          # condition:
-          #   changesets:
-          #     includePaths:
-          #       - "frontend/dods_pip/**"
+          condition:
+            changesets:
+              includePaths:
+                - "frontend/dods_pip/**"
           services:
             - docker
           script:
