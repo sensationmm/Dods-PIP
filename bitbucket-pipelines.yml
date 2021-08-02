@@ -22,9 +22,8 @@ pipelines:
     # Pull requests to main branch will trigger a deployment to Test environment
     master: 
       - step:
-          name: Test and Build Frontend 
+          name: Test, Build Frontend image
           image: node:lts-alpine
-          deployment: Test
           caches:
             - node
             - docker
