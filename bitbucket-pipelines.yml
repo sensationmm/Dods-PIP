@@ -32,16 +32,14 @@ pipelines:
           services:
             - docker
           script:
-            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}
+            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
             - cd ${FRONTEND_SRC}
             - yarn install
             - yarn lint
             - yarn test
             - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
-            - docker build -t ${IMAGE_NAME}:${BITBUCKET_BUILD_NUMBER} .
+            - docker build -t ${IMAGE_NAME} .
             - docker push ${IMAGE_NAME}
-            - docker tag ${IMAGE_NAME}:${BITBUCKET_BUILD_NUMBER} ${IMAGE_NAME}:latest
-            - docker push ${IMAGE_NAME}:latest
             - cd ../../tools
             - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
 
