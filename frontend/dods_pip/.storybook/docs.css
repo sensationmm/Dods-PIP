@@ -1,0 +1,52 @@
+.docs-table {
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+}
+
+.docs-row {
+  border: 0px !important;
+  background: none !important;
+  vertical-align: top;
+}
+
+.docs-row-head {
+  border: 0px !important;
+  text-align: left !important;
+  padding: 0 0 15px 0 !important;
+  color: rgba(51, 51, 51, 0.6) !important;
+}
+
+.docs-row-title {
+  padding: 0 !important;
+  font-weight: bold !important;
+  border: 0 !important;
+  padding-bottom: 10px !important;
+}
+
+.docs-row-content {
+  padding: 0 !important;
+  border: 0 !important;
+  padding-bottom: 10px !important;
+}
+
+.docs-col-first {
+  width: 30% !important;
+}
+
+.docs-swatch {
+  width: 100% !important;
+  height: 50px !important;
+  border-radius: 2px !important;
+}
+
+.docs-swatch-label {
+  width: 100% !important;
+  font-family: 'Operator Mono', 'Fira Code Retina', 'Fira Code', 'FiraCode-Retina', 'Andale Mono',
+    'Lucida Console', Consolas, Monaco, monospace !important;
+  padding: 0 0 20px 0 !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  color: rgba(51, 51, 51, 0.6) !important;
+}

@@ -1,0 +1,22 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs';
+import theme from '../src/globals/color';
+
+<Meta title="Color" />
+
+<ColorPalette>
+  {Object.keys(theme).map((item, count) => {
+    if (typeof theme[item] === 'object') {
+      return Object.keys(theme[item]).map((item2, count2) => {
+        return (
+          <ColorItem
+            key={`coloritem-${count}-${count2}`}
+            title={`color.${item}.${item2}`}
+            colors={[theme[item][item2]]}
+          />
+        );
+      });
+    } else {
+      return <ColorItem title={`color.${item}`} colors={[theme[item]]} />;
+    }
+  })}
+</ColorPalette>

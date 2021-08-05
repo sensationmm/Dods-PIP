@@ -1,0 +1,36 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs';
+import elevation from '../src/globals/elevation';
+import './docs.css';
+
+<Meta title="Elevation" />
+
+<table className="docs-table">
+  <thead>
+    <tr className="docs-row">
+      <th className="docs-row-head docs-col-first">Name</th>
+      <th className="docs-row-head">Swatches</th>
+    </tr>
+  </thead>
+  <tbody>
+    {Object.keys(elevation).map((item, count) => {
+      return (
+        <tr className="docs-row" key={`swatch-${count}`}>
+          <td className="docs-row-title">{`elevation.${item}`}</td>
+          <td className="docs-row-content">
+            <div
+              style={{
+                width: '100%',
+                height: '100px',
+                border: '1px solid black',
+                borderRadius: '5px',
+                boxShadow: elevation[item],
+              }}
+            />
+            <br />
+            <br />
+          </td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>

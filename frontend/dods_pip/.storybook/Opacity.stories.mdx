@@ -1,0 +1,46 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs';
+import opacity from '../src/globals/opacity';
+import color from '../src/globals/color';
+import './docs.css';
+
+<Meta title="Opacity" />
+
+<table className="docs-table">
+  <thead>
+    <tr className="docs-row">
+      <th className="docs-row-head docs-col-first">Name</th>
+      <th className="docs-row-head">Swatches</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr className="docs-row">
+      <td className="docs-row-title"> </td>
+      <td className="docs-row-content">
+        <div
+          className="docs-swatch"
+          style={{
+            backgroundColor: color.theme.blue,
+          }}
+        />
+        <div className="docs-swatch-label">Base</div>
+      </td>
+    </tr>
+    {Object.keys(opacity).map((item, count) => {
+      return (
+        <tr className="docs-row" key={`swatch-${count}`}>
+          <td className="docs-row-title">{`opacity.${item}`}</td>
+          <td className="docs-row-content">
+            <div
+              className="docs-swatch"
+              style={{
+                backgroundColor: color.theme.blue,
+                opacity: opacity[item],
+              }}
+            />
+            <div className="docs-swatch-label">Opacity {`${opacity[item] * 100}%`}</div>
+          </td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
