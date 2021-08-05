@@ -1,0 +1,19 @@
+import { Meta, IconGallery, IconItem } from '@storybook/addon-docs';
+import theme from '../src/globals/color';
+import IconCross from '../src/components/Icon/assets/icon-cross.svg';
+import IconTick from '../src/components/Icon/assets/icon-tick.svg';
+import IconTickBold from '../src/components/Icon/assets/icon-tickBold.svg';
+import IconLibrary from '../src/components/Icon/assets';
+
+<Meta title="Icon" />
+
+<IconGallery>
+  {Object.keys(IconLibrary).map((iconName, count) => {
+    const Icon = IconLibrary[iconName];
+    return (
+      <IconItem name={iconName} key={`icon-${count}`}>
+        <Icon />
+      </IconItem>
+    );
+  })}
+</IconGallery>
