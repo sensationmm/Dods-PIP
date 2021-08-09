@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import color from '../../../globals/color';
-import Leaves from '../../../assets/leaves.svg';
-import LeavesMobile from '../../../assets/leaves-mobile.svg';
+import Leaves from '../../../assets/images/leaves.svg';
+import LeavesMobile from '../../../assets/images/leaves-mobile.svg';
 
 import * as Styled from './Panel.styles';
 

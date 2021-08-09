@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 
 import Panel from '../_layout/Panel';
-import Logo from '../../assets/logo-dods.svg';
+import Logo from '../../assets/images/logo-dods.svg';
 
 import * as Styled from './Header.styles';
 

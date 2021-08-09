@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 import Panel from '../../components/_layout/Panel';
 import color from '../../globals/color';
-import LogoWhite from '../../assets/logo-white-dods-pip.svg';
+import LogoWhite from '../../assets/images/logo-white-dods-pip.svg';
 
 import * as Styled from './Footer.styles';
 
