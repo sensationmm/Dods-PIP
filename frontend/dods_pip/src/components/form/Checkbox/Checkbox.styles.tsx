@@ -3,8 +3,6 @@ import color from '../../../globals/color';
 import opacity from '../../../globals/opacity';
 import { hexAToRGBA } from '../../../utils/color';
 
-export const wrapper = styled.div``;
-
 export const checkbox = styled.div`
   cursor: pointer;
 `;
@@ -64,7 +62,7 @@ export const checkboxToggleChecked = styled(checkboxToggle)`
   }
 `;
 
-export const checkboxLabel = styled.label`
+export const checkboxLabelWrapper = styled.div`
   &.disabled {
     color: var(--color-grey-mid);
   }

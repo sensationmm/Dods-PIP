@@ -44,11 +44,11 @@ const Checkbox: React.FC<CheckboxProps> = ({ id, label, isChecked, onChange, isD
             <Icon src={Icons.IconTick} size={IconSize.medium} color={color.base.white} />
           )}
         </Component>
-        <Styled.checkboxLabel htmlFor={id} className={classNames({ disabled: isDisabled })}>
-          <Text type="label" color={color.theme.blueMid} bold>
+        <Styled.checkboxLabelWrapper className={classNames({ disabled: isDisabled })}>
+          <Text type="label" htmlFor={id} color={color.theme.blueMid} bold>
             {label}
           </Text>
-        </Styled.checkboxLabel>
+        </Styled.checkboxLabelWrapper>
       </Styled.checkboxLayout>
     </Styled.checkbox>
   );
