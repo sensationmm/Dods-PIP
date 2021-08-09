@@ -1,3 +1,5 @@
+import GlobalFonts from '../src/globals/fonts';
+
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
   controls: {
@@ -24,6 +26,7 @@ export const decorators = [
         justifyContent: 'center',
       }}
     >
+      <GlobalFonts />
       <Story />
     </div>
   ),

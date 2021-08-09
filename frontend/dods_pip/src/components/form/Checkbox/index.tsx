@@ -45,7 +45,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ id, label, isChecked, onChange, isD
           )}
         </Component>
         <Styled.checkboxLabel htmlFor={id} className={classNames({ disabled: isDisabled })}>
-          <Text type="span" color={color.theme.blueMid} bold>
+          <Text type="label" color={color.theme.blueMid} bold>
             {label}
           </Text>
         </Styled.checkboxLabel>

@@ -49,7 +49,7 @@ const Home = () => {
 
             <div>
               <Box>
-                <Text type={'h2'}>Welcome</Text>
+                <Text type={'h4'}>Welcome</Text>
                 <Spacer size={6} />
                 <InputText label={'Your email'} value={emailAddress} onChange={setEmailAddress} />
                 <Spacer size={4} />
@@ -87,8 +87,8 @@ const Home = () => {
               <Spacer size={4} />
 
               <Box>
-                <Text type={'h3'}>Don’t have an account?</Text>
-                <Spacer size={2} />
+                <Text type={'h5'}>Don’t have an account?</Text>
+                <Spacer size={4} />
                 <Text type={'span'} center color={color.theme.blueMid}>
                   If you don’t have an account with Dods, why not sign up for the free trial?
                 </Text>

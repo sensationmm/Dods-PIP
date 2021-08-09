@@ -25,6 +25,8 @@ export const input = styled.input`
   font-size: 14px;
   padding: ${spacing(3)};
   box-sizing: border-box;
+  font-family: 'Open Sans';
+  font-size: 16px;
 
   &:hover,
   &:focus {

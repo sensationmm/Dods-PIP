@@ -12,6 +12,8 @@ export const wrapper = styled.div`
 `;
 
 const base = styled.button`
+  font-family: 'Open Sans Bold';
+  font-size: 16px;
   outline: 0;
   border-width: 1px;
   border-style: solid;

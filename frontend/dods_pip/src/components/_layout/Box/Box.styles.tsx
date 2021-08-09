@@ -9,7 +9,7 @@ export const wrapper = styled.div`
   border-radius: 8px;
   box-shadow: ${elevation.dropShadow2};
 
-  @media (min-width: 600px) {
+  @media (min-width: 1024px) {
     padding: ${spacing(20)};
   }
 `;

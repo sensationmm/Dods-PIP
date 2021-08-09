@@ -1,15 +1,16 @@
-// import classnames from 'classnames';
 import * as React from 'react';
+import classNames from 'classnames';
 import { StyledComponent } from 'styled-components';
 
 import colorPalette from '../../globals/color';
 import * as Styled from './Text.styles';
 
-type TextStyles = 'h1' | 'h2' | 'h3' | 'p' | 'label' | 'span';
+type CoreTextStyles = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'span';
 
-interface ITextProps {
+type TextStyles = CoreTextStyles | 'body' | 'bodySmall' | 'bodyLarge';
+
+export interface TextProps {
   children?: React.ReactNode;
-  className?: string;
   type?: TextStyles;
   color?: string;
   bold?: boolean;
@@ -17,22 +18,29 @@ interface ITextProps {
   htmlFor?: string;
 }
 
-const Text: React.FC<ITextProps> = ({
-  className,
+const Text: React.FC<TextProps> = ({
   children,
-  type = 'p',
-  color = colorPalette.base.black,
+  type = 'body',
+  color = colorPalette.theme.blue,
   bold = false,
   center = false,
   htmlFor,
 }) => {
-  // TODO: add typography styling once specified by design
-  const finalClassName = ''; //classnames(className, baseStyles.base, baseStyles[type], baseStyles[color]);
-
-  const element = Styled[type] as StyledComponent<TextStyles, {}>;
+  let element: StyledComponent<CoreTextStyles, {}>;
+  let className = '';
+  switch (type) {
+    case 'body':
+    case 'bodySmall':
+    case 'bodyLarge':
+      element = Styled.p;
+      className = type;
+      break;
+    default:
+      element = Styled[type];
+  }
 
   const props = {
-    className: finalClassName,
+    className: classNames(className, { bold: bold }),
     'data-test': 'component-text',
     htmlFor: htmlFor,
   };
@@ -43,7 +51,6 @@ const Text: React.FC<ITextProps> = ({
       ...props,
       style: {
         color: color,
-        fontWeight: bold ? 'bold' : 'normal',
         textAlign: center ? 'center' : 'left',
       },
     },

@@ -13,13 +13,18 @@ describe('Text', () => {
     expect(wrapper.find('[data-test="component-text"]').length).toEqual(1);
   });
 
-  it('renders default tag', () => {
+  it('renders default p tag', () => {
     const wrapper = shallow(<Text>{props.children}</Text>);
     expect(wrapper.find('[data-test="component-text"]').type().target).toEqual('p');
   });
 
-  it('renders the given prop type as the html tag', () => {
-    const wrapper = shallow(<Text {...props} />);
+  it('renders header tag', () => {
+    const wrapper = shallow(<Text type="h2">{props.children}</Text>);
+    expect(wrapper.find('[data-test="component-text"]').type().target).toEqual('h2');
+  });
+
+  it('renders custom body tag', () => {
+    const wrapper = shallow(<Text type="bodySmall">{props.children}</Text>);
     expect(wrapper.find('[data-test="component-text"]').type().target).toEqual('p');
   });
 
@@ -28,20 +33,11 @@ describe('Text', () => {
     expect(wrapper.find('[data-test="component-text"]').text()).toEqual(props.children);
   });
 
-  it('renders the default style', () => {
-    const wrapper = shallow(<Text {...props} />);
-    const component = wrapper.find('[data-test="component-text"]');
-
-    let containerStyle = component.get(0).props.style;
-    expect(containerStyle.fontWeight).toEqual('normal');
-  });
-
   it('renders the bold style', () => {
     const wrapper = shallow(<Text {...props} bold={true} />);
     const component = wrapper.find('[data-test="component-text"]');
 
-    let containerStyle = component.get(0).props.style;
-    expect(containerStyle.fontWeight).toEqual('bold');
+    expect(component.hasClass('bold')).toEqual(true);
   });
 
   it('renders the centered style', () => {
