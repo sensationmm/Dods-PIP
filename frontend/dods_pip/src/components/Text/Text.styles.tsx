@@ -131,6 +131,7 @@ export const label = styled.label`
 `;
 
 export const span = styled.span`
+  font-family: 'Open Sans';
   display: block;
   font-size: 12px;
   padding: 0;
