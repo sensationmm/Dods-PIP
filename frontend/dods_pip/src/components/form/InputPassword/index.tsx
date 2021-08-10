@@ -10,10 +10,11 @@ import * as Styled from './InputPassword.styles';
 export interface InputPasswordProps extends Omit<InputBaseProps, 'type'> {}
 
 const InputPassword: React.FC<InputPasswordProps> = ({
+  id,
   label,
   value,
   isDisabled = false,
-  hasError,
+  error,
   helperText,
   onChange,
 }) => {
@@ -22,12 +23,13 @@ const InputPassword: React.FC<InputPasswordProps> = ({
   return (
     <Styled.wrapper>
       <Input
+        id={id}
         data-test="component-input-password"
         type={viewPassword ? 'text' : 'password'}
         label={label}
         value={value}
         isDisabled={isDisabled}
-        hasError={hasError}
+        error={error}
         helperText={helperText}
         onChange={(e) => onChange(e.target.value)}
       />
@@ -36,7 +38,11 @@ const InputPassword: React.FC<InputPasswordProps> = ({
           src={viewPassword ? Icons.IconHide : Icons.IconShow}
           size={IconSize.medium}
           color={
-            !isDisabled ? (!hasError ? color.theme.blueMid : color.alert.red) : color.base.grey
+            !isDisabled
+              ? typeof error !== 'string'
+                ? color.theme.blueMid
+                : color.alert.red
+              : color.base.grey
           }
         />
       </Styled.toggle>

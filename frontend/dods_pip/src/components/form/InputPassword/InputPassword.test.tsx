@@ -8,7 +8,7 @@ import color from '../../../globals/color';
 describe('InputPassword', () => {
   it('renders without error', () => {
     const wrapper = shallow(
-      <InputPassword label="Example" value={'Example'} onChange={() => {}} />,
+      <InputPassword id="test" label="Example" value={'Example'} onChange={() => {}} />,
     );
     const component = wrapper.find('[data-test="component-input-password"]');
     expect(component.length).toEqual(1);
@@ -16,7 +16,7 @@ describe('InputPassword', () => {
 
   it('renders password version', () => {
     const wrapper = shallow(
-      <InputPassword label="Example" value={'Example'} onChange={() => {}} />,
+      <InputPassword id="test" label="Example" value={'Example'} onChange={() => {}} />,
     );
     const input = wrapper.find(Input);
     expect(input.props().type).toEqual('password');
@@ -24,7 +24,7 @@ describe('InputPassword', () => {
 
   it('renders text version', () => {
     const wrapper = shallow(
-      <InputPassword label="Example" value={'Example'} onChange={() => {}} />,
+      <InputPassword id="test" label="Example" value={'Example'} onChange={() => {}} />,
     );
     const toggle = wrapper.find('[data-test="password-toggle"]');
     toggle.simulate('click');
@@ -34,7 +34,7 @@ describe('InputPassword', () => {
 
   it('renders disabled state', () => {
     const wrapper = shallow(
-      <InputPassword label="Example" isDisabled={true} value={''} onChange={() => {}} />,
+      <InputPassword id="test" label="Example" isDisabled={true} value={''} onChange={() => {}} />,
     );
     const component = wrapper.find(Icon);
     expect(component.props().color).toEqual(color.base.grey);
@@ -42,7 +42,7 @@ describe('InputPassword', () => {
 
   it('renders error state', () => {
     const wrapper = shallow(
-      <InputPassword label="Example" hasError={true} value={''} onChange={() => {}} />,
+      <InputPassword id="test" label="Example" error={'yes'} value={''} onChange={() => {}} />,
     );
     const component = wrapper.find(Icon);
     expect(component.props().color).toEqual(color.alert.red);
@@ -55,7 +55,7 @@ describe('InputPassword', () => {
     useStateSpy.mockImplementation((init: boolean) => [init, setState]);
 
     const wrapper = shallow(
-      <InputPassword label="Example" value={'Example'} onChange={() => {}} />,
+      <InputPassword id="test" label="Example" value={'Example'} onChange={() => {}} />,
     );
     const toggle = wrapper.find('[data-test="password-toggle"]');
     toggle.simulate('click');
@@ -64,7 +64,9 @@ describe('InputPassword', () => {
 
   it('fires onChange method', () => {
     const typeWatcher = jest.fn();
-    const wrapper = shallow(<InputPassword label="Example" value={''} onChange={typeWatcher} />);
+    const wrapper = shallow(
+      <InputPassword id="test" label="Example" value={''} onChange={typeWatcher} />,
+    );
     const component = wrapper.find('[data-test="component-input-password"]');
     component.simulate('focus');
     component.simulate('change', { target: { value: 'new' } });

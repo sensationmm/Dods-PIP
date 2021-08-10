@@ -12,10 +12,11 @@ export interface InputTextProps extends Omit<InputBaseProps, 'type'> {
 }
 
 const InputText: React.FC<InputTextProps> = ({
+  id,
   label,
   value,
   isDisabled = false,
-  hasError,
+  error,
   helperText,
   onChange,
   icon,
@@ -23,12 +24,13 @@ const InputText: React.FC<InputTextProps> = ({
   return (
     <Styled.wrapper className={classNames({ icon: icon !== undefined })}>
       <Input
+        id={id}
         data-test="component-input-text"
         type="text"
         label={label}
         value={value}
         isDisabled={isDisabled}
-        hasError={hasError}
+        error={error}
         helperText={helperText}
         onChange={(e) => onChange(e.target.value)}
       />
@@ -37,7 +39,11 @@ const InputText: React.FC<InputTextProps> = ({
           src={icon}
           size={IconSize.medium}
           color={
-            !isDisabled ? (!hasError ? color.theme.blueMid : color.alert.red) : color.base.grey
+            !isDisabled
+              ? typeof error !== 'string'
+                ? color.theme.blueMid
+                : color.alert.red
+              : color.base.grey
           }
         />
       )}

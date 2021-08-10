@@ -12,10 +12,11 @@ export interface InputSearchProps extends Omit<InputBaseProps, 'type' | 'label'>
 }
 
 const InputSearch: React.FC<InputSearchProps> = ({
+  id,
   label = 'Search...',
   value,
   isDisabled = false,
-  hasError,
+  error,
   helperText,
   onChange,
 }) => {
@@ -24,15 +25,22 @@ const InputSearch: React.FC<InputSearchProps> = ({
       <Icon
         src={Icons.IconSearch}
         size={IconSize.medium}
-        color={!isDisabled ? (!hasError ? color.theme.blueMid : color.alert.red) : color.base.grey}
+        color={
+          !isDisabled
+            ? typeof error !== 'string'
+              ? color.theme.blueMid
+              : color.alert.red
+            : color.base.grey
+        }
       />
       <Input
+        id={id}
         data-test="component-input-search"
         type="text"
         label={label}
         value={value}
         isDisabled={isDisabled}
-        hasError={hasError}
+        error={error}
         helperText={helperText}
         onChange={(e) => onChange(e.target.value)}
       />

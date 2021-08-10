@@ -17,7 +17,7 @@ Primary.args = {
   label: '',
   value: '',
   isDisabled: false,
-  hasError: false,
+  error: undefined,
   helperText: '',
 };
 
