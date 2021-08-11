@@ -6,7 +6,7 @@ import elevation from '../../../globals/elevation';
 export const wrapper = styled.div`
   padding: ${spacing(10)};
   background: ${color.base.white};
-  border-radius: 8px;
+  border-radius: ${spacing(2)};
   box-shadow: ${elevation.dropShadow2};
 
   @media (min-width: 1024px) {
