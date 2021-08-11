@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 
 import Panel from '../../components/_layout/Panel';
 import color from '../../globals/color';

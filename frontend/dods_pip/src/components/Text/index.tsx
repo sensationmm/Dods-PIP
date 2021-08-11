@@ -7,13 +7,14 @@ import * as Styled from './Text.styles';
 
 type CoreTextStyles = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'span';
 
-type TextStyles = CoreTextStyles | 'body' | 'bodySmall' | 'bodyLarge';
+type TextStyles = CoreTextStyles | 'body' | 'bodySmall' | 'bodyLarge' | 'labelSmall';
 
 export interface TextProps {
   children?: React.ReactNode;
   type?: TextStyles;
   color?: string;
   bold?: boolean;
+  uppercase?: boolean;
   center?: boolean;
   htmlFor?: string;
 }
@@ -23,6 +24,7 @@ const Text: React.FC<TextProps> = ({
   type = 'body',
   color = colorPalette.theme.blue,
   bold = false,
+  uppercase = false,
   center = false,
   htmlFor,
 }) => {
@@ -33,6 +35,10 @@ const Text: React.FC<TextProps> = ({
     case 'bodySmall':
     case 'bodyLarge':
       element = Styled.p;
+      className = type;
+      break;
+    case 'labelSmall':
+      element = Styled.label;
       className = type;
       break;
     default:
@@ -52,6 +58,7 @@ const Text: React.FC<TextProps> = ({
       style: {
         color: color,
         textAlign: center ? 'center' : 'left',
+        textTransform: uppercase ? 'uppercase' : 'none',
       },
     },
     children,

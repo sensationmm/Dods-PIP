@@ -139,6 +139,12 @@ export const label = styled.label`
   line-height: 12px;
   padding: 0;
   margin: 0;
+
+  &.small {
+    font-size: 8px;
+    letter-spacing: 1px;
+    line-height: auto;
+  }
 `;
 
 export const span = styled.span`

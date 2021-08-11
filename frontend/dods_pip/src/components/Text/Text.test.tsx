@@ -28,6 +28,11 @@ describe('Text', () => {
     expect(wrapper.find('[data-test="component-text"]').type().target).toEqual('p');
   });
 
+  it('renders custom label tag', () => {
+    const wrapper = shallow(<Text type="labelSmall">{props.children}</Text>);
+    expect(wrapper.find('[data-test="component-text"]').type().target).toEqual('label');
+  });
+
   it('renders the given child in the html tag', () => {
     const wrapper = shallow(<Text {...props} />);
     expect(wrapper.find('[data-test="component-text"]').text()).toEqual(props.children);
@@ -38,6 +43,14 @@ describe('Text', () => {
     const component = wrapper.find('[data-test="component-text"]');
 
     expect(component.hasClass('bold')).toEqual(true);
+  });
+
+  it('renders the uppercase style', () => {
+    const wrapper = shallow(<Text {...props} uppercase={true} />);
+    const component = wrapper.find('[data-test="component-text"]');
+
+    let containerStyle = component.get(0).props.style;
+    expect(containerStyle.textTransform).toEqual('uppercase');
   });
 
   it('renders the centered style', () => {

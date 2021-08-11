@@ -4,6 +4,7 @@ import spacing from '../../../globals/spacing';
 import elevation from '../../../globals/elevation';
 
 export const wrapper = styled.div`
+  position: relative;
   padding: ${spacing(10)};
   background: ${color.base.white};
   border-radius: ${spacing(2)};

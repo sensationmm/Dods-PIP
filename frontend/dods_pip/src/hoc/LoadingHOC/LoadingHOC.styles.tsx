@@ -6,15 +6,18 @@ import { hexAToRGBA } from '../../utils/color';
 
 export const mask = styled.div`
   position: fixed;
-  display: none;
-  z-index: 1000;
+  display: block;
+  z-index: -1;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   background: ${hexAToRGBA(color.base.black, opacity.low)};
+  opacity: 0;
+  transition: opacity 0.5s linear;
 
   &.visible {
-    display: block;
+    opacity: 1;
+    z-index: 1000;
   }
 `;

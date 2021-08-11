@@ -6,6 +6,7 @@ import spacing from '../../../globals/spacing';
 import { p as Text } from '../../Text/Text.styles';
 
 export const wrapper = styled.div`
+  position: relative;
   width: 100%;
   background: ${color.shadow.red};
   padding: ${spacing(3)} !important;
