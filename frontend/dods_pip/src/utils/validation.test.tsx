@@ -43,7 +43,7 @@ describe('validation functions', () => {
     });
   });
 
-  describe('validateNumeric', () => {
+  describe('validateNumeric()', () => {
     test('returns true for numbers', () => {
       const isValid = validation.validateNumeric('21');
       expect(isValid).toBe(true);
@@ -89,6 +89,98 @@ describe('validation functions', () => {
       const input: Array<any> = [];
       const isValid = validation.validateRequired(input);
       expect(isValid).toBe(false);
+    });
+  });
+
+  describe('validatePassword()', () => {
+    test('returns false if less than 8 chars', () => {
+      const password = 'Passwo';
+      const result = validation.validatePassword(password);
+      expect(result).toEqual({
+        valid: false,
+        results: {
+          number: false,
+          uppercase: true,
+          lowercase: true,
+          special: false,
+          length8: false,
+        },
+      });
+    });
+
+    test('returns false if no numbers', () => {
+      const password = 'Password';
+      const result = validation.validatePassword(password);
+      expect(result).toEqual({
+        valid: false,
+        results: {
+          number: false,
+          uppercase: true,
+          lowercase: true,
+          special: false,
+          length8: true,
+        },
+      });
+    });
+
+    test('returns false if no uppercase', () => {
+      const password = 'password1';
+      const result = validation.validatePassword(password);
+      expect(result).toEqual({
+        valid: false,
+        results: {
+          number: true,
+          uppercase: false,
+          lowercase: true,
+          special: false,
+          length8: true,
+        },
+      });
+    });
+
+    test('returns false if no lowercase', () => {
+      const password = 'PASSWORD1';
+      const result = validation.validatePassword(password);
+      expect(result).toEqual({
+        valid: false,
+        results: {
+          number: true,
+          uppercase: true,
+          lowercase: false,
+          special: false,
+          length8: true,
+        },
+      });
+    });
+
+    test('returns false if no special characters', () => {
+      const password = 'Password1';
+      const result = validation.validatePassword(password);
+      expect(result).toEqual({
+        valid: false,
+        results: {
+          number: true,
+          uppercase: true,
+          lowercase: true,
+          special: false,
+          length8: true,
+        },
+      });
+    });
+
+    test('returns true for a valid password', () => {
+      const password = 'Password1!';
+      const result = validation.validatePassword(password);
+      expect(result).toEqual({
+        valid: true,
+        results: {
+          number: true,
+          uppercase: true,
+          lowercase: true,
+          special: true,
+          length8: true,
+        },
+      });
     });
   });
 });
