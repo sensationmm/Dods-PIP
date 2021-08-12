@@ -166,7 +166,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
                 <Spacer size={4} />
 
                 <Text type="span" center color={color.theme.blueMid}>
-                  <Link href="">
+                  <Link href="/reset-password">
                     <a>Forgot your password?</a>
                   </Link>
                 </Text>
