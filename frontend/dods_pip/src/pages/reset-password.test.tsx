@@ -4,7 +4,7 @@ import { ResetPassword } from './reset-password.page';
 import * as Validation from '../utils/validation';
 
 describe('ResetPassword', () => {
-  let wrapper: any, formEmail: any, formPassword, formButton: any;
+  let wrapper: any, formButton: any;
   const validateRequiredSpy = jest.spyOn(Validation, 'validateRequired');
   const validateEmailSpy = jest.spyOn(Validation, 'validateEmail');
   const setLoadingSpy = jest.fn();
@@ -34,14 +34,12 @@ describe('ResetPassword', () => {
       .mockImplementationOnce(() => [states[count].errors, setState])
       .mockImplementationOnce(() => [states[count].requested, setState]);
     wrapper = shallow(<ResetPassword isLoading={false} setLoading={setLoadingSpy} />);
-    formEmail = wrapper.find('[data-test="reset-email"]');
     formButton = wrapper.find('[data-test="form-button"]');
   });
 
   it('renders without error', () => {
     const component = wrapper.find('[data-test="page-reset-password"]');
     expect(component.length).toEqual(1);
-    expect(formEmail.length).toEqual(1);
     expect(formButton.length).toEqual(1);
   });
 

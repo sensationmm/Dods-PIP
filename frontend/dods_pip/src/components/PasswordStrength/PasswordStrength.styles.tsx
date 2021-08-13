@@ -28,4 +28,8 @@ export const pip = styled.div`
   &.pass {
     background: ${color.alert.green};
   }
+
+  &.disabled {
+    background: ${color.base.grey};
+  }
 `;

@@ -14,6 +14,7 @@ const Template: Story<PasswordStrengthProps> = (args) => <PasswordStrength {...a
 export const Primary = Template.bind({});
 
 Primary.args = {
+  disabled: false,
   number: false,
   uppercase: false,
   lowercase: false,

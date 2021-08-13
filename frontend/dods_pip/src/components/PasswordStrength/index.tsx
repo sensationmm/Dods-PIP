@@ -11,6 +11,7 @@ export interface PasswordStrengthProps {
   lowercase?: boolean;
   special?: boolean;
   length8?: boolean;
+  disabled?: boolean;
 }
 
 const PasswordStrength: React.FC<PasswordStrengthProps> = ({
@@ -19,6 +20,7 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({
   lowercase = false,
   special = false,
   length8 = false,
+  disabled = false,
 }) => {
   const items = [
     [
@@ -41,8 +43,15 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({
               key={`item-${countItem}`}
               data-test={`pass-item-${countGroup}-${countItem}`}
             >
-              <Styled.pip className={classNames({ pass: item.pass })} />
-              <Text color={item.pass ? color.alert.green : color.alert.red}>{item.label}</Text>
+              <Styled.pip className={classNames({ pass: item.pass }, { disabled: disabled })} />
+              <Text
+                type={'bodySmall'}
+                color={
+                  !disabled ? (item.pass ? color.alert.green : color.alert.red) : color.base.grey
+                }
+              >
+                {item.label}
+              </Text>
             </Styled.item>
           ))}
         </div>

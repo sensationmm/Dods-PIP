@@ -32,4 +32,14 @@ describe('PasswordStrength', () => {
     expect(pip.hasClass('pass')).toEqual(true);
     expect(label.props().color).toEqual(color.alert.green);
   });
+
+  it('renders disabled style', () => {
+    const wrapper = shallow(<PasswordStrength disabled={true} />);
+    const item = wrapper.find('[data-test="pass-item-0-0"]');
+    const pip = item.find(Styled.pip);
+    const label = item.find(Text);
+
+    expect(pip.hasClass('disabled')).toEqual(true);
+    expect(label.props().color).toEqual(color.base.grey);
+  });
 });
