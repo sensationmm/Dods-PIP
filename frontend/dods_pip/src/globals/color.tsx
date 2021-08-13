@@ -7,7 +7,7 @@ const color = {
   },
   shadow: {
     blue: '#EAEEF3',
-    grey: '#f5f5f6',
+    grey: '#D9D9D9',
     red: '#f9ecea',
   },
   base: {
@@ -21,8 +21,9 @@ const color = {
     orange: '#DD7B00',
   },
   alert: {
-    green: '#17821B',
-    red: '#CF2612',
+    green: '#17824E',
+    greenLight: '#29C26E',
+    red: '#EF4E3B',
   },
 };
 
