@@ -12,9 +12,9 @@ export const mask = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: ${hexAToRGBA(color.base.black, opacity.low)};
+  background: ${hexAToRGBA(color.base.black, 0.8)};
   opacity: 0;
-  transition: opacity 0.5s linear;
+  transition: opacity 0.3s linear;
 
   &.visible {
     opacity: 1;

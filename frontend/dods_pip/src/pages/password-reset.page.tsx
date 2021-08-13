@@ -32,7 +32,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const [errors, setErrors] = React.useState<Errors>({});
   const [confirmed, setConfirmed] = React.useState<boolean>(false);
   const [passwordStrength, setPasswordStrength] = React.useState<PasswordStrengthProps>({});
-  const [isRepeatPassword, setIsRepeatPassword] = React.useState<boolean>(false);
+  const [isRepeatPassword, setIsRepeatPassword] = React.useState<boolean>(true);
 
   const validateForm = () => {
     let formErrors = { ...errors };
@@ -155,11 +155,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
 
                   <Spacer size={6} />
 
-                  <Button
-                    data-test={'form-button'}
-                    label={'Send recovery link'}
-                    onClick={onConfirm}
-                  />
+                  <Button data-test={'form-button'} label={'Save Changes'} onClick={onConfirm} />
                 </Box>
               ) : (
                 <Box data-test="reset-confirmation">
