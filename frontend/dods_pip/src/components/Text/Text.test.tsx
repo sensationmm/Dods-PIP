@@ -49,7 +49,7 @@ describe('Text', () => {
     const wrapper = shallow(<Text {...props} uppercase={true} />);
     const component = wrapper.find('[data-test="component-text"]');
 
-    let containerStyle = component.get(0).props.style;
+    const containerStyle = component.get(0).props.style;
     expect(containerStyle.textTransform).toEqual('uppercase');
   });
 
@@ -57,7 +57,7 @@ describe('Text', () => {
     const wrapper = shallow(<Text {...props} center={true} />);
     const component = wrapper.find('[data-test="component-text"]');
 
-    let containerStyle = component.get(0).props.style;
+    const containerStyle = component.get(0).props.style;
     expect(containerStyle.textAlign).toEqual('center');
   });
 });

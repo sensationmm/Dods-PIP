@@ -1,7 +1,8 @@
 import styled from 'styled-components';
+
 import color from '../../../globals/color';
-import spacing from '../../../globals/spacing';
 import elevation from '../../../globals/elevation';
+import spacing from '../../../globals/spacing';
 
 export const wrapper = styled.div`
   position: relative;

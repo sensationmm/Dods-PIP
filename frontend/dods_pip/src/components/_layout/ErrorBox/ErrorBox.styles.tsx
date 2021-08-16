@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import color from '../../../globals/color';
 import spacing from '../../../globals/spacing';
-
 import { p as Text } from '../../Text/Text.styles';
 
 export const wrapper = styled.div`

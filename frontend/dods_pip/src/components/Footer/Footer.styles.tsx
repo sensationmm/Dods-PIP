@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import spacing from '../../globals/spacing';
 
 export const wrapper = styled.div`
   padding: 0;

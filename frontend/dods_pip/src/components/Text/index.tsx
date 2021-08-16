@@ -1,5 +1,5 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 import { StyledComponent } from 'styled-components';
 
 import colorPalette from '../../globals/color';
@@ -28,7 +28,7 @@ const Text: React.FC<TextProps> = ({
   center = false,
   htmlFor,
 }) => {
-  let element: StyledComponent<CoreTextStyles, {}>;
+  let element: StyledComponent<CoreTextStyles, Record<string, unknown>>;
   let className = '';
   switch (type) {
     case 'body':

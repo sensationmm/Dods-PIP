@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import mediaQueries from '../../globals/media';
 
 export const h1 = styled.h1`

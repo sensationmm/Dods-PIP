@@ -1,6 +1,6 @@
 import Lottie from 'react-lottie';
-import animationData from './dods-loader.json';
 
+import animationData from './dods-loader.json';
 import * as Styled from './Loader.styles';
 
 const Loader: React.FC = () => {

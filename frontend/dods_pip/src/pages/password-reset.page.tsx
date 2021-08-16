@@ -1,22 +1,18 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import React from 'react';
 
-import color from '../globals/color';
-import * as Validation from '../utils/validation';
-import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
-
-import Button from '../components/Button';
-import Text from '../components/Text';
+import InputPassword from '../components/_form/InputPassword';
 import Box from '../components/_layout/Box';
 import Columns from '../components/_layout/Columns';
+import ErrorBox from '../components/_layout/ErrorBox';
 import Panel from '../components/_layout/Panel';
 import Spacer from '../components/_layout/Spacer';
-import InputText from '../components/form/InputText';
-import InputPassword from '../components/form/InputPassword';
+import Button from '../components/Button';
 import PasswordStrength, { PasswordStrengthProps } from '../components/PasswordStrength';
-import ErrorBox from '../components/_layout/ErrorBox';
+import Text from '../components/Text';
+import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
+import * as Validation from '../utils/validation';
 
 type Errors = {
   password?: string | undefined;
@@ -32,10 +28,10 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const [errors, setErrors] = React.useState<Errors>({});
   const [confirmed, setConfirmed] = React.useState<boolean>(false);
   const [passwordStrength, setPasswordStrength] = React.useState<PasswordStrengthProps>({});
-  const [isRepeatPassword, setIsRepeatPassword] = React.useState<boolean>(false);
+  const [isRepeatPassword] = React.useState<boolean>(false);
 
   const validateForm = () => {
-    let formErrors = { ...errors };
+    const formErrors = { ...errors };
 
     if (!Validation.validateRequired(password)) {
       formErrors.password = 'Password is required';
@@ -135,7 +131,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
 
                   <Spacer size={6} />
 
-                  <PasswordStrength disabled={!!!password} {...passwordStrength} />
+                  <PasswordStrength disabled={!password} {...passwordStrength} />
 
                   {isRepeatPassword && (
                     <>

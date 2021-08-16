@@ -1,10 +1,10 @@
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 
-import * as Styled from './IconButton.styles';
-import { Icons } from '../Icon/assets';
-import Icon, { IconSize } from '../Icon';
 import color from '../../globals/color';
+import Icon, { IconSize } from '../Icon';
+import { Icons } from '../Icon/assets';
+import * as Styled from './IconButton.styles';
 
 export interface IconButtonProps extends React.HTMLProps<HTMLButtonElement> {
   icon?: Icons;

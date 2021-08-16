@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
+
 import color from '../../globals/color';
 import Text from '../Text';
-
 import * as Styled from './PasswordStrength.styles';
 
 export interface PasswordStrengthProps {

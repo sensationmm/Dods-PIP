@@ -1,9 +1,9 @@
-import React from 'react';
 import classNames from 'classnames';
-import color from '../../../globals/color';
+import React from 'react';
+
 import Leaves from '../../../assets/images/leaves.svg';
 import LeavesMobile from '../../../assets/images/leaves-mobile.svg';
-
+import color from '../../../globals/color';
 import * as Styled from './Panel.styles';
 
 export interface PanelProps {

@@ -1,6 +1,6 @@
 const baseUnit = 4;
 
-const spacing = (size: number) => {
+const spacing = (size: number): string => {
   return `${size * baseUnit}px`;
 };
 

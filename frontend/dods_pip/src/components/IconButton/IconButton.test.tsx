@@ -1,7 +1,8 @@
-import React from 'react';
 import { shallow } from 'enzyme';
-import IconButton from '.';
+import React from 'react';
+
 import { Icons } from '../Icon/assets';
+import IconButton from '.';
 
 describe('IconButton', () => {
   it('renders without error', () => {

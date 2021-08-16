@@ -10,15 +10,15 @@ export const validateMatching = (input: string, inputToMatch: string): boolean =
   return input === inputToMatch && !!input;
 };
 
-export const validateNumeric = (input: any): boolean => {
-  if (input === '') {
+export const validateNumeric = (input: number): boolean => {
+  if (input.toString() === '') {
     return false;
   }
 
   return !isNaN(input);
 };
 
-export const validateRequired = (input: any): boolean => {
+export const validateRequired = (input: string): boolean => {
   return !!input && (!Array.isArray(input) || (Array.isArray(input) && input.length > 0));
 };
 

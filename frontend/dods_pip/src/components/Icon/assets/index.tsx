@@ -1,17 +1,18 @@
+import IconAdd from './icon-add.svg';
+import IconCalendar from './icon-calendar.svg';
 import IconCross from './icon-cross.svg';
-import IconTick from './icon-tick.svg';
-import IconTickBold from './icon-tickBold.svg';
+import IconHide from './icon-hide.svg';
 import IconSearch from './icon-search.svg';
 import IconShow from './icon-show.svg';
-import IconHide from './icon-hide.svg';
-import IconCalendar from './icon-calendar.svg';
-import IconAdd from './icon-add.svg';
+import IconTick from './icon-tick.svg';
+import IconTickBold from './icon-tickBold.svg';
 
 type TypeIconLibrary = {
   [key in Icons]: string;
 };
 
 export enum Icons {
+  IconAdd = 'IconAdd',
   IconCalendar = 'IconCalendar',
   IconCross = 'IconCross',
   IconHide = 'IconHide',
@@ -19,10 +20,10 @@ export enum Icons {
   IconShow = 'IconShow',
   IconTick = 'IconTick',
   IconTickBold = 'IconTickBold',
-  IconAdd = 'IconAdd',
 }
 
 const IconLibrary = {
+  IconAdd,
   IconCalendar,
   IconCross,
   IconHide,
@@ -30,7 +31,6 @@ const IconLibrary = {
   IconShow,
   IconTick,
   IconTickBold,
-  IconAdd,
 } as TypeIconLibrary;
 
 export default IconLibrary;

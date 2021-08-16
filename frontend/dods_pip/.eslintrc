@@ -1,3 +1,20 @@
 {
-  "extends": ["next", "next/core-web-vitals"]
+  "extends": [
+    "next", 
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["simple-import-sort"],
+  "rules": {
+    "@typescript-eslint/no-empty-interface": 0,
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error"
+  },
+  "ignorePatterns": ["**/*.test.tsx"]
 }

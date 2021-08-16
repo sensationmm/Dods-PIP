@@ -1,5 +1,5 @@
-import color from './color';
 import { hexAToRGBA } from '../utils/color';
+import color from './color';
 
 const dropShadow = {
   dropShadow1: `0 4px 12px ${hexAToRGBA(color.theme.blueDark, 0.12)}`,

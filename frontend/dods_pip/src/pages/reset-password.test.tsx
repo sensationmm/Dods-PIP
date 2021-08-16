@@ -1,10 +1,11 @@
+import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
-import { shallow } from 'enzyme';
-import { ResetPassword } from './reset-password.page';
+
 import * as Validation from '../utils/validation';
+import { ResetPassword } from './reset-password.page';
 
 describe('ResetPassword', () => {
-  let wrapper: any, formButton: any;
+  let wrapper: ShallowWrapper, formButton: ShallowWrapper;
   const validateRequiredSpy = jest.spyOn(Validation, 'validateRequired');
   const validateEmailSpy = jest.spyOn(Validation, 'validateEmail');
   const setLoadingSpy = jest.fn();

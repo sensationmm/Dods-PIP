@@ -2,21 +2,19 @@ import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
 
-import color from '../globals/color';
-import * as Validation from '../utils/validation';
-import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
-
-import Button from '../components/Button';
-import Text from '../components/Text';
+import Checkbox from '../components/_form/Checkbox';
+import InputPassword from '../components/_form/InputPassword';
+import InputText from '../components/_form/InputText';
 import Box from '../components/_layout/Box';
 import Columns from '../components/_layout/Columns';
+import ErrorBox from '../components/_layout/ErrorBox';
 import Panel from '../components/_layout/Panel';
 import Spacer from '../components/_layout/Spacer';
-import InputText from '../components/form/InputText';
-import InputPassword from '../components/form/InputPassword';
-import Checkbox from '../components/form/Checkbox';
-import ErrorBox from '../components/_layout/ErrorBox';
-
+import Button from '../components/Button';
+import Text from '../components/Text';
+import color from '../globals/color';
+import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
+import * as Validation from '../utils/validation';
 import * as Styled from './index.styles';
 
 type Errors = {
@@ -34,7 +32,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
   const [failureCount, setFailureCount] = React.useState<number>(0);
 
   const validateForm = () => {
-    let formErrors = { ...errors };
+    const formErrors = { ...errors };
 
     if (!Validation.validateRequired(emailAddress)) {
       formErrors.email = 'Email address is required';

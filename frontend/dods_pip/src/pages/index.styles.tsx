@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import color from '../globals/color';
-import spacing from '../globals/spacing';
 
 import { label as Text } from '../components/Text/Text.styles';
+import color from '../globals/color';
+import spacing from '../globals/spacing';
 
 export const failureCount = styled.span`
   position: absolute;

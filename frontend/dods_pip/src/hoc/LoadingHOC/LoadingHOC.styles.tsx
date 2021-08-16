@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import color from '../../globals/color';
-import opacity from '../../globals/opacity';
 import { hexAToRGBA } from '../../utils/color';
 
 export const mask = styled.div`

@@ -1,18 +1,15 @@
 import Head from 'next/head';
-import Link from 'next/link';
 import React from 'react';
 
-import color from '../globals/color';
-import * as Validation from '../utils/validation';
-import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
-
-import Button from '../components/Button';
-import Text from '../components/Text';
+import InputText from '../components/_form/InputText';
 import Box from '../components/_layout/Box';
 import Columns from '../components/_layout/Columns';
 import Panel from '../components/_layout/Panel';
 import Spacer from '../components/_layout/Spacer';
-import InputText from '../components/form/InputText';
+import Button from '../components/Button';
+import Text from '../components/Text';
+import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
+import * as Validation from '../utils/validation';
 
 type Errors = {
   email?: string | undefined;
@@ -26,7 +23,7 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
   const [requested, setRequested] = React.useState<boolean>(false);
 
   const validateForm = () => {
-    let formErrors = { ...errors };
+    const formErrors = { ...errors };
 
     if (!Validation.validateRequired(emailAddress)) {
       formErrors.email = 'Email address is required';

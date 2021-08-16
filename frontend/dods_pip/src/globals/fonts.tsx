@@ -1,8 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 
 import LibreBaskerville from '../assets/fonts/LibreBaskerville-Regular.ttf';
-import OpenSans from '../assets/fonts/OpenSans-Regular.ttf';
 import OpenSansBold from '../assets/fonts/OpenSans-Bold.ttf';
+import OpenSans from '../assets/fonts/OpenSans-Regular.ttf';
 
 export default createGlobalStyle`
   @font-face {

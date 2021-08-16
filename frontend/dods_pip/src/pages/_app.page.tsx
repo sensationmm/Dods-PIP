@@ -1,12 +1,12 @@
 import '../styles/globals.css';
+
 import { AppProps } from 'next/app';
-import GlobalFonts from '../globals/fonts';
 import Head from 'next/head';
 
-import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <div data-test={'page-app'}>
       <Head>

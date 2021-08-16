@@ -1,10 +1,10 @@
-import React from 'react';
 import { shallow } from 'enzyme';
-import PasswordStrength from '.';
-import color from '../../globals/color';
+import React from 'react';
 
-import * as Styled from './PasswordStrength.styles';
+import color from '../../globals/color';
 import Text from '../Text';
+import PasswordStrength from '.';
+import * as Styled from './PasswordStrength.styles';
 
 describe('PasswordStrength', () => {
   it('renders without error', () => {

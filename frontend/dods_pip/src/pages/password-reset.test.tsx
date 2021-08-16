@@ -1,14 +1,14 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-
+import { shallow, ShallowWrapper } from 'enzyme';
 import { useRouter } from 'next/router';
-import { PasswordReset } from './password-reset.page';
+import React from 'react';
+
 import * as Validation from '../utils/validation';
+import { PasswordReset } from './password-reset.page';
 
 jest.mock('next/router', () => ({ useRouter: jest.fn().mockReturnValue({ push: jest.fn() }) }));
 
 describe('PasswordReset', () => {
-  let wrapper: any, formButton: any;
+  let wrapper: ShallowWrapper, formButton: ShallowWrapper;
   const validateRequiredSpy = jest.spyOn(Validation, 'validateRequired');
   const validatePasswordSpy = jest.spyOn(Validation, 'validatePassword');
   const validateMatchingSpy = jest.spyOn(Validation, 'validateMatching');
@@ -131,10 +131,10 @@ describe('PasswordReset', () => {
 
   it('executes password onChange funcs', () => {
     const passwordInput = wrapper.find('[data-test="reset-password"]');
+    expect(passwordInput.length).toBe(1);
     passwordInput.props().onChange('Test123!');
     expect(setState).toHaveBeenCalledWith('Test123!');
     expect(validatePasswordSpy).toHaveBeenCalledWith('Test123!');
-    expect(passwordInput.length).toBe(1);
   });
 
   it('navigates back to login at end of flow', () => {

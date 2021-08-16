@@ -1,8 +1,8 @@
-import React from 'react';
-import color from '../../globals/color';
-
-import Text, { TextProps } from '.';
 import { Meta, Story } from '@storybook/react';
+import React from 'react';
+
+import color from '../../globals/color';
+import Text, { TextProps } from '.';
 
 export default {
   component: Text,

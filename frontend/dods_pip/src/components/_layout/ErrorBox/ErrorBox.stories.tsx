@@ -1,8 +1,8 @@
-import React from 'react';
 import { Meta, Story } from '@storybook/react';
+import React from 'react';
 
-import ErrorBox, { ErrorBoxProps } from '.';
 import Text from '../../Text';
+import ErrorBox, { ErrorBoxProps } from '.';
 
 export default {
   component: ErrorBox,

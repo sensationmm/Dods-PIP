@@ -6,7 +6,7 @@ export const breakpoints = {
   xxl: 1920,
 };
 
-const mediaQueries = (key: keyof typeof breakpoints) => {
+const mediaQueries = (key: keyof typeof breakpoints): any => {
   return (style: any) => `@media (min-width: ${breakpoints[key]}px) { ${style} }`;
 };
 

@@ -1,10 +1,10 @@
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 
-import * as Styled from './Button.styles';
-import { Icons } from '../Icon/assets';
-import Icon, { IconSize } from '../Icon';
 import color from '../../globals/color';
+import Icon, { IconSize } from '../Icon';
+import { Icons } from '../Icon/assets';
+import * as Styled from './Button.styles';
 
 type ButtonType = 'primary' | 'secondary' | 'text';
 type IconAlignment = 'left' | 'right';

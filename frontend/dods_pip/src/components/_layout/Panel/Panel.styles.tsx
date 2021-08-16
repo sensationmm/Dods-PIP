@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import color from '../../../globals/color';
 import spacing from '../../../globals/spacing';
 import { wrapper as Columns } from '../Columns/Columns.styles';

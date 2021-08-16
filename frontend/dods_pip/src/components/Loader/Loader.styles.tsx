@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
-import { hexAToRGBA } from '../../utils/color';
-
 import color from '../../globals/color';
+import { hexAToRGBA } from '../../utils/color';
 
 export const mask = styled.div`
   display: flex;

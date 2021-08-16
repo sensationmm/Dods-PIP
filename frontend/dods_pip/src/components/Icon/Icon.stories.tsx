@@ -1,10 +1,9 @@
+import { Meta, Story } from '@storybook/react';
 import React from 'react';
 
-import Icon, { IconProps } from '.';
-import { Meta, Story } from '@storybook/react';
-import { Icons } from './assets';
-import { IconSize } from './';
 import color from '../../globals/color';
+import Icon, { IconProps, IconSize } from '.';
+import { Icons } from './assets';
 
 export default {
   component: Icon,

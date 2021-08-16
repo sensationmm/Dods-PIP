@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
-import Loader from '../../components/Loader';
 
+import Loader from '../../components/Loader';
 import * as Styled from './LoadingHOC.styles';
 
 export type LoadingHOCProps = {

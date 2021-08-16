@@ -1,9 +1,10 @@
-import React from 'react';
 import { shallow } from 'enzyme';
-import Button from '.';
-import * as Styled from './Button.styles';
+import React from 'react';
+
 import Icon from '../Icon';
 import { Icons } from '../Icon/assets';
+import Button from '.';
+import * as Styled from './Button.styles';
 
 describe('Button', () => {
   it('renders without error', () => {
@@ -13,7 +14,6 @@ describe('Button', () => {
   });
   it('renders primary variant', () => {
     const wrapper = shallow(<Button type={'primary'} />);
-    const component = wrapper.find('[data-test="component-button"]');
     const button = wrapper.childAt(0);
     expect(button.type().componentStyle.componentId).toEqual(
       Styled.primary.componentStyle.componentId,
@@ -22,7 +22,6 @@ describe('Button', () => {
 
   it('renders secondary variant', () => {
     const wrapper = shallow(<Button type={'secondary'} />);
-    const component = wrapper.find('[data-test="component-button"]');
     const button = wrapper.childAt(0);
     expect(button.type().componentStyle.componentId).toEqual(
       Styled.secondary.componentStyle.componentId,
@@ -31,7 +30,6 @@ describe('Button', () => {
 
   it('renders text variant', () => {
     const wrapper = shallow(<Button type={'text'} />);
-    const component = wrapper.find('[data-test="component-button"]');
     const button = wrapper.childAt(0);
     expect(button.type().componentStyle.componentId).toEqual(
       Styled.text.componentStyle.componentId,
@@ -40,7 +38,6 @@ describe('Button', () => {
 
   it('renders icon override', () => {
     const wrapper = shallow(<Button type={'secondary'} icon={Icons.IconAdd} />);
-    const component = wrapper.find('[data-test="component-button"]');
     const button = wrapper.childAt(0);
 
     const icon = wrapper.find(Icon);
