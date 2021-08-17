@@ -1,0 +1,36 @@
+service: graphologi-integration
+
+frameworkVersion: '2'
+
+plugins:
+  - serverless-python-requirements
+
+# package:
+#   exclude:
+#     - node_modules/**
+#     - .idea/**
+#     - .requirements/**
+#     - env/**
+#     - README.md
+#     - package.json
+#     - package-lock.json
+#     - requirements.txt
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: eu-west-1
+  lambdaHashingVersion: '20201221'
+  stage: ${opt:stage, 'dev'}
+
+  environment:
+    SERVERLESS_STAGE: ${self:provider.stage}
+
+functions:
+  taxonomy:
+    handler: handler.taxonomy
+    events:
+      - http:
+          path: /taxonomy
+          method: post
+
