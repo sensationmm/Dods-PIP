@@ -1,0 +1,9 @@
+{
+  "name": "graphologi-integration",
+  "description": "Lambda and Endpoint for taxonomy ingestion from Graphologi",
+  "version": "0.1.0",
+  "dependencies": {
+    "aws-sdk": "^2.970.0"
+  },
+  "devDependencies": {}
+}

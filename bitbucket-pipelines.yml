@@ -1,36 +1,15 @@
 pipelines:
   default:
-    - step:
-        name: Lint and test PIP Frontend
-        image: gioatsomoglobal/devopstools:0.1.0
-        caches:
-          - node
-        condition:
-          changesets:
-            includePaths:
-              - "frontend/dods_pip/**"
-        script:
-          - cd ${FRONTEND_SRC}
-          - yarn install
-          - yarn lint
-          - yarn test
-
-  branches:
-    # Commits to main branch will trigger a deployment to Test environment
-    master: 
+    - parallel:
       - step:
-          name: Test/Build/Deploy Frontend image
-          image: gioatsomoglobal/devopstools:0.1.0
-          deployment: Test
+          name: Build and Deploy Frontend
+          image: gioatsomoglobal/devopstools:0.2.0
+          caches:
+            - node
           condition:
             changesets:
               includePaths:
                 - "frontend/dods_pip/**"
-          caches:
-            - node
-            - docker
-          services:
-            - docker
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
             - cd ${FRONTEND_SRC}
@@ -42,12 +21,24 @@ pipelines:
             - docker push ${IMAGE_NAME}
             - cd ../../tools
             - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+      - step:
+          name: Deploy Graphologi Webhook
+          image: gioatsomoglobal/devopstools:0.2.0
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/graphologi-integration/**"
+          script:
+            - cd services/graphologi-integration
+            - serverless deploy
 
   custom:
     deployment-to-staging:
       - step:
           name: Deploy to staging environment
-          image: gioatsomoglobal/devopstools:0.1.0
+          image: gioatsomoglobal/devopstools:0.2.0
           deployment: Staging
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:latest

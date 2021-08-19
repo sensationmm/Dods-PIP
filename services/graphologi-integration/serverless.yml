@@ -1,0 +1,72 @@
+service: graphologi-integration
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+  lambdaHashingVersion: '20201221'
+  stage: ${opt:stage, 'dev'}
+
+  environment:
+    SERVERLESS_STAGE: ${self:provider.stage}
+    S3_TAXONOMY_BUCKET: ${self:service}-${opt:stage, self:provider.stage}-taxonomies
+  
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource:
+        - 'arn:aws:s3:::${self:provider.environment.S3_TAXONOMY_BUCKET}/*'
+
+resources:
+  Resources:
+    LoggingBucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: ${self:service}-${opt:stage, self:provider.stage}-logging
+        AccessControl: LogDeliveryWrite
+
+    S3TaxonomyBucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: ${self:provider.environment.S3_TAXONOMY_BUCKET}
+        LoggingConfiguration:
+          DestinationBucketName: ${self:service}-${opt:stage, self:provider.stage}-logging
+          LogFilePrefix: graphologi-bucket-logs
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "Authorization"
+              AllowedMethods:
+                - GET
+              AllowedOrigins:
+                - "*"
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - PUT
+              AllowedOrigins:
+                - "*"
+
+
+functions:
+  taxonomy:
+    handler: handler.dumper
+    events:
+      - http:
+          path: /taxonomy
+          method: put
+  
+  elasticindex:
+    handler: index.elastic
+    events:
+      - s3:
+          bucket: ${self:provider.environment.S3_TAXONOMY_BUCKET}
+          event: s3:ObjectCreated:*
+          existing: true
+          rules:
+            - suffix: .json
+
