@@ -39,7 +39,7 @@ pipelines:
       - step:
           name: End to End testing
           script:
-            - echo 'To do: Define and run end e2e testing'
+            - echo 'Define and run end e2e testing'
 
   custom:
     deployment-to-staging:
