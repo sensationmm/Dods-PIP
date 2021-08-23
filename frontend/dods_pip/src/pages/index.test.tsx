@@ -1,9 +1,13 @@
 import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
-import fetchJson from '../lib/fetchJson';
 import * as Validation from '../utils/validation';
 import { Home } from './index.page';
+
+jest.mock('cookie-cutter', () => ({
+  get: jest.fn(),
+  set: jest.fn(),
+}));
 
 jest.mock('../lib/fetchJson', () => {
   return jest.fn().mockImplementation(() =>

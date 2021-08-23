@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import cookieCutter from 'cookie-cutter';
 import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
@@ -28,8 +29,14 @@ type Errors = {
 interface HomeProps extends LoadingHOCProps {}
 
 export const Home: React.FC<HomeProps> = ({ setLoading }) => {
-  const [emailAddress, setEmailAddress] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
+  let storedEmail = '',
+    storedPassword = '';
+  if (cookieCutter) {
+    storedEmail = cookieCutter.get && cookieCutter.get('dods-login-username');
+    storedPassword = cookieCutter.get && cookieCutter.get('dods-login-password');
+  }
+  const [emailAddress, setEmailAddress] = React.useState<string>(storedEmail);
+  const [password, setPassword] = React.useState<string>(storedPassword);
   const [remember, setRemember] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Errors>({});
   const [failureCount, setFailureCount] = React.useState<number>(0);
@@ -77,6 +84,11 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
         body: JSON.stringify(body),
       });
       mutateUser(user);
+
+      if (remember) {
+        cookieCutter.set('dods-login-username', emailAddress);
+        cookieCutter.set('dods-login-password', password);
+      }
     } catch (error) {
       if (error.data.name === 'NotAuthorizedException') {
         setFailureCount(error.data.failedLoginAttemptCount);
@@ -203,11 +215,13 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
                             Your account is now blocked. Click below to unblock it.
                           </Text>
                         )}
-                        <Styled.failureCount className={classNames({ final: failureCount >= 2 })}>
-                          <Text type={'labelSmall'} uppercase>
-                            Attempt {failureCount}/3
-                          </Text>
-                        </Styled.failureCount>
+                        {failureCount <= 3 && (
+                          <Styled.failureCount className={classNames({ final: failureCount >= 2 })}>
+                            <Text type={'labelSmall'} uppercase>
+                              Attempt {failureCount}/3
+                            </Text>
+                          </Styled.failureCount>
+                        )}
                       </ErrorBox>
                     </>
                   )}

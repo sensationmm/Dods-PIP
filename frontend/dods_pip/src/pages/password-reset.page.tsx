@@ -81,7 +81,10 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
       });
       setConfirmed(true);
     } catch (error) {
-      if (error.data.name === 'CodeMismatchException') {
+      if (
+        error.data.name === 'CodeMismatchException' ||
+        error.data.name === 'ExpiredCodeException'
+      ) {
         const formErrors = { ...errors };
         formErrors.form = 'EXPIRED';
         setErrors(formErrors);

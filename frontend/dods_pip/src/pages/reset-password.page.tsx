@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import React from 'react';
 
 import InputText from '../components/_form/InputText';
@@ -99,9 +100,7 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
               {!requested ? (
                 <Box data-test="reset-request">
                   <Text type={'h4'}>Reset Password</Text>
-
                   <Spacer size={4} />
-
                   <InputText
                     data-test={'reset-email'}
                     id="reset-email"
@@ -111,14 +110,20 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
                     error={errors.email}
                     helperText={'Please enter your email'}
                   />
-
                   <Spacer size={10} />
-
                   <Button
                     data-test={'form-button'}
                     label={'Send recovery link'}
                     onClick={onReset}
                   />
+                  <Spacer size={4} />
+                  <Text type="bodySmall" center>
+                    If you’ve forgotten your username, please{' '}
+                    <Link href="">
+                      <a>Contact Us</a>
+                    </Link>{' '}
+                    directly.
+                  </Text>
                 </Box>
               ) : (
                 <Box data-test="reset-confirmation">
