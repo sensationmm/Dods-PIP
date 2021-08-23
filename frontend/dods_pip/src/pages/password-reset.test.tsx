@@ -1,11 +1,20 @@
 import { shallow, ShallowWrapper } from 'enzyme';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import * as Validation from '../utils/validation';
 import { PasswordReset } from './password-reset.page';
 
-jest.mock('next/router', () => ({ useRouter: jest.fn().mockReturnValue({ push: jest.fn() }) }));
+const mockRouterPush = jest.fn();
+jest.mock('next/router', () => ({
+  useRouter: jest
+    .fn()
+    // .mockReturnValueOnce({ push: (arg) => mockRouterPush(arg), query: {} })
+    .mockReturnValue({ push: (arg) => mockRouterPush(arg), query: { verificationCode: 'abc' } }),
+}));
+
+jest.mock('../lib/fetchJson', () => {
+  return jest.fn().mockReturnValueOnce(true);
+});
 
 describe('PasswordReset', () => {
   let wrapper: ShallowWrapper, formButton: ShallowWrapper;
@@ -26,6 +35,7 @@ describe('PasswordReset', () => {
   };
 
   const states = [
+    // defaultState, // redirects to homepage if no validation code
     defaultState, // renders without error
     defaultState, // renders password reset
     { ...defaultState, confirmed: true }, // renders password reset confirmation
@@ -52,6 +62,10 @@ describe('PasswordReset', () => {
     wrapper = shallow(<PasswordReset isLoading={false} setLoading={setLoadingSpy} />);
     formButton = wrapper.find('[data-test="form-button"]');
   });
+
+  // it('redirects to homepage if no validation code', () => {
+  //   expect(mockRouterPush).toHaveBeenCalledWith('/');
+  // });
 
   it('renders without error', () => {
     const component = wrapper.find('[data-test="page-password-reset"]');
@@ -140,7 +154,7 @@ describe('PasswordReset', () => {
   it('navigates back to login at end of flow', () => {
     const backToLogin = wrapper.find('[data-test="button-back-to-login"]');
     backToLogin.simulate('click');
-    expect(useRouter().push).toHaveBeenCalledWith('/');
+    expect(mockRouterPush).toHaveBeenCalledWith('/');
   });
 
   it('shows repeat password warning', () => {

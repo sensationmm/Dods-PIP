@@ -9,6 +9,7 @@ import Spacer from '../components/_layout/Spacer';
 import Button from '../components/Button';
 import Text from '../components/Text';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
+import fetchJson from '../lib/fetchJson';
 import * as Validation from '../utils/validation';
 
 type Errors = {
@@ -42,10 +43,23 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
     }
   };
 
-  const onReset = () => {
+  const handleSubmit = async () => {
+    try {
+      await fetchJson('/api/forgotPassword', {
+        body: JSON.stringify({ email: emailAddress }),
+      });
+    } catch (error) {
+      /* istanbul ignore next*/
+      console.log(error);
+    }
+  };
+
+  const onReset = async () => {
     setLoading(true);
 
     if (validateForm()) {
+      await handleSubmit();
+
       setRequested(true);
       setLoading(false);
     } else {
