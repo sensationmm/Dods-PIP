@@ -4,6 +4,8 @@ pipelines:
       - step:
           name: Build and Deploy Frontend
           image: gioatsomoglobal/devopstools:0.2.0
+          services:
+            - docker
           caches:
             - node
           condition:
@@ -21,6 +23,7 @@ pipelines:
             - docker push ${IMAGE_NAME}
             - cd ../../tools
             - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+
       - step:
           name: Deploy Graphologi Webhook
           image: gioatsomoglobal/devopstools:0.2.0
@@ -33,6 +36,19 @@ pipelines:
           script:
             - cd services/graphologi-integration
             - serverless deploy
+
+      - step:
+          name: Deploy Scrapping Lambdas
+          image: gioatsomoglobal/devopstools:0.2.0
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "scrapping/**"
+          script:
+            - cd scrapping
+            - scrapping_deploy.sh
 
   branches:
     master:
