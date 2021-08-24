@@ -1,91 +1,112 @@
 let crypto;
+const { Client } = require('@elastic/elasticsearch')
 try {
   crypto = require('crypto'); // eslint-disable-line import/no-extraneous-dependencies
 } catch (err) {
   console.log('crypto support is disabled!');
 }
 
-// This is a travesty but I wanted to implement this quick
-const pubKey = `-----BEGIN PUBLIC KEY-----
-MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAryll0fkZkLAvpg17JVg6
-3q0pHzK/XjSi3CLFbXRz1hjV8ZBbbXHpeM+fXo32VAlJRShZ7GsONa6hNzsz7xQl
-h2Wlo28x0r8WOzPVV/hG8Sm23jdWZnjvo9yRG5JZzir0Azb+6QRw6ksOCW0bxxSX
-tqu3lQX9uvhzJ+UIvzaDi7qbMWOQPw9QFPfDpK650YwYBtsGfYehTaeDrFeEtL4O
-1rMHVTA7C6KP3XRqk5swW7EExgU7aOFSBTzkYNqwm9SiNrRUPtYUdh6vQlceG2LU
-PFmWtzMDjCh7ululSmuRdyXOdHQg4/sq9pi1KudqjAmVY7agAK1oVS67Bizz83Pm
-SoNDQPkpekLRvqFY1vv9Ky0Di5mdEKdlbaqaGpFfYR/zmktl8mSc7GHQwQEs6rcD
-JH+or181JLQ5h/QNSsrCegq5LU9kJTC3vyeAWTDbLpEZZaosmIFpcdHAsrPJQ7PC
-VUtaefD6HPL5gIAr7xv9ECAz5v5WQOWjMH+ZMtCMi9Dq75eOG3xBPK3MKiG0xwyp
-FwduVlEPIua16qsQQ8xhIeOS7Rb8dRfuMzLnBcf5uHGl9Qlk+WTMlaP1wtcDWB4o
-OEe/49957V1kng+EJxSabBrotsLDXkJTbXQyiIa7glIN8UMQLo0Q0PqHqNf7VVZu
-wR/X5Fg2LSgOuK7FQRiF2p0CAwEAAQ==
------END PUBLIC KEY-----`;
+const graphPubKey = process.env.GRAPH_PUB_KEY
+const esCloudId = process.env.ES_CLOUD_ID
+const esKeyId = process.env.ES_KEY_ID
+const esApiKey = process.env.ES_API_KEY
 
 exports.dumper =  async function(event, context) {
-   // event.Records.forEach(record => {
-   //    console.log(record.body)
-   //  })
-   console.log('## ENVIRONMENT VARIABLES: ' + serialize(process.env));
-   console.log('## CONTEXT: ' + serialize(context));
-   console.log('## EVENT: ' + serialize(event));
+    console.log('## ENVIRONMENT VARIABLES: ' + serialize(process.env));
+    console.log('## CONTEXT: ' + serialize(context));
+    console.log('## EVENT: ' + serialize(event));
 
-   // Graphologi's documentation talks about rejecting uploads that look
-   //  too old (their payload has a timestamp, hopefully epoch as well)
-   var epoch = new Date().getTime() / 1000;
+    // We need to JSON decode the JSON-LD payload
+    let eventBodyJson = JSON.parse(event.body);
 
-   // this implementation of payload validation is failing
-   // I'll skip it in the mean time
-   // let payloadValid = validatePayload(event.headers, event.body, pubKey);
-   // console.log('Payload validation returned: ', payloadValid);
+    let payloadValid = validatePayload(event.headers, eventBodyJson, graphPubKey);
+    console.log('Payload validation returned: ', payloadValid);
 
-   // Return error for invalid payloads
-   // if (! payloadValid ) {
-   //    return '{statusCode: 406, body: "Payload validation failed}';
-   // }
+    //Return error for invalid payloads
+    if (! payloadValid ) {
+      return '{statusCode: 406, body: "Payload validation failed}';
+    }
 
-   const fileName = epoch + '.json';
+    await addTaxonomyToES(eventBodyJson)
 
-   let upStatus = uploadFileOnS3(event.body, fileName);
-   console.log('Taxonomy upload status: ', upStatus);
-   // To Do: error handling for failed uploads
-
-   return '{ statusCode: 200, body: "ok" }';
+    return '{ statusCode: 200, body: "ok" }';
 };
 
 var serialize = function(object) {
    return JSON.stringify(object, null, 2)
 };
 
-function uploadFileOnS3(fileData, fileName) {
-   const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
-   const s3 = new AWS.S3();
+function renameKey ( obj, oldKey, newKey ) {
+  obj[newKey] = obj[oldKey];
+  delete obj[oldKey];
+}
 
-   const params = {
-       Bucket: process.env.S3_TAXONOMY_BUCKET, 
-       Key: fileName,
-       Body: 'hello fucking world!',
-      //  Body: JSON.stringify(fileData),
-   };
+function prepareTaxonomyForInsertion(taxonomy) {
+    // We will use the graphologi ID as it allows easier lookups and cross checking
+    taxonomy.forEach( obj => renameKey( obj, 'id', '_id' ) );
 
-   s3.upload(params, function(err, data) {
-      console.log('Taxonomy upload response: ', err, data);
-      if (err) {
-        return err
+    // Rename some of the problem columns that can't be used in ES
+    taxonomy.forEach( obj => renameKey( obj, 'http://purl.org/dc/terms/identifier', 'identifier' ) );
+    taxonomy.forEach( obj => renameKey( obj, 'http://taxo.dods.co.uk/onto#deleted', 'deleted' ) );
+    taxonomy.forEach( obj => renameKey( obj, 'http://taxo.dods.co.uk/onto#exactMatch', 'exactMatch' ) );
+    taxonomy.forEach( obj => renameKey( obj, 'http://taxo.dods.co.uk/onto#legacyID', 'legacyID' ) );
+    taxonomy.forEach( obj => renameKey( obj, 'http://taxo.dods.co.uk/onto#typeOfClue', 'typeOfClue' ) );
+    taxonomy.forEach( obj => renameKey( obj, 'http://www.mondeca.com/system/t3#abbreviation', 'abbreviation' ) );
+    taxonomy.forEach( obj => renameKey( obj, 'http://www.mondeca.com/system/t3#language', 'language' ) );
+
+    const preparedTaxonomy = taxonomy.flatMap(doc => [{ index: { _index: 'taxonomy', ...doc} }])
+
+    return preparedTaxonomy
+}
+
+async function saveToES(body, client) {
+    const { body: bulkResponse } = await client.bulk({ refresh: true, body })
+
+    return bulkResponse
+}
+
+async function addTaxonomyToES(taxonomy) {
+
+    let preparedTaxonomy = prepareTaxonomyForInsertion(taxonomy)
+    const client = new Client({
+      cloud: {
+        id: esCloudId,
+      },
+      auth: {
+        apiKey: {
+          id: esKeyId,
+          api_key: esApiKey
+        }
       }
-      if (data) {
-        return data;
-      }
-    });
+    })
 
-   // try {
-   //     const response = s3.upload(params).promise();
-   //     console.log('Taxonomy Upload Response: ', response);
-   //     return response;
+    const bulkResponse = saveToES(preparedTaxonomy, client)
 
-   // } catch (err) {
-   //     console.log(err);
-   // }
-};
+    if (bulkResponse.errors) {
+        const erroredDocuments = []
+        // The items array has the same order of the dataset we just indexed.
+        // The presence of the `error` key indicates that the operation
+        // that we did for the document has failed.
+        bulkResponse.items.forEach((action, i) => {
+            const operation = Object.keys(action)[0]
+            if (action[operation].error) {
+                erroredDocuments.push({
+                    // If the status is 429 it means that you can retry the document,
+                    // otherwise it's very likely a mapping error, and you should
+                    // fix the document before to try it again.
+                    status: action[operation].status,
+                    error: action[operation].error,
+                    operation: preparedTaxonomy[i * 2],
+                    document: preparedTaxonomy[i * 2 + 1]
+                })
+            }
+        })
+        console.log('## Errored DOCUMENTS: ' + JSON.stringify(erroredDocuments))
+    }
+
+    const { body: count } = await client.count({ index: 'taxonomy' })
+    console.log(count)
+}
 
 function validatePayload(headers, payload, publicKey) {
    // Expecting an authorization header with parameters:
