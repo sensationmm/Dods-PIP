@@ -7,7 +7,7 @@ rootDir=$PWD
 IFS=$'\n'
 services=($(find . -name "serverless.yml"))
 unset IFS
-
+echo "Will work on ${services[@]}"
 # Go to each one and run deployment
 for service in "${services[@]}"; do
   folder=$(dirname $service)
