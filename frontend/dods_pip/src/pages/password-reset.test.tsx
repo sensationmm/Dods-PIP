@@ -9,7 +9,7 @@ jest.mock('next/router', () => ({
   useRouter: jest
     .fn()
     // .mockReturnValueOnce({ push: (arg) => mockRouterPush(arg), query: {} })
-    .mockReturnValue({ push: (arg) => mockRouterPush(arg), query: { verificationCode: 'abc' } }),
+    .mockReturnValue({ push: (arg) => mockRouterPush(arg), query: { code: 'abc' } }),
 }));
 
 jest.mock('../lib/fetchJson', () => {
