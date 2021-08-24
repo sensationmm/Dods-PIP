@@ -108,7 +108,7 @@ if [[ -d "$_cleanedFolder" ]]; then
 fi
 
 if [[ ${_arg_verbose} -ge 1 ]]; then
-   echo "Proceeding to create a folder named '${_cleanedFolder}' with a serverless service named 'scraper-${_sls_name}'"
+   echo "Creating folder '${_cleanedFolder}' with  SLS service named 'scraper-${_sls_name}'"
 fi
 
 mkdir ${_cleanedFolder}
