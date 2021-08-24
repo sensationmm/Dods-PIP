@@ -42,7 +42,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setLoading }) => {
               </Text>
               <Spacer size={4} />
               <Text>
-                Dods PIP is the market leading, Global political intelligence ervice, facilitating
+                Dods PIP is the market leading, Global political intelligence service, facilitating
                 comprehensive monitoring of people, political and policy developments.
               </Text>
               <Spacer size={12} />

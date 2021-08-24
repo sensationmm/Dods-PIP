@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import cookieCutter from 'cookie-cutter';
 import Head from 'next/head';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Checkbox from '../components/_form/Checkbox';
 import InputPassword from '../components/_form/InputPassword';
@@ -41,6 +41,12 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
   const [errors, setErrors] = React.useState<Errors>({});
   const [failureCount, setFailureCount] = React.useState<number>(0);
   const [unblockingRequested, setUnblockingRequested] = React.useState(false);
+
+  useEffect(() => {
+    if (storedEmail && storedEmail.length > 0) {
+      setRemember(true);
+    }
+  }, [storedEmail]);
 
   const { mutateUser } = useUser({
     redirectTo: '/dashboard',
@@ -84,11 +90,6 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
         body: JSON.stringify(body),
       });
       mutateUser(user);
-
-      if (remember) {
-        cookieCutter.set('dods-login-username', emailAddress);
-        cookieCutter.set('dods-login-password', password);
-      }
     } catch (error) {
       if (error.data.name === 'NotAuthorizedException') {
         setFailureCount(error.data.failedLoginAttemptCount);
@@ -110,8 +111,13 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
     setLoading(true);
 
     if (validateForm()) {
-      await handleLogin();
-      setLoading(false);
+      await handleLogin().then(() => {
+        if (remember) {
+          cookieCutter.set('dods-login-username', emailAddress);
+          cookieCutter.set('dods-login-password', password);
+        }
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
@@ -147,7 +153,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
               </Text>
               <Spacer size={4} />
               <Text>
-                Dods PIP is the market leading, Global political intelligence ervice, facilitating
+                Dods PIP is the market leading, Global political intelligence service, facilitating
                 comprehensive monitoring of people, political and policy developments.
               </Text>
               <Spacer size={12} />
@@ -278,7 +284,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
                   <Text type={'h4'}>Unblock Requested</Text>
                   <Spacer size={6} />
                   <Text type="bodySmall">
-                    You will shortly receive an email with a link to re-validate your indentity and
+                    You will shortly receive an email with a link to re-validate your identity and
                     unblock your account.
                   </Text>
                   <Spacer size={4} />
