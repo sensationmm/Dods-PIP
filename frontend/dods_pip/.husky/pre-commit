@@ -3,8 +3,17 @@
 
 [ -n "$CI" ] && exit 0
 
-cd frontend/dods_pip
-echo 'Pre-commit checks... linting, tests and build... please fix any errors'
-yarn test
-yarn lint
-yarn build
+function get_commit {
+	git log --oneline -- $1 | head -n 1 | cut -d " " -f1
+}
+
+ROOT_COMMIT=$(get_commit)
+SUBDIR_COMMIT=$(get_commit frontend/dods_pip)
+
+if [ "$SUBDIR_COMMIT" == "$ROOT_COMMIT" ]; then
+	cd frontend/dods_pip
+	echo 'Pre-commit checks... linting, tests and build... please fix any errors'
+	yarn test
+	yarn lint
+	yarn build
+fi
