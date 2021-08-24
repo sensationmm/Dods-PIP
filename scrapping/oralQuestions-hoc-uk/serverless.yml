@@ -1,4 +1,4 @@
-service: scraper-$TPL_SLS_NAME
+service: scraper_oralquestions-hoc-uk
 
 frameworkVersion: '2'
 projectDir: ../
@@ -21,7 +21,7 @@ provider:
 
 functions:
   scrape:
-    name: scraper-$TPL_SLS_NAME-${sls:stage}
+    name: scraper_${sls:stage}
     handler: handler.run
     events:
       # Invoke Lambda function every 55 minutes
