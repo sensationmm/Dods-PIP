@@ -21,7 +21,7 @@ provider:
 
 functions:
   scrape:
-    name: scraper_${sls:stage}
+    name: scraper-oralquestions-hoc-uk-${sls:stage}
     handler: handler.run
     events:
       # Invoke Lambda function every 55 minutes
