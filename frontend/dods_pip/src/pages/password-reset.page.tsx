@@ -27,7 +27,7 @@ interface PasswordResetProps extends LoadingHOCProps {}
 
 export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const router = useRouter();
-  const { verificationCode } = router.query;
+  const { code, email } = router.query;
   const [password, setPassword] = React.useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Errors>({});
@@ -36,7 +36,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const [isRepeatPassword] = React.useState<boolean>(false);
 
   useEffect(() => {
-    if (router.isReady && !verificationCode) {
+    if (router.isReady && !code) {
       router.push('/');
     }
   });
@@ -74,12 +74,11 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
       await fetchJson('/api/resetPassword', {
         body: JSON.stringify({
           // @todo: needs to be there for api, remove once handled by BE
-          email: 'kevin.reynolds@somoglobal.com',
+          email,
           newPassword: password,
-          verificationCode,
+          verificationCode: code,
         }),
       });
-      setConfirmed(true);
     } catch (error) {
       if (
         error.data.name === 'CodeMismatchException' ||
@@ -87,6 +86,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
       ) {
         const formErrors = { ...errors };
         formErrors.form = 'EXPIRED';
+        setLoading(false);
         setErrors(formErrors);
       }
     }
@@ -96,14 +96,16 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
     setLoading(true);
 
     if (validateForm() && !isRepeatPassword) {
-      await handleSubmit();
-      setLoading(false);
+      await handleSubmit().then(() => {
+        setConfirmed(true);
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
   };
 
-  if (!verificationCode) return <Loader inline />;
+  if (!code) return <Loader inline />;
 
   return (
     <div data-test="page-password-reset">
@@ -126,7 +128,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
               </Text>
               <Spacer size={4} />
               <Text>
-                Dods PIP is the market leading, Global political intelligence ervice, facilitating
+                Dods PIP is the market leading, Global political intelligence service, facilitating
                 comprehensive monitoring of people, political and policy developments.
               </Text>
               <Spacer size={12} />
