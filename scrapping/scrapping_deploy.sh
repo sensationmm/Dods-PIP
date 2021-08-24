@@ -14,6 +14,7 @@ for service in "${services[@]}"; do
   echo "Located service at ${folder}"
   cd $folder
   echo "Deploying ..."
+  yarn install
   sls deploy
   cd $rootDir 
 done
