@@ -1,4 +1,4 @@
-service: motions-edm-uk
+service: writtenQuestions-hoc-uk
 
 frameworkVersion: '2'
 projectDir: ../
@@ -21,7 +21,7 @@ provider:
 
 functions:
   scrape:
-    name: motions-edm-uk-${sls:stage}-scraper 
+    name: ${serviceName}-${sls:stage}-scraper 
     handler: handler.run
     events:
       # Invoke Lambda function every 55 minutes
