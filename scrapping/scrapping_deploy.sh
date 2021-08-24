@@ -14,6 +14,6 @@ for service in "${services[@]}"; do
   echo "Located service at ${folder}"
   cd $folder
   echo "Deploying ..."
-  cd $rootDir 
   sls deploy
+  cd $rootDir 
 done
