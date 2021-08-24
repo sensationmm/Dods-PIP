@@ -21,10 +21,10 @@ provider:
 
 functions:
   scrape:
-    name: ${sls:stage}-scraper 
+    name: motions-edm-uk-${sls:stage}-scraper 
     handler: handler.run
     events:
-      # Invoke Lambda function every 5 minutes
+      # Invoke Lambda function every 55 minutes
       - schedule: rate(55 minutes)
   # cronHandler:
   #   handler: handler.run
