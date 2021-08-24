@@ -49,7 +49,7 @@ pipelines:
                 - "scrapping/**"
           script:
             - cd scrapping
-            - scrapping_deploy.sh
+            - ./scrapping_deploy.sh
 
   branches:
     master:
