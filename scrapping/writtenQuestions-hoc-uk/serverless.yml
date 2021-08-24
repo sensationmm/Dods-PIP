@@ -21,7 +21,7 @@ provider:
 
 functions:
   scrape:
-    name: ${serviceName}-${sls:stage}-scraper 
+    name: writtenQuestions-hoc-uk-${sls:stage}-scraper 
     handler: handler.run
     events:
       # Invoke Lambda function every 55 minutes
