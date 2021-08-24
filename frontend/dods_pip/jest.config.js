@@ -21,7 +21,7 @@ module.exports = {
     '!src/**/_app.page.tsx',
     '!coverage',
     '!src/globals/**/*.{ts,tsx}',
-    '!src/pages/api/hello.ts',
     '!src/components/_example/*',
+    '!src/pages/api/*.*',
   ],
 };

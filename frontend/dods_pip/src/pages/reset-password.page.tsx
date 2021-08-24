@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import React from 'react';
 
 import InputText from '../components/_form/InputText';
@@ -9,6 +10,7 @@ import Spacer from '../components/_layout/Spacer';
 import Button from '../components/Button';
 import Text from '../components/Text';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
+import fetchJson from '../lib/fetchJson';
 import * as Validation from '../utils/validation';
 
 type Errors = {
@@ -42,10 +44,23 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
     }
   };
 
-  const onReset = () => {
+  const handleSubmit = async () => {
+    try {
+      await fetchJson('/api/forgotPassword', {
+        body: JSON.stringify({ email: emailAddress }),
+      });
+    } catch (error) {
+      /* istanbul ignore next*/
+      console.log(error);
+    }
+  };
+
+  const onReset = async () => {
     setLoading(true);
 
     if (validateForm()) {
+      await handleSubmit();
+
       setRequested(true);
       setLoading(false);
     } else {
@@ -85,9 +100,7 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
               {!requested ? (
                 <Box data-test="reset-request">
                   <Text type={'h4'}>Reset Password</Text>
-
                   <Spacer size={4} />
-
                   <InputText
                     data-test={'reset-email'}
                     id="reset-email"
@@ -97,14 +110,20 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
                     error={errors.email}
                     helperText={'Please enter your email'}
                   />
-
                   <Spacer size={10} />
-
                   <Button
                     data-test={'form-button'}
                     label={'Send recovery link'}
                     onClick={onReset}
                   />
+                  <Spacer size={4} />
+                  <Text type="bodySmall" center>
+                    If you’ve forgotten your username, please{' '}
+                    <Link href="">
+                      <a>Contact Us</a>
+                    </Link>{' '}
+                    directly.
+                  </Text>
                 </Box>
               ) : (
                 <Box data-test="reset-confirmation">

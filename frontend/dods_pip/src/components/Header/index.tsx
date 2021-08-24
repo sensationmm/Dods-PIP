@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 import Logo from '../../assets/images/logo-dods.svg';
@@ -11,7 +12,11 @@ const Header: React.FC<HeaderProps> = () => {
     <Styled.wrapper>
       <Panel data-test="component-header" isPadded={false}>
         <Styled.logo>
-          <Logo layout={'fill'} alt={'Dods Logo'} />
+          <Link href="/">
+            <a>
+              <Logo layout={'fill'} alt={'Dods Logo'} />
+            </a>
+          </Link>
         </Styled.logo>
       </Panel>
     </Styled.wrapper>

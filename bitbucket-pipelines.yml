@@ -4,6 +4,7 @@ pipelines:
       - step:
           name: Build and Deploy Frontend
           image: gioatsomoglobal/devopstools:0.2.0
+          deployment: Test
           services:
             - docker
           caches:

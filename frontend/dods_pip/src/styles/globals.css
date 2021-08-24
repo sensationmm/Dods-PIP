@@ -11,6 +11,10 @@ a {
   font-family: 'Open Sans Bold';
 }
 
+b {
+  font-family: 'Open Sans Bold';
+}
+
 * {
   box-sizing: border-box;
 }
