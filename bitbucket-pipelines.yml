@@ -49,6 +49,7 @@ pipelines:
                 - "scrapping/**"
           script:
             - cd scrapping
+            - npm install
             - ./scrapping_deploy.sh
 
   branches:

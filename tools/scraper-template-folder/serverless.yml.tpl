@@ -1,4 +1,4 @@
-service: scraper-motions-edm-uk
+service: scraper_motions-edm-uk
 
 frameworkVersion: '2'
 projectDir: ../
@@ -21,7 +21,7 @@ provider:
 
 functions:
   scrape:
-    name: scraper-motions-edm-uk-${sls:stage}
+    name: scraper_motions-edm-uk_${sls:stage}
     handler: handler.run
     events:
       # Invoke Lambda function every 55 minutes
