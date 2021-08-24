@@ -1,4 +1,4 @@
-service: scraper_oralquestions-hoc-uk
+service: scraper-oralquestions-hoc-uk
 
 frameworkVersion: '2'
 projectDir: ../
