@@ -1,0 +1,12 @@
+{
+  "name": "scraper-writtenquestions-hol-uk",
+  "version": "1.0.0",
+  "description": "Creating a function that runs as a cron job using the serverless `schedule` event",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless": "^2.56.0",
+    "serverless-offline": "^8.0.0",
+    "serverless-python-requirements": "^5.1.1"
+  }
+}
