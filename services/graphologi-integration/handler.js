@@ -69,7 +69,7 @@ function prepareTaxonomyForInsertion(taxonomy) {
     taxonomy.forEach( obj => renameKey( obj, 'http://www.mondeca.com/system/t3#abbreviation', 'abbreviation' ) );
     taxonomy.forEach( obj => renameKey( obj, 'http://www.mondeca.com/system/t3#language', 'language' ) );
 
-    const preparedTaxonomy = taxonomy.flatMap(doc => [{ index: { _index: 'taxonomy'}, doc}])
+    const preparedTaxonomy = taxonomy.flatMap(doc => [{ upsert: { _index: 'taxonomy'}, doc}])
 
     return preparedTaxonomy
 }
