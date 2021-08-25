@@ -42,7 +42,7 @@ exports.dumper =  async function(event, context) {
       return '{statusCode: 406, body: "Payload validation failed}';
     }
 
-    await addTaxonomyToES(eventBodyJson)
+    await addTaxonomyToES(eventBodyJson['graph'])
 
     return '{ statusCode: 200, body: "ok" }';
 };
