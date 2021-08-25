@@ -51,6 +51,9 @@ resources:
               AllowedOrigins:
                 - "*"
 
+package:
+  include:
+    - node_modules/**
 
 functions:
   taxonomy:
