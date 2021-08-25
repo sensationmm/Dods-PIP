@@ -3,7 +3,7 @@ import re, os
 import logging
 from fuzzywuzzy import fuzz
 import operator
-from src.utilities.configs import Config
+from utilities.configs import Config
 from json import loads, dump
 
 class Common:

@@ -1,12 +1,18 @@
-service: scraper-writtenQuestions-hol-uk
+org: mesaslan
+app: writtenquestionholuk
+service: writtenquestionholuk
 
 frameworkVersion: '2'
 projectDir: ../
 variablesResolutionMode: 20210326
 configValidationMode: error
 
+plugins:
+  - serverless-python-requirements
+  - serverless-offline
+
 custom:
-  app_acronym: dods-wq-bucket
+  app_acronym: dods-wq-hol-uk-bucket
   default_stage: dev
   stage: ${opt:stage, self:custom.default_stage}
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
@@ -30,12 +36,10 @@ package:
     - package.json
     - package-lock.json
     - requirements.txt
-  include:
-    - ../
 
 provider:
   name: aws
-  runtime: python3.8
+  runtime: python3.9
   lambdaHashingVersion: 20201221
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
@@ -59,9 +63,6 @@ functions:
     events:
       - schedule: rate(1 day)
 
-plugins:
-  - serverless-python-requirements
-  - serverless-offline
 resources:
   Resources:
     assetDynamoDbTable:

@@ -1,15 +1,15 @@
 import requests
-from scrapping.services.data_model import DataModel
-from scrapping.utilities.logger import logger
+from services.data_model import DataModel
+from utilities.logger import logger
 import boto3
 import os
 from datetime import datetime
 from bs4 import BeautifulSoup
 from json import loads, dumps
 import xmltodict
-from scrapping.utilities.common import Common
-from scrapping.utilities.configs import Config
-from scrapping.services.validation import Validator
+from utilities.common import Common
+from utilities.configs import Config
+from services.validation import Validator
 
 
 WRITE_QUESTIONS_HOL_FOLDER = 'write-questions-hol'
@@ -20,7 +20,6 @@ content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_temp
 root_dir = os.path.abspath(os.curdir)
 config = Config()._config_read((root_dir + "/configs/config.ini"))
 def run(event, context):
-    logger.debug('foldername: {}'.format(event['path']['date']))
     logger.debug('BUCKET: {}'.format(BUCKET))
     s3 = boto3.client('s3')
     try:
