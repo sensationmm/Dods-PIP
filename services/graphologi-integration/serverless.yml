@@ -15,7 +15,6 @@ provider:
     ES_CLOUD_ID: ${env:ES_CLOUD_ID}
     ES_KEY_ID: ${env:ES_KEY_ID}
     ES_API_KEY: ${env:ES_API_KEY}
-    GRAPH_PUB_KEY: ${env:GRAPH_PUB_KEY}
   
   iamRoleStatements:
     - Effect: Allow
