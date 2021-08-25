@@ -11,6 +11,7 @@ unset IFS
 # Go to each one and run deployment
 for service in "${services[@]}"; do
   folder=$(dirname $service)
+  echo "\n-------------------------------------"
   echo "Located service at ${folder}"
   cd $folder
   echo "Deploying ..."
