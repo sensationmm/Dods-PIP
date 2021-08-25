@@ -6,7 +6,22 @@ try {
   console.log('crypto support is disabled!');
 }
 
-const graphPubKey = process.env.GRAPH_PUB_KEY
+// This is not a great way of implementing it but it looks like keys cannot be passed correctly via serverless
+// This is a publicly available key so there is no risk associated with having it inside the code.
+const graphPubKey = `-----BEGIN PUBLIC KEY-----
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAryll0fkZkLAvpg17JVg6
+3q0pHzK/XjSi3CLFbXRz1hjV8ZBbbXHpeM+fXo32VAlJRShZ7GsONa6hNzsz7xQl
+h2Wlo28x0r8WOzPVV/hG8Sm23jdWZnjvo9yRG5JZzir0Azb+6QRw6ksOCW0bxxSX
+tqu3lQX9uvhzJ+UIvzaDi7qbMWOQPw9QFPfDpK650YwYBtsGfYehTaeDrFeEtL4O
+1rMHVTA7C6KP3XRqk5swW7EExgU7aOFSBTzkYNqwm9SiNrRUPtYUdh6vQlceG2LU
+PFmWtzMDjCh7ululSmuRdyXOdHQg4/sq9pi1KudqjAmVY7agAK1oVS67Bizz83Pm
+SoNDQPkpekLRvqFY1vv9Ky0Di5mdEKdlbaqaGpFfYR/zmktl8mSc7GHQwQEs6rcD
+JH+or181JLQ5h/QNSsrCegq5LU9kJTC3vyeAWTDbLpEZZaosmIFpcdHAsrPJQ7PC
+VUtaefD6HPL5gIAr7xv9ECAz5v5WQOWjMH+ZMtCMi9Dq75eOG3xBPK3MKiG0xwyp
+FwduVlEPIua16qsQQ8xhIeOS7Rb8dRfuMzLnBcf5uHGl9Qlk+WTMlaP1wtcDWB4o
+OEe/49957V1kng+EJxSabBrotsLDXkJTbXQyiIa7glIN8UMQLo0Q0PqHqNf7VVZu
+wR/X5Fg2LSgOuK7FQRiF2p0CAwEAAQ==
+-----END PUBLIC KEY-----`;
 const esCloudId = process.env.ES_CLOUD_ID
 const esKeyId = process.env.ES_KEY_ID
 const esApiKey = process.env.ES_API_KEY
