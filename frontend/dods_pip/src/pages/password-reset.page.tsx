@@ -1,6 +1,7 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import InputPassword from '../components/_form/InputPassword';
 import Box from '../components/_layout/Box';
@@ -9,26 +10,36 @@ import ErrorBox from '../components/_layout/ErrorBox';
 import Panel from '../components/_layout/Panel';
 import Spacer from '../components/_layout/Spacer';
 import Button from '../components/Button';
+import Loader from '../components/Loader';
 import PasswordStrength, { PasswordStrengthProps } from '../components/PasswordStrength';
 import Text from '../components/Text';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
+import fetchJson from '../lib/fetchJson';
 import * as Validation from '../utils/validation';
 
 type Errors = {
   password?: string | undefined;
   passwordConfirm?: string | undefined;
+  form?: string | undefined;
 };
 
 interface PasswordResetProps extends LoadingHOCProps {}
 
 export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const router = useRouter();
+  const { code, email } = router.query;
   const [password, setPassword] = React.useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Errors>({});
   const [confirmed, setConfirmed] = React.useState<boolean>(false);
   const [passwordStrength, setPasswordStrength] = React.useState<PasswordStrengthProps>({});
   const [isRepeatPassword] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    if (router.isReady && !code) {
+      router.push('/');
+    }
+  });
 
   const validateForm = () => {
     const formErrors = { ...errors };
@@ -58,16 +69,43 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
     }
   };
 
-  const onConfirm = () => {
+  const handleSubmit = async () => {
+    try {
+      await fetchJson('/api/resetPassword', {
+        body: JSON.stringify({
+          // @todo: needs to be there for api, remove once handled by BE
+          email,
+          newPassword: password,
+          verificationCode: code,
+        }),
+      });
+    } catch (error) {
+      if (
+        error.data.name === 'CodeMismatchException' ||
+        error.data.name === 'ExpiredCodeException'
+      ) {
+        const formErrors = { ...errors };
+        formErrors.form = 'EXPIRED';
+        setLoading(false);
+        setErrors(formErrors);
+      }
+    }
+  };
+
+  const onConfirm = async () => {
     setLoading(true);
 
     if (validateForm() && !isRepeatPassword) {
-      setConfirmed(true);
-      setLoading(false);
+      await handleSubmit().then(() => {
+        setConfirmed(true);
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
   };
+
+  if (!code) return <Loader inline />;
 
   return (
     <div data-test="page-password-reset">
@@ -90,7 +128,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
               </Text>
               <Spacer size={4} />
               <Text>
-                Dods PIP is the market leading, Global political intelligence ervice, facilitating
+                Dods PIP is the market leading, Global political intelligence service, facilitating
                 comprehensive monitoring of people, political and policy developments.
               </Text>
               <Spacer size={12} />
@@ -144,6 +182,25 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                         <Text type={'bodySmall'}>
                           You need to set a unique password that hasn’t previously been used in the
                           last [X amount of time].
+                        </Text>
+                      </ErrorBox>
+                    </>
+                  )}
+
+                  {errors.form === 'EXPIRED' && (
+                    <>
+                      <Spacer size={4} />
+                      <ErrorBox data-test={'failure-count'}>
+                        <Text type={'bodySmall'} bold>
+                          Reset Code Expired
+                        </Text>
+                        <Spacer size={2} />
+                        <Text type={'bodySmall'}>
+                          Request a new code by clicking{' '}
+                          <Link href="/reset-password">
+                            <a>here</a>
+                          </Link>
+                          .
                         </Text>
                       </ErrorBox>
                     </>

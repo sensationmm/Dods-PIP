@@ -16,4 +16,8 @@ export const failureCount = styled.span`
   ${Text} {
     color: ${color.base.white} !important;
   }
+
+  &.final {
+    background: ${color.alert.red};
+  }
 `;

@@ -4,6 +4,10 @@ import React from 'react';
 import * as Validation from '../utils/validation';
 import { ResetPassword } from './reset-password.page';
 
+jest.mock('../lib/fetchJson', () => {
+  return jest.fn().mockReturnValueOnce(true);
+});
+
 describe('ResetPassword', () => {
   let wrapper: ShallowWrapper, formButton: ShallowWrapper;
   const validateRequiredSpy = jest.spyOn(Validation, 'validateRequired');

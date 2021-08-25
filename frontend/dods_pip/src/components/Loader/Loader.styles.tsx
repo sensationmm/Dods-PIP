@@ -13,4 +13,11 @@ export const mask = styled.div`
   width: 100vw;
   height: 100vh;
   // background: ${hexAToRGBA(color.theme.blueDark, 0.4)};
+
+  &.inline {
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: 100%;
+  }
 `;

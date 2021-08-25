@@ -4,6 +4,9 @@ pipelines:
       - step:
           name: Build and Deploy Frontend
           image: gioatsomoglobal/devopstools:0.2.0
+          deployment: Test
+          services:
+            - docker
           caches:
             - node
           condition:
@@ -21,6 +24,7 @@ pipelines:
             - docker push ${IMAGE_NAME}
             - cd ../../tools
             - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+
       - step:
           name: Deploy Graphologi Webhook
           image: gioatsomoglobal/devopstools:0.2.0
@@ -32,7 +36,29 @@ pipelines:
                 - "services/graphologi-integration/**"
           script:
             - cd services/graphologi-integration
+            - npm install
             - serverless deploy
+
+      - step:
+          name: Deploy Scrapping Lambdas
+          image: gioatsomoglobal/devopstools:0.2.0
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "scrapping/**"
+          script:
+            - cd scrapping
+            - npm install
+            - ./scrapping_deploy.sh
+
+  branches:
+    master:
+      - step:
+          name: End to End testing
+          script:
+            - echo 'Define and run end e2e testing'
 
   custom:
     deployment-to-staging:
@@ -41,6 +67,6 @@ pipelines:
           image: gioatsomoglobal/devopstools:0.2.0
           deployment: Staging
           script:
-            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:latest
+            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
             - cd tools
             - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
