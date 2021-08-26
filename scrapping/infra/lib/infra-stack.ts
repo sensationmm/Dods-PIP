@@ -14,7 +14,18 @@ export class InfraStackDev extends cdk.Stack {
     const bucket = new s3.Bucket(this, bucketName, {
       bucketName: cdk.PhysicalName.GENERATE_IF_NEEDED,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      autoDeleteObjects: true
+      autoDeleteObjects: true,
+      cors: [
+        {
+          allowedMethods: [
+            s3.HttpMethods.GET,
+            s3.HttpMethods.POST,
+            s3.HttpMethods.PUT,
+          ],
+          allowedOrigins: ["*"],
+          allowedHeaders: ["*"],
+        },
+      ],
     });
 
     const gotContent = new lambda.Function(this, 'contentHandler', {
