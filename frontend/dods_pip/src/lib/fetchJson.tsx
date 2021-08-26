@@ -15,7 +15,10 @@ export default async function fetchJson(url: string, args?: RequestInit): Promis
       ...args,
     });
 
-    const data = await response.json();
+    const data = await response
+      .clone()
+      .json()
+      .catch(() => response.text());
 
     if (response.ok) {
       return data;

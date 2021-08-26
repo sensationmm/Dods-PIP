@@ -4,17 +4,25 @@ import React from 'react';
 import * as Validation from '../utils/validation';
 import { Home } from './index.page';
 
+const mockCookieGet = jest.fn();
+const mockCookieSet = jest.fn();
+
 jest.mock('cookie-cutter', () => ({
-  get: jest.fn(),
-  set: jest.fn(),
+  get: (name: string) => mockCookieGet(name),
+  set: (name: string, value: string) => mockCookieSet(name, value),
 }));
 
 jest.mock('../lib/fetchJson', () => {
-  return jest.fn().mockImplementation(() =>
-    Promise.resolve({
-      json: () => {},
-    }),
-  );
+  return jest
+    .fn()
+    .mockImplementationOnce(() =>
+      Promise.reject({ data: { name: 'NotAuthorizedException', failedLoginAttemptCount: 2 } }),
+    )
+    .mockImplementationOnce(() =>
+      Promise.reject({ data: { name: 'OtherException', failedLoginAttemptCount: 2 } }),
+    )
+    .mockImplementationOnce(() => Promise.reject({ data: { name: 'FAIL' } }))
+    .mockImplementation(() => Promise.resolve());
 });
 
 const mockMutateUserSpy = jest.fn();
@@ -32,7 +40,8 @@ describe('Home', () => {
     unblockButton,
     warning1,
     warning2,
-    warning3;
+    warning3,
+    unblockConfirmation;
   const validateRequiredSpy = jest.spyOn(Validation, 'validateRequired');
   const validateEmailSpy = jest.spyOn(Validation, 'validateEmail');
   const setLoadingSpy = jest.fn();
@@ -45,6 +54,7 @@ describe('Home', () => {
     remember: false,
     errors: {},
     failureCount: 0,
+    unblockingRequested: false,
   };
 
   const states = [
@@ -57,20 +67,16 @@ describe('Home', () => {
     { ...defaultState, password: 'test' }, // returns missing email error
     { ...defaultState, emailAddress: 'invalid' }, // returns invalid email error
     { ...defaultState, emailAddress: 'test@test.com' }, // returns missing password error
-    { ...defaultState, emailAddress: 'test@test.com', password: 'test' }, // captures login fail
-    { ...defaultState, emailAddress: 'test@test.com', password: 'test' }, // clears errors on successful form completion
+    { ...defaultState, emailAddress: 'test@test.com', password: 'test' }, // captures onLogin fail
+    { ...defaultState, emailAddress: 'test@test.com', password: 'test' }, // captures onLogin generic fail
+    { ...defaultState, failureCount: 3, emailAddress: 'test@test.com', password: 'test' }, // captures onUnblock fail
+    { ...defaultState, remember: false, emailAddress: 'test@test.com', password: 'test' }, // login success without remember
+    { ...defaultState, remember: true, emailAddress: 'test@test.com', password: 'test' }, // login success with remember
     { ...defaultState, failureCount: 3 }, // handles account unblocking
+    { ...defaultState, unblockingRequested: true }, //renders unblocking confirmation
   ];
 
   let count = 0;
-
-  beforeAll(() => {
-    global.fetch = () => {
-      return Promise.resolve({
-        json: () => Promise.resolve([]),
-      });
-    };
-  });
 
   beforeEach(() => {
     useStateSpy
@@ -78,7 +84,8 @@ describe('Home', () => {
       .mockImplementationOnce(() => [states[count].password, setState])
       .mockImplementationOnce(() => [states[count].remember, setState])
       .mockImplementationOnce(() => [states[count].errors, setState])
-      .mockImplementationOnce(() => [states[count].failureCount, setState]);
+      .mockImplementationOnce(() => [states[count].failureCount, setState])
+      .mockImplementationOnce(() => [states[count].unblockingRequested, setState]);
     wrapper = shallow(<Home isLoading={false} setLoading={setLoadingSpy} />);
     formEmail = wrapper.find('[data-test="login-email"]');
     formPassword = wrapper.find('[data-test="login-password"]');
@@ -87,13 +94,14 @@ describe('Home', () => {
     warning1 = wrapper.find('[data-test="warning-1"]');
     warning2 = wrapper.find('[data-test="warning-2"]');
     warning3 = wrapper.find('[data-test="warning-3"]');
-    expect(formEmail.length).toEqual(1);
-    expect(formPassword.length).toEqual(1);
+    unblockConfirmation = wrapper.find('[data-test="unblock-confirmation"]');
   });
 
   it('renders without error', () => {
     const component = wrapper.find('[data-test="page-home"]');
     expect(component.length).toEqual(1);
+    expect(formEmail.length).toEqual(1);
+    expect(formPassword.length).toEqual(1);
     expect(loginButton.length).toEqual(1);
     expect(unblockButton.length).toEqual(0);
   });
@@ -179,25 +187,38 @@ describe('Home', () => {
       });
     });
 
-    it('clears catches login fail', () => {
-      loginButton.simulate('click');
+    it('catches onLogin fail', async () => {
+      await loginButton.simulate('click');
+      expect(setLoadingSpy).toHaveBeenCalledWith(true);
       expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
       expect(validateRequiredSpy).toHaveBeenCalledWith('test');
       expect(validateRequiredSpy).toHaveBeenCalledWith('test@test.com');
       expect(validateEmailSpy).toHaveBeenCalledTimes(1);
       expect(validateEmailSpy).toHaveBeenCalledWith('test@test.com');
       expect(setState).toHaveBeenCalledWith({});
-
-      // return fetchJson('example')
-      //   .then()
-      //   .catch((data) => {
-      //     expect(mockMutateUserSpy).toHaveBeenCalledTimes(1);
-      //     expect(setState).toHaveBeenCalledWith('fail');
-      //   });
+      expect(setState).toHaveBeenCalledWith(2);
+      expect(setLoadingSpy).toHaveBeenCalledWith(false);
+      expect(mockCookieSet).toHaveBeenCalledTimes(0);
     });
 
-    it('clears errors on successful form completion', () => {
-      loginButton.simulate('click');
+    it('catches onLogin generic fail', async () => {
+      await loginButton.simulate('click');
+      expect(setLoadingSpy).toHaveBeenCalledWith(true);
+      expect(setState).toHaveBeenCalledWith({ form: 'FAIL' });
+      expect(setLoadingSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('catches onUnblock fail', async () => {
+      await unblockButton.simulate('click');
+      expect(setLoadingSpy).toHaveBeenCalledWith(true);
+      expect(setLoadingSpy).toHaveBeenCalledWith(false);
+      expect(setState).toHaveBeenCalledWith({ form: 'FAIL' });
+    });
+
+    it('login success without remember', async () => {
+      expect(mockCookieGet).toHaveBeenCalledWith('dods-login-username');
+      expect(mockCookieGet).toHaveBeenCalledWith('dods-login-password');
+      await loginButton.simulate('click');
       expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
       expect(validateRequiredSpy).toHaveBeenCalledWith('test');
       expect(validateRequiredSpy).toHaveBeenCalledWith('test@test.com');
@@ -206,19 +227,39 @@ describe('Home', () => {
       expect(setState).toHaveBeenCalledWith({});
       expect(setLoadingSpy).toHaveBeenCalledWith(true);
 
-      // return fetchJson('example')
-      //   .then((data) => {
-      //     expect(mockMutateUserSpy).toHaveBeenCalledTimes(1);
-      //     expect(setState).toHaveBeenCalledWith(false);
-      //   })
-      //   .catch();
+      expect(setLoadingSpy).toHaveBeenCalledWith(false);
+      expect(mockMutateUserSpy).toHaveBeenCalledTimes(1);
+      expect(mockCookieSet).toHaveBeenCalledTimes(0);
     });
 
-    // it('handles account unblocking', () => {
-    //   unblockButton.simulate('click');
-    //   expect(setLoadingSpy).toHaveBeenCalledWith(true);
-    //   expect(setLoadingSpy).toHaveBeenCalledWith(false);
-    // });
+    it('login success with remember', async () => {
+      await loginButton.simulate('click');
+      expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
+      expect(validateRequiredSpy).toHaveBeenCalledWith('test');
+      expect(validateRequiredSpy).toHaveBeenCalledWith('test@test.com');
+      expect(validateEmailSpy).toHaveBeenCalledTimes(1);
+      expect(validateEmailSpy).toHaveBeenCalledWith('test@test.com');
+      expect(setState).toHaveBeenCalledWith({});
+      expect(setLoadingSpy).toHaveBeenCalledWith(true);
+
+      expect(setLoadingSpy).toHaveBeenCalledWith(false);
+      expect(mockMutateUserSpy).toHaveBeenCalledTimes(1);
+      expect(mockCookieSet).toHaveBeenCalledWith('dods-login-username', 'test@test.com');
+      expect(mockCookieSet).toHaveBeenCalledWith('dods-login-password', 'test');
+    });
+
+    it('handles account unblocking', async () => {
+      await unblockButton.simulate('click');
+      expect(setLoadingSpy).toHaveBeenCalledWith(true);
+
+      expect(setState).toHaveBeenCalledWith(0);
+      expect(setState).toHaveBeenCalledWith(true);
+      expect(setLoadingSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('renders unblocking confirmation', async () => {
+      expect(unblockConfirmation.length).toEqual(1);
+    });
   });
 
   afterEach(() => {
