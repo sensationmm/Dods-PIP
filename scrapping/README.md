@@ -2,58 +2,28 @@ This folder hosts the infrastructure and Lambda definitions for the different co
 
 ```
 .
+├── README.md
+├── debates-hoc-uk
+├── debates-hol-uk
+├── debates-nir
+├── debates-wls
 ├── infra
-│   ├── README.md
-│   ├── bin
-│   ├── cdk.json
-│   ├── cdk.out
-│   ├── handlers
-│   ├── jest.config.js
-│   ├── lib
-│   ├── node_modules
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── run.sh
-│   ├── test
-│   ├── tsconfig.json
-│   └── yarn.lock
+├── lib
 ├── motions-edm-uk
-│   ├── README.md
-│   ├── handler.py
-│   ├── node_modules
-│   ├── package-lock.json
-│   ├── package.json
-│   └── serverless.yml
 ├── oralQuestions-hoc-uk
-│   ├── README.md
-│   ├── handler.py
-│   ├── package-lock.json
-│   ├── package.json
-│   └── serverless.yml
 ├── oralQuestions-hol-uk
-│   ├── README.md
-│   ├── handler.py
-│   ├── package-lock.json
-│   ├── package.json
-│   └── serverless.yml
 ├── package.json
 ├── scraper-bootstrap.sh
 ├── scrapping_deploy.sh
 ├── serverless.common.yml
+├── templates
 ├── writtenQuestions-hoc-uk
-│   ├── README.md
-│   ├── handler.py
-│   ├── node_modules
-│   ├── package-lock.json
-│   ├── package.json
-│   └── serverless.yml
 └── writtenQuestions-hol-uk
-    ├── README.md
-    ├── handler.py
-    ├── package-lock.json
-    ├── package.json
-    └── serverless.yml
 ```
+Where:
+- `lib` holds Python code common to all scrapers
+- `templates` holds JSON templates needed for content formating 
+
 ## Usage
 
 ### Deployment
