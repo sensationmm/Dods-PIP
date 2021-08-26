@@ -1,15 +1,3 @@
-<!--
-title: 'AWS Python Scheduled Cron example in Python'
-description: 'This is an example of creating a function that runs as a cron job using the serverless ''schedule'' event.'
-layout: Doc
-framework: v1
-platform: AWS
-language: Python
-authorLink: 'https://github.com/rupakg'
-authorName: 'Rupak Ganguly'
-authorAvatar: 'https://avatars0.githubusercontent.com/u/8188?v=4&s=140'
--->
-
 # Serverless Framework Python Scheduled Cron on AWS
 
 This template demonstrates how to develop and deploy a simple cron-like service running on AWS Lambda using the traditional Serverless Framework.
