@@ -55,6 +55,7 @@ pipelines:
             - cd scrapping/writtenQuestions-hol-uk
             - npm install
             - pip3 install -U pip setuptools 
+            - pip3 install wheel
             - pip3 install -r requirements.txt
             - ./scrapping_deploy.sh
 
