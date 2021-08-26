@@ -49,10 +49,12 @@ pipelines:
           condition:
             changesets:
               includePaths:
-                - "scrapping/**"
+                # - "scrapping/**"
+                - "scrapping/writtenQuestions-hol-uk/**"
           script:
             - cd scrapping
             - npm install
+            - pip3 install -r requirements.txt
             - ./scrapping_deploy.sh
 
   branches:

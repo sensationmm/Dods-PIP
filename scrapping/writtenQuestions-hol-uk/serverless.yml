@@ -22,8 +22,8 @@ custom:
   s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
   s3_bucket_arn: arn:aws:s3:::infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
-  pythonRequirements:
-    dockerizePip: true
+  # pythonRequirements:
+  #   dockerizePip: true
 
 package:
   patterns:
