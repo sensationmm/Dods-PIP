@@ -27,7 +27,7 @@ interface PasswordResetProps extends LoadingHOCProps {}
 
 export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const router = useRouter();
-  const { code, email } = router.query;
+  const { code, uid } = router.query;
   const [password, setPassword] = React.useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Errors>({});
@@ -36,6 +36,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const [isRepeatPassword] = React.useState<boolean>(false);
 
   useEffect(() => {
+    /* istanbul ignore next*/
     if (router.isReady && !code) {
       router.push('/');
     }
@@ -69,43 +70,40 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      await fetchJson('/api/resetPassword', {
-        body: JSON.stringify({
-          // @todo: needs to be there for api, remove once handled by BE
-          email,
-          newPassword: password,
-          verificationCode: code,
-        }),
-      });
-    } catch (error) {
-      if (
-        error.data.name === 'CodeMismatchException' ||
-        error.data.name === 'ExpiredCodeException'
-      ) {
-        const formErrors = { ...errors };
-        formErrors.form = 'EXPIRED';
-        setLoading(false);
-        setErrors(formErrors);
-      }
-    }
-  };
-
   const onConfirm = async () => {
     setLoading(true);
 
     if (validateForm() && !isRepeatPassword) {
-      await handleSubmit().then(() => {
+      try {
+        await fetchJson('/api/resetPassword', {
+          body: JSON.stringify({
+            email: uid,
+            newPassword: password,
+            verificationCode: code,
+          }),
+        });
         setConfirmed(true);
         setLoading(false);
-      });
+      } catch (error) {
+        if (
+          error.data?.name === 'CodeMismatchException' ||
+          error.data?.name === 'ExpiredCodeException'
+        ) {
+          const formErrors = { ...errors };
+          formErrors.form = 'EXPIRED';
+          setLoading(false);
+          setErrors(formErrors);
+        } else {
+          setErrors({ form: 'FAIL' });
+          setLoading(false);
+        }
+      }
     } else {
       setLoading(false);
     }
   };
 
-  if (!code) return <Loader inline />;
+  if (!code) return <Loader data-test="no-code-loader" inline />;
 
   return (
     <div data-test="page-password-reset">
@@ -190,7 +188,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                   {errors.form === 'EXPIRED' && (
                     <>
                       <Spacer size={4} />
-                      <ErrorBox data-test={'failure-count'}>
+                      <ErrorBox data-test={'code-expired-warning'}>
                         <Text type={'bodySmall'} bold>
                           Reset Code Expired
                         </Text>
