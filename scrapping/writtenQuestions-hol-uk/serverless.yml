@@ -52,6 +52,7 @@ provider:
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
+    - ${file(../serverless.common.yml):lambdaPolicyS3}
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -63,7 +64,6 @@ provider:
         - dynamodb:DescribeTable
       Resource:
         - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
-    - ${file(../serverless.common.yml):lambdaPolicyS3}
 
 functions:
   scrape:
