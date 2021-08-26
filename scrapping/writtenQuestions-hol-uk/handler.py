@@ -32,7 +32,8 @@ def run(event, context):
         Originator_list = eval(config.get('Originator', 'Originator_list'))
         i = 0
         for entry in entries:
-            qnaxml_url = entry.find('id').text
+            http_url = entry.find('id').text
+            qnaxml_url = http_url.replace("http://", "https://")
             res = requests.get(qnaxml_url)
             if str(res.status_code) != '200':
                 continue
