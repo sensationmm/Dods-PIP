@@ -21,6 +21,7 @@ This folder hosts the infrastructure and Lambda definitions for the different co
 └── writtenQuestions-hol-uk/
 ```
 Where:
+- `infra` hold AWS CDK definitions of AWS resources common to all Lambda functions
 - `lib` holds Python code common to all scrapers
 - `templates` holds JSON templates needed for content formating 
 - `
