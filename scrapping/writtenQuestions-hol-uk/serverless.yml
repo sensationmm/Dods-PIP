@@ -52,7 +52,13 @@ provider:
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
-    - ${file(../serverless.common.yml):lambdaPolicyS3}
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+        - s3:*        
+      Resource: "arn:aws:s3:::infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9" 
+
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -91,6 +97,6 @@ resources:
             AttributeName: document_hash
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
         TableName: ${self:custom.dynamodb_table}
