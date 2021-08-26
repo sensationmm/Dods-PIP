@@ -3,26 +3,27 @@ This folder hosts the infrastructure and Lambda definitions for the different co
 ```
 .
 ├── README.md
-├── debates-hoc-uk
-├── debates-hol-uk
-├── debates-nir
-├── debates-wls
-├── infra
-├── lib
-├── motions-edm-uk
-├── oralQuestions-hoc-uk
-├── oralQuestions-hol-uk
 ├── package.json
 ├── scraper-bootstrap.sh
 ├── scrapping_deploy.sh
-├── serverless.common.yml
-├── templates
-├── writtenQuestions-hoc-uk
-└── writtenQuestions-hol-uk
+├── debates-hoc-uk/
+├── debates-hol-uk/
+├── debates-nir/
+├── debates-wls/
+├── infra/
+├── lib/
+├── motions-edm-uk/
+├── oralQuestions-hoc-uk/
+├── oralQuestions-hol-uk/
+├── serverless.common.yml/
+├── templates/
+├── writtenQuestions-hoc-uk/
+└── writtenQuestions-hol-uk/
 ```
 Where:
 - `lib` holds Python code common to all scrapers
 - `templates` holds JSON templates needed for content formating 
+- `
 
 ## Usage
 
