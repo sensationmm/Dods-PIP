@@ -1,7 +1,7 @@
 from jsonschema import validate, Draft4Validator, SchemaError
 from json import load, loads
 import os
-from utilities.logger import logger
+from logger import logger
 
 class Validator:
     def content_schema_validator(self, content: dict):

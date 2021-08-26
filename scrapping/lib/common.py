@@ -3,7 +3,7 @@ import re, os
 import logging
 from fuzzywuzzy import fuzz
 import operator
-from utilities.configs import Config
+from configs import Config
 from json import loads, dump
 
 class Common:
@@ -15,7 +15,7 @@ class Common:
 	def Originator_Check(self, input):
 		try:
 			root_dir = os.path.abspath(os.curdir)
-			config = Config()._config_read((root_dir + "/configs/config.ini"))
+			config = Config()._config_read((root_dir + "config.ini"))
 			Originator_list = eval(config.get('Originator', 'Originator_list'))
 			Scored_Dict={}
 			Final_Originator=''

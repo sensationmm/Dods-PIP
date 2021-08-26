@@ -1,29 +1,30 @@
 import requests
-from services.data_model import DataModel
-from utilities.logger import logger
+from lib.data_model import DataModel
+from lib.logger import logger
 import boto3
 import os
 from datetime import datetime
 from bs4 import BeautifulSoup
 from json import loads, dumps
 import xmltodict
-from utilities.common import Common
-from utilities.configs import Config
-from services.validation import Validator
+from lib.common import Common
+from lib.configs import Config
+from lib.validation import Validator
 
 
-WRITE_QUESTIONS_HOL_FOLDER = 'write-questions-hol'
+WRITE_QUESTIONS_HOL_FOLDER = 'written-questions-hol-uk'
 BUCKET = os.environ['S3_WRITTEN_QUESTION_BUCKET']
 content_type = 'Written Questions HOL (UK)'
 
 content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
-root_dir = os.path.abspath(os.curdir)
-config = Config()._config_read((root_dir + "/configs/config.ini"))
+# root_dir = os.path.abspath(os.curdir)
+config = Config()._config_read(("config.ini"))
+# config = Config()._config_read((root_dir + "config.ini"))
 def run(event, context):
     logger.debug('BUCKET: {}'.format(BUCKET))
     s3 = boto3.client('s3')
     try:
-        response = requests.get(config.get('writtel_questions_hol', 'sourceUrl')).content
+        response = requests.get(config.get('parser', 'sourceUrl')).content
         soup = BeautifulSoup(response, 'html5lib')
         entries = soup.find_all('entry')
         Insert_Rows = []
@@ -41,7 +42,7 @@ def run(event, context):
 
             content = Common().get_file_content(content_template_file_path)
             content['contentType'] = content_type
-            content['contentSource'] = config.get('writtel_questions_hol', 'contentSource')
+            content['contentSource'] = config.get('parser', 'contentSource')
             content['contentSourceURL'] = qnaxml_url
             content['extractDate'] = datetime.now().isoformat()
             content['content'] = dict_content
@@ -69,7 +70,7 @@ def run(event, context):
                 s3.put_object(
                     Body=dumps(content).encode('UTF-8'),
                     Bucket=BUCKET,
-                    Key=(short_date + '/' + hash_code)
+                    Key=(WRITE_QUESTIONS_HOL_FOLDER + '/' + short_date + '/' + hash_code)
                 )
                 asset = DataModel()
                 asset.document_hash = hash_code
