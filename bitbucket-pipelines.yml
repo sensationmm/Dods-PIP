@@ -57,7 +57,8 @@ pipelines:
             - pip3 install -U pip setuptools 
             - pip3 install wheel
             - pip3 install -r requirements.txt
-            - ./scrapping_deploy.sh
+            - sls deploy
+            # - ./scrapping_deploy.sh
 
   branches:
     master:

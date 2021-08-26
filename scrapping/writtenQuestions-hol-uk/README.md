@@ -110,13 +110,23 @@ There is no additional step required. Your defined schedules becomes active righ
 In order to test out your functions locally, you can invoke them with the following command:
 
 ```
-serverless invoke local --function rateHandler
+serverless invoke local --function handler
 ```
 
 After invocation, you should see output similar to:
 
 ```bash
-INFO:handler:Your cron function aws-python-scheduled-cron-dev-rateHandler ran at 15:02:43.203145
+2021-08-25 21:06:23,591 31462-4605246976 root [handler.py:24] :   DEBUG: BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+
+2021-08-25 21:06:23,776 31462-4605246976 urllib3.connectionpool [connectionpool.py:227] :   DEBUG: Starting new HTTP connection (1): api.data.parliament.uk:80
+
+2021-08-25 21:06:24,080 31462-4605246976 urllib3.connectionpool [connectionpool.py:452] :   DEBUG: http://api.data.parliament.uk:80 "GET /resources/files/feed?dataset=1&filetype=qnaxml&take=500 HTTP/1.1" 301 0
+
+2021-08-25 21:06:24,087 31462-4605246976 urllib3.connectionpool [connectionpool.py:971] :   DEBUG: Starting new HTTPS connection (1): api.data.parliament.uk:443
+
+2021-08-25 21:06:24,885 31462-4605246976 urllib3.connectionpool [connectionpool.py:452] :   DEBUG: https://api.data.parliament.uk:443 "GET /resources/files/feed?dataset=1&filetype=qnaxml&take=500 HTTP/1.1" 200 10665
+
+2021-08-25 21:06:25,085 31462-4605246976 urllib3.connectionpool [connectionpool.py:227] :   DEBUG: Starting new HTTP connection (1): api.data.parliament.uk:80
 ```
 
 ### Bundling dependencies
