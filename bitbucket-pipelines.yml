@@ -36,6 +36,7 @@ pipelines:
                 - "services/graphologi-integration/**"
           script:
             - cd services/graphologi-integration
+            - npm install
             - serverless deploy
 
       - step:

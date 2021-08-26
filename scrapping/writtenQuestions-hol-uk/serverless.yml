@@ -1,4 +1,4 @@
-service: writtenquestionholuk
+service: scraper-writtenquestions-hol-uk
 
 frameworkVersion: '2'
 projectDir: ../
@@ -36,7 +36,7 @@ package:
 
 provider:
   name: aws
-  runtime: python3.9
+  runtime: python3.8
   lambdaHashingVersion: 20201221
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
