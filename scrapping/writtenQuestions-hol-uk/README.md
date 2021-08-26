@@ -1,6 +1,6 @@
-# Serverless Framework Python Scheduled Cron on AWS
+# Written Questions / House of Lords / UK
 
-This template demonstrates how to develop and deploy a simple cron-like service running on AWS Lambda using the traditional Serverless Framework.
+This function performs scrapping for http://api.data.parliament.uk/resources/files/feed?dataset=1&filetype=qnaxml&take=500
 
 ## Schedule event type
 
