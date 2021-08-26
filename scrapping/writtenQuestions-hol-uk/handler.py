@@ -67,11 +67,12 @@ def run(event, context):
             if hasattr(document, 'document_hash'):
                 continue
             else:
-                s3.put_object(
+                s3_response = s3.put_object(
                     Body=dumps(content).encode('UTF-8'),
                     Bucket=BUCKET,
                     Key=(WRITE_QUESTIONS_HOL_FOLDER + '/' + short_date + '/' + hash_code)
                 )
+                logger.info('Object upload respondend with: %s', s3_response)
                 asset = DataModel()
                 asset.document_hash = hash_code
                 asset.save()
