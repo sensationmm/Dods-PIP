@@ -24,7 +24,7 @@ Where:
 - `infra` hold AWS CDK definitions of AWS resources common to all Lambda functions
 - `lib` holds Python code common to all scrapers
 - `templates` holds JSON templates needed for content formating 
-- `
+- All other folder contain Lambda definitions and code to perform specific scrapping tasks
 
 ## Usage
 
