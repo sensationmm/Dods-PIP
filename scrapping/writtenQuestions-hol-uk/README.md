@@ -62,6 +62,7 @@ Detailed information about cron expressions in available in official [AWS docs](
 
 
 ## Usage
+Blah blah
 
 ### Deployment
 

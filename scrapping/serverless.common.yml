@@ -6,5 +6,8 @@ custom:
 lambdaPolicyS3:
     Effect: Allow
     Action:
+      - s3:PutObject
+      - s3:GetObject
       - s3:*
+
     Resource: "arn:aws:s3:::infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9"
