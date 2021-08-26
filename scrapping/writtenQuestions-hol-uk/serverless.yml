@@ -71,8 +71,8 @@ functions:
     description: Ingest Written Questions HOL (UK) data
     handler: handler.run
     events:
-      ## Invoke Lambda function on Mon-Fri at 10:15 am
-      - schedule: cron(30 14 ? * MON-FRI *)
+      ## Invoke Lambda function on Mon-Fri at 15:05
+      - schedule: cron(05 15 ? * MON-FRI *)
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 
