@@ -54,10 +54,8 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - s3:PutObject
-        - s3:GetObject
         - s3:*        
-      Resource: "arn:aws:s3:::infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9" 
+      Resource: "arn:aws:s3:::*"
 
     - Effect: Allow
       Action:
@@ -78,7 +76,7 @@ functions:
     handler: handler.run
     events:
       ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(05 15 ? * MON-FRI *)
+      - schedule: cron(00 22 ? * MON-FRI *)
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 
