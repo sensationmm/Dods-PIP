@@ -2,6 +2,8 @@ custom:
   # Our stage is based on what is passed in when running serverless
   # commands. Or falls back to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
+  content_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+  region: eu-west-1
 
 lambdaPolicyS3:
     Effect: Allow
