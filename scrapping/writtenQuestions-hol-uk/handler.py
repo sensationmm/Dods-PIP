@@ -11,7 +11,6 @@ from lib.common import Common
 from lib.configs import Config
 from lib.validation import Validator
 
-
 BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Written Questions HOL (UK)'
@@ -25,10 +24,10 @@ def run(event, context):
         response = requests.get(config.get('parser', 'sourceUrl')).content
         soup = BeautifulSoup(response, 'html5lib')
         entries = soup.find_all('entry')
-        Insert_Rows = []
+        # Insert_Rows = []
 
         Originator_list = eval(config.get('Originator', 'Originator_list'))
-        i = 0
+        # i = 0
         for entry in entries:
             http_url = entry.find('id').text
             qnaxml_url = http_url.replace("http://", "https://")
