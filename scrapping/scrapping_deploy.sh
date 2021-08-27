@@ -86,6 +86,7 @@ for folder in "${!buildThis[@]}"; do
    echo "------------------------------"
    echo "Building $folder"
    cd $folder
+   echo $PWD
    deploymentSteps
    cd $rootDir
 done
