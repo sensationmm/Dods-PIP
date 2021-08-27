@@ -6,7 +6,7 @@ from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
 from pynamodb.models import Model
 from logger import logger
 
-BUCKET = os.environ['S3_WRITTEN_QUESTION_BUCKET']
+BUCKET = os.environ['CONTENT_BUCKET']
 KEY_BASE = os.environ['S3_KEY_BASE']
 
 class State(Enum):
