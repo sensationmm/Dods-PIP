@@ -14,7 +14,7 @@ from lib.validation import Validator
 
 BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
-content_type = 'Written Questions HOL (UK)'
+content_type = 'Early Day Motions (UK)'
 
 content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
 config = Config()._config_read(("config.ini"))

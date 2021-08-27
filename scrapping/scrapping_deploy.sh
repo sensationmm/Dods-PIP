@@ -73,6 +73,8 @@ for line in "${changesList[@]}"; do
    fi
 done
 
+unset ${buildThis[scrapping]}
+
 for special in "${specialFolders[@]}"; do
   if [[ ${buildThis[$special]} == "true" ]]; then
      echo "Build All folders"
