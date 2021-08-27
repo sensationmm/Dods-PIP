@@ -14,14 +14,14 @@ from lib.validation import Validator
 
 WRITE_QUESTIONS_HOL_FOLDER = 'written-questions-hol-uk'
 BUCKET = os.environ['S3_WRITTEN_QUESTION_BUCKET']
+THE_BUCKET = os.environ['CONTENT_BUCKET']
+PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Written Questions HOL (UK)'
 
 content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
-# root_dir = os.path.abspath(os.curdir)
 config = Config()._config_read(("config.ini"))
-# config = Config()._config_read((root_dir + "config.ini"))
 def run(event, context):
-    logger.debug('BUCKET: {}'.format(BUCKET))
+    logger.debug('Starting scrapping process with BUCKET: "%s", prefix: "%s" ', THE_BUCKET, PREFIX)
     s3 = boto3.client('s3')
     try:
         response = requests.get(config.get('parser', 'sourceUrl')).content

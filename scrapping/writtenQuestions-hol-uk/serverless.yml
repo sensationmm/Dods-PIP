@@ -10,6 +10,7 @@ plugins:
   - serverless-offline
 
 custom:
+  resource_prefix: written-questions-hol-uk
   app_acronym: dods-wq-hol-uk-bucket
   default_stage: dev
   stage: ${opt:stage, self:custom.default_stage}
@@ -21,9 +22,6 @@ custom:
   dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
   s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
-  s3_bucket_arn: arn:aws:s3:::infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
-  # pythonRequirements:
-  #   dockerizePip: true
 
 package:
   patterns:
@@ -45,10 +43,12 @@ provider:
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
+    KEY_PREFIX: ${self:custom.resource_prefix}
     DYNAMODB_TABLE: ${self:custom.dynamodb_table}
     DYNAMODB_HOST: ${self:custom.dynamodb_host}
-    REGION: ${self:custom.region}
+    REGION: ${file(../serverless.common.yml):custom.region}
     S3_WRITTEN_QUESTION_BUCKET: ${self:custom.s3_bucket}
+    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
