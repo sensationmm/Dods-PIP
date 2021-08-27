@@ -41,7 +41,7 @@ pipelines:
 
       - step:
           name: Deploy Scrapping Lambdas
-          image: gioatsomoglobal/devopstools:0.4.1
+          image: gioatsomoglobal/devopstools:0.4.2
           services:
             - docker
           caches:
@@ -49,16 +49,11 @@ pipelines:
           condition:
             changesets:
               includePaths:
-                # - "scrapping/**"
-                - "scrapping/writtenQuestions-hol-uk/**"
+                - "scrapping/**"
           script:
-            - cd scrapping/writtenQuestions-hol-uk
+            - cd scrapping
             - npm install
-            - pip3 install -U pip setuptools 
-            - pip3 install wheel
-            - pip3 install -r requirements.txt
-            - sls deploy
-            # - ./scrapping_deploy.sh
+            - ./scrapping_deploy.sh
 
   branches:
     master:
