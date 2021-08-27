@@ -47,7 +47,6 @@ provider:
     DYNAMODB_TABLE: ${self:custom.dynamodb_table}
     DYNAMODB_HOST: ${self:custom.dynamodb_host}
     REGION: ${file(../serverless.common.yml):custom.region}
-    S3_WRITTEN_QUESTION_BUCKET: ${self:custom.s3_bucket}
     CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
