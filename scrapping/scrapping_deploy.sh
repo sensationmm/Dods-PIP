@@ -49,7 +49,7 @@ declare -A buildThis
 committedChanges=$(git diff ${BITBUCKET_COMMIT}^! --stat=180,120 --compact-summary)
 readarray -t changesList <<<"${committedChanges}"
 
-re_changes='[:alnum:]+.*\|'
+re_changes='scrapping/[:alnum:]+.*\|'
 
 for line in "${changesList[@]}"; do
    if [[ $line =~ $re_changes ]]; then
@@ -106,5 +106,4 @@ for folder in "${!buildThis[@]}"; do
    echo $PWD
    deploymentSteps
    cd $rootDir
-   exit 0
 done
