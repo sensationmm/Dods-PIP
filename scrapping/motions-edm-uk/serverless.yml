@@ -1,4 +1,3 @@
-service: scraper-writtenquestions-hol-uk
 service: scraper-motions-edm-uk
 
 frameworkVersion: '2'
