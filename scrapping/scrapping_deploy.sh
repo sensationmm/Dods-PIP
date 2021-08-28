@@ -35,8 +35,32 @@ function getRE(){
    echo $caseRE
 }
 
+begins_with_short_option()
+{
+	local first_option all_short_options='V'
+	first_option="${1:0:1}"
+	test "$all_short_options" = "${all_short_options/$first_option/}" && return 1 || return 0
+}
+
+_arg_verbose=0
+
+parse_commandline()
+{
+	while test $# -gt 0
+	do
+		_key="$1"
+		case "$_key" in
+			-V|--verbose)
+				_arg_verbose=$((_arg_verbose + 1))
+				;;
+		esac
+		shift
+	done
+}
+
 #-- main --
 
+parse_commandline "$@"
 # Only rebuild on changes to these type of file
 buildOnChangesTo=('*.py' '*.ts' '*.js' '*.json' 'serverless.yml')
 
@@ -49,32 +73,26 @@ declare -A buildThis
 committedChanges=$(git diff ${BITBUCKET_COMMIT}^! --stat=180,120 --compact-summary)
 readarray -t changesList <<<"${committedChanges}"
 
-re_changes='scrapping/[:alnum:]+.*\|'
+# re_changes='scrapping/[:alnum:]+.*\|'
+re_changes="(scrapping\/(.*)/(.*\..+)) *\|"
+
+[[ $_arg_verbose -gt 0 ]] && echo "verbose mode ON"
 
 for line in "${changesList[@]}"; do
+   
    if [[ $line =~ $re_changes ]]; then
-      fileChanged=$(echo $line | cut -f1 -d\|)
+      # [[ $_arg_verbose -gt 0 ]] && echo "RE captures change in folder: ${BASH_REMATCH[2]}"
+      folderChanged=${BASH_REMATCH[2]}
+      fileName=${BASH_REMATCH[3]}
 
-      fileName=$( echo ${fileChanged##*/} ) 
-      pathChanged=$( echo ${fileChanged%/*} )
-      folderChanged=$( echo ${pathChanged##scrapping\/} )
-      # echo "$fileName was changed on folder $folderChanged"
+      [[ $_arg_verbose -gt 0 ]] && echo "$fileName was changed on folder $folderChanged"
       buildThis["$folderChanged"]="true"
 
-      # If there a change on a "special" folder break early - Deploy all
+      # If there is a change on a "special" folder break early - Deploy all
       if [[ ${specialFolders[@]} =~ $folderChanged ]]; then
          break
       fi
 
-      # for case in "${buildOnChangesTo[@]}"; do
-      #    caseRE=$(getRE $case)
-      #    echo "does $fileName match $caseRE"
-      #    if [[ $fileName =~ $caseRE ]]; then
-      #       echo "$fileName means rebuild"
-      #       buildThis["$folderChanged"]="true"
-      #       break
-      #    fi
-      # done
    fi
 done
 
