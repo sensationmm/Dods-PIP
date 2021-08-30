@@ -4,7 +4,6 @@ import React from 'react';
 import Pagination, { PaginationProps } from '.';
 
 export default {
-  component: Pagination,
   title: 'Functional/Pagination',
   controls: { hideNoControlsWarning: true },
   argTypes: {
