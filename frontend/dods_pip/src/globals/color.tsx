@@ -7,7 +7,7 @@ const color = {
   },
   shadow: {
     blue: '#EAEEF3',
-    grey: '#D9D9D9',
+    grey: '#F5F5F6',
     red: '#f9ecea',
     yellow: '#FFF8E5',
   },
