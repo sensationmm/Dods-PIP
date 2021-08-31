@@ -4,7 +4,7 @@ import React from 'react';
 import Icon, { IconSize } from '../Icon';
 import Text from '../Text';
 import Avatar from '.';
-import { Background, clientBackgroundColor, consultantBackgroundColor } from './Avatar.styles';
+import { Background } from './Avatar.styles';
 import color from '../../globals/color';
 
 describe('Avatar', () => {
@@ -17,20 +17,20 @@ describe('Avatar', () => {
   it('renders small icon variant', () => {
     const wrapper = shallow(<Avatar type="client" size="small" />);
     const icon = wrapper.find(Icon);
-    expect(icon.props().size).toEqual(IconSize.small);
+    expect(icon.props().size).toEqual(IconSize.large);
     expect(icon.props().color).toEqual(color.base.white);
   });
 
   it('renders medium icon variant', () => {
     const wrapper = shallow(<Avatar type="client" size="medium" />);
     const icon = wrapper.find(Icon);
-    expect(icon.props().size).toEqual(IconSize.medium);
+    expect(icon.props().size).toEqual(IconSize.xlarge);
   });
 
   it('renders large icon variant', () => {
     const wrapper = shallow(<Avatar type="client" size="large" />);
     const icon = wrapper.find(Icon);
-    expect(icon.props().size).toEqual(IconSize.xlarge);
+    expect(icon.props().size).toEqual(IconSize.xxlarge);
   });
 
   it('renders small text variant', () => {

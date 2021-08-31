@@ -17,21 +17,21 @@ export interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ type, size, number, disabled }) => {
-  const [iconSize, setIconSize] = useState<IconSizes>('xlarge');
-  const [fontSize, setFontSize] = useState<TextStyles>('body');
+  const [iconSize, setIconSize] = useState<IconSizes>('xxlarge');
+  const [fontSize, setFontSize] = useState<TextStyles>('bodyLarge');
   useEffect(() => {
     ((size: Size) => {
       switch (size) {
         case 'large':
-          setIconSize('xlarge');
+          setIconSize('xxlarge');
           setFontSize('bodyLarge');
           break;
         case 'medium':
-          setIconSize('medium');
+          setIconSize('xlarge');
           setFontSize('body');
           break;
         case 'small':
-          setIconSize('small');
+          setIconSize('large');
           setFontSize('bodySmall');
           break;
       }
