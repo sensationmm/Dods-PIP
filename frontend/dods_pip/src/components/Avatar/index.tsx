@@ -31,12 +31,16 @@ const Avatar: React.FC<AvatarProps> = ({ type, size, number, disabled }) => {
   return (
     <Styled.wrapper data-test="component-avatar">
       <Styled.Background type={type} disabled={disabled} size={size}>
-        {number ? (
+        {number && !disabled ? (
           <Text color="white" type={fontSize(size)}>
             {`+${number}`}
           </Text>
         ) : (
-          <Icon src={Icons.IconTick} size={IconSize[size]} color={color.base.white} />
+          <Icon
+            src={Icons.IconAvatar}
+            size={IconSize[size]}
+            color={disabled ? color.base.grey : color.base.white}
+          />
         )}
       </Styled.Background>
     </Styled.wrapper>
