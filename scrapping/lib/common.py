@@ -4,7 +4,8 @@ import logging
 from fuzzywuzzy import fuzz
 import operator
 from configs import Config
-from json import loads, dump
+from json import loads
+from bs4 import BeautifulSoup
 
 class Common:
 
@@ -52,3 +53,14 @@ class Common:
 		with open(path, 'r') as file:
 			schema = loads(file.read())
 		return schema
+
+	@staticmethod
+	def convert_2_xhtml(html):
+		soup = BeautifulSoup(html, "html5lib")
+		[x.extract() for x in soup.find_all() if len(x.text) == 0]
+		[x.extract() for x in soup.find_all('script')]
+		[x.extract() for x in soup.find_all('style')]
+		[x.extract() for x in soup.find_all('noscript')]
+		[x.extract() for x in soup.find_all(r'\s*')]
+		soup.prettify()
+		return soup
