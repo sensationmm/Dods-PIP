@@ -24,6 +24,7 @@ import * as Styled from './index.styles';
 type Errors = {
   email?: string | undefined;
   password?: string | undefined;
+  form?: string | undefined;
 };
 
 interface HomeProps extends LoadingHOCProps {}
@@ -31,10 +32,8 @@ interface HomeProps extends LoadingHOCProps {}
 export const Home: React.FC<HomeProps> = ({ setLoading }) => {
   let storedEmail = '',
     storedPassword = '';
-  if (cookieCutter) {
-    storedEmail = cookieCutter.get && cookieCutter.get('dods-login-username');
-    storedPassword = cookieCutter.get && cookieCutter.get('dods-login-password');
-  }
+  storedEmail = cookieCutter.get && cookieCutter.get('dods-login-username');
+  storedPassword = cookieCutter.get && cookieCutter.get('dods-login-password');
   const [emailAddress, setEmailAddress] = React.useState<string>(storedEmail);
   const [password, setPassword] = React.useState<string>(storedPassword);
   const [remember, setRemember] = React.useState<boolean>(false);
@@ -43,6 +42,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
   const [unblockingRequested, setUnblockingRequested] = React.useState(false);
 
   useEffect(() => {
+    /* istanbul ignore next*/
     if (storedEmail && storedEmail.length > 0) {
       setRemember(true);
     }
@@ -78,46 +78,35 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
       return false;
     }
   };
-
-  async function handleLogin() {
-    const body = {
-      email: emailAddress,
-      password: password,
-    };
-
-    try {
-      const user = await fetchJson('/api/login', {
-        body: JSON.stringify(body),
-      });
-      mutateUser(user);
-    } catch (error) {
-      if (error.data.name === 'NotAuthorizedException') {
-        setFailureCount(error.data.failedLoginAttemptCount);
-      }
-    }
-  }
-
-  async function handleUnblocking() {
-    try {
-      await fetchJson('/api/enableUser', {
-        body: JSON.stringify({ email: emailAddress }),
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   const onLogin = async () => {
     setLoading(true);
 
     if (validateForm()) {
-      await handleLogin().then(() => {
+      const body = {
+        email: emailAddress,
+        password: password,
+      };
+
+      try {
+        const user = await fetchJson('/api/login', {
+          body: JSON.stringify(body),
+        });
+        mutateUser(user);
+
         if (remember) {
           cookieCutter.set('dods-login-username', emailAddress);
           cookieCutter.set('dods-login-password', password);
         }
         setLoading(false);
-      });
+      } catch (error) {
+        if (error.data.name === 'NotAuthorizedException') {
+          setFailureCount(error.data.failedLoginAttemptCount);
+          setLoading(false);
+        } else {
+          setErrors({ form: 'FAIL' });
+          setLoading(false);
+        }
+      }
     } else {
       setLoading(false);
     }
@@ -126,10 +115,17 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
   const onUnblock = async () => {
     setLoading(true);
 
-    await handleUnblocking();
-    setFailureCount(0);
-    setUnblockingRequested(true);
-    setLoading(false);
+    try {
+      await fetchJson('/api/enableUser', {
+        body: JSON.stringify({ email: emailAddress }),
+      });
+      setFailureCount(0);
+      setUnblockingRequested(true);
+      setLoading(false);
+    } catch (error) {
+      setErrors({ form: 'FAIL' });
+      setLoading(false);
+    }
   };
 
   return (
@@ -280,7 +276,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
                   )}
                 </Box>
               ) : (
-                <Box>
+                <Box data-test="unblock-confirmation">
                   <Text type={'h4'}>Unblock Requested</Text>
                   <Spacer size={6} />
                   <Text type="bodySmall">

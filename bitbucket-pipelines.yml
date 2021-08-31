@@ -44,7 +44,9 @@ pipelines:
 
       - step:
           name: Deploy Scrapping Lambdas
-          image: gioatsomoglobal/devopstools:0.2.0
+          image: gioatsomoglobal/devopstools:0.4.2
+          services:
+            - docker
           caches:
             - node
           condition:

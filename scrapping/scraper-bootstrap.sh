@@ -118,10 +118,15 @@ fi
 
 cp ../tools/scraper-template-folder/* ${_cleanedFolder}
 cp ../tools/scraper-template-folder/.gitignore ${_cleanedFolder}
-cd ${_cleanedFolder}
 if [[ ${_arg_verbose} -ge 1 ]]; then
    echo "Templates copied ..."
 fi
+
+# Add symbolic links for custom dependencies
+cd ${_cleanedFolder}
+ln -s ../lib lib
+ln -s ../templates templates
+
 
 export TPL_SLS_NAME=${_sls_name}
 envsubst < "serverless.yml.tpl" > serverless.yml
