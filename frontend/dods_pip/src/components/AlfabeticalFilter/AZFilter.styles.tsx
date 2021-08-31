@@ -29,8 +29,12 @@ export const letter = styled.div<Props>`
   width: ${spacing(8.5)};
   height: ${spacing(8.5)};
   background: ${(props) => (props.selected ? color.theme.blue : 'transparent')};
+  color: ${(props) => (props.selected ? color.base.white : color.theme.blue)};
   border-radius: 50%;
-  ${(props) => (props.selected ? '' : '&: hover { background: color.theme.blue; opacity:0.24 }')}
+  &:hover {
+    background: ${(props) => (!props.selected ? color.shadow.grey : color.theme.blue)};
+    color: ${(props) => (!props.selected ? color.base.white : color.theme.blue)};
+  }
 `;
 
 export const viewAll = styled.span`

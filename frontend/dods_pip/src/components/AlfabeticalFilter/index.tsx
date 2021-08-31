@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import color from '../../globals/color';
 import Icon, { IconSize } from '../Icon';
@@ -40,8 +40,8 @@ const alfabet = [
 ];
 
 const AZFilter: React.FC<AZFilterProps> = ({ onClick }) => {
-  const [hoveringAzFilter, setHoveringAzFilter] = useState(false);
-  const [selectedLetter, setSelectedLetter] = useState('');
+  const [hoveringAzFilter, setHoveringAzFilter] = React.useState(false);
+  const [selectedLetter, setSelectedLetter] = React.useState('');
   const selectLetter = (letter: string) => {
     setSelectedLetter(letter);
     onClick?.(letter);
@@ -54,7 +54,7 @@ const AZFilter: React.FC<AZFilterProps> = ({ onClick }) => {
       data-test="component-AZFilter"
     >
       <Styled.wrapper>
-        <div onClick={() => selectLetter('')}>
+        <div data-test="button-all" onClick={() => selectLetter('')}>
           <Styled.viewAll>
             <Icon
               src={Icons.IconAzFilter}
@@ -71,7 +71,7 @@ const AZFilter: React.FC<AZFilterProps> = ({ onClick }) => {
         </div>
         <Styled.letterSection>
           {alfabet.map((alf) => (
-            <div key={alf} onClick={() => selectLetter(alf)}>
+            <div data-test={`button-${alf}`} key={alf} onClick={() => selectLetter(alf)}>
               <Styled.letter selected={selectedLetter === alf}>
                 <Text
                   type="bodyLarge"
