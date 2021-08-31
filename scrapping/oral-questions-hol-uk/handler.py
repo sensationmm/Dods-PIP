@@ -13,7 +13,6 @@ from lib.validation import Validator
 import re
 from urllib.parse import urljoin
 
-
 BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 
@@ -31,7 +30,7 @@ def run(event, context):
         links = content.xpath(
             "//tr[@class='calendar-week']/descendant::a[contains(@aria-label,'This day has business')]/@href")
 
-        Insert_Rows = []
+        Insert_Rows = [] # Is this really needed ? don't see where is being used
         # Looping the calendar if aria-label value is ('This day has business')
         for i, active_links in enumerate(links[::-1]):
             qalink = urljoin(mainUrl, active_links.extract())
