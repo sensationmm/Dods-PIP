@@ -8,6 +8,7 @@ export enum IconSize {
   small = 10,
   medium = 14,
   large = 18,
+  xlarge = 36,
 }
 
 export interface IconProps {

@@ -5,10 +5,11 @@ import { AvatarProps, Size, UserType } from '.';
 
 export const wrapper = styled.div``;
 
+export const clientBackgroundColor = `linear-gradient(180deg, ${color.accent.yellow} 0%, ${color.accent.orange} 100%)`;
+export const consultantBackgroundColor = `linear-gradient(180deg, ${color.theme.blueLight} 0%, ${color.theme.blue} 100%);`;
+
 const backgroundColor = (typeOfClient: UserType) => {
-  return typeOfClient === 'client'
-    ? `linear-gradient(180deg, ${color.accent.yellow} 0%, ${color.accent.orange} 100%)`
-    : `linear-gradient(180deg, ${color.theme.blueLight} 0%, ${color.theme.blue} 100%);`;
+  return typeOfClient === 'client' ? clientBackgroundColor : consultantBackgroundColor;
 };
 
 const backgroundSize = (size: Size) => {
