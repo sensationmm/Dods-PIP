@@ -528,7 +528,19 @@ Resources:
       Timeout: "1"
       Count: 0
 
-  
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicRead
+      BucketName: test-dods-pip-storybook
+      MetricsConfigurations:
+        - Id: EntireBucket
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+    DeletionPolicy: Retain
+  Outputs:
+
   
 
   AddonsStack:
@@ -553,3 +565,17 @@ Outputs:
     Value: !GetAtt DiscoveryService.Arn
     Export:
       Name: !Sub ${AWS::StackName}-DiscoveryServiceARN
+
+  WebsiteURL:
+    Description: URL for website hosted on S3
+    Value: !GetAtt
+      - S3Bucket
+      - WebsiteURL
+  S3BucketSecureURL:
+    Description: Name of S3 bucket to hold website content
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt
+          - S3Bucket
+          - DomainName

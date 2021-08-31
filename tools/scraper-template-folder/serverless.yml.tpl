@@ -1,4 +1,3 @@
-service: scraper-writtenquestions-hol-uk
 service: scraper-$TPL_SLS_NAME
 
 frameworkVersion: '2'
