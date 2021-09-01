@@ -37,12 +37,13 @@ function getRE(){
 
 begins_with_short_option()
 {
-	local first_option all_short_options='V'
+	local first_option all_short_options='VT'
 	first_option="${1:0:1}"
 	test "$all_short_options" = "${all_short_options/$first_option/}" && return 1 || return 0
 }
 
 _arg_verbose=0
+_arg_test=0
 
 parse_commandline()
 {
@@ -53,6 +54,9 @@ parse_commandline()
 			-V|--verbose)
 				_arg_verbose=$((_arg_verbose + 1))
 				;;
+			-T|--test)
+				_arg_test=$((_arg_test + 1))
+				;;
 		esac
 		shift
 	done
@@ -61,38 +65,49 @@ parse_commandline()
 #-- main --
 
 parse_commandline "$@"
-# Only rebuild on changes to these type of file
-buildOnChangesTo=('*.py' '*.ts' '*.js' '*.json' 'serverless.yml')
-
 # Changes on these folders trigger rebuild on all lambda folders
 specialFolders=('lib' 'templates')                  
 
 # Folders to rebuild according to changes
 declare -A buildThis
 # Determine what changed in current commit
-committedChanges=$(git diff ${BITBUCKET_COMMIT}^! --stat=180,120 --compact-summary)
+committedChanges=$(git diff master..${BITBUCKET_BRANCH} --compact-summary --stat=180,120)
 readarray -t changesList <<<"${committedChanges}"
 
-# re_changes='scrapping/[:alnum:]+.*\|'
-re_changes="(scrapping\/(.*)/(.*\..+)) *\|"
+#re_changes="(scrapping\/(.*)/(.*\..+)) *\|"
+re_changes='(scrapping\/(.*)\/(.*\.[[:alnum:]]+))[[:space:]]+\|'
+re_newOrRemoved='(scrapping\/(.*)\/(.*\.[[:alnum:]]+).*\((.*)\))[[:space:]]+\|'
 
 [[ $_arg_verbose -gt 0 ]] && echo "verbose mode ON"
 
 for line in "${changesList[@]}"; do
    
-   if [[ $line =~ $re_changes ]]; then
-      # [[ $_arg_verbose -gt 0 ]] && echo "RE captures change in folder: ${BASH_REMATCH[2]}"
+   [[ $_arg_verbose -gt 0 ]] && echo "$line"
+   # Handle output for new or removed files in the repo
+   if [[ $line =~ $re_newOrRemoved ]]; then
       folderChanged=${BASH_REMATCH[2]}
       fileName=${BASH_REMATCH[3]}
+      changeType=${BASH_REMATCH[4]}
+   fi
 
-      [[ $_arg_verbose -gt 0 ]] && echo "$fileName was changed on folder $folderChanged"
-      buildThis["$folderChanged"]="true"
+   # Handle output for changed files in the repo
+   if [[ $line =~ $re_changes ]]; then
+      folderChanged=${BASH_REMATCH[2]}
+      fileName=${BASH_REMATCH[3]}
+      changeType='changed'
+   fi
 
-      # If there is a change on a "special" folder break early - Deploy all
-      if [[ ${specialFolders[@]} =~ $folderChanged ]]; then
-         break
-      fi
+   [[ $_arg_verbose -gt 0 ]] && echo "$fileName is $changeType on folder $folderChanged"
+   # Gone files do NOT merit a rebuild - To consider if we should handle a destroy
+   if [[ "$changeType" == "gone" ]]; then
+      continue
+   fi
+   [[ $_arg_verbose -gt 0 ]] && echo "$folderChanged will need a re-build"
+   buildThis["$folderChanged"]="true"
 
+   # If there is a change on a "special" folder break early - Deploy all
+   if [[ ${specialFolders[@]} =~ $folderChanged ]]; then
+      break
    fi
 done
 
@@ -112,6 +127,7 @@ for special in "${specialFolders[@]}"; do
   if [[ ${buildThis[$special]} == "true" ]]; then
      echo "------------------------------"
      echo "Build All folders"
+     [[ $_arg_test -gt 0 ]] && echo deployAll && exit 0
      deployAll
      exit 0
   fi
@@ -120,6 +136,7 @@ done
 for folder in "${!buildThis[@]}"; do
    echo "------------------------------"
    echo "Building $folder"
+   [[ $_arg_test -gt 0 ]] && echo 'deploymentSteps' && continue
    cd $folder
    echo $PWD
    deploymentSteps
