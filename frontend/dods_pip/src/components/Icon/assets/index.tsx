@@ -1,4 +1,5 @@
 import IconAdd from './icon-add.svg';
+import IconAzFilter from './icon-azFilter.svg';
 import IconCalendar from './icon-calendar.svg';
 import IconChevronLeft from './icon-chevronLeft.svg';
 import IconChevronRight from './icon-chevronRight.svg';
@@ -15,6 +16,7 @@ type TypeIconLibrary = {
 
 export enum Icons {
   IconAdd = 'IconAdd',
+  IconAzFilter = 'IconAzFilter',
   IconCalendar = 'IconCalendar',
   IconChevronLeft = 'IconChevronLeft',
   IconChevronRight = 'IconChevronRight',
@@ -28,6 +30,7 @@ export enum Icons {
 
 const IconLibrary = {
   IconAdd,
+  IconAzFilter,
   IconCalendar,
   IconChevronLeft,
   IconChevronRight,
