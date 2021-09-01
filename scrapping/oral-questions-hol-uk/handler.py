@@ -17,9 +17,11 @@ BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 
 content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
-config = Config()._config_read(("config.ini"))
+config = Config().config_read(("config.ini"))
 content_type = config.get('parser', 'informationType', fallback=None)
 content_source = config.get('parser', 'contentSource', fallback=None)
+
+
 def run(event, context):
     logger.debug('Starting scrapping process with BUCKET: "%s", prefix: "%s" ', BUCKET, PREFIX)
     s3 = boto3.client('s3')
