@@ -15,6 +15,7 @@ import * as Validation from '../utils/validation';
 
 type Errors = {
   email?: string | undefined;
+  form?: string | undefined;
 };
 
 interface ResetPasswordProps extends LoadingHOCProps {}
@@ -44,25 +45,21 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      await fetchJson('/api/forgotPassword', {
-        body: JSON.stringify({ email: emailAddress }),
-      });
-    } catch (error) {
-      /* istanbul ignore next*/
-      console.log(error);
-    }
-  };
-
   const onReset = async () => {
     setLoading(true);
 
     if (validateForm()) {
-      await handleSubmit();
+      try {
+        await fetchJson('/api/forgotPassword', {
+          body: JSON.stringify({ email: emailAddress }),
+        });
 
-      setRequested(true);
-      setLoading(false);
+        setRequested(true);
+        setLoading(false);
+      } catch (error) {
+        setErrors({ form: 'FAIL' });
+        setLoading(false);
+      }
     } else {
       setLoading(false);
     }

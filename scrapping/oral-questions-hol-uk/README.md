@@ -1,22 +1,10 @@
-<!--
-title: 'AWS Python Scheduled Cron example in Python'
-description: 'This is an example of creating a function that runs as a cron job using the serverless ''schedule'' event.'
-layout: Doc
-framework: v1
-platform: AWS
-language: Python
-authorLink: 'https://github.com/rupakg'
-authorName: 'Rupak Ganguly'
-authorAvatar: 'https://avatars0.githubusercontent.com/u/8188?v=4&s=140'
--->
+# Oral Questions Tabled / House of Lords / UK
 
-# Serverless Framework Python Scheduled Cron on AWS
-
-This template demonstrates how to develop and deploy a simple cron-like service running on AWS Lambda using the traditional Serverless Framework.
+This function performs scrapping for https://hansard.parliament.uk/Lords
 
 ## Schedule event type
 
-This examples defines two functions, `rateHandler` and `cronHandler`, both of which are triggered by an event of `schedule` type, which is used for configuring functions to be executed at specific time or in specific intervals. For detailed information about `schedule` event, please refer to corresponding section of Serverless [docs](https://serverless.com/framework/docs/providers/aws/events/schedule/).
+This function is scheduled to run once a day using a cron expression defined on the serverless.yml file
 
 When defining `schedule` events, we need to use `rate` or `cron` expression syntax.
 
@@ -74,6 +62,7 @@ Detailed information about cron expressions in available in official [AWS docs](
 
 
 ## Usage
+Blah blah
 
 ### Deployment
 
@@ -92,25 +81,25 @@ Serverless: Packaging service...
 Serverless: Excluding development dependencies...
 Serverless: Uploading CloudFormation file to S3...
 Serverless: Uploading artifacts...
-Serverless: Uploading service aws-python-scheduled-cron.zip file to S3 (84.82 KB)...
+Serverless: Uploading service scraper-writtenquestions-hol-uk.zip file to S3 (84.82 KB)...
 Serverless: Validating template...
 Serverless: Updating Stack...
 Serverless: Checking Stack update progress...
 ........................
 Serverless: Stack update finished...
 Service Information
-service: aws-python-scheduled-cron
+service: scraper-writtenquestions-hol-uk
 stage: dev
 region: us-east-1
-stack: aws-python-scheduled-cron-dev
+stack: scraper-writtenquestions-hol-uk-dev
 resources: 16
 api keys:
   None
 endpoints:
   None
 functions:
-  rateHandler: aws-python-scheduled-cron-dev-rateHandler
-  cronHandler: aws-python-scheduled-cron-dev-cronHandler
+  rateHandler: scraper-writtenquestions-hol-uk-dev-rateHandler
+  cronHandler: scraper-writtenquestions-hol-uk-dev-cronHandler
 layers:
   None
 ```
@@ -122,13 +111,23 @@ There is no additional step required. Your defined schedules becomes active righ
 In order to test out your functions locally, you can invoke them with the following command:
 
 ```
-serverless invoke local --function rateHandler
+serverless invoke local --function handler
 ```
 
 After invocation, you should see output similar to:
 
 ```bash
-INFO:handler:Your cron function aws-python-scheduled-cron-dev-rateHandler ran at 15:02:43.203145
+2021-08-25 21:06:23,591 31462-4605246976 root [handler.py:24] :   DEBUG: BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+
+2021-08-25 21:06:23,776 31462-4605246976 urllib3.connectionpool [connectionpool.py:227] :   DEBUG: Starting new HTTP connection (1): api.data.parliament.uk:80
+
+2021-08-25 21:06:24,080 31462-4605246976 urllib3.connectionpool [connectionpool.py:452] :   DEBUG: http://api.data.parliament.uk:80 "GET /resources/files/feed?dataset=1&filetype=qnaxml&take=500 HTTP/1.1" 301 0
+
+2021-08-25 21:06:24,087 31462-4605246976 urllib3.connectionpool [connectionpool.py:971] :   DEBUG: Starting new HTTPS connection (1): api.data.parliament.uk:443
+
+2021-08-25 21:06:24,885 31462-4605246976 urllib3.connectionpool [connectionpool.py:452] :   DEBUG: https://api.data.parliament.uk:443 "GET /resources/files/feed?dataset=1&filetype=qnaxml&take=500 HTTP/1.1" 200 10665
+
+2021-08-25 21:06:25,085 31462-4605246976 urllib3.connectionpool [connectionpool.py:227] :   DEBUG: Starting new HTTP connection (1): api.data.parliament.uk:80
 ```
 
 ### Bundling dependencies

@@ -8,16 +8,21 @@ const mockRouterPush = jest.fn();
 jest.mock('next/router', () => ({
   useRouter: jest
     .fn()
-    // .mockReturnValueOnce({ push: (arg) => mockRouterPush(arg), query: {} })
+    .mockReturnValueOnce({ push: (arg) => mockRouterPush(arg), query: {} })
     .mockReturnValue({ push: (arg) => mockRouterPush(arg), query: { code: 'abc' } }),
 }));
 
 jest.mock('../lib/fetchJson', () => {
-  return jest.fn().mockReturnValueOnce(true);
+  return jest
+    .fn()
+    .mockImplementationOnce(() => Promise.reject({ data: { name: 'CodeMismatchException' } }))
+    .mockImplementationOnce(() => Promise.reject({ data: { name: 'ExpiredCodeException' } }))
+    .mockImplementationOnce(() => Promise.reject({ data: { name: 'OtherException' } }))
+    .mockImplementation(() => Promise.resolve());
 });
 
 describe('PasswordReset', () => {
-  let wrapper: ShallowWrapper, formButton: ShallowWrapper;
+  let wrapper: ShallowWrapper, formButton: ShallowWrapper, codeExpiredWarning;
   const validateRequiredSpy = jest.spyOn(Validation, 'validateRequired');
   const validatePasswordSpy = jest.spyOn(Validation, 'validatePassword');
   const validateMatchingSpy = jest.spyOn(Validation, 'validateMatching');
@@ -35,7 +40,7 @@ describe('PasswordReset', () => {
   };
 
   const states = [
-    // defaultState, // redirects to homepage if no validation code
+    defaultState, // shows loader if no code found
     defaultState, // renders without error
     defaultState, // renders password reset
     { ...defaultState, confirmed: true }, // renders password reset confirmation
@@ -43,10 +48,14 @@ describe('PasswordReset', () => {
     { ...defaultState, password: 'invalid' }, // returns invalid password error
     { ...defaultState, password: 'Valid123!' }, // returns missing passwordConfirm error
     { ...defaultState, password: 'Valid123!', passwordConfirm: 'invalid' }, // eturns unmatching passwordConfirm error
+    { ...defaultState, password: 'Valid123!', passwordConfirm: 'Valid123!' }, // handles CodeMismatchException exception
+    { ...defaultState, password: 'Valid123!', passwordConfirm: 'Valid123!' }, // handles ExpiredCodeException exception
+    { ...defaultState, password: 'Valid123!', passwordConfirm: 'Valid123!' }, // handles generic exception
     { ...defaultState, password: 'Valid123!', passwordConfirm: 'Valid123!' }, // clears errors on successful form completion
     defaultState, // executes password onChange funcs
     { ...defaultState, confirmed: true }, // navigates back to login at end of flow
     { ...defaultState, isRepeatPassword: true }, // shows repeat password warning
+    { ...defaultState, errors: { form: 'EXPIRED' } }, //shows repeat password warning
   ];
 
   let count = 0;
@@ -61,11 +70,13 @@ describe('PasswordReset', () => {
       .mockImplementationOnce(() => [states[count].isRepeatPassword, setState]);
     wrapper = shallow(<PasswordReset isLoading={false} setLoading={setLoadingSpy} />);
     formButton = wrapper.find('[data-test="form-button"]');
+    codeExpiredWarning = wrapper.find('[data-test="code-expired-warning"]');
   });
 
-  // it('redirects to homepage if no validation code', () => {
-  //   expect(mockRouterPush).toHaveBeenCalledWith('/');
-  // });
+  it('show loader if no code found', () => {
+    const noCodeLoader = wrapper.find('[data-test="no-code-loader"]');
+    expect(noCodeLoader.length).toEqual(1);
+  });
 
   it('renders without error', () => {
     const component = wrapper.find('[data-test="page-password-reset"]');
@@ -133,14 +144,35 @@ describe('PasswordReset', () => {
     });
   });
 
-  it('clears errors on successful form completion', () => {
-    formButton.simulate('click');
+  it('handles CodeMismatchException exception', async () => {
+    await formButton.simulate('click');
+    expect(setLoadingSpy).toHaveBeenCalledWith(false);
+    expect(setState).toHaveBeenCalledWith({ form: 'EXPIRED' });
+    wrapper.update();
+  });
+
+  it('handles ExpiredCodeException exception', async () => {
+    await formButton.simulate('click');
+    expect(setLoadingSpy).toHaveBeenCalledWith(false);
+    expect(setState).toHaveBeenCalledWith({ form: 'EXPIRED' });
+  });
+
+  it('handles generic exception', async () => {
+    await formButton.simulate('click');
+    expect(setLoadingSpy).toHaveBeenCalledWith(false);
+    expect(setState).toHaveBeenCalledWith({ form: 'FAIL' });
+  });
+
+  it('clears errors on successful form completion', async () => {
+    await formButton.simulate('click');
     expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
     expect(validatePasswordSpy).toHaveBeenCalledTimes(1);
     expect(validatePasswordSpy).toHaveBeenCalledWith('Valid123!');
     expect(validateMatchingSpy).toHaveBeenCalledTimes(1);
     expect(validateMatchingSpy).toHaveBeenCalledWith('Valid123!', 'Valid123!');
+    expect(setLoadingSpy).toHaveBeenCalledWith(false);
     expect(setState).toHaveBeenCalledWith({});
+    expect(setState).toHaveBeenCalledWith(true);
   });
 
   it('executes password onChange funcs', () => {
@@ -160,6 +192,11 @@ describe('PasswordReset', () => {
   it('shows repeat password warning', () => {
     const warning = wrapper.find('[data-test="repeat-password-warning"]');
     expect(warning.length).toEqual(1);
+  });
+
+  it('shows code expired warning', () => {
+    codeExpiredWarning = wrapper.find('[data-test="code-expired-warning"]');
+    expect(codeExpiredWarning.length).toEqual(1);
   });
 
   afterEach(() => {

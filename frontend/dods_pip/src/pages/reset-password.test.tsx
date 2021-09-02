@@ -5,7 +5,10 @@ import * as Validation from '../utils/validation';
 import { ResetPassword } from './reset-password.page';
 
 jest.mock('../lib/fetchJson', () => {
-  return jest.fn().mockReturnValueOnce(true);
+  return jest
+    .fn()
+    .mockImplementationOnce(() => Promise.reject({ data: { name: 'OtherException' } }))
+    .mockImplementation(() => Promise.resolve());
 });
 
 describe('ResetPassword', () => {
@@ -28,6 +31,7 @@ describe('ResetPassword', () => {
     { ...defaultState, requested: true }, // renders reset request confirmation
     defaultState, // returns missing email error
     { ...defaultState, emailAddress: 'invalid' }, // returns invalid email error
+    { ...defaultState, emailAddress: 'test@test.com' }, // catches api failure
     { ...defaultState, emailAddress: 'test@test.com' }, // clears errors on successful form completion
   ];
 
@@ -83,13 +87,22 @@ describe('ResetPassword', () => {
       });
     });
 
-    it('clears errors on successful form completion', () => {
-      formButton.simulate('click');
+    it('catches api failure', async () => {
+      await formButton.simulate('click');
+      expect(setLoadingSpy).toHaveBeenCalledWith(true);
+      expect(setState).toHaveBeenCalledWith({ form: 'FAIL' });
+      expect(setLoadingSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('clears errors on successful form completion', async () => {
+      await formButton.simulate('click');
+      expect(setLoadingSpy).toHaveBeenCalledWith(true);
       expect(validateRequiredSpy).toHaveBeenCalledTimes(1);
       expect(validateRequiredSpy).toHaveBeenCalledWith('test@test.com');
       expect(validateEmailSpy).toHaveBeenCalledTimes(1);
       expect(validateEmailSpy).toHaveBeenCalledWith('test@test.com');
       expect(setState).toHaveBeenCalledWith({});
+      expect(setLoadingSpy).toHaveBeenCalledWith(false);
     });
   });
 
