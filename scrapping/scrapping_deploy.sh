@@ -7,26 +7,26 @@ BB_URL="https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_FULL_NAME}"
 
 function deployAll() {
   # Get all sub-folders with serverless.yml file
+  cd $rootDir
   IFS=$'\n'
-  services=($(find . -name "serverless.yml"))
+  services=($(find . -name "serverless.yml" -not -path "*/node_modules/*"))
   unset IFS
 
   # Go to each sub-folder and run deployment
   for service in "${services[@]}"; do
     folder=$(dirname $service)
     printf '\n-------------------------------------'
-    cd $folder
-
     echo "Deploying service at ${folder} ..."
+    cd $folder
     deploymentSteps
     cd $rootDir 
   done
 }
 
 function deploymentSteps() {
-    [ -f 'package.json' ] && npm install
-    [ -f 'requirements.txt' ] && pip3 install -r requirements.txt
-    [ -f 'serverless.yml' ] && sls deploy
+   npm install
+   pip3 install -r requirements.txt
+   sls deploy
 }
 
 begins_with_short_option()
