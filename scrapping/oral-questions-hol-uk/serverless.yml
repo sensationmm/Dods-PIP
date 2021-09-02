@@ -1,4 +1,4 @@
-service: scraper-writtenquestions-hoc-uk
+service: scraper-oralquestions-hol-uk
 
 frameworkVersion: '2'
 projectDir: ../
@@ -8,9 +8,10 @@ configValidationMode: error
 plugins:
   - serverless-python-requirements
   - serverless-offline
+
 custom:
-  resource_prefix: written-questions-hoc-uk
-  app_acronym: dods-wq-hoc-uk-bucket
+  resource_prefix: oral-questions-hol-uk
+  app_acronym: dods-oq-hol-uk-bucket
   default_stage: dev
   stage: ${opt:stage, self:custom.default_stage}
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
@@ -21,7 +22,6 @@ custom:
   dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
   s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
-  lambdas_root_folder: ..
 
 package:
   patterns:
@@ -49,9 +49,6 @@ provider:
     REGION: ${file(../serverless.common.yml):custom.region}
     CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
-    ROOT_FOLDER: ${self:custom.lambdas_root_folder}
-    # Uncomment next line if deleting symbolic links (lib and templates)
-    # PYTHONPATH: ${self:provider.environment.ROOT_FOLDER}
 
   iamRoleStatements:
     - Effect: Allow
@@ -73,14 +70,11 @@ provider:
 
 functions:
   scrape:
-    name: scraper-writtenQuestions-hoc-uk-${sls:stage}
-    description: Ingest Written Questions HOC (UK) data
+    name: scraper-oral-questions-hol-uk-${sls:stage}
+    description: Ingest Oral Questions HOL (UK) data
     handler: handler.run
     events:
-      ## Invoke Lambda function on Mon-Fri at 15:05
       - schedule: cron(00 22 ? * MON-FRI *)
-      ## Invoke lambda once a day
-      # - schedule: rate(1 day)
 
 resources:
   Resources:
