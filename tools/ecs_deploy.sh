@@ -7,6 +7,19 @@ SERVICE=$1
 JSON_OUT='task-template.json'
 TD='task-definition.json'
 
+feService=$(echo ${SERVICE//\//-})
+feManifest="../infra/copilot/${feService}/manifest.yml"
+
+echo "Copilot's service: $feService"
+echo "Deployment environment: ${BITBUCKET_DEPLOYMENT_ENVIRONMENT}"
+echo "Frontend service manifest: ${feManifest}"
+
+# Replace container image on the manifest with recently built one
+echo "container image: ${IMAGE_NAME}"
+perl -pi.bak -e "s/location: ${AWS_ECR_NAME}.*$/${IMAGE_NAME}/" $feManifest
+cat $feManifest
+exit 0
+
 echo "1/5: Checking task definition for service ${SERVICE}"
 export TASK_DEFINITION=$(
    aws ecs describe-services --cluster ${FARGATE_CLUSTER} \
