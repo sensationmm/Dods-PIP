@@ -5,9 +5,9 @@ import { StyledComponent } from 'styled-components';
 import colorPalette from '../../globals/color';
 import * as Styled from './Text.styles';
 
-type CoreTextStyles = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'span';
+export type CoreTextStyles = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'span';
 
-type TextStyles = CoreTextStyles | 'body' | 'bodySmall' | 'bodyLarge' | 'labelSmall';
+export type TextStyles = CoreTextStyles | 'body' | 'bodySmall' | 'bodyLarge' | 'labelSmall';
 
 export interface TextProps {
   children?: React.ReactNode;

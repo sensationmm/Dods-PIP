@@ -3,7 +3,7 @@ pipelines:
     - parallel:
       - step:
           name: Build and Deploy Frontend
-          image: gioatsomoglobal/devopstools:0.2.0
+          image: gioatsomoglobal/devopstools:0.4.3
           deployment: Test
           services:
             - docker
@@ -18,7 +18,10 @@ pipelines:
             - cd ${FRONTEND_SRC}
             - yarn install
             - yarn lint
+            - yarn build-storybook
             - yarn test
+            - aws s3 rm s3://test-dods-pip-storybook/
+            - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
             - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
             - docker build -t ${IMAGE_NAME} .
             - docker push ${IMAGE_NAME}
