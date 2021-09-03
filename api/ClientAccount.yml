@@ -1,0 +1,159 @@
+openapi: 3.0.0
+info:
+  description: Dods Client Accounts API
+  version: "1.0.0"
+  title: Client Account API
+paths:
+  /:
+    get:
+      summary: List all Client Accounts
+      parameters:
+        - in: query
+          name: limit
+          description: maximum number of Client Accounts to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 100
+      responses:
+        '200':
+          description: list of all Client Accounts in the system
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientAccountResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Does not have correct permissions
+  /clientaccount:
+    post:
+      summary: Create Client Account
+      requestBody:
+        description: Client Account to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientAccount'
+      responses:
+        '200':
+          description: Succesfully created Client Accout
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientAccountResponse'
+        '400':
+          description: Invalid Client Account supplied
+        '401':
+          description: Not authenticated
+        '403':
+          description: Does not have correct permissions
+        '409':
+          description: an existing item already exists
+  /clientaccount/{accountId}:
+    parameters:
+      - in: path
+        name: accountId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: UUID of the account to get
+    get:
+      summary: Get an account by ID
+      responses:
+        '200':
+          description: Specified client account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAccountResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Does not have correct permissions
+        '404':
+          description: Client Account not found
+    put:
+      summary: Update client by ID
+      requestBody:
+        description: Client Account to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientAccount'
+      responses:
+        '200':
+          description: Updated account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAccountResponse'
+        '400':
+          description: Invalid Client Account supplied
+        '401':
+          description: Not authenticated
+        '403':
+          description: Does not have correct permissions
+        '404':
+          description: Client Account not found
+components:
+  schemas:
+    ClientAccount:
+      type: object
+      required:
+        - name
+        - notes
+        - contact_name
+        - contact_email_address
+        - contact_telephone_number
+        - contract_start_date
+        - contract_rollover
+        - contract_end_date
+      properties:
+        name:
+         type: string
+         example: Dods information
+        notes:
+          type: string
+        contact_name:
+          type: string
+          example: Joe Bloggs
+        contact_email_address:
+          type: string
+          example: user@email.com
+        contact_telephone_number:
+          type: string
+          example: '+442071838750'
+        contract_start_date:
+          type: string
+          format: date-time
+          example: '2000-01-01T01:01:01.001Z'
+        contract_rollover:
+          type: boolean
+        contract_end_date:
+          type: string
+          format: date-time
+          example: '2000-01-01T01:01:01.001Z'
+        primary_sales_contact:
+          type: string
+          format: uuid
+          example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    ClientAccountResponse:
+      allOf:     # Combines the BasicErrorModel and the inline model
+        - $ref: '#/components/schemas/ClientAccount'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: d290f1ss-6c54-4b01-98e6-d701748f7151
