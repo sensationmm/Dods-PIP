@@ -57,7 +57,13 @@ const Button: React.FC<ButtonProps> = ({
         onClick={onClick}
       >
         {label}
-        {icon && <Icon src={icon} size={IconSize.large} color={color.base.white} />}
+        {icon && (
+          <Icon
+            src={icon}
+            size={isSmall ? IconSize.medium : IconSize.large}
+            color={color.base.white}
+          />
+        )}
       </Component>
     </Styled.wrapper>
   );

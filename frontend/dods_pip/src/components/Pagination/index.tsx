@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import color from '../../globals/color';
 import Icon, { IconSize } from '../Icon';
@@ -13,21 +13,19 @@ export type PaginationProps = {
   dataLength: number;
 };
 
-type Data = {
-  [key: string]: string | number;
-};
-
-type DataArray = Array<Data>;
-
 type PaginationType = {
   PaginationStats: React.FC;
-  PaginationContent: (data: DataArray) => DataArray;
+  PaginationContent: <Type>(data: Type) => Type;
   PaginationButtons: React.FC;
 };
 
 const Pagination = (dataLength: number): PaginationType => {
   const [activePage, setActivePage] = React.useState<number>(0);
   const [numPerPage, setNumPerPage] = React.useState<NumPerPage>(30);
+
+  useEffect(() => {
+    setActivePage(0);
+  }, [dataLength]);
 
   const pageButtons = () => {
     const numPages = Math.ceil(dataLength / numPerPage);
@@ -79,7 +77,7 @@ const Pagination = (dataLength: number): PaginationType => {
     return (
       <Styled.stats data-test="component-pagination-stats">
         <Text type="bodySmall" color={color.base.grey} data-test="item-count">
-          Showing {start + 1}-{Math.min(dataLength, end)} of {dataLength}
+          Showing {dataLength > 0 ? start + 1 : 0}-{Math.min(dataLength, end)} of {dataLength}
         </Text>
         <Text type="bodySmall" color={color.base.grey}>
           Items per page&nbsp;
@@ -98,7 +96,8 @@ const Pagination = (dataLength: number): PaginationType => {
     );
   };
 
-  const PaginationContent = (data: DataArray): DataArray => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const PaginationContent = (data: any) => {
     const start = activePage * numPerPage;
     const end = start + numPerPage;
     return data.slice(start, end);

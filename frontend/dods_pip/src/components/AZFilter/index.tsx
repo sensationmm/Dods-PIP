@@ -7,7 +7,8 @@ import Text from '../Text';
 import * as Styled from './AZFilter.styles';
 
 export interface AZFilterProps {
-  onClick?: (letter: string) => void;
+  selectedLetter: string;
+  setSelectedLetter: (letter: string) => void;
 }
 
 const alfabet = [
@@ -39,12 +40,10 @@ const alfabet = [
   'Z',
 ];
 
-const AZFilter: React.FC<AZFilterProps> = ({ onClick }) => {
+const AZFilter: React.FC<AZFilterProps> = ({ selectedLetter, setSelectedLetter }) => {
   const [hoveringAzFilter, setHoveringAzFilter] = React.useState(false);
-  const [selectedLetter, setSelectedLetter] = React.useState('');
   const selectLetter = (letter: string) => {
     setSelectedLetter(letter);
-    onClick?.(letter);
   };
 
   return (
@@ -59,11 +58,11 @@ const AZFilter: React.FC<AZFilterProps> = ({ onClick }) => {
             <Icon
               src={Icons.IconAzFilter}
               size={IconSize.large}
-              color={selectedLetter === '' ? color.base.black : color.base.grey}
+              color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
             />
             <Text
-              type="bodySmall"
-              color={selectedLetter === '' ? color.theme.blue : color.base.grey}
+              type="label"
+              color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
             >
               VIEW ALL
             </Text>

@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 import color from '../../globals/color';
 import spacing from '../../globals/spacing';
+import { Icon } from '../Icon/Icon.styles';
+import { label } from '../Text/Text.styles';
 
 export const wrapper = styled.div`
   width: 100%;
@@ -9,6 +11,7 @@ export const wrapper = styled.div`
   border-top: 1px solid ${color.shadow.blue};
   display: flex;
   align-items: center;
+  justify-content: space-between;
 `;
 
 export const letterSection = styled.div`
@@ -39,9 +42,18 @@ export const letter = styled.div<Props>`
 
 export const viewAll = styled.span`
   cursor: pointer;
-  margin-right: ${spacing(15)};
   margin-left: ${spacing(2)};
   display: flex;
   justify-content: center;
   align-items: center;
+  white-space: nowrap;
+  cursor: pointer;
+
+  ${Icon} {
+    margin-right: ${spacing(2)};
+  }
+
+  ${Icon}, ${label} {
+    cursor: pointer;
+  }
 `;

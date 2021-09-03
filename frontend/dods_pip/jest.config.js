@@ -19,6 +19,7 @@ module.exports = {
     '!src/**/*.stories.{ts,tsx}',
     '!src/**/*.styles.{ts,tsx}',
     '!src/**/_app.page.tsx',
+    '!src/**/_document.page.tsx',
     '!coverage',
     '!src/globals/**/*.{ts,tsx}',
     '!src/components/_example/*',

@@ -2,8 +2,10 @@ import IconAdd from './icon-add.svg';
 import IconAvatar from './icon-avatar.svg';
 import IconAzFilter from './icon-azFilter.svg';
 import IconCalendar from './icon-calendar.svg';
+import IconChevronDown from './icon-chevronDown.svg';
 import IconChevronLeft from './icon-chevronLeft.svg';
 import IconChevronRight from './icon-chevronRight.svg';
+import IconChevronUp from './icon-chevronUp.svg';
 import IconCross from './icon-cross.svg';
 import IconHide from './icon-hide.svg';
 import IconSearch from './icon-search.svg';
@@ -20,8 +22,10 @@ export enum Icons {
   IconAvatar = 'IconAvatar',
   IconAzFilter = 'IconAzFilter',
   IconCalendar = 'IconCalendar',
+  IconChevronDown = 'IconChevronDown',
   IconChevronLeft = 'IconChevronLeft',
   IconChevronRight = 'IconChevronRight',
+  IconChevronUp = 'IconChevronUp',
   IconCross = 'IconCross',
   IconHide = 'IconHide',
   IconSearch = 'IconSearch',
@@ -35,8 +39,10 @@ const IconLibrary = {
   IconAvatar,
   IconAzFilter,
   IconCalendar,
+  IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
+  IconChevronUp,
   IconCross,
   IconHide,
   IconSearch,
