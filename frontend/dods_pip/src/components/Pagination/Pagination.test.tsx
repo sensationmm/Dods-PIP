@@ -86,6 +86,7 @@ describe('Pagination', () => {
     // PaginationButtons
     defaultState, // renders without error
     defaultState, // shows correct stats
+    defaultState, // handles empty data
     defaultState, // decrements page on prev click
     defaultState, // increments page on next click
     { ...defaultState, activePage: 0 }, // disables prev arrow when first page is active
@@ -116,6 +117,13 @@ describe('Pagination', () => {
       const wrapper = shallow(<PaginationStats />);
       const itemCount = wrapper.find('[data-test="item-count"]');
       expect(itemCount.props().children.join('')).toEqual('Showing 16-20 of 59');
+    });
+
+    it('handles empty data', () => {
+      const { PaginationStats } = Pagination(0);
+      const wrapper = shallow(<PaginationStats />);
+      const itemCount = wrapper.find('[data-test="item-count"]');
+      expect(itemCount.props().children.join('')).toEqual('Showing 0-0 of 0');
     });
 
     it('changes items per page', () => {

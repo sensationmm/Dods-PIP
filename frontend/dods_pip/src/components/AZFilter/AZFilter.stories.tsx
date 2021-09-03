@@ -5,10 +5,10 @@ import AZFilter, { AZFilterProps } from '.';
 
 export default {
   component: AZFilter,
-  title: 'Core/AlfabeticalFilter',
+  title: 'Functional/AZFilter',
   controls: { hideNoControlsWarning: true },
   argTypes: {
-    onClick: { action: 'clicked' },
+    setSelectedLetter: { action: 'clicked' },
   },
 } as Meta;
 
@@ -16,4 +16,6 @@ const Template: Story<AZFilterProps> = (args) => <AZFilter {...args} />;
 
 export const Primary = Template.bind({});
 
-Primary.args = {};
+Primary.args = {
+  selectedLetter: '',
+};

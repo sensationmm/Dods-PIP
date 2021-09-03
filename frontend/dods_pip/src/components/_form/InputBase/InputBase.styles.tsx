@@ -21,7 +21,7 @@ export const input = styled.input`
   background: ${color.shadow.blue};
   border-bottom: 1px solid ${color.theme.blueMid};
   margin-bottom: 1px;
-  border-radius: 3px 3px 0 0;
+  border-radius: 8px 8px 0 0;
   color: ${color.theme.blueMid};
   font-size: 14px;
   padding: ${spacing(3)};

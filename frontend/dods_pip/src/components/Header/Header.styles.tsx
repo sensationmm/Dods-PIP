@@ -13,4 +13,11 @@ export const logo = styled.div`
   position: relative;
   width: 80px;
   height: 50px;
+  margin-right: ${spacing(10)};
+`;
+
+export const container = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
