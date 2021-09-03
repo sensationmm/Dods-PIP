@@ -1,0 +1,5 @@
+organization       = "mettrr"
+project            = "website"
+region             = "eu-west-1"
+deployment_account = "225155507429"
+deployment_role    = "SecOps"
