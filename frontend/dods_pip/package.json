@@ -10,7 +10,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test": "jest",
-    "test:watch": "jest --watchAll --coverage",
+    "test:watch": "jest --watch --coverage",
     "docker-build": "docker build . -t dods-pip",
     "docker": "docker run -p 3000:3000 dods-pip",
     "postinstall": "cd ../.. && husky install frontend/dods_pip/.husky"
