@@ -136,6 +136,8 @@ export const Clients: React.FC<ClientsProps> = () => {
 
             <Styled.filterContent open={showFilter} data-test="filter-content">
               <Styled.filterContentCol>
+                {/* @TODO: replace html selects with <Select /> component when built DOD-376 */}
+                {/* hence istanbul ignores, wasnt worth testing temporary code */}
                 <select
                   value={filterSubscription}
                   onChange={/* istanbul ignore next*/ (e) => setFilterSubscription(e.target.value)}
@@ -185,6 +187,7 @@ export const Clients: React.FC<ClientsProps> = () => {
           <Spacer size={5} />
 
           {/* @TODO: replace with data table for rendering */}
+          {/*<DataTable data={accountsData} /> */}
           {accountsData.map((account: ClientAccount, count: number) => {
             return <div key={`account-${count}`}>{account.name}</div>;
           })}
