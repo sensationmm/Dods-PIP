@@ -3,7 +3,7 @@ pipelines:
     - parallel:
       - step:
           name: Build and Deploy Frontend
-          image: gioatsomoglobal/devopstools:0.2.0
+          image: gioatsomoglobal/devopstools:0.4.3
           deployment: Test
           services:
             - docker
