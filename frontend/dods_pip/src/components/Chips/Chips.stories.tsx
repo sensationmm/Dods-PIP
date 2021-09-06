@@ -7,12 +7,18 @@ export default {
   component: Chips,
   title: 'Core/Chips',
   controls: { hideNoControlsWarning: true },
+  argTypes: {
+    onClick: { action: 'clicked' },
+    onCloseClick: { action: 'Close button clicked' },
+  },
 } as Meta;
 
 const Template: Story<ChipsProps> = (args) => <Chips {...args} />;
 
-export const Simple = Template.bind({});
+export const Default = Template.bind({});
 
-Simple.args = {
-  label: 'Simple',
+Default.args = {
+  label: 'Chip',
+  selected: false,
+  disabled: false,
 };

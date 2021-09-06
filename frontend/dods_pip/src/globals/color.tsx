@@ -26,9 +26,6 @@ const color = {
     greenLight: '#29C26E',
     red: '#EF4E3B',
   },
-  disabled: {
-    greyBackground: '#F5F5F6',
-  },
 };
 
 export default color;

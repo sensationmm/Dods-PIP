@@ -16,7 +16,7 @@ PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Written Questions HOL (UK)'
 
 content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
-config = Config()._config_read(("config.ini"))
+config = Config().config_read(("config.ini"))
 def run(event, context):
     logger.debug('Starting scrapping process with BUCKET: "%s", prefix: "%s" ', BUCKET, PREFIX)
     s3 = boto3.client('s3')

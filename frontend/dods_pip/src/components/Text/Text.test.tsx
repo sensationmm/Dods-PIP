@@ -33,6 +33,11 @@ describe('Text', () => {
     expect(wrapper.find('[data-test="component-text"]').type().target).toEqual('label');
   });
 
+  it('renders custom span tag', () => {
+    const wrapper = shallow(<Text type="headerTitle">{props.children}</Text>);
+    expect(wrapper.find('[data-test="component-text"]').type().target).toEqual('span');
+  });
+
   it('renders the given child in the html tag', () => {
     const wrapper = shallow(<Text {...props} />);
     expect(wrapper.find('[data-test="component-text"]').text()).toEqual(props.children);

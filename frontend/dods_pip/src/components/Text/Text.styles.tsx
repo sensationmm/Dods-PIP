@@ -110,7 +110,9 @@ export const p = styled.p`
   padding: 0;
   margin: 0;
 
-  &.bold {
+  &.bold,
+  bold,
+  strong {
     font-family: 'Open Sans Bold';
   }
 
@@ -154,4 +156,9 @@ export const span = styled.span`
   font-size: 12px;
   padding: 0;
   margin: 0;
+
+  &.headerTitle {
+    font-family: 'Libre Baskerville';
+    font-size: 24px;
+  }
 `;
