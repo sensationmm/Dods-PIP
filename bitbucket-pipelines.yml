@@ -41,6 +41,19 @@ pipelines:
             - cd services/graphologi-integration
             - npm install
             - serverless deploy
+      - step:
+          name: Deploy service-user-profile
+          image: gioatsomoglobal/devopstools:0.2.0
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/graphologi-integration/**"
+          script:
+            - cd services/graphologi-integration
+            - npm install
+            - serverless deploy
 
       - step:
           name: Deploy Scrapping Lambdas
