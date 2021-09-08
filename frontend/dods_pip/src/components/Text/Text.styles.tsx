@@ -137,14 +137,14 @@ export const bodySmall = styled.p``;
 export const bodyLarge = styled.p``;
 
 export const label = styled.label`
-  font-family: 'Open Sans Bold';
-  font-size: 10px;
-  line-height: 12px;
+  font-family: 'Open Sans';
+  font-size: 16px;
+  line-height: 16px;
   padding: 0;
   margin: 0;
 
   &.small {
-    font-size: 8px;
+    font-size: 12px;
     letter-spacing: 1px;
     line-height: auto;
   }

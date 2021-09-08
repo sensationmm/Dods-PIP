@@ -7,11 +7,39 @@ export const wrapper = styled.div`
   position: relative;
   width: 100%;
 
-  span {
+  > span {
     display: block;
-    padding: ${spacing(2)} ${spacing(3)} 0 ${spacing(3)};
+    padding-top: ${spacing(2)};
     margin: 0;
   }
+`;
+
+export const inputWrapper = styled.div`
+  position: relative;
+`;
+
+export const label = styled.div`
+  display: flex;
+  align-items: baseline;
+  margin-bottom: ${spacing(3)};
+`;
+
+export const requiredStar = styled.span`
+  color: ${color.alert.red};
+  display: inline;
+  font-size: 12px;
+  line-height: 12px;
+  margin-right: ${spacing(1)};
+  align-self: center;
+`;
+
+export const requiredLabel = styled.span`
+  color: ${color.base.grey};
+  font-size: 12px;
+  margin-left: ${spacing(2)};
+  font-family: Open Sans;
+  line-height: 16px;
+  margin-bottom: -${spacing(1)};
 `;
 
 export const input = styled.input`
@@ -19,9 +47,8 @@ export const input = styled.input`
   border: 0;
   outline: 0;
   background: ${color.shadow.blue};
-  border-bottom: 1px solid ${color.theme.blueMid};
-  margin-bottom: 1px;
-  border-radius: 8px 8px 0 0;
+  margin-bottom: 2px;
+  border-radius: 8px;
   color: ${color.theme.blueMid};
   font-size: 14px;
   padding: ${spacing(3)};
@@ -29,10 +56,16 @@ export const input = styled.input`
   font-family: 'Open Sans';
   font-size: 16px;
 
-  &:hover,
+  &:hover {
+    margin-bottom: 1px;
+    border-bottom: 1px solid ${color.theme.blueMid};
+    border-radius: 8px 8px 0 0;
+  }
+
   &:focus {
     margin-bottom: 0;
-    border-bottom-width: 2px;
+    border-bottom: 2px solid ${color.theme.blueMid};
+    border-radius: 8px 8px 0 0;
   }
 
   &:focus {
@@ -51,5 +84,13 @@ export const input = styled.input`
     background: ${color.shadow.grey};
     pointer-events: none;
     cursor: not-allowed;
+  }
+
+  &.small {
+    padding: ${spacing(1)} ${spacing(3)};
+  }
+
+  &.medium {
+    padding: ${spacing(2)} ${spacing(3)};
   }
 `;
