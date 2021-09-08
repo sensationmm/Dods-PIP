@@ -21,7 +21,7 @@ Primary.args = {
   error: undefined,
   required: false,
   optional: false,
-  helperText: 'asdasd',
+  helperText: '',
 };
 
 Primary.parameters = {
