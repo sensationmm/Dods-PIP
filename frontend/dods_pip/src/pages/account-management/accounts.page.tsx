@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import React from 'react';
 
-import Checkbox from '../../components/_form/Checkbox';
 import InputSearch from '../../components/_form/InputSearch';
 import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
