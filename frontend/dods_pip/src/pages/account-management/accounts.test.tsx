@@ -3,8 +3,7 @@ import React from 'react';
 import Icon from '../../components/Icon';
 import { Icons } from '../../components/Icon/assets';
 
-import { Clients } from './clients.page';
-import { filterToggle } from './clients.styles';
+import { Accounts } from './accounts.page';
 
 describe('Account Management: Clients', () => {
   let wrapper;
@@ -24,7 +23,6 @@ describe('Account Management: Clients', () => {
     filterAZ: '',
     filterSubscription: '',
     filterLocation: '',
-    filterIncomplete: false,
   };
 
   const states = [
@@ -35,7 +33,6 @@ describe('Account Management: Clients', () => {
     { ...defaultState, filterAZ: 'M' }, // filters by a-z
     { ...defaultState, filterSubscription: 'level2' }, // filters by subscription
     { ...defaultState, filterLocation: 'europe' }, // filters by location
-    { ...defaultState, filterIncomplete: true }, // filters by incomplete
   ];
 
   let count = 0;
@@ -47,11 +44,10 @@ describe('Account Management: Clients', () => {
       .mockImplementationOnce(() => [states[count].filterAZ, setStatefilterAZ])
       .mockImplementationOnce(() => [states[count].filterSubscription, setStatefilterSubscription])
       .mockImplementationOnce(() => [states[count].filterLocation, setStatefilterLocation])
-      .mockImplementationOnce(() => [states[count].filterIncomplete, setStatefilterIncomplete])
       .mockImplementationOnce(() => [0, jest.fn]) //Pagination component setState calls
       .mockImplementationOnce(() => [30, jest.fn]); //Pagination component setState calls
 
-    wrapper = shallow(<Clients isLoading={false} setLoading={setLoadingSpy} />);
+    wrapper = shallow(<Accounts isLoading={false} setLoading={setLoadingSpy} />);
   });
 
   it('renders without error', () => {
@@ -95,11 +91,6 @@ describe('Account Management: Clients', () => {
   it('filters by location', () => {
     const itemsCount = wrapper.find('[data-test="items-count"]');
     expect(itemsCount.text()).toEqual('13');
-  });
-
-  it('filters by incomplete', () => {
-    const itemsCount = wrapper.find('[data-test="items-count"]');
-    expect(itemsCount.text()).toEqual('35');
   });
 
   afterEach(() => {
