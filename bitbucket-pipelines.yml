@@ -3,6 +3,7 @@ pipelines:
     - parallel:
       - step:
           name: Build and Deploy Frontend
+          size: 2x
           image: gioatsomoglobal/devopstools:0.4.3
           deployment: Test
           services:
