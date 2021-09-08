@@ -13,10 +13,13 @@ export interface InputTextProps extends Omit<InputBaseProps, 'type'> {
 
 const InputText: React.FC<InputTextProps> = ({
   id,
+  size,
   label,
   value,
   isDisabled = false,
   error,
+  required,
+  optional,
   helperText,
   onChange,
   icon,
@@ -27,26 +30,30 @@ const InputText: React.FC<InputTextProps> = ({
         id={id}
         data-test="component-input-text"
         type="text"
+        size={size}
         label={label}
         value={value}
         isDisabled={isDisabled}
         error={error}
+        required={required}
+        optional={optional}
         helperText={helperText}
         onChange={onChange}
-      />
-      {icon && (
-        <Icon
-          src={icon}
-          size={IconSize.medium}
-          color={
-            !isDisabled
-              ? typeof error !== 'string'
-                ? color.theme.blueMid
-                : color.alert.red
-              : color.base.grey
-          }
-        />
-      )}
+      >
+        {icon && (
+          <Icon
+            src={icon}
+            size={IconSize.medium}
+            color={
+              !isDisabled
+                ? typeof error !== 'string'
+                  ? color.theme.blueMid
+                  : color.alert.red
+                : color.base.grey
+            }
+          />
+        )}
+      </Input>
     </Styled.wrapper>
   );
 };
