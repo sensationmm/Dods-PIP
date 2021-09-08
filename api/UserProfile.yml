@@ -158,7 +158,7 @@ paths:
             minimum: 0
             maximum: 100
             example: 50
-            allowEmptyValue: true
+          allowEmptyValue: true
       responses:
         '200':
           description: List of User Profiles in the system
@@ -239,9 +239,8 @@ components:
               format: uuid
               example: d290f1ss-6c54-4b01-98e6-d701748f7151
     Role:
-      type: object
-      required:
-        id:
+      - type: object
+        required:
           - id
           - title
           - dods_role
