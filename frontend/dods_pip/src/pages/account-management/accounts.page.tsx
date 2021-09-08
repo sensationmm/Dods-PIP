@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import React from 'react';
 
-import Checkbox from '../../components/_form/Checkbox';
 import InputSearch from '../../components/_form/InputSearch';
 import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
@@ -15,7 +14,7 @@ import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import MockDataClientAccounts from '../../mocks/data/client-accounts.json';
-import * as Styled from './clients.styles';
+import * as Styled from './accounts.styles';
 
 type AccountSubscription = 'level1' | 'level2' | 'level3' | 'level4';
 
@@ -36,16 +35,15 @@ type ClientAccount = {
 
 type ClientAccounts = ClientAccount[];
 
-interface ClientsProps extends LoadingHOCProps {}
+interface AccountsProps extends LoadingHOCProps {}
 
-export const Clients: React.FC<ClientsProps> = () => {
+export const Accounts: React.FC<AccountsProps> = () => {
   const accountsList = MockDataClientAccounts.accounts as ClientAccounts;
   const [showFilter, setShowFilter] = React.useState<boolean>(true);
   const [filterSearchText, setFilterSearchText] = React.useState<string>('');
   const [filterAZ, setFilterAZ] = React.useState<string>('');
   const [filterSubscription, setFilterSubscription] = React.useState<string>('');
   const [filterLocation, setFilterLocation] = React.useState<string>('');
-  const [filterIncomplete, setFilterIncomplete] = React.useState<boolean>(false);
 
   const filterAccounts = (data: ClientAccounts) => {
     let filteredData: ClientAccounts = data;
@@ -73,10 +71,6 @@ export const Clients: React.FC<ClientsProps> = () => {
       filteredData = filteredData.filter((item: ClientAccount) => item.location === filterLocation);
     }
 
-    if (filterIncomplete) {
-      filteredData = filteredData.filter((item: ClientAccount) => item.completed);
-    }
-
     return filteredData;
   };
 
@@ -98,7 +92,7 @@ export const Clients: React.FC<ClientsProps> = () => {
           <Breadcrumbs
             history={[
               { href: '/account-management', label: 'Account Management' },
-              { href: '/account-management/clients', label: 'Clients' },
+              { href: '/account-management/accounts', label: 'Accounts' },
             ]}
           />
 
@@ -109,7 +103,7 @@ export const Clients: React.FC<ClientsProps> = () => {
             <Button isSmall icon={Icons.IconAdd} label="Add Client Account" />
           </Styled.header>
 
-          <Spacer size={17} />
+          <Spacer size={12} />
 
           <Styled.filterContainer>
             <Styled.filterToggle>
@@ -158,12 +152,6 @@ export const Clients: React.FC<ClientsProps> = () => {
                   <option value="south-america">South America</option>
                   <option value="asia">Asia</option>
                 </select>
-                <Checkbox
-                  id="filter-completed"
-                  isChecked={filterIncomplete}
-                  onChange={setFilterIncomplete}
-                  label="Show only completed accounts"
-                />
               </Styled.filterContentCol>
 
               <Styled.filterContentCol>
@@ -201,4 +189,4 @@ export const Clients: React.FC<ClientsProps> = () => {
   );
 };
 
-export default LoadingHOC(Clients);
+export default LoadingHOC(Accounts);
