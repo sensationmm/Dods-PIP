@@ -217,6 +217,23 @@ components:
               type: string
               format: uuid
               example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    Role:
+      type: object
+      required:
+        - id
+        - title
+        - dods_role
+      properties:
+        id:
+            type: string
+            format: uuid
+            example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        title:
+            type: string
+            example: Dods Contractor
+        dods_role:
+            description: Indicates if role is dods internal role
+            type: boolean
 
     UserProfileWithRole:
       allOf: # Combines the BasicErrorModel and the inline model
@@ -238,20 +255,4 @@ components:
               type: string
               format: uuid
               example: d290f1ss-6c54-4b01-98e6-d701748f7151
-    Role:
-      - type: object
-        required:
-          - id
-          - title
-          - dods_role
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: d290f1ss-6c54-4b01-98e6-d701748f7151
-        title:
-          type: string
-          example: Dods Contractor
-        dods_role:
-          description: Indicates if role is dods internal role
-          type: boolean
+
