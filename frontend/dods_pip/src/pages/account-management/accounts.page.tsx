@@ -159,6 +159,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   id="filter-search"
                   onChange={setFilterSearchText}
                   value={filterSearchText}
+                  size="small"
                 />
               </Styled.filterContentCol>
             </Styled.filterContent>
