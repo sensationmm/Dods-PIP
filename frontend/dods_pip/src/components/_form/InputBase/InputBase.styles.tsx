@@ -50,7 +50,6 @@ export const input = styled.input`
   margin-bottom: 2px;
   border-radius: 8px;
   color: ${color.theme.blueMid};
-  font-size: 14px;
   padding: ${spacing(3)};
   box-sizing: border-box;
   font-family: 'Open Sans';
