@@ -6,14 +6,12 @@ import { Icons } from '../../Icon/assets';
 import Input, { InputBaseProps } from '../InputBase';
 import * as Styled from './InputSearch.styles';
 
-export interface InputSearchProps extends Omit<InputBaseProps, 'type' | 'label'> {
-  label?: string;
-}
+export interface InputSearchProps extends Omit<InputBaseProps, 'type'> {}
 
 const InputSearch: React.FC<InputSearchProps> = ({
   id,
   size,
-  label = 'Search...',
+  label,
   value,
   isDisabled = false,
   error,
@@ -37,6 +35,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
         optional={optional}
         helperText={helperText}
         onChange={onChange}
+        placeholder={'Search...'}
       >
         <Icon
           src={Icons.IconSearch}
