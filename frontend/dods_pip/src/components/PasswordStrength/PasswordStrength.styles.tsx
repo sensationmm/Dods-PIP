@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
 import color from '../../globals/color';
-import mediaQueries from '../../globals/media';
+import media from '../../globals/media';
 import spacing from '../../globals/spacing';
 
 export const wrapper = styled.div`
   width: 100%;
 
-  ${mediaQueries('md')`
+  ${media.greaterThan('md')`
     display: grid;
     grid-template-columns: 1fr 1fr;
   `}

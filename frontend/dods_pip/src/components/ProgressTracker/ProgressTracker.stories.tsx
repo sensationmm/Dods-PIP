@@ -13,4 +13,13 @@ const Template: Story<ProgressTrackerProps> = (args) => <ProgressTracker {...arg
 
 export const Primary = Template.bind({});
 
-Primary.args = {};
+Primary.args = {
+  condensed: false,
+  activeStep: 1,
+  steps: [
+    { label: 'Project Overview' },
+    { label: 'Project Tags' },
+    { label: 'Project Setup' },
+    { label: 'Lorem ipsum' },
+  ],
+};
