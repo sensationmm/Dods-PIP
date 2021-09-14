@@ -9,10 +9,8 @@ type SelectItem = {
   value: string;
 };
 
-export interface SelectProps extends InputTextProps {
-  // selected?: string;
+export interface SelectProps extends Omit<InputTextProps, 'icon'> {
   options: SelectItem[];
-  // placeholder?: string;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -46,7 +44,7 @@ const Select: React.FC<SelectProps> = ({
       <Styled.select>
         <InputText
           id={id}
-          data-test="component-select-value"
+          data-test="select-input"
           size={size}
           label={label}
           value={value !== '' ? parseValue() : placeholder}
@@ -55,22 +53,30 @@ const Select: React.FC<SelectProps> = ({
           required={required}
           optional={optional}
           helperText={helperText}
-          onChange={onChange}
+          onChange={() => setIsOpen(true)}
           icon={isOpen ? Icons.IconChevronUp : Icons.IconChevronDown}
-        >
-          <Styled.dropdown open={isOpen}>
-            {options.map((item, count) => (
-              <Styled.dropdownItem
-                key={`option-${count}`}
-                size={size}
-                onClick={() => setValue(item.value)}
-              >
-                {item.name}
-              </Styled.dropdownItem>
-            ))}
-          </Styled.dropdown>
-        </InputText>
-        <Styled.selectTrigger onClick={() => setIsOpen(!isOpen)} />
+          css={{ pointerEvents: 'none' }}
+          onFocus={() => setIsOpen(true)}
+          tabIndex={1}
+        />
+        {!isDisabled && (
+          <Styled.selectTrigger data-test="select-trigger" onClick={() => setIsOpen(!isOpen)} />
+        )}
+        <Styled.dropdown open={isOpen} hasHelper={helperText !== ''} hasError={error !== undefined}>
+          {options.map((item, count) => (
+            <Styled.dropdownItem
+              key={`option-${count}`}
+              data-test={`option-${count}`}
+              size={size}
+              onClick={() => setValue(item.value)}
+              hasError={error !== undefined}
+              tabIndex={2}
+              onKeyPress={() => setValue(item.value)}
+            >
+              {item.name}
+            </Styled.dropdownItem>
+          ))}
+        </Styled.dropdown>
       </Styled.select>
     </Styled.wrapper>
   );

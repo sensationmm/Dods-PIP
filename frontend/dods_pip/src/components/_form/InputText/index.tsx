@@ -22,6 +22,9 @@ const InputText: React.FC<InputTextProps> = ({
   optional,
   helperText,
   onChange,
+  onFocus,
+  onBlur,
+  tabIndex,
   icon,
 }) => {
   return (
@@ -39,6 +42,9 @@ const InputText: React.FC<InputTextProps> = ({
         optional={optional}
         helperText={helperText}
         onChange={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        tabIndex={tabIndex}
       >
         {icon && (
           <Icon

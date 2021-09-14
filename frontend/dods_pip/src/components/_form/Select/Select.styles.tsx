@@ -23,18 +23,20 @@ export const selectTrigger = styled.div`
 
 type DropdownProps = {
   open: boolean;
+  hasHelper: boolean;
+  hasError: boolean;
 };
 
 export const dropdown = styled.div<DropdownProps>`
   display: ${(p) => (p.open ? 'block' : 'none')};
   position: absolute;
-  margin-top: -8px;
+  margin-top: ${(p) => (p.hasHelper || p.hasError ? '-35px' : '-8px')};
   padding-top: 8px;
   width: 100%;
   border-radius: 0 0 8px 8px;
   overflow: hidden;
-  box-shadow: ${elevation.dropShadow1};
-  background: ${color.shadow.blue};
+  box-shadow: ${elevation.selectShadow};
+  background: ${(p) => (p.hasError ? color.shadow.red : color.shadow.blue)};
 
   &:before {
     content: '';
@@ -42,17 +44,18 @@ export const dropdown = styled.div<DropdownProps>`
     top: 8px;
     width: 100%;
     height: 2px;
-    background: ${color.theme.blueMid};
+    background: ${(p) => (p.hasError ? color.alert.red : color.theme.blueMid)};
   }
 `;
 
 type DropdownItemProps = {
   size: 'small' | 'medium' | 'large';
+  hasError: boolean;
 };
 
 export const dropdownItem = styled.div<DropdownItemProps>`
-  color: ${color.theme.blueMid};
-  background: ${color.shadow.blue};
+  color: ${(p) => (p.hasError ? color.alert.red : color.theme.blueMid)};
+  background: ${(p) => (p.hasError ? color.shadow.red : color.shadow.blue)};
   padding: ${(p) =>
     p.size === 'large'
       ? spacing(3)
