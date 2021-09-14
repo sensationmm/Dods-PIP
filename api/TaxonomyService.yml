@@ -1,0 +1,247 @@
+openapi: 3.0.0
+info:
+  description: Dods Taxonomy Service API
+  version: "1.0.0"
+  title: Taxonomy Service API
+paths:
+  /taxonomies:
+    get:
+      summary: List all Taxonomies
+      parameters:
+        - in: query
+          name: limit
+          description: Limit of records for each page
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 100
+            example: 50
+          allowEmptyValue: true
+        - in: query
+          name: start
+          description: Start record from result
+          schema:
+            type: integer
+            format: int32
+            example: 120
+          allowEmptyValue: true
+        - in: query
+          name: tags
+          description: Search by tags
+          schema:
+            type: string
+          allowEmptyValue: true
+        - in: query
+          name: parent
+          description: Search by parent
+          schema:
+            type: string
+          allowEmptyValue: true
+        - in: query
+          name: id
+          description: Search by id
+          schema:
+            type: string
+            example: 51436c1b-f898-4063-a040-20aa53d1f8ea
+          allowEmptyValue: true
+      responses:
+        '200':
+          description: List of Taxonomies in the system
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/TaxonomyEntity'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Does not have correct permissions
+
+
+components:
+  schemas:
+    TaxonomyEntity:
+      type: object
+      required: [
+        id
+        language
+        typeOfClue
+        exactMatch
+        inScheme
+        type
+        ]
+      properties:
+        id:
+          type: string
+          example: http://www.dods.co.uk/taxonomy/instance/concept/68f06cdf-a497-4873-bd4b-5e9e17ca24f6
+        abbreviation:
+          type: object
+          properties:
+            value:
+              type: string
+              example: PPP
+            language:
+              type: string
+              example: en
+        altLabel:
+          type: object
+          properties:
+            en:
+              type: string
+              example: medical appliances
+            de:
+              type: string
+              example: medizinische Ausrüstung
+            fr:
+              type: string
+              example: équipement médical
+        broader:
+          type: string
+          example: 'http://www.dods.co.uk/taxonomy/instance/Topics/61f9ace7-ed24-4b2b-8f1e-01c6f1774941'
+        created:
+          type: string
+          format: date-time
+          example: '2020-11-11T11:06:38.771Z'
+        defaultLang:
+          type: string
+          example: en
+        deprecated:
+          type: boolean
+          example: true
+        editorialNote:
+          type: object
+          properties:
+            en:
+              type: string
+              example: EU Monitoring
+        exactMatch:
+          type: boolean
+          example: true
+        hasComponent:
+          type: string
+          example: ["http://www.dods.co.uk/taxonomy/instance/MediaTypes","http://www.dods.co.uk/taxonomy/instance/Organisations"]
+        hasTopConcept:
+          type: string
+          example: ["http://www.dods.co.uk/taxonomy/instance/MediaTypes/20cef6a6-c680-43bc-81ad-ae75e8b2d0be","http://www.dods.co.uk/taxonomy/instance/MediaTypes/42b8202e-b1b8-4250-95c4-989cde4265b7","http://www.dods.co.uk/taxonomy/instance/MediaTypes/661ab2cb-0114-4a3d-b5f9-2be12fc4bd95"]
+        deleted:
+          type: boolean
+          example: false
+        skosXL:
+          type: boolean
+          example: true
+        useSlashIRI:
+          type: boolean
+          example: true
+        identifier:
+          type: string
+          example: d1889b13-d22b-4ff0-bd9f-fcafc5a808cc
+        inScheme:
+          type: string
+          example: 'https://www.dodsgroup.com/taxonomy/instance/Topics'
+        isComponentOf:
+          type: string
+          example: '"https://grafsync.graphifi.com/data/project/13293e13-1a9b-4365-ad65-886f80393682'
+        isXlAltLabelOf:
+          type: string
+          example: 'http://www.dods.co.uk/taxonomy/instance/concept/e5d3f4ef-e082-4752-a754-b2ef468974e2'
+        isXlPrefLabelOf:
+          type: string
+          example: 'http://www.dods.co.uk/taxonomy/instance/Topics/6f086670-9fa7-48ff-8c4a-8d5bacaf61b1'
+        language:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "http://psi.oasis-open.org/iso/639/#deu"
+
+        legacyID:
+          type: string
+          example: '838'
+        literalForm:
+          type: object
+          properties:
+            en:
+              type: string
+              example: validation of expenditure
+            de:
+              type: string
+              example: Wiederaufforstung
+            fr:
+              type: string
+              example: tank
+        modified:
+          type: string
+          format: date-time
+          example: '2020-11-11T11:06:38.771Z'
+        narrower:
+          type: string
+          example: ["http://www.dods.co.uk/taxonomy/instance/Topics/96dc0777-2e6b-404b-911e-612f1bc0b8e0", "http://eurovoc.europa.eu/47", "http://www.dods.co.uk/taxonomy/instance/Topics/c30abebb-727c-4d67-8054-66245d6c4826", "http://www.dods.co.uk/taxonomy/instance/Topics/e5b03a63-3892-4d4e-b524-833d8daaa64d"]
+        notation:
+          type: string
+          example: ["EU"]
+        prefLabel:
+          type: object
+          properties:
+            en:
+              type: string
+              example: Right2Water
+            de:
+              type: string
+              example: zwischenstaatliches Abkommen
+            fr:
+              type: string
+              example: accord intergouvernemental
+        projectColour:
+          type: string
+          example: '00A9E0'
+        projectLang:
+          type: string
+          example: ["de","en","fr"]
+        related:
+          type: string
+          example: 'http://eurovoc.europa.eu/4930'
+        relatedMatch:
+          type: string
+          example: 'http://xmlns.com/foaf/0.1/Organization/5CC6A5884336894291A7647CCB63F057'
+        revisionNo:
+          type: number
+          example:
+        scopeNote:
+          type: object
+          properties:
+            und:
+              type: string
+              example: Unlawful acts in general.
+        title:
+          type: object
+          properties:
+            en:
+              type: string
+              example: Political Parties
+        topConceptOf:
+          type: string
+          example:
+        type:
+          type: string
+          example:
+        typeOfClue:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 'http://taxo.dods.co.uk/onto#ClueTypeStandard'
+        useUuidIRI:
+          type: boolean
+          example: true
+        xlAltLabel:
+          type: string
+          example: ["http://eurovoc.europa.eu/176539","http://eurovoc.europa.eu/176540","http://eurovoc.europa.eu/219562","http://eurovoc.europa.eu/234193"]
+        xlLabelRelation:
+          type: string
+          example: ["http://eurovoc.europa.eu/218126"]
+        xlPrefLabel:
+          type: string
+          example: "http://www.dods.co.uk/taxonomy/instance/concept/4735"
