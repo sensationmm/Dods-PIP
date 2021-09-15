@@ -14,10 +14,13 @@ const Template: Story<InputSearchProps> = (args) => <InputSearch {...args} />;
 export const Primary = Template.bind({});
 
 Primary.args = {
-  label: '',
+  label: 'Label',
   value: '',
+  size: 'large',
   isDisabled: false,
   error: undefined,
+  required: false,
+  optional: false,
   helperText: '',
 };
 

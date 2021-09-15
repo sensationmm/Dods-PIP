@@ -22,7 +22,7 @@ export const textarea = styled.textarea<TextAreaProps>`
   border: 0;
   outline: 0;
   background: ${({ inline }) => !inline && color.shadow.blue};
-  margin-bottom: 1px;
+  margin-bottom: 2px;
   border-radius: 8px 8px 0 0;
   color: ${color.theme.blueMid};
   font-size: 14px;
@@ -33,10 +33,11 @@ export const textarea = styled.textarea<TextAreaProps>`
   resize: none;
 
   &:hover {
+    margin-bottom: 1px;
     border-bottom: ${({ inline }) => !inline && `1px solid ${color.theme.blueMid}`};
   }
   &:focus {
-    margin-bottom: 0;
+    margin-bottom: 0px;
     border-bottom: ${({ inline }) => !inline && `2px solid ${color.theme.blueMid}`};
     color: ${color.base.black};
   }

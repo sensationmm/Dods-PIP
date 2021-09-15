@@ -6,38 +6,76 @@ import Text from '../../Text';
 import * as Styled from './InputBase.styles';
 
 type InputType = 'text' | 'search' | 'password';
+type InputSize = 'small' | 'medium' | 'large';
 
 export interface InputBaseProps {
   id: string;
   type: InputType;
-  label: string;
+  size?: InputSize;
+  label?: string;
   value: string;
   isDisabled?: boolean;
   error?: string | undefined;
+  required?: boolean;
+  optional?: boolean;
   helperText?: string;
   onChange: (val: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder?: string;
+  tabIndex?: number;
 }
 
 const InputBase: React.FC<InputBaseProps> = ({
   id,
   type,
+  size = 'large',
   label,
   value,
   isDisabled = false,
   error = undefined,
+  required = false,
+  optional = false,
   helperText,
   onChange,
+  onFocus,
+  onBlur,
+  children,
+  placeholder,
+  tabIndex,
 }) => {
   return (
     <Styled.wrapper data-test="component-input-base">
-      <Styled.input
-        id={id}
-        data-test="component-input-base-input"
-        className={classNames({ error: typeof error === 'string', disabled: isDisabled })}
-        type={type}
-        value={value || label}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      {label && (
+        <Styled.label data-test="field-label">
+          {required && <Styled.requiredStar>*</Styled.requiredStar>}
+          <Text type="label" color={color.theme.blue}>
+            {label}
+          </Text>
+          {required && <Styled.requiredLabel>(Required)</Styled.requiredLabel>}
+          {!required && optional && <Styled.requiredLabel>(Optional)</Styled.requiredLabel>}
+        </Styled.label>
+      )}
+      <Styled.inputWrapper>
+        <Styled.input
+          id={id}
+          data-test="component-input-base-input"
+          className={classNames({
+            error: typeof error === 'string',
+            disabled: isDisabled,
+            small: size === 'small',
+            medium: size === 'medium',
+          })}
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          tabIndex={tabIndex}
+        />
+        {children}
+      </Styled.inputWrapper>
       {(helperText || typeof error === 'string') && (
         <Text
           data-test="component-input-base-helper"
