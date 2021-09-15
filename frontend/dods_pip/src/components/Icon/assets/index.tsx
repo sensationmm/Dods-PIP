@@ -7,6 +7,7 @@ import IconChevronLeft from './icon-chevronLeft.svg';
 import IconChevronRight from './icon-chevronRight.svg';
 import IconChevronUp from './icon-chevronUp.svg';
 import IconCross from './icon-cross.svg';
+import IconGrid from './icon-grid.svg';
 import IconHide from './icon-hide.svg';
 import IconSearch from './icon-search.svg';
 import IconShow from './icon-show.svg';
@@ -27,12 +28,15 @@ export enum Icons {
   IconChevronRight = 'IconChevronRight',
   IconChevronUp = 'IconChevronUp',
   IconCross = 'IconCross',
+  IconGrid = 'IconGrid',
   IconHide = 'IconHide',
   IconSearch = 'IconSearch',
   IconShow = 'IconShow',
   IconTick = 'IconTick',
   IconTickBold = 'IconTickBold',
 }
+
+export type IconType = keyof typeof Icons;
 
 const IconLibrary = {
   IconAdd,
@@ -44,6 +48,7 @@ const IconLibrary = {
   IconChevronRight,
   IconChevronUp,
   IconCross,
+  IconGrid,
   IconHide,
   IconSearch,
   IconShow,

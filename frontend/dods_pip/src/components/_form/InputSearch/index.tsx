@@ -6,43 +6,49 @@ import { Icons } from '../../Icon/assets';
 import Input, { InputBaseProps } from '../InputBase';
 import * as Styled from './InputSearch.styles';
 
-export interface InputSearchProps extends Omit<InputBaseProps, 'type' | 'label'> {
-  label?: string;
-}
+export interface InputSearchProps extends Omit<InputBaseProps, 'type'> {}
 
 const InputSearch: React.FC<InputSearchProps> = ({
   id,
-  label = 'Search...',
+  size,
+  label,
   value,
   isDisabled = false,
   error,
+  required,
+  optional,
   helperText,
   onChange,
 }) => {
   return (
     <Styled.wrapper>
-      <Icon
-        src={Icons.IconSearch}
-        size={IconSize.medium}
-        color={
-          !isDisabled
-            ? typeof error !== 'string'
-              ? color.theme.blueMid
-              : color.alert.red
-            : color.base.grey
-        }
-      />
       <Input
         id={id}
         data-test="component-input-search"
         type="text"
+        size={size}
         label={label}
         value={value}
         isDisabled={isDisabled}
         error={error}
+        required={required}
+        optional={optional}
         helperText={helperText}
         onChange={onChange}
-      />
+        placeholder={'Search...'}
+      >
+        <Icon
+          src={Icons.IconSearch}
+          size={IconSize.medium}
+          color={
+            !isDisabled
+              ? typeof error !== 'string'
+                ? color.theme.blueMid
+                : color.alert.red
+              : color.base.grey
+          }
+        />
+      </Input>
     </Styled.wrapper>
   );
 };

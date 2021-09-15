@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
-export const Icon = styled.span`
-  display: inline-block;
+export const Icon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

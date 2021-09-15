@@ -2,9 +2,8 @@ pipelines:
   default:
     - parallel:
       - step:
-          name: Build and Deploy Frontend
-          image: gioatsomoglobal/devopstools:0.4.3
-          deployment: Test
+          name: Build Frontend
+          image: node:alpine
           services:
             - docker
           caches:
@@ -17,19 +16,26 @@ pipelines:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
             - cd ${FRONTEND_SRC}
             - yarn install
-            - yarn lint
-            - yarn build-storybook
             - yarn test
-            - aws s3 rm s3://test-dods-pip-storybook/
-            - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
-            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
-            - docker build -t ${IMAGE_NAME} .
-            - docker push ${IMAGE_NAME}
-            - cd ../../tools
-            - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+            - yarn lint
+            - yarn build
+            - yarn build-storybook
 
       - step:
           name: Deploy Graphologi Webhook
+          image: gioatsomoglobal/devopstools:0.2.0
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/graphologi-integration/**"
+          script:
+            - cd services/graphologi-integration
+            - npm install
+            - serverless deploy
+      - step:
+          name: Deploy service-user-profile
           image: gioatsomoglobal/devopstools:0.2.0
           caches:
             - node
@@ -61,15 +67,38 @@ pipelines:
   branches:
     master:
       - step:
-          name: End to End testing
+          name: Build and Deploy Frontend
+          size: 2x
+          image: gioatsomoglobal/devopstools:0.4.3
+          deployment: Test
+          services:
+            - docker
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "frontend/dods_pip/**"
           script:
-            - echo 'Define and run end e2e testing'
+            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
+            - cd ${FRONTEND_SRC}
+            - yarn install
+            - yarn lint
+            - yarn build-storybook
+            - yarn test
+            - aws s3 rm s3://test-dods-pip-storybook/
+            - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
+            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
+            - docker build -t ${IMAGE_NAME} .
+            - docker push ${IMAGE_NAME}
+            - cd ../../tools
+            - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
 
   custom:
     deployment-to-staging:
       - step:
           name: Deploy to staging environment
-          image: gioatsomoglobal/devopstools:0.2.0
+          image: gioatsomoglobal/devopstools:0.4.3
           deployment: Staging
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
