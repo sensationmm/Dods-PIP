@@ -1,0 +1,511 @@
+openapi: 3.0.0
+
+info:
+
+  description: Dods User Profile API
+
+  version: "1.0.0"
+
+  title: User Profile API
+
+paths:
+
+  /user:
+
+    get:
+
+      summary: List all User Profiles
+
+      parameters:
+
+        - in: query
+
+          name: limit
+
+          description: Maximum number of User Profiles to return
+
+          schema:
+
+            type: integer
+
+            format: int32
+
+            minimum: 0
+
+            maximum: 100
+
+            example: 50
+
+          allowEmptyValue: true
+
+        - in: query
+
+          name: with_roles
+
+          description: Return User Profiles with role data
+
+          schema:
+
+            type: boolean
+
+          allowEmptyValue: true
+
+      responses:
+
+        '200':
+
+          description: List of User Profiles in the system
+
+          content:
+
+            application/json:
+
+              schema:
+
+                type: array
+
+                items:
+
+                  oneOf:
+
+                    - $ref: '#/components/schemas/UserProfile'
+
+                    - $ref: '#/components/schemas/UserProfileWithRole'
+
+        '401':
+
+          description: Not authenticated
+
+        '403':
+
+          description: Does not have correct permissions
+
+    post:
+
+      summary: Add new User Profile
+
+      requestBody:
+
+        description: User Profile to create
+
+        required: true
+
+        content:
+
+          application/json:
+
+            schema:
+
+              $ref: '#/components/schemas/UserProfileCreate'
+
+      responses:
+
+        '200':
+
+          description: Succesfully created User Profile
+
+          content:
+
+            application/json:
+
+              schema:
+
+                $ref: '#/components/schemas/UserProfile'
+
+        '400':
+
+          description: Invalid User Profile supplied
+
+        '401':
+
+          description: Not authenticated
+
+        '403':
+
+          description: Does not have correct permissions
+
+        '409':
+
+          description: an existing item already exists
+
+  /user/{userId}:
+
+    parameters:
+
+      - in: path
+
+        name: userId
+
+        schema:
+
+          type: string
+
+          format: uuid
+
+        required: true
+
+        description: UUID of the User to get
+
+    get:
+
+      summary: Get an User by ID
+
+      parameters:
+
+        - in: query
+
+          name: with_roles
+
+          description: Return User Profiles with role data
+
+          schema:
+
+            type: boolean
+
+          allowEmptyValue: true
+
+      responses:
+
+        '200':
+
+          description: Specified client account
+
+          content:
+
+            application/json:
+
+              schema:
+
+                oneOf:
+
+                  - $ref: '#/components/schemas/UserProfile'
+
+                  - $ref: '#/components/schemas/UserProfileWithRole'
+
+        '401':
+
+          description: Not authenticated
+
+        '403':
+
+          description: Does not have correct permissions
+
+        '404':
+
+          description: Client Account not found
+
+    put:
+
+      summary: Update User Profile
+
+      requestBody:
+
+        description: User Profile update
+
+        required: true
+
+        content:
+
+          application/json:
+
+            schema:
+
+              $ref: '#/components/schemas/UserProfile'
+
+      responses:
+
+        '200':
+
+          description: Succesfully updated User Profile
+
+          content:
+
+            application/json:
+
+              schema:
+
+                $ref: '#/components/schemas/UserProfile'
+
+        '400':
+
+          description: Invalid User Profile supplied
+
+        '401':
+
+          description: Not authenticated
+
+        '403':
+
+          description: Does not have correct permissions
+
+        '409':
+
+          description: an existing item already exists
+
+  /user-by-name/{nameOrPartial}:
+
+    parameters:
+
+      - in: path
+
+        name: nameOrPartial
+
+        schema:
+
+          type: string
+
+        required: true
+
+        description: Name or partial name to search by
+
+    get:
+
+      summary: Get a User by name
+
+      responses:
+
+        '200':
+
+          description: Found Users
+
+          content:
+
+            application/json:
+
+              schema:
+
+                type: array
+
+                items:
+
+                  $ref: '#/components/schemas/UserProfile'
+
+        '401':
+
+          description: Not authenticated
+
+        '403':
+
+          description: Does not have correct permissions
+
+        '404':
+
+          description: No Users found
+
+  /role:
+
+    get:
+
+      summary: List all Roles
+
+      parameters:
+
+        - in: query
+
+          name: limit
+
+          description: Maximum number of Roles to return
+
+          schema:
+
+            type: integer
+
+            format: int32
+
+            minimum: 0
+
+            maximum: 100
+
+            example: 50
+
+          allowEmptyValue: true
+
+      responses:
+
+        '200':
+
+          description: List of User Profiles in the system
+
+          content:
+
+            application/json:
+
+              schema:
+
+                type: array
+
+                items:
+
+                  $ref: '#/components/schemas/Role'
+
+        '401':
+
+          description: Not authenticated
+
+        '403':
+
+          description: Does not have correct permissions
+
+
+
+components:
+
+  schemas:
+
+    UserProfileBase:
+
+      type: object
+
+      required:
+
+        - title
+
+        - first_name
+
+        - last_name
+
+        - primary_email_address
+
+        - telephone_number_1
+
+      properties:
+
+        title:
+
+          type: string
+
+          example: Dr
+
+        first_name:
+
+         type: string
+
+         example: Jane
+
+        last_name:
+
+          type: string
+
+          example: Blogs
+
+        primary_email_address:
+
+          type: string
+
+          example: Jane.Blogs@email.com
+
+        seconday_email_address:
+
+          type: string
+
+          example: Jane.Blogs@email.com
+
+        telephone_number_1:
+
+          type: string
+
+          example: '+442071838750'
+
+        telephone_number_2:
+
+          type: string
+
+          example: '+442071838750'
+
+    UserProfile:
+
+      allOf:     # Combines the BasicErrorModel and the inline model
+
+        - $ref: '#/components/schemas/UserProfileBase'
+
+        - type: object
+
+          required:
+
+            - id
+
+          properties:
+
+            id:
+
+              type: string
+
+              format: uuid
+
+              example: d290f1ss-6c54-4b01-98e6-d701748f7151
+
+    Role:
+
+      type: object
+
+      required:
+
+        - id
+
+        - title
+
+        - dods_role
+
+      properties:
+
+        id:
+
+            type: string
+
+            format: uuid
+
+            example: d290f1ss-6c54-4b01-98e6-d701748f7151
+
+        title:
+
+            type: string
+
+            example: Dods Contractor
+
+        dods_role:
+
+            description: Indicates if role is dods internal role
+
+            type: boolean
+
+
+    UserProfileWithRole:
+
+      allOf: # Combines the BasicErrorModel and the inline model
+
+        - $ref: '#/components/schemas/UserProfile'
+
+        - type: object
+
+          required:
+
+            - role
+
+          properties:
+
+            role:
+
+              $ref: '#/components/schemas/Role'
+
+    UserProfileCreate:
+
+      allOf:     # Combines the BasicErrorModel and the inline model
+
+        - $ref: '#/components/schemas/UserProfileBase'
+
+        - type: object
+
+          required:
+
+            - role_id
+
+          properties:
+
+            role_id:
+
+              type: string
+
+              format: uuid
+
+              example: d290f1ss-6c54-4b01-98e6-d701748f7151
+
