@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   title: Client Account API
 paths:
-  /:
+  /clientaccount:
     get:
       summary: List all Client Accounts
       parameters:
@@ -29,7 +29,6 @@ paths:
           description: Not authenticated
         '403':
           description: Does not have correct permissions
-  /clientaccount:
     post:
       summary: Create Client Account
       requestBody:
