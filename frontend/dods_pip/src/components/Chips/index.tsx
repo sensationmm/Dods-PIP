@@ -76,7 +76,7 @@ const Chips: React.FC<ChipsProps> = ({
         </Text>
       </Styled.contentWrapper>
       {hovering && (
-        <Styled.closeButton disabled={disabled} onClick={onCloseClick}>
+        <Styled.closeButton selected={selected} disabled={disabled} onClick={onCloseClick}>
           <Icon
             src={Icons.IconCross}
             size={IconSize.small}
