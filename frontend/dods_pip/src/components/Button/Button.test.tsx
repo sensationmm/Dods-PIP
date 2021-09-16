@@ -53,8 +53,8 @@ describe('Button', () => {
     expect(button.hasClass('small')).toEqual(true);
   });
 
-  it('renders icon override', () => {
-    const wrapper = shallow(<Button type={'secondary'} icon={Icons.IconAdd} />);
+  it('renders primary icon variant', () => {
+    const wrapper = shallow(<Button type={'primary'} icon={Icons.IconAdd} />);
     const button = wrapper.childAt(0);
 
     const icon = wrapper.find(Icon);
@@ -63,6 +63,19 @@ describe('Button', () => {
     expect(icon.props().size).toEqual(IconSize.large);
     expect(button.type().componentStyle.componentId).toEqual(
       Styled.primary.componentStyle.componentId,
+    );
+  });
+
+  it('renders secondary icon variant', () => {
+    const wrapper = shallow(<Button type={'secondary'} icon={Icons.IconAdd} />);
+    const button = wrapper.childAt(0);
+
+    const icon = wrapper.find(Icon);
+
+    expect(icon.length).toEqual(1);
+    expect(icon.props().size).toEqual(IconSize.large);
+    expect(button.type().componentStyle.componentId).toEqual(
+      Styled.secondary.componentStyle.componentId,
     );
   });
 });
