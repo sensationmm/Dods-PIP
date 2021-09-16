@@ -136,7 +136,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
       </Head>
 
       <main>
-        <Panel isWelcome>
+        <Panel isWelcome isNarrow>
           <Columns>
             <div>
               <Text type={'h1'}>Political Intelligence Platform</Text>

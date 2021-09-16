@@ -5,6 +5,14 @@ import { Icons } from '../../components/Icon/assets';
 
 import { Accounts } from './accounts.page';
 
+const mockRouterPush = jest.fn();
+jest.mock('next/router', () => ({
+  useRouter: jest
+    .fn()
+    .mockReturnValueOnce({ push: (arg) => mockRouterPush(arg), query: {} })
+    .mockReturnValue({ push: (arg) => mockRouterPush(arg), query: { code: 'abc' } }),
+}));
+
 describe('Account Management: Clients', () => {
   let wrapper;
 
@@ -33,6 +41,7 @@ describe('Account Management: Clients', () => {
     { ...defaultState, filterAZ: 'M' }, // filters by a-z
     { ...defaultState, filterSubscription: 'level2' }, // filters by subscription
     { ...defaultState, filterLocation: 'europe' }, // filters by location
+    defaultState, // navigates to create client flow
   ];
 
   let count = 0;
@@ -91,6 +100,12 @@ describe('Account Management: Clients', () => {
   it('filters by location', () => {
     const itemsCount = wrapper.find('[data-test="items-count"]');
     expect(itemsCount.text()).toEqual('13');
+  });
+
+  it('navigates to create client flow', () => {
+    const createClientButton = wrapper.find('[data-test="btn-create-client-account"]');
+    createClientButton.simulate('click');
+    expect(mockRouterPush).toHaveBeenCalledWith('/account-management/add-client');
   });
 
   afterEach(() => {

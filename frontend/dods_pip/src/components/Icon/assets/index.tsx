@@ -9,8 +9,10 @@ import IconChevronUp from './icon-chevronUp.svg';
 import IconCross from './icon-cross.svg';
 import IconGrid from './icon-grid.svg';
 import IconHide from './icon-hide.svg';
+import IconPerson from './icon-person.svg';
 import IconSearch from './icon-search.svg';
 import IconShow from './icon-show.svg';
+import IconSuitcase from './icon-suitcase.svg';
 import IconTick from './icon-tick.svg';
 import IconTickBold from './icon-tickBold.svg';
 
@@ -30,8 +32,10 @@ export enum Icons {
   IconCross = 'IconCross',
   IconGrid = 'IconGrid',
   IconHide = 'IconHide',
+  IconPerson = 'IconPerson',
   IconSearch = 'IconSearch',
   IconShow = 'IconShow',
+  IconSuitcase = 'IconSuitcase',
   IconTick = 'IconTick',
   IconTickBold = 'IconTickBold',
 }
@@ -50,8 +54,10 @@ const IconLibrary = {
   IconCross,
   IconGrid,
   IconHide,
+  IconPerson,
   IconSearch,
   IconShow,
+  IconSuitcase,
   IconTick,
   IconTickBold,
 } as TypeIconLibrary;
