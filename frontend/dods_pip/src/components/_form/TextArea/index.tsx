@@ -3,12 +3,14 @@ import React from 'react';
 
 import color from '../../../globals/color';
 import Text from '../../Text';
+import Label from '../Label';
 import * as Styled from './TextArea.styles';
 
 export interface TextAreaProps {
   id?: string;
   label?: string;
   required?: boolean;
+  optional?: boolean;
   characterLimit?: number;
   value?: string;
   placeholder?: string;
@@ -22,7 +24,8 @@ export interface TextAreaProps {
 const TextArea: React.FC<TextAreaProps> = ({
   id,
   label,
-  required,
+  required = false,
+  optional = false,
   characterLimit,
   value,
   placeholder,
@@ -49,33 +52,7 @@ const TextArea: React.FC<TextAreaProps> = ({
   return (
     <Styled.wrapper data-test="component-textarea">
       <Styled.topArea>
-        <div>
-          <Styled.labelWrapper>
-            {required && (
-              <Styled.requiredAsterisk>
-                <Text data-test="textarea-label-asterisk" type={'span'} color={color.alert.red}>
-                  *
-                </Text>
-              </Styled.requiredAsterisk>
-            )}
-            {label && (
-              <Text data-test="textarea-label" type={'body'}>
-                {label}
-              </Text>
-            )}
-            {required && (
-              <Styled.requiredHelper>
-                <Text
-                  data-test="textarea-label-required-text"
-                  type={'span'}
-                  color={color.base.grey}
-                >
-                  ( Required )
-                </Text>
-              </Styled.requiredHelper>
-            )}
-          </Styled.labelWrapper>
-        </div>
+        <div>{label && <Label label={label} required={required} optional={optional} />}</div>
         {hasCharacterLimit && (
           <Styled.requiredHelper>
             <Text data-test="textarea-label-character-limit" type={'span'}>

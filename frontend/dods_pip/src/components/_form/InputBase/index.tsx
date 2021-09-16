@@ -3,6 +3,7 @@ import React from 'react';
 
 import color from '../../../globals/color';
 import Text from '../../Text';
+import Label from '../Label';
 import * as Styled from './InputBase.styles';
 
 type InputType = 'text' | 'search' | 'password';
@@ -46,16 +47,7 @@ const InputBase: React.FC<InputBaseProps> = ({
 }) => {
   return (
     <Styled.wrapper data-test="component-input-base">
-      {label && (
-        <Styled.label data-test="field-label">
-          {required && <Styled.requiredStar>*</Styled.requiredStar>}
-          <Text type="label" color={color.theme.blue}>
-            {label}
-          </Text>
-          {required && <Styled.requiredLabel>(Required)</Styled.requiredLabel>}
-          {!required && optional && <Styled.requiredLabel>(Optional)</Styled.requiredLabel>}
-        </Styled.label>
-      )}
+      {label && <Label label={label} required={required} optional={optional} />}
       <Styled.inputWrapper>
         <Styled.input
           id={id}
