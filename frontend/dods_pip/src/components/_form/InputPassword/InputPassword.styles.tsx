@@ -14,8 +14,11 @@ export const wrapper = styled.div`
 
 export const toggle = styled.div`
   position: absolute;
+  display: flex;
+  align-items: center;
   z-index: 2;
   right: ${spacing(4)};
-  top: ${spacing(3)};
+  top: 50%;
+  transform: translateY(-50%);
   cursor: pointer;
 `;

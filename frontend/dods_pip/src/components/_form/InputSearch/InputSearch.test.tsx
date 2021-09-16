@@ -15,10 +15,10 @@ describe('InputSearch', () => {
     expect(component.length).toEqual(1);
   });
 
-  it('renders default label', () => {
+  it('renders default placeholder', () => {
     const wrapper = shallow(<InputSearch id="test" value={''} onChange={jest.fn} />);
     const component = wrapper.find(InputBase);
-    expect(component.props().label).toEqual('Search...');
+    expect(component.props().placeholder).toEqual('Search...');
   });
 
   it('renders label override', () => {

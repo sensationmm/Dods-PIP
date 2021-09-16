@@ -11,6 +11,7 @@
     "build-storybook": "build-storybook",
     "test": "jest",
     "test:watch": "jest --watch --coverage",
+    "test:watchAll": "jest --watchAll --coverage",
     "docker-build": "docker build . -t dods-pip",
     "docker": "docker run -p 3000:3000 dods-pip",
     "postinstall": "cd ../.. && husky install frontend/dods_pip/.husky"
@@ -24,6 +25,7 @@
     "react-dom": "17.0.2",
     "react-lottie": "^1.2.3",
     "styled-components": "^5.3.0",
+    "styled-media-query": "^2.1.2",
     "svg-react-loader": "^0.4.6",
     "swr": "^0.5.6"
   },

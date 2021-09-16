@@ -9,6 +9,8 @@ describe('InputBase onChange={jest.fn}', () => {
       <InputBase id="test" onChange={jest.fn} type="text" label="Example" value="Example" />,
     );
     const component = wrapper.find('[data-test="component-input-base"]');
+    const label = wrapper.find('[data-test="field-label"]');
+    expect(label.length).toEqual(1);
     expect(component.length).toEqual(1);
   });
 
@@ -20,12 +22,34 @@ describe('InputBase onChange={jest.fn}', () => {
     expect(component.props().value).toEqual('Value');
   });
 
-  it('renders label in field if no value', () => {
+  it('renders required state', () => {
     const wrapper = shallow(
-      <InputBase id="test" onChange={jest.fn} type="text" label="Label" value="" />,
+      <InputBase
+        id="test"
+        onChange={jest.fn}
+        type="text"
+        label="Label"
+        value="Value"
+        required={true}
+      />,
     );
-    const component = wrapper.find('[data-test="component-input-base-input"]');
-    expect(component.props().value).toEqual('Label');
+    const label = wrapper.find('[data-test="field-label"]');
+    expect(label.text()).toEqual('*<Text />(Required)');
+  });
+
+  it('renders optional state', () => {
+    const wrapper = shallow(
+      <InputBase
+        id="test"
+        onChange={jest.fn}
+        type="text"
+        label="Label"
+        value="Value"
+        optional={true}
+      />,
+    );
+    const label = wrapper.find('[data-test="field-label"]');
+    expect(label.text()).toEqual('<Text />(Optional)');
   });
 
   it('renders helper text if given', () => {
