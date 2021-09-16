@@ -3,10 +3,16 @@ import styled from 'styled-components';
 import color from '../../../globals/color';
 import elevation from '../../../globals/elevation';
 import spacing from '../../../globals/spacing';
+import { wrapper as InputText } from '../InputBase/InputBase.styles';
 
 export const wrapper = styled.div`
   position: relative;
   width: 100%;
+  box-sizing: content-box;
+
+  ${InputText} {
+    z-index: 1;
+  }
 `;
 
 export const select = styled.div`
@@ -19,6 +25,7 @@ export const selectTrigger = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 2;
 `;
 
 type DropdownProps = {

@@ -15,6 +15,7 @@ describe('Select', () => {
     defaultState, // renders without error
     defaultState, // renders default label
     defaultState, // renders custom placeholder
+    defaultState, // handles empty helper text
     defaultState, // sets value on choosing option
     defaultState, // shows correct label for passed prop value
     defaultState, // handles passed prop value not matching options
@@ -74,6 +75,25 @@ describe('Select', () => {
     );
     const input = wrapper.find('[data-test="select-input"]');
     expect(input.props().value).toEqual('Custom value');
+  });
+
+  it('handles empty helper text', () => {
+    wrapper = shallow(
+      <Select
+        id="example"
+        value=""
+        onChange={mockOnChange}
+        placeholder={'Custom value'}
+        options={[
+          { name: 'Option 1', value: 'option1' },
+          { name: 'Option 2', value: 'option2' },
+          { name: 'Option 3', value: 'option3' },
+        ]}
+        helperText={''}
+      />,
+    );
+    const dropdown = wrapper.find('[data-test="select-dropdown"]');
+    expect(dropdown.props().hasHelper).toEqual(false);
   });
 
   it('sets value on choosing option', () => {

@@ -62,7 +62,12 @@ const Select: React.FC<SelectProps> = ({
         {!isDisabled && (
           <Styled.selectTrigger data-test="select-trigger" onClick={() => setIsOpen(!isOpen)} />
         )}
-        <Styled.dropdown open={isOpen} hasHelper={helperText !== ''} hasError={error !== undefined}>
+        <Styled.dropdown
+          data-test="select-dropdown"
+          open={isOpen}
+          hasHelper={helperText !== undefined && helperText !== ''}
+          hasError={error !== undefined}
+        >
           {options.map((item, count) => (
             <Styled.dropdownItem
               key={`option-${count}`}

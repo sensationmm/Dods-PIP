@@ -10,7 +10,6 @@ export const wrapper = styled.div`
 
   &.icon {
     ${InputBase} {
-      width: calc(100% - ${spacing(14)});
       padding-right: ${spacing(11)};
     }
   }
