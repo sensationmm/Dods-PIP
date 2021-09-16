@@ -21,6 +21,12 @@ export const filterToggle = styled.div`
   }
 `;
 
+export const filterToggleButon = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 type FilterContentProps = {
   open: boolean;
 };
