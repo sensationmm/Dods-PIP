@@ -41,7 +41,7 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
       })}
       <Styled.currentStep>
         <Text color={color.theme.blue} bold data-test="current-step">
-          {steps[activeStep - 1].label}
+          {activeStep <= steps.length ? steps[activeStep - 1].label : ''}
         </Text>
       </Styled.currentStep>
     </Styled.wrapper>
