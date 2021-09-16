@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  description: DODS Boilerplate
+  version: 1.0.0
+  title: DODS Boilerplate
+  contact:
+    email: kenanhancer@gmail.com
+  license:
+    name: GPL 3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+servers:
+  - url: /api
+
+paths:
+  /health:
+    get:
+      operationId: health
+      summary: "Get Health Message"
+      description: "Get Health Message"
+      responses:
+        "200":
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /client-accounts/{clientAccountId}:
+    get:
+      operationId: getClientAccount
+      summary: "Get Client Account"
+      description: "Get Client Account"
+      parameters:
+        - $ref: "#/components/parameters/clientAccountId"
+      responses:
+        "200":
+          $ref: "#/components/responses/ClientAccount"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    Errors:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  parameters:
+    clientAccountId:
+      in: path
+      name: clientAccountId
+      schema:
+        type: string
+      required: true
+      description: Clint Account UUID
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    BadRequest:
+      description: Bad Request. Input must be valid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Message"
+              - $ref: "#/components/schemas/Errors"
+    NotAcceptable:
+      description: Not Acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    ClientAccount:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: "object"

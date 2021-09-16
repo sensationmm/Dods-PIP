@@ -1,4 +1,4 @@
-import { SayHelloParameters, SayLocalHelloParameters } from '../../../src/domain/interfaces';
+import { SayHelloParameters, SayLocalHelloParameters } from '../../../src/domain';
 import { sayHello } from '../../../src/handlers/sayHello/sayHello';
 import { GreetingRepository } from '../../../src/repositories/GreetingRepository';
 
