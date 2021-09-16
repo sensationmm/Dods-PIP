@@ -101,7 +101,9 @@ export const Accounts: React.FC<AccountsProps> = () => {
           <Spacer size={6} />
 
           <Styled.header>
-            <Text type="h1">Accounts</Text>
+            <Text type="h1" headingStyle="hero">
+              Accounts
+            </Text>
             <Button
               data-test="btn-create-client-account"
               onClick={() => router.push('/account-management/add-client')}

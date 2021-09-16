@@ -13,7 +13,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, content }) => {
     <Styled.wrapper data-test="component-page-header">
       <Styled.container>
         <div>
-          <Text type="h3" data-test="pageheader-title">
+          <Text type="h1" headingStyle="hero" data-test="pageheader-title">
             {title}
           </Text>
         </div>

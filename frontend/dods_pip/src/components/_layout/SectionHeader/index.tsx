@@ -17,7 +17,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, subtitle }) 
     <Styled.wrapper data-test="component-section-header">
       <Icon src={icon} size={IconSize.xxlarge} data-test="sectionheader-icon" />
       <Styled.titles>
-        <Text type="h2" data-test="sectionheader-title">
+        <Text type="h2" headingStyle="title" data-test="sectionheader-title">
           {title}
         </Text>
         <Spacer size={2} />
