@@ -34,3 +34,9 @@ export class HttpNotFoundResponse<T> extends BaseHttpResponse<T> {
         super(HttpStatusCode.NOT_FOUND, input);
     }
 }
+
+export class HttpInternalServerErrorResponse<T> extends BaseHttpResponse<T> {
+    constructor(input?: T) {
+        super(HttpStatusCode.INTERNAL_SERVER_ERROR, input);
+    }
+}

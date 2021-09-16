@@ -4,6 +4,7 @@ import { OpenApiSpecLoader, Spec } from 'express-openapi-validator/dist/framewor
 import { HttpRequest } from './HttpRequest';
 import { OpenApiAdaptedRequest } from './OpenApiAdaptedRequest';
 import { OpenApiRequestHandler, OpenAPIV3, OpenApiValidatorOpts } from 'express-openapi-validator/dist/framework/types';
+import { HttpBadRequestError } from '../../domain';
 
 export class GenericOpenApiValidator {
   private metadataMiddlewareFunction: OpenApiRequestHandler;
@@ -27,14 +28,44 @@ export class GenericOpenApiValidator {
 
   private static getSchema = (spec: Spec, route: string, method: string): OpenAPIV3.OperationObject => {
 
-    const schema: OpenAPIV3.OperationObject = spec.apiDoc.paths[route] && spec.apiDoc.paths[route][(method.toLowerCase() as keyof OpenAPIV3.PathItemObject)] as OpenAPIV3.OperationObject;
+    const methodLowerCase = method.toLocaleLowerCase();
 
-    if (!schema) {
-      //TODO: Declare error message
-      throw 'Function not part of openAPI';
+    const splittedPathUrl = route.split('/').slice(1);
+
+    const swaggerDefinition = spec.apiDoc;
+
+    const { paths: swagger_paths } = swaggerDefinition;
+
+    const [swagger_path, swagger_pathMethods] = Object.entries(swagger_paths).find(([key]) => key === route || key.split('/').slice(1).every((item, index) => item.includes('{') || splittedPathUrl[index] === item)) || [];
+
+    let pathParams;
+
+    if (swagger_path?.includes('{')) {
+      pathParams = swagger_path.split('/').reduce((acc, cur, index) => {
+
+        if (!cur.includes('{')) {
+          return acc;
+        }
+
+        return { ...acc, [cur.replace(/[{}]/g, '').toLocaleLowerCase()]: splittedPathUrl[index - 1] };
+      }, {});
     }
 
-    return schema;
+    const [, swagger_pathMethod] = swagger_pathMethods && Object.entries(swagger_pathMethods).find(([key, value]) => key.toLocaleLowerCase() === methodLowerCase) || [];
+
+    if (!swagger_pathMethod) {
+      throw new HttpBadRequestError('Function not part of openAPI');
+    }
+
+    return swagger_pathMethod;
+    // const schema: OpenAPIV3.OperationObject = spec.apiDoc.paths[route] && spec.apiDoc.paths[route][(method.toLowerCase() as keyof OpenAPIV3.PathItemObject)] as OpenAPIV3.OperationObject;
+
+    // if (!schema) {
+    //   //TODO: Declare error message
+    //   throw 'Function not part of openAPI';
+    // }
+
+    // return schema;
   }
 
   public static getOpenApiData = async (inputData: HttpRequest): Promise<{ route: string, method: string, schema: OpenAPIV3.OperationObject }> => {
