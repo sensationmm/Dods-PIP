@@ -1,0 +1,44 @@
+import React from 'react';
+
+import Icon, { IconSize } from '../../Icon';
+import { Icons } from '../../Icon/assets';
+import Text from '../../Text';
+import Spacer from '../Spacer';
+import * as Styled from './SectionHeader.styles';
+
+export interface SectionHeaderProps {
+  icon: Icons;
+  title: string;
+  subtitle: string | Array<string>;
+}
+
+const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, subtitle }) => {
+  return (
+    <Styled.wrapper data-test="component-section-header">
+      <Icon src={icon} size={IconSize.xxlarge} data-test="sectionheader-icon" />
+      <Styled.titles>
+        <Text type="h2" data-test="sectionheader-title">
+          {title}
+        </Text>
+        <Spacer size={2} />
+        {!Array.isArray(subtitle) ? (
+          <Text type="p" data-test="sectionheader-subtitle">
+            {subtitle}
+          </Text>
+        ) : (
+          subtitle.map((para, count) => (
+            <Text
+              key={`sectionheader-subtitle-${count}`}
+              type="p"
+              data-test={`sectionheader-subtitle-${count}`}
+            >
+              {para}
+            </Text>
+          ))
+        )}
+      </Styled.titles>
+    </Styled.wrapper>
+  );
+};
+
+export default SectionHeader;
