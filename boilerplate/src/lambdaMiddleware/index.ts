@@ -30,7 +30,6 @@ export const buildLambdaFunctions = <T = AsyncMiddleware>(handlers: Array<T>, op
 
     const services: Record<string, any> = { handlers, openApiDocument, genericOpenApiValidator, validateRequests, validateResponses, elapsedMilliseconds: 0, ...args };
 
-    //@ts-ignore
     return buildPipeline([entryMiddleware, errorMiddleware, ...middlewares, jsonBodyParserMiddleware], services);
 };
 
@@ -51,6 +50,5 @@ export const buildLambdaFunction = <T = AsyncMiddleware>(handler: T, options: Op
 
     const services: Record<string, any> = { openApiDocument, genericOpenApiValidator, validateRequests, validateResponses, elapsedMilliseconds: 0, ...args };
 
-    //@ts-ignore
     return buildPipeline([entryMiddleware, errorMiddleware, ...middlewares, jsonBodyParserMiddleware, handler], services);
 };

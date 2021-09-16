@@ -11,6 +11,8 @@ dist/
 coverage/
 launch.json
 .offline*
+.vscode
+CertificateAuthorityCertificate.pem
 
 # Compiled Java class files
 *.class

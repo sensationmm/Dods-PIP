@@ -1,5 +1,5 @@
 import { AsyncLambdaMiddleware } from "nut-pipe";
-import { HttpDefaultResponse } from "../../domain/http";
+import { HttpError } from "../../domain";
 
 export const errorMiddleware: AsyncLambdaMiddleware = async (event, context, next) => {
 
@@ -10,7 +10,7 @@ export const errorMiddleware: AsyncLambdaMiddleware = async (event, context, nex
 
     } catch (error: any) {
         const { stack, statusCode = 500, message, ...rest } = error;
-        result = new HttpDefaultResponse(statusCode, { message, ...rest });
+        result = new HttpError({ message, ...rest }, statusCode);
     }
 
     return result;
