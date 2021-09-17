@@ -84,6 +84,7 @@ const Select: React.FC<SelectProps> = ({
               {item.name}
               {item.value === value && (
                 <Icon
+                  data-test="selected-icon"
                   src={Icons.IconTickBold}
                   size={IconSize.medium}
                   color={error !== undefined ? color.alert.red : color.theme.blueMid}
