@@ -1,6 +1,7 @@
 import { LoginEventPublisher } from "./LoginEventPublisher";
-import { LoginPersister } from "./LoginPersister";
+import { LoginAttemptsPersister } from "./LoginAttemptsPersister";
+import { LoginLastPasswordsPersister } from "./LoginLastPasswordsPersister";
 
-export interface Login extends LoginPersister, LoginEventPublisher {
+export interface Login extends LoginAttemptsPersister, LoginLastPasswordsPersister, LoginEventPublisher {
     validateLastPassword(userName: string, password: string): Promise<boolean>;
 }

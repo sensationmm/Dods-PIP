@@ -1,3 +1,4 @@
 export * from './Login';
 export * from './LoginEventPublisher';
-export * from './LoginPersister';
+export * from './LoginAttemptsPersister';
+export * from './LoginLastPasswordsPersister';

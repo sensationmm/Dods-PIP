@@ -33,8 +33,10 @@ provider:
     COGNITO_CLIENT_ID: !Ref DodsUserPoolClient
     LOGIN_EVENT_BUS_NAME: ${self:custom.resourceNames.DODS_LOGIN_EVENT_BUS_NAME}
     LOGIN_EVENT_BUS_ARN: ${self:custom.resourceNames.DOD_LOGIN_EVENT_BUS_ARN}
-    LOGIN_DYNAMODB_TABLE: ${self:custom.resourceNames.DODS_LOGIN_DYNAMODB_TABLE}
+    LOGIN_ATTEMPTS_DYNAMODB_TABLE: ${self:custom.resourceNames.DODS_LOGIN_ATTEMPTS_DYNAMODB_TABLE}
+    LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: ${self:custom.resourceNames.DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE}
     FAILED_LOGIN_ATTEMPT_COUNT: 3
+    LOGIN_LAST_PASSWORDS_NOT_REUSE_DAY: 180
     RESET_PASSWORD_URL: http://dods-publi-bb29eyratgfk-1522307155.eu-west-1.elb.amazonaws.com/password-reset
 
   eventBridge:
@@ -48,7 +50,15 @@ provider:
         - dynamodb:Query
         - dynamodb:Scan
         - dynamodb:UpdateItem
-      Resource: !GetAtt Login.Arn
+      Resource: !GetAtt LoginAttempts.Arn
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+      Resource: !GetAtt LoginLastPasswords.Arn
     - Effect: Allow
       Action:
         - cognito-idp:AdminDisableUser
@@ -77,7 +87,8 @@ custom:
     enabled: true
     chains: 8
   resourceNames:
-    DODS_LOGIN_DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-login
+    DODS_LOGIN_ATTEMPTS_DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-login-attempts
+    DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-login-last-passwords
     DODS_LOGIN_EVENT_BUS_NAME: ${self:service}-${self:provider.stage}-login-event-bus
     DOD_LOGIN_EVENT_BUS_ARN: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/${self:custom.resourceNames.DODS_LOGIN_EVENT_BUS_NAME}
     DODS_USER_POOL_NAME: ${self:service}-${self:provider.stage}-UserPool
@@ -219,16 +230,35 @@ resources:
       Properties:
         Name: ${self:custom.resourceNames.DODS_LOGIN_EVENT_BUS_NAME}
 
-    Login:
+    LoginAttempts:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.resourceNames.DODS_LOGIN_DYNAMODB_TABLE}
+        TableName: ${self:custom.resourceNames.DODS_LOGIN_ATTEMPTS_DYNAMODB_TABLE}
         AttributeDefinitions:
           - AttributeName: userName
             AttributeType: S
         KeySchema:
           - AttributeName: userName
             KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: _ttl
+          Enabled: true
+        BillingMode: PAY_PER_REQUEST
+
+    LoginLastPasswords:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.resourceNames.DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: userName
+            AttributeType: S
+          - AttributeName: createdDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userName
+            KeyType: HASH
+          - AttributeName: createdDate
+            KeyType: RANGE
         TimeToLiveSpecification:
           AttributeName: _ttl
           Enabled: true
