@@ -30,5 +30,5 @@ Primary.args = {
 };
 
 Primary.parameters = {
-  controls: { exclude: ['type', 'id', 'placeholder', 'readonly', 'onClick', 'icon'] },
+  controls: { exclude: ['type', 'id', 'readonly', 'onClick', 'icon'] },
 };
