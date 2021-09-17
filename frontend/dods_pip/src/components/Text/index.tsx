@@ -45,6 +45,12 @@ const Text: React.FC<TextProps> = ({
   let element: StyledComponent<CoreTextStyles, Record<string, unknown>>;
   let className = '';
   switch (type) {
+    case 'body':
+    case 'bodySmall':
+    case 'bodyLarge':
+      element = Styled.p;
+      className = type;
+      break;
     case 'labelSmall':
       element = Styled.label;
       className = type;
@@ -53,13 +59,8 @@ const Text: React.FC<TextProps> = ({
       element = Styled.span;
       className = type;
       break;
-    case 'body':
-    case 'bodySmall':
-    case 'bodyLarge':
     default:
-      element = Styled.p;
-      className = type;
-      break;
+      element = Styled[type];
   }
 
   const props = {

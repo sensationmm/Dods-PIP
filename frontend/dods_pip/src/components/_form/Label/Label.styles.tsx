@@ -12,8 +12,8 @@ export const label = styled.div`
 export const requiredStar = styled.span`
   color: ${color.alert.red};
   display: inline;
-  font-size: 12px;
-  line-height: 12px;
+  font-size: 16px;
+  line-height: 16px;
   margin-right: ${spacing(1)};
   align-self: center;
 `;

@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import InputText from '../../../components/_form/InputText';
@@ -10,20 +9,31 @@ import SectionHeader from '../../../components/_layout/SectionHeader';
 import Spacer from '../../../components/_layout/Spacer';
 import Button from '../../../components/Button';
 import { Icons } from '../../../components/Icon/assets';
+import color from '../../../globals/color';
 import * as Styled from './index.styles';
+
+export type Errors = {
+  accountName?: string | undefined;
+  accountNotes?: string | undefined;
+  contactName?: string | undefined;
+  contactTelephone?: string | undefined;
+  contactEmail?: string | undefined;
+};
 
 export interface AccountInfoProps {
   accountName: string;
-  setAccountName: (value: string) => void;
+  setAccountName: (val: string) => void;
   accountNotes: string;
-  setAccountNotes: (value: string) => void;
+  setAccountNotes: (val: string) => void;
   contactName: string;
-  setContactName: (value: string) => void;
+  setContactName: (val: string) => void;
   contactTelephone: string;
-  setContactTelephone: (value: string) => void;
+  setContactTelephone: (val: string) => void;
   contactEmail: string;
-  setContactEmail: (value: string) => void;
-  setActiveStep: (step: number) => void;
+  setContactEmail: (val: string) => void;
+  errors: Errors;
+  onSubmit: () => void;
+  onBack: () => void;
 }
 
 const AccountInfo: React.FC<AccountInfoProps> = ({
@@ -37,16 +47,16 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   setContactTelephone,
   contactEmail,
   setContactEmail,
-  setActiveStep,
+  errors,
+  onSubmit,
+  onBack,
 }) => {
-  const router = useRouter();
-
   const isComplete =
     accountName !== '' && contactName !== '' && contactTelephone != '' && contactEmail !== '';
 
   return (
     <main data-test="account-info">
-      <Panel isNarrow>
+      <Panel isNarrow bgColor={color.base.ivory}>
         <SectionHeader
           title="About the Account"
           subtitle="Please add the client details below"
@@ -65,6 +75,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
                 value={accountName}
                 onChange={setAccountName}
                 placeholder="Type the account name"
+                error={errors.accountName}
               />
             </div>
 
@@ -78,6 +89,9 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
             onChange={setAccountNotes}
             value={accountNotes}
             placeholder="Type the account notes"
+            characterLimit={500}
+            optional
+            error={errors.accountNotes}
           />
         </Styled.wrapper>
 
@@ -108,6 +122,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
                 value={contactName}
                 onChange={setContactName}
                 placeholder="Type the full name"
+                error={errors.contactName}
               />
 
               <Spacer size={6} />
@@ -119,6 +134,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
                 value={contactTelephone}
                 onChange={setContactTelephone}
                 placeholder="Type the telephone number"
+                error={errors.contactTelephone}
               />
             </div>
 
@@ -130,6 +146,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
                 value={contactEmail}
                 onChange={setContactEmail}
                 placeholder="Type the email address"
+                error={errors.contactEmail}
               />
             </div>
           </Columns>
@@ -137,10 +154,11 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
         <Spacer size={20} />
 
-        <PageActions hasBack backHandler={() => router.push('/account-management/accounts')}>
+        <PageActions data-test="page-actions" hasBack backHandler={onBack}>
           <Button
+            data-test="continue-button"
             label="Save and continue"
-            onClick={() => setActiveStep(2)}
+            onClick={onSubmit}
             icon={Icons.IconChevronRight}
             iconAlignment="right"
             disabled={!isComplete}

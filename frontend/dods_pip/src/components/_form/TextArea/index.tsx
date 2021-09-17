@@ -70,6 +70,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         data-test="textarea-input"
         className={classNames({ error: typeof error === 'string' })}
         cols={4}
+        rows={5}
         id={id}
         maxLength={characterLimit}
         value={characterLimit ? value?.slice(0, characterLimit) : value}

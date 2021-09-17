@@ -7,31 +7,55 @@ describe('AccountInfo', () => {
   let wrapper;
 
   beforeEach(() => {
-    const setAccountName = jest.fn();
-    const setAccountNotes = jest.fn();
-    const setContactName = jest.fn();
-    const setContactTelephone = jest.fn();
-    const setContactEmail = jest.fn();
-    const setActiveStep = jest.fn();
     wrapper = shallow(
       <AccountInfo
         accountName={'accountName'}
-        setAccountName={setAccountName}
+        setAccountName={jest.fn}
         accountNotes={'accountNotes'}
-        setAccountNotes={setAccountNotes}
+        setAccountNotes={jest.fn}
         contactName={'contactName'}
-        setContactName={setContactName}
+        setContactName={jest.fn}
         contactTelephone={'contactTelephone'}
-        setContactTelephone={setContactTelephone}
+        setContactTelephone={jest.fn}
         contactEmail={'contactEmail'}
-        setContactEmail={setContactEmail}
-        setActiveStep={setActiveStep}
+        setContactEmail={jest.fn}
+        onSubmit={jest.fn}
+        onBack={jest.fn}
+        errors={{}}
       />,
     );
   });
 
-  it('renders without error', () => {
+  it('renders without error and allows submission', () => {
     const component = wrapper.find('[data-test="account-info"]');
     expect(component.length).toEqual(1);
+    const button = wrapper.find('[data-test="continue-button"]');
+    expect(button.props().disabled).toEqual(false);
+  });
+
+  it('prevents submission if form empty', () => {
+    wrapper = shallow(
+      <AccountInfo
+        accountName={''}
+        setAccountName={jest.fn}
+        accountNotes={''}
+        setAccountNotes={jest.fn}
+        contactName={''}
+        setContactName={jest.fn}
+        contactTelephone={''}
+        setContactTelephone={jest.fn}
+        contactEmail={''}
+        setContactEmail={jest.fn}
+        onSubmit={jest.fn}
+        onBack={jest.fn}
+        errors={{}}
+      />,
+    );
+    const button = wrapper.find('[data-test="continue-button"]');
+    expect(button.props().disabled).toEqual(true);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });

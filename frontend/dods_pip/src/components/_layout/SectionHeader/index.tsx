@@ -1,5 +1,6 @@
 import React from 'react';
 
+import color from '../../../globals/color';
 import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
 import Text from '../../Text';
@@ -22,7 +23,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, subtitle }) 
         </Text>
         <Spacer size={2} />
         {!Array.isArray(subtitle) ? (
-          <Text type="p" data-test="sectionheader-subtitle">
+          <Text type="p" data-test="sectionheader-subtitle" color={color.base.black}>
             {subtitle}
           </Text>
         ) : (
@@ -31,6 +32,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, subtitle }) 
               key={`sectionheader-subtitle-${count}`}
               type="p"
               data-test={`sectionheader-subtitle-${count}`}
+              color={color.base.black}
             >
               {para}
             </Text>

@@ -127,6 +127,12 @@ export const p = styled.p`
   }
 `;
 
+export const h1 = styled.h1``;
+export const h2 = styled.h2``;
+export const h3 = styled.h3``;
+export const h4 = styled.h4``;
+export const h5 = styled.h5``;
+export const h6 = styled.h6``;
 export const body = styled.p``;
 export const bodySmall = styled.p``;
 export const bodyLarge = styled.p``;
