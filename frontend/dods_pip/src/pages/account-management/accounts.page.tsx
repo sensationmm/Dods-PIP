@@ -2,6 +2,7 @@ import Head from 'next/head';
 import React from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
+import Select from '../../components/_form/Select';
 import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
 import AZFilter from '../../components/AZFilter';
@@ -107,15 +108,18 @@ export const Accounts: React.FC<AccountsProps> = () => {
 
           <Styled.filterContainer>
             <Styled.filterToggle>
-              <div data-test="filter-toggle" onClick={() => setShowFilter(!showFilter)}>
+              <Styled.filterToggleButon
+                data-test="filter-toggle"
+                onClick={() => setShowFilter(!showFilter)}
+              >
                 <Text type="bodySmall" bold uppercase color={color.base.black}>
                   Filter
-                  <Icon
-                    src={showFilter ? Icons.IconChevronUp : Icons.IconChevronDown}
-                    color={color.theme.blueMid}
-                  />
                 </Text>
-              </div>
+                <Icon
+                  src={showFilter ? Icons.IconChevronUp : Icons.IconChevronDown}
+                  color={color.theme.blueMid}
+                />
+              </Styled.filterToggleButon>
 
               <Styled.dataCount>
                 <Text type="bodySmall" color={color.base.grey}>
@@ -130,28 +134,35 @@ export const Accounts: React.FC<AccountsProps> = () => {
 
             <Styled.filterContent open={showFilter} data-test="filter-content">
               <Styled.filterContentCol>
-                {/* @TODO: replace html selects with <Select /> component when built DOD-376 */}
-                {/* hence istanbul ignores, wasnt worth testing temporary code */}
-                <select
+                <Select
+                  id="filter-subscription"
+                  size="small"
+                  options={[
+                    { value: '', name: 'All Subscriptions' },
+                    { value: 'level1', name: 'Level 1' },
+                    { value: 'level2', name: 'Level 2' },
+                    { value: 'level3', name: 'Level 3' },
+                    { value: 'level4', name: 'Level 4' },
+                    { value: 'level5', name: 'Level 5' },
+                  ]}
+                  onChange={setFilterSubscription}
                   value={filterSubscription}
-                  onChange={/* istanbul ignore next*/ (e) => setFilterSubscription(e.target.value)}
-                >
-                  <option value="">All Subscriptions</option>
-                  <option value="level1">Level 1</option>
-                  <option value="level2">Level 2</option>
-                  <option value="level3">Level 3</option>
-                  <option value="level4">Level 4</option>
-                </select>
-                <select
+                  placeholder="All Subscriptions"
+                />
+                <Select
+                  id="filter-location"
+                  size="small"
+                  options={[
+                    { value: '', name: 'All Locations' },
+                    { value: 'europe', name: 'Europe' },
+                    { value: 'north-america', name: 'North America' },
+                    { value: 'south-america', name: 'South America' },
+                    { value: 'asia', name: 'Asia' },
+                  ]}
+                  onChange={setFilterLocation}
                   value={filterLocation}
-                  onChange={/* istanbul ignore next*/ (e) => setFilterLocation(e.target.value)}
-                >
-                  <option value="">Location</option>
-                  <option value="europe">Europe</option>
-                  <option value="north-america">North America</option>
-                  <option value="south-america">South America</option>
-                  <option value="asia">Asia</option>
-                </select>
+                  placeholder="All Locations"
+                />
               </Styled.filterContentCol>
 
               <Styled.filterContentCol>
@@ -159,6 +170,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   id="filter-search"
                   onChange={setFilterSearchText}
                   value={filterSearchText}
+                  size="small"
                 />
               </Styled.filterContentCol>
             </Styled.filterContent>

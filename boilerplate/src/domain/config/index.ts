@@ -3,8 +3,7 @@ import { resolve } from 'path';
 import { DownstreamEndpoints } from '../interfaces';
 import { execSync } from 'child_process'
 
-const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage ${process.env.SERVERLESS_STAGE || 'test'} --format json${process.env.SERVERLESS_STAGE === 'prod' ? '' : ' | tail -n +2'}`;
-// const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage ${process.env.SERVERLESS_STAGE || 'test'} --format json`;
+const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage ${process.env.SERVERLESS_STAGE || 'test'} --format json${process.env.SERVERLESS_STAGE === 'local' ? ' | tail -n +2' : ''}`;
 
 let infoCache = ''
 const fetchServerlessInfo = (): string => {
@@ -18,28 +17,34 @@ const fetchServerlessInfo = (): string => {
     }
 }
 
+const setUnitTestEnvironmentVariables = () => {
+    if (process.env.NODE_ENV === 'test') {
+        let serverlessInfoJson;
+
+        try {
+            serverlessInfoJson = fetchServerlessInfo();
+        } catch (error: any) {
+            console.error(error.stdout.toString('utf8'));
+
+            process.exit(1);
+        }
+
+        let serverlessInfo;
+        try {
+            serverlessInfo = JSON.parse(serverlessInfoJson);
+        } catch (error: any) {
+            console.error(`ERROR: when JSON.parse() try to parse the following output. \n\n ${serverlessInfoJson}`);
+
+            process.exit(1);
+        }
+
+        Object.assign(process.env, serverlessInfo.provider.environment);
+    }
+};
+
 const loadConfig = (schema: Schema) => {
 
-    let serverlessInfoJson;
-
-    try {
-        serverlessInfoJson = fetchServerlessInfo();
-    } catch (error: any) {
-        console.error(error.stdout.toString('utf8'));
-
-        process.exit(1);
-    }
-
-    let serverlessInfo;
-    try {
-        serverlessInfo = JSON.parse(serverlessInfoJson);
-    } catch (error: any) {
-        console.error(`ERROR: when JSON.parse() try to parse the following output. \n\n ${serverlessInfoJson}`);
-
-        process.exit(1);
-    }
-
-    Object.assign(process.env, serverlessInfo.provider.environment);
+    setUnitTestEnvironmentVariables();
 
     const { value: envVars, error } = schema.prefs({ errors: { label: 'key' } }).validate(process.env);
 

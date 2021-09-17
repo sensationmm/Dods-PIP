@@ -10,7 +10,6 @@ export const wrapper = styled.div`
 
   &.icon {
     ${InputBase} {
-      width: calc(100% - ${spacing(14)});
       padding-right: ${spacing(11)};
     }
   }
@@ -19,6 +18,7 @@ export const wrapper = styled.div`
     position: absolute;
     z-index: 2;
     right: ${spacing(4)};
-    top: ${spacing(3)};
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;

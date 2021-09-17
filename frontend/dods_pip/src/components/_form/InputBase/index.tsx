@@ -12,7 +12,7 @@ export interface InputBaseProps {
   id: string;
   type: InputType;
   size?: InputSize;
-  label: string;
+  label?: string;
   value: string;
   isDisabled?: boolean;
   error?: string | undefined;
@@ -20,6 +20,10 @@ export interface InputBaseProps {
   optional?: boolean;
   helperText?: string;
   onChange: (val: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder?: string;
+  tabIndex?: number;
 }
 
 const InputBase: React.FC<InputBaseProps> = ({
@@ -34,7 +38,11 @@ const InputBase: React.FC<InputBaseProps> = ({
   optional = false,
   helperText,
   onChange,
+  onFocus,
+  onBlur,
   children,
+  placeholder,
+  tabIndex,
 }) => {
   return (
     <Styled.wrapper data-test="component-input-base">
@@ -61,6 +69,10 @@ const InputBase: React.FC<InputBaseProps> = ({
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          tabIndex={tabIndex}
         />
         {children}
       </Styled.inputWrapper>

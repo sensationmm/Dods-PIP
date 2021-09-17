@@ -1,4 +1,4 @@
-import { SayLocalHelloParameters } from "../domain/interfaces";
+import { SayLocalHelloParameters } from "../domain";
 
 export interface Greeting {
     sayEnglishHello(data: SayLocalHelloParameters): Promise<string>;

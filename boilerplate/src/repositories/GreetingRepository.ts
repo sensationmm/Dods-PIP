@@ -1,7 +1,6 @@
-import { DownstreamEndpoints, SayLocalHelloParameters } from "../domain/interfaces";
+import { DownstreamEndpoints, SayLocalHelloParameters, config } from "../domain";
 import { Greeting } from "./Greeting";
 import { requestHandler } from '../utility';
-import { config } from "../domain/config";
 
 export class GreetingRepository implements Greeting {
 

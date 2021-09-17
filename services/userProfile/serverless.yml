@@ -1,0 +1,91 @@
+service: dods-nodejs-lambda-boilerplate
+
+configValidationMode: warn
+
+frameworkVersion: ^2.54.0
+
+variablesResolutionMode: 20210326
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'test'}
+  lambdaHashingVersion: 20201221
+  
+  
+  environment:
+    NODE_ENV: ${opt:NODE_ENV, 'test'}
+    SERVERLESS_STAGE: ${self:provider.stage}
+    SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint}
+    SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint}
+
+custom:
+  endpoints:
+    test:
+      sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
+      sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
+    prod:
+      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
+      sayEnglishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+    keepOutputDirectory: false
+  serverless-offline:
+    httpPort: 3000
+  prune:
+    automatic: true
+    number: 1
+  dependsOn:
+    enabled: true
+    chains: 8
+  localstack:
+    stages:
+      # list of stages for which the plugin should be enabled
+      - test
+    host: http://localhost # optional - LocalStack host to connect to
+    edgePort: 4566 # optional - LocalStack edge port to connect to
+    autostart: false # optional - Start LocalStack in Docker on Serverless deploy
+    # lambda:
+    #   # Enable this flag to improve performance
+    #   mountCode: True
+    docker:
+      # Enable this flag to run "docker ..." commands as sudo
+      sudo: False
+
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+  - serverless-localstack
+  - serverless-dependson-plugin
+  - serverless-offline
+
+functions:
+
+  role:
+    handler: src/handlers/role/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: role
+  user:
+    handler: src/handlers/user/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: user
+  userByName:
+    handler: src/handlers/userByName/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: userByName
+
+
+
+  
