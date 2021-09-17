@@ -44,6 +44,7 @@ export const dropdown = styled.div<DropdownProps>`
   overflow: hidden;
   box-shadow: ${elevation.selectShadow};
   background: ${(p) => (p.hasError ? color.shadow.red : color.shadow.blue)};
+  z-index: 2;
 
   &:before {
     content: '';
@@ -58,11 +59,13 @@ export const dropdown = styled.div<DropdownProps>`
 type DropdownItemProps = {
   size: 'small' | 'medium' | 'large';
   hasError: boolean;
+  active: boolean;
 };
 
 export const dropdownItem = styled.div<DropdownItemProps>`
-  color: ${(p) => (p.hasError ? color.alert.red : color.theme.blueMid)};
-  background: ${(p) => (p.hasError ? color.shadow.red : color.shadow.blue)};
+  color: ${({ hasError, active }) =>
+    active ? color.base.grey : hasError ? color.alert.red : color.theme.blueMid};
+  background: ${({ hasError }) => (hasError ? color.shadow.red : color.shadow.blue)};
   padding: ${(p) =>
     p.size === 'large'
       ? spacing(3)
@@ -71,8 +74,21 @@ export const dropdownItem = styled.div<DropdownItemProps>`
       : `${spacing(1)} ${spacing(3)}`};
   font-family: 'Open Sans';
   font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid ${({ hasError }) => (hasError ? color.shadow.red : color.shadow.blue)};
 
   &:hover {
     background: ${color.base.white};
+  }
+
+  &:focus {
+    border-color: ${color.theme.blueMid};
+    outline: 0;
+  }
+
+  &:last-of-type {
+    border-radius: 0 0 8px 8px;
   }
 `;
