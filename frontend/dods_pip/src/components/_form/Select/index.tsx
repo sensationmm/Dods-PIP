@@ -1,5 +1,7 @@
 import React from 'react';
 
+import color from '../../../globals/color';
+import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
 import InputText, { InputTextProps } from '../InputText';
 import * as Styled from './Select.styles';
@@ -62,7 +64,12 @@ const Select: React.FC<SelectProps> = ({
         {!isDisabled && (
           <Styled.selectTrigger data-test="select-trigger" onClick={() => setIsOpen(!isOpen)} />
         )}
-        <Styled.dropdown open={isOpen} hasHelper={helperText !== ''} hasError={error !== undefined}>
+        <Styled.dropdown
+          data-test="select-dropdown"
+          open={isOpen}
+          hasHelper={helperText !== undefined && helperText !== ''}
+          hasError={error !== undefined}
+        >
           {options.map((item, count) => (
             <Styled.dropdownItem
               key={`option-${count}`}
@@ -72,8 +79,17 @@ const Select: React.FC<SelectProps> = ({
               hasError={error !== undefined}
               tabIndex={2}
               onKeyPress={() => setValue(item.value)}
+              active={item.value === value}
             >
               {item.name}
+              {item.value === value && (
+                <Icon
+                  data-test="selected-icon"
+                  src={Icons.IconTickBold}
+                  size={IconSize.medium}
+                  color={error !== undefined ? color.alert.red : color.theme.blueMid}
+                />
+              )}
             </Styled.dropdownItem>
           ))}
         </Styled.dropdown>

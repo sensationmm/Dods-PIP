@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info:
+  description: DODS Identity and Access Management(IAM)
+  version: 1.0.0
+  title: DODS Identity and Access Management(IAM)
+  contact:
+    email: kenanhancer@gmail.com
+  license:
+    name: GPL 3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+servers:
+  - url: /api
+paths:
+  /signUp:
+    post:
+      operationId: signUp
+      summary: "AWS Cognito SignUp"
+      description: "AWS Cognito SignUp"
+      requestBody:
+        $ref: "#/components/requestBodies/signUpBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/SignUp"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /signIn:
+    post:
+      operationId: signIn
+      summary: "AWS Cognito SignIn"
+      description: "AWS Cognito SignIn"
+      parameters:
+        - $ref: "#/components/parameters/email"
+        - $ref: "#/components/parameters/password"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /signOut:
+    get:
+      operationId: signOut
+      summary: "AWS Cognito SignOut"
+      description: "AWS Cognito SignOut"
+      parameters:
+        - $ref: "#/components/parameters/email"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /forgotPassword:
+    get:
+      operationId: forgotPassword
+      summary: "AWS Cognito ForgotPassword"
+      description: "AWS Cognito ForgotPassword"
+      parameters:
+        - $ref: "#/components/parameters/email"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /changePassword:
+    get:
+      operationId: changePassword
+      summary: "AWS Cognito ChangePassword"
+      description: "AWS Cognito ChangePassword"
+      parameters:
+        - $ref: "#/components/parameters/email"
+        - $ref: "#/components/parameters/password"
+        - $ref: "#/components/parameters/newPassword"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /resetPassword:
+    get:
+      operationId: resetPassword
+      summary: "AWS Cognito ResetPassword"
+      description: "AWS Cognito ResetPassword"
+      parameters:
+        - $ref: "#/components/parameters/email"
+        - $ref: "#/components/parameters/newPassword"
+        - $ref: "#/components/parameters/verificationCode"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /confirmRegistration:
+    get:
+      operationId: confirmRegistration
+      summary: "AWS Cognito ConfirmRegistration"
+      description: "AWS Cognito ConfirmRegistration"
+      parameters:
+        - $ref: "#/components/parameters/email"
+        - $ref: "#/components/parameters/verificationCode"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /deleteUser:
+    get:
+      operationId: deleteUser
+      summary: "AWS Cognito DeleteUser"
+      description: "AWS Cognito DeleteUser"
+      parameters:
+        - $ref: "#/components/parameters/email"
+        - $ref: "#/components/parameters/password"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /disableUser:
+    get:
+      operationId: disableUser
+      summary: "AWS Cognito DisableUser"
+      description: "AWS Cognito DisableUser"
+      parameters:
+        - $ref: "#/components/parameters/email"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /enableUser:
+    get:
+      operationId: enableUser
+      summary: "AWS Cognito EnableUser"
+      description: "AWS Cognito EnableUser"
+      parameters:
+        - $ref: "#/components/parameters/email"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /resendConfirmationCode:
+    get:
+      operationId: resendConfirmationCode
+      summary: "AWS Cognito ResendConfirmationCode"
+      description: "AWS Cognito ResendConfirmationCode"
+      parameters:
+        - $ref: "#/components/parameters/email"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /getUserData:
+    get:
+      operationId: getUserData
+      summary: "AWS Cognito GetUserData"
+      description: "AWS Cognito GetUserData"
+      parameters:
+        - $ref: "#/components/parameters/accessToken"
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  parameters:
+    partyId:
+      in: path
+      name: partyId
+      schema:
+        type: "string"
+      required: true
+      description: ID of party that request events
+    eventType:
+      in: path
+      name: eventType
+      schema:
+        type: "string"
+        example: "Submission.EQDBB"
+      required: true
+      description: Type of event (Submission/Offer)
+    dateFrom:
+      in: query
+      name: dateFrom
+      schema:
+        type: "string"
+        format: "date-time"
+      required: false
+      description: Date from which to look for existing events
+    eventBusinessDataId:
+      in: query
+      name: eventBusinessDataId
+      schema:
+        type: "string"
+      required: false
+      description: Event data ID
+    livingEvents:
+      in: query
+      name: livingEvents
+      schema:
+        type: "boolean"
+      required: false
+      description: If true - extract only non expired events
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    Errors:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+  responses:
+    Events:
+      description: Events from event store
+      content:
+        application/json:
+          schema:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/Howden.HX.XDM.Events.Event"
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    BadRequest:
+      description: Bad Request. Input must be valid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Message"
+              - $ref: "#/components/schemas/Errors"
+    NotAcceptable:
+      description: Not Acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    UnprocessableEntity:
+      description: Unprocessable Entity. Input must be valid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Message"
+  requestBodies:
+    signUpBody:
+      description: A JSON object containing pet information
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              room_name:
+                type: string
+              user_identity:
+                type: string

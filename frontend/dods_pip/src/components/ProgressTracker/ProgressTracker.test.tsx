@@ -32,4 +32,10 @@ describe('ProgressTracker', () => {
     const currentStep = wrapper.find('[data-test="current-step"]');
     expect(currentStep.props().children).toEqual('Project Setup');
   });
+
+  it('handles incorrect activeStep', () => {
+    wrapper = shallow(<ProgressTracker activeStep={10} steps={steps} />);
+    const currentStep = wrapper.find('[data-test="current-step"]');
+    expect(currentStep.props().children).toEqual('');
+  });
 });

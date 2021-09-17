@@ -11,18 +11,18 @@ type WrapperProps = {
 
 export const wrapper = styled.div<WrapperProps>`
   display: inline-block;
-  border: 1px solid ${color.base.grey};
+  border: 1px solid ${color.shadow.grey};
   background: ${({ selected, disabled }) =>
-    disabled ? color.shadow.grey : selected ? color.shadow.blue : color.base.white};
+    disabled ? color.base.ivory : selected ? color.shadow.blue : color.base.white};
   color: ${({ disabled }) => disabled && color.base.grey};
   border-radius: 60px;
-  padding: 8px;
+  padding: 4px 8px 4px 4px;
   display: flex;
   justify-content: center;
   align-items: center;
   &:hover {
     background: ${({ disabled, selected }) =>
-      disabled ? color.shadow.grey : selected ? color.shadow.blue : color.shadow.blue};
+      disabled ? color.base.ivory : selected ? color.shadow.blue : color.shadow.blue};
   }
 `;
 
@@ -38,9 +38,11 @@ export const contentWrapper = styled.div`
 
 type CloseButtonProps = {
   disabled?: boolean;
+  selected?: boolean;
 };
 
 export const closeButton = styled.div<CloseButtonProps>`
+  display: ${({ selected }) => (selected ? 'inline' : 'none')};
   padding: ${spacing(1.5)};
   border-radius: 50%;
   background: ${({ disabled }) => (disabled ? color.base.grey : color.theme.blueMid)};

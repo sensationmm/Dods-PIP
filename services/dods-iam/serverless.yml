@@ -1,0 +1,338 @@
+service: dods-iam
+
+configValidationMode: warn
+
+frameworkVersion: ^2.57.0
+
+variablesResolutionMode: 20210326
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'dev'}
+  lambdaHashingVersion: 20201221
+
+  stackTags:
+    service: ${self:service}
+    env: ${self:provider.stage}
+    version: 1
+    teamsEmail: kenan.hancer@somoglobal.com
+    team: dods
+  tags:
+    myTag1: myTag1
+
+  tracing:
+    apiGateway: true
+    lambda: true
+
+  environment:
+    NODE_ENV: development
+    SERVERLESS_STAGE: ${self:provider.stage}
+    COGNITO_USER_POOL_ID: !Ref DodsUserPool
+    COGNITO_CLIENT_ID: !Ref DodsUserPoolClient
+    LOGIN_EVENT_BUS_NAME: ${self:custom.resourceNames.DODS_LOGIN_EVENT_BUS_NAME}
+    LOGIN_EVENT_BUS_ARN: ${self:custom.resourceNames.DOD_LOGIN_EVENT_BUS_ARN}
+    LOGIN_ATTEMPTS_DYNAMODB_TABLE: ${self:custom.resourceNames.DODS_LOGIN_ATTEMPTS_DYNAMODB_TABLE}
+    LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: ${self:custom.resourceNames.DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE}
+    FAILED_LOGIN_ATTEMPT_COUNT: 3
+    LOGIN_LAST_PASSWORDS_NOT_REUSE_DAY: 180
+    RESET_PASSWORD_URL: http://dods-publi-bb29eyratgfk-1522307155.eu-west-1.elb.amazonaws.com/password-reset
+
+  eventBridge:
+    useCloudFormation: true
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+      Resource: !GetAtt LoginAttempts.Arn
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+      Resource: !GetAtt LoginLastPasswords.Arn
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminDisableUser
+        - cognito-idp:AdminEnableUser
+      Resource: !GetAtt DodsUserPool.Arn
+    - Effect: Allow
+      Action:
+        - events:PutEvents
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: !GetAtt LoginEventBus.Arn
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules:
+      forceInclude:
+        - express
+    keepOutputDirectory: false
+  prune:
+    automatic: true
+    number: 1
+  dependsOn:
+    enabled: true
+    chains: 8
+  resourceNames:
+    DODS_LOGIN_ATTEMPTS_DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-login-attempts
+    DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-login-last-passwords
+    DODS_LOGIN_EVENT_BUS_NAME: ${self:service}-${self:provider.stage}-login-event-bus
+    DOD_LOGIN_EVENT_BUS_ARN: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/${self:custom.resourceNames.DODS_LOGIN_EVENT_BUS_NAME}
+    DODS_USER_POOL_NAME: ${self:service}-${self:provider.stage}-UserPool
+    DODS_USER_POOL_CLIENT_NAME: ${self:service}-${self:provider.stage}-UserPoolClient
+  localstack:
+    stages:
+      # list of stages for which the plugin should be enabled
+      - local
+      - test
+    host: http://localhost # optional - LocalStack host to connect to
+    edgePort: 4566 # optional - LocalStack edge port to connect to
+    autostart: false # optional - Start LocalStack in Docker on Serverless deploy
+    # lambda:
+    #   # Enable this flag to improve performance
+    #   mountCode: True
+    docker:
+      # Enable this flag to run "docker ..." commands as sudo
+      sudo: False
+
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+  - serverless-localstack
+  - serverless-dependson-plugin
+  - serverless-offline
+
+functions:
+  customMessage:
+    description: Triggered before AWS Cognito send notification
+    handler: src/handlers/http/customMessage/customMessage.customMessage
+    events:
+      - cognitoUserPool:
+          pool: ${self:service}-${self:provider.stage}-UserPool
+          trigger: CustomMessage
+          existing: true
+  changePassword:
+    description: Triggered when http request comes
+    handler: src/handlers/http/changePassword/index.handle
+    events:
+      - http:
+          method: post
+          path: changePassword
+  resetPassword:
+    description: Triggered when http request comes
+    handler: src/handlers/http/resetPassword/index.handle
+    events:
+      - http:
+          method: post
+          path: resetPassword
+  signIn:
+    description: Triggered when http request comes
+    handler: src/handlers/http/signIn/index.handle
+    events:
+      - http:
+          method: post
+          path: signIn
+  signOut:
+    description: Triggered when http request comes
+    handler: src/handlers/http/signOut/index.handle
+    events:
+      - http:
+          method: post
+          path: signOut
+  signUp:
+    description: Triggered when http request comes
+    handler: src/handlers/http/signUp/index.handle
+    events:
+      - http:
+          method: post
+          path: signUp
+  resendConfirmationCode:
+    description: Triggered when http request comes
+    handler: src/handlers/http/resendConfirmationCode/index.handle
+    events:
+      - http:
+          method: post
+          path: resendConfirmationCode
+  confirmRegistration:
+    description: Triggered when http request comes
+    handler: src/handlers/http/confirmRegistration/index.handle
+    events:
+      - http:
+          method: post
+          path: confirmRegistration
+  forgotPassword:
+    description: Triggered when http request comes
+    handler: src/handlers/http/forgotPassword/index.handle
+    events:
+      - http:
+          method: post
+          path: forgotPassword
+  deleteUser:
+    description: Triggered when http request comes
+    handler: src/handlers/http/deleteUser/index.handle
+    events:
+      - http:
+          method: post
+          path: deleteUser
+  getUserData:
+    description: Triggered when http request comes
+    handler: src/handlers/http/getUserData/index.handle
+    events:
+      - http:
+          method: get
+          path: getUserData
+  disableUser:
+    description: Triggered when http request comes
+    handler: src/handlers/http/disableUser/index.handle
+    events:
+      - http:
+          method: post
+          path: disableUser
+  enableUser:
+    description: Triggered when http request comes
+    handler: src/handlers/http/enableUser/index.handle
+    events:
+      - http:
+          method: post
+          path: enableUser
+
+  onLoginPasswordEvents:
+    description: Triggered when AWS Event Bus takes new event
+    handler: src/handlers/event/onLoginPasswordEvents/index.handle
+    events:
+      - eventBridge:
+          eventBus: !GetAtt LoginEventBus.Name
+          pattern:
+            source:
+              - Login
+            detail-type:
+              - NewUserCreated
+              - PasswordUpdated
+
+resources:
+  Resources:
+    LoginEventBus:
+      Type: AWS::Events::EventBus
+      DeletionPolicy: Delete
+      Properties:
+        Name: ${self:custom.resourceNames.DODS_LOGIN_EVENT_BUS_NAME}
+
+    LoginAttempts:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.resourceNames.DODS_LOGIN_ATTEMPTS_DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: userName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userName
+            KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: _ttl
+          Enabled: true
+        BillingMode: PAY_PER_REQUEST
+
+    LoginLastPasswords:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.resourceNames.DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: userName
+            AttributeType: S
+          - AttributeName: createdDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userName
+            KeyType: HASH
+          - AttributeName: createdDate
+            KeyType: RANGE
+        TimeToLiveSpecification:
+          AttributeName: _ttl
+          Enabled: true
+        BillingMode: PAY_PER_REQUEST
+
+    DodsUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:custom.resourceNames.DODS_USER_POOL_NAME}
+        EmailVerificationMessage: Your verification code is {####}.
+        EmailVerificationSubject: Your verification code
+        MfaConfiguration: OFF
+        UsernameConfiguration:
+          CaseSensitive: false
+        VerificationMessageTemplate:
+          DefaultEmailOption: CONFIRM_WITH_LINK # or CONFIRM_WITH_CODE
+          EmailSubject: Your verification code
+          EmailMessage: Your verification code is {####}.
+          EmailSubjectByLink: Dods Public Intelligence Platform - Verify your account
+          EmailMessageByLink: <html><head></head><body><p>Hello.</p><p>Welcome to Dods Political intelligence Platform.</p><p>Great to have you on board!</p><hr><h1>Please verify your account</h1><p>To ensure this account is legitimate, please verify your account by clicking the button below.</p><p>Your verification code is {####}.</p><form action="{##Verify Email##}"><input type="submit" value="Begin Free Trial" /></form></body></html>
+          SmsMessage: Your username is {username} and temporary password is {####}.
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: false
+          InviteMessageTemplate:
+            EmailMessage: Your username is {username} and temporary password is {####}.
+            EmailSubject: Your temporary password
+            SMSMessage: Your username is {username} and temporary password is {####}.
+        UsernameAttributes:
+          - email
+        # AliasAttributes:
+        #   - email
+        AutoVerifiedAttributes:
+          - email
+        EmailConfiguration:
+          EmailSendingAccount: COGNITO_DEFAULT
+          ReplyToEmailAddress: donotreply@domain.tld
+        Policies:
+          PasswordPolicy:
+            TemporaryPasswordValidityDays: 7
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+            RequireUppercase: true
+        Schema:
+          - Name: custom:company-name
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 3
+              MaxLength: 512
+          - Name: custom:job-title
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 3
+              MaxLength: 256
+          - Name: "name"
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 3
+              MaxLength: 256
+
+    DodsUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:custom.resourceNames.DODS_USER_POOL_CLIENT_NAME}
+        GenerateSecret: false
+        UserPoolId:
+          Ref: DodsUserPool
+
+    DodsUserPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        UserPoolId: !Ref DodsUserPool
+        Domain: dods-pip-${self:provider.stage}
