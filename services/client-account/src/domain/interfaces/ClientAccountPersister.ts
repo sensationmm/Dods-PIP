@@ -1,5 +1,8 @@
-import { ClientAccountDAO } from "./ClientAccountDAO";
+import { ClientAccountParameters, ClientAccountResponse } from '.';
 
 export interface ClientAccountPersister {
-    getClientAccount(clientAccountId: string): Promise<Array<ClientAccountDAO>>;
+    createClientAccount(
+        clientAccount: ClientAccountParameters
+    ): Promise<ClientAccountResponse>;
+    getClientAccount(clientAccountId: string): Promise<ClientAccountResponse>;
 }

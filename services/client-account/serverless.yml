@@ -93,3 +93,11 @@ functions:
       - http:
           method: get
           path: client-accounts/{clientAccountId}
+  
+  createClientAccount:
+    handler: src/handlers/createClientAccount/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: clientaccount
