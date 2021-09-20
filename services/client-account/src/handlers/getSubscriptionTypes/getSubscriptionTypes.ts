@@ -7,6 +7,6 @@ export const getSubscriptionTypes = async (): Promise<APIGatewayProxyResultV2> =
         await ClientAccountRepository.defaultInstance.getSubscriptionTypes();
 
     return new HttpSuccessResponse(
-        `Hello world, parameters: ${JSON.stringify(response)}`
+        JSON.stringify(response)
     );
 };
