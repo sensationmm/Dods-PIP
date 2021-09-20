@@ -101,3 +101,11 @@ functions:
       - http:
           method: post
           path: clientaccount
+
+  getSubscriptionTypes:
+    handler: src/handlers/getSubscriptionTypes/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: subscription-types

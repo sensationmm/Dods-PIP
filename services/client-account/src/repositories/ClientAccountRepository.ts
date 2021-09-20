@@ -2,9 +2,10 @@ import {
     ClientAccountParameters,
     ClientAccountPersister,
     ClientAccountResponse,
+    SubscriptionTypeResponse,
 } from '../domain';
 
-import { ClientAccountModel } from '../db/models';
+import { ClientAccountModel, SubscriptionTypeModel } from '../db/models';
 import { ClientAccountModelCreationAttributes } from '../db/types';
 
 function parseResponseFromModel(
@@ -46,11 +47,24 @@ function parseModelParameters(
     return parameters;
 }
 
+function parseSubscriptionTypesResponseFromModel(modelList: SubscriptionTypeModel[]): SubscriptionTypeResponse[] {
+    const response: SubscriptionTypeResponse[] = modelList.map(model => {
+        return {
+            id: model.uuid,
+            name: model.name
+        }
+    })
+    return response
+}
+
 export class ClientAccountRepository implements ClientAccountPersister {
     static defaultInstance: ClientAccountPersister =
-        new ClientAccountRepository(ClientAccountModel);
+        new ClientAccountRepository(ClientAccountModel, SubscriptionTypeModel);
 
-    constructor(private model: typeof ClientAccountModel) {}
+    constructor(
+        private model: typeof ClientAccountModel,
+        private subscriptionTypeModel: typeof SubscriptionTypeModel
+        ) {}
 
     async createClientAccount(
         clientAccount: ClientAccountParameters
@@ -67,9 +81,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         return newClientAccount;
     }
 
-    async getClientAccount(
-        clientAccountId: string
-    ): Promise<ClientAccountResponse> {
+    async getClientAccount(clientAccountId: string): Promise<ClientAccountResponse> {
         if (!clientAccountId) {
             throw new Error('Error: clientAccountId cannot be empty');
         }
@@ -85,5 +97,11 @@ export class ClientAccountRepository implements ClientAccountPersister {
         } else {
             throw new Error('Error: clientAccount not found');
         }
+    }
+
+    async getSubscriptionTypes(): Promise<Array<SubscriptionTypeResponse>> {
+        const subscriptionTypes = await this.subscriptionTypeModel.findAll()
+        const subscriptionTypesParsed = parseSubscriptionTypesResponseFromModel(subscriptionTypes)
+        return subscriptionTypesParsed
     }
 }
