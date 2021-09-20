@@ -1,20 +1,45 @@
-import { ClientAccountParameters, HttpSuccessResponse } from '../../domain';
+import {
+    ClientAccountParameters,
+    HttpBadRequestResponse,
+    HttpInternalServerErrorResponse,
+    HttpSuccessResponse,
+} from '../../domain';
 
 import { APIGatewayProxyResultV2 } from 'aws-lambda';
 import { ClientAccountRepository } from '../../repositories/ClientAccountRepository';
+import { ValidationError } from 'sequelize';
 
-export const createClientAccount = async (parameters: {
+export const createClientAccount = async ({
+    clientAccount,
+}: {
     clientAccount: ClientAccountParameters;
 }): Promise<APIGatewayProxyResultV2> => {
-    console.log(parameters);
+    try {
+        const newClientAccount =
+            await ClientAccountRepository.defaultInstance.createClientAccount(
+                clientAccount
+            );
 
-    const newClientAccount =
-        await ClientAccountRepository.defaultInstance.createClientAccount(
-            parameters.clientAccount
-        );
+        return new HttpSuccessResponse({
+            success: true,
+            message: 'Client account successfully created.',
+            data: newClientAccount,
+        });
+    } catch (error) {
+        console.error('Error creating client account:', error);
 
-    return new HttpSuccessResponse({
-        message: 'Client account successfully created.',
-        data: newClientAccount,
-    });
+        if (error instanceof ValidationError) {
+            return new HttpBadRequestResponse({
+                success: false,
+                message: 'Error creating client account.',
+                errors: error.errors,
+            });
+        }
+
+        return new HttpInternalServerErrorResponse({
+            success: false,
+            message: 'Error creating client account.',
+            error,
+        });
+    }
 };
