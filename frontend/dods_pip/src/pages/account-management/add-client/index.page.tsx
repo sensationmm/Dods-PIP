@@ -45,10 +45,18 @@ export const AddClient: React.FC<AddClientProps> = () => {
       delete formErrors.contactEmail;
     }
 
+    if (!Validation.validatePhone(contactTelephone)) {
+      formErrors.contactTelephone = 'Invalid format';
+    } else {
+      delete formErrors.contactTelephone;
+    }
+
     setErrorsStep1(formErrors);
 
     if (Object.keys(formErrors).length === 0) {
       setActiveStep(2);
+    } else {
+      window.scrollTo(0, 0);
     }
   };
 

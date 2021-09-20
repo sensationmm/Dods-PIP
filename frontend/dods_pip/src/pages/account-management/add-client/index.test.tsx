@@ -1,9 +1,8 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import { validateEmail } from '../../../utils/validation';
-
 import { AddClient } from './index.page';
 
+global.scrollTo = jest.fn();
 const mockRouterPush = jest.fn();
 jest.mock('next/router', () => ({
   useRouter: jest.fn().mockReturnValue({ push: (val) => mockRouterPush(val) }),
@@ -34,9 +33,15 @@ describe('Account Management: Clients', () => {
     { ...defaultState, activeStep: 3 }, // shows step 3
     { ...defaultState, activeStep: 4 }, // shows step 4
     defaultState, // exits create account flow on clicking back
-    { ...defaultState, accountName: 'Somo' }, // submit step1 fails account name
-    { ...defaultState, contactEmail: 'asd' }, // submit step1 fails email
-    defaultState, // submit step1 succeeds
+    { ...defaultState, accountName: 'Somo', contactTelephone: '1234567' }, // submit step1 fails account name
+    { ...defaultState, contactEmail: 'asd', contactTelephone: '1234567' }, // submit step1 fails email
+    { ...defaultState, contactEmail: 'asd@asd.asd', contactTelephone: '1234567asd' }, // submit step1 fails telephone
+    {
+      ...defaultState,
+      accountName: 'Somo1',
+      contactEmail: 'asd@asd.asd',
+      contactTelephone: '1234567',
+    }, // submit step1 succeeds
     { ...defaultState, activeStep: 2 }, // proceeds from step 2
     { ...defaultState, activeStep: 3 }, // proceeds from step 3
     { ...defaultState, activeStep: 4 }, // proceeds from step 4
@@ -115,8 +120,17 @@ describe('Account Management: Clients', () => {
     expect(setActiveStepSpy).toHaveBeenCalledTimes(0);
   });
 
+  it('submit step1 fails telephone', () => {
+    step1.props().onSubmit();
+    expect(setErrorSpy).toHaveBeenCalledWith({
+      contactTelephone: 'Invalid format',
+    });
+    expect(setActiveStepSpy).toHaveBeenCalledTimes(0);
+  });
+
   it('submit step1 succeeds', () => {
     step1.props().onSubmit();
+    expect(setErrorSpy).toHaveBeenCalledWith({});
     expect(setActiveStepSpy).toHaveBeenCalledWith(2);
   });
 

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import InputTelephone from '../../../components/_form/InputTelephone';
 import InputText from '../../../components/_form/InputText';
 import TextArea from '../../../components/_form/TextArea';
 import Columns from '../../../components/_layout/Columns';
@@ -127,7 +128,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
               <Spacer size={6} />
 
-              <InputText
+              <InputTelephone
                 id="account-info-contact-telephone"
                 label="Telephone Number"
                 required
