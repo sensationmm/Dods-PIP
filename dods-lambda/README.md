@@ -9,6 +9,13 @@ This package includes:
 - JSON body serialization
 - OpenAPI validation
 
+
+## Installation
+
+```shell
+npm i npm i @dodsgroup/dods-lambda
+```
+
 By using this API middleware, you can take the API Gateway handling code out of your Lambda code, and simplify your API code by leaving out CORS and global error handling.
 
 ## Prerequisites
@@ -71,19 +78,20 @@ import { EventBridgeHandler } from "aws-lambda";
 import { buildLambdaFunction, AsyncLambdaHandler, TriggerMiddlewares } from "@dodsgroup/dods-lambda";
 import { config } from '../../../domain';
 
-export const onLoginPasswordEvents: EventBridgeHandler<string, PasswordUpdated, void> = async (event) => {
+export const onLoginPasswordEvents: AsyncLambdaHandler<EventBridgeEvent<string, PasswordUpdated, void>> = async (event) => {
 
     //Business Logic here :)
 
 }
 
 // Adds Error Handling Middleware, Event logging Middleware to your handler.
-export const handle = buildLambdaFunction(changePassword, { middlewares: [...TriggerMiddlewares.EventBridgeMiddlewares], openApiDocumentPath: config.openApiPath, validateRequests: false, validateResponses: false });
+export const handle = buildLambdaFunction(changePassword, { middlewares: TriggerMiddlewares.EventBridgeMiddlewares, openApiDocumentPath: config.openApiPath, validateRequests: false, validateResponses: false });
 ```
 
 EventBridge triggered Lambda function
 
 ```ts
+import { EventBridgeEvent } from "aws-lambda";
 import { buildLambdaFunction, AsyncLambdaHandler, TriggerMiddlewares } from "@dodsgroup/dods-lambda";
 import { config } from '../../../domain';
 
@@ -94,5 +102,29 @@ export const onLoginPasswordEvents: AsyncLambdaHandler<EventBridgeEvent<string, 
 }
 
 // Adds Error Handling Middleware, Event logging Middleware to your handler.
-export const handle = buildLambdaFunction(changePassword, { middlewares: [...TriggerMiddlewares.EventBridgeMiddlewares], openApiDocumentPath: config.openApiPath, validateRequests: false, validateResponses: false });
+export const handle = buildLambdaFunction(changePassword, { middlewares: TriggerMiddlewares.EventBridgeMiddlewares, openApiDocumentPath: config.openApiPath, validateRequests: false, validateResponses: false });
+```
+
+Injecting new middleware
+
+```ts
+import { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
+import { buildLambdaFunction, AsyncLambdaHandler, AsyncLambdaMiddleware } from "@dodsgroup/dods-lambda";
+import { HttpResponse, HttpStatusCode } from "../domain";
+
+export const sampleMiddleware: AsyncLambdaMiddleware = async (event, context, callback, next) => {
+
+    // write your business logic here
+
+    let response: APIGatewayProxyStructuredResultV2;
+
+    const result = await next(event, context);
+
+    return new HttpResponse(HttpStatusCode.OK, result);
+};
+
+const OKHandler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyStructuredResultV2> => new HttpResponse("OK");
+
+// Adds Error Handling Middleware, HTTP logging Middleware, OpenAPIValidator Middleware to your handler.
+export const handle = buildLambdaFunction(OKHandler, { middlewares: [...TriggerMiddlewares.APIGatewayMiddlewares, sampleMiddleware], openApiDocumentPath: config.openApiPath, validateRequests: false, validateResponses: false });
 ```

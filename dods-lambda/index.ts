@@ -3,6 +3,7 @@ import { buildPipeline, AsyncMiddleware, AsyncHandler } from 'nut-pipe';
 import { errorMiddleware, eventLogerMiddleware, httpLogerMiddleware, openApiValidatorMiddleware } from './middlewares';
 import { GenericOpenApiValidator } from './validation';
 
+export * from 'nut-pipe';
 export class TriggerMiddlewares {
     static APIGatewayMiddlewares = [httpLogerMiddleware, openApiValidatorMiddleware];
     static EventBridgeMiddlewares = [eventLogerMiddleware];
@@ -16,7 +17,7 @@ export interface Options {
     validateResponses?: boolean;
 }
 
-const defaultOptions: Options = { middlewares: [...TriggerMiddlewares.APIGatewayMiddlewares], openApiDocumentPath: '', validateRequests: true, validateResponses: false };
+const defaultOptions: Options = { middlewares: TriggerMiddlewares.APIGatewayMiddlewares, openApiDocumentPath: '', validateRequests: true, validateResponses: false };
 
 export const buildLambdaFunction = <T extends AsyncMiddleware>(handler: T, options: Options = defaultOptions): AsyncHandler => {
 
