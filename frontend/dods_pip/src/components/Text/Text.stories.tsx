@@ -42,6 +42,7 @@ export const Default = Template.bind({});
 Default.args = {
   children: 'Text goes here',
   type: 'h1',
+  headingStyle: 'hero',
   color: 'color.base.black',
   bold: false,
   center: false,

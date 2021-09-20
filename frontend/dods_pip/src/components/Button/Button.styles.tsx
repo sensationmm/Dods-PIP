@@ -56,6 +56,8 @@ const base = styled.button`
     }
 
     &.iconRight {
+      padding-right: ${spacing(11)};
+
       ${Icon} {
         right: ${spacing(3)};
       }
