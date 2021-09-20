@@ -35,8 +35,10 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    MARIA_DB_CON: "MARIA_DB_CON"
-    CLIENT_ACCOUNT_TABLE_NAME: "CLIENT_ACCOUNT_TABLE_NAME"
+    MARIA_DB_HOST: "localhost"
+    MARIA_DB_USERNAME: "root"
+    MARIA_DB_PASSWORD: "rootPass"
+    MARIA_DB_DATABASE: "dods"
 
 custom:
   webpack:
@@ -93,3 +95,11 @@ functions:
       - http:
           method: get
           path: client-accounts/{clientAccountId}
+  
+  createClientAccount:
+    handler: src/handlers/createClientAccount/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: clientaccount

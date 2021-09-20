@@ -40,3 +40,9 @@ export class HttpInternalServerErrorResponse<T> extends BaseHttpResponse<T> {
         super(HttpStatusCode.INTERNAL_SERVER_ERROR, input);
     }
 }
+
+export class HttpBadRequestResponse<T> extends BaseHttpResponse<T> {
+    constructor(input?: T) {
+        super(HttpStatusCode.BAD_REQUEST, input);
+    }
+}
