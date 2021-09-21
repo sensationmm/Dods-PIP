@@ -35,8 +35,9 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    MARIA_DB_CON: "MARIA_DB_CON"
-    CLIENT_ACCOUNT_TABLE_NAME: "CLIENT_ACCOUNT_TABLE_NAME"
+    MARIADB_CONNECTION_STRING: 'mariadb://root:123456@127.0.0.1:3306/dods?allowPublicKeyRetrieval=true&useSSL=false'
+    MARIADB_CONNECTION_LIMIT: 5
+
 
 custom:
   webpack:

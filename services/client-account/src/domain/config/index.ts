@@ -62,8 +62,8 @@ const envVarsSchema = Joi.object()
         NODE_ENV: Joi.string().valid(...stages).default('test'),
         SERVERLESS_STAGE: Joi.string().required().valid('prod', 'dev', 'test').default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
-        MARIA_DB_CON: Joi.string().required(),
-        CLIENT_ACCOUNT_TABLE_NAME: Joi.string().required()
+        MARIADB_CONNECTION_STRING: Joi.string().required(),
+        MARIADB_CONNECTION_LIMIT: Joi.string().required(),
     })
     .unknown();
 
@@ -82,9 +82,9 @@ export const config = {
         downstreamEndpoints: {}
     },
     aws: {
-        mariaDb: {
-            connectionString: envVars.MARIA_DB_CON as string,
-            clientAccountTableName: envVars.CLIENT_ACCOUNT_TABLE_NAME as string
+        mariadb: {
+            connectionString: envVars.MARIADB_CONNECTION_STRING as string,
+            connectionLimit: envVars.MARIADB_CONNECTION_LIMIT as number
         }
     }
 };

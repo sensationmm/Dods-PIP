@@ -1,3 +1,2 @@
-export * from './ClientAccount';
-export * from './ClientAccountDAO';
 export * from './ClientAccountPersister';
+export * from './ClientAccount';
