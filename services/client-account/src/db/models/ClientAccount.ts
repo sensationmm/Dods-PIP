@@ -7,13 +7,17 @@ import {
 } from 'sequelize';
 import {
     ClientAccountModelAttributes,
+    ClientAccountModelCreationAttributes,
 } from '../types';
 
 import SubscriptionType from './SubscriptionType';
 import sequelize from '../sequelize';
 
 class ClientAccountModel
-    extends Model<ClientAccountModelAttributes>
+    extends Model<
+        ClientAccountModelAttributes,
+        ClientAccountModelCreationAttributes
+    >
     implements ClientAccountModelAttributes
 {
     public id!: number;

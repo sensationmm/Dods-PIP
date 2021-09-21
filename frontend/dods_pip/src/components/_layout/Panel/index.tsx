@@ -10,6 +10,7 @@ export interface PanelProps {
   bgColor?: string;
   isWelcome?: boolean;
   isPadded?: boolean;
+  isNarrow?: boolean;
 }
 
 const Panel: React.FC<PanelProps> = ({
@@ -17,6 +18,7 @@ const Panel: React.FC<PanelProps> = ({
   bgColor = color.base.white,
   isWelcome = false,
   isPadded = true,
+  isNarrow = false,
 }) => {
   return (
     <Styled.wrapper
@@ -24,7 +26,9 @@ const Panel: React.FC<PanelProps> = ({
       style={{ backgroundColor: bgColor }}
       className={classNames({ welcome: isWelcome })}
     >
-      <Styled.panel className={classNames({ padded: isPadded })}>{children}</Styled.panel>
+      <Styled.panel className={classNames({ padded: isPadded }, { narrow: isNarrow })}>
+        {children}
+      </Styled.panel>
       {isWelcome && (
         <Styled.leaves data-test="panel-leaves" aria-hidden="true">
           <Leaves id="desktop" alt="" />

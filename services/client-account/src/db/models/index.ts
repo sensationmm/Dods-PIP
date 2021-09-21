@@ -1,9 +1,9 @@
 import ClientAccountModel from './ClientAccount';
 import SubscriptionTypeModel from './SubscriptionType';
 
-ClientAccountModel.belongsTo(SubscriptionTypeModel);
-SubscriptionTypeModel.hasMany(ClientAccountModel, {
-    foreignKey: 'subscriptionTypeId',
+
+ClientAccountModel.belongsTo(SubscriptionTypeModel, {
+    foreignKey: 'subscription',
 });
 
 export { ClientAccountModel, SubscriptionTypeModel };

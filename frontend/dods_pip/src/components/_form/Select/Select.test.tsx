@@ -2,6 +2,7 @@ import { shallow } from 'enzyme';
 import React from 'react';
 
 import Select from '.';
+import color from '../../../globals/color';
 import { Icons } from '../../Icon/assets';
 
 describe('Select', () => {
@@ -21,6 +22,7 @@ describe('Select', () => {
     defaultState, // handles passed prop value not matching options
     { ...defaultState, isOpen: true }, // shows correct open state
     defaultState, // renders disabled state
+    defaultState, // renders error state
     defaultState, // keyboard use - triggers dropdown on focus
     { ...defaultState, isOpen: true }, // keyboard use - selects option on keypress
     defaultState, // keyboard use - prevents typing in input
@@ -55,6 +57,8 @@ describe('Select', () => {
 
   it('renders default label', () => {
     const input = wrapper.find('[data-test="select-input"]');
+    const icon = wrapper.find('[data-test="selected-icon"]');
+    expect(icon.length).toEqual(0);
     expect(input.props().value).toEqual('Choose an option...');
     expect(input.props().icon).toEqual(Icons.IconChevronDown);
   });
@@ -123,7 +127,9 @@ describe('Select', () => {
     );
 
     const input = wrapper.find('[data-test="select-input"]');
+    const icon = wrapper.find('[data-test="selected-icon"]');
     expect(input.props().value).toEqual('Option 3');
+    expect(icon.length).toEqual(1);
   });
 
   it('handles passed prop value not matching options', () => {
@@ -166,6 +172,26 @@ describe('Select', () => {
 
     const trigger = wrapper.find('[data-test="select-trigger"]');
     expect(trigger.length).toEqual(0);
+  });
+
+  it('renders error state', () => {
+    wrapper = shallow(
+      <Select
+        id="example"
+        value="option1"
+        onChange={mockOnChange}
+        placeholder={'Custom value'}
+        options={[
+          { name: 'Option 1', value: 'option1' },
+          { name: 'Option 2', value: 'option2' },
+          { name: 'Option 3', value: 'option3' },
+        ]}
+        error="Required"
+      />,
+    );
+
+    const icon = wrapper.find('[data-test="selected-icon"]');
+    expect(icon.props().color).toEqual(color.alert.red);
   });
 
   it('keyboard use - triggers dropdown on focus', () => {

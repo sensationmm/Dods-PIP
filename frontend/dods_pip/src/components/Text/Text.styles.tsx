@@ -2,19 +2,28 @@ import styled from 'styled-components';
 
 import media from '../../globals/media';
 
-export const h1 = styled.h1`
-  font-family: 'Libre Baskerville';
-  font-size: 64px;
-  line-height: 64px;
-  padding: 0;
-  margin: 0;
+export const heading = styled.span`
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Libre Baskerville';
+    padding: 0;
+    margin: 0;
+  }
 
-  ${media.greaterThan('md')`
+  .heroExtraLarge {
+    font-size: 64px;
+    line-height: 64px;
+
+    ${media.greaterThan('md')`
     font-size: 58px;    
     line-height: 58px;
   `}
 
-  ${media.greaterThan('xl')`
+    ${media.greaterThan('xl')`
     font-size: 74px;    
     line-height: 74px;
   `}
@@ -23,21 +32,18 @@ export const h1 = styled.h1`
     font-size: 80px;    
     line-height: 80px;
   `}
-`;
+  }
 
-export const h2 = styled.h2`
-  font-family: 'Libre Baskerville';
-  font-size: 34px;
-  line-height: 34px;
-  padding: 0;
-  margin: 0;
+  .heroLarge {
+    font-size: 34px;
+    line-height: 34px;
 
-  ${media.greaterThan('md')`
+    ${media.greaterThan('md')`
     font-size: 42px;
     line-height: 42px;
   `}
 
-  ${media.greaterThan('lg')`
+    ${media.greaterThan('lg')`
     font-size: 52px;
     line-height: 52px;
   `}
@@ -46,63 +52,52 @@ export const h2 = styled.h2`
     font-size: 64px;
     line-height: 64px;
   `}
-`;
+  }
 
-export const h3 = styled.h3`
-  font-family: 'Libre Baskerville';
-  font-size: 32px;
-  line-height: 32px;
-  padding: 0;
-  margin: 0;
+  .hero {
+    font-size: 32px;
+    line-height: 32px;
 
-  ${media.greaterThan('md')`
+    ${media.greaterThan('md')`
     font-size: 38px;
     line-height: 38px;
   `}
 
-  ${media.greaterThan('lg')`
+    ${media.greaterThan('lg')`
     font-size: 48px;
     line-height: 48px;
   `}
-`;
+  }
 
-export const h4 = styled.h4`
-  font-family: 'Libre Baskerville';
-  font-size: 24px;
-  line-height: 24px;
-  padding: 0;
-  margin: 0;
+  .titleLarge {
+    font-size: 24px;
+    line-height: 24px;
 
-  ${media.greaterThan('lg')`
+    ${media.greaterThan('lg')`
     font-size: 32px;
     line-height: 32px;
   `}
-`;
+  }
 
-export const h5 = styled.h5`
-  font-family: 'Libre Baskerville';
-  font-size: 18px;
-  line-height: 18px;
-  padding: 0;
-  margin: 0;
+  .title {
+    font-size: 18px;
+    line-height: 18px;
 
-  ${media.greaterThan('lg')`
+    ${media.greaterThan('lg')`
     font-size: 24px;
     line-height: 24px;
   `}
-`;
+  }
 
-export const h6 = styled.h6`
-  font-family: 'Libre Baskerville';
-  font-size: 14px;
-  line-height: 14px;
-  padding: 0;
-  margin: 0;
+  .titleSmall {
+    font-size: 14px;
+    line-height: 14px;
 
-  ${media.greaterThan('lg')`
+    ${media.greaterThan('lg')`
     font-size: 18px;
     line-height: 18px;
   `}
+  }
 `;
 
 export const p = styled.p`
@@ -132,6 +127,12 @@ export const p = styled.p`
   }
 `;
 
+export const h1 = styled.h1``;
+export const h2 = styled.h2``;
+export const h3 = styled.h3``;
+export const h4 = styled.h4``;
+export const h5 = styled.h5``;
+export const h6 = styled.h6``;
 export const body = styled.p``;
 export const bodySmall = styled.p``;
 export const bodyLarge = styled.p``;

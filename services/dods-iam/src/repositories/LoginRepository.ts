@@ -1,42 +1,41 @@
-import { LoginDynamodb } from "./LoginDynamodb";
+import { LoginAttemptsDynamodb } from "./LoginAttemptsDynamodb";
+import { LoginLastPasswordsDynamodb } from "./LoginLastPasswordsDynamodb";
 import { hash, compare } from '../utility'
 import { LoginEventBus } from "./LoginEventBus";
-import { Login, PasswordUpdated, LoginPersister, LoginEventPublisher } from '../domain';
+import { Login, PasswordUpdated, LoginAttemptsPersister, LoginLastPasswordsPersister, LoginEventPublisher } from '../domain';
 
 export class LoginRepository implements Login {
 
-    static defaultInstance = new LoginRepository(LoginDynamodb.defaultInstance, LoginEventBus.defaultInstance);
+    static defaultInstance = new LoginRepository(LoginAttemptsDynamodb.defaultInstance, LoginLastPasswordsDynamodb.defaultInstance, LoginEventBus.defaultInstance);
 
-    constructor(private loginPersister: LoginPersister, private loginEventPublisher: LoginEventPublisher) { }
+    constructor(private loginAttemptsPersister: LoginAttemptsPersister, private loginLastPasswordsPersister: LoginLastPasswordsPersister, private loginEventPublisher: LoginEventPublisher) { }
 
-    async getLastPassword(userName: string): Promise<string | undefined> {
-        return await this.loginPersister.getLastPassword(userName);
+    async getLastPasswords(userName: string): Promise<string[]> {
+        return await this.loginLastPasswordsPersister.getLastPasswords(userName);
     }
 
     async saveLastPassword(email: string, password: string): Promise<void> {
 
         const hashedPassword = hash(password);
 
-        await this.loginPersister.saveLastPassword(email, hashedPassword);
+        await this.loginLastPasswordsPersister.saveLastPassword(email, hashedPassword);
     }
 
     async validateLastPassword(userName: string, password: string): Promise<boolean> {
 
-        const lastPassword = await this.loginPersister.getLastPassword(userName);
+        const lastPasswords = await this.loginLastPasswordsPersister.getLastPasswords(userName);
 
-        if (lastPassword && compare(password, lastPassword)) {
-            return false;
-        }
+        const result = !lastPasswords.some(lastPassword => compare(password, lastPassword))
 
-        return true;
+        return result;
     }
 
     async resetLoginAttempt(email: string): Promise<boolean> {
-        return await this.loginPersister.resetLoginAttempt(email);
+        return await this.loginAttemptsPersister.resetLoginAttempt(email);
     }
 
     async incrementFailedLoginAttempt(email: string): Promise<number> {
-        return await this.loginPersister.incrementFailedLoginAttempt(email);
+        return await this.loginAttemptsPersister.incrementFailedLoginAttempt(email);
     }
 
     async publishNewLogin(detail: PasswordUpdated): Promise<void> {

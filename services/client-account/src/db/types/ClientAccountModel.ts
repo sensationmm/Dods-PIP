@@ -1,3 +1,5 @@
+import { Optional } from 'sequelize/types';
+
 export interface ClientAccountModelAttributes {
     id: number;
     uuid: string;
@@ -11,3 +13,9 @@ export interface ClientAccountModelAttributes {
     contractRollover: boolean;
     contractEndDate: Date | null;
 }
+
+export interface ClientAccountModelCreationAttributes
+    extends Optional<
+        ClientAccountModelAttributes,
+        'id' | 'uuid' | 'subscriptionSeats'
+    > {}

@@ -1,0 +1,73 @@
+{
+  "name": "taxonomy-service",
+  "version": "1.0.0",
+  "description": "Taxonomy Restful Api",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
+    "test:report": "open coverage/integration-tests-report.html && open coverage/lcov-report/index.html",
+    "dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=dev serverless offline --stage dev",
+    "validate:env": "SERVERLESS_STAGE=prod ts-node ./src/domain/config/index.ts",
+    "package": "serverless package",
+    "deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless deploy --stage dev",
+    "deploy:prod": "AWS_PROFILE=dods-prod AWS_REGION=eu-west-1 serverless deploy --stage prod",
+    "remove:deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage dev",
+    "remove:deploy:prod": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage prod",
+    "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}"
+  },
+  "pre-commit": [
+    "test:coverage",
+    "test:integration"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/DodsGroup/dodsmlp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/DodsGroup/dodsmlp/issues"
+  },
+  "homepage": "https://bitbucket.org/DodsGroup/dodsmlp#readme",
+  "devDependencies": {
+    "@cucumber/cucumber": "^7.3.1",
+    "@cucumber/pretty-formatter": "^1.0.0-alpha.1",
+    "@types/aws-lambda": "^8.10.83",
+    "@types/axios": "^0.14.0",
+    "@types/jest": "^27.0.1",
+    "@types/nut-pipe": "^1.1.2",
+    "@types/yamljs": "^0.2.31",
+    "copy-webpack-plugin": "^9.0.1",
+    "cucumber-html-reporter": "^5.5.0",
+    "jest": "^27.1.0",
+    "mockserver-client": "^5.11.2",
+    "open": "^8.2.1",
+    "pre-commit": "^1.2.2",
+    "serverless": "^2.57.0",
+    "serverless-dependson-plugin": "^1.1.2",
+    "serverless-localstack": "^0.4.34",
+    "serverless-offline": "^8.1.0",
+    "serverless-prune-plugin": "^1.5.1",
+    "serverless-webpack": "^5.5.4",
+    "swagger-parser": "^10.0.3",
+    "ts-jest": "^27.0.5",
+    "ts-loader": "^9.2.5",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "aws-lambda": "^1.0.6",
+    "aws-sdk": "^2.979.0",
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "express-openapi-validator": "^4.13.0",
+    "joi": "^17.4.2",
+    "lodash": "^4.17.21",
+    "nut-pipe": "^1.1.6",
+    "yamljs": "^0.3.0"
+  }
+}

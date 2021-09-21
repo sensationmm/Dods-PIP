@@ -71,7 +71,6 @@
     "mariadb": "^2.5.4",
     "nut-pipe": "^1.1.6",
     "sequelize": "^6.6.5",
-    "sequelize-cli": "^6.2.0",
     "yamljs": "^0.3.0"
   }
 }

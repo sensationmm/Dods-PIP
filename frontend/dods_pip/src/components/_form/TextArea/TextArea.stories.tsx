@@ -14,10 +14,16 @@ const Template: Story<TextAreaProps> = (args) => <TextArea {...args} />;
 export const Primary = Template.bind({});
 
 Primary.args = {
-  required: false,
-  isDisabled: false,
   label: '',
   value: '',
-  placeholder: '',
+  isDisabled: false,
+  error: undefined,
+  required: false,
+  optional: false,
   helperText: '',
+  placeholder: '',
+};
+
+Primary.parameters = {
+  controls: { exclude: ['tabIndex', 'id'] },
 };

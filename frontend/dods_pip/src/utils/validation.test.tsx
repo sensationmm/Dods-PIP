@@ -183,4 +183,36 @@ describe('validation functions', () => {
       });
     });
   });
+
+  describe('validatePhone()', () => {
+    test('returns true for numeric string with phone number chars', () => {
+      const string = '(+44)1234567';
+      const isValid = validation.validatePhone(string);
+      expect(isValid).toBe(true);
+    });
+
+    test('returns false for non-numeric string', () => {
+      const string = '(+44)123456asd';
+      const isValid = validation.validatePhone(string);
+      expect(isValid).toBe(false);
+    });
+
+    test('returns false if value is an empty string', () => {
+      const string = '';
+      const isValid = validation.validatePhone(string);
+      expect(isValid).toBe(false);
+    });
+
+    test('returns false if value is less than 7', () => {
+      const string = '(+44)123456';
+      const isValid = validation.validatePhone(string);
+      expect(isValid).toBe(false);
+    });
+
+    test('returns false if value is larger than 15', () => {
+      const string = '(+44)1234567890123456';
+      const isValid = validation.validatePhone(string);
+      expect(isValid).toBe(false);
+    });
+  });
 });

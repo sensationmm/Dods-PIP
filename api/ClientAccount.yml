@@ -16,6 +16,16 @@ paths:
             format: int32
             minimum: 0
             maximum: 100
+        - in: query
+          name: with_tags
+          description: Return Client Account with Tags
+          schema:
+            type: boolean
+        - in: query
+          name: with_team_members
+          description: Return Client Account with Team Members
+          schema:
+            type: boolean
       responses:
         '200':
           description: list of all Client Accounts in the system
@@ -24,11 +34,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ClientAccountResponse'
+                  oneOf:
+                    - $ref: '#/components/schemas/ClientAccountResponse'
+                    - $ref: '#/components/schemas/ClientAccountWithTags'
+                    - $ref: '#/components/schemas/ClientAccountWithTeamMembers'
         '401':
-          description: Not authenticated
+          $ref: '#/components/responses/Unauthenticated'
         '403':
-          description: Does not have correct permissions
+          $ref: '#/components/responses/Unauthorized'
     post:
       summary: Create Client Account
       requestBody:
@@ -44,17 +57,15 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClientAccountResponse'
+                $ref: '#/components/schemas/ClientAccountResponse'
         '400':
-          description: Invalid Client Account supplied
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Not authenticated
+          $ref: '#/components/responses/Unauthenticated'
         '403':
-          description: Does not have correct permissions
-        '409':
-          description: an existing item already exists
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /clientaccount/{accountId}:
     parameters:
       - in: path
@@ -63,22 +74,22 @@ paths:
           type: string
           format: uuid
         required: true
-        description: UUID of the account to get
+        description: UUID of the Client Account to get
     get:
       summary: Get an account by ID
       responses:
         '200':
-          description: Specified client account
+          description: Specified Client Account
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientAccountResponse'
         '401':
-          description: Not authenticated
+          $ref: '#/components/responses/Unauthenticated'
         '403':
-          description: Does not have correct permissions
+          $ref: '#/components/responses/Unauthorized'
         '404':
-          description: Client Account not found
+          $ref: '#/components/responses/NotFound'
     put:
       summary: Update client by ID
       requestBody:
@@ -90,21 +101,229 @@ paths:
               $ref: '#/components/schemas/ClientAccount'
       responses:
         '200':
-          description: Updated account
+          description: Updated Client Account
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientAccountResponse'
         '400':
-          description: Invalid Client Account supplied
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Not authenticated
+          $ref: '#/components/responses/Unauthenticated'
         '403':
-          description: Does not have correct permissions
+          $ref: '#/components/responses/Unauthorized'
         '404':
-          description: Client Account not found
+          $ref: '#/components/responses/NotFound'
+
+  /clientaccount/{accountId}/tag:
+    parameters:
+      - in: path
+        name: accountId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: UUID of the Client Account
+
+    get:
+      summary: Get Client Account Tags
+      responses:
+        '200':
+          description: List of all Tags on the Client Account
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Add Tag to Client Account
+      requestBody:
+        description: Tag to add
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - tag_id
+                - name
+              properties:
+                tag_id:
+                  type: string
+                  example: "http://www.dods.co.uk/taxonomy/instance/term/01269740-9567-4ae2-9024-06b25eaba1dc"
+                  description: The Tag ID in ElasticSearch
+                name:
+                  type: string
+                  example: "Winter travel disruption"
+      responses:
+        '200':
+          description: Added Tag to Client Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAccountWithTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /clientaccount/{accountId}/tag/{tagId}:
+    parameters:
+      - in: path
+        name: accountId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: UUID of the Client Account
+      - in: path
+        name: tagId
+        schema:
+          type: integer
+        required: true
+        example: 1
+    delete:
+      description: Delete Tag From Client Account
+      responses:
+        '200':
+          description: Removed Tag from Client Account
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/ClientAccountResponse'
+                    - $ref: '#/components/schemas/ClientAccountWithTags'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /clientaccount/{accountId}/teammember:
+    parameters:
+      - in: path
+        name: accountId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: UUID of the Client Account
+    get:
+      summary: Get all the Dods internal Team Members linked to a Client Account
+      responses:
+        '200':
+          description: All the Team Members under the account
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMember'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Add a Dods internal Team Member to a Client Account
+      responses:
+        '200':
+          description: The Client Account with the added Team Memver
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAccountWithTeamMembers'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /clientaccount/{accountId}/seats:
+    parameters:
+      - in: path
+        name: accountId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: UUID of the Client Account
+    get:
+      summary: Get Client Account Seats data
+      responses:
+        '200':
+          description: Get the total and available Seats for the Client Account
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - total_seats
+                  - remaining_seats
+                properties:
+                  total_seats:
+                    type: integer
+                    example: 20
+                  remaining_seats:
+                    type: integer
+                    example: 10
+
 components:
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthenticated:
+      description: Unauthenticated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "4xx"
+        message:
+          type: string
+          example: Error message relevant to error
+      required:
+        - code
+        - message
     ClientAccount:
       type: object
       required:
@@ -146,13 +365,83 @@ components:
           format: uuid
           example: d290f1ss-6c54-4b01-98e6-d701748f7151
     ClientAccountResponse:
-      allOf:     # Combines the BasicErrorModel and the inline model
+      allOf:
         - $ref: '#/components/schemas/ClientAccount'
-        - type: object
-          required:
-            - id
-          properties:
-            id:
-              type: string
-              format: uuid
-              example: d290f1ss-6c54-4b01-98e6-d701748f7151
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    ClientAccountWithTags:
+      allOf:
+        - $ref: '#/components/schemas/ClientAccountResponse'
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    ClientAccountWithTeamMembers:
+      allOf:
+        - $ref: '#/components/schemas/ClientAccountResponse'
+      type: object
+      required:
+        - team_members
+      properties:
+        team_members:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamMember'
+    Tag:
+      type: object
+      required:
+        - id
+        - tag_id
+        - name
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: The auto increment ID of the link between a Tag and a Client Account
+        tag_id:
+          type: string
+          example: "http://www.dods.co.uk/taxonomy/instance/term/01269740-9567-4ae2-9024-06b25eaba1dc"
+          description: The Tag ID in ElasticSearch
+        name:
+          type: string
+          example: "Winter travel disruption"
+    TeamMember:
+      type: object
+      required:
+        - id
+        - member_id
+        - first_name
+        - last_name
+        - email_address
+        - telephone_number
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: The auto increment ID of the link between a User and a Client Account
+        member_id:
+          type: string
+          format: uuid
+          example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        first_name:
+          type: string
+          example: Jane
+        last_name:
+          type: string
+          example: blogs
+        email_address:
+          type: string
+          example: Jane.Blogs@email.com
+        telephone_number:
+          type: string
+          example: '+442071838750'
