@@ -60,7 +60,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       <Panel isNarrow bgColor={color.base.ivory}>
         <SectionHeader
           title="About the Account"
-          subtitle="Please add the client details below"
+          subtitle="Please add the client details below."
           icon={Icons.IconSuitcase}
         />
 
@@ -86,7 +86,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
           <Spacer size={6} />
 
           <TextArea
-            label="Account Notes"
+            label="Account notes"
             onChange={setAccountNotes}
             value={accountNotes}
             placeholder="Type the account notes"
@@ -105,8 +105,8 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
         <SectionHeader
           title="Primary Contact"
           subtitle={[
-            'Please create a primary contact for the Account.',
-            'You can assign them to a project once the Account is created',
+            'Please create a primary contact for the account.',
+            'You can assign them to a project once the account is created.',
           ]}
           icon={Icons.IconPerson}
         />
@@ -130,7 +130,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
               <InputTelephone
                 id="account-info-contact-telephone"
-                label="Telephone Number"
+                label="Telephone number"
                 required
                 value={contactTelephone}
                 onChange={setContactTelephone}
@@ -142,7 +142,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
             <div>
               <InputText
                 id="account-info-contact-email"
-                label="Email Address"
+                label="Email address"
                 required
                 value={contactEmail}
                 onChange={setContactEmail}
