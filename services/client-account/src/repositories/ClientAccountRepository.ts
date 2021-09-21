@@ -5,7 +5,8 @@ function parseResponseFromModel(
     model: ClientAccountModel
 ): ClientAccountResponse {
     const response: ClientAccountResponse = {
-        id: model.uuid,
+        id: model.id,
+        uuid: model.uuid,
         name: model.name,
         notes: model.notes,
         contact_name: model.contactName,

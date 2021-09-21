@@ -17,7 +17,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     test(`${FUNCTION_NAME} Valid input`, async () => {
 
-        const clientAccountId = '111';
+        const clientAccountId = '71d0c73e-857f-4eab-b213-1d95f4f6118a';
 
         const expectedRepositoryResponse = [{ clientAccountId }];
 
