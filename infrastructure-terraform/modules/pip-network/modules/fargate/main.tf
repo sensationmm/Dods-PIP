@@ -217,7 +217,8 @@ data "template_file" "app" {
   template = file("${path.module}/templates/app.json.tpl")
   vars = {
     host_port         = 80
-    sentry_port       = 443
+
+    name              = local.main_resource_name
     app_image         = var.app_image
     app_port          = var.app_port
     fargate_cpu       = var.fargate_cpu
@@ -347,7 +348,7 @@ resource "aws_iam_role" "ecs_task_role" {
 resource "aws_iam_policy" "ecs_task_role" {
   name        = "${var.project}-${var.environment}-${local.main_resource_name}-task-policy"
   description = "Policy for trusted roles"
-  policy = templatefile("${path.module}/templates/task-access-policy.json.tpl")
+  policy = file("${path.module}/templates/task-access-policy.json.tpl")
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_role" {

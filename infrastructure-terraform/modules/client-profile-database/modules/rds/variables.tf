@@ -77,3 +77,29 @@ variable "db_password" {
   default    = ""
   type       = string
 }
+
+variable "vpc_id" {
+  description = "vpc variable"
+  default = ""
+}
+
+variable "private_subnet_ids" {
+  description = "vpc variable"
+  default = ""
+}
+
+variable "public_subnet_ids" {
+  description = "vpc variable"
+  default = ""
+}
+
+variable "cidr_block" {}
+variable "ipv6_cidr_block" {}
+
+variable "default_tags" {
+  type = map(any)
+  default = {
+    Version   = "1"
+    ManagedBy = "terraform"
+  }
+}

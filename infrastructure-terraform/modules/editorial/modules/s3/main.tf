@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "bucket" {
     error_document = "error.html"
   }
 
-  tags {
+  tags = {
     environment = var.environment
     project     = var.project
     version     = "1"

@@ -32,6 +32,20 @@ variable "app_image" {
   default     = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:639732e4f367758bb6eddb333fc5f620b4d80029"
 }
 
+
+
+variable "vpc_id" {
+  description = "vpc variable"
+  default = ""
+}
+variable "private_subnet_ids" {
+  description = "vpc variable"
+  default = ""
+}
+variable "public_subnet_ids" {
+  description = "vpc variable"
+  default = ""
+}
 // --------------------------------------------------------------------------------------------------------------------
 // - Custom Fargate policy Variables
 // --------------------------------------------------------------------------------------------------------------------

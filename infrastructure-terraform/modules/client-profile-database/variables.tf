@@ -43,3 +43,24 @@ variable "db_password" {
   default     = ""
   type        = string
 }
+
+variable "vpc_id" {
+  description = "vpc variable"
+  default = ""
+}
+variable "private_subnet_ids" {
+  description = "vpc variable"
+  default = ""
+}
+variable "public_subnet_ids" {
+  description = "vpc variable"
+  default = ""
+}
+
+variable "cidr_block" {
+  description = "vpc cidr block"
+}
+
+variable "ipv6_cidr_block" {
+  description = "vpc cidr block"
+}

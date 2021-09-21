@@ -1,12 +1,4 @@
 // --------------------------------------------------------------------------------------------------------------------
-// - VPC
-// --------------------------------------------------------------------------------------------------------------------
-module "vpc" {
-  environment = var.environment
-  source      = "./modules/vpc"
-}
-
-// --------------------------------------------------------------------------------------------------------------------
 // - Builder primary work cluster
 // --------------------------------------------------------------------------------------------------------------------
 module "ecs" {
@@ -17,11 +9,11 @@ module "ecs" {
 
 
   //vpc variables
-  vpc_id                  = module.vpc.vpc_id
-  private_subnet_ids      = module.vpc.private_subnet_ids
-  public_subnet_ids       = module.vpc.public_subnet_ids
-  availability_zone_names = module.vpc.availability_zone_names
-  az_count                = module.vpc.az_count
+  vpc_id                  = var.vpc_id
+  private_subnet_ids      = var.private_subnet_ids
+  public_subnet_ids       = var.public_subnet_ids
+  availability_zone_names = var.availability_zone_names
+  az_count                = var.az_count
 
   //variables for iam policies
 
