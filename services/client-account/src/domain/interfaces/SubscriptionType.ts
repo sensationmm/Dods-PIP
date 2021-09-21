@@ -1,7 +1,7 @@
 export interface SubscriptionType {
     name: string;
-    // location?: number | null;
-    // content_type?: number | null;
+    location?: number | null;
+    contentType?: number | null;
 }
 
 export interface SubscriptionTypeResponse extends SubscriptionType {
