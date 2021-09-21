@@ -14,6 +14,7 @@ function parseResponseFromModel(
         contact_telephone_number: model.contactTelephoneNumber,
         contract_start_date: model.contractStartDate.toJSON(),
         contract_rollover: model.contractRollover,
+        subscription: model.SubscriptionType,
         contract_end_date: model.contractEndDate
             ? model.contractEndDate.toJSON()
             : undefined,
@@ -36,7 +37,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
 
         const clientAccountModel = await this.model.findOne({
-            where: { uuid: clientAccountId },
+            where: { uuid: clientAccountId }, include: ["SubscriptionType"]
         });
 
         if (clientAccountModel) {
