@@ -11,10 +11,11 @@
     "module": "commonJs",
     "target": "es2020",
     "lib": ["es2020"],
+    "outDir": "dist",
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "typeRoots": ["./@types"]
+    "typeRoots": ["src/@types"]
   },
   "include": ["./**/*.ts"],
   "exclude": [

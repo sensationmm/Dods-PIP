@@ -3,9 +3,8 @@ const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   context: __dirname,
-  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
-  entry: slsw.lib.entries,
-  devtool: slsw.lib.webpack.isLocal ? 'eval-cheap-module-source-map' : 'source-map',
+  mode: 'production',
+  devtool: 'source-map',
   resolve: {
     extensions: ['.mjs', '.json', '.ts', '.yml'],
     symlinks: false,
@@ -27,9 +26,7 @@ module.exports = {
         exclude: [
           [
             path.resolve(__dirname, 'node_modules'),
-            path.resolve(__dirname, '.webpack'),
-            path.resolve(__dirname, 'images'),
-            path.resolve(__dirname, 'coverage')
+            path.resolve(__dirname, '.webpack')
           ]
         ],
         options: {
