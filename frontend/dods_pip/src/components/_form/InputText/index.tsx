@@ -26,6 +26,7 @@ const InputText: React.FC<InputTextProps> = ({
   onBlur,
   tabIndex,
   icon,
+  placeholder,
 }) => {
   return (
     <Styled.wrapper className={classNames({ icon: icon !== undefined })}>
@@ -45,6 +46,7 @@ const InputText: React.FC<InputTextProps> = ({
         onFocus={onFocus}
         onBlur={onBlur}
         tabIndex={tabIndex}
+        placeholder={placeholder}
       >
         {icon && (
           <Icon

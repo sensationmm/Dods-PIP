@@ -66,9 +66,9 @@ describe('InputText', () => {
     );
     const component = wrapper.find('[data-test="component-input-text"]');
     component.simulate('focus');
-    component.simulate('change', { target: { value: 'new' } });
+    component.simulate('change', 'new');
     expect(typeWatcher).toHaveBeenCalledTimes(1);
-    expect(typeWatcher).toHaveBeenCalledWith({ target: { value: 'new' } });
+    expect(typeWatcher).toHaveBeenCalledWith('new');
   });
 
   afterEach(() => {

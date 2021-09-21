@@ -66,3 +66,9 @@ export const validatePassword = (input: string): ValidatePasswordReturn => {
     results: results,
   };
 };
+
+export const validatePhone = (input: string): boolean => {
+  const inputVal = input ? input.substr(input.indexOf(')') + 1) : '';
+  if (inputVal === '') return false;
+  return !Number.isNaN(Number(inputVal)) && inputVal.length >= 7 && inputVal.length <= 15;
+};

@@ -26,6 +26,7 @@ export const step = styled.div<ProgressProps>`
 
   .label {
     display: none;
+    white-space: nowrap;
   }
 
   ${({ condensed }) => media.greaterThan('md')`
