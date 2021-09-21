@@ -68,7 +68,9 @@
     "express-openapi-validator": "^4.13.1",
     "joi": "^17.4.2",
     "lodash": "^4.17.21",
+    "mariadb": "^2.5.4",
     "nut-pipe": "^1.1.6",
+    "sequelize": "^6.6.5",
     "yamljs": "^0.3.0"
   }
 }
