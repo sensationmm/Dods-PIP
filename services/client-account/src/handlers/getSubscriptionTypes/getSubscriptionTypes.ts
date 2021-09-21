@@ -1,10 +1,10 @@
 import { APIGatewayProxyResultV2 } from 'aws-lambda';
-import { ClientAccountRepository } from '../../repositories/ClientAccountRepository';
+import { SubscriptionTypeRepository } from '../../repositories/SubscriptionTypeRepository';
 import { HttpSuccessResponse } from '../../domain';
 
 export const getSubscriptionTypes = async (): Promise<APIGatewayProxyResultV2> => {
     const response =
-        await ClientAccountRepository.defaultInstance.getSubscriptionTypes();
+        await SubscriptionTypeRepository.defaultInstance.getSubscriptionTypes();
 
     return new HttpSuccessResponse(
         JSON.stringify(response)

@@ -2,10 +2,9 @@ import {
     ClientAccountParameters,
     ClientAccountPersister,
     ClientAccountResponse,
-    SubscriptionTypeResponse,
 } from '../domain';
 
-import { ClientAccountModel, SubscriptionTypeModel } from '../db/models';
+import { ClientAccountModel } from '../db/models';
 import { ClientAccountModelCreationAttributes } from '../db/types';
 
 function parseResponseFromModel(
@@ -47,24 +46,11 @@ function parseModelParameters(
     return parameters;
 }
 
-function parseSubscriptionTypesResponseFromModel(modelList: SubscriptionTypeModel[]): SubscriptionTypeResponse[] {
-    const response: SubscriptionTypeResponse[] = modelList.map(model => {
-        return {
-            id: model.uuid,
-            name: model.name
-        }
-    })
-    return response
-}
-
 export class ClientAccountRepository implements ClientAccountPersister {
     static defaultInstance: ClientAccountPersister =
-        new ClientAccountRepository(ClientAccountModel, SubscriptionTypeModel);
+        new ClientAccountRepository(ClientAccountModel);
 
-    constructor(
-        private model: typeof ClientAccountModel,
-        private subscriptionTypeModel: typeof SubscriptionTypeModel
-        ) {}
+    constructor(private model: typeof ClientAccountModel) {}
 
     async createClientAccount(
         clientAccount: ClientAccountParameters
@@ -97,11 +83,5 @@ export class ClientAccountRepository implements ClientAccountPersister {
         } else {
             throw new Error('Error: clientAccount not found');
         }
-    }
-
-    async getSubscriptionTypes(): Promise<Array<SubscriptionTypeResponse>> {
-        const subscriptionTypes = await this.subscriptionTypeModel.findAll()
-        const subscriptionTypesParsed = parseSubscriptionTypesResponseFromModel(subscriptionTypes)
-        return subscriptionTypesParsed
     }
 }
