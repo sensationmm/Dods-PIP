@@ -1,6 +1,6 @@
 # websites2020 deployment
 
-This repo manages deployment for the 2020 new websites environments and infrastructure.
+This directory manages deployment for the Dods Political intelligence platform and infrastructure.
 Centrally managed and self-documented deployment of new resources and apply CI/CD to the process.
 This allows for version controlled, immutable infrastructure.
 
@@ -9,7 +9,7 @@ This allows for version controlled, immutable infrastructure.
 - set up keypair
   - terraform-key
 - set up roles
-- set up S3 bucket with name matching in terraform.tf e.g: bucket = "mettr-websites2020-terraform-state"
+- set up S3 bucket with name matching in terraform.tf e.g: bucket = "dods-pip-terraform-state"
 - provide this S3 bucket with a policy similar to this:
 
 ```
@@ -29,8 +29,8 @@ This allows for version controlled, immutable infrastructure.
       },
       "Action": "s3:*",
       "Resource": [
-        "arn:aws:s3:::da-terraform-remote-state-bucket",
-        "arn:aws:s3:::da-terraform-remote-state-bucket/*"
+        "arn:aws:s3:::dods-pip-remote-state-bucket",
+        "arn:aws:s3:::dods-pip-terraform-remote-state-bucket/*"
       ]
     }
   ]
@@ -55,12 +55,12 @@ This allows for version controlled, immutable infrastructure.
 
 ## Tags
 
-Resources should have the following tag convention
+Resources should have the following tag convention, camelcase tags, lower case values:
 
 |Name|Default|Options|
 |---|---|---|
-|`Environment`|-|`development`, `production`, `staging`, `test`|
-|`ApplicationID`|-|`website-editor`, `website-builder`|
-|`Version`|`1`|1, 2, 3 etc|
-|`Owner`|-|-|
-|`ManagedBy`|-|`terraform`, `serverless`, `console`|
+|`environment`|-|`development`, `production`, `staging`, `test`|
+|`project`|-|`pip`, `project-2`|
+|`version`|`1`|`1`, `2`, `3` etc|
+|`owner`|-|`michael brown`, `giovanni espinosa`|
+|`managedBy`|-|`terraform`, `serverless`, `console`|

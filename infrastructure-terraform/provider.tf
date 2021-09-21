@@ -1,11 +1,12 @@
 provider "aws" {
   region = "eu-west-1"
+  profile = "dods-dev"
 }
 
 provider "aws" {
   alias   = "dev"
   region  = "eu-west-1"
-  profile = "deployment-1"
+  profile = "dods-dev"
   assume_role {
     role_arn     = local.development_tf_role
     session_name = "DEVELOP"
@@ -16,7 +17,7 @@ provider "aws" {
 provider "aws" {
   alias   = "prod"
   region  = "eu-west-1"
-  profile = "deployment-1"
+  profile = "dods-dev"
   assume_role {
     role_arn     = local.production_tf_role
     session_name = "MASTER"
@@ -27,7 +28,7 @@ provider "aws" {
 provider "aws" {
   alias   = "staging"
   region  = "eu-west-1"
-  profile = "deployment-1"
+  profile = "dods-dev"
   assume_role {
     role_arn     = local.staging_tf_role
     session_name = "STAGING"
@@ -38,7 +39,7 @@ provider "aws" {
 provider "aws" {
   alias   = "dev-us-east-1"
   region  = "us-east-1"
-  profile = "deployment-1"
+  profile = "dods-dev"
   assume_role {
     role_arn     = local.development_tf_role
     session_name = "DEVELOP"
@@ -49,7 +50,7 @@ provider "aws" {
 provider "aws" {
   alias   = "prod-us-east-1"
   region  = "us-east-1"
-  profile = "deployment-1"
+  profile = "dods-dev"
   assume_role {
     role_arn     = local.production_tf_role
     session_name = "MASTER"
@@ -60,7 +61,7 @@ provider "aws" {
 provider "aws" {
   alias   = "staging-us-east-1"
   region  = "us-east-1"
-  profile = "deployment-1"
+  profile = "dods-dev"
   assume_role {
     role_arn     = local.staging_tf_role
     session_name = "STAGING"
