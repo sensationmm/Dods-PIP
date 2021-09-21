@@ -1,11 +1,11 @@
 const color = {
   theme: {
+    bluePastel: '#C2DDFF',
+    blueSky: '#89BCFF',
     blueLight: '#3776CA',
     blueMid: '#124384',
-    blue: '#122035',
+    blue: '#222955',
     blueDark: '#122035',
-    bluePastel: '#3776CA',
-    blueSky: '#3776CA',
   },
   shadow: {
     blue: '#EAEEF3',
