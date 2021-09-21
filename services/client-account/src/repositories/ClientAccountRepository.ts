@@ -6,6 +6,7 @@ import {
 
 import { ClientAccountModel } from '../db/models';
 import { ClientAccountModelCreationAttributes } from '../db/types';
+import SubscriptionType from "../db/models/SubscriptionType";
 
 function parseResponseFromModel(
     model: ClientAccountModel
@@ -22,6 +23,7 @@ function parseResponseFromModel(
         contract_end_date: model.contractEndDate
             ? model.contractEndDate.toJSON()
             : undefined,
+        subscription: model.SubscriptionType
     };
 
     return response;
@@ -75,7 +77,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
 
         const clientAccountModel = await this.model.findOne({
-            where: { uuid: clientAccountId },
+            where: { uuid: clientAccountId }, include: [SubscriptionType]
         });
 
         if (clientAccountModel) {
