@@ -2,7 +2,7 @@ import { AsyncLambdaMiddleware } from "nut-pipe";
 import { HttpResponse, HttpStatusCode } from "../domain";
 import { Logger } from "../utility";
 
-export const httpLogerMiddleware: AsyncLambdaMiddleware = async (event, context, callback, next) => {
+export const httpLogerMiddleware: AsyncLambdaMiddleware = async (event, context, _, next) => {
 
     Logger.info(`HttpLogerMiddleware Entry`, { path: event.requestContext.http.path, method: event.requestContext.http.method });
 

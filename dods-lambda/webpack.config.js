@@ -3,7 +3,7 @@ const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   context: __dirname,
-  mode: 'production',
+  mode: 'development',
   devtool: 'source-map',
   resolve: {
     extensions: ['.mjs', '.json', '.ts', '.yml'],
@@ -11,7 +11,7 @@ module.exports = {
     cacheWithContext: false,
   },
   output: {
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'commonjs',
     path: path.join(__dirname, '.webpack'),
     filename: '[name].js',
   },
