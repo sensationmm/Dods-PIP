@@ -13,10 +13,18 @@ export type TextStyles =
   | 'bodyLarge'
   | 'labelSmall'
   | 'headerTitle';
+export type HeadingStyle =
+  | 'heroExtraLarge'
+  | 'heroLarge'
+  | 'hero'
+  | 'titleLarge'
+  | 'title'
+  | 'titleSmall';
 
 export interface TextProps {
   children?: React.ReactNode;
   type?: TextStyles;
+  headingStyle?: HeadingStyle;
   color?: string;
   bold?: boolean;
   uppercase?: boolean;
@@ -27,6 +35,7 @@ export interface TextProps {
 const Text: React.FC<TextProps> = ({
   children,
   type = 'body',
+  headingStyle = 'hero',
   color = colorPalette.theme.blue,
   bold = false,
   uppercase = false,
@@ -59,6 +68,26 @@ const Text: React.FC<TextProps> = ({
     'data-test': 'component-text',
     htmlFor: htmlFor,
   };
+
+  if (type.length === 2 && type.substr(0, 1) === 'h') {
+    return (
+      <Styled.heading>
+        {React.createElement(
+          type,
+          {
+            ...props,
+            className: headingStyle,
+            style: {
+              color: color,
+              textAlign: center ? 'center' : 'left',
+              textTransform: uppercase ? 'uppercase' : 'none',
+            },
+          },
+          children,
+        )}
+      </Styled.heading>
+    );
+  }
 
   return React.createElement(
     element,

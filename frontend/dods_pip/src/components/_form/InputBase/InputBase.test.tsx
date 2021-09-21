@@ -2,6 +2,7 @@ import { shallow } from 'enzyme';
 import React from 'react';
 
 import InputBase from '.';
+import Label from '../Label';
 
 describe('InputBase onChange={jest.fn}', () => {
   it('renders without error', () => {
@@ -9,7 +10,7 @@ describe('InputBase onChange={jest.fn}', () => {
       <InputBase id="test" onChange={jest.fn} type="text" label="Example" value="Example" />,
     );
     const component = wrapper.find('[data-test="component-input-base"]');
-    const label = wrapper.find('[data-test="field-label"]');
+    const label = wrapper.find(Label);
     expect(label.length).toEqual(1);
     expect(component.length).toEqual(1);
   });
@@ -20,36 +21,6 @@ describe('InputBase onChange={jest.fn}', () => {
     );
     const component = wrapper.find('[data-test="component-input-base-input"]');
     expect(component.props().value).toEqual('Value');
-  });
-
-  it('renders required state', () => {
-    const wrapper = shallow(
-      <InputBase
-        id="test"
-        onChange={jest.fn}
-        type="text"
-        label="Label"
-        value="Value"
-        required={true}
-      />,
-    );
-    const label = wrapper.find('[data-test="field-label"]');
-    expect(label.text()).toEqual('*<Text />(Required)');
-  });
-
-  it('renders optional state', () => {
-    const wrapper = shallow(
-      <InputBase
-        id="test"
-        onChange={jest.fn}
-        type="text"
-        label="Label"
-        value="Value"
-        optional={true}
-      />,
-    );
-    const label = wrapper.find('[data-test="field-label"]');
-    expect(label.text()).toEqual('<Text />(Optional)');
   });
 
   it('renders helper text if given', () => {
