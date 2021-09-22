@@ -33,6 +33,7 @@ const Chips: React.FC<ChipsProps> = ({
 
   return (
     <Styled.wrapper
+      iconOrAvatar={icon || avatarType ? true : false}
       data-test="component-chip"
       selected={selected}
       disabled={disabled}
@@ -70,21 +71,24 @@ const Chips: React.FC<ChipsProps> = ({
           data-test="chips-label"
           type={chipsSize === 'medium' ? 'body' : 'bodySmall'}
           bold
-          color={disabled ? color.base.grey : color.theme.blueMid}
+          color={disabled ? color.base.greyDark : color.theme.blue}
         >
           {label}
         </Text>
       </Styled.contentWrapper>
-      {hovering && (
-        <Styled.closeButton selected={selected} disabled={disabled} onClick={onCloseClick}>
-          <Icon
-            src={Icons.IconCross}
-            size={IconSize.small}
-            color={color.base.white}
-            data-test="closeButtonIcon"
-          />
-        </Styled.closeButton>
-      )}
+      <Styled.closeButton
+        selected={selected}
+        disabled={disabled}
+        hovering={hovering}
+        onClick={onCloseClick}
+      >
+        <Icon
+          src={Icons.IconCross}
+          size={IconSize.small}
+          color={color.base.white}
+          data-test="closeButtonIcon"
+        />
+      </Styled.closeButton>
     </Styled.wrapper>
   );
 };
