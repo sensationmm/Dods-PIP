@@ -1,10 +1,13 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { AsyncLambdaMiddlewareWithServices } from "nut-pipe";
+import { Logger } from "../utility";
 import { awsOpenApiRequestAdapter } from "../validation";
 
 export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices<APIGatewayProxyEvent> = async (event, context, callback, services, next) => {
 
-    const { genericOpenApiValidator } = services;
+    const { genericOpenApiValidator, validateRequests, validateResponses } = services;
+
+    Logger.info(`OpenApiValidatorMiddleware Entry`, { validateRequests, validateResponses });
 
     let data;
     let openApiRequest;
@@ -37,6 +40,8 @@ export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices<APIGa
     if (genericOpenApiValidator && openApiRequest) {
         await genericOpenApiValidator.validateResponse(openApiRequest, response);
     }
+
+    Logger.info(`OpenApiValidatorMiddleware Success`);
 
     return response;
 };

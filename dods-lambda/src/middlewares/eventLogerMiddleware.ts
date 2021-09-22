@@ -8,4 +8,5 @@ export const eventLogerMiddleware: AsyncLambdaMiddleware<EventBridgeEvent<string
 
     await next(event, context, callback);
 
+    Logger.info(`EventLogerMiddleware Success`);
 };
