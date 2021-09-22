@@ -2,9 +2,10 @@ import {
     ClientAccountParameters,
     ClientAccountPersister,
     ClientAccountResponse,
+
 } from '../domain';
 
-import { ClientAccountModel } from '../db/models';
+import { ClientAccountModel,UserProfileModel } from '../db/models';
 import { ClientAccountModelCreationAttributes } from '../db/types';
 import SubscriptionType from "../db/models/SubscriptionType";
 
@@ -82,6 +83,38 @@ export class ClientAccountRepository implements ClientAccountPersister {
             const clientAccount = parseResponseFromModel(clientAccountModel);
 
             return clientAccount;
+        } else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
+
+    async getRemainingSeats(
+        clientAccountId: string
+    ): Promise<number> {
+        
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+        
+        const clientAccountModel = await this.model.findOne({
+             where: { uuid: clientAccountId },
+         });
+
+        if (clientAccountModel) {
+
+            const subscriptionSeats:number= clientAccountModel.subscriptionSeats;
+
+                const result = await ClientAccountModel.findOne({
+                    where: { uuid: clientAccountId },
+                    include: UserProfileModel
+                  });
+
+                
+                  const busySeats: number = result.dataValues.UserProfileModels.length;
+                  const availableSeats:number= subscriptionSeats-busySeats;
+        
+
+            return availableSeats;
         } else {
             throw new Error('Error: clientAccount not found');
         }

@@ -4,4 +4,5 @@ export interface ClientAccountPersister {
         clientAccount: ClientAccountParameters
     ): Promise<ClientAccountResponse>;
     getClientAccount(clientAccountId: string): Promise<ClientAccountResponse>;
+    getRemainingSeats(clientAccountId: string): Promise<number>;
 }

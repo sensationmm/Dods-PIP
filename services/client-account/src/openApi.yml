@@ -52,6 +52,21 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
 
+  /clientaccount/{clientAccountId}/seats:
+    get:
+      operationId: getRemainingSeats
+      summary: "Get Remaining Seats"
+      description: "Get Client Account"
+      parameters:
+        - $ref: "#/components/parameters/clientAccountId"
+      responses:
+        "200":
+          $ref: "#/components/responses/ClientAccount"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 
   /subscription-types:
     get:
@@ -126,7 +141,7 @@ components:
       schema:
         type: string
       required: true
-      description: Clint Account UUID
+      description: Client Account UUID
 
   responses:
     NotFound:

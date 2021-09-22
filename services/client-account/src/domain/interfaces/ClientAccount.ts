@@ -20,3 +20,5 @@ export interface ClientAccountResponse extends ClientAccount {
 export interface GetClientAccountParameters {
     clientAccountId: string;
 }
+export interface ClientAccountParameters extends ClientAccount {}
+
