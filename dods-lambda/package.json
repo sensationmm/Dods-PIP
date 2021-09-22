@@ -17,7 +17,7 @@
     "express": "^4.17.1",
     "express-openapi-validator": "^4.13.1",
     "lodash": "^4.17.21",
-    "nut-pipe": "^1.2.2",
+    "nut-pipe": "^1.2.3",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

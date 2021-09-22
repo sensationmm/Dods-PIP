@@ -1,4 +1,5 @@
 import { APIGatewayProxyResultV2 } from "aws-lambda";
+import { AsyncLambdaMiddleware } from "nut-pipe";
 import { HttpBadRequestError, HttpSuccessResponse, HttpUnauthorizedResponse } from '../../../domain';
 import { LoginRepository } from "../../../repositories";
 import { AwsCognito } from "../../../services";
@@ -9,7 +10,7 @@ export interface ChangePasswordParameters {
     newPassword: string;
 }
 
-export const changePassword = async ({ email, password, newPassword }: ChangePasswordParameters): Promise<APIGatewayProxyResultV2> => {
+export const changePassword: AsyncLambdaMiddleware<ChangePasswordParameters, string> = async ({ email, password, newPassword })=> {
 
     if (!email) {
         throw new HttpBadRequestError("Request Body should contain Email field.");
@@ -40,5 +41,5 @@ export const changePassword = async ({ email, password, newPassword }: ChangePas
         response = new HttpUnauthorizedResponse(error);
     }
 
-    return response;
+    return '';
 };

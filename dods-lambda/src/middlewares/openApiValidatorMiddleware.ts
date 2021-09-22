@@ -1,7 +1,7 @@
 import { AsyncLambdaMiddlewareWithServices } from "nut-pipe";
 import { awsOpenApiRequestAdapter } from "../validation";
 
-export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices = async (event, context, _, services, next) => {
+export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices = async (event, context, callback, services, next) => {
 
     const { genericOpenApiValidator } = services;
 
@@ -31,7 +31,7 @@ export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices = asy
         Object.assign(data, parsedBody);
     }
 
-    const response = await next(data as any, context);
+    const response = await next(data as any, context, callback);
 
     if (genericOpenApiValidator && openApiRequest) {
         await genericOpenApiValidator.validateResponse(openApiRequest, response);
