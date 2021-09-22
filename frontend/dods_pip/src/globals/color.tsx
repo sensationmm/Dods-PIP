@@ -2,7 +2,7 @@ const color = {
   theme: {
     bluePastel: '#C2DDFF',
     blueSky: '#89BCFF',
-    blueLight: '#3776CA',
+    blueLight: '#3072C9',
     blueMid: '#124384',
     blue: '#222955',
     blueDark: '#122035',

@@ -10,6 +10,7 @@ import {
 
 import { ClientAccountModel, SubscriptionTypeModel } from '../db/models';
 import { ClientAccountModelCreationAttributes } from '../db/types';
+import SubscriptionType from "../db/models/SubscriptionType";
 
 function parseResponseFromModel(
     model: ClientAccountModel
@@ -26,7 +27,8 @@ function parseResponseFromModel(
         contract_end_date: model.contractEndDate
             ? model.contractEndDate.toJSON()
             : undefined,
-        SubscriptionType: model.SubscriptionType ? model.SubscriptionType : undefined,
+        // SubscriptionType: model.SubscriptionType ? model.SubscriptionType : undefined,
+        subscription: model.SubscriptionType
     };
 
     return response;
@@ -72,15 +74,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
         return newClientAccount;
     }
 
-    async getClientAccount(
-        clientAccountId: string
-    ): Promise<ClientAccountResponse> {
+    async getClientAccount(clientAccountId: string): Promise<ClientAccountResponse> {
         if (!clientAccountId) {
             throw new Error('Error: clientAccountId cannot be empty');
         }
 
         const clientAccountModel = await this.model.findOne({
-            where: { uuid: clientAccountId },
+            where: { uuid: clientAccountId }, include: [SubscriptionType]
         });
 
         if (clientAccountModel) {

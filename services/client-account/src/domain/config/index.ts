@@ -67,18 +67,15 @@ const stages = ['production', 'development', 'test'];
 
 const envVarsSchema = Joi.object()
     .keys({
-        NODE_ENV: Joi.string()
-            .valid(...stages)
-            .default('test'),
-        SERVERLESS_STAGE: Joi.string()
-            .required()
-            .valid('prod', 'dev', 'test')
-            .default('test'),
+        NODE_ENV: Joi.string().valid(...stages).default('test'),
+        SERVERLESS_STAGE: Joi.string().required().valid('prod', 'dev', 'test').default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
         MARIA_DB_DATABASE: Joi.string().required(),
         MARIA_DB_HOST: Joi.string().required(),
         MARIA_DB_USERNAME: Joi.string().required(),
         MARIA_DB_PASSWORD: Joi.string().required(),
+        MARIADB_CONNECTION_STRING: Joi.string().required(),
+        MARIADB_CONNECTION_LIMIT: Joi.string().required(),
     })
     .unknown();
 
@@ -103,6 +100,8 @@ export const config = {
             username: envVars.MARIA_DB_USERNAME as string,
             password: envVars.MARIA_DB_PASSWORD as string,
             host: envVars.MARIA_DB_HOST as string,
+            connectionString: envVars.MARIADB_CONNECTION_STRING as string,
+            connectionLimit: envVars.MARIADB_CONNECTION_LIMIT as number
         },
     },
 };

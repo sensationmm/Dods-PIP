@@ -1,4 +1,5 @@
-import { Pagination } from "./Pagination";
+import { Pagination } from "../interfaces";
+import SubscriptionType from "../../db/models/SubscriptionType";
 
 export interface ClientAccount {
     name: string;
@@ -9,11 +10,13 @@ export interface ClientAccount {
     contract_start_date: string;
     contract_rollover: boolean;
     contract_end_date?: string;
-    SubscriptionType: {} | undefined;
+    // SubscriptionType: {} | undefined;
 }
 
 export interface ClientAccountResponse extends ClientAccount {
-    id: string;
+    id: number;
+    uuid: string;
+    subscription: SubscriptionType | undefined
 }
 
 export interface ClientAccountParameters extends ClientAccount {
@@ -24,4 +27,7 @@ export interface SearchClientAccountParameters extends Pagination {
     subscriptionTypes?: number[] | null;
     searchTerm?: string | null;
     startsBy?: string | null;
+}
+export interface GetClientAccountParameters {
+    clientAccountId: string;
 }
