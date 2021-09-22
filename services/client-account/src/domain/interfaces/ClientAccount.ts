@@ -1,3 +1,16 @@
-import { ClientAccountPersister } from "./ClientAccountPersister";
+export interface ClientAccount {
+    name: string;
+    notes: string | null;
+    contact_name: string;
+    contact_email_address: string;
+    contact_telephone_number: string;
+    contract_start_date: string;
+    contract_rollover: boolean;
+    contract_end_date?: string;
+}
 
-export interface ClientAccount extends ClientAccountPersister { }
+export interface ClientAccountResponse extends ClientAccount {
+    id: string;
+}
+
+export interface ClientAccountParameters extends ClientAccount {}

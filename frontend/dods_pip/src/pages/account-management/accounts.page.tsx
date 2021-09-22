@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
@@ -45,6 +46,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
   const [filterAZ, setFilterAZ] = React.useState<string>('');
   const [filterSubscription, setFilterSubscription] = React.useState<string>('');
   const [filterLocation, setFilterLocation] = React.useState<string>('');
+  const router = useRouter();
 
   const filterAccounts = (data: ClientAccounts) => {
     let filteredData: ClientAccounts = data;
@@ -100,8 +102,16 @@ export const Accounts: React.FC<AccountsProps> = () => {
           <Spacer size={6} />
 
           <Styled.header>
-            <Text type="h1">Accounts</Text>
-            <Button isSmall icon={Icons.IconAdd} label="Add Client Account" />
+            <Text type="h1" headingStyle="hero">
+              Accounts
+            </Text>
+            <Button
+              data-test="btn-create-client-account"
+              onClick={() => router.push('/account-management/add-client')}
+              isSmall
+              icon={Icons.IconAdd}
+              label="Add Client Account"
+            />
           </Styled.header>
 
           <Spacer size={12} />

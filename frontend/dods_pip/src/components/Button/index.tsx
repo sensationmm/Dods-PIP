@@ -29,18 +29,16 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   let Component = Styled.primary;
 
-  if (!icon) {
-    switch (type) {
-      case 'primary':
-        Component = Styled.primary;
-        break;
-      case 'secondary':
-        Component = Styled.secondary;
-        break;
-      case 'text':
-        Component = Styled.text;
-        break;
-    }
+  switch (type) {
+    case 'primary':
+      Component = Styled.primary;
+      break;
+    case 'secondary':
+      Component = Styled.secondary;
+      break;
+    case 'text':
+      Component = Styled.text;
+      break;
   }
 
   return (
@@ -61,7 +59,7 @@ const Button: React.FC<ButtonProps> = ({
           <Icon
             src={icon}
             size={isSmall ? IconSize.medium : IconSize.large}
-            color={color.base.white}
+            color={type === 'primary' ? color.base.white : color.theme.blueMid}
           />
         )}
       </Component>

@@ -1,7 +1,6 @@
 import { EventBridgeEvent } from "aws-lambda";
 import { PasswordUpdated } from "../../../domain";
 import { LoginRepository } from '../../../repositories';
-import { Logger } from '../../../utility';
 
 export const onLoginPasswordEvents = async (event: EventBridgeEvent<string, PasswordUpdated>): Promise<void> => {
 
@@ -32,5 +31,4 @@ export const onLoginPasswordEvents = async (event: EventBridgeEvent<string, Pass
     // }
 
     await LoginRepository.defaultInstance.saveLastPassword(event.detail.userName, event.detail.lastPassword);
-
 };
