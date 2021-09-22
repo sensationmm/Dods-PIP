@@ -1,8 +1,9 @@
 {
   "name": "@dodsgroup/dods-lambda",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "",
-  "main": ".webpack/main.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.js",
   "scripts": {
     "build": "webpack",
     "predeploy": "npm run build",
@@ -16,7 +17,7 @@
     "express": "^4.17.1",
     "express-openapi-validator": "^4.13.1",
     "lodash": "^4.17.21",
-    "nut-pipe": "^1.1.6",
+    "nut-pipe": "^1.1.8",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

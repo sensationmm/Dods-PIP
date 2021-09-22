@@ -16,8 +16,7 @@
     "declarationMap": true,  
     "sourceMap": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "typeRoots": ["src/@types"]
+    "esModuleInterop": true
   },
   "include": ["./**/*.ts"],
   "exclude": [

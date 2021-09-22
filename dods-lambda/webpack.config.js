@@ -3,8 +3,11 @@ const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   context: __dirname,
-  mode: 'development',
+  mode: 'production',
   devtool: 'source-map',
+  entry: {
+    index: './index.ts'
+  },
   resolve: {
     extensions: ['.mjs', '.json', '.ts', '.yml'],
     symlinks: false,
@@ -12,8 +15,9 @@ module.exports = {
   },
   output: {
     libraryTarget: 'commonjs',
-    path: path.join(__dirname, '.webpack'),
-    filename: '[name].js',
+    path: path.join(__dirname, 'dist'),
+    filename: 'index.js',
+    sourceMapFilename: 'index.js.map',
   },
   target: 'node',
   externals: [nodeExternals()],
@@ -30,8 +34,7 @@ module.exports = {
           ]
         ],
         options: {
-          transpileOnly: true,
-          experimentalWatchApi: true,
+          transpileOnly: false
         }
       }
     ]

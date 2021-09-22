@@ -4,6 +4,7 @@ import { errorMiddleware, eventLogerMiddleware, httpLogerMiddleware, openApiVali
 import { GenericOpenApiValidator } from './validation';
 
 export * from 'nut-pipe';
+
 export class TriggerMiddlewares {
     static APIGatewayMiddlewares = [httpLogerMiddleware, openApiValidatorMiddleware];
     static EventBridgeMiddlewares = [eventLogerMiddleware];
