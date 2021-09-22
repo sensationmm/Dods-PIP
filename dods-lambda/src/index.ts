@@ -22,7 +22,7 @@ const defaultOptions: Options = { middlewares: TriggerMiddlewares.APIGatewayMidd
 
 export const buildLambdaFunction = <T extends AsyncMiddleware>(handler: T, options: Options = defaultOptions): AsyncHandler => {
 
-    const { middlewares = [], openApiDocumentPath, validateRequests, validateResponses, ...args } = options || {};
+    const { middlewares = TriggerMiddlewares.APIGatewayMiddlewares, openApiDocumentPath, validateRequests, validateResponses, ...args } = options || {};
 
     let openApiDocument;
     let genericOpenApiValidator;

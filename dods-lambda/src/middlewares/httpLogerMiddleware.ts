@@ -1,10 +1,11 @@
+import { APIGatewayProxyEvent } from "aws-lambda";
 import { AsyncLambdaMiddleware } from "nut-pipe";
 import { HttpResponse, HttpStatusCode } from "../domain";
 import { Logger } from "../utility";
 
-export const httpLogerMiddleware: AsyncLambdaMiddleware = async (event, context, callback, next) => {
+export const httpLogerMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = async (event, context, callback, next) => {
 
-    Logger.info(`HttpLogerMiddleware Entry`, { path: event.requestContext.http.path, method: event.requestContext.http.method });
+    Logger.info(`HttpLogerMiddleware Entry`, { path: event.path, method: event.httpMethod });
 
     const result = await next(event, context, callback);
 

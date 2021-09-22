@@ -1,10 +1,12 @@
-import { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 import { AsyncLambdaMiddleware } from "nut-pipe";
 import { HttpResponse, HttpStatusCode } from "../domain";
 
-export const errorMiddleware: AsyncLambdaMiddleware = async (event, context, callback, next) => {
+export const errorMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = async (event, context, callback, next) => {
 
     let response: APIGatewayProxyStructuredResultV2;
+
+    console.log(event);
 
     try {
 
