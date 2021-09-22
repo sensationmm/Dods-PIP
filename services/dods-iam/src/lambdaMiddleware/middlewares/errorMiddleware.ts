@@ -1,4 +1,4 @@
-import { AsyncLambdaMiddleware } from "nut-pipe";
+import { AsyncLambdaMiddleware } from "@dodsgroup/dods-lambda";
 import { HttpError } from "../../domain";
 
 export const errorMiddleware: AsyncLambdaMiddleware = async (event, context, callback, next) => {

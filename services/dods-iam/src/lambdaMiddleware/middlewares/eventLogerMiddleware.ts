@@ -1,4 +1,4 @@
-import { AsyncLambdaMiddleware } from "nut-pipe";
+import { AsyncLambdaMiddleware } from "@dodsgroup/dods-lambda";
 
 export const eventLogerMiddleware: AsyncLambdaMiddleware = async (event, context, callback, next) => {
 
