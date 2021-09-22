@@ -67,9 +67,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         return newClientAccount;
     }
 
-    async getClientAccount(
-        clientAccountId: string
-    ): Promise<ClientAccountResponse> {
+    async getClientAccount(clientAccountId: string): Promise<ClientAccountResponse> {
         if (!clientAccountId) {
             throw new Error('Error: clientAccountId cannot be empty');
         }

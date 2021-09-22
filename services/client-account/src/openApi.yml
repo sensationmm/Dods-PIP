@@ -53,6 +53,19 @@ paths:
           $ref: "#/components/responses/BadRequest"
 
 
+  /subscription-types:
+    get:
+      operationId: getSubscriptionTypes
+      summary: "Get Subscription Types list"
+      description: "Get Subscription Types list"
+      responses:
+        "200":
+          $ref: "#/components/responses/SubscriptionTypes"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
   schemas:
     Message:
@@ -137,6 +150,12 @@ components:
           schema:
             $ref: "#/components/schemas/Message"
     ClientAccount:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: "object"
+    SubscriptionTypes:
       description: ""
       content:
         application/json:
