@@ -31,6 +31,8 @@ class ClientAccountModel
     public contractStartDate!: Date;
     public contractRollover!: boolean;
     public contractEndDate!: Date | null;
+    public SubscriptionType?: {};
+
 
     //Timestamps
     public readonly createdAt!: Date;

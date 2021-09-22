@@ -14,18 +14,71 @@ paths:
           schema:
             type: integer
             format: int32
+            default: 10
             minimum: 0
             maximum: 100
         - in: query
-          name: with_tags
-          description: Return Client Account with Tags
+          name: offset
+          description: Offset value for pagination
           schema:
-            type: boolean
+            type: integer
+            default: 0
+            minimum: 0
+          required: false
+        # - in: query
+        #   name: with_tags
+        #   description: Return Client Account with Tags
+        #   schema:
+        #     type: boolean
+        # - in: query
+        #   name: with_team_members
+        #   description: Return Client Account with Team Members
+        #   schema:
+        #     type: boolean
         - in: query
-          name: with_team_members
-          description: Return Client Account with Team Members
+          name: locations
           schema:
-            type: boolean
+            type: array
+            items:
+              type: integer
+          examples:
+            oneId:
+              summary: Example of a single location's ID
+              value: [5] # ?locations=5
+            multipleIds:
+              summary: Example of multiple location's IDs
+              value: [1, 5, 7] # ?locations=1,5,7
+          required: false
+          explode: false
+          description: Client Accounts by location
+        - in: query
+          name: subscriptionTypes
+          schema:
+            type: array
+            items:
+              type: integer
+          examples:
+            oneId:
+              summary: Example of a single location's ID
+              value: [5] # ?subscriptionTypes=5
+            multipleIds:
+              summary: Example of multiple location's IDs
+              value: [1, 5, 7] # ?subscriptionTypes=1,5,7
+          required: false
+          explode: false
+          description: Client Accounts by subscription type
+        - in: query
+          name: searchTerm
+          schema:
+            type: string
+          required: false
+          description: Client Accounts by name's filtering using search term
+        - in: query
+          name: startsBy
+          schema:
+            type: string
+          required: false
+          description: Client Accounts by name's first letter
       responses:
         '200':
           description: list of all Client Accounts in the system

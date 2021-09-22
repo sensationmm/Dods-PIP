@@ -1,10 +1,14 @@
 import {
+    Op, WhereOptions
+} from 'sequelize';
+import {
     ClientAccountParameters,
+    SearchClientAccountParameters,
     ClientAccountPersister,
     ClientAccountResponse,
 } from '../domain';
 
-import { ClientAccountModel } from '../db/models';
+import { ClientAccountModel, SubscriptionTypeModel } from '../db/models';
 import { ClientAccountModelCreationAttributes } from '../db/types';
 
 function parseResponseFromModel(
@@ -22,6 +26,7 @@ function parseResponseFromModel(
         contract_end_date: model.contractEndDate
             ? model.contractEndDate.toJSON()
             : undefined,
+        SubscriptionType: model.SubscriptionType ? model.SubscriptionType : undefined,
     };
 
     return response;
@@ -82,6 +87,55 @@ export class ClientAccountRepository implements ClientAccountPersister {
             const clientAccount = parseResponseFromModel(clientAccountModel);
 
             return clientAccount;
+        } else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
+
+    async searchClientAccount(searchClientAccountParams: SearchClientAccountParameters): Promise<Array<ClientAccountResponse>> {
+        const { startsBy, locations, subscriptionTypes, searchTerm } = searchClientAccountParams
+        const { limit, offset } = searchClientAccountParams
+
+        let clientAccountWhere: WhereOptions = {}
+        let subscriptionTypeWhere: WhereOptions = {}
+
+        if (startsBy) {
+            clientAccountWhere['name'] = {
+                [Op.like]: `${startsBy}%`
+            }
+        }
+        if (locations) {
+            subscriptionTypeWhere['location'] = {
+                [Op.in]: locations
+            }
+        }
+        if (subscriptionTypes) {
+            subscriptionTypeWhere['id'] = {
+                [Op.in]: subscriptionTypes
+            }
+        }
+        if (searchTerm) {
+            clientAccountWhere['name'] = {
+                [Op.like]: `%${searchTerm}%`
+            }
+        }
+        const clientAccountModels = await this.model.findAll({
+            where: clientAccountWhere,
+            include: [
+                {
+                    model: SubscriptionTypeModel,
+                    where: subscriptionTypeWhere,
+                    required: false
+                }
+            ],
+            offset: offset,
+            limit: limit,
+        });
+        if (clientAccountModels) {
+            const parsedModels: Array<ClientAccountResponse> = clientAccountModels.map(model => parseResponseFromModel(model))
+            const clientAccounts: Array<ClientAccountResponse> = parsedModels;
+
+            return clientAccounts;
         } else {
             throw new Error('Error: clientAccount not found');
         }
