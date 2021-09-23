@@ -1,6 +1,5 @@
 import { Pagination } from "../interfaces";
 import SubscriptionType from "../../db/models/SubscriptionType";
-import { ClientAccountTeamModel, SubscriptionTypeModel } from "../../db";
 
 export interface ClientAccount {
     name: string;
@@ -19,8 +18,7 @@ export interface ClientAccountResponse extends ClientAccount {
     subscription: SubscriptionType | null
 }
 
-export interface ClientAccountParameters extends ClientAccount {
-}
+export interface ClientAccountParameters extends ClientAccount {}
 
 export interface SearchClientAccountResponse {
     id: string;

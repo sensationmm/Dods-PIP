@@ -9,7 +9,7 @@ import {
     SearchClientAccountResponse,
 } from '../domain';
 
-import { ClientAccountModel, ClientAccountTeamModel, SubscriptionTypeModel } from '../db/models';
+import { ClientAccountModel, ClientAccountTeamModel, SubscriptionTypeModel, UserProfileModel } from '../db/models';
 import SubscriptionType from "../db/models/SubscriptionType";
 import { parseModelParameters, parseResponseFromModel, parseSearchClientAccountResponse } from '../domain/interfaces/parser';
 
@@ -103,4 +103,49 @@ export class ClientAccountRepository implements ClientAccountPersister {
             throw new Error('Error: clientAccount not found');
         }
     }
+    async getClientAccountSeats(
+        clientAccountId: string
+    ): Promise<number> {
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+
+        const clientAccountModel = await this.model.findOne({
+            where: { uuid: clientAccountId },
+        });
+
+       if (clientAccountModel) {
+            const subscriptionSeats:number= clientAccountModel.subscriptionSeats;
+            return subscriptionSeats;
+       }
+       else {
+        throw new Error('Error: clientAccount not found');
+    }
+
+
+    }
+
+    async getClientAccountUsers(
+        clientAccountId: string
+    ): Promise<ClientAccountModel> {
+
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+
+        const clientAccountModel = await ClientAccountModel.findOne({
+            where: { uuid: clientAccountId },
+            include: UserProfileModel
+        });
+
+       if (clientAccountModel) {
+
+            
+            return clientAccountModel;
+       }
+       else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
+
 }

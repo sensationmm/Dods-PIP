@@ -1,4 +1,5 @@
 import ClientAccountModel from './ClientAccount';
+import UserProfileModel from './UserProfile';
 import SubscriptionTypeModel from './SubscriptionType';
 import ClientAccountTeamModel from './ClientAccountTeam';
 
@@ -18,4 +19,7 @@ ClientAccountModel.belongsTo(ClientAccountTeamModel, {
     targetKey: 'clientAccountId'
 });
 
-export { ClientAccountModel, SubscriptionTypeModel, ClientAccountTeamModel };
+ClientAccountModel.belongsToMany(UserProfileModel, { through: 'dods_client_account_teams', foreignKey: 'client_account_id' });
+UserProfileModel.belongsToMany(ClientAccountModel, { through: 'dods_client_account_teams',foreignKey: 'user_id'  });
+
+export { ClientAccountModel, SubscriptionTypeModel, UserProfileModel, ClientAccountTeamModel };
