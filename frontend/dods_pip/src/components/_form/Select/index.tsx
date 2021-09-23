@@ -56,7 +56,7 @@ const Select: React.FC<SelectProps> = ({
           optional={optional}
           helperText={helperText}
           onChange={() => setIsOpen(true)}
-          icon={isOpen ? Icons.IconChevronUp : Icons.IconChevronDown}
+          icon={isOpen && !isDisabled ? Icons.IconChevronUp : Icons.IconChevronDown}
           css={{ pointerEvents: 'none' }}
           onFocus={() => setIsOpen(true)}
           tabIndex={1}
@@ -66,7 +66,7 @@ const Select: React.FC<SelectProps> = ({
         )}
         <Styled.dropdown
           data-test="select-dropdown"
-          open={isOpen}
+          open={isOpen && !isDisabled}
           hasHelper={helperText !== undefined && helperText !== ''}
           hasError={error !== undefined}
         >

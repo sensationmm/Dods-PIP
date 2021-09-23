@@ -158,6 +158,12 @@ export const span = styled.span`
   padding: 0;
   margin: 0;
 
+  &.bold,
+  bold,
+  strong {
+    font-family: 'Open Sans Bold';
+  }
+
   &.headerTitle {
     font-family: 'Libre Baskerville';
     font-size: 24px;
