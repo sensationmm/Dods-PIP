@@ -6,52 +6,12 @@ import {
     SearchClientAccountParameters,
     ClientAccountPersister,
     ClientAccountResponse,
+    SearchClientAccountResponse,
 } from '../domain';
 
-import { ClientAccountModel, SubscriptionTypeModel } from '../db/models';
-import { ClientAccountModelCreationAttributes } from '../db/types';
+import { ClientAccountModel, ClientAccountTeamModel, SubscriptionTypeModel } from '../db/models';
 import SubscriptionType from "../db/models/SubscriptionType";
-
-function parseResponseFromModel(
-    model: ClientAccountModel
-): ClientAccountResponse {
-    const response: ClientAccountResponse = {
-        id: model.uuid,
-        name: model.name,
-        notes: model.notes,
-        contact_name: model.contactName,
-        contact_email_address: model.contactEmailAddress,
-        contact_telephone_number: model.contactTelephoneNumber,
-        contract_start_date: model.contractStartDate.toJSON(),
-        contract_rollover: model.contractRollover,
-        contract_end_date: model.contractEndDate
-            ? model.contractEndDate.toJSON()
-            : undefined,
-        // SubscriptionType: model.SubscriptionType ? model.SubscriptionType : undefined,
-        subscription: model.SubscriptionType
-    };
-
-    return response;
-}
-
-function parseModelParameters(
-    requestParameters: ClientAccountParameters
-): ClientAccountModelCreationAttributes {
-    const parameters: ClientAccountModelCreationAttributes = {
-        name: requestParameters.name,
-        notes: requestParameters.notes,
-        contactName: requestParameters.contact_name,
-        contactEmailAddress: requestParameters.contact_email_address,
-        contactTelephoneNumber: requestParameters.contact_telephone_number,
-        contractStartDate: new Date(requestParameters.contract_start_date),
-        contractRollover: requestParameters.contract_rollover,
-        contractEndDate: requestParameters.contract_end_date
-            ? new Date(requestParameters.contract_end_date)
-            : null,
-    };
-
-    return parameters;
-}
+import { parseModelParameters, parseResponseFromModel, parseSearchClientAccountResponse } from '../domain/interfaces/parser';
 
 export class ClientAccountRepository implements ClientAccountPersister {
     static defaultInstance: ClientAccountPersister =
@@ -59,9 +19,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
     constructor(private model: typeof ClientAccountModel) {}
 
-    async createClientAccount(
-        clientAccount: ClientAccountParameters
-    ): Promise<ClientAccountResponse> {
+    async createClientAccount(clientAccount: ClientAccountParameters): Promise<ClientAccountResponse> {
         if (!clientAccount) {
             throw new Error('Error: clientAccount cannot be empty');
         }
@@ -92,7 +50,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async searchClientAccount(searchClientAccountParams: SearchClientAccountParameters): Promise<Array<ClientAccountResponse>> {
+    async searchClientAccount(searchClientAccountParams: SearchClientAccountParameters): Promise<Array<SearchClientAccountResponse>> {
         const { startsBy, locations, subscriptionTypes, searchTerm } = searchClientAccountParams
         const { limit, offset } = searchClientAccountParams
 
@@ -101,7 +59,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         if (startsBy) {
             clientAccountWhere['name'] = {
-                [Op.like]: `${startsBy}%`
+                [Op.like]: `${startsBy}%`,
             }
         }
         if (locations) {
@@ -125,15 +83,20 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 {
                     model: SubscriptionTypeModel,
                     where: subscriptionTypeWhere,
+                    required: false,
+                },
+                {
+                    model: ClientAccountTeamModel,
                     required: false
-                }
+                },
             ],
             offset: offset,
             limit: limit,
         });
         if (clientAccountModels) {
-            const parsedModels: Array<ClientAccountResponse> = clientAccountModels.map(model => parseResponseFromModel(model))
-            const clientAccounts: Array<ClientAccountResponse> = parsedModels;
+            const clientAccounts: Array<SearchClientAccountResponse> = clientAccountModels.map(
+                model => parseSearchClientAccountResponse(model)
+            );
 
             return clientAccounts;
         } else {

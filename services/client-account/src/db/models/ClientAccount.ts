@@ -11,13 +11,11 @@ import {
 } from '../types';
 
 import SubscriptionType from './SubscriptionType';
+import ClientAccountTeam from './ClientAccountTeam';
 import sequelize from '../sequelize';
 
 class ClientAccountModel
-    extends Model<
-        ClientAccountModelAttributes,
-        ClientAccountModelCreationAttributes
-    >
+    extends Model<ClientAccountModelAttributes, ClientAccountModelCreationAttributes>
     implements ClientAccountModelAttributes
 {
     public id!: number;
@@ -31,9 +29,10 @@ class ClientAccountModel
     public contractStartDate!: Date;
     public contractRollover!: boolean;
     public contractEndDate!: Date | null;
-    public subscription?: SubscriptionType;
-
-
+    
+    public SubscriptionType?: SubscriptionType;
+    public ClientAccountTeam?: ClientAccountTeam;
+    
     //Timestamps
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -42,9 +41,12 @@ class ClientAccountModel
     //Model Associations
     public getSubscription!: BelongsToGetAssociationMixin<SubscriptionType>;
     public setSubscription!: BelongsToCreateAssociationMixin<SubscriptionType>;
+    public getTeam!: BelongsToGetAssociationMixin<ClientAccountTeam>;
+    public setTeam!: BelongsToCreateAssociationMixin<ClientAccountTeam>;
 
-    public static associations: {
+    public static associations: { 
         subscription: Association<ClientAccountModel, SubscriptionType>;
+        team: Association<ClientAccountModel, ClientAccountTeam>;
     };
 }
 
