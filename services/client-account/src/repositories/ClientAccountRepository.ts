@@ -88,35 +88,49 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async getRemainingSeats(
+    async getClientAccountSeats(
         clientAccountId: string
     ): Promise<number> {
-        
         if (!clientAccountId) {
             throw new Error('Error: clientAccountId cannot be empty');
         }
-        
+
         const clientAccountModel = await this.model.findOne({
-             where: { uuid: clientAccountId },
-         });
+            where: { uuid: clientAccountId },
+        });
 
-        if (clientAccountModel) {
-
+       if (clientAccountModel) {
             const subscriptionSeats:number= clientAccountModel.subscriptionSeats;
+            return subscriptionSeats;
+       }
+       else {
+        throw new Error('Error: clientAccount not found');
+    }
 
-                const result = await ClientAccountModel.findOne({
-                    where: { uuid: clientAccountId },
-                    include: UserProfileModel
-                  });
 
-                
-                  const busySeats: number = result.dataValues.UserProfileModels.length;
-                  const availableSeats:number= subscriptionSeats-busySeats;
-        
+    }
 
-            return availableSeats;
-        } else {
+    async getClientAccountUsers(
+        clientAccountId: string
+    ): Promise<ClientAccountModel> {
+
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+
+        const clientAccountModel = await ClientAccountModel.findOne({
+            where: { uuid: clientAccountId },
+            include: UserProfileModel
+        });
+
+       if (clientAccountModel) {
+
+            
+            return clientAccountModel;
+       }
+       else {
             throw new Error('Error: clientAccount not found');
         }
     }
+
 }

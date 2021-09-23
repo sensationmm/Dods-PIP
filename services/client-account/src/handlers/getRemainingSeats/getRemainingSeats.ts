@@ -9,12 +9,20 @@ export const getRemainingSeats = async ({
     clientAccountId: string;
 }): Promise<APIGatewayProxyResultV2> => {
     
-    const response= 
-    await ClientAccountRepository.defaultInstance.getRemainingSeats(
-            clientAccountId
+    const clientAccountUsers=
+    await ClientAccountRepository.defaultInstance.getClientAccountUsers(
+        clientAccountId
     );
-    console.log(clientAccountId)
+
+    const clientAccountSuscriptedSeats=
+    await ClientAccountRepository.defaultInstance.getClientAccountSeats(
+        clientAccountId
+    );
+
+    const occupiedSeats:number= clientAccountUsers.dataValues.UserProfileModels.length;
+    const availableSeats:number= clientAccountSuscriptedSeats-occupiedSeats;
+ 
     return new HttpSuccessResponse(
-        `Remaining Seats ${response}`
+        `Remaining Seats ${availableSeats}`
     );
 };
