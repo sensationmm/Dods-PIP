@@ -1,4 +1,5 @@
 import React from 'react';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 import color from '../../../globals/color';
 import Icon, { IconSize } from '../../Icon';
@@ -43,57 +44,59 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <Styled.wrapper data-test="component-select">
-      <Styled.select>
-        <InputText
-          id={id}
-          data-test="select-input"
-          size={size}
-          label={label}
-          value={value !== '' ? parseValue() : placeholder}
-          isDisabled={isDisabled}
-          error={error}
-          required={required}
-          optional={optional}
-          helperText={helperText}
-          onChange={() => setIsOpen(true)}
-          icon={isOpen && !isDisabled ? Icons.IconChevronUp : Icons.IconChevronDown}
-          css={{ pointerEvents: 'none' }}
-          onFocus={() => setIsOpen(true)}
-          tabIndex={1}
-        />
-        {!isDisabled && (
-          <Styled.selectTrigger data-test="select-trigger" onClick={() => setIsOpen(!isOpen)} />
-        )}
-        <Styled.dropdown
-          data-test="select-dropdown"
-          open={isOpen && !isDisabled}
-          hasHelper={helperText !== undefined && helperText !== ''}
-          hasError={error !== undefined}
-        >
-          {options.map((item, count) => (
-            <Styled.dropdownItem
-              key={`option-${count}`}
-              data-test={`option-${count}`}
-              size={size}
-              onClick={() => setValue(item.value)}
-              hasError={error !== undefined}
-              tabIndex={2}
-              onKeyPress={() => setValue(item.value)}
-              active={item.value === value}
-            >
-              {item.name}
-              {item.value === value && (
-                <Icon
-                  data-test="selected-icon"
-                  src={Icons.IconTickBold}
-                  size={IconSize.medium}
-                  color={error !== undefined ? color.alert.red : color.theme.blueMid}
-                />
-              )}
-            </Styled.dropdownItem>
-          ))}
-        </Styled.dropdown>
-      </Styled.select>
+      <OutsideClickHandler onOutsideClick={() => setIsOpen(false)}>
+        <Styled.select>
+          <InputText
+            id={id}
+            data-test="select-input"
+            size={size}
+            label={label}
+            value={value !== '' ? parseValue() : placeholder}
+            isDisabled={isDisabled}
+            error={error}
+            required={required}
+            optional={optional}
+            helperText={helperText}
+            onChange={() => setIsOpen(true)}
+            icon={isOpen && !isDisabled ? Icons.IconChevronUp : Icons.IconChevronDown}
+            css={{ pointerEvents: 'none' }}
+            onFocus={() => setIsOpen(true)}
+            tabIndex={1}
+          />
+          {!isDisabled && (
+            <Styled.selectTrigger data-test="select-trigger" onClick={() => setIsOpen(!isOpen)} />
+          )}
+          <Styled.dropdown
+            data-test="select-dropdown"
+            open={isOpen && !isDisabled}
+            hasHelper={helperText !== undefined && helperText !== ''}
+            hasError={error !== undefined}
+          >
+            {options.map((item, count) => (
+              <Styled.dropdownItem
+                key={`option-${count}`}
+                data-test={`option-${count}`}
+                size={size}
+                onClick={() => setValue(item.value)}
+                hasError={error !== undefined}
+                tabIndex={2}
+                onKeyPress={() => setValue(item.value)}
+                active={item.value === value}
+              >
+                {item.name}
+                {item.value === value && (
+                  <Icon
+                    data-test="selected-icon"
+                    src={Icons.IconTickBold}
+                    size={IconSize.medium}
+                    color={error !== undefined ? color.alert.red : color.theme.blueMid}
+                  />
+                )}
+              </Styled.dropdownItem>
+            ))}
+          </Styled.dropdown>
+        </Styled.select>
+      </OutsideClickHandler>
     </Styled.wrapper>
   );
 };

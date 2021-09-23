@@ -1,5 +1,6 @@
 import { shallow } from 'enzyme';
 import React from 'react';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 import SelectMulti from '.';
 import color from '../../../globals/color';
@@ -28,13 +29,14 @@ describe('SelectMulti', () => {
     defaultState, // keyboard use - triggers dropdown on focus
     { ...defaultState, isOpen: true }, // keyboard use - selects option on keypress
     defaultState, // keyboard use - prevents typing in input
+    defaultState, // click outside
   ];
 
   let count = 0;
 
   const useStateSpy = jest.spyOn(React, 'useState');
-  const mockSetState = jest.fn();
-  useStateSpy.mockImplementation(() => [states[count].isOpen, mockSetState]);
+  const mockSetOpen = jest.fn();
+  useStateSpy.mockImplementation(() => [states[count].isOpen, mockSetOpen]);
   const mockOnChange = jest.fn();
 
   beforeEach(() => {
@@ -107,11 +109,11 @@ describe('SelectMulti', () => {
     const option = wrapper.find('[data-test="option-1"]');
 
     trigger.simulate('click');
-    expect(mockSetState).toHaveBeenCalledWith(true);
+    expect(mockSetOpen).toHaveBeenCalledWith(true);
 
     option.simulate('click');
     expect(mockOnChange).toHaveBeenCalledWith(['option2']);
-    expect(mockSetState).toHaveBeenCalledWith(false);
+    expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 
   it('sets value on choosing additional option', () => {
@@ -131,11 +133,11 @@ describe('SelectMulti', () => {
     const option = wrapper.find('[data-test="option-1"]');
 
     trigger.simulate('click');
-    expect(mockSetState).toHaveBeenCalledWith(true);
+    expect(mockSetOpen).toHaveBeenCalledWith(true);
 
     option.simulate('click');
     expect(mockOnChange).toHaveBeenCalledWith(['option3', 'option2']);
-    expect(mockSetState).toHaveBeenCalledWith(false);
+    expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 
   it('shows correct label for passed prop value', () => {
@@ -224,20 +226,26 @@ describe('SelectMulti', () => {
   it('keyboard use - triggers dropdown on focus', () => {
     const input = wrapper.find('[data-test="select-input"]');
     input.simulate('focus');
-    expect(mockSetState).toHaveBeenCalledWith(true);
+    expect(mockSetOpen).toHaveBeenCalledWith(true);
   });
 
   it('keyboard use - selects option on keypress', () => {
     const option = wrapper.find('[data-test="option-1"]');
     option.simulate('keypress');
     expect(mockOnChange).toHaveBeenCalledWith(['option2']);
-    expect(mockSetState).toHaveBeenCalledWith(false);
+    expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 
   it('keyboard use - prevents typing in input', () => {
     const input = wrapper.find('[data-test="select-input"]');
     input.simulate('change');
-    expect(mockSetState).toHaveBeenCalledWith(true);
+    expect(mockSetOpen).toHaveBeenCalledWith(true);
+  });
+
+  it('click outside', () => {
+    const clickOutside = wrapper.find(OutsideClickHandler);
+    clickOutside.props().onOutsideClick();
+    expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 
   afterEach(() => {
