@@ -9,6 +9,7 @@ export const wrapper = styled.div`
   position: relative;
   display: block;
   width: 100%;
+  z-index: 1;
 
   &.welcome {
     background: linear-gradient(
