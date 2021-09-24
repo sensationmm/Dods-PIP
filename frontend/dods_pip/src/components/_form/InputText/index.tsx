@@ -49,17 +49,19 @@ const InputText: React.FC<InputTextProps> = ({
         placeholder={placeholder}
       >
         {icon && (
-          <Icon
-            src={icon}
-            size={IconSize.medium}
-            color={
-              !isDisabled
-                ? typeof error !== 'string'
-                  ? color.theme.blueMid
-                  : color.alert.red
-                : color.base.grey
-            }
-          />
+          <div onClick={onFocus}>
+            <Icon
+              src={icon}
+              size={IconSize.medium}
+              color={
+                !isDisabled
+                  ? typeof error !== 'string'
+                    ? color.theme.blueMid
+                    : color.alert.red
+                  : color.base.grey
+              }
+            />
+          </div>
         )}
       </Input>
     </Styled.wrapper>
