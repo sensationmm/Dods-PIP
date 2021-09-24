@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { shallow } from 'enzyme';
 import React from 'react';
 
@@ -71,7 +72,7 @@ describe('DatePicker', () => {
     const picker = wrapper.find('[data-test="date-popup"]');
     const input = wrapper.find('[data-test="date-picker-input"]');
     expect(input.props().value).toEqual('01/01/2022');
-    expect(picker.props().selected).toEqual(new Date('2022-01-01T08:00:00Z'));
+    expect(picker.props().selected).toEqual(new Date('01/01/2022'));
   });
 
   it('uses minDate', () => {
@@ -85,7 +86,7 @@ describe('DatePicker', () => {
       />,
     );
     const picker = wrapper.find('[data-test="date-popup"]');
-    expect(picker.props().minDate).toEqual(new Date('2022-01-01T08:00:00Z'));
+    expect(picker.props().minDate).toEqual(new Date('01/01/2022'));
   });
 
   it('uses maxDate', () => {
@@ -99,7 +100,7 @@ describe('DatePicker', () => {
       />,
     );
     const picker = wrapper.find('[data-test="date-popup"]');
-    expect(picker.props().maxDate).toEqual(new Date('2022-06-01T07:00:00Z'));
+    expect(picker.props().maxDate).toEqual(new Date('06/01/2022'));
   });
 
   afterEach(() => {

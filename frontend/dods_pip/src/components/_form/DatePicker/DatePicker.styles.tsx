@@ -96,11 +96,18 @@ export const wrapper = styled.div`
 
         &--outside-month {
           height: 0;
+          color: ${color.base.white};
+          pointer-events: none;
           background-color: transparent;
 
           &:hover {
             background: none;
           }
+        }
+
+        &--disabled {
+          color: ${color.base.grey};
+          pointer-events: none;
         }
       }
     }
