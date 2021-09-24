@@ -126,10 +126,10 @@ describe("Core/Chips - Hover tests ", () => {
     expect(buttonIcon.find(Icon).props().color).toEqual(color.base.white)
   })
   
-  it("Close button icon should not render", () => {
+  it("Close button icon should render", () => {
     const wrapper = shallow(<Chips label="Label" />)
     const buttonIcon = wrapper.find('[data-test="closeButtonIcon"]')
-    expect(buttonIcon.length).toEqual(0)
+    expect(buttonIcon.length).toEqual(1)
   })
 
   
