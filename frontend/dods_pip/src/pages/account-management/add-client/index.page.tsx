@@ -5,7 +5,6 @@ import React from 'react';
 import PageHeader from '../../../components/_layout/PageHeader';
 import ProgressTracker from '../../../components/ProgressTracker';
 import LoadingHOC, { LoadingHOCProps } from '../../../hoc/LoadingHOC';
-import * as Validation from '../../../utils/validation';
 import AccountInfo, { Errors as ErrorsStep1 } from './account-info';
 import Subscription from './subscription';
 import Tagging from './tagging';
@@ -29,36 +28,6 @@ export const AddClient: React.FC<AddClientProps> = () => {
     { label: 'Team' },
     { label: 'Tagging' },
   ];
-
-  const onSubmitStep1 = () => {
-    const formErrors = { ...errorsStep1 };
-
-    if (accountName === 'Somo') {
-      formErrors.accountName = 'An account with this name already exists';
-    } else {
-      delete formErrors.accountName;
-    }
-
-    if (!Validation.validateEmail(contactEmail)) {
-      formErrors.contactEmail = 'Invalid format';
-    } else {
-      delete formErrors.contactEmail;
-    }
-
-    if (!Validation.validatePhone(contactTelephone)) {
-      formErrors.contactTelephone = 'Invalid format';
-    } else {
-      delete formErrors.contactTelephone;
-    }
-
-    setErrorsStep1(formErrors);
-
-    if (Object.keys(formErrors).length === 0) {
-      setActiveStep(2);
-    } else {
-      window.scrollTo(0, 0);
-    }
-  };
 
   const onSubmitStep2 = () => {
     setActiveStep(3);
@@ -98,8 +67,9 @@ export const AddClient: React.FC<AddClientProps> = () => {
           contactEmail={contactEmail}
           setContactEmail={setContactEmail}
           onBack={() => router.push('/account-management/accounts')}
-          onSubmit={onSubmitStep1}
+          onSubmit={() => setActiveStep(2)}
           errors={errorsStep1}
+          setErrors={setErrorsStep1}
         />
       )}
 
