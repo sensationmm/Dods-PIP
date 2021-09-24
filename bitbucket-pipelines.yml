@@ -2,7 +2,7 @@ pipelines:
   default:
     - parallel:
       - step:
-          name: Build Frontend
+          name: Test build Frontend
           image: node:alpine
           services:
             - docker
@@ -34,19 +34,47 @@ pipelines:
             - cd services/graphologi-integration
             - npm install
             - serverless deploy
+
       - step:
-          name: Deploy service-user-profile
-          image: gioatsomoglobal/devopstools:0.2.0
+          name: Test build user-profile Service
+          image: node:alpine
           caches:
             - node
           condition:
             changesets:
               includePaths:
-                - "services/graphologi-integration/**"
+                - "services/userProfile/**"
           script:
-            - cd services/graphologi-integration
+            - cd services/userProfile
             - npm install
-            - serverless deploy
+            - npm run test
+            - npm run test:coverage
+            
+      - step:
+          name: Test build client-account Service
+          image: node:alpine
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/client-account/**"
+          script:
+            - cd services/client-account
+            - npm install
+            - npm run test
+            - npm run test:coverage
+
+      - step:
+          name: Validate OpenAPI definitions
+          image: openapitools/openapi-generator-cli:v5.2.1
+          condition:
+            changesets:
+              includePaths:
+                - "api/**"
+          script:
+            - cd api
+            - for i in *.yml; do; openapi-generator-cli validate $i; done
 
       - step:
           name: Deploy Scrapping Lambdas
