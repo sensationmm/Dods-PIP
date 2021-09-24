@@ -2,11 +2,12 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
-import Select from '.';
+import SelectMulti from '.';
 import color from '../../../globals/color';
 import { Icons } from '../../Icon/assets';
+import Text from '../../Text';
 
-describe('Select', () => {
+describe('SelectMulti', () => {
   let wrapper;
 
   const defaultState = {
@@ -18,7 +19,8 @@ describe('Select', () => {
     defaultState, // renders default label
     defaultState, // renders custom placeholder
     defaultState, // handles empty helper text
-    defaultState, // sets value on choosing option
+    defaultState, // sets value on choosing initial option
+    defaultState, // sets value on choosing additional option
     defaultState, // shows correct label for passed prop value
     defaultState, // handles passed prop value not matching options
     { ...defaultState, isOpen: true }, // shows correct open state
@@ -39,9 +41,9 @@ describe('Select', () => {
 
   beforeEach(() => {
     wrapper = shallow(
-      <Select
+      <SelectMulti
         id="example"
-        value=""
+        value={[]}
         onChange={mockOnChange}
         options={[
           { name: 'Option 1', value: 'option1' },
@@ -67,9 +69,9 @@ describe('Select', () => {
 
   it('renders custom placeholder', () => {
     wrapper = shallow(
-      <Select
+      <SelectMulti
         id="example"
-        value=""
+        value={[]}
         onChange={mockOnChange}
         placeholder={'Custom value'}
         options={[
@@ -85,9 +87,9 @@ describe('Select', () => {
 
   it('handles empty helper text', () => {
     wrapper = shallow(
-      <Select
+      <SelectMulti
         id="example"
-        value=""
+        value={[]}
         onChange={mockOnChange}
         placeholder={'Custom value'}
         options={[
@@ -102,7 +104,7 @@ describe('Select', () => {
     expect(dropdown.props().hasHelper).toEqual(false);
   });
 
-  it('sets value on choosing option', () => {
+  it('sets value on choosing initial option', () => {
     const trigger = wrapper.find('[data-test="select-trigger"]');
     const option = wrapper.find('[data-test="option-1"]');
 
@@ -110,15 +112,39 @@ describe('Select', () => {
     expect(mockSetOpen).toHaveBeenCalledWith(true);
 
     option.simulate('click');
-    expect(mockOnChange).toHaveBeenCalledWith('option2');
+    expect(mockOnChange).toHaveBeenCalledWith(['option2']);
+    expect(mockSetOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('sets value on choosing additional option', () => {
+    wrapper = shallow(
+      <SelectMulti
+        id="example"
+        value={['option3']}
+        onChange={mockOnChange}
+        options={[
+          { name: 'Option 1', value: 'option1' },
+          { name: 'Option 2', value: 'option2' },
+          { name: 'Option 3', value: 'option3' },
+        ]}
+      />,
+    );
+    const trigger = wrapper.find('[data-test="select-trigger"]');
+    const option = wrapper.find('[data-test="option-1"]');
+
+    trigger.simulate('click');
+    expect(mockSetOpen).toHaveBeenCalledWith(true);
+
+    option.simulate('click');
+    expect(mockOnChange).toHaveBeenCalledWith(['option3', 'option2']);
     expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 
   it('shows correct label for passed prop value', () => {
     wrapper = shallow(
-      <Select
+      <SelectMulti
         id="example"
-        value="option3"
+        value={['option3']}
         onChange={mockOnChange}
         options={[
           { name: 'Option 1', value: 'option1' },
@@ -129,16 +155,17 @@ describe('Select', () => {
     );
 
     const input = wrapper.find('[data-test="select-input"]');
-    const icon = wrapper.find('[data-test="selected-icon"]');
-    expect(input.props().value).toEqual('Option 3');
-    expect(icon.length).toEqual(1);
+    const count = wrapper.find('[data-test="selected-count"]');
+    expect(input.props().value).toEqual('Items selected');
+    expect(count.length).toEqual(1);
+    expect(count.find(Text).props().children).toEqual(1);
   });
 
   it('handles passed prop value not matching options', () => {
     wrapper = shallow(
-      <Select
+      <SelectMulti
         id="example"
-        value="option"
+        value={['option']}
         onChange={mockOnChange}
         options={[
           { name: 'Option 1', value: 'option1' },
@@ -149,7 +176,7 @@ describe('Select', () => {
     );
 
     const input = wrapper.find('[data-test="select-input"]');
-    expect(input.props().value).toEqual('');
+    expect(input.props().value).toEqual('Choose an option...');
   });
 
   it('shows correct open state', () => {
@@ -159,9 +186,9 @@ describe('Select', () => {
 
   it('renders disabled state', () => {
     wrapper = shallow(
-      <Select
+      <SelectMulti
         id="example"
-        value=""
+        value={[]}
         onChange={mockOnChange}
         options={[
           { name: 'Option 1', value: 'option1' },
@@ -178,9 +205,9 @@ describe('Select', () => {
 
   it('renders error state', () => {
     wrapper = shallow(
-      <Select
+      <SelectMulti
         id="example"
-        value="option1"
+        value={['option1']}
         onChange={mockOnChange}
         placeholder={'Custom value'}
         options={[
@@ -192,8 +219,8 @@ describe('Select', () => {
       />,
     );
 
-    const icon = wrapper.find('[data-test="selected-icon"]');
-    expect(icon.props().color).toEqual(color.alert.red);
+    const icon = wrapper.find('[data-test="component-checkbox-toggle"]');
+    expect(icon.at(0).props().hasError).toEqual(true);
   });
 
   it('keyboard use - triggers dropdown on focus', () => {
@@ -205,7 +232,7 @@ describe('Select', () => {
   it('keyboard use - selects option on keypress', () => {
     const option = wrapper.find('[data-test="option-1"]');
     option.simulate('keypress');
-    expect(mockOnChange).toHaveBeenCalledWith('option2');
+    expect(mockOnChange).toHaveBeenCalledWith(['option2']);
     expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 
