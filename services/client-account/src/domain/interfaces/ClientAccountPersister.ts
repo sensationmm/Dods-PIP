@@ -1,5 +1,4 @@
 import { ClientAccountParameters, ClientAccountResponse } from '.';
-
 export interface ClientAccountPersister {
     createClientAccount(
         clientAccount: ClientAccountParameters

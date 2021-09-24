@@ -1,3 +1,5 @@
+import SubscriptionType from "../../db/models/SubscriptionType";
+
 export interface ClientAccount {
     name: string;
     notes: string | null;
@@ -10,7 +12,11 @@ export interface ClientAccount {
 }
 
 export interface ClientAccountResponse extends ClientAccount {
-    id: string;
+    id: number
+    uuid: string;
+    subscription: SubscriptionType
 }
 
-export interface ClientAccountParameters extends ClientAccount {}
+export interface GetClientAccountParameters {
+    clientAccountId: string;
+}

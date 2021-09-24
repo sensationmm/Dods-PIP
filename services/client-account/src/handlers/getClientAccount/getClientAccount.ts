@@ -1,18 +1,15 @@
 import { APIGatewayProxyResultV2 } from 'aws-lambda';
+import { GetClientAccountParameters, HttpSuccessResponse } from '../../domain';
 import { ClientAccountRepository } from '../../repositories/ClientAccountRepository';
-import { HttpSuccessResponse } from '../../domain';
 
-export const getClientAccount = async ({
-    clientAccountId,
-}: {
-    clientAccountId: string;
-}): Promise<APIGatewayProxyResultV2> => {
-    const response =
+
+export const getClientAccount = async (parameters: GetClientAccountParameters): Promise<APIGatewayProxyResultV2> => {
+    const getClientAccount =
         await ClientAccountRepository.defaultInstance.getClientAccount(
-            clientAccountId
+            parameters.clientAccountId
         );
-
-    return new HttpSuccessResponse(
-        `Hello world, parameters: ${JSON.stringify(response)}`
-    );
+    return new HttpSuccessResponse({
+        message: 'Client account found.',
+        data: getClientAccount,
+    });
 };
