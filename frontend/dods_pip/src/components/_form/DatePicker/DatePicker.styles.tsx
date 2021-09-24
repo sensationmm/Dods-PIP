@@ -11,7 +11,7 @@ export const wrapper = styled.div`
 
   > div:nth-child(2) {
     position: absolute;
-    top: calc(100% + ${spacing(3)});
+    top: calc(100% + ${spacing(2)});
 
     .react-datepicker {
       font-family: Open Sans;
