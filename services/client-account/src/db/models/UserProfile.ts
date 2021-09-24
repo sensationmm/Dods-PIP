@@ -9,13 +9,10 @@ import {
     UserProfileModelAttributes,
 } from '../types';
 
-//import SubscriptionType from './SubscriptionType';
 import sequelize from '../sequelize';
 
 class UserProfileModel
-    extends Model<
-        UserProfileModelAttributes
-    >
+    extends Model<UserProfileModelAttributes>
     implements UserProfileModelAttributes
 {
     public id!: number;
@@ -28,6 +25,8 @@ class UserProfileModel
     public secondaryEmail!:string;
     public telephoneNumber_1!:string;
     public telephoneNumber_2!:string;
+    
+    public fullName?:string;
 
     //Timestamps
     public readonly createdAt!: Date;
@@ -70,6 +69,15 @@ UserProfileModel.init(
             type: DataTypes.STRING(50),
             allowNull: false,
             comment: 'null',
+        },
+        fullName: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                return `${this.firstName} ${this.lastName}`;
+            },
+            set(_value) {
+                throw new Error('Do not try to set the `fullName` value!');
+            }
         },
         title: {
             type: DataTypes.STRING(150),

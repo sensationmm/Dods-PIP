@@ -18,6 +18,14 @@ ClientAccountModel.belongsTo(ClientAccountTeamModel, {
     foreignKey: 'id',
     targetKey: 'clientAccountId'
 });
+ClientAccountTeamModel.hasMany(UserProfileModel, {
+    foreignKey: 'id',
+    sourceKey: 'userId'
+});
+// UserProfileModel.belongsTo(ClientAccountTeamModel, {
+//     foreignKey: 'id',
+//     targetKey: 'userId'
+// });
 
 ClientAccountModel.belongsToMany(UserProfileModel, { through: 'dods_client_account_teams', foreignKey: 'client_account_id' });
 UserProfileModel.belongsToMany(ClientAccountModel, { through: 'dods_client_account_teams',foreignKey: 'user_id'  });

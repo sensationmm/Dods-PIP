@@ -1,6 +1,7 @@
+import { string } from "joi";
 import { ClientAccountParameters, ClientAccountResponse } from ".";
 import { ClientAccountModel } from "../../db";
-import { ClientAccountModelCreationAttributes } from "../../db/types";
+import { ClientAccountModelCreationAttributes, UserProfileModelAttributes } from "../../db/types";
 
 export function parseResponseFromModel(model: ClientAccountModel): ClientAccountResponse {
     const response: ClientAccountResponse = {
@@ -45,18 +46,18 @@ export function parseSearchClientAccountResponse(model: any) {
         notes: model.notes,
         subscription: model.SubscriptionType && model.SubscriptionType.name,
         location: model.SubscriptionType && model.SubscriptionType.location,
-        projects: 9999999,
-        projectsNote: "FROM WHERE TO PULL THIS DATA?",
-        team: {
-            clientAccountId: model.ClientAccountTeam && model.ClientAccountTeam.clientAccountId,
-            userId: model.ClientAccountTeam && model.ClientAccountTeam.userId,
-            teamMemberType: model.ClientAccountTeam?.teamMemberType,
-            name: "which field is the name? The 'teamMemberType' field is number",
-            type: "consultant" as const,
-            typeNote: "Same question..."
-        },
-        completed: true,
-        completedNote: "FROM WHERE TO PULL THIS DATA?"
+        projects: 0,
+        team:
+            model.ClientAccountTeam && 
+            model.ClientAccountTeam.UserProfileModels &&
+            model.ClientAccountTeam.UserProfileModels
+                .map((item: UserProfileModelAttributes) => {
+                    return {
+                        name: item.fullName,
+                        type: model.ClientAccountTeam.parsedType
+                    }
+            }),
+        completed: true
     };
     return response
 }

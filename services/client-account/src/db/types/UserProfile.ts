@@ -6,11 +6,12 @@ export interface UserProfileModelAttributes {
     roleId: number;
     firstName:string;
     lastName:string;
-    title:string;
+    title: string;
     primaryEmail:string;
     secondaryEmail:string;
     telephoneNumber_1:string;
     telephoneNumber_2:string;
+    fullName?: string;
 }
 
 // export interface ClientAccountModelCreationAttributes

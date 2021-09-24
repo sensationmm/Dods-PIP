@@ -87,7 +87,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 },
                 {
                     model: ClientAccountTeamModel,
-                    required: false
+                    required: false,
+                    include: [UserProfileModel]
                 },
             ],
             offset: offset,
