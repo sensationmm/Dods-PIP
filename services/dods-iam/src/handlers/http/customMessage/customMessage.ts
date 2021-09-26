@@ -1,7 +1,7 @@
 import { CustomMessageTriggerHandler } from "aws-lambda";
 import { config } from '../../../domain';
 
-export const customMessage: CustomMessageTriggerHandler = (event, context, callback) => {
+export const customMessage: CustomMessageTriggerHandler = (event, _, callback) => {
 
     if (event.userPoolId === config.aws.resources.cognito.userPoolId) {
         if (event.triggerSource === "CustomMessage_ForgotPassword") {

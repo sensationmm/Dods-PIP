@@ -85,7 +85,7 @@ export class GenericOpenApiValidator {
     return openApiRequest;
   }
 
-  public validateResponse = async (request: OpenApiAdaptedRequest, response: any): Promise<void> => {
+  public validateResponse = async (request: OpenApiAdaptedRequest, _: any): Promise<void> => {
 
     const contentType = Object.keys(request.openapi.schema.responses["200"].content)[0];
     // These properties are required for responseValidationFunction to work

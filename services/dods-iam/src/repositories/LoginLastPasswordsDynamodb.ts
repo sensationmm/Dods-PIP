@@ -1,4 +1,4 @@
-import { addDays, addMinutes, subMinutes, getUnixTime } from 'date-fns'
+import { addMinutes, subMinutes, getUnixTime } from 'date-fns'
 import { config, LoginLastPasswordsPersister } from '../domain';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { Logger } from '../utility';
