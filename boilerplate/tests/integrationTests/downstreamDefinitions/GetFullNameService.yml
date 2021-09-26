@@ -1,29 +1,29 @@
 openapi: 3.0.0
 info:
-  description: DODS Greeting English Service
+  description: DODS Greeting Turkish Service
   version: 1.0.0
-  title: DODS Greeting English Service
+  title: DODS Greeting Turkish Service
   contact:
     email: kenanhancer@gmail.com
   license:
     name: GPL 3.0
     url: "https://www.gnu.org/licenses/gpl-3.0.html"
 servers:
-  - url: localhost:1081
+  - url: localhost:1083
 
 paths:
-  /sayEnglishHello:
+  /getFullName:
     get:
-      operationId: sayEnglishHello
-      summary: "Get English Greeting Message"
-      description: "Get English Greeting Message"
+      operationId: getFullName
+      summary: "Get full name of person"
+      description: "Get full name of person"
       parameters:
         - $ref: "#/components/parameters/title"
         - $ref: "#/components/parameters/firstName"
         - $ref: "#/components/parameters/lastName"
       responses:
         "200":
-          $ref: "#/components/responses/SayEnglishHello"
+          $ref: "#/components/responses/GetFullName"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -95,14 +95,14 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Message"
-    SayEnglishHello:
-      description: "Hello {title} {firstName} {lastName}"
+    GetFullName:
+      description: "{title} {firstName} {lastName}"
       content:
         application/json:
           schema:
             type: "string"
           examples:
             Kenan:
-              value: Hello Mr Kenan Hancer
+              value: Mr Kenan Hancer
             Larissa:
-              value: Hello Mrs Larissa Cottrell
+              value: Mrs Larissa Cottrell

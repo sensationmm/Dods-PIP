@@ -32,11 +32,12 @@ module.exports = {
             path.resolve(__dirname, '.serverless'),
             path.resolve(__dirname, '.webpack'),
             path.resolve(__dirname, 'images'),
+            path.resolve(__dirname, 'scripts'),
             path.resolve(__dirname, 'coverage')
           ]
         ],
         options: {
-          transpileOnly: true,
+          transpileOnly: false,
           experimentalWatchApi: true,
         }
       }

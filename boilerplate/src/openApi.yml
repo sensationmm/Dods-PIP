@@ -40,6 +40,57 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /getFullName:
+    get:
+      operationId: getFullName
+      summary: "Get full name of person"
+      description: "Get full name of person"
+      parameters:
+        - $ref: "#/components/parameters/title"
+        - $ref: "#/components/parameters/firstName"
+        - $ref: "#/components/parameters/lastName"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetFullName"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /sayEnglishHello:
+    get:
+      operationId: sayEnglishHello
+      summary: "Get English Greeting Message"
+      description: "Get English Greeting Message"
+      parameters:
+        - $ref: "#/components/parameters/title"
+        - $ref: "#/components/parameters/firstName"
+        - $ref: "#/components/parameters/lastName"
+      responses:
+        "200":
+          $ref: "#/components/responses/SayEnglishHello"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /sayTurkishHello:
+    get:
+      operationId: sayTurkishHello
+      summary: "Get Turkish Greeting Message"
+      description: "Get Turkish Greeting Message"
+      parameters:
+        - $ref: "#/components/parameters/title"
+        - $ref: "#/components/parameters/firstName"
+        - $ref: "#/components/parameters/lastName"
+      responses:
+        "200":
+          $ref: "#/components/responses/SayTurkishHello"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
   schemas:
     Message:
@@ -127,3 +178,36 @@ components:
               value: Merhaba Mr Kenan Hancer
             Larissa:
               value: Hello Mrs Larissa Cottrell
+    GetFullName:
+      description: "{title} {firstName} {lastName}"
+      content:
+        application/json:
+          schema:
+            type: "string"
+          examples:
+            Kenan:
+              value: Mr Kenan Hancer
+            Larissa:
+              value: Mrs Larissa Cottrell
+    SayEnglishHello:
+      description: "Hello {title} {firstName} {lastName}"
+      content:
+        application/json:
+          schema:
+            type: "string"
+          examples:
+            Kenan:
+              value: Hello Mr Kenan Hancer
+            Larissa:
+              value: Hello Mrs Larissa Cottrell
+    SayTurkishHello:
+      description: "Merhaba {title} {firstName} {lastName}"
+      content:
+        application/json:
+          schema:
+            type: "string"
+          examples:
+            Kenan:
+              value: Merhaba Mr Kenan Hancer
+            Larissa:
+              value: Merhaba Mrs Larissa Cottrell
