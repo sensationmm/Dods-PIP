@@ -36,5 +36,5 @@ export const changePassword: AsyncLambdaMiddleware<ChangePasswordParameters> = a
         response = 'This password is used previously';
     }
 
-    return '';
+    return response;
 };
