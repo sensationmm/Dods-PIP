@@ -1,5 +1,5 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { HttpBadRequestError, HttpSuccessResponse, HttpUnauthorizedResponse } from '../../../domain';
+import { AsyncLambdaMiddleware } from "@dodsgroup/dods-lambda";
+import { HttpBadRequestError } from '../../../domain';
 import { LoginRepository } from "../../../repositories";
 import { AwsCognito } from "../../../services";
 
@@ -9,7 +9,7 @@ export interface ChangePasswordParameters {
     newPassword: string;
 }
 
-export const changePassword = async ({ email, password, newPassword }: ChangePasswordParameters): Promise<APIGatewayProxyResultV2> => {
+export const changePassword: AsyncLambdaMiddleware<ChangePasswordParameters> = async ({ email, password, newPassword }) => {
 
     if (!email) {
         throw new HttpBadRequestError("Request Body should contain Email field.");
@@ -19,25 +19,21 @@ export const changePassword = async ({ email, password, newPassword }: ChangePas
         throw new HttpBadRequestError("Request Body should contain NewPassword field.");
     }
 
-    let response: APIGatewayProxyResultV2;
+    let response: string;
 
-    try {
-        await AwsCognito.defaultInstance.signIn(email, password);
+    await AwsCognito.defaultInstance.signIn(email, password);
 
-        const validateLastPasswordWithNewPassword = await LoginRepository.defaultInstance.validateLastPassword(email, newPassword);
+    const validateLastPasswordWithNewPassword = await LoginRepository.defaultInstance.validateLastPassword(email, newPassword);
 
-        if (validateLastPasswordWithNewPassword) {
-            const result = await AwsCognito.defaultInstance.changePassword(email, password, newPassword)
+    if (validateLastPasswordWithNewPassword) {
+        const result = await AwsCognito.defaultInstance.changePassword(email, password, newPassword)
 
-            await LoginRepository.defaultInstance.publishUpdatePassword({ userName: email, lastPassword: newPassword });
+        await LoginRepository.defaultInstance.publishUpdatePassword({ userName: email, lastPassword: newPassword });
 
-            response = new HttpSuccessResponse(result);
-        }
-        else {
-            response = new HttpUnauthorizedResponse('This password is used previously');
-        }
-    } catch (error: any) {
-        response = new HttpUnauthorizedResponse(error);
+        response = result as string;
+    }
+    else {
+        response = 'This password is used previously';
     }
 
     return response;

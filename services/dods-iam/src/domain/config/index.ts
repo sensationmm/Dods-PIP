@@ -67,7 +67,7 @@ const envVarsSchema = Joi.object()
         LOGIN_EVENT_BUS_ARN: Joi.string().required().description('Dods Login Event Bus ARN'),
         LOGIN_ATTEMPTS_DYNAMODB_TABLE: Joi.string().required().description('Dods Login Attempts Dynamodb Table Name'),
         LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: Joi.string().required().description('Dods Login Last Passwords Dynamodb Table Name'),
-        LOGIN_LAST_PASSWORDS_NOT_REUSE_DAY: Joi.string().required().description('Dods Login Last Passwords not Reuse Day')
+        LOGIN_LAST_PASSWORDS_NOT_REUSE_MINUTES: Joi.number().required().description('Dods Login Last Passwords not Reuse Minutes'),
     })
     .unknown();
 
@@ -86,7 +86,7 @@ export const config = {
                 userPoolId: envVars.COGNITO_USER_POOL_ID as string,
                 clientId: envVars.COGNITO_CLIENT_ID as string,
                 failedLoginAttemptCount: envVars.FAILED_LOGIN_ATTEMPT_COUNT as number,
-                lastPasswordNotReuseDay: envVars.LOGIN_LAST_PASSWORDS_NOT_REUSE_DAY as number
+                lastPasswordNotReuseMinutes: envVars.LOGIN_LAST_PASSWORDS_NOT_REUSE_MINUTES as number
             },
             loginAttemptsDynamodbTableName: envVars.LOGIN_ATTEMPTS_DYNAMODB_TABLE as string,
             loginLastPasswordsDynamodbTableName: envVars.LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE as string,

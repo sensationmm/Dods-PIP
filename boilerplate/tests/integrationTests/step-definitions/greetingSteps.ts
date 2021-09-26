@@ -5,6 +5,7 @@ import { config, HttpStatusCode } from '../../../src/domain'
 
 Given('lambda function name is {string}', function (lambdaFunction) {
     this.lambdaFunction = lambdaFunction;
+    this.data = { title: 'Mr', firstName: 'Kenan', lastName: 'Hancer' };
 });
 
 Given('lambda function name is {string} and i set language as {string}', function (lambdaFunction, language) {

@@ -1,16 +1,18 @@
-import { APIGatewayProxyResultV2 } from 'aws-lambda';
-import { HttpSuccessResponse, SayHelloParameters } from '../../domain';
+import { AsyncLambdaHandler } from '@dodsgroup/dods-lambda';
+import { SayHelloParameters } from '../../domain';
 import { GreetingRepository } from '../../repositories/GreetingRepository';
 
-export const sayHello = async (requestPayload: SayHelloParameters): Promise<APIGatewayProxyResultV2> => {
+export const sayHello: AsyncLambdaHandler<SayHelloParameters> = async (data) => {
 
     let response;
 
-    if (requestPayload.language === 'Turkish') {
-        response = await GreetingRepository.defaultInstance.sayTurkishHello(requestPayload);
-    } else if (requestPayload.language === 'English') {
-        response = await GreetingRepository.defaultInstance.sayEnglishHello(requestPayload);
+    const { language } = data;
+
+    if (language === 'Turkish') {
+        response = await GreetingRepository.defaultInstance.sayTurkishHello(data);
+    } else if (language === 'English') {
+        response = await GreetingRepository.defaultInstance.sayEnglishHello(data);
     }
 
-    return new HttpSuccessResponse(response);
+    return response;
 };

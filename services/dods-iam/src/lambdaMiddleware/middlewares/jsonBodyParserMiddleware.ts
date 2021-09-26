@@ -1,7 +1,7 @@
-import { AsyncLambdaMiddlewareWithServices } from "nut-pipe";
+import { AsyncLambdaMiddlewareWithServices } from "@dodsgroup/dods-lambda";
 import { awsOpenApiRequestAdapter } from "../validation";
 
-export const jsonBodyParserMiddleware: AsyncLambdaMiddlewareWithServices = async (event, context, services, next) => {
+export const jsonBodyParserMiddleware: AsyncLambdaMiddlewareWithServices = async (event, context, _, services, next) => {
 
     const { genericOpenApiValidator } = services;
 

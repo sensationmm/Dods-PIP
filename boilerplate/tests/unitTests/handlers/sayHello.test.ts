@@ -21,7 +21,7 @@ jest.mock("../../../src/repositories/GreetingRepository", () => {
 const sayTurkishHelloMock = (GreetingRepository.defaultInstance.sayTurkishHello as jest.Mock);
 const sayEnglishHelloMock = (GreetingRepository.defaultInstance.sayEnglishHello as jest.Mock);
 
-const FUNCTION_NAME = "sayHello";
+const FUNCTION_NAME = sayHello.name;
 
 describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME} as English`, async () => {
@@ -31,7 +31,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const englishGreeting = sayEnglishHello(data);
 
-        expect(response).toEqual({ body: englishGreeting, statusCode: 200 });
+        expect(response).toEqual(englishGreeting);
 
         expect(sayEnglishHelloMock).toHaveBeenCalledWith(data);
 
@@ -45,7 +45,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const turkishGreeting = sayTurkishHello(data);
 
-        expect(response).toEqual({ body: turkishGreeting, statusCode: 200 });
+        expect(response).toEqual(turkishGreeting);
 
         expect(sayTurkishHelloMock).toHaveBeenCalledWith(data);
 
@@ -58,7 +58,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const response = await sayHello(data);
 
-        expect(response).toEqual({ body: undefined, statusCode: 200 });
+        expect(response).toEqual(undefined);
 
     });
 });

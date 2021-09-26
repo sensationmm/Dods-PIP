@@ -68,7 +68,7 @@ export class AwsCognito {
         return new Promise((resolve, reject) => {
 
             cognitoUser.authenticateUser(authenticationDetails, {
-                onSuccess: function (result) {
+                onSuccess: function (_) {
                     cognitoUser.changePassword(password, newPassword, (err, result) => {
                         if (err) {
                             reject(err);
@@ -183,7 +183,7 @@ export class AwsCognito {
 
         return new Promise((resolve, reject) => {
             cognitoUser.authenticateUser(authenticationDetails, {
-                onSuccess: function (result) {
+                onSuccess: function (_) {
                     cognitoUser.deleteUser((err, result) => {
                         if (err) {
                             reject(err);

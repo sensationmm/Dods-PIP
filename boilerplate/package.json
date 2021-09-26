@@ -8,7 +8,7 @@
     "test:coverage": "jest --coverage",
     "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
     "test:report": "open coverage/integration-tests-report.html && open coverage/lcov-report/index.html",
-    "dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=dev serverless offline --stage dev",
+    "dev": "scripts/setUpDev.sh && AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=dev serverless offline --stage dev && scripts/tearDown.sh",
     "validate:env": "SERVERLESS_STAGE=prod ts-node ./src/domain/config/index.ts",
     "package": "serverless package",
     "deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless deploy --stage dev",
@@ -38,8 +38,6 @@
     "@types/aws-lambda": "^8.10.83",
     "@types/axios": "^0.14.0",
     "@types/jest": "^27.0.1",
-    "@types/nut-pipe": "^1.1.2",
-    "@types/yamljs": "^0.2.31",
     "copy-webpack-plugin": "^9.0.1",
     "cucumber-html-reporter": "^5.5.0",
     "jest": "^27.1.0",
@@ -61,14 +59,10 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "@dodsgroup/dods-lambda": "^1.1.5",
     "aws-lambda": "^1.0.6",
     "aws-sdk": "^2.979.0",
     "axios": "^0.21.1",
-    "express": "^4.17.1",
-    "express-openapi-validator": "^4.13.0",
-    "joi": "^17.4.2",
-    "lodash": "^4.17.21",
-    "nut-pipe": "^1.1.6",
-    "yamljs": "^0.3.0"
+    "joi": "^17.4.2"
   }
 }

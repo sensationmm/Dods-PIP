@@ -11,16 +11,19 @@
     "module": "commonJs",
     "target": "es2020",
     "lib": ["es2020"],
+    "outDir": "dist",
+    "declaration": true, 
+    "declarationMap": true,  
     "sourceMap": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "typeRoots": ["./@types"]
+    "esModuleInterop": true
   },
   "include": ["./**/*.ts"],
   "exclude": [
     "./node_modules/**/*",
     ".webpack/**/*",
     "_warmup/**/*",
-    ".vscode/**/*"
+    ".vscode/**/*",
+    "./dist/**/*"
   ]
 }
