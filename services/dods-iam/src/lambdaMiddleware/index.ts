@@ -1,6 +1,6 @@
 import YAML from 'yamljs';
-import { buildPipeline, AsyncMiddleware, AsyncHandler } from 'nut-pipe';
-import { entryMiddleware, errorMiddleware, jsonBodyParserMiddleware } from './middlewares';
+import { buildPipeline, AsyncMiddleware, AsyncHandler } from '@dodsgroup/dods-lambda';
+import { errorMiddleware, jsonBodyParserMiddleware } from './middlewares';
 import { GenericOpenApiValidator } from './validation';
 
 export interface Options {
@@ -30,7 +30,7 @@ export const buildLambdaFunctions = <T = AsyncMiddleware>(handlers: Array<T>, op
 
     const services: Record<string, any> = { handlers, openApiDocument, genericOpenApiValidator, validateRequests, validateResponses, elapsedMilliseconds: 0, ...args };
 
-    return buildPipeline([entryMiddleware, errorMiddleware, ...middlewares, jsonBodyParserMiddleware], services);
+    return buildPipeline([errorMiddleware, ...middlewares, jsonBodyParserMiddleware], services);
 };
 
 export const buildLambdaFunction = <T = AsyncMiddleware>(handler: T, options: Options = defaultOptions): AsyncHandler => {
@@ -50,5 +50,5 @@ export const buildLambdaFunction = <T = AsyncMiddleware>(handler: T, options: Op
 
     const services: Record<string, any> = { openApiDocument, genericOpenApiValidator, validateRequests, validateResponses, elapsedMilliseconds: 0, ...args };
 
-    return buildPipeline([entryMiddleware, errorMiddleware, ...middlewares, jsonBodyParserMiddleware, handler], services);
+    return buildPipeline([errorMiddleware, ...middlewares, jsonBodyParserMiddleware, handler], services);
 };

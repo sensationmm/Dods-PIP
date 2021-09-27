@@ -3,18 +3,21 @@ const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   context: __dirname,
-  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
-  entry: slsw.lib.entries,
-  devtool: slsw.lib.webpack.isLocal ? 'eval-cheap-module-source-map' : 'source-map',
+  mode: 'production',
+  devtool: 'source-map',
+  entry: {
+    index: './index.ts'
+  },
   resolve: {
     extensions: ['.mjs', '.json', '.ts', '.yml'],
     symlinks: false,
     cacheWithContext: false,
   },
   output: {
-    libraryTarget: 'commonjs2',
-    path: path.join(__dirname, '.webpack'),
-    filename: '[name].js',
+    libraryTarget: 'commonjs',
+    path: path.join(__dirname, 'dist'),
+    filename: 'index.js',
+    sourceMapFilename: 'index.js.map',
   },
   target: 'node',
   externals: [nodeExternals()],
@@ -27,14 +30,11 @@ module.exports = {
         exclude: [
           [
             path.resolve(__dirname, 'node_modules'),
-            path.resolve(__dirname, '.webpack'),
-            path.resolve(__dirname, 'images'),
-            path.resolve(__dirname, 'coverage')
+            path.resolve(__dirname, '.webpack')
           ]
         ],
         options: {
-          transpileOnly: true,
-          experimentalWatchApi: true,
+          transpileOnly: false
         }
       }
     ]

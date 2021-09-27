@@ -1,4 +1,4 @@
-import { addDays, getUnixTime } from 'date-fns'
+import { addMinutes, subMinutes, getUnixTime } from 'date-fns'
 import { config, LoginLastPasswordsPersister } from '../domain';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { Logger } from '../utility';
@@ -22,7 +22,7 @@ export class LoginLastPasswordsDynamodb implements LoginLastPasswordsPersister {
                     userName,
                     createdDate: now,
                     password,
-                    _ttl: getUnixTime(addDays(new Date(), config.aws.resources.cognito.lastPasswordNotReuseDay))
+                    _ttl: getUnixTime(addMinutes(new Date(), config.aws.resources.cognito.lastPasswordNotReuseMinutes))
                 }
             };
 
@@ -35,16 +35,15 @@ export class LoginLastPasswordsDynamodb implements LoginLastPasswordsPersister {
     async getLastPasswords(userName: string): Promise<Array<string>> {
 
         try {
-            const now = new Date();
 
-            now.setUTCDate(now.getUTCDate() - config.aws.resources.cognito.lastPasswordNotReuseDay);
+            const queryDate = subMinutes(new Date(), config.aws.resources.cognito.lastPasswordNotReuseMinutes)
 
             const queryParams: DocumentClient.QueryInput = {
                 TableName: this.loginLastPasswordsDynamodbTableName,
                 KeyConditionExpression: '#userName = :userName and #createdDate > :createdDate',
                 ExpressionAttributeValues: {
                     ':userName': userName,
-                    ':createdDate': now.toISOString()
+                    ':createdDate': queryDate.toISOString()
                 },
                 ExpressionAttributeNames: {
                     '#userName': 'userName',

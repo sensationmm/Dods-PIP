@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import color from '../../../globals/color';
 import opacity from '../../../globals/opacity';
+import spacing from '../../../globals/spacing';
 import { hexAToRGBA } from '../../../utils/color';
 
 export const checkbox = styled.div`
@@ -20,7 +21,7 @@ export const checkboxToggle = styled.div`
   border-radius: 4px;
   width: 22px;
   height: 22px;
-  margin-right: 10px;
+  margin-right: ${spacing(3)};
   background: ${color.base.white};
   display: flex;
   justify-content: center;

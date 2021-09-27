@@ -7,16 +7,18 @@ import { ChipsSize } from '.';
 type WrapperProps = {
   selected?: boolean;
   disabled?: boolean;
+  iconOrAvatar?: boolean;
 };
 
 export const wrapper = styled.div<WrapperProps>`
+  cursor: pointer;
   display: inline-block;
-  border: 1px solid ${color.shadow.grey};
+  border: 1px solid ${color.base.greyLight};
   background: ${({ selected, disabled }) =>
     disabled ? color.base.ivory : selected ? color.shadow.blue : color.base.white};
   color: ${({ disabled }) => disabled && color.base.grey};
   border-radius: 60px;
-  padding: 4px 8px 4px 4px;
+  padding: ${({ iconOrAvatar }) => (iconOrAvatar ? '4px 8px 4px 4px' : '4px 8px 4px 8px')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,13 +41,15 @@ export const contentWrapper = styled.div`
 type CloseButtonProps = {
   disabled?: boolean;
   selected?: boolean;
+  hovering?: boolean;
 };
 
 export const closeButton = styled.div<CloseButtonProps>`
-  display: ${({ selected }) => (selected ? 'inline' : 'none')};
+  display: ${({ selected, hovering, disabled }) =>
+    selected && hovering ? 'inline' : selected && disabled ? 'inline' : 'none'};
   padding: ${spacing(1.5)};
   border-radius: 50%;
-  background: ${({ disabled }) => (disabled ? color.base.grey : color.theme.blueMid)};
+  background: ${({ disabled }) => (disabled ? color.base.grey : color.theme.blue)};
   margin-left: ${spacing(2)};
 `;
 
@@ -61,6 +65,7 @@ export const iconWrapper = styled.div<IconWrapperType>`
   width: ${({ size }) => (size === 'medium' ? spacing(8) : spacing(6))};
   height: ${({ size }) => (size === 'medium' ? spacing(8) : spacing(6))};
   border-radius: 50%;
+  border: 1px solid ${color.base.greyLight};
   background: ${({ hovering, selected, disabled }) =>
     disabled ? color.shadow.grey : hovering || selected ? color.base.white : color.shadow.blue};
   display: flex;

@@ -48,7 +48,7 @@ const OKHandler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxy
 export const handle = buildLambdaFunction(OKHandler, { openApiDocumentPath: config.openApiPath, validateRequests: false, validateResponses: false });
 ```
 
-APIGateway triggered Lambda function with strongly Typed Request and Response 
+APIGateway triggered Lambda function with strongly Typed Request and Response. Request headers, query parameters, body will be exposed in first parameter as shown in the following sample code. `ChangePasswordParameters` interface has 3 fields. email field can be in header, password field can be in query parameter and newPassword can be in body. You should add or update your endpoint in `./src/openApi.yml`
 
 ```ts
 import { buildLambdaFunction, AsyncLambdaHandler } from "@dodsgroup/dods-lambda";

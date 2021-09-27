@@ -8,7 +8,7 @@ const getFullName = (data: SayLocalHelloParameters) => `${data.title} ${data.fir
 
 const requestHandlerMock = (requestHandler as jest.Mock);
 
-const FUNCTION_NAME = "GreetingRepository";
+const FUNCTION_NAME = GreetingRepository.name;
 
 afterEach(() => {
     requestHandlerMock.mockReset();
@@ -23,15 +23,16 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const requestHandlerResponse = `Hello ${getFullNameResponse}`;
 
-        requestHandlerMock.mockImplementation(() => requestHandlerResponse);
+        requestHandlerMock.mockReturnValue(requestHandlerResponse);
 
         const response = await GreetingRepository.defaultInstance.sayEnglishHello(data);
 
-        expect(response).toEqual(requestHandlerResponse);
+        expect(requestHandlerMock).toHaveBeenCalledTimes(1);
 
-        // expect(requestHandlerMock).toHaveBeenCalledWith(data);
+        const expectedResponse = requestHandlerMock.mock.results[0].value;
 
-        expect(requestHandlerMock).toHaveReturnedWith(requestHandlerResponse);
+        expect(response).toEqual(expectedResponse);
+
     });
 
     test('sayTurkishHello Valid input', async () => {
@@ -41,15 +42,32 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const requestHandlerResponse = `Merhaba ${getFullNameResponse}`;
 
-        requestHandlerMock.mockImplementation(() => requestHandlerResponse);
+        requestHandlerMock.mockReturnValue(requestHandlerResponse);
 
         const response = await GreetingRepository.defaultInstance.sayTurkishHello(data);
 
-        expect(response).toEqual(requestHandlerResponse);
+        expect(requestHandlerMock).toHaveBeenCalledTimes(1);
 
-        // expect(requestHandlerMock).toHaveBeenCalledWith(data);
+        const expectedResponse = requestHandlerMock.mock.results[0].value;
 
-        expect(requestHandlerMock).toHaveReturnedWith(requestHandlerResponse);
+        expect(response).toEqual(expectedResponse);
+
+    });
+
+    it('getFullName valid input', async () => {
+        const data: SayLocalHelloParameters = { title: 'Mr', firstName: 'kenan', lastName: 'hancer' };
+
+        const requestHandlerResponse = `${data.title} ${data.firstName} ${data.lastName}`;
+
+        requestHandlerMock.mockReturnValue(requestHandlerResponse);
+
+        const response = await GreetingRepository.defaultInstance.getFullName(data);
+
+        expect(requestHandlerMock).toHaveBeenCalledTimes(1);
+
+        const expectedResponse = requestHandlerMock.mock.results[0].value;
+
+        expect(response).toEqual(expectedResponse);
     });
 });
 

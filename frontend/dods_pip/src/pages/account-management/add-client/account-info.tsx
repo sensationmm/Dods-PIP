@@ -11,6 +11,7 @@ import Spacer from '../../../components/_layout/Spacer';
 import Button from '../../../components/Button';
 import { Icons } from '../../../components/Icon/assets';
 import color from '../../../globals/color';
+import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
 
 export type Errors = {
@@ -33,6 +34,7 @@ export interface AccountInfoProps {
   contactEmail: string;
   setContactEmail: (val: string) => void;
   errors: Errors;
+  setErrors: (errors: Errors) => void;
   onSubmit: () => void;
   onBack: () => void;
 }
@@ -49,11 +51,64 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   contactEmail,
   setContactEmail,
   errors,
+  setErrors,
   onSubmit,
   onBack,
 }) => {
   const isComplete =
-    accountName !== '' && contactName !== '' && contactTelephone != '' && contactEmail !== '';
+    Object.keys(errors).length === 0 &&
+    accountName !== '' &&
+    contactName !== '' &&
+    contactTelephone != '' &&
+    contactEmail !== '';
+
+  const validateAccountName = () => {
+    const formErrors = { ...errors };
+    if (accountName === '') {
+      formErrors.accountName = 'This field is required';
+    } else if (accountName.replace(' ', '').toLowerCase() === 'somo') {
+      formErrors.accountName = 'An account with this name already exists';
+    } else {
+      delete formErrors.accountName;
+    }
+    setErrors(formErrors);
+  };
+
+  const validateName = () => {
+    const formErrors = { ...errors };
+    if (contactName === '') {
+      formErrors.contactName = 'This field is required';
+    } else {
+      delete formErrors.contactName;
+    }
+
+    setErrors(formErrors);
+  };
+
+  const validateEmail = () => {
+    const formErrors = { ...errors };
+    if (contactEmail === '') {
+      formErrors.contactEmail = 'This field is required';
+    } else if (!Validation.validateEmail(contactEmail)) {
+      formErrors.contactEmail = 'Invalid format';
+    } else {
+      delete formErrors.contactEmail;
+    }
+
+    setErrors(formErrors);
+  };
+
+  const validatePhone = () => {
+    const formErrors = { ...errors };
+    if (contactTelephone === '') {
+      formErrors.contactTelephone = 'This field is required';
+    } else if (!Validation.validatePhone(contactTelephone)) {
+      formErrors.contactTelephone = 'Invalid format';
+    } else {
+      delete formErrors.contactTelephone;
+    }
+    setErrors(formErrors);
+  };
 
   return (
     <main data-test="account-info">
@@ -77,6 +132,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
                 onChange={setAccountName}
                 placeholder="Type the account name"
                 error={errors.accountName}
+                onBlur={validateAccountName}
               />
             </div>
 
@@ -124,6 +180,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
                 onChange={setContactName}
                 placeholder="Type the full name"
                 error={errors.contactName}
+                onBlur={validateName}
               />
 
               <Spacer size={6} />
@@ -136,6 +193,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
                 onChange={setContactTelephone}
                 placeholder="Type the telephone number"
                 error={errors.contactTelephone}
+                onBlur={validatePhone}
               />
             </div>
 
@@ -148,6 +206,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
                 onChange={setContactEmail}
                 placeholder="Type the email address"
                 error={errors.contactEmail}
+                onBlur={validateEmail}
               />
             </div>
           </Columns>

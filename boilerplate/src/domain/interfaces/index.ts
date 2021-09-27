@@ -15,4 +15,5 @@ export interface SayHelloParameters extends SayLocalHelloParameters {
 export interface DownstreamEndpoints {
     sayTurkishHelloEndpointUrl: string;
     sayEnglishHelloEndpointUrl: string;
+    getFullNameEndpointUrl: string;
 }

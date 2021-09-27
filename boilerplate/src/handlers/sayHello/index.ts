@@ -1,4 +1,4 @@
-import { buildLambdaFunction } from "../../lambdaMiddleware";
+import { buildLambdaFunction } from "@dodsgroup/dods-lambda";
 import { sayHello } from "./sayHello";
 import { config } from '../../domain';
 

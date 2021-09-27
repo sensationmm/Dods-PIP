@@ -1,6 +1,19 @@
 import GlobalFonts from '../src/globals/fonts';
 
 export const parameters = {
+  backgrounds: {
+    default: 'white',
+    values: [
+      {
+        name: 'white',
+        value: '#fff',
+      },
+      {
+        name: 'DODs dark background',
+        value: '#122035',
+      },
+    ],
+  },
   actions: { argTypesRegex: '^on[A-Z].*' },
   controls: {
     matchers: {
@@ -19,7 +32,6 @@ export const decorators = [
         width: 'calc(100vw - 2rem)',
         height: 'calc(100vh - 2rem)',
         padding: '1rem',
-        background: 'white',
         margin: 0,
         display: 'flex',
         alignItems: 'center',
