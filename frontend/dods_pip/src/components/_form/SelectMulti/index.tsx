@@ -10,7 +10,7 @@ import InputText, { InputTextProps } from '../InputText';
 import * as Styled from './SelectMulti.styles';
 
 type SelectItem = {
-  name: string;
+  label: string;
   value: string;
 };
 
@@ -37,8 +37,14 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const setValue = (val: string) => {
-    onChange([...value, val]);
-    setIsOpen(false);
+    if (inArray(val, value)) {
+      const vals = value.slice();
+      const index = value.indexOf(val);
+      vals.splice(index, 1);
+      onChange(vals);
+    } else {
+      onChange([...value, val]);
+    }
   };
 
   const numSelected = value.filter((item) =>
@@ -104,7 +110,7 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
                       <Icon src={Icons.IconTick} size={IconSize.small} color={color.base.white} />
                     )}
                   </Component>
-                  {item.name}
+                  {item.label}
                 </Styled.dropdownItem>
               );
             })}
