@@ -21,6 +21,7 @@ describe('SelectMulti', () => {
     defaultState, // handles empty helper text
     defaultState, // sets value on choosing initial option
     defaultState, // sets value on choosing additional option
+    defaultState, // unsets value on 2nd click
     defaultState, // shows correct label for passed prop value
     defaultState, // handles passed prop value not matching options
     { ...defaultState, isOpen: true }, // shows correct open state
@@ -46,9 +47,9 @@ describe('SelectMulti', () => {
         value={[]}
         onChange={mockOnChange}
         options={[
-          { name: 'Option 1', value: 'option1' },
-          { name: 'Option 2', value: 'option2' },
-          { name: 'Option 3', value: 'option3' },
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
         ]}
       />,
     );
@@ -75,9 +76,9 @@ describe('SelectMulti', () => {
         onChange={mockOnChange}
         placeholder={'Custom value'}
         options={[
-          { name: 'Option 1', value: 'option1' },
-          { name: 'Option 2', value: 'option2' },
-          { name: 'Option 3', value: 'option3' },
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
         ]}
       />,
     );
@@ -93,9 +94,9 @@ describe('SelectMulti', () => {
         onChange={mockOnChange}
         placeholder={'Custom value'}
         options={[
-          { name: 'Option 1', value: 'option1' },
-          { name: 'Option 2', value: 'option2' },
-          { name: 'Option 3', value: 'option3' },
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
         ]}
         helperText={''}
       />,
@@ -113,7 +114,6 @@ describe('SelectMulti', () => {
 
     option.simulate('click');
     expect(mockOnChange).toHaveBeenCalledWith(['option2']);
-    expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 
   it('sets value on choosing additional option', () => {
@@ -123,9 +123,9 @@ describe('SelectMulti', () => {
         value={['option3']}
         onChange={mockOnChange}
         options={[
-          { name: 'Option 1', value: 'option1' },
-          { name: 'Option 2', value: 'option2' },
-          { name: 'Option 3', value: 'option3' },
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
         ]}
       />,
     );
@@ -137,7 +137,29 @@ describe('SelectMulti', () => {
 
     option.simulate('click');
     expect(mockOnChange).toHaveBeenCalledWith(['option3', 'option2']);
-    expect(mockSetOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('unsets value on 2nd click', () => {
+    wrapper = shallow(
+      <SelectMulti
+        id="example"
+        value={['option3', 'option1']}
+        onChange={mockOnChange}
+        options={[
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
+        ]}
+      />,
+    );
+    const trigger = wrapper.find('[data-test="select-trigger"]');
+    const option = wrapper.find('[data-test="option-0"]');
+
+    trigger.simulate('click');
+    expect(mockSetOpen).toHaveBeenCalledWith(true);
+
+    option.simulate('click');
+    expect(mockOnChange).toHaveBeenCalledWith(['option3']);
   });
 
   it('shows correct label for passed prop value', () => {
@@ -147,9 +169,9 @@ describe('SelectMulti', () => {
         value={['option3']}
         onChange={mockOnChange}
         options={[
-          { name: 'Option 1', value: 'option1' },
-          { name: 'Option 2', value: 'option2' },
-          { name: 'Option 3', value: 'option3' },
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
         ]}
       />,
     );
@@ -168,9 +190,9 @@ describe('SelectMulti', () => {
         value={['option']}
         onChange={mockOnChange}
         options={[
-          { name: 'Option 1', value: 'option1' },
-          { name: 'Option 2', value: 'option2' },
-          { name: 'Option 3', value: 'option3' },
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
         ]}
       />,
     );
@@ -191,9 +213,9 @@ describe('SelectMulti', () => {
         value={[]}
         onChange={mockOnChange}
         options={[
-          { name: 'Option 1', value: 'option1' },
-          { name: 'Option 2', value: 'option2' },
-          { name: 'Option 3', value: 'option3' },
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
         ]}
         isDisabled={true}
       />,
@@ -211,9 +233,9 @@ describe('SelectMulti', () => {
         onChange={mockOnChange}
         placeholder={'Custom value'}
         options={[
-          { name: 'Option 1', value: 'option1' },
-          { name: 'Option 2', value: 'option2' },
-          { name: 'Option 3', value: 'option3' },
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
         ]}
         error="Required"
       />,
@@ -233,7 +255,6 @@ describe('SelectMulti', () => {
     const option = wrapper.find('[data-test="option-1"]');
     option.simulate('keypress');
     expect(mockOnChange).toHaveBeenCalledWith(['option2']);
-    expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 
   it('keyboard use - prevents typing in input', () => {
