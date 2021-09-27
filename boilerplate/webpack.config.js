@@ -17,9 +17,13 @@ module.exports = {
     libraryTarget: 'commonjs2',
     path: path.join(__dirname, '.webpack'),
     filename: '[name].js',
+    clean: true,
   },
   target: 'node',
   externals: [nodeExternals()],
+  optimization: {
+    minimize: true
+  },
   module: {
     rules: [
       // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
