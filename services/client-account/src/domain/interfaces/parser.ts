@@ -1,5 +1,4 @@
-import { string } from "joi";
-import { ClientAccountParameters, ClientAccountResponse } from ".";
+import { ClientAccountParameters, ClientAccountResponse, SearchClientAccountResponse } from ".";
 import { ClientAccountModel } from "../../db";
 import { ClientAccountModelCreationAttributes, UserProfileModelAttributes } from "../../db/types";
 
@@ -39,7 +38,7 @@ export function parseModelParameters(requestParameters: ClientAccountParameters)
     return parameters;
 }
 
-export function parseSearchClientAccountResponse(model: any) {
+export function parseSearchClientAccountResponse(model: ClientAccountModel): SearchClientAccountResponse {
     const response = {
         id: model.uuid,
         name: model.name,
@@ -54,7 +53,7 @@ export function parseSearchClientAccountResponse(model: any) {
                 .map((item: UserProfileModelAttributes) => {
                     return {
                         name: item.fullName,
-                        type: model.ClientAccountTeam.parsedType
+                        type: model.ClientAccountTeam && model.ClientAccountTeam.parsedType
                     }
             }),
         completed: true

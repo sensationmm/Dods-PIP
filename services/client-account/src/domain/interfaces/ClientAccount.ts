@@ -24,8 +24,8 @@ export interface SearchClientAccountResponse {
     id: string;
     name: string;
     notes: string | null;
-    subscription: "level1" | "level2" | "level3" | "level4";
-    location: string;
+    subscription: string | undefined;
+    location: number | undefined;
     projects: number;
     team: {
         name: string;

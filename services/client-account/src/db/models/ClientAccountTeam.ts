@@ -19,6 +19,9 @@ class ClientAccountTeam extends Model<ClientAccountTeamAttributes, ClientAccount
     public userId?: number | null;
     public teamMemberType!: number;
 
+    public UserProfileModels?: UserProfileModel[] ;
+
+
     public parsedType?: string;
 
     //Timestamps
