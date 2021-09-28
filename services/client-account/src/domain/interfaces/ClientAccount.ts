@@ -1,3 +1,4 @@
+import { Pagination } from "../interfaces";
 import SubscriptionType from "../../db/models/SubscriptionType";
 
 export interface ClientAccount {
@@ -12,11 +13,33 @@ export interface ClientAccount {
 }
 
 export interface ClientAccountResponse extends ClientAccount {
-    id: number
+    id: number;
     uuid: string;
-    subscription: SubscriptionType
+    subscription: SubscriptionType | null
 }
 
+export interface ClientAccountParameters extends ClientAccount {}
+
+export interface SearchClientAccountResponse {
+    id: string;
+    name: string;
+    notes: string | null;
+    subscription: string | undefined;
+    location: number | undefined;
+    projects: number;
+    team: {
+        name: string;
+        type: "consultant" | "client";
+    },
+    completed: boolean;
+}
+
+export interface SearchClientAccountParameters extends Pagination {
+    locations?: number[] | null;
+    subscriptionTypes?: number[] | null;
+    searchTerm?: string | null;
+    startsBy?: string | null;
+}
 export interface GetClientAccountParameters {
     clientAccountId: string;
 }

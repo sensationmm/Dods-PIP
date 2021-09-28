@@ -38,6 +38,24 @@ paths:
           $ref: "#/components/responses/NotFound"
   
   /clientaccount:
+    get:
+      operationId: searchClientAccount
+      summary: "Search Client Accounts"
+      description: "Search Client Accounts"
+      parameters:
+        - $ref: "#/components/parameters/locations"
+        - $ref: "#/components/parameters/subscriptionTypes"
+        - $ref: "#/components/parameters/searchTerm"
+        - $ref: "#/components/parameters/startsBy"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+      responses:
+        "200":
+          $ref: "#/components/responses/ClientAccount"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
     post:
       operationId: createClientAccount
       summary: "Create Client Account"
@@ -51,6 +69,21 @@ paths:
           $ref: "#/components/responses/ClientAccount"
         "400":
           $ref: "#/components/responses/BadRequest"
+
+  /clientaccount/{clientAccountId}/seats:
+    get:
+      operationId: getRemainingSeats
+      summary: "Get Remaining Seats"
+      description: "Get Client Account"
+      parameters:
+        - $ref: "#/components/parameters/clientAccountId"
+      responses:
+        "200":
+          $ref: "#/components/responses/ClientAccount"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 
   /subscription-types:
@@ -127,6 +160,73 @@ components:
         type: string
       required: true
       description: Clint Account UUID
+    locations:
+      in: query
+      name: locations
+      schema:
+        type: array
+        items:
+          type: integer
+      examples:
+        oneId:
+          summary: Example of a single location's ID
+          value: [5] # ?locations=5
+        multipleIds:
+          summary: Example of multiple location's IDs
+          value: [1, 5, 7] # ?locations=1,5,7
+      required: false
+      explode: false
+      description: Client Accounts by location
+    subscriptionTypes:
+      in: query
+      name: subscriptionTypes
+      schema:
+        type: array
+        items:
+          type: integer
+      examples:
+        oneId:
+          summary: Example of a single location's ID
+          value: [5] # ?subscriptionTypes=5
+        multipleIds:
+          summary: Example of multiple location's IDs
+          value: [1, 5, 7] # ?subscriptionTypes=1,5,7
+      required: false
+      explode: false
+      description: Client Accounts by subscription type
+    searchTerm:
+      in: query
+      name: searchTerm
+      schema:
+        type: string
+      required: false
+      description: Client Accounts by name's filtering using search term
+    startsBy:
+      in: query
+      name: startsBy
+      schema:
+        type: string
+      required: false
+      description: Client Accounts by name's first letter
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        default: 10
+        minimum: 0
+        maximum: 100
+      required: false
+      description: maximum number of Client Accounts to return
+    offset:
+      in: query
+      name: offset
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+      required: false
+      description: Offset value for pagination
 
   responses:
     NotFound:

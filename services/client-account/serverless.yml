@@ -105,7 +105,15 @@ functions:
       - http:
           method: post
           path: clientaccount
-
+  
+  searchClientAccount:
+    handler: src/handlers/searchClientAccount/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: clientaccount
+  
   getSubscriptionTypes:
     handler: src/handlers/getSubscriptionTypes/index.handle
     description: Triggered when http request comes
