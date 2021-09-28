@@ -23,6 +23,14 @@ export const wrapper = styled.div<WrapperProps>`
       padding-left: ${({ hasSelected }) => (hasSelected ? spacing(12) : spacing(3))};
     }
   }
+
+  &:hover {
+    ${Input} {
+      margin-bottom: 1px;
+      border-bottom: 1px solid ${color.theme.blueMid};
+      border-radius: 8px 8px 0 0;
+    }
+  }
 `;
 
 export const select = styled.div`

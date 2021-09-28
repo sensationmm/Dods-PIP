@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import color from '../../../globals/color';
 import elevation from '../../../globals/elevation';
 import spacing from '../../../globals/spacing';
-import { wrapper as InputText } from '../InputBase/InputBase.styles';
+import { input as Input, wrapper as InputText } from '../InputBase/InputBase.styles';
 
 export const wrapper = styled.div`
   position: relative;
@@ -12,6 +12,14 @@ export const wrapper = styled.div`
 
   ${InputText} {
     z-index: 1;
+  }
+
+  &:hover {
+    ${Input} {
+      margin-bottom: 1px;
+      border-bottom: 1px solid ${color.theme.blueMid};
+      border-radius: 8px 8px 0 0;
+    }
   }
 `;
 
