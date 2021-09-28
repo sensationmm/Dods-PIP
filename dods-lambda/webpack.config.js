@@ -18,9 +18,13 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',
     sourceMapFilename: 'index.js.map',
+    clean: true,
   },
   target: 'node',
   externals: [nodeExternals()],
+  optimization: {
+    minimize: true
+  },
   module: {
     rules: [
       // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
@@ -34,7 +38,8 @@ module.exports = {
           ]
         ],
         options: {
-          transpileOnly: false
+          transpileOnly: false,
+          experimentalWatchApi: false,
         }
       }
     ]

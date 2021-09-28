@@ -42,7 +42,7 @@ module.exports = {
         ],
         options: {
           transpileOnly: false,
-          experimentalWatchApi: true,
+          experimentalWatchApi: false,
         }
       }
     ]
