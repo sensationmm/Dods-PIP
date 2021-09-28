@@ -15,12 +15,9 @@
     "deploy:prod": "AWS_PROFILE=dods-prod AWS_REGION=eu-west-1 serverless deploy --stage prod",
     "remove:deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage dev",
     "remove:deploy:prod": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage prod",
-    "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}"
+    "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}",
+    "postinstall": "cd ../.. && husky install services/client-account/.husky"
   },
-  "pre-commit": [
-    "test:coverage",
-    "test:integration"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://kenanhancerdod@bitbucket.org/kenanhancerdod/client-account.git"
@@ -42,10 +39,10 @@
     "@types/yamljs": "^0.2.31",
     "copy-webpack-plugin": "^9.0.1",
     "cucumber-html-reporter": "^5.5.0",
+    "husky": "^7.0.2",
     "jest": "^27.1.0",
     "mockserver-client": "^5.11.2",
     "open": "^8.2.1",
-    "pre-commit": "^1.2.2",
     "serverless": "^2.59.0",
     "serverless-dependson-plugin": "^1.1.2",
     "serverless-localstack": "^0.4.34",
