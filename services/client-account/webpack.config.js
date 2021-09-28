@@ -17,9 +17,13 @@ module.exports = {
     libraryTarget: 'commonjs2',
     path: path.join(__dirname, '.webpack'),
     filename: '[name].js',
+    clean: true,
   },
   target: 'node',
   externals: [nodeExternals()],
+  optimization: {
+    minimize: true
+  },
   module: {
     rules: [
       // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
@@ -32,12 +36,13 @@ module.exports = {
             path.resolve(__dirname, '.serverless'),
             path.resolve(__dirname, '.webpack'),
             path.resolve(__dirname, 'images'),
+            path.resolve(__dirname, 'scripts'),
             path.resolve(__dirname, 'coverage')
           ]
         ],
         options: {
-          transpileOnly: true,
-          experimentalWatchApi: true,
+          transpileOnly: false,
+          experimentalWatchApi: false,
         }
       }
     ]
