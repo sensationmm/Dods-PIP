@@ -15,7 +15,4 @@ export interface ClientAccountModelAttributes {
 }
 
 export interface ClientAccountModelCreationAttributes
-    extends Optional<
-        ClientAccountModelAttributes,
-        'id' | 'uuid' | 'subscriptionSeats'
-    > {}
+    extends Optional<ClientAccountModelAttributes, 'id' | 'uuid' | 'subscriptionSeats'> {}
