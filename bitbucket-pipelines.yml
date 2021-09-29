@@ -46,7 +46,7 @@ pipelines:
                 - "services/userProfile/**"
           script:
             - cd services/userProfile
-            - ./setenv.sh
+            - source setenv.sh
             - printenv
             - npm install
             - npm run test
