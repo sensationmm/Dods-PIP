@@ -10,25 +10,41 @@ provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
-  stage: ${opt:stage, 'test'}
+  stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
-  
+  apiGateway:
+    restApiId: emhumq7ktf
+    restApiRootResourceId: lzvvrnid32
+    description: Default Gateway for dev deployed with dods-iam
+    apiKeys:
+      - name: testing-key
+        value: 8b8pv1rGpssR8eeUMjQPjsi8dC2ztrP1GTG1K2w
+        description: Manually generated API key to test securing lambda functions
   
   environment:
-    NODE_ENV: ${opt:NODE_ENV, 'test'}
+    NODE_ENV: ${opt:NODE_ENV, 'dev'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint}
-    SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint}
+    # SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint}
+    # SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint}
+    GET_USER_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getUserEndpoint}
+    GET_USERBYNAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getUserByNameEndpoint}
+    GET_ROLE_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getRoleEndpoint}
 
 custom:
   endpoints:
-    test:
-      sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
-      sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
+    dev:
+      # sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
+      # sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
+      getUserEndpoint: http://localhost:1081/user
+      getUserByNameEndpoint: http://localhost:1081/userByName
+      getRoleEndpoint: http://localhost:1081/role
     prod:
-      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
-      sayEnglishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
+      # sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
+      # sayEnglishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
+      getUserEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
+      getUserByNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
+      getRoleEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -71,6 +87,7 @@ functions:
       - http:
           method: get
           path: role
+          private: true
   user:
     handler: src/handlers/user/index.handle
     description: Triggered when http request comes
@@ -78,6 +95,7 @@ functions:
       - http:
           method: get
           path: user
+          private: true
   userByName:
     handler: src/handlers/userByName/index.handle
     description: Triggered when http request comes
@@ -85,7 +103,5 @@ functions:
       - http:
           method: get
           path: userByName
+          private: true
 
-
-
-  

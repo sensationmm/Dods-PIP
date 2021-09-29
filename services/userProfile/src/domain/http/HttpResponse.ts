@@ -1,4 +1,4 @@
-import HttpStatusCode from './HttpStatusCode';
+import { HttpStatusCode } from './';
 
 export interface HttpResponse {
     statusCode?: HttpStatusCode;
@@ -9,7 +9,7 @@ export interface HttpResponse {
     cookies?: string[];
 }
 
-export class HttpDefaultResponse<T> implements HttpResponse {
+export abstract class BaseHttpResponse<T> implements HttpResponse {
     body?: string;
 
     constructor(public statusCode: HttpStatusCode, input?: T) {
@@ -17,20 +17,26 @@ export class HttpDefaultResponse<T> implements HttpResponse {
     }
 }
 
-export class HttpSuccessResponse<T> extends HttpDefaultResponse<T> {
+export class HttpSuccessResponse<T> extends BaseHttpResponse<T> {
     constructor(input?: T) {
         super(HttpStatusCode.OK, input);
     }
 }
 
-export class HttpUnauthorizedResponse<T> extends HttpDefaultResponse<T> {
+export class HttpUnauthorizedResponse<T> extends BaseHttpResponse<T> {
     constructor(input?: T) {
         super(HttpStatusCode.UNAUTHORIZED, input);
     }
 }
 
-export class HttpNotFoundResponse<T> extends HttpDefaultResponse<T> {
+export class HttpNotFoundResponse<T> extends BaseHttpResponse<T> {
     constructor(input?: T) {
         super(HttpStatusCode.NOT_FOUND, input);
+    }
+}
+
+export class HttpInternalServerErrorResponse<T> extends BaseHttpResponse<T> {
+    constructor(input?: T) {
+        super(HttpStatusCode.INTERNAL_SERVER_ERROR, input);
     }
 }
