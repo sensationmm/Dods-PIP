@@ -43,7 +43,11 @@ const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <Styled.wrapper data-test="component-select">
+    <Styled.wrapper
+      data-test="component-select"
+      hasError={error !== undefined}
+      isDisabled={isDisabled}
+    >
       <OutsideClickHandler onOutsideClick={() => setIsOpen(false)}>
         <Styled.select>
           <InputText

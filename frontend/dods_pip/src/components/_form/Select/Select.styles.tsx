@@ -5,7 +5,12 @@ import elevation from '../../../globals/elevation';
 import spacing from '../../../globals/spacing';
 import { input as Input, wrapper as InputText } from '../InputBase/InputBase.styles';
 
-export const wrapper = styled.div`
+type WrapperProps = {
+  hasError: boolean;
+  isDisabled: boolean;
+};
+
+export const wrapper = styled.div<WrapperProps>`
   position: relative;
   width: 100%;
   box-sizing: content-box;
@@ -14,10 +19,13 @@ export const wrapper = styled.div`
     z-index: 1;
   }
 
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+
   &:hover {
     ${Input} {
       margin-bottom: 1px;
-      border-bottom: 1px solid ${color.theme.blueMid};
+      border-bottom: 1px solid
+        ${({ hasError }) => (hasError ? color.alert.red : color.theme.blueMid)};
       border-radius: 8px 8px 0 0;
     }
   }

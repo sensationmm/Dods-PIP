@@ -9,6 +9,8 @@ import { input as Input, wrapper as InputText } from '../InputBase/InputBase.sty
 
 type WrapperProps = {
   hasSelected: boolean;
+  hasError: boolean;
+  isDisabled: boolean;
 };
 
 export const wrapper = styled.div<WrapperProps>`
@@ -24,10 +26,13 @@ export const wrapper = styled.div<WrapperProps>`
     }
   }
 
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+
   &:hover {
     ${Input} {
       margin-bottom: 1px;
-      border-bottom: 1px solid ${color.theme.blueMid};
+      border-bottom: 1px solid
+        ${({ hasError }) => (hasError ? color.alert.red : color.theme.blueMid)};
       border-radius: 8px 8px 0 0;
     }
   }
@@ -85,7 +90,7 @@ export const checkboxToggle = styled.div<checkboxToggleProps>`
   width: 16px;
   height: 16px;
   margin-right: ${spacing(3)};
-  background: ${color.base.white};
+  background: ${color.shadow.blue};
   display: flex;
   justify-content: center;
   align-items: center;
