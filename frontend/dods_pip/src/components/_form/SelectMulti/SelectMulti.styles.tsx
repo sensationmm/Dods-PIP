@@ -90,7 +90,7 @@ export const checkboxToggle = styled.div<checkboxToggleProps>`
   width: 16px;
   height: 16px;
   margin-right: ${spacing(3)};
-  background: ${color.base.white};
+  background: ${color.shadow.blue};
   display: flex;
   justify-content: center;
   align-items: center;
