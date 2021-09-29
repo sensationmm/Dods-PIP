@@ -1,6 +1,6 @@
 import { ClientAccountParameters, ClientAccountResponse, SearchClientAccountResponse } from ".";
 import { ClientAccountModel } from "../../db";
-import { ClientAccountModelCreationAttributes, UserProfileModelAttributes } from "../../db/types";
+import { ClientAccountModelCreationAttributes } from "../../db/types";
 
 export function parseResponseFromModel(model: ClientAccountModel): ClientAccountResponse {
     const response: ClientAccountResponse = {
@@ -50,7 +50,7 @@ export function parseSearchClientAccountResponse(model: ClientAccountModel): Sea
             model.ClientAccountTeam && 
             model.ClientAccountTeam.UserProfileModels &&
             model.ClientAccountTeam.UserProfileModels
-                .map((item: UserProfileModelAttributes) => {
+                .map((item) => {
                     return {
                         name: item.fullName,
                         type: model.ClientAccountTeam && model.ClientAccountTeam.parsedType

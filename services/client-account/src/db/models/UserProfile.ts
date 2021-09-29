@@ -1,7 +1,4 @@
 import {
-    Association,
-    BelongsToCreateAssociationMixin,
-    BelongsToGetAssociationMixin,
     DataTypes,
     Model,
 } from 'sequelize';
