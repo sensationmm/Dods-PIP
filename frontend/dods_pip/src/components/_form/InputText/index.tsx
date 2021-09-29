@@ -14,6 +14,7 @@ export interface InputTextProps extends Omit<InputBaseProps, 'type'> {
 const InputText: React.FC<InputTextProps> = ({
   id,
   size,
+  length,
   label,
   value,
   isDisabled = false,
@@ -36,6 +37,7 @@ const InputText: React.FC<InputTextProps> = ({
         data-test="component-input-text"
         type="text"
         size={size}
+        length={length}
         label={label}
         value={value}
         isDisabled={isDisabled}

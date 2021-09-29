@@ -33,8 +33,21 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
   optional,
   helperText,
   onChange,
+  onBlur,
 }) => {
+  const firstRun = React.useRef(true);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+
+    if (!firstRun.current && !isOpen) {
+      onBlur && onBlur();
+    }
+  }, [isOpen]);
 
   const setValue = (val: string) => {
     if (inArray(val, value)) {
@@ -61,7 +74,9 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
             data-test="select-input"
             size={size}
             label={label}
-            value={hasSelected ? 'Items selected' : placeholder}
+            value={
+              hasSelected ? (numSelected === 1 ? 'Item selected' : 'Items selected') : placeholder
+            }
             isDisabled={isDisabled}
             error={error}
             required={required}

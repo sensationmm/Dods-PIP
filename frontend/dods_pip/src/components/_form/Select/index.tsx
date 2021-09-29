@@ -12,8 +12,9 @@ type SelectItem = {
   value: string;
 };
 
-export interface SelectProps extends Omit<InputTextProps, 'icon'> {
+export interface SelectProps extends Omit<InputTextProps, 'icon' | 'length'> {
   options: SelectItem[];
+  isFullWidth?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -29,8 +30,22 @@ const Select: React.FC<SelectProps> = ({
   optional,
   helperText,
   onChange,
+  onBlur,
+  isFullWidth = false,
 }) => {
+  const firstRun = React.useRef(true);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+
+    if (!firstRun.current && !isOpen) {
+      onBlur && onBlur();
+    }
+  }, [isOpen]);
 
   const setValue = (val: string) => {
     onChange(val);
@@ -43,7 +58,7 @@ const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <Styled.wrapper data-test="component-select">
+    <Styled.wrapper data-test="component-select" isFullWidth={isFullWidth}>
       <OutsideClickHandler onOutsideClick={() => setIsOpen(false)}>
         <Styled.select>
           <InputText
@@ -62,6 +77,8 @@ const Select: React.FC<SelectProps> = ({
             css={{ pointerEvents: 'none' }}
             onFocus={() => setIsOpen(true)}
             tabIndex={1}
+            placeholder={placeholder}
+            length={Math.max(...options.map((item) => item.name.length))}
           />
           {!isDisabled && (
             <Styled.selectTrigger data-test="select-trigger" onClick={() => setIsOpen(!isOpen)} />

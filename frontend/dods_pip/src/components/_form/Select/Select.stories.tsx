@@ -15,6 +15,7 @@ export const Primary = Template.bind({});
 
 Primary.args = {
   label: 'Label',
+  placeholder: 'choose',
   value: '',
   options: [
     { name: 'Option 1', value: 'option1' },
@@ -23,6 +24,7 @@ Primary.args = {
   ],
   size: 'large',
   isDisabled: false,
+  isFullWidth: false,
   error: undefined,
   required: false,
   optional: false,
