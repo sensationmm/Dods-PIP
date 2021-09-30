@@ -95,11 +95,13 @@ const Subscription: React.FC<SubscriptionProps> = ({
   const isComplete =
     location.length > 0 &&
     contentType.length > 0 &&
+    userSeats !== '' &&
     renewalType !== '' &&
     startDate !== '' &&
     (renewalType === 'annual' ||
       (renewalType === 'endDate' && endDateType !== '' && endDateType !== 'custom') ||
-      (renewalType === 'endDate' && endDateType === 'custom' && endDate !== ''));
+      (renewalType === 'endDate' && endDateType === 'custom' && endDate !== '')) &&
+    Object.keys(errors).length === 0;
 
   const handleSetLocation = (val: string) => {
     if (inArray(val, location)) {
@@ -124,7 +126,11 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
   const setUserSeatsError = (err?: string) => {
     const formErrors = { ...errors };
-    formErrors.userSeats = err;
+    if (err !== undefined) {
+      formErrors.userSeats = err;
+    } else {
+      delete formErrors.userSeats;
+    }
     setErrors(formErrors);
   };
 
@@ -271,6 +277,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             label="Assign a start date"
             required
             value={startDate}
+            minDate={format(new Date(), 'yyyy-MM-dd').toString()}
             onChange={setStartDate}
             helperText="dd/mm/yyyy format"
           />
