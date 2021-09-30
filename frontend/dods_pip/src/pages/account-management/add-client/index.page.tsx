@@ -8,14 +8,13 @@ import ProgressTracker from '../../../components/ProgressTracker';
 import LoadingHOC, { LoadingHOCProps } from '../../../hoc/LoadingHOC';
 import AccountInfo, { Errors as ErrorsStep1 } from './account-info';
 import Subscription, { Errors as ErrorsStep2 } from './subscription';
-import Tagging from './tagging';
 import Team from './team';
 
 interface AddClientProps extends LoadingHOCProps {}
 
 export const AddClient: React.FC<AddClientProps> = () => {
   const router = useRouter();
-  const [activeStep, setActiveStep] = React.useState<number>(1);
+  const [activeStep, setActiveStep] = React.useState<number>(3);
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
   const [contactName, setContactName] = React.useState<string>('');
@@ -43,10 +42,6 @@ export const AddClient: React.FC<AddClientProps> = () => {
 
   const onSubmitStep3 = () => {
     setActiveStep(4);
-  };
-
-  const onSubmitStep4 = () => {
-    setActiveStep(1);
   };
 
   return (
@@ -108,9 +103,6 @@ export const AddClient: React.FC<AddClientProps> = () => {
       )}
       {activeStep === 3 && (
         <Team data-test="step-3" onSubmit={onSubmitStep3} onBack={() => setActiveStep(2)} />
-      )}
-      {activeStep === 4 && (
-        <Tagging data-test="step-4" onSubmit={onSubmitStep4} onBack={() => setActiveStep(3)} />
       )}
     </div>
   );
