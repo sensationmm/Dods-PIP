@@ -10,10 +10,12 @@ echo '# do not modify it manually' >> ${STAGE}.env
 
 # run serverless print to get a JSON representation of the runtime config
 # extract only the environment definitions
+echo 'Reading serverless configuration from file...'
 SLS_ENV=$(SLS_DEPRECATION_DISABLE='*' npx serverless print --stage $STAGE --format json | jq '.provider.environment' )
 
 readarray -t ENVS <<<"${SLS_ENV}"
 
+echo 'Generating file with required environment variables...'
 for line in "${ENVS[@]}"; do
    if [[ $line =~ [{}] ]]; then
       continue
@@ -30,4 +32,6 @@ for line in "${ENVS[@]}"; do
 
    echo export $DEF >> ${STAGE}.env
 done
+
+echo "Required environment variables saved on ${STAGE}.env"
 exit 0
