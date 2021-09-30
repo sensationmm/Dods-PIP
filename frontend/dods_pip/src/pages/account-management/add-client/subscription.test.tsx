@@ -60,6 +60,14 @@ describe('Subscription', () => {
     expect(button.props().disabled).toEqual(true);
   });
 
+  it('sets consultant hours error', () => {
+    const input = wrapper.find('[id="consultant-hours"]');
+    input.props().onBlur('error');
+    expect(setErrors).toHaveBeenCalledWith({ consultantHours: 'error' });
+    const button = wrapper.find('[data-test="continue-button"]');
+    expect(button.props().disabled).toEqual(true);
+  });
+
   it('fails empty end date type', () => {
     wrapper = shallow(<Subscription {...defaultProps} renewalType="endDate" />);
     const input = wrapper.find('[id="end-date-type"]');
@@ -95,9 +103,18 @@ describe('Subscription', () => {
 
   it('clears user seats error', () => {
     wrapper = shallow(
-      <Subscription {...defaultProps} userSeats="endDate" errors={{ userSeats: 'error' }} />,
+      <Subscription {...defaultProps} userSeats="5" errors={{ userSeats: 'error' }} />,
     );
     const input = wrapper.find('[id="user-seats"]');
+    input.props().onBlur();
+    expect(setErrors).toHaveBeenCalledWith({});
+  });
+
+  it('clears consultant hours error', () => {
+    wrapper = shallow(
+      <Subscription {...defaultProps} consultantHours="10" errors={{ consultantHours: 'error' }} />,
+    );
+    const input = wrapper.find('[id="consultant-hours"]');
     input.props().onBlur();
     expect(setErrors).toHaveBeenCalledWith({});
   });
@@ -197,6 +214,7 @@ describe('Subscription', () => {
         renewalType="annual"
         startDate="2022-01-01"
         userSeats="5"
+        consultantHours="10"
       />,
     );
     const component = wrapper.find('[data-test="subscription"]');
@@ -215,6 +233,7 @@ describe('Subscription', () => {
         endDateType="2year"
         startDate="2022-01-01"
         userSeats="5"
+        consultantHours="10"
       />,
     );
     const component = wrapper.find('[data-test="subscription"]');
@@ -234,6 +253,7 @@ describe('Subscription', () => {
         startDate="2022-01-01"
         endDate="2024-01-01"
         userSeats="5"
+        consultantHours="10"
       />,
     );
     const component = wrapper.find('[data-test="subscription"]');

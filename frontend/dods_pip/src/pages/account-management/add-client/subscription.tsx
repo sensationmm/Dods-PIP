@@ -96,6 +96,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
     location.length > 0 &&
     contentType.length > 0 &&
     userSeats !== '' &&
+    consultantHours !== '' &&
     renewalType !== '' &&
     startDate !== '' &&
     (renewalType === 'annual' ||
@@ -130,6 +131,16 @@ const Subscription: React.FC<SubscriptionProps> = ({
       formErrors.userSeats = err;
     } else {
       delete formErrors.userSeats;
+    }
+    setErrors(formErrors);
+  };
+
+  const setConsultantHoursError = (err?: string) => {
+    const formErrors = { ...errors };
+    if (err !== undefined) {
+      formErrors.consultantHours = err;
+    } else {
+      delete formErrors.consultantHours;
     }
     setErrors(formErrors);
   };
@@ -235,10 +246,13 @@ const Subscription: React.FC<SubscriptionProps> = ({
           />
 
           <NumberPicker
+            id="consultant-hours"
             label="Consultant hours"
             required
             value={consultantHours}
             onChange={setConsultantHours}
+            error={errors.consultantHours}
+            onBlur={setConsultantHoursError}
           />
         </Styled.locations>
 
