@@ -46,14 +46,15 @@ describe('InputSearch', () => {
   it('fires onChange method', () => {
     const typeWatcher = jest.fn();
     const wrapper = shallow(
-      <InputSearch id="test" label="Example" value={''} onChange={typeWatcher} />,
+      <InputSearch id="test" label="Example" value={'example'} onChange={typeWatcher} />,
     );
-    const component = wrapper.find('[data-test="component-input-search"]');
-    component.simulate('focus');
-    component.simulate('change', 'new');
+    const clear = wrapper.find('[data-test="input-clear"]');
+    clear.simulate('click');
     expect(typeWatcher).toHaveBeenCalledTimes(1);
-    expect(typeWatcher).toHaveBeenCalledWith('new');
+    expect(typeWatcher).toHaveBeenCalledWith('');
   });
+
+  it('clears value', () => {});
 
   afterEach(() => {
     jest.resetAllMocks();
