@@ -1,28 +1,23 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { HttpBadRequestError, HttpSuccessResponse, HttpUnauthorizedResponse } from '../../../domain';
+import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
+import { DeleteUserParameters } from "../../../domain";
 import { AwsCognito } from "../../../services";
 
-export interface DeleteUserParameters {
-    email: string;
-    password: string;
-}
-
-export const deleteUser = async ({ email, password }: DeleteUserParameters): Promise<APIGatewayProxyResultV2> => {
+export const deleteUser: AsyncLambdaMiddleware<DeleteUserParameters> = async ({ email, password }) => {
 
     if (!email) {
-        throw new HttpBadRequestError("Request Body should contain Email field.");
+        throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     } else if (!password) {
-        throw new HttpBadRequestError("Request Body should contain Password field.");
+        throw new HttpError("Request Body should contain Password field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: APIGatewayProxyResultV2;
+    let response: HttpResponse<string>;
 
     try {
         const result = await AwsCognito.defaultInstance.deleteUser(email, password);
 
-        response = new HttpSuccessResponse(result);
+        response = new HttpResponse(HttpStatusCode.OK, result);
     } catch (error: any) {
-        response = new HttpUnauthorizedResponse(error);
+        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
     }
 
     return response;

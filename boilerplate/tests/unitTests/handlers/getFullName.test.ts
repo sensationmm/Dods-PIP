@@ -9,7 +9,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const response = await getFullName(data);
 
-        const expectedResponse = `${data.title} ${data.firstName} ${data.lastName}`;
+        const expectedResponse = { statusCode: 200, body: `${data.title} ${data.firstName} ${data.lastName}` };
 
         expect(response).toEqual(expectedResponse);
     });

@@ -1,25 +1,19 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { HttpBadRequestError, HttpSuccessResponse, HttpUnauthorizedResponse } from '../../../domain';
+import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
+import { ResetPasswordParameters } from "../../../domain";
 import { LoginRepository } from "../../../repositories";
 import { AwsCognito } from "../../../services";
 
-export interface ResetPasswordParameters {
-    email: string;
-    newPassword: string;
-    verificationCode: string;
-}
-
-export const resetPassword = async ({ email, newPassword, verificationCode }: ResetPasswordParameters): Promise<APIGatewayProxyResultV2> => {
+export const resetPassword: AsyncLambdaMiddleware<ResetPasswordParameters> = async ({ email, newPassword, verificationCode }) => {
 
     if (!email) {
-        throw new HttpBadRequestError("Request Body should contain Email field.");
+        throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     } else if (!newPassword) {
-        throw new HttpBadRequestError("Request Body should contain NewPassword field.");
+        throw new HttpError("Request Body should contain NewPassword field.", HttpStatusCode.BAD_REQUEST);
     } else if (!verificationCode) {
-        throw new HttpBadRequestError("Request Body should contain VerificationCode field.");
+        throw new HttpError("Request Body should contain VerificationCode field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: APIGatewayProxyResultV2;
+    let response: HttpResponse<string>;
 
     try {
         const decodedEmail = Buffer.from(decodeURIComponent(email), 'base64').toString();
@@ -32,13 +26,13 @@ export const resetPassword = async ({ email, newPassword, verificationCode }: Re
 
             await LoginRepository.defaultInstance.publishUpdatePassword({ userName: decodedEmail, lastPassword: newPassword });
 
-            response = new HttpSuccessResponse(result);
+            response = new HttpResponse(HttpStatusCode.OK, result);
         }
         else {
-            response = new HttpSuccessResponse('This password is used previously');
+            response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, 'This password is used previously');
         }
     } catch (error: any) {
-        response = new HttpUnauthorizedResponse(error);
+        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
     }
 
     return response;

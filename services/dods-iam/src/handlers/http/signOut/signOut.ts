@@ -1,20 +1,14 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { HttpBadRequestError, HttpSuccessResponse } from '../../../domain';
+import { AsyncLambdaMiddleware, HttpStatusCode, HttpError, HttpResponse } from "@dodsgroup/dods-lambda";
+import { SignOutParameters } from "../../../domain";
 import { AwsCognito } from "../../../services";
 
-const badRequestError = "Request Body should contain Email field.";
-
-export interface SignOutParameters {
-    email: string;
-}
-
-export const signOut = async ({ email }: SignOutParameters): Promise<APIGatewayProxyResultV2> => {
+export const signOut: AsyncLambdaMiddleware<SignOutParameters> = async ({ email }) => {
 
     if (!email) {
-        throw new HttpBadRequestError(badRequestError);
+        throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     }
 
     await AwsCognito.defaultInstance.signOut(email);
 
-    return new HttpSuccessResponse();
+    return new HttpResponse(HttpStatusCode.OK, 'SUCCESS');
 };

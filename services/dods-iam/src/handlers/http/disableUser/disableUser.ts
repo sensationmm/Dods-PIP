@@ -1,28 +1,21 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { HttpBadRequestError, HttpSuccessResponse, HttpUnauthorizedResponse } from '../../../domain';
+import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
+import { DisableUserParameters } from "../../../domain";
 import { AwsCognito } from "../../../services";
 
-const badRequestError = "Request Body should contain Email field.";
-
-export interface DisableUserParameters {
-    email: string;
-    password: string;
-}
-
-export const disableUser = async ({ email }: DisableUserParameters): Promise<APIGatewayProxyResultV2> => {
+export const disableUser: AsyncLambdaMiddleware<DisableUserParameters> = async ({ email }) => {
 
     if (!email) {
-        throw new HttpBadRequestError(badRequestError);
+        throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: APIGatewayProxyResultV2;
+    let response: HttpResponse<string>;
 
     try {
         const result = await AwsCognito.defaultInstance.disableUser(email);
 
-        response = new HttpSuccessResponse(result);
+        response = new HttpResponse(HttpStatusCode.OK, result);
     } catch (error: any) {
-        response = new HttpUnauthorizedResponse(error);
+        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
     }
 
     return response;

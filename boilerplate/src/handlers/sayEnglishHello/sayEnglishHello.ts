@@ -6,7 +6,5 @@ export const sayEnglishHello: AsyncLambdaHandler<SayLocalHelloParameters> = asyn
 
     const fullName = await GreetingRepository.defaultInstance.getFullName(data);
 
-    const response = `Hello ${fullName}`;
-    
-    return response;
+    return `Hello ${fullName}`;
 };

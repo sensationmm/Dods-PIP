@@ -1,4 +1,4 @@
-import { PasswordUpdated } from "../event";
+import { PasswordUpdated } from ".";
 
 export interface LoginEventPublisher {
     publishNewLogin(detail: PasswordUpdated): Promise<void>;

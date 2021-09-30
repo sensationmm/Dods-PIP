@@ -76,9 +76,7 @@ provider:
 custom:
   webpack:
     webpackConfig: ./webpack.config.js
-    includeModules:
-      forceInclude:
-        - express
+    includeModules: true
     keepOutputDirectory: false
   prune:
     automatic: true
@@ -116,14 +114,6 @@ plugins:
   - serverless-offline
 
 functions:
-  customMessage:
-    description: Triggered before AWS Cognito send notification
-    handler: src/handlers/http/customMessage/customMessage.customMessage
-    events:
-      - cognitoUserPool:
-          pool: ${self:service}-${self:provider.stage}-UserPool
-          trigger: CustomMessage
-          existing: true
   changePassword:
     description: Triggered when http request comes
     handler: src/handlers/http/changePassword/index.handle
@@ -209,6 +199,14 @@ functions:
           method: post
           path: enableUser
 
+  customMessage:
+    description: Triggered before AWS Cognito send notification
+    handler: src/handlers/event/customMessage/customMessage.customMessage
+    events:
+      - cognitoUserPool:
+          pool: ${self:service}-${self:provider.stage}-UserPool
+          trigger: CustomMessage
+          existing: true
   onLoginPasswordEvents:
     description: Triggered when AWS Event Bus takes new event
     handler: src/handlers/event/onLoginPasswordEvents/index.handle

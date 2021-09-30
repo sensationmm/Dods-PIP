@@ -1,27 +1,23 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { HttpBadRequestError, HttpNotFoundResponse, HttpSuccessResponse } from '../../../domain';
+import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
+import { GetUserDataParameters } from "../../../domain";
 import { AwsCognito } from "../../../services";
 
-export interface GetUserDataParameters {
-    accessToken: string;
-}
-
-export const getUserData = async ({ accessToken }: GetUserDataParameters): Promise<APIGatewayProxyResultV2> => {
+export const getUserData: AsyncLambdaMiddleware<GetUserDataParameters> = async ({ accessToken }) => {
 
     if (!accessToken) {
-        throw new HttpBadRequestError("Request QueryString should contain Email field.");
+        throw new HttpError("Request QueryString should contain Email field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: APIGatewayProxyResultV2;
+    let response: HttpResponse<string>;
 
     try {
         const result = await AwsCognito.defaultInstance.getUserData(accessToken);
 
-        response = new HttpSuccessResponse(result);
+        response = new HttpResponse(HttpStatusCode.OK, result);
     } catch (error: any) {
         // const { code } = error;
 
-        response = new HttpNotFoundResponse(error);
+        response = new HttpResponse(HttpStatusCode.NOT_FOUND, error);
     }
     return response;
 };

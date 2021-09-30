@@ -11,11 +11,11 @@
     "module": "commonJs",
     "target": "es2020",
     "lib": ["es2020"],
-    "sourceMap": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "sourceMap": true,
   },
-  "include": ["./src/**/*.ts", "./src/openApi.yml"],
+  "include": ["./src/**/*.ts"],
   "exclude": [
     "./node_modules/**/*",
     ".serverless/**/*",

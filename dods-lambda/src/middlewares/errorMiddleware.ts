@@ -11,7 +11,14 @@ export const errorMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = asyn
 
         const result = await next(event, context, callback);
 
-        response = new HttpResponse(HttpStatusCode.OK, result);
+        const apiGatewayResult = result as APIGatewayProxyStructuredResultV2;
+
+        if (apiGatewayResult && apiGatewayResult.statusCode) {
+            response = apiGatewayResult;
+        } else {
+            response = new HttpResponse(HttpStatusCode.OK, result);
+        }
+
     } catch (error: any) {
         const { stack, statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR, message, ...rest } = error;
         response = new HttpResponse(statusCode, { message, ...rest });

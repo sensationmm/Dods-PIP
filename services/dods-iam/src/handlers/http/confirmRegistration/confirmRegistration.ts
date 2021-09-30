@@ -1,34 +1,30 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { HttpBadRequestError, HttpNotFoundResponse, HttpSuccessResponse, HttpUnauthorizedResponse } from '../../../domain';
+import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
+import { ConfirmRegistrationParameters } from "../../../domain";
 import { AwsCognito } from "../../../services";
 
-export interface ConfirmRegistrationParameters {
-    email: string;
-    verificationCode: string;
-}
-
-export const confirmRegistration = async ({ email, verificationCode }: ConfirmRegistrationParameters): Promise<APIGatewayProxyResultV2> => {
+export const confirmRegistration: AsyncLambdaMiddleware<ConfirmRegistrationParameters> = async ({ email, verificationCode }) => {
 
     if (!email) {
-        throw new HttpBadRequestError("Request Body should contain Email field.");
+        throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     } else if (!verificationCode) {
-        throw new HttpBadRequestError("Request Body should contain VerificationCode field.");
+        throw new HttpError("Request Body should contain VerificationCode field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: APIGatewayProxyResultV2;
+    let response: HttpResponse<string>;
 
     try {
         const result = await AwsCognito.defaultInstance.confirmRegistration(email, verificationCode);
 
-        response = new HttpSuccessResponse(result);
+        response = new HttpResponse(HttpStatusCode.OK, result);
     } catch (error: any) {
         const { code } = error;
 
         if (code === 'ExpiredCodeException') {
-            response = new HttpUnauthorizedResponse(error);
+            response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
         } else {
-            response = new HttpNotFoundResponse(error);
+            response = new HttpResponse(HttpStatusCode.NOT_FOUND, error);
         }
     }
+
     return response;
 };

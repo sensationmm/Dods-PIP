@@ -1,39 +1,37 @@
-import { AsyncLambdaMiddleware } from "@dodsgroup/dods-lambda";
-import { HttpBadRequestError } from '../../../domain';
+import { AsyncLambdaMiddleware, HttpError, HttpResponse, HttpStatusCode } from "@dodsgroup/dods-lambda";
+import { ChangePasswordParameters } from "../../../domain";
 import { LoginRepository } from "../../../repositories";
 import { AwsCognito } from "../../../services";
-
-export interface ChangePasswordParameters {
-    email: string;
-    password: string;
-    newPassword: string;
-}
 
 export const changePassword: AsyncLambdaMiddleware<ChangePasswordParameters> = async ({ email, password, newPassword }) => {
 
     if (!email) {
-        throw new HttpBadRequestError("Request Body should contain Email field.");
+        throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     } else if (!password) {
-        throw new HttpBadRequestError("Request Body should contain Password field.");
+        throw new HttpError("Request Body should contain Password field.", HttpStatusCode.BAD_REQUEST);
     } else if (!newPassword) {
-        throw new HttpBadRequestError("Request Body should contain NewPassword field.");
+        throw new HttpError("Request Body should contain NewPassword field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: string;
+    let response: HttpResponse<string>;
 
-    await AwsCognito.defaultInstance.signIn(email, password);
+    try {
+        await AwsCognito.defaultInstance.signIn(email, password);
 
-    const validateLastPasswordWithNewPassword = await LoginRepository.defaultInstance.validateLastPassword(email, newPassword);
+        const validateLastPasswordWithNewPassword = await LoginRepository.defaultInstance.validateLastPassword(email, newPassword);
 
-    if (validateLastPasswordWithNewPassword) {
-        const result = await AwsCognito.defaultInstance.changePassword(email, password, newPassword)
+        if (validateLastPasswordWithNewPassword) {
+            const result = await AwsCognito.defaultInstance.changePassword(email, password, newPassword)
 
-        await LoginRepository.defaultInstance.publishUpdatePassword({ userName: email, lastPassword: newPassword });
+            await LoginRepository.defaultInstance.publishUpdatePassword({ userName: email, lastPassword: newPassword });
 
-        response = result as string;
-    }
-    else {
-        response = 'This password is used previously';
+            response = new HttpResponse(HttpStatusCode.OK, result);
+        }
+        else {
+            response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, 'This password is used previously');
+        }
+    } catch (error: any) {
+        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
     }
 
     return response;

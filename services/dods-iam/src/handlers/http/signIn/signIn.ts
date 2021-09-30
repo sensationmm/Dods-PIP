@@ -1,29 +1,25 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { config, HttpBadRequestError, HttpSuccessResponse, HttpUnauthorizedResponse } from '../../../domain';
+import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
+import { SigningParameters } from "aws-sdk/clients/signer";
+import { config } from "../../../domain";
 import { LoginRepository } from "../../../repositories";
 import { AwsCognito } from "../../../services";
 
-export interface SignInParameters {
-    email: string;
-    password: string;
-}
-
-export const signIn = async ({ email, password }: SignInParameters): Promise<APIGatewayProxyResultV2> => {
+export const signIn: AsyncLambdaMiddleware<SigningParameters> = async ({ email, password }) => {
 
     if (!email) {
-        throw new HttpBadRequestError("Request Body should contain Email field.");
+        throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     } else if (!password) {
-        throw new HttpBadRequestError("Request Body should contain Password field.");
+        throw new HttpError("Request Body should contain Password field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: APIGatewayProxyResultV2;
+    let response: HttpResponse<string>;
 
     try {
         const tokens = await AwsCognito.defaultInstance.signIn(email, password);
 
         await LoginRepository.defaultInstance.resetLoginAttempt(email);
 
-        response = new HttpSuccessResponse(tokens);
+        response = new HttpResponse(HttpStatusCode.OK, tokens);
     } catch (error: any) {
         const failedLoginAttemptCount = await LoginRepository.defaultInstance.incrementFailedLoginAttempt(email);
 
@@ -35,7 +31,7 @@ export const signIn = async ({ email, password }: SignInParameters): Promise<API
 
         error.failedLoginAttemptCount = failedLoginAttemptCount;
 
-        response = new HttpUnauthorizedResponse(error);
+        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
     }
 
     return response;

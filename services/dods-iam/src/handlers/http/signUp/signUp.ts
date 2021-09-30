@@ -1,36 +1,32 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { HttpBadRequestError, HttpNotFoundResponse, HttpSuccessResponse, HttpUnauthorizedResponse } from '../../../domain';
+import { HttpError, HttpResponse, HttpStatusCode } from "@dodsgroup/dods-lambda";
+import { AsyncLambdaMiddleware } from "nut-pipe";
+import { SignUpParameters } from "../../../domain";
 import { LoginRepository } from "../../../repositories";
 import { AwsCognito } from "../../../services";
 
-export interface SignUpParameters {
-    email: string;
-    password: string;
-}
-
-export const signUp = async ({ email, password }: SignUpParameters): Promise<APIGatewayProxyResultV2> => {
+export const signUp: AsyncLambdaMiddleware<SignUpParameters> = async ({ email, password }) => {
 
     if (!email) {
-        throw new HttpBadRequestError("Request Body should contain Email field.");
+        throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     } else if (!password) {
-        throw new HttpBadRequestError("Request Body should contain Password field.");
+        throw new HttpError("Request Body should contain Password field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: APIGatewayProxyResultV2;
+    let response: HttpResponse<string>;
 
     try {
         await AwsCognito.defaultInstance.signUp(email, password);
 
         await LoginRepository.defaultInstance.publishNewLogin({ userName: email, lastPassword: password });
 
-        response = new HttpSuccessResponse("SUCCESS");
+        response = new HttpResponse(HttpStatusCode.OK, "SUCCESS");
     } catch (error: any) {
         const { code } = error;
 
         if (code === 'UsernameExistsException') {
-            response = new HttpNotFoundResponse(error);
+            response = new HttpResponse(HttpStatusCode.NOT_FOUND, error);
         } else {
-            response = new HttpUnauthorizedResponse(error);
+            response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
         }
     }
     return response;

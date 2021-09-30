@@ -3,6 +3,8 @@ import { buildPipeline, AsyncMiddleware, AsyncHandler } from 'nut-pipe';
 import { errorMiddleware, eventLogerMiddleware, httpLogerMiddleware, openApiValidatorMiddleware } from './middlewares';
 import { GenericOpenApiValidator } from './validation';
 
+export * from "./domain";
+
 export * from 'nut-pipe';
 
 export class TriggerMiddlewares {

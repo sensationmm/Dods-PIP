@@ -1,7 +1,7 @@
+import { EventBridgeError } from "@dodsgroup/dods-lambda";
 import { EventBridge } from "aws-sdk";
 import { PutEventsRequest } from "aws-sdk/clients/eventbridge";
 import { Logger } from ".";
-import { EventBridgeError } from "../domain";
 
 const defaultEventBridge = new EventBridge();
 
