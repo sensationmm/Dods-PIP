@@ -18,6 +18,7 @@ export interface SelectMultiProps extends Omit<InputTextProps, 'icon' | 'value' 
   value: Array<string>;
   options: SelectItem[];
   onChange: (val: Array<string>) => void;
+  isFullWidth?: boolean;
 }
 
 const SelectMulti: React.FC<SelectMultiProps> = ({
@@ -34,6 +35,7 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
   helperText,
   onChange,
   onBlur,
+  isFullWidth = false,
 }) => {
   const firstRun = React.useRef(true);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -71,6 +73,7 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
       hasSelected={hasSelected}
       hasError={error !== undefined}
       isDisabled={isDisabled}
+      isFullWidth={isFullWidth}
     >
       <OutsideClickHandler onOutsideClick={() => setIsOpen(false)}>
         <Styled.select>
@@ -92,6 +95,8 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
             css={{ pointerEvents: 'none' }}
             onFocus={() => setIsOpen(true)}
             tabIndex={1}
+            placeholder={placeholder}
+            length={Math.max(...options.map((item) => item.label.length))}
           >
             {hasSelected && (
               <Styled.pip data-test="selected-count">

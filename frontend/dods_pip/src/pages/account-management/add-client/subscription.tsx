@@ -4,10 +4,10 @@ import React from 'react';
 import Checkbox from '../../../components/_form/Checkbox';
 import DatePicker from '../../../components/_form/DatePicker';
 import Label from '../../../components/_form/Label';
+import NumberPicker from '../../../components/_form/NumberPicker';
 import RadioGroup from '../../../components/_form/radio';
 import Select from '../../../components/_form/Select';
 import SelectMulti from '../../../components/_form/SelectMulti';
-import Columns from '../../../components/_layout/Columns';
 import PageActions from '../../../components/_layout/PageActions';
 import Panel from '../../../components/_layout/Panel';
 import SectionHeader from '../../../components/_layout/SectionHeader';
@@ -58,6 +58,10 @@ const Subscription: React.FC<SubscriptionProps> = ({
   setLocation,
   contentType,
   setContentType,
+  userSeats,
+  setUserSeats,
+  consultantHours,
+  setConsultantHours,
   renewalType,
   setRenewalType,
   startDate,
@@ -118,6 +122,12 @@ const Subscription: React.FC<SubscriptionProps> = ({
     setErrors(formErrors);
   };
 
+  const setUserSeatsError = (err?: string) => {
+    const formErrors = { ...errors };
+    formErrors.userSeats = err;
+    setErrors(formErrors);
+  };
+
   const validateEndDate = () => {
     const formErrors = { ...errors };
     if (endDate === '') {
@@ -149,48 +159,46 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
         <Spacer size={11} />
 
-        <Styled.wrapper>
-          <Columns>
-            <div>
-              <Label label="Location" required />
-              <Spacer size={3} />
+        <Styled.locations>
+          <Styled.allocationTitle>
+            <Label label="Location" required />
 
-              <Styled.locations>
-                <Checkbox
-                  id="location-eu"
-                  label="EU Coverage"
-                  isChecked={inArray('eu', location)}
-                  onChange={() => handleSetLocation('eu')}
-                />
-                <Checkbox
-                  id="location-uk"
-                  label="UK Coverage"
-                  isChecked={inArray('uk', location)}
-                  onChange={() => handleSetLocation('uk')}
-                />
-              </Styled.locations>
-            </div>
+            <Spacer size={3} />
 
-            <div>
-              <SelectMulti
-                id="content-type"
-                label="Type of Content"
-                required
-                value={contentType}
-                onChange={setContentType}
-                options={[
-                  { value: 'option1', label: 'Option One' },
-                  { value: 'option2', label: 'Option Two' },
-                  { value: 'option3', label: 'Option Three' },
-                  { value: 'option4', label: 'Option Four' },
-                  { value: 'option5', label: 'Option Five' },
-                ]}
-                onBlur={validateContentType}
-                error={errors.contentType}
+            <Styled.locations>
+              <Checkbox
+                id="location-eu"
+                label="EU Coverage"
+                isChecked={inArray('eu', location)}
+                onChange={() => handleSetLocation('eu')}
               />
-            </div>
-          </Columns>
-        </Styled.wrapper>
+              <Checkbox
+                id="location-uk"
+                label="UK Coverage"
+                isChecked={inArray('uk', location)}
+                onChange={() => handleSetLocation('uk')}
+              />
+            </Styled.locations>
+          </Styled.allocationTitle>
+
+          <SelectMulti
+            id="content-type"
+            label="Type of Content"
+            isFullWidth={false}
+            required
+            value={contentType}
+            onChange={setContentType}
+            options={[
+              { value: 'option1', label: 'Option One' },
+              { value: 'option2', label: 'Option Two' },
+              { value: 'option3', label: 'Option Three' },
+              { value: 'option4', label: 'Option Four' },
+              { value: 'option5', label: 'Option Five' },
+            ]}
+            onBlur={validateContentType}
+            error={errors.contentType}
+          />
+        </Styled.locations>
 
         <Spacer size={10} />
 
@@ -198,19 +206,35 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
         <Spacer size={11} />
 
-        <Columns>
-          <div>
+        <Styled.locations>
+          <Styled.allocationTitle>
             <Text type="h3" headingStyle="titleSmall">
               Allocation
             </Text>
             <Spacer size={1} />
-            <Text type="body" color={color.theme.blueDark}>
+            <Text type="bodySmall" color={color.theme.blueDark}>
               Select an annual allocation for this account
             </Text>
-          </div>
+          </Styled.allocationTitle>
 
-          <div>&lt;Seats&gt;</div>
-        </Columns>
+          <NumberPicker
+            id="user-seats"
+            label="User Seats"
+            required
+            value={userSeats}
+            onChange={setUserSeats}
+            error={errors.userSeats}
+            minVal={'5'}
+            onBlur={setUserSeatsError}
+          />
+
+          <NumberPicker
+            label="Consultant hours"
+            required
+            value={consultantHours}
+            onChange={setConsultantHours}
+          />
+        </Styled.locations>
 
         <Spacer size={12} />
 

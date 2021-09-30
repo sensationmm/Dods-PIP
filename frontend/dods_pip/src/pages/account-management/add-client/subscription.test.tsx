@@ -52,6 +52,14 @@ describe('Subscription', () => {
     expect(button.props().disabled).toEqual(true);
   });
 
+  it('sets passed user seats error', () => {
+    const input = wrapper.find('[id="user-seats"]');
+    input.props().onBlur('error');
+    expect(setErrors).toHaveBeenCalledWith({ userSeats: 'error' });
+    const button = wrapper.find('[data-test="continue-button"]');
+    expect(button.props().disabled).toEqual(true);
+  });
+
   it('fails empty end date type', () => {
     wrapper = shallow(<Subscription {...defaultProps} renewalType="endDate" />);
     const input = wrapper.find('[id="end-date-type"]');

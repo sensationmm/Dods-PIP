@@ -22,3 +22,7 @@ export const dates = styled.div`
     margin-right: ${spacing(5)};
   }
 `;
+
+export const allocationTitle = styled.div`
+  min-width: 40%;
+`;
