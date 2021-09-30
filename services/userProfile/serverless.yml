@@ -25,8 +25,6 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'dev'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    # SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint}
-    # SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint}
     GET_USER_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getUserEndpoint}
     GET_USERBYNAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getUserByNameEndpoint}
     GET_ROLE_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getRoleEndpoint}
@@ -34,14 +32,10 @@ provider:
 custom:
   endpoints:
     dev:
-      # sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
-      # sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
       getUserEndpoint: http://localhost:1081/user
       getUserByNameEndpoint: http://localhost:1081/userByName
       getRoleEndpoint: http://localhost:1081/role
     prod:
-      # sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
-      # sayEnglishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
       getUserEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
       getUserByNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
       getRoleEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
