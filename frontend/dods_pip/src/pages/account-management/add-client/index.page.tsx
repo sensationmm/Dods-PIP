@@ -15,7 +15,7 @@ interface AddClientProps extends LoadingHOCProps {}
 
 export const AddClient: React.FC<AddClientProps> = () => {
   const router = useRouter();
-  const [activeStep, setActiveStep] = React.useState<number>(2);
+  const [activeStep, setActiveStep] = React.useState<number>(1);
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
   const [contactName, setContactName] = React.useState<string>('');
