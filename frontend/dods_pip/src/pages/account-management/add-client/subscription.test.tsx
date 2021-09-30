@@ -52,7 +52,7 @@ describe('Subscription', () => {
     expect(button.props().disabled).toEqual(true);
   });
 
-  it('sets passed user seats error', () => {
+  it('sets user seats error', () => {
     const input = wrapper.find('[id="user-seats"]');
     input.props().onBlur('error');
     expect(setErrors).toHaveBeenCalledWith({ userSeats: 'error' });
@@ -89,6 +89,15 @@ describe('Subscription', () => {
       />,
     );
     const input = wrapper.find('[id="content-type"]');
+    input.props().onBlur();
+    expect(setErrors).toHaveBeenCalledWith({});
+  });
+
+  it('clears user seats error', () => {
+    wrapper = shallow(
+      <Subscription {...defaultProps} userSeats="endDate" errors={{ userSeats: 'error' }} />,
+    );
+    const input = wrapper.find('[id="user-seats"]');
     input.props().onBlur();
     expect(setErrors).toHaveBeenCalledWith({});
   });
@@ -187,6 +196,7 @@ describe('Subscription', () => {
         contentType={['example']}
         renewalType="annual"
         startDate="2022-01-01"
+        userSeats="5"
       />,
     );
     const component = wrapper.find('[data-test="subscription"]');
@@ -204,6 +214,7 @@ describe('Subscription', () => {
         renewalType="endDate"
         endDateType="2year"
         startDate="2022-01-01"
+        userSeats="5"
       />,
     );
     const component = wrapper.find('[data-test="subscription"]');
@@ -222,6 +233,7 @@ describe('Subscription', () => {
         endDateType="custom"
         startDate="2022-01-01"
         endDate="2024-01-01"
+        userSeats="5"
       />,
     );
     const component = wrapper.find('[data-test="subscription"]');
