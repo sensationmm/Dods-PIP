@@ -46,10 +46,10 @@ pipelines:
                 - "services/userProfile/**"
           script:
             - cd services/userProfile
+            - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source $SERVERLES_STAGE.env
-            - npm install
             - npm run test
             - npm run test:coverage
             
