@@ -13,6 +13,7 @@ export interface InputBaseProps {
   id: string;
   type: InputType;
   size?: InputSize;
+  length?: number;
   label?: string;
   value: string;
   isDisabled?: boolean;
@@ -31,6 +32,7 @@ const InputBase: React.FC<InputBaseProps> = ({
   id,
   type,
   size = 'large',
+  length = 1,
   label,
   value,
   isDisabled = false,
@@ -65,6 +67,7 @@ const InputBase: React.FC<InputBaseProps> = ({
           onFocus={onFocus}
           onBlur={onBlur}
           tabIndex={tabIndex}
+          size={Math.max(placeholder?.length || 1, length)}
         />
         {children}
       </Styled.inputWrapper>

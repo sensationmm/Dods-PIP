@@ -13,6 +13,7 @@ import IconMinus from './icon-minus.svg';
 import IconPerson from './icon-person.svg';
 import IconSearch from './icon-search.svg';
 import IconShow from './icon-show.svg';
+import IconSubscription from './icon-subscription.svg';
 import IconSuitcase from './icon-suitcase.svg';
 import IconTick from './icon-tick.svg';
 import IconTickBold from './icon-tickBold.svg';
@@ -37,6 +38,7 @@ export enum Icons {
   IconPerson = 'IconPerson',
   IconSearch = 'IconSearch',
   IconShow = 'IconShow',
+  IconSubscription = 'IconSubscription',
   IconSuitcase = 'IconSuitcase',
   IconTick = 'IconTick',
   IconTickBold = 'IconTickBold',
@@ -60,6 +62,7 @@ const IconLibrary = {
   IconPerson,
   IconSearch,
   IconShow,
+  IconSubscription,
   IconSuitcase,
   IconTick,
   IconTickBold,

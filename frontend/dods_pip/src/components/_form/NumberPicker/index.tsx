@@ -58,7 +58,11 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
         parseInt(e.target.value) < parseInt(minVal) ||
         parseInt(e.target.value) > parseInt(maxVal)
       ) {
-        onBlur?.(`Must be in range ${minVal}-${maxVal}`);
+        parseInt(minVal) > 0 &&
+          parseInt(maxVal) < 999 &&
+          onBlur?.(`Must be in range ${minVal}-${maxVal}`);
+        parseInt(minVal) > 0 && maxVal === '999' && onBlur?.(`Minimum value is ${minVal}`);
+        minVal === '0' && parseInt(maxVal) < 999 && onBlur?.(`Maximum value is ${maxVal}`);
       } else {
         onBlur?.(undefined);
       }
@@ -79,10 +83,14 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
           size={size}
           disabled={isDisabled || parseInt(value) <= parseInt(minVal)}
           error={error}
-          onClick={() =>
-            parseInt(value) > parseInt(minVal) &&
-            onChange((parseInt(valueConverter(value)) - 1).toString())
-          }
+          onClick={() => {
+            if (parseInt(value) > parseInt(minVal)) {
+              onChange((parseInt(valueConverter(value)) - 1).toString());
+            }
+            if (parseInt(value) - 1 <= parseInt(maxVal)) {
+              onBlur?.(undefined);
+            }
+          }}
           onMouseEnter={() => setHoverMinusButton(true)}
           onMouseLeave={() => setHoverMinusButton(false)}
           data-test="minus-button"
@@ -127,9 +135,14 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
           size={size}
           disabled={isDisabled || parseInt(value) >= parseInt(maxVal)}
           error={error}
-          onClick={() =>
-            parseInt(value) < parseInt(maxVal) && onChange((parseInt(value) + 1).toString())
-          }
+          onClick={() => {
+            if (parseInt(value) < parseInt(maxVal)) {
+              onChange((parseInt(value) + 1).toString());
+            }
+            if (parseInt(value) + 1 >= parseInt(minVal)) {
+              onBlur?.(undefined);
+            }
+          }}
           onMouseEnter={() => setHoverPlusButton(true)}
           onMouseLeave={() => setHoverPlusButton(false)}
           data-test="plus-button"
