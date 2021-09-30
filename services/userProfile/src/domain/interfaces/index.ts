@@ -1,18 +1,10 @@
-export type Title = "Mr" | "Mrs" | "Miss" | "Ms";
-
-export type Language = "English" | "Turkish";
-
-export interface SayLocalHelloParameters {
-    firstName: string;
-    lastName: string;
-    title: Title;
-}
-
-export interface SayHelloParameters extends SayLocalHelloParameters {
-    language: Language;
-}
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+export * from './user-profile';
 
 export interface DownstreamEndpoints {
-    sayTurkishHelloEndpointUrl: string;
-    sayEnglishHelloEndpointUrl: string;
+    getUserEndpoint: string;
+    getUserByNameEndpoint: string;
+    getRoleEndpoint: string;
 }

@@ -37,7 +37,7 @@ pipelines:
 
       - step:
           name: Test build user-profile Service
-          image: node:alpine
+          image: gioatsomoglobal/devopstools:0.4.3
           caches:
             - node
           condition:
@@ -47,12 +47,15 @@ pipelines:
           script:
             - cd services/userProfile
             - npm install
+            - export SERVERLESS_STAGE=dev
+            - ./setenv.sh
+            - source *.env
             - npm run test
             - npm run test:coverage
             
       - step:
           name: Test build client-account Service
-          image: node:alpine
+          image: gioatsomoglobal/devopstools:0.4.3
           caches:
             - node
           condition:
