@@ -67,7 +67,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
         onBlur?.(undefined);
       }
     } else {
-      onBlur?.(undefined);
+      onBlur?.('This field is required');
     }
   };
 

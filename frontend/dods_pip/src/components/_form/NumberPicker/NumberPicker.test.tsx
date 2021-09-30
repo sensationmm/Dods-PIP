@@ -158,7 +158,7 @@ describe('NumberPicker', () => {
 
       component.simulate('blur', { target: { value: notOutOfVbondrVal } });
       expect(onBlur).toHaveBeenCalledTimes(1);
-      expect(onBlur).toHaveBeenCalledWith(undefined);
+      expect(onBlur).toHaveBeenCalledWith('This field is required');
     });
   });
 
