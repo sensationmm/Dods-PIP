@@ -2,7 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testMatch: ['**/tests/unitTests/**/*.test.*'],
-  collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!src/**/index.ts', '!src/constants/config.ts', '!src/lambdaMiddleware/**', '!src/domain/**'],
+  collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!src/**/index.ts', '!src/constants/config.ts', '!src/domain/**'],
   modulePaths: ['<rootDir>'],
   coverageDirectory: './coverage',
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],

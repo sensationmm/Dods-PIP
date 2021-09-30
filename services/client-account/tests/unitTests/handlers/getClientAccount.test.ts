@@ -1,7 +1,7 @@
 import { getClientAccount } from '../../../src/handlers/getClientAccount/getClientAccount';
 import { ClientAccountRepository } from '../../../src/repositories';
 import { mocked } from 'ts-jest/utils'
-import { HttpSuccessResponse } from '../../../src/domain';
+import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
 const FUNCTION_NAME = getClientAccount.name;
 
@@ -21,7 +21,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const expectedRepositoryResponse = [{ clientAccountId }];
 
-        const expectedResponse = new HttpSuccessResponse(`Hello world, parameters: ${JSON.stringify(expectedRepositoryResponse)}`)
+        const expectedResponse = new HttpResponse(HttpStatusCode.OK, `Hello world, parameters: ${JSON.stringify(expectedRepositoryResponse)}`)
 
         mockedClientAccountRepository.defaultInstance.getClientAccount.mockResolvedValue(expectedRepositoryResponse);
 

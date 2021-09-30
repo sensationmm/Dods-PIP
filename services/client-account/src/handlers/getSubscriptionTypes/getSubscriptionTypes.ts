@@ -1,12 +1,8 @@
-import { APIGatewayProxyResultV2 } from 'aws-lambda';
-import { SubscriptionTypeRepository } from '../../repositories/SubscriptionTypeRepository';
-import { HttpSuccessResponse } from '../../domain';
+import { AsyncLambdaMiddleware, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { SubscriptionTypeRepository } from '../../repositories';
 
-export const getSubscriptionTypes = async (): Promise<APIGatewayProxyResultV2> => {
-    const response =
-        await SubscriptionTypeRepository.defaultInstance.getSubscriptionTypes();
+export const getSubscriptionTypes: AsyncLambdaMiddleware = async () => {
+    const response = await SubscriptionTypeRepository.defaultInstance.getSubscriptionTypes();
 
-    return new HttpSuccessResponse(
-        JSON.stringify(response)
-    );
+    return new HttpResponse(HttpStatusCode.OK, response);
 };

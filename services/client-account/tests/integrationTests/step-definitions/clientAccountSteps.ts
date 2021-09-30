@@ -1,7 +1,8 @@
 import axios from "axios";
 import expect from 'expect'
 import { When, Then, Given } from "@cucumber/cucumber";
-import { config, HttpStatusCode } from '../../../src/domain'
+import { config } from '../../../src/domain'
+import { HttpStatusCode } from '@dodsgroup/dods-lambda';
 
 Given('lambda function name is {string}', function (lambdaFunction) {
     this.lambdaFunction = lambdaFunction;

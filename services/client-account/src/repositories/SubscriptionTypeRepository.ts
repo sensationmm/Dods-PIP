@@ -1,7 +1,4 @@
-import {
-    SubscriptionTypeResponse,
-} from '../domain';
-
+import { SubscriptionTypeResponse, } from '../domain';
 import { SubscriptionTypeModel } from '../db/models';
 import { SubscriptionTypePersister } from '../domain/interfaces/SubscriptionTypePersister';
 
@@ -13,15 +10,15 @@ function parseSubscriptionTypesResponseFromModel(modelList: SubscriptionTypeMode
             location: model.location,
             contentType: model.contentType
         }
-    })
-    return response
+    });
+
+    return response;
 }
 
 export class SubscriptionTypeRepository implements SubscriptionTypePersister {
-    static defaultInstance: SubscriptionTypePersister =
-        new SubscriptionTypeRepository(SubscriptionTypeModel);
+    static defaultInstance: SubscriptionTypePersister = new SubscriptionTypeRepository(SubscriptionTypeModel);
 
-    constructor(private subscriptionTypeModel: typeof SubscriptionTypeModel) {}
+    constructor(private subscriptionTypeModel: typeof SubscriptionTypeModel) { }
 
     async getSubscriptionTypes(): Promise<Array<SubscriptionTypeResponse>> {
         const subscriptionTypes = await this.subscriptionTypeModel.findAll()

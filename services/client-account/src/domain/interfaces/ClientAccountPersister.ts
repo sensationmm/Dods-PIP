@@ -1,9 +1,7 @@
-import { ClientAccountParameters, ClientAccountResponse, SearchClientAccountParameters, SearchClientAccountResponse } from '.';
+import { ClientAccount, ClientAccountResponse, SearchClientAccountParameters, SearchClientAccountResponse } from '.';
 
 export interface ClientAccountPersister {
-    createClientAccount(
-        clientAccount: ClientAccountParameters
-    ): Promise<ClientAccountResponse>;
+    createClientAccount(clientAccount: ClientAccount): Promise<ClientAccountResponse>;
     getClientAccount(clientAccountId: string): Promise<ClientAccountResponse>;
     searchClientAccount(clientAccount: SearchClientAccountParameters): Promise<Array<SearchClientAccountResponse>>;
 }

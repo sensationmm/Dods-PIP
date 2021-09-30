@@ -1,9 +1,5 @@
-import { buildLambdaFunction } from '../../lambdaMiddleware';
+import { buildLambdaFunction } from '@dodsgroup/dods-lambda';
 import { config } from '../../domain';
 import { createClientAccount } from './createClientAccount';
 
-export const handle = buildLambdaFunction(createClientAccount, {
-    openApiDocumentPath: config.openApiPath,
-    validateRequests: true,
-    validateResponses: false,
-});
+export const handle = buildLambdaFunction(createClientAccount, { openApiDocumentPath: config.openApiPath, validateRequests: true, validateResponses: false });

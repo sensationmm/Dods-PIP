@@ -1,26 +1,13 @@
-import {
-    ClientAccountParameters,
-    HttpBadRequestResponse,
-    HttpInternalServerErrorResponse,
-    HttpSuccessResponse,
-} from '../../domain';
-
-import { APIGatewayProxyResultV2 } from 'aws-lambda';
-import { ClientAccountRepository } from '../../repositories/ClientAccountRepository';
+import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse } from '@dodsgroup/dods-lambda';
+import { ClientAccountParameters } from '../../domain';
+import { ClientAccountRepository } from '../../repositories';
 import { ValidationError } from 'sequelize';
 
-export const createClientAccount = async ({
-    clientAccount,
-}: {
-    clientAccount: ClientAccountParameters;
-}): Promise<APIGatewayProxyResultV2> => {
+export const createClientAccount: AsyncLambdaMiddleware<ClientAccountParameters> = async ({ clientAccount }) => {
     try {
-        const newClientAccount =
-            await ClientAccountRepository.defaultInstance.createClientAccount(
-                clientAccount
-            );
+        const newClientAccount = await ClientAccountRepository.defaultInstance.createClientAccount(clientAccount);
 
-        return new HttpSuccessResponse({
+        return new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Client account successfully created.',
             data: newClientAccount,
@@ -29,14 +16,14 @@ export const createClientAccount = async ({
         console.error('Error creating client account:', error);
 
         if (error instanceof ValidationError) {
-            return new HttpBadRequestResponse({
+            return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
                 success: false,
                 message: 'Error creating client account.',
                 errors: error.errors,
             });
         }
 
-        return new HttpInternalServerErrorResponse({
+        return new HttpResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, {
             success: false,
             message: 'Error creating client account.',
             error,
