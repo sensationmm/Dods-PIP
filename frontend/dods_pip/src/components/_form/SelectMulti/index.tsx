@@ -66,7 +66,12 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
   const hasSelected = numSelected > 0;
 
   return (
-    <Styled.wrapper data-test="component-select" hasSelected={hasSelected}>
+    <Styled.wrapper
+      data-test="component-select"
+      hasSelected={hasSelected}
+      hasError={error !== undefined}
+      isDisabled={isDisabled}
+    >
       <OutsideClickHandler onOutsideClick={() => setIsOpen(false)}>
         <Styled.select>
           <InputText

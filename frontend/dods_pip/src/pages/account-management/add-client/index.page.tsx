@@ -25,7 +25,7 @@ export const AddClient: React.FC<AddClientProps> = () => {
 
   const [location, setLocation] = React.useState<Array<string>>([]);
   const [contentType, setContentType] = React.useState<Array<string>>([]);
-  const [userSeats, setUserSeats] = React.useState<number>(5);
+  const [userSeats, setUserSeats] = React.useState<string>('5');
   const [consultantHours, setConsultantHours] = React.useState<string>('');
   const [renewalType, setRenewalType] = React.useState<string>('annual');
   const [startDate, setStartDate] = React.useState<string>(

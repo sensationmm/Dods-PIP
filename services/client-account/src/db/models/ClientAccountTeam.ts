@@ -22,7 +22,7 @@ class ClientAccountTeam extends Model<ClientAccountTeamAttributes, ClientAccount
     public UserProfileModels?: UserProfileModel[] ;
 
 
-    public parsedType?: string;
+    public parsedType?: "consultant" | "client";
 
     //Timestamps
     public readonly createdAt!: Date;

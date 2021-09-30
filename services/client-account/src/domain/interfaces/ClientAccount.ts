@@ -28,9 +28,9 @@ export interface SearchClientAccountResponse {
     location: number | undefined;
     projects: number;
     team: {
-        name: string;
-        type: "consultant" | "client";
-    },
+        name: string | undefined;
+        type: "consultant" | "client" | undefined;
+    }[] | undefined,
     completed: boolean;
 }
 
