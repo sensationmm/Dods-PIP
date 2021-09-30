@@ -11,11 +11,12 @@ type WrapperProps = {
   hasSelected: boolean;
   hasError: boolean;
   isDisabled: boolean;
+  isFullWidth: boolean;
 };
 
 export const wrapper = styled.div<WrapperProps>`
   position: relative;
-  width: 100%;
+  width: ${({ isFullWidth }) => (isFullWidth ? '100%' : 'auto')};
   box-sizing: content-box;
 
   ${InputText} {

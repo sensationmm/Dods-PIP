@@ -14,7 +14,8 @@
     "test:watchAll": "jest --watchAll --coverage",
     "docker-build": "docker build . -t dods-pip",
     "docker": "docker run -p 3000:3000 dods-pip",
-    "postinstall": "cd ../.. && husky install frontend/dods_pip/.husky"
+    "postinstall": "cd ../.. && husky install frontend/dods_pip/.husky",
+    "git-prune": "git branch --merged master | grep -v '^[ *]*master$' | xargs git branch -d"
   },
   "dependencies": {
     "classnames": "^2.3.1",
@@ -52,6 +53,7 @@
     "@types/styled-components": "^5.1.11",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
     "babel-jest": "^27.0.6",
     "babel-loader": "^8.2.2",
     "babel-plugin-styled-components": "^1.13.2",

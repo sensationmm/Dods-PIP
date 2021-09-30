@@ -8,15 +8,17 @@ import { input as Input, wrapper as InputText } from '../InputBase/InputBase.sty
 type WrapperProps = {
   hasError: boolean;
   isDisabled: boolean;
+  isFullWidth: boolean;
 };
 
 export const wrapper = styled.div<WrapperProps>`
   position: relative;
-  width: 100%;
+  width: ${({ isFullWidth }) => (isFullWidth ? '100%' : 'auto')};
   box-sizing: content-box;
 
   ${InputText} {
     z-index: 1;
+    overflow: visible;
   }
 
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
@@ -51,6 +53,7 @@ type DropdownProps = {
 };
 
 export const dropdown = styled.div<DropdownProps>`
+  overflow: visible;
   display: ${(p) => (p.open ? 'block' : 'none')};
   position: absolute;
   margin-top: ${(p) => (p.hasHelper || p.hasError ? '-35px' : '-8px')};
@@ -79,6 +82,7 @@ type DropdownItemProps = {
 };
 
 export const dropdownItem = styled.div<DropdownItemProps>`
+  white-space: nowrap;
   color: ${({ hasError, active }) =>
     active ? color.base.grey : hasError ? color.alert.red : color.theme.blueMid};
   background: ${({ hasError }) => (hasError ? color.shadow.red : color.shadow.blue)};

@@ -25,10 +25,23 @@ const DatePicker: React.FC<DatePickerProps> = ({
   optional,
   helperText,
   onChange,
+  onBlur,
   minDate,
   maxDate,
 }) => {
+  const firstRun = React.useRef(true);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+
+    if (!firstRun.current && !isOpen) {
+      onBlur && onBlur();
+    }
+  }, [isOpen]);
 
   const handleChange = (date: Date) => {
     setIsOpen(!isOpen);

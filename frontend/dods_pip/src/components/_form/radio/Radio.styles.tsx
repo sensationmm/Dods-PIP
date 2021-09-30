@@ -80,6 +80,20 @@ export const radioInputDisabled = styled(radioInput)`
   }
 `;
 
-export const radioGroup = styled.div``;
-export const button = styled.div``;
-export const radioGroupWrapper = styled.div``;
+export const radioGroup = styled.div`
+  width: 100%;
+`;
+
+export const radioGroupWrapper = styled.fieldset`
+  border: 0;
+  display: flex;
+  padding: 0;
+
+  > div {
+    margin-right: ${spacing(6)};
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+`;

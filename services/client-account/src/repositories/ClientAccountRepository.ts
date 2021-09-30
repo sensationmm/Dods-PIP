@@ -55,7 +55,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
         const { limit, offset } = searchClientAccountParams
 
         let clientAccountWhere: WhereOptions = {}
-        let subscriptionTypeWhere: WhereOptions = {}
 
         if (startsBy) {
             clientAccountWhere['name'] = {
@@ -63,14 +62,10 @@ export class ClientAccountRepository implements ClientAccountPersister {
             }
         }
         if (locations) {
-            subscriptionTypeWhere['location'] = {
-                [Op.in]: locations
-            }
+            clientAccountWhere['$SubscriptionType.location$'] = { [Op.in]: locations }
         }
         if (subscriptionTypes) {
-            subscriptionTypeWhere['id'] = {
-                [Op.in]: subscriptionTypes
-            }
+            clientAccountWhere['$SubscriptionType.id$'] = { [Op.in]: subscriptionTypes }
         }
         if (searchTerm) {
             clientAccountWhere['name'] = {
@@ -79,10 +74,10 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
         const clientAccountModels = await this.model.findAll({
             where: clientAccountWhere,
+            subQuery: false,
             include: [
                 {
                     model: SubscriptionTypeModel,
-                    where: subscriptionTypeWhere,
                     required: false,
                 },
                 {
