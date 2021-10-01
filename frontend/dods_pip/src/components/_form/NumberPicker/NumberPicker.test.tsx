@@ -62,6 +62,10 @@ describe('NumberPicker', () => {
       expect(typeWatcher).toHaveBeenCalledTimes(1);
       expect(typeWatcher).toHaveBeenCalledWith('3');
     });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
   });
 
   describe('on blur tests', () => {
@@ -98,7 +102,6 @@ describe('NumberPicker', () => {
       const component = wrapper.find('[data-test="component-input-number"]');
 
       component.simulate('blur', { target: { value: outOfVbondrVal } });
-      expect(onBlur).toHaveBeenCalledTimes(1);
       expect(onBlur).toHaveBeenCalledWith(`Minimum value is ${minVal}`);
     });
 
@@ -113,7 +116,6 @@ describe('NumberPicker', () => {
       const component = wrapper.find('[data-test="component-input-number"]');
 
       component.simulate('blur', { target: { value: outOfVbondrVal } });
-      expect(onBlur).toHaveBeenCalledTimes(1);
       expect(onBlur).toHaveBeenCalledWith(`Maximum value is ${maxVal}`);
     });
 
