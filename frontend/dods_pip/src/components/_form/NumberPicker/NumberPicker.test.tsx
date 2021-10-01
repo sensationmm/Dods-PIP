@@ -162,6 +162,19 @@ describe('NumberPicker', () => {
       expect(onBlur).toHaveBeenCalledTimes(1);
       expect(onBlur).toHaveBeenCalledWith('This field is required');
     });
+
+    it('should correct non-integers', () => {
+      const mockOnChange = jest.fn();
+      const wrapper = shallow(<NumberPicker onChange={mockOnChange} value="5" />);
+      const input = wrapper.find('[data-test="component-input-number"]');
+      input.simulate('blur', { target: { value: '5.4' } });
+      expect(mockOnChange).toHaveBeenCalledTimes(1);
+      expect(mockOnChange).toHaveBeenCalledWith('5');
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
   });
 
   describe('styles', () => {

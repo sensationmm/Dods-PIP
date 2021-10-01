@@ -53,11 +53,10 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
   const valueConverter = (value: string) => value.substr(0, 3);
   value = valueConverter(value);
   const onBlurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+
     if (validateNumeric(parseInt(e.target.value))) {
-      if (
-        parseInt(e.target.value) < parseInt(minVal) ||
-        parseInt(e.target.value) > parseInt(maxVal)
-      ) {
+      if (parseInt(val) < parseInt(minVal) || parseInt(val) > parseInt(maxVal)) {
         parseInt(minVal) > -1 &&
           parseInt(maxVal) <= 999 &&
           onBlur?.(`Must be in range ${minVal}-${maxVal}`);
@@ -65,6 +64,10 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
         minVal === '0' && parseInt(maxVal) < 999 && onBlur?.(`Maximum value is ${maxVal}`);
       } else {
         onBlur?.(undefined);
+      }
+
+      if ((val as unknown as number) % 1 !== 0) {
+        onChange(Math.round(parseInt(val)).toString());
       }
     } else {
       onBlur?.('This field is required');

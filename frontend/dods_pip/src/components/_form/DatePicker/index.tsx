@@ -95,7 +95,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
         required={required}
         optional={optional}
         helperText={helperText}
-        onChange={onChange}
+        onChange={() => false}
         icon={Icons.IconCalendar}
         onFocus={() => setIsOpen(true)}
         tabIndex={1}
@@ -109,7 +109,6 @@ const DatePicker: React.FC<DatePickerProps> = ({
           inline
           onClickOutside={() => setIsOpen(false)}
           closeOnScroll={true}
-          monthsShown={2}
           calendarStartDay={1}
           minDate={minDate ? formattedMinDate : undefined}
           maxDate={maxDate ? formattedMaxDate : undefined}
