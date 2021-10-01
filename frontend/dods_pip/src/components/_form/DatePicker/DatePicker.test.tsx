@@ -19,6 +19,7 @@ describe('DatePicker', () => {
     { isOpen: true }, // renders given value
     { isOpen: true }, // uses minDate
     { isOpen: true }, // uses maxDate
+    { isOpen: false }, // prevents manually editing date
   ];
 
   describe('mounted', () => {
@@ -121,6 +122,12 @@ describe('DatePicker', () => {
       );
       const picker = wrapper.find('[data-test="date-popup"]');
       expect(picker.props().maxDate).toEqual(new Date('06/01/2022'));
+    });
+
+    it('prevents manually editing date', () => {
+      const input = wrapper.find('[data-test="date-picker-input"]');
+      input.props().onChange('2022-01-01');
+      expect(mockOnChange).toHaveBeenCalledTimes(0);
     });
   });
 
