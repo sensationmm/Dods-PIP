@@ -241,7 +241,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             value={userSeats}
             onChange={setUserSeats}
             error={errors.userSeats}
-            minVal={'5'}
+            minVal={'1'}
             onBlur={setUserSeatsError}
           />
 
@@ -294,6 +294,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             minDate={format(new Date(), 'yyyy-MM-dd').toString()}
             onChange={setStartDate}
             helperText="dd/mm/yyyy format"
+            maxDate={endDate}
           />
 
           {renewalType === 'endDate' && endDateType === 'custom' && (

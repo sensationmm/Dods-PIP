@@ -58,8 +58,8 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
         parseInt(e.target.value) < parseInt(minVal) ||
         parseInt(e.target.value) > parseInt(maxVal)
       ) {
-        parseInt(minVal) > 0 &&
-          parseInt(maxVal) < 999 &&
+        parseInt(minVal) > -1 &&
+          parseInt(maxVal) <= 999 &&
           onBlur?.(`Must be in range ${minVal}-${maxVal}`);
         parseInt(minVal) > 0 && maxVal === '999' && onBlur?.(`Minimum value is ${minVal}`);
         minVal === '0' && parseInt(maxVal) < 999 && onBlur?.(`Maximum value is ${maxVal}`);
