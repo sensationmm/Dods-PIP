@@ -299,10 +299,10 @@ const Subscription: React.FC<SubscriptionProps> = ({
               placeholder="Choose"
               onChange={setEndDateType}
               options={[
-                { name: 'In 1 year', value: '1year' },
-                { name: 'In 2 years', value: '2year' },
-                { name: 'In 3 years', value: '3year' },
-                { name: 'Custom', value: 'custom' },
+                { label: 'In 1 year', value: '1year' },
+                { label: 'In 2 years', value: '2year' },
+                { label: 'In 3 years', value: '3year' },
+                { label: 'Custom', value: 'custom' },
               ]}
               onBlur={validateEndDateType}
               error={errors.endDateType}
