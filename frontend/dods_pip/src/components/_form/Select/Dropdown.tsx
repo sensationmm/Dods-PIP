@@ -1,6 +1,7 @@
 import React from 'react';
 
 import color from '../../../globals/color';
+import { inArray } from '../../../utils/array';
 import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
 import { SelectProps } from '.';
@@ -12,7 +13,7 @@ export interface DropdownProps {
   hasError: boolean;
   options: SelectProps['options'];
   size?: SelectProps['size'];
-  selectedValue?: SelectProps['value'];
+  selectedValue?: SelectProps['value'] | Array<SelectProps['value']>;
   setValue: (val: string) => void;
 }
 
@@ -32,28 +33,38 @@ const Dropdown: React.FC<DropdownProps> = ({
       hasHelper={hasHelper}
       hasError={hasError}
     >
-      {options.map((item, count) => (
-        <Styled.dropdownItem
-          key={`option-${count}`}
-          data-test={`option-${count}`}
-          size={size}
-          onClick={() => setValue(item.value)}
-          hasError={hasError}
-          tabIndex={2}
-          onKeyPress={() => setValue(item.value)}
-          active={item.value === selectedValue}
-        >
-          {item.label}
-          {item.value === selectedValue && (
-            <Icon
-              data-test="selected-icon"
-              src={Icons.IconTickBold}
-              size={IconSize.medium}
-              color={hasError ? color.alert.red : color.theme.blueMid}
-            />
-          )}
-        </Styled.dropdownItem>
-      ))}
+      {options.map((item, count) => {
+        const isActive =
+          item.value === selectedValue ||
+          (Array.isArray(selectedValue) && inArray(item.value, selectedValue));
+
+        return (
+          <Styled.dropdownItem
+            key={`option-${count}`}
+            data-test={`option-${count}`}
+            size={size}
+            onClick={() => {
+              !isActive && setValue(item.value);
+            }}
+            hasError={hasError}
+            tabIndex={2}
+            onKeyPress={() => {
+              !isActive && setValue(item.value);
+            }}
+            active={isActive}
+          >
+            {item.label}
+            {isActive && (
+              <Icon
+                data-test="selected-icon"
+                src={Icons.IconTickBold}
+                size={IconSize.medium}
+                color={hasError ? color.alert.red : color.theme.blueMid}
+              />
+            )}
+          </Styled.dropdownItem>
+        );
+      })}
     </Styled.dropdown>
   );
 };

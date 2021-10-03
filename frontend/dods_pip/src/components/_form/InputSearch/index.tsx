@@ -19,6 +19,8 @@ const InputSearch: React.FC<InputSearchProps> = ({
   optional,
   helperText,
   onChange,
+  onFocus,
+  onBlur,
   placeholder = 'Search...',
 }) => {
   const isFilled = value.length > 0;
@@ -37,6 +39,8 @@ const InputSearch: React.FC<InputSearchProps> = ({
         optional={optional}
         helperText={helperText}
         onChange={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
         placeholder={placeholder}
       >
         <Icon

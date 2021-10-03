@@ -63,7 +63,7 @@ export const dropdown = styled.div<DropdownProps>`
   overflow: hidden;
   box-shadow: ${elevation.selectShadow};
   background: ${(p) => (p.hasError ? color.shadow.red : color.shadow.blue)};
-  z-index: 2;
+  z-index: 100;
 
   &:before {
     content: '';
