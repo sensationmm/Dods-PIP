@@ -14,6 +14,7 @@ const color = {
     yellow: '#FFF8E5',
   },
   base: {
+    transparent: 'transparent',
     white: '#FFFFFF',
     ivory: '#F8F8F8',
     greyLighter: '#F3F3F3',

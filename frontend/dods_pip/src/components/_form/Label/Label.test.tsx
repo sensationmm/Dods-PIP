@@ -3,6 +3,7 @@ import React from 'react';
 
 import Label from '.';
 import Text from '../../Text';
+import color from '../../../globals/color';
 
 describe('Label', () => {
   it('renders without error', () => {
@@ -28,4 +29,22 @@ describe('Label', () => {
     expect(required.text()).toEqual('(Optional)');
     expect(requiredStar.length).toEqual(0);
   });
+
+  it("should display with bold state", () => {
+    const wrapper = shallow(<Label label="Example" bold />)
+    const component  = wrapper.find('[data-test="text-component"]')
+    expect(component.find(Text).props().bold).toEqual(true)    
+  })
+
+  it("should display with disabled state", () => {
+    const wrapper = shallow(<Label label="Example" bold isDisabled />)
+    const component  = wrapper.find('[data-test="text-component"]')
+    expect(component.find(Text).props().color).toEqual(color.base.greyDark)    
+  })
+
+  it("should display with light color in darkMode", () => {
+    const wrapper = shallow(<Label label="Example" bold darkMode/>)
+    const component  = wrapper.find('[data-test="text-component"]')
+    expect(component.find(Text).props().color).toEqual(color.base.white)    
+  })
 });
