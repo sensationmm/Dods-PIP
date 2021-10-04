@@ -1,5 +1,7 @@
-import { TaxonomiesParameters } from "../domain/interfaces";
+import {TaxonomiesParameters} from "../domain";
 
 export interface Taxonomy {
-    getTaxonomies(data: TaxonomiesParameters): Promise<string>;
+    getTaxonomies(data: TaxonomiesParameters): Promise<any[ ]>;
+
+    searchTaxonomies(data: TaxonomiesParameters): Promise<any[ ]>;
 }

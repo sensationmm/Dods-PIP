@@ -1,16 +1,21 @@
-import { TaxonomiesParameters } from '../../../src/domain/interfaces';
 import { getTaxonomies } from '../../../src/handlers/taxonomies/getTaxonomies';
+import {HttpBadRequestError, HttpSuccessResponse, TaxonomiesParameters} from "../../../src/domain";
 
 const FUNCTION_NAME = "getTaxonomies";
 
 describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME}`, async () => {
-        const data: TaxonomiesParameters = { id: 'str-uuid' };
+        const data: TaxonomiesParameters = { tags: 'str-uuid' };
 
         const response = await getTaxonomies(data);
+        expect(response).toBeInstanceOf(HttpSuccessResponse);
 
-        expect(response).toEqual({ body: 'Hello World', statusCode: 200 });
+    });
 
-    
+    test('getTaxonomies with no tags throws HTTP error', async () => {
+        const data: TaxonomiesParameters = { id: 'winter' };
+
+        await expect(getTaxonomies(data)).rejects.toThrow(HttpBadRequestError);
+
     });
 });
