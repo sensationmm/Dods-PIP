@@ -3,6 +3,7 @@ import React from 'react';
 
 import SectionHeader from '.';
 import { Icons } from '../../Icon/assets';
+import Avatar from '../../Avatar';
 
 describe('SectionHeader', () => {
   let wrapper;
@@ -39,5 +40,17 @@ describe('SectionHeader', () => {
   it('renders icon', () => {
     const icon = wrapper.find('[data-test="sectionheader-icon"]');
     expect(icon.props().src).toEqual(Icons.IconTick);
+  });
+
+  it('renders component icon override', () => {
+    wrapper = shallow(
+      <SectionHeader
+        title="Title"
+        subtitle="Subtitle"
+        icon={<Avatar type="consultant" size="small" />}
+      />,
+    );
+    const component = wrapper.find(Avatar);
+    expect(component.length).toBe(1);
   });
 });

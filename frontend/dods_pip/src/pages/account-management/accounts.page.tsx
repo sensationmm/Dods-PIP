@@ -148,12 +148,12 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   id="filter-subscription"
                   size="small"
                   options={[
-                    { value: '', name: 'All Subscriptions' },
-                    { value: 'level1', name: 'Level 1' },
-                    { value: 'level2', name: 'Level 2' },
-                    { value: 'level3', name: 'Level 3' },
-                    { value: 'level4', name: 'Level 4' },
-                    { value: 'level5', name: 'Level 5' },
+                    { value: '', label: 'All Subscriptions' },
+                    { value: 'level1', label: 'Level 1' },
+                    { value: 'level2', label: 'Level 2' },
+                    { value: 'level3', label: 'Level 3' },
+                    { value: 'level4', label: 'Level 4' },
+                    { value: 'level5', label: 'Level 5' },
                   ]}
                   onChange={setFilterSubscription}
                   value={filterSubscription}
@@ -163,11 +163,11 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   id="filter-location"
                   size="small"
                   options={[
-                    { value: '', name: 'All Locations' },
-                    { value: 'europe', name: 'Europe' },
-                    { value: 'north-america', name: 'North America' },
-                    { value: 'south-america', name: 'South America' },
-                    { value: 'asia', name: 'Asia' },
+                    { value: '', label: 'All Locations' },
+                    { value: 'europe', label: 'Europe' },
+                    { value: 'north-america', label: 'North America' },
+                    { value: 'south-america', label: 'South America' },
+                    { value: 'asia', label: 'Asia' },
                   ]}
                   onChange={setFilterLocation}
                   value={filterLocation}

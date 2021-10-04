@@ -68,6 +68,7 @@ const InputBase: React.FC<InputBaseProps> = ({
           onBlur={onBlur}
           tabIndex={tabIndex}
           size={Math.max(placeholder?.length || 1, length)}
+          autoComplete="off"
         />
         {children}
       </Styled.inputWrapper>

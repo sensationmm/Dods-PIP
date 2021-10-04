@@ -7,6 +7,7 @@ import IconChevronLeft from './icon-chevronLeft.svg';
 import IconChevronRight from './icon-chevronRight.svg';
 import IconChevronUp from './icon-chevronUp.svg';
 import IconCross from './icon-cross.svg';
+import IconCrossBold from './icon-crossBold.svg';
 import IconGrid from './icon-grid.svg';
 import IconHide from './icon-hide.svg';
 import IconMinus from './icon-minus.svg';
@@ -32,6 +33,7 @@ export enum Icons {
   IconChevronRight = 'IconChevronRight',
   IconChevronUp = 'IconChevronUp',
   IconCross = 'IconCross',
+  IconCrossBold = 'IconCrossBold',
   IconGrid = 'IconGrid',
   IconHide = 'IconHide',
   IconMinus = 'IconMinus',
@@ -56,6 +58,7 @@ const IconLibrary = {
   IconChevronRight,
   IconChevronUp,
   IconCross,
+  IconCrossBold,
   IconGrid,
   IconHide,
   IconMinus,

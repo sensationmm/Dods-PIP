@@ -16,7 +16,7 @@ export interface ChipsProps {
   disabled?: boolean;
   avatarType?: UserType;
   onClick?: () => void;
-  onCloseClick?: () => void;
+  onCloseClick?: (val: string) => void;
 }
 
 const Chips: React.FC<ChipsProps> = ({
@@ -80,10 +80,10 @@ const Chips: React.FC<ChipsProps> = ({
         selected={selected}
         disabled={disabled}
         hovering={hovering}
-        onClick={onCloseClick}
+        onClick={() => onCloseClick?.(label)}
       >
         <Icon
-          src={Icons.IconCross}
+          src={Icons.IconCrossBold}
           size={IconSize.small}
           color={color.base.white}
           data-test="closeButtonIcon"
