@@ -130,42 +130,49 @@ components:
       properties:
         name:
           type: string
+          required: true
           example: Dods information
         notes:
           type: string
+          required: true
         contact_name:
           type: string
+          required: true
           example: Joe Bloggs
         contact_email_address:
           type: string
+          required: true
           example: user@email.com
         contact_telephone_number:
           type: string
+          required: true
           example: "+442071838750"
         contract_start_date:
           type: string
           format: date-time
+          required: true
           example: "2000-01-01T01:01:01.001Z"
         contract_rollover:
           type: boolean
+          required: true
         contract_end_date:
           type: string
           format: date-time
+          required: true
           example: "2000-01-01T01:01:01.001Z"
     ClientAccountTeam:
       type: object
-      required:
-        - userId
-        - clientAccountId
-        - teamMemberType
       properties:
         userId:
-          type: string
+          type: number
+          required: true
         clientAccountId:
-          type: string
+          type: number
+          required: true
         teamMemberType:
-          type: string
-          enum: [Consultant, Client]
+          type: number
+          required: true
+          enum: [1, 2]
         
   parameters:
     clientAccountId:

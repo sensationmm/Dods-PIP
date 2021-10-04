@@ -1,5 +1,6 @@
 import { Association, DataTypes, Model, Optional } from 'sequelize';
 import { UserProfileModel } from '.';
+import { ClientAccountTeam } from '../../domain/interfaces/ClientAccountTeam';
 
 import sequelize from '../sequelize';
 
@@ -10,16 +11,14 @@ interface ClientAccountTeamAttributes {
     parsedType?: string;
 }
 
-interface ClientAccountTeamCreationAttributes extends Optional<ClientAccountTeamAttributes, 'userId'> {}
+interface ClientAccountTeamCreationAttributes extends Optional<ClientAccountTeamAttributes, 'userId'> { }
 
-class ClientAccountTeam extends Model<ClientAccountTeamAttributes, ClientAccountTeamCreationAttributes>
-    implements ClientAccountTeamAttributes
-{
+class ClientAccountTeamModel extends Model<ClientAccountTeamAttributes, ClientAccountTeamCreationAttributes> implements ClientAccountTeam, ClientAccountTeamAttributes {
     public clientAccountId!: number;
-    public userId?: number | null;
+    public userId?: number;
     public teamMemberType!: number;
 
-    public UserProfileModels?: UserProfileModel[] ;
+    public UserProfileModels?: UserProfileModel[];
 
 
     public parsedType?: "consultant" | "client";
@@ -30,11 +29,11 @@ class ClientAccountTeam extends Model<ClientAccountTeamAttributes, ClientAccount
     public readonly deletedAt!: Date | null;
 
     public static associations: {
-        user: Association<ClientAccountTeam, UserProfileModel>;
+        user: Association<ClientAccountTeamModel, UserProfileModel>;
     };
 }
 
-ClientAccountTeam.init(
+ClientAccountTeamModel.init(
     {
         clientAccountId: {
             type: DataTypes.INTEGER,
@@ -76,4 +75,4 @@ ClientAccountTeam.init(
     }
 );
 
-export default ClientAccountTeam;
+export default ClientAccountTeamModel;

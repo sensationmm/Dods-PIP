@@ -1,7 +1,7 @@
 import ClientAccountModel from './ClientAccount';
 import UserProfileModel from './UserProfile';
 import SubscriptionTypeModel from './SubscriptionType';
-import ClientAccountTeamModel from './ClientAccountTeam';
+import ClientAccountTeamModel from './ClientAccountTeamModel';
 
 // SubscriptionTypeModel.hasMany(ClientAccountModel, {
 //     foreignKey: 'id'

@@ -11,7 +11,7 @@ import {
 } from '../types';
 
 import SubscriptionType from './SubscriptionType';
-import ClientAccountTeam from './ClientAccountTeam';
+import ClientAccountTeam from './ClientAccountTeamModel';
 import sequelize from '../sequelize';
 
 class ClientAccountModel

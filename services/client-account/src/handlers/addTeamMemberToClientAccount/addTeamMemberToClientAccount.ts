@@ -1,34 +1,24 @@
-import { AsyncLambdaMiddleware, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { AsyncLambdaMiddleware, HttpError, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { ClientAccountTeamParameters } from '../../domain/interfaces/ClientAccountTeam';
 import { ClientAccountRepository } from '../../repositories';
+import { ClientAccountTeamRepository } from '../../repositories/ClientAccountTeamRepository';
 
-export interface AddTeamMemberToClientAccountParameters {
-    userId: number;
-    clientAccountId: string;
-    teamMemberType: string;
-}
+export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTeamParameters> =
+    async ({ clientAccountTeam }) => {
 
-// const clientAccountTeamRepository = {
-//     create: async (data: any) => {
-//         console.log(data);
-//     }
-// }
+        const clientAccount = await ClientAccountRepository.defaultInstance.findOne({ id: clientAccountTeam.clientAccountId });
 
-export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<AddTeamMemberToClientAccountParameters> =
-    async ({ userId, clientAccountId, teamMemberType }) => {
+        if (clientAccount && clientAccount.subscription_seats && clientAccount.subscription_seats < 1) {
+            throw new HttpError("Client Account has not enough available seats", HttpStatusCode.FORBIDDEN);
+        }
 
-        console.log({ userId, clientAccountId, teamMemberType });
-
-        const clientAccount = await ClientAccountRepository.defaultInstance.getClientAccount(clientAccountId);
-
-        console.log(clientAccount);
-
-        // if (clientAccount && clientAccount.subscription_seats && clientAccount.subscription_seats < 1) {
-        //     throw new HttpError("Client Account has not enough available seats", HttpStatusCode.FORBIDDEN);
-        // }
-
-        // await clientAccountTeamRepository.create({ userId, clientAccountId, teamMemberType });
+        await ClientAccountTeamRepository.defaultInstance.create(clientAccountTeam);
 
         // await ClientAccountRepository.defaultInstance.updateClientAcount({ clientAccountId, subscription_seats: clientAccount.subscription_seats! - 1 })
 
-        return new HttpResponse(HttpStatusCode.OK, "Team member was added to the client account");
+        return new HttpResponse(HttpStatusCode.OK, {
+            sucess: true,
+            message: 'Team member was added to the client account.',
+            data: clientAccountTeam,
+        });
     };

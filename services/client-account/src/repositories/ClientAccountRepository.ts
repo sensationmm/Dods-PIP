@@ -48,6 +48,19 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
+    async findOne(where: Record<string, any>): Promise<ClientAccountResponse> {
+
+        const clientAccountModel = await this.model.findOne({ where, include: [SubscriptionType] });
+
+        if (clientAccountModel) {
+            const clientAccount = parseResponseFromModel(clientAccountModel);
+
+            return clientAccount;
+        } else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
+
     async searchClientAccount(searchClientAccountParams: SearchClientAccountParameters): Promise<Array<SearchClientAccountResponse>> {
         const { startsBy, locations, subscriptionTypes, searchTerm } = searchClientAccountParams
         const { limit, offset } = searchClientAccountParams
