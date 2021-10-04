@@ -39,7 +39,6 @@ provider:
     description: Default Gateway for dev deployed with dods-iam
 
   environment:
-    NODE_ENV: ${opt:NODE_ENV, 'dev'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
     MARIADB_CONNECTION_STRING: 'mariadb://root:123456@127.0.0.1:3306/dods?allowPublicKeyRetrieval=true&useSSL=false'

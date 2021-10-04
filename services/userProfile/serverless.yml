@@ -22,7 +22,6 @@ provider:
         description: Manually generated API key to test securing lambda functions
   
   environment:
-    NODE_ENV: ${opt:NODE_ENV, 'dev'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
     GET_USER_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getUserEndpoint}
