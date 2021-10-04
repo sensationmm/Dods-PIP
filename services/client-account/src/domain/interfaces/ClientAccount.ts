@@ -4,6 +4,7 @@ import SubscriptionType from "../../db/models/SubscriptionType";
 export interface ClientAccount {
     name: string;
     notes: string | null;
+    subscription_seats?: number;
     contact_name: string;
     contact_email_address: string;
     contact_telephone_number: string;

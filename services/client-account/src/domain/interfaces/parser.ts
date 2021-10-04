@@ -16,6 +16,7 @@ export function parseResponseFromModel(model: ClientAccountModel): ClientAccount
         contract_end_date: model.contractEndDate
             ? model.contractEndDate.toJSON()
             : undefined,
+        subscription_seats: model.subscriptionSeats,
         subscription: model.SubscriptionType!
     };
 

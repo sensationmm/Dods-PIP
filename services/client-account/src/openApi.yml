@@ -36,7 +36,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-  
+
   /clientaccount:
     get:
       operationId: searchClientAccount
@@ -60,10 +60,8 @@ paths:
       operationId: createClientAccount
       summary: "Create Client Account"
       description: "Create Client Account"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ClientAccount"
+      requestBody:
+        $ref: "#/components/requestBodies/clientAccount"
       responses:
         "200":
           $ref: "#/components/responses/ClientAccount"
@@ -85,7 +83,6 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-
   /subscription-types:
     get:
       operationId: getSubscriptionTypes
@@ -98,6 +95,19 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+
+  /client-accounts/{clientAccountId}/team-members:
+    post:
+      operationId: addTeamMemberToClientAccount
+      summary: "Add Team Member to Client Account"
+      description: "Add Team Member to Client Account"
+      requestBody:
+        $ref: "#/components/requestBodies/clientAccountTeam"
+      responses:
+        "200":
+          $ref: "#/components/responses/ClientAccountTeamResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
 components:
   schemas:
@@ -117,19 +127,10 @@ components:
               type: string
     ClientAccount:
       type: object
-      required:
-        - name
-        - notes
-        - contact_name
-        - contact_email_address
-        - contact_telephone_number
-        - contract_start_date
-        - contract_rollover
-        - contract_end_date
       properties:
         name:
-         type: string
-         example: Dods information
+          type: string
+          example: Dods information
         notes:
           type: string
         contact_name:
@@ -140,18 +141,32 @@ components:
           example: user@email.com
         contact_telephone_number:
           type: string
-          example: '+442071838750'
+          example: "+442071838750"
         contract_start_date:
           type: string
           format: date-time
-          example: '2000-01-01T01:01:01.001Z'
+          example: "2000-01-01T01:01:01.001Z"
         contract_rollover:
           type: boolean
         contract_end_date:
           type: string
           format: date-time
-          example: '2000-01-01T01:01:01.001Z'
-
+          example: "2000-01-01T01:01:01.001Z"
+    ClientAccountTeam:
+      type: object
+      required:
+        - userId
+        - clientAccountId
+        - teamMemberType
+      properties:
+        userId:
+          type: string
+        clientAccountId:
+          type: string
+        teamMemberType:
+          type: string
+          enum: [Consultant, Client]
+        
   parameters:
     clientAccountId:
       in: path
@@ -261,3 +276,25 @@ components:
         application/json:
           schema:
             type: "object"
+    ClientAccountTeamResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: "object"
+
+  requestBodies:
+    clientAccount:
+      description: A JSON object containing pet information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClientAccount"
+    clientAccountTeam:
+      description: A JSON object containing pet information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClientAccountTeam"

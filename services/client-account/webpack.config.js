@@ -37,6 +37,7 @@ module.exports = {
             path.resolve(__dirname, '.webpack'),
             path.resolve(__dirname, 'images'),
             path.resolve(__dirname, 'scripts'),
+            path.resolve(__dirname, 'mariadb'),
             path.resolve(__dirname, 'coverage')
           ]
         ],
