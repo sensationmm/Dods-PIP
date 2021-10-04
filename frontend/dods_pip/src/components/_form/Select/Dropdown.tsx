@@ -15,6 +15,7 @@ export interface DropdownProps {
   size?: SelectProps['size'];
   selectedValue?: SelectProps['value'] | Array<SelectProps['value']>;
   setValue: (val: string) => void;
+  isFilter?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -25,6 +26,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   size = 'large',
   selectedValue = '',
   setValue,
+  isFilter = false,
 }) => {
   return (
     <Styled.dropdown
@@ -32,6 +34,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       open={isOpen}
       hasHelper={hasHelper}
       hasError={hasError}
+      isFilter={isFilter}
     >
       {options.map((item, count) => {
         const isActive =
@@ -52,6 +55,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               !isActive && setValue(item.value);
             }}
             active={isActive}
+            isFilter={isFilter}
           >
             {item.label}
             {isActive && (

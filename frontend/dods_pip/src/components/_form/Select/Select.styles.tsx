@@ -9,6 +9,7 @@ type WrapperProps = {
   hasError: boolean;
   isDisabled: boolean;
   isFullWidth: boolean;
+  isFilter: boolean;
 };
 
 export const wrapper = styled.div<WrapperProps>`
@@ -21,13 +22,20 @@ export const wrapper = styled.div<WrapperProps>`
     overflow: visible;
   }
 
+  ${Input} {
+    background: ${({ hasError, isFilter }) =>
+      hasError ? color.shadow.red : isFilter ? color.base.white : color.shadow.blue};
+    border: 1px solid ${color.shadow.blue} !important;
+    margin-bottom: 1px;
+  }
+
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
 
   &:hover {
     ${Input} {
       margin-bottom: 1px;
       border-bottom: 1px solid
-        ${({ hasError }) => (hasError ? color.alert.red : color.theme.blueMid)};
+        ${({ hasError }) => (hasError ? color.alert.red : color.theme.blueMid)} !important;
       border-radius: 8px 8px 0 0;
     }
   }
@@ -50,6 +58,7 @@ type DropdownProps = {
   open: boolean;
   hasHelper: boolean;
   hasError: boolean;
+  isFilter: boolean;
 };
 
 export const dropdown = styled.div<DropdownProps>`
@@ -62,7 +71,8 @@ export const dropdown = styled.div<DropdownProps>`
   border-radius: 0 0 8px 8px;
   overflow: hidden;
   box-shadow: ${elevation.selectShadow};
-  background: ${(p) => (p.hasError ? color.shadow.red : color.shadow.blue)};
+  background: ${({ hasError, isFilter }) =>
+    hasError ? color.shadow.red : isFilter ? color.base.white : color.shadow.blue};
   z-index: 100;
 
   &:before {
@@ -79,13 +89,15 @@ type DropdownItemProps = {
   size: 'small' | 'medium' | 'large';
   hasError: boolean;
   active: boolean;
+  isFilter: boolean;
 };
 
 export const dropdownItem = styled.div<DropdownItemProps>`
   white-space: nowrap;
   color: ${({ hasError, active }) =>
     active ? color.base.grey : hasError ? color.alert.red : color.theme.blueMid};
-  background: ${({ hasError }) => (hasError ? color.shadow.red : color.shadow.blue)};
+  background: ${({ hasError, isFilter }) =>
+    hasError ? color.shadow.red : isFilter ? color.base.white : color.shadow.blue};
   padding: ${(p) =>
     p.size === 'large'
       ? spacing(3)
@@ -97,7 +109,10 @@ export const dropdownItem = styled.div<DropdownItemProps>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid ${({ hasError }) => (hasError ? color.shadow.red : color.shadow.blue)};
+  border: 1px solid
+    ${({ hasError, isFilter }) =>
+      hasError ? color.shadow.red : isFilter ? color.base.white : color.shadow.blue};
+  margin-right: 0 !important;
 
   &:hover {
     background: ${color.base.white};

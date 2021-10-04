@@ -39,7 +39,7 @@ describe('Account Management: Clients', () => {
     defaultState, // toggles filter view
     { ...defaultState, filterSearchText: 'anot' }, // filters by search box
     { ...defaultState, filterAZ: 'M' }, // filters by a-z
-    { ...defaultState, filterSubscription: 'level2' }, // filters by subscription
+    { ...defaultState, filterSubscription: 'Level 2' }, // filters by subscription
     { ...defaultState, filterLocation: 'europe' }, // filters by location
     defaultState, // navigates to create client flow
   ];

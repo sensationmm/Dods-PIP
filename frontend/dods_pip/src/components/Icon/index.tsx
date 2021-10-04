@@ -16,18 +16,21 @@ export interface IconProps {
   src: Icons;
   size?: IconSize;
   color?: string;
+  alt?: string;
 }
 
 const Icon: React.FC<IconProps> = ({
   src,
   size = IconSize.small,
   color = colorPalette.theme.blue,
+  alt,
 }) => {
   const Icon = IconLibrary[src];
   return (
     <Styled.Icon
       data-test="component-icon"
       style={{ width: `${size}px`, height: `${size}px`, color: color }}
+      title={alt}
     >
       <Icon />
     </Styled.Icon>

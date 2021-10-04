@@ -14,9 +14,10 @@ export interface AvatarProps {
   size: Size;
   number?: number;
   disabled?: boolean;
+  alt?: string;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ type, size, number, disabled }) => {
+const Avatar: React.FC<AvatarProps> = ({ type, size, number, disabled, alt }) => {
   const [iconSize, setIconSize] = useState<IconSizes>('xxlarge');
   const [fontSize, setFontSize] = useState<TextStyles>('bodyLarge');
   useEffect(() => {
@@ -50,6 +51,7 @@ const Avatar: React.FC<AvatarProps> = ({ type, size, number, disabled }) => {
             src={Icons.IconAvatar}
             size={IconSize[iconSize]}
             color={disabled ? color.base.grey : color.base.white}
+            alt={alt}
           />
         )}
       </Styled.Background>
