@@ -1,6 +1,5 @@
 import Joi, { Schema } from 'joi';
 import { resolve } from 'path';
-import { DownstreamEndpoints } from '../interfaces';
 import { execSync } from 'child_process'
 
 const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage ${process.env.SERVERLESS_STAGE || 'test'} --format json${process.env.SERVERLESS_STAGE === 'local' ? ' | tail -n +2' : ''}`;
@@ -11,9 +10,7 @@ const fetchServerlessInfo = (): string => {
         return infoCache;
     } else {
         console.debug(`Running \`${fullServerlessInfoCommand}\`...`, null)
-        const info = execSync(fullServerlessInfoCommand).toString()
-        infoCache = info
-        return infoCache;
+        return execSync(fullServerlessInfoCommand).toString()
     }
 }
 
@@ -62,7 +59,10 @@ const envVarsSchema = Joi.object()
     .keys({
         NODE_ENV: Joi.string().valid(...stages).default('test'),
         SERVERLESS_STAGE: Joi.string().required().valid('prod', 'dev', 'test').default('test'),
-        SERVERLESS_PORT: Joi.number().required().default(3000)
+        SERVERLESS_PORT: Joi.number().required().default(3000),
+        ES_CLOUD_ID: Joi.string().required(),
+        ES_KEY_ID: Joi.string().required(),
+        ES_API_KEY: Joi.string().required(),
     })
     .unknown();
 
@@ -80,5 +80,10 @@ export const config = {
     dods: {
         downstreamEndpoints: {}
     },
-    aws: {}
+    aws: {},
+    elasticsearch: {
+        esCloudId: envVars.ES_CLOUD_ID as string,
+        esKeyId: envVars.ES_KEY_ID as string,
+        esApiKey: envVars.ES_API_KEY as string,
+    }
 };
