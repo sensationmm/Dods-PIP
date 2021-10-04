@@ -13,6 +13,7 @@ launch.json
 .offline*
 .vscode
 CertificateAuthorityCertificate.pem
+mariadb/conf
 
 # Compiled Java class files
 *.class
