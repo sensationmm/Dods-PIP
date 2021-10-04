@@ -15,6 +15,7 @@ import TagSelector from '../../../components/TagSelector';
 import * as TagSelectorStyles from '../../../components/TagSelector/TagSelector.styles';
 import Text from '../../../components/Text';
 import color from '../../../globals/color';
+import MockUserData from '../../../mocks/data/users.json';
 import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
 
@@ -206,21 +207,7 @@ const Team: React.FC<TeamProps> = ({
           helperText="Click on the people to add them as a team members"
           placeholder="Start typing to search a person..."
           size="medium"
-          values={[
-            { label: 'kevin', value: 'kevin' },
-            { label: 'brian', value: 'brian' },
-            { label: 'david', value: 'david' },
-            { label: 'gavin', value: 'gavin' },
-            { label: 'gareth', value: 'gareth' },
-            { label: 'gabba', value: 'gabba' },
-            { label: 'ganns', value: 'ganns' },
-            { label: 'gavs', value: 'asd' },
-            { label: 'gavs', value: 'sdf' },
-            { label: 'gavs', value: 'dfg' },
-            { label: 'gavs', value: 'fgh' },
-            { label: 'gavs', value: 'ghj' },
-            { label: 'gavs', value: 'hjk' },
-          ]}
+          values={MockUserData.users}
           onChange={setTeamMembers}
           selectedValues={teamMembers}
           icon="consultant"
@@ -235,16 +222,7 @@ const Team: React.FC<TeamProps> = ({
           helperText="Click on the people to add them as an account manager"
           placeholder="Start typing to search a person..."
           size="medium"
-          values={[
-            { label: 'kevin', value: 'kevin' },
-            { label: 'brian', value: 'brian' },
-            { label: 'david', value: 'david' },
-            { label: 'gavin', value: 'gavin' },
-            { label: 'gareth', value: 'gareth' },
-            { label: 'gabba', value: 'gabba' },
-            { label: 'ganns', value: 'ganns' },
-            { label: 'gavs', value: 'gavs' },
-          ]}
+          values={MockUserData.users}
           onChange={setAccountManagers}
           selectedValues={accountManagers}
           icon="consultant"
