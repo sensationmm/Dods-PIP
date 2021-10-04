@@ -47,15 +47,11 @@ export const AddClient: React.FC<AddClientProps> = () => {
   const [clientAccess, setClientAccess] = React.useState<string>('');
   const [errorsStep3, setErrorsStep3] = React.useState<ErrorsStep3>({});
 
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeStep]);
+
   const steps = [{ label: 'Account Info' }, { label: 'Subscription' }, { label: 'Team' }];
-
-  const onSubmitStep2 = () => {
-    setActiveStep(3);
-  };
-
-  const onSubmitStep3 = () => {
-    setActiveStep(4);
-  };
 
   return (
     <div data-test="page-account-management-add-client">
@@ -110,7 +106,7 @@ export const AddClient: React.FC<AddClientProps> = () => {
           setEndDateType={setEndDateType}
           errors={errorsStep2}
           setErrors={setErrorsStep2}
-          onSubmit={onSubmitStep2}
+          onSubmit={() => setActiveStep(3)}
           onBack={() => setActiveStep(1)}
         />
       )}
@@ -142,7 +138,7 @@ export const AddClient: React.FC<AddClientProps> = () => {
           setClientAccess={setClientAccess}
           errors={errorsStep3}
           setErrors={setErrorsStep3}
-          onSubmit={onSubmitStep3}
+          onSubmit={() => router.push('/account-management/accounts')}
           onBack={() => setActiveStep(2)}
         />
       )}

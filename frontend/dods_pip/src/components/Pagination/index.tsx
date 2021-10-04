@@ -2,12 +2,13 @@ import classNames from 'classnames';
 import React, { useEffect } from 'react';
 
 import color from '../../globals/color';
+import Select from '../_form/Select';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import Text from '../Text';
 import * as Styled from './Pagination.styles';
 
-type NumPerPage = 30 | 60 | 90;
+type NumPerPage = '30' | '60' | '90';
 
 export type PaginationProps = {
   dataLength: number;
@@ -21,17 +22,17 @@ type PaginationType = {
 
 const Pagination = (dataLength: number): PaginationType => {
   const [activePage, setActivePage] = React.useState<number>(0);
-  const [numPerPage, setNumPerPage] = React.useState<NumPerPage>(30);
+  const [numPerPage, setNumPerPage] = React.useState<NumPerPage>('30');
 
   useEffect(() => {
     setActivePage(0);
   }, [dataLength]);
 
   const pageButtons = () => {
-    const numPages = Math.ceil(dataLength / numPerPage);
+    const numPages = Math.ceil(dataLength / parseInt(numPerPage));
     const buttons = [];
 
-    for (let i = 0; i < Math.ceil(dataLength / numPerPage); i++) {
+    for (let i = 0; i < Math.ceil(dataLength / parseInt(numPerPage)); i++) {
       if (
         i === 0 ||
         i === numPages - 1 ||
@@ -66,45 +67,52 @@ const Pagination = (dataLength: number): PaginationType => {
   };
 
   const PaginationStats: React.FC = () => {
-    const changeLayout = (num: NumPerPage) => {
-      setNumPerPage(num);
+    const changeLayout = (num: string) => {
+      setNumPerPage(num as NumPerPage);
       setActivePage(0);
     };
 
-    const start = activePage * numPerPage;
-    const end = start + numPerPage;
+    const start = activePage * parseInt(numPerPage);
+    const end = start + parseInt(numPerPage);
 
     return (
       <Styled.stats data-test="component-pagination-stats">
         <Text type="bodySmall" color={color.base.grey} data-test="item-count">
           Showing {dataLength > 0 ? start + 1 : 0}-{Math.min(dataLength, end)} of {dataLength}
         </Text>
-        <Text type="bodySmall" color={color.base.grey}>
-          Items per page&nbsp;
-          {/* @todo: replace with select list component */}
-          <select
+        <Styled.perPage>
+          <Text type="bodySmall" color={color.base.grey}>
+            Items per page&nbsp;
+          </Text>
+          <Select
+            id="pagination-pp"
             data-test="set-page-count"
-            onChange={(event) => changeLayout(event.target.value as unknown as NumPerPage)}
+            size="small"
+            options={[
+              { value: '30', label: '30' },
+              { value: '60', label: '60' },
+              { value: '90', label: '90' },
+            ]}
+            onChange={changeLayout}
+            placeholder=""
             value={numPerPage}
-          >
-            <option>30</option>
-            <option>60</option>
-            <option>90</option>
-          </select>
-        </Text>
+            isFullWidth={false}
+            isFilter
+          />
+        </Styled.perPage>
       </Styled.stats>
     );
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const PaginationContent = (data: any) => {
-    const start = activePage * numPerPage;
+    const start = activePage * parseInt(numPerPage);
     const end = start + numPerPage;
     return data.slice(start, end);
   };
 
   const PaginationButtons: React.FC = () => {
-    const numPages = Math.ceil(dataLength / numPerPage);
+    const numPages = Math.ceil(dataLength / parseInt(numPerPage));
     const hasPrev = activePage > 0;
     const hasNext = activePage < numPages - 1;
     return (

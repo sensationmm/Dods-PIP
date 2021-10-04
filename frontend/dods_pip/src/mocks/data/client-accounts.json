@@ -3,7 +3,7 @@
     {
       "id": "exampleid1",
       "name": "Project One",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "europe",
       "projects": 3,
       "team": [
@@ -16,7 +16,7 @@
     {
       "id": "exampleid2",
       "name": "Project Two",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "north-america",
       "projects": 3,
       "team": [
@@ -29,7 +29,7 @@
     {
       "id": "exampleid3",
       "name": "Another Project",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "europe",
       "projects": 2,
       "team": [
@@ -41,7 +41,7 @@
     {
       "id": "exampleid4",
       "name": "Example Project",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "south-america",
       "projects": 1,
       "team": [
@@ -50,14 +50,17 @@
         {"name": "Person3 Name", "type": "consultant"},
         {"name": "Person4 Name", "type": "client"},
         {"name": "Person5 Name", "type": "client"},
-        {"name": "Person6 Name", "type": "client"}
+        {"name": "Person6 Name", "type": "client"},
+        {"name": "Person7 Name", "type": "consultant"},
+        {"name": "Person8 Name", "type": "client"},
+        {"name": "Person9 Name", "type": "client"}
       ],
       "completed": true
     },
     {
       "id": "exampleid5",
       "name": "Example Endeavour",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "europe",
       "projects": 10,
       "team": [
@@ -71,7 +74,7 @@
     {
       "id": "exampleid6",
       "name": "Example Endeavour",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "asia",
       "projects": 4,
       "team": [
@@ -85,7 +88,7 @@
     {
       "id": "exampleid7",
       "name": "Example Undertaking",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "asia",
       "projects": 5,
       "team": [
@@ -99,7 +102,7 @@
     {
       "id": "exampleid8",
       "name": "My Project",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "europe",
       "projects": 15,
       "team": [
@@ -117,7 +120,7 @@
     {
       "id": "exampleid9",
       "name": "My Project",
-      "subscription": "level3",
+      "subscription": "Level 3",
       "location": "europe",
       "projects": 2,
       "team": [
@@ -133,7 +136,7 @@
     {
       "id": "exampleid10",
       "name": "Your Project",
-      "subscription": "level3",
+      "subscription": "Level 3",
       "location": "asia",
       "projects": 2,
       "team": [
@@ -146,7 +149,7 @@
     {
       "id": "exampleid11",
       "name": "Their Project",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "asia",
       "projects": 2,
       "team": [
@@ -161,7 +164,7 @@
     {
       "id": "exampleid12",
       "name": "Project Two",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "north-america",
       "projects": 3,
       "team": [
@@ -174,7 +177,7 @@
     {
       "id": "exampleid13",
       "name": "Another Project",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "europe",
       "projects": 2,
       "team": [
@@ -186,7 +189,7 @@
     {
       "id": "exampleid14",
       "name": "Example Project",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "south-america",
       "projects": 1,
       "team": [
@@ -202,7 +205,7 @@
     {
       "id": "exampleid15",
       "name": "Example Endeavour",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "south-america",
       "projects": 4,
       "team": [
@@ -216,7 +219,7 @@
     {
       "id": "exampleid16",
       "name": "Example Endeavour",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "asia",
       "projects": 4,
       "team": [
@@ -230,7 +233,7 @@
     {
       "id": "exampleid17",
       "name": "Example Undertaking",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "north-america",
       "projects": 5,
       "team": [
@@ -244,7 +247,7 @@
     {
       "id": "exampleid18",
       "name": "My Project",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "europe",
       "projects": 15,
       "team": [
@@ -260,7 +263,7 @@
     {
       "id": "exampleid19",
       "name": "My Project",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "asia",
       "projects": 2,
       "team": [
@@ -276,7 +279,7 @@
     {
       "id": "exampleid20",
       "name": "Your Project",
-      "subscription": "level3",
+      "subscription": "Level 3",
       "location": "asia",
       "projects": 2,
       "team": [
@@ -289,7 +292,7 @@
     {
       "id": "exampleid21",
       "name": "Their Project",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "asia",
       "projects": 2,
       "team": [
@@ -304,7 +307,7 @@
     {
       "id": "exampleid22",
       "name": "Project Two",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "south-america",
       "projects": 3,
       "team": [
@@ -317,7 +320,7 @@
     {
       "id": "exampleid23",
       "name": "Another Project",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "europe",
       "projects": 2,
       "team": [
@@ -329,7 +332,7 @@
     {
       "id": "exampleid24",
       "name": "Example Project",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "europe",
       "projects": 1,
       "team": [
@@ -345,7 +348,7 @@
     {
       "id": "exampleid25",
       "name": "Example Endeavour",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "south-america",
       "projects": 14,
       "team": [
@@ -361,7 +364,7 @@
     {
       "id": "exampleid26",
       "name": "Example Endeavour",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "asia",
       "projects": 4,
       "team": [
@@ -374,7 +377,7 @@
     {
       "id": "exampleid27",
       "name": "Example Undertaking",
-      "subscription": "level5",
+      "subscription": "Level 5",
       "location": "north-america",
       "projects": 5,
       "team": [
@@ -388,7 +391,7 @@
     {
       "id": "exampleid28",
       "name": "My Project",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "europe",
       "projects": 5,
       "team": [
@@ -403,7 +406,7 @@
     {
       "id": "exampleid29",
       "name": "My Project",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "asia",
       "projects": 2,
       "team": [
@@ -419,7 +422,7 @@
     {
       "id": "exampleid30",
       "name": "Your Project",
-      "subscription": "level3",
+      "subscription": "Level 3",
       "location": "asia",
       "projects": 2,
       "team": [
@@ -432,7 +435,7 @@
     {
       "id": "exampleid31",
       "name": "Their Project",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "europe",
       "projects": 12,
       "team": [
@@ -446,7 +449,7 @@
     {
       "id": "exampleid32",
       "name": "Project Two",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "south-america",
       "projects": 3,
       "team": [
@@ -459,7 +462,7 @@
     {
       "id": "exampleid33",
       "name": "Another Project",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "europe",
       "projects": 42,
       "team": [
@@ -475,7 +478,7 @@
     {
       "id": "exampleid34",
       "name": "Example Project",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "asia",
       "projects": 1,
       "team": [
@@ -491,7 +494,7 @@
     {
       "id": "exampleid35",
       "name": "Example Endeavour",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "south-america",
       "projects": 14,
       "team": [
@@ -507,7 +510,7 @@
     {
       "id": "exampleid36",
       "name": "Example Endeavour",
-      "subscription": "level4",
+      "subscription": "Level 4",
       "location": "asia",
       "projects": 4,
       "team": [
@@ -520,7 +523,7 @@
     {
       "id": "exampleid37",
       "name": "Example Undertaking",
-      "subscription": "level5",
+      "subscription": "Level 5",
       "location": "north-america",
       "projects": 5,
       "team": [
@@ -534,7 +537,7 @@
     {
       "id": "exampleid38",
       "name": "My Project",
-      "subscription": "level2",
+      "subscription": "Level 2",
       "location": "europe",
       "projects": 5,
       "team": [
@@ -549,7 +552,7 @@
     {
       "id": "exampleid39",
       "name": "My Project",
-      "subscription": "level1",
+      "subscription": "Level 1",
       "location": "asia",
       "projects": 2,
       "team": [

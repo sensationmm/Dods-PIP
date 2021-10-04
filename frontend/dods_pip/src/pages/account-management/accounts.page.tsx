@@ -6,9 +6,11 @@ import InputSearch from '../../components/_form/InputSearch';
 import Select from '../../components/_form/Select';
 import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
+import Avatar from '../../components/Avatar';
 import AZFilter from '../../components/AZFilter';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Button from '../../components/Button';
+import DataTable, { DataTableSort } from '../../components/DataTable';
 import Icon from '../../components/Icon';
 import { Icons } from '../../components/Icon/assets';
 import Pagination from '../../components/Pagination';
@@ -16,6 +18,7 @@ import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import MockDataClientAccounts from '../../mocks/data/client-accounts.json';
+import MockUserData from '../../mocks/data/users.json';
 import * as Styled from './accounts.styles';
 
 type AccountSubscription = 'level1' | 'level2' | 'level3' | 'level4';
@@ -81,7 +84,9 @@ export const Accounts: React.FC<AccountsProps> = () => {
     filterAccounts(accountsList).length,
   );
 
-  const accountsData = PaginationContent<ClientAccounts>(filterAccounts(accountsList));
+  const accountsData = PaginationContent<ClientAccounts>(
+    filterAccounts(DataTableSort(accountsList)),
+  );
 
   return (
     <div data-test="page-account-management-clients">
@@ -149,15 +154,16 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   size="small"
                   options={[
                     { value: '', label: 'All Subscriptions' },
-                    { value: 'level1', label: 'Level 1' },
-                    { value: 'level2', label: 'Level 2' },
-                    { value: 'level3', label: 'Level 3' },
-                    { value: 'level4', label: 'Level 4' },
-                    { value: 'level5', label: 'Level 5' },
+                    { value: 'Level 1', label: 'Level 1' },
+                    { value: 'Level 2', label: 'Level 2' },
+                    { value: 'Level 3', label: 'Level 3' },
+                    { value: 'Level 4', label: 'Level 4' },
+                    { value: 'Level 5', label: 'Level 5' },
                   ]}
                   onChange={setFilterSubscription}
                   value={filterSubscription}
                   placeholder="All Subscriptions"
+                  isFilter
                 />
                 <Select
                   id="filter-location"
@@ -172,6 +178,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   onChange={setFilterLocation}
                   value={filterLocation}
                   placeholder="All Locations"
+                  isFilter
                 />
               </Styled.filterContentCol>
 
@@ -196,11 +203,66 @@ export const Accounts: React.FC<AccountsProps> = () => {
 
           <Spacer size={5} />
 
-          {/* @TODO: replace with data table for rendering */}
-          {/*<DataTable data={accountsData} /> */}
-          {accountsData.map((account: ClientAccount, count: number) => {
-            return <div key={`account-${count}`}>{account.name}</div>;
-          })}
+          <DataTable
+            headings={['Name', 'Subscription', 'Live projects', 'Team', '']}
+            colWidths={[8, 4, 4, 4, 1]}
+            rows={accountsData.map((account: ClientAccount, count: number) => {
+              const teamClient = account.team
+                .slice(3)
+                .filter((team) => team.type === 'client').length;
+              const teamConsultant = account.team
+                .slice(3)
+                .filter((team) => team.type === 'consultant').length;
+
+              let team = account.team;
+
+              if (account.team.length > 5) {
+                if (teamClient > 0 && teamConsultant > 0) {
+                  team = account.team.slice(0, 3);
+                } else if (teamClient > 0 || teamConsultant > 0) {
+                  team = account.team.slice(0, 4);
+                }
+              }
+
+              const overflowTeamClient = account.team
+                .slice(team.length)
+                .filter((team) => team.type === 'client').length;
+              const overflowTeamConsultant = account.team
+                .slice(team.length)
+                .filter((team) => team.type === 'consultant').length;
+
+              return [
+                account.name.substring(0, 1),
+                <Text key={`account-${count}-name`} bold>
+                  {account.name}
+                </Text>,
+                <Text key={`account-${count}-subscription`}>{account.subscription}</Text>,
+                <Text key={`account-${count}-projects`}>{account.projects}</Text>,
+                <Styled.teamList key={`account-${count}-team`}>
+                  {team.map((member, count2) => {
+                    const randomName =
+                      MockUserData.users[Math.floor(Math.random() * MockUserData.users.length)]
+                        .label;
+                    return (
+                      <Avatar
+                        key={`team-${count2}`}
+                        type={member.type}
+                        size="small"
+                        alt={randomName}
+                      />
+                    );
+                  })}
+                  {overflowTeamClient > 0 && (
+                    <Avatar type="client" number={overflowTeamClient} size="small" />
+                  )}
+                  {overflowTeamConsultant > 0 && (
+                    <Avatar type="consultant" number={overflowTeamConsultant} size="small" />
+                  )}
+                </Styled.teamList>,
+                <Icon key={`account-${count}-link`} src={Icons.IconChevronRight} />,
+              ];
+            })}
+          />
 
           <Spacer size={4} />
 

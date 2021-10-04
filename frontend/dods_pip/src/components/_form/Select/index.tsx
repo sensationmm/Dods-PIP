@@ -14,6 +14,7 @@ type SelectItem = {
 export interface SelectProps extends Omit<InputTextProps, 'icon' | 'length'> {
   options: SelectItem[];
   isFullWidth?: boolean;
+  isFilter?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -31,6 +32,7 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   onBlur,
   isFullWidth = false,
+  isFilter = false,
 }) => {
   const firstRun = React.useRef(true);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -62,6 +64,7 @@ const Select: React.FC<SelectProps> = ({
       hasError={error !== undefined}
       isDisabled={isDisabled}
       isFullWidth={isFullWidth}
+      isFilter={isFilter}
     >
       <OutsideClickHandler onOutsideClick={() => setIsOpen(false)}>
         <Styled.select>
@@ -96,6 +99,7 @@ const Select: React.FC<SelectProps> = ({
             size={size}
             selectedValue={value}
             setValue={setValue}
+            isFilter={isFilter}
           />
         </Styled.select>
       </OutsideClickHandler>
