@@ -103,7 +103,7 @@ describe('Account Management: Clients', () => {
 
   it('proceeds from step 3', () => {
     step3.props().onSubmit();
-    expect(setActiveStepSpy).toHaveBeenCalledWith(4);
+    expect(mockRouterPush).toHaveBeenCalledWith('/account-management/accounts');
   });
 
   it('navigates back from step 2', () => {
