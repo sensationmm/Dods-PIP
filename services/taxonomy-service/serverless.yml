@@ -35,6 +35,9 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
+    ES_KEY_ID: ${env:ES_KEY_ID}
+    ES_API_KEY: ${env:ES_API_KEY}
 
 custom:
   webpack:
@@ -71,6 +74,10 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+
+package:
+  include:
+    - node_modules/**
 
 functions:
 
