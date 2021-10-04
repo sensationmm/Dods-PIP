@@ -8,7 +8,7 @@ import Spacer from '../Spacer';
 import * as Styled from './SectionHeader.styles';
 
 export interface SectionHeaderProps {
-  icon: Icons;
+  icon: Icons | JSX.Element;
   title: string;
   subtitle: string | Array<string>;
 }
@@ -16,7 +16,11 @@ export interface SectionHeaderProps {
 const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, subtitle }) => {
   return (
     <Styled.wrapper data-test="component-section-header">
-      <Icon src={icon} size={IconSize.xxlarge} data-test="sectionheader-icon" />
+      {typeof icon == 'string' ? (
+        <Icon src={icon} size={IconSize.xxlarge} data-test="sectionheader-icon" />
+      ) : (
+        icon
+      )}
       <Styled.titles>
         <Text type="h2" headingStyle="title" data-test="sectionheader-title">
           {title}

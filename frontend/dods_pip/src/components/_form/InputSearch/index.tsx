@@ -19,9 +19,13 @@ const InputSearch: React.FC<InputSearchProps> = ({
   optional,
   helperText,
   onChange,
+  onFocus,
+  onBlur,
+  placeholder = 'Search...',
 }) => {
+  const isFilled = value.length > 0;
   return (
-    <Styled.wrapper>
+    <Styled.wrapper isFilled={isFilled}>
       <Input
         id={id}
         data-test="component-input-search"
@@ -35,7 +39,9 @@ const InputSearch: React.FC<InputSearchProps> = ({
         optional={optional}
         helperText={helperText}
         onChange={onChange}
-        placeholder={'Search...'}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        placeholder={placeholder}
       >
         <Icon
           src={Icons.IconSearch}
@@ -48,6 +54,12 @@ const InputSearch: React.FC<InputSearchProps> = ({
               : color.base.grey
           }
         />
+
+        {isFilled && (
+          <Styled.clear data-test="input-clear" onClick={() => onChange('')}>
+            <Icon src={Icons.IconCross} size={IconSize.medium} color={color.theme.blue} />
+          </Styled.clear>
+        )}
       </Input>
     </Styled.wrapper>
   );

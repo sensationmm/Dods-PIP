@@ -15,16 +15,15 @@ export const Primary = Template.bind({});
 
 Primary.args = {
   label: 'Label',
-  placeholder: 'choose',
   value: '',
   options: [
-    { name: 'Option 1', value: 'option1' },
-    { name: 'Option 2', value: 'option2' },
-    { name: 'Option 3', value: 'option3' },
+    { label: 'Option 1', value: 'option1' },
+    { label: 'Option 2', value: 'option2' },
+    { label: 'Option 3', value: 'option3' },
   ],
   size: 'large',
   isDisabled: false,
-  isFullWidth: false,
+  isFullWidth: true,
   error: undefined,
   required: false,
   optional: false,
