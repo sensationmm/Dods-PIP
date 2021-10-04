@@ -98,11 +98,26 @@ pipelines:
   branches:
     master:
       - parallel:
+
+        - step: 
+            name: Auth-Authz Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.3
+            condition:
+              changesets:
+                includePaths:
+                  - "services/dods-iam/**"
+            script:
+              - cd services/dods-iam
+              - npm install
+              - npm run test || true
+              - npm run test:coverage || true
+              - serverless deploy --stage dev
+
         - step: 
             name: User Profile Deploy
             size: 2x
             image: gioatsomoglobal/devopstools:0.4.3
-            deployment: Test
             condition:
               changesets:
                 includePaths:
@@ -118,7 +133,6 @@ pipelines:
             name: Client Account Deploy
             size: 2x
             image: gioatsomoglobal/devopstools:0.4.3
-            deployment: Test
             condition:
               changesets:
                 includePaths:
