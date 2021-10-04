@@ -12,13 +12,15 @@ export interface ClientAccount {
     contract_end_date?: string;
 }
 
+export interface ClientAccountParameters {
+    clientAccount: ClientAccount;
+}
+
 export interface ClientAccountResponse extends ClientAccount {
     id: number;
     uuid: string;
-    subscription: SubscriptionType | null
+    subscription: SubscriptionType | null;
 }
-
-export interface ClientAccountParameters extends ClientAccount {}
 
 export interface SearchClientAccountResponse {
     id: string;

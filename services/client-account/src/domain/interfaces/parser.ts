@@ -1,10 +1,11 @@
-import { ClientAccountParameters, ClientAccountResponse, SearchClientAccountResponse } from ".";
+import { ClientAccount, ClientAccountResponse, SearchClientAccountResponse } from ".";
 import { ClientAccountModel } from "../../db";
 import { ClientAccountModelCreationAttributes } from "../../db/types";
 
 export function parseResponseFromModel(model: ClientAccountModel): ClientAccountResponse {
     const response: ClientAccountResponse = {
-        id: model.uuid,
+        id: model.id,
+        uuid: model.uuid,
         name: model.name,
         notes: model.notes,
         contact_name: model.contactName,
@@ -15,13 +16,13 @@ export function parseResponseFromModel(model: ClientAccountModel): ClientAccount
         contract_end_date: model.contractEndDate
             ? model.contractEndDate.toJSON()
             : undefined,
-        subscription: model.SubscriptionType
+        subscription: model.SubscriptionType!
     };
 
     return response;
 }
 
-export function parseModelParameters(requestParameters: ClientAccountParameters): ClientAccountModelCreationAttributes {
+export function parseModelParameters(requestParameters: ClientAccount): ClientAccountModelCreationAttributes {
     const parameters: ClientAccountModelCreationAttributes = {
         name: requestParameters.name,
         notes: requestParameters.notes,
@@ -47,7 +48,7 @@ export function parseSearchClientAccountResponse(model: ClientAccountModel): Sea
         location: model.SubscriptionType && model.SubscriptionType.location,
         projects: 0,
         team:
-            model.ClientAccountTeam && 
+            model.ClientAccountTeam &&
             model.ClientAccountTeam.UserProfileModels &&
             model.ClientAccountTeam.UserProfileModels
                 .map((item) => {
@@ -55,7 +56,7 @@ export function parseSearchClientAccountResponse(model: ClientAccountModel): Sea
                         name: item.fullName,
                         type: model.ClientAccountTeam && model.ClientAccountTeam.parsedType
                     }
-            }),
+                }),
         completed: true
     };
     return response

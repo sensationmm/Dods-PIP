@@ -1,25 +1,23 @@
+import { Op, WhereOptions } from 'sequelize';
+import { ClientAccountModel, ClientAccountTeamModel, SubscriptionTypeModel, UserProfileModel } from '../db';
+import SubscriptionType from "../db/models/SubscriptionType";
 import {
-    Op, WhereOptions
-} from 'sequelize';
-import {
-    ClientAccountParameters,
     SearchClientAccountParameters,
     ClientAccountPersister,
     ClientAccountResponse,
     SearchClientAccountResponse,
+    ClientAccount,
+    parseModelParameters,
+    parseResponseFromModel,
+    parseSearchClientAccountResponse
 } from '../domain';
 
-import { ClientAccountModel, ClientAccountTeamModel, SubscriptionTypeModel, UserProfileModel } from '../db/models';
-import SubscriptionType from "../db/models/SubscriptionType";
-import { parseModelParameters, parseResponseFromModel, parseSearchClientAccountResponse } from '../domain/interfaces/Parser';
-
 export class ClientAccountRepository implements ClientAccountPersister {
-    static defaultInstance: ClientAccountPersister =
-        new ClientAccountRepository(ClientAccountModel);
+    static defaultInstance: ClientAccountPersister = new ClientAccountRepository(ClientAccountModel);
 
-    constructor(private model: typeof ClientAccountModel) {}
+    constructor(private model: typeof ClientAccountModel) { }
 
-    async createClientAccount(clientAccount: ClientAccountParameters): Promise<ClientAccountResponse> {
+    async createClientAccount(clientAccount: ClientAccount): Promise<ClientAccountResponse> {
         if (!clientAccount) {
             throw new Error('Error: clientAccount cannot be empty');
         }
