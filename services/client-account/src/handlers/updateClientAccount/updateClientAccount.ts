@@ -10,8 +10,6 @@ import { UpdateClientAccountParameters } from '../../domain';
 export const updateClientAccount: AsyncLambdaMiddleware<UpdateClientAccountParameters> =
     async (clientAccount) => {
         if (!clientAccount.contract_rollover) {
-            console.log('-----------contract ');
-            console.log(clientAccount.contract_end_date);
             if (!clientAccount.contract_end_date) {
                 return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
                     success: false,

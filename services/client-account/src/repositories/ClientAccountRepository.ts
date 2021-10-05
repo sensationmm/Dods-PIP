@@ -205,7 +205,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
             const updateRecord = await clientAccountToUpdate.save();
 
-            console.log(updateRecord);
             const newClientAccount = parseResponseFromModel(updateRecord);
 
             return newClientAccount;
@@ -224,9 +223,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
         });
-
-        console.log('haaaps');
-        console.log(clientAccountModel);
 
         if (clientAccountModel) {
             const subscriptionSeats: number =

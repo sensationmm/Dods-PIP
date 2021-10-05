@@ -9,8 +9,6 @@ import { GetClientAccountParameters } from '../../domain';
 
 export const getRemainingSeats: AsyncLambdaMiddleware<GetClientAccountParameters> =
     async (parameters) => {
-        console.log('-----clientAcccount ');
-        console.log(parameters.clientAccountId);
         const clientAccountUsers =
             await ClientAccountRepository.defaultInstance.getClientAccountUsers(
                 parameters.clientAccountId
@@ -21,11 +19,6 @@ export const getRemainingSeats: AsyncLambdaMiddleware<GetClientAccountParameters
                 parameters.clientAccountId
             );
 
-        //const occupiedSeats:number= clientAccountUsers.dataValues.UserProfileModels.length;
-
-        // const UsersPerClientObj:any = clientAccountUsers.get('UserProfileModels');
-        // console.log('------------------- Client Account Users-----------------');
-        // const occupiedSeats= Object.keys(UsersPerClientObj).length
         const availableSeats: number =
             clientAccountSuscriptedSeats - clientAccountUsers;
 
