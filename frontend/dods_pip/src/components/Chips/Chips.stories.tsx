@@ -19,6 +19,5 @@ export const Default = Template.bind({});
 
 Default.args = {
   label: 'Chip',
-  selected: false,
   disabled: false,
 };

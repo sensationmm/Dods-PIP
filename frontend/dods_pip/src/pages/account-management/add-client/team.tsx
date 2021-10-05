@@ -258,7 +258,12 @@ const Team: React.FC<TeamProps> = ({
               )}
               <TagSelectorStyles.tags>
                 {clientUsers.map((item, count) => (
-                  <Chips key={`chip-${count}`} label={item} avatarType="client" />
+                  <Chips
+                    data-test="added-client-users"
+                    key={`chip-${count}`}
+                    label={item}
+                    avatarType="client"
+                  />
                 ))}
               </TagSelectorStyles.tags>
             </TagSelectorStyles.containerHeader>
@@ -267,6 +272,7 @@ const Team: React.FC<TeamProps> = ({
             <Spacer size={5} />
 
             <Button
+              data-test="create-new-user"
               type="secondary"
               label="Create a New User"
               icon={Icons.IconAdd}

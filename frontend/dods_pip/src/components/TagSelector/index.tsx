@@ -28,7 +28,6 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   selectedValues = [],
   icon,
 }) => {
-  const [deleteTag, setDeleteTag] = React.useState<string>('');
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
   const handleAdd = (val: string) => {
@@ -37,7 +36,6 @@ const TagSelector: React.FC<TagSelectorProps> = ({
       newValues.push(val);
     } else {
       newValues.splice(newValues.indexOf(val), 1);
-      setDeleteTag('');
     }
     onChange(newValues);
   };
@@ -60,12 +58,11 @@ const TagSelector: React.FC<TagSelectorProps> = ({
         <Styled.tags>
           {selectedValues.map((item, count) => (
             <Chips
+              data-test="chips"
               key={`chip-${count}`}
               label={item}
               onCloseClick={handleAdd}
               avatarType={icon as UserType}
-              onClick={() => setDeleteTag(item)}
-              selected={item === deleteTag}
             />
           ))}
         </Styled.tags>
