@@ -9,4 +9,4 @@ this, run the following your terminal:
 * export SERVERLESS_STAGE=dev
 * ./setenv.sh
 * source dev.env
-* npm run test
+* npm run test:coverage
