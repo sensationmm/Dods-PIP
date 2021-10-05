@@ -15,6 +15,9 @@
     "esModuleInterop": true,
     "sourceMap": true,
   },
+  "types": [
+    "jest"
+  ],
   "include": ["./src/**/*.ts"],
   "exclude": [
     "./node_modules/**/*",

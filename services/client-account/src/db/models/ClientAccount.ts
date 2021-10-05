@@ -10,12 +10,17 @@ import {
     ClientAccountModelCreationAttributes,
 } from '../types';
 
-import SubscriptionType from './SubscriptionType';
 import ClientAccountTeam from './ClientAccountTeamModel';
+import SubscriptionType from './SubscriptionType';
+//import SubscriptionType from './SubscriptionType';
+import { SubscriptionTypeModel } from '.';
 import sequelize from '../sequelize';
 
 class ClientAccountModel
-    extends Model<ClientAccountModelAttributes, ClientAccountModelCreationAttributes>
+    extends Model<
+        ClientAccountModelAttributes,
+        ClientAccountModelCreationAttributes
+    >
     implements ClientAccountModelAttributes
 {
     public id!: number;
@@ -29,10 +34,14 @@ class ClientAccountModel
     public contractStartDate!: Date;
     public contractRollover!: boolean;
     public contractEndDate!: Date | null;
-    
+
     public SubscriptionType?: SubscriptionType;
     public ClientAccountTeam?: ClientAccountTeam;
-    
+
+    public consultantHours!: number;
+
+    public subscription!: number | string;
+
     //Timestamps
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -44,10 +53,17 @@ class ClientAccountModel
     public getTeam!: BelongsToGetAssociationMixin<ClientAccountTeam>;
     public setTeam!: BelongsToCreateAssociationMixin<ClientAccountTeam>;
 
-    public static associations: { 
+    public static associations: {
         subscription: Association<ClientAccountModel, SubscriptionType>;
         team: Association<ClientAccountModel, ClientAccountTeam>;
     };
+    //public setSubscription!: BelongsToCreateAssociationMixin<SubscriptionType>;
+
+    public subscriptionType?: SubscriptionTypeModel;
+
+    // public static associations: {
+    //     subscription: Association<ClientAccountModel, SubscriptionTypeModel>;
+    // };
 }
 
 ClientAccountModel.init(
@@ -93,6 +109,12 @@ ClientAccountModel.init(
             defaultValue: 0,
             allowNull: false,
         },
+
+        consultantHours: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+
         contractStartDate: {
             type: DataTypes.DATE,
             allowNull: true,

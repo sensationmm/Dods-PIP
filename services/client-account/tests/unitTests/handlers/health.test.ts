@@ -1,6 +1,6 @@
 import { health } from '../../../src/handlers/health/health';
 
-const FUNCTION_NAME = "health";
+const FUNCTION_NAME = 'health';
 
 describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input - response should be "healthy"', async () => {
@@ -9,4 +9,3 @@ describe(`${FUNCTION_NAME} handler`, () => {
         // expect(response).toEqual({ body: 'healthy', statusCode: 200 });
     });
 });
-

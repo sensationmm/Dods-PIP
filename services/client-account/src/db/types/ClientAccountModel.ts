@@ -11,8 +11,12 @@ export interface ClientAccountModelAttributes {
     subscriptionSeats: number;
     contractStartDate: Date;
     contractRollover: boolean;
-    contractEndDate: Date | null;
+    contractEndDate: Date | null | string;
+    consultantHours: number;
 }
 
 export interface ClientAccountModelCreationAttributes
-    extends Optional<ClientAccountModelAttributes, 'id' | 'uuid' | 'subscriptionSeats'> {}
+    extends Optional<
+        ClientAccountModelAttributes,
+        'id' | 'uuid' | 'subscriptionSeats' | 'consultantHours'
+    > {}
