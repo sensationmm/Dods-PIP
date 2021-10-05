@@ -1,10 +1,16 @@
-import { ClientAccount, ClientAccountResponse, SearchClientAccountResponse } from ".";
-import { ClientAccountModel } from "../../db";
-import { ClientAccountModelCreationAttributes } from "../../db/types";
+import {
+    ClientAccountParameters,
+    ClientAccountResponse,
+    SearchClientAccountResponse,
+} from '.';
 
-export function parseResponseFromModel(model: ClientAccountModel): ClientAccountResponse {
+import { ClientAccountModel } from '../../db';
+import { ClientAccountModelCreationAttributes } from '../../db/types';
+
+export function parseResponseFromModel(
+    model: ClientAccountModel
+): ClientAccountResponse {
     const response: ClientAccountResponse = {
-        id: model.id,
         uuid: model.uuid,
         name: model.name,
         notes: model.notes,
@@ -17,13 +23,16 @@ export function parseResponseFromModel(model: ClientAccountModel): ClientAccount
             ? model.contractEndDate.toJSON()
             : undefined,
         subscription_seats: model.subscriptionSeats,
-        subscription: model.SubscriptionType!
+        consultant_hours: model.consultantHours,
+        subscription: model.SubscriptionType!,
     };
 
     return response;
 }
 
-export function parseModelParameters(requestParameters: ClientAccount): ClientAccountModelCreationAttributes {
+export function parseModelParameters(
+    requestParameters: ClientAccountParameters
+): ClientAccountModelCreationAttributes {
     const parameters: ClientAccountModelCreationAttributes = {
         name: requestParameters.name,
         notes: requestParameters.notes,
@@ -40,7 +49,9 @@ export function parseModelParameters(requestParameters: ClientAccount): ClientAc
     return parameters;
 }
 
-export function parseSearchClientAccountResponse(model: ClientAccountModel): SearchClientAccountResponse {
+export function parseSearchClientAccountResponse(
+    model: ClientAccountModel
+): SearchClientAccountResponse {
     const response = {
         id: model.uuid,
         name: model.name,
@@ -51,14 +62,15 @@ export function parseSearchClientAccountResponse(model: ClientAccountModel): Sea
         team:
             model.ClientAccountTeam &&
             model.ClientAccountTeam.UserProfileModels &&
-            model.ClientAccountTeam.UserProfileModels
-                .map((item) => {
-                    return {
-                        name: item.fullName,
-                        type: model.ClientAccountTeam && model.ClientAccountTeam.parsedType
-                    }
-                }),
-        completed: true
+            model.ClientAccountTeam.UserProfileModels.map((item) => {
+                return {
+                    name: item.fullName,
+                    type:
+                        model.ClientAccountTeam &&
+                        model.ClientAccountTeam.parsedType,
+                };
+            }),
+        completed: true,
     };
-    return response
+    return response;
 }
