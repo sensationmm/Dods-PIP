@@ -20,4 +20,7 @@ export interface ClientAccountPersister {
     updateClientAccount(
         updateParameters: UpdateClientAccountParameters
     ): Promise<ClientAccountResponse | never[]>;
+
+    getClientAccountSeats(clientAccountId: string): Promise<number | never[]>;
+    getClientAccountUsers(clientAccountId: string): Promise<number>;
 }
