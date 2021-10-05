@@ -45,6 +45,7 @@ pipelines:
               includePaths:
                 - "services/userProfile/**"
           script:
+            - ./what2build.sh || true
             - cd services/userProfile
             - npm install
             - export SERVERLESS_STAGE=dev
@@ -55,7 +56,7 @@ pipelines:
             
       - step:
           name: Client Account Service
-          image: node:current-bullseye
+          image: gioatsomoglobal/devopstools:0.4.3
           caches:
             - node
           condition:
@@ -63,9 +64,12 @@ pipelines:
               includePaths:
                 - "services/client-account/**"
           script:
-            - ./what2build.sh
+            - ./what2build.sh || true
             - cd services/client-account
             - npm install
+            - export SERVERLESS_STAGE=dev
+            - ./setenv.sh
+            - source *.env
             - npm run test || true
             - npm run test:coverage || true
 
@@ -124,8 +128,12 @@ pipelines:
                 includePaths:
                   - "services/userProfile/**"
             script:
+              - ./what2build.sh || true
               - cd services/userProfile
               - npm install
+              - export SERVERLESS_STAGE=dev
+              - ./setenv.sh
+              - source *.env
               - npm run test || true
               - npm run test:coverage || true
               - serverless deploy --stage dev
@@ -133,7 +141,7 @@ pipelines:
         - step: 
             name: Client Account Deploy
             size: 2x
-            image: node:current-bullseye
+            image: gioatsomoglobal/devopstools:0.4.3
             condition:
               changesets:
                 includePaths:
@@ -142,6 +150,9 @@ pipelines:
               - ./what2buid.sh
               - cd services/client-account
               - npm install
+              - export SERVERLESS_STAGE=dev
+              - ./setenv.sh
+              - source *.env
               - npm run test || true
               - npm run test:coverage || true
               - serverless deploy --stage dev
