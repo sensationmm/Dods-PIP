@@ -37,7 +37,7 @@ pipelines:
 
       - step:
           name: User Profile Service
-          image: gioatsomoglobal/devopstools:0.4.3
+          image: node:current-bullseye
           caches:
             - node
           condition:
@@ -45,6 +45,7 @@ pipelines:
               includePaths:
                 - "services/userProfile/**"
           script:
+            - ./what2build.sh || true
             - cd services/userProfile
             - npm install
             - export SERVERLESS_STAGE=dev
@@ -63,9 +64,12 @@ pipelines:
               includePaths:
                 - "services/client-account/**"
           script:
-            - ./what2build.sh
+            - ./what2build.sh || true
             - cd services/client-account
             - npm install
+            - export SERVERLESS_STAGE=dev
+            - ./setenv.sh
+            - source *.env
             - npm run test || true
             - npm run test:coverage || true
 
