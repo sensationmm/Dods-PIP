@@ -55,7 +55,7 @@ pipelines:
             
       - step:
           name: Client Account Service
-          image: gioatsomoglobal/devopstools:0.4.3
+          image: node:current-bullseye
           caches:
             - node
           condition:
@@ -63,6 +63,7 @@ pipelines:
               includePaths:
                 - "services/client-account/**"
           script:
+            - ./what2build.sh
             - cd services/client-account
             - npm install
             - npm run test || true
@@ -132,12 +133,13 @@ pipelines:
         - step: 
             name: Client Account Deploy
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.3
+            image: node:current-bullseye
             condition:
               changesets:
                 includePaths:
                   - "services/client-account/**"
             script:
+              - ./what2buid.sh
               - cd services/client-account
               - npm install
               - npm run test || true
