@@ -22,15 +22,11 @@ describe('Select', () => {
     defaultState, // renders default label
     defaultState, // renders custom placeholder
     defaultState, // handles empty helper text
-    // defaultState, // sets value on choosing option
-    // defaultState, // shows correct label for passed prop value
     defaultState, // handles passed prop value not matching options
     { ...defaultState, isOpen: true }, // shows correct open state
     defaultState, // renders disabled state
-    // defaultState, // renders error state
     defaultState, // triggers dropdown on click
     defaultState, // keyboard use - triggers dropdown on focus
-    // { ...defaultState, isOpen: true }, // keyboard use - selects option on keypress
     defaultState, // keyboard use - prevents typing in input
     defaultState, // click outside
   ];
@@ -134,38 +130,6 @@ describe('Select', () => {
       expect(dropdown.props().hasHelper).toEqual(false);
     });
 
-    it.skip('sets value on choosing option', () => {
-      const trigger = wrapper.find('[data-test="select-trigger"]');
-      const option = wrapper.find('[data-test="option-1"]');
-
-      trigger.simulate('click');
-      expect(mockSetOpen).toHaveBeenCalledWith(true);
-
-      option.simulate('click');
-      expect(mockOnChange).toHaveBeenCalledWith('option2');
-      expect(mockSetOpen).toHaveBeenCalledWith(false);
-    });
-
-    it.skip('shows correct label for passed prop value', () => {
-      wrapper = shallow(
-        <Select
-          id="example"
-          value="option3"
-          onChange={mockOnChange}
-          options={[
-            { label: 'Option 1', value: 'option1' },
-            { label: 'Option 2', value: 'option2' },
-            { label: 'Option 3', value: 'option3' },
-          ]}
-        />,
-      );
-
-      const input = wrapper.find('[data-test="select-input"]');
-      const icon = wrapper.find('[data-test="selected-icon"]');
-      expect(input.props().value).toEqual('Option 3');
-      expect(icon.length).toEqual(1);
-    });
-
     it('handles passed prop value not matching options', () => {
       wrapper = shallow(
         <Select
@@ -208,26 +172,6 @@ describe('Select', () => {
       expect(trigger.length).toEqual(0);
     });
 
-    it.skip('renders error state', () => {
-      wrapper = shallow(
-        <Select
-          id="example"
-          value="option1"
-          onChange={mockOnChange}
-          placeholder={'Custom value'}
-          options={[
-            { label: 'Option 1', value: 'option1' },
-            { label: 'Option 2', value: 'option2' },
-            { label: 'Option 3', value: 'option3' },
-          ]}
-          error="Required"
-        />,
-      );
-
-      const icon = wrapper.find('[data-test="selected-icon"]');
-      expect(icon.props().color).toEqual(color.alert.red);
-    });
-
     it('triggers dropdown on click', () => {
       const trigger = wrapper.find('[data-test="select-trigger"]');
 
@@ -239,13 +183,6 @@ describe('Select', () => {
       const input = wrapper.find('[data-test="select-input"]');
       input.simulate('focus');
       expect(mockSetOpen).toHaveBeenCalledWith(true);
-    });
-
-    it.skip('keyboard use - selects option on keypress', () => {
-      const option = wrapper.find('[data-test="option-1"]');
-      option.simulate('keypress');
-      expect(mockOnChange).toHaveBeenCalledWith('option2');
-      expect(mockSetOpen).toHaveBeenCalledWith(false);
     });
 
     it('keyboard use - prevents typing in input', () => {

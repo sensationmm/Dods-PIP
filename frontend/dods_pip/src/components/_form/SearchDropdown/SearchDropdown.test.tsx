@@ -11,8 +11,6 @@ describe('SearchDropdown', () => {
   const setSearch = jest.fn();
   const setResults = jest.fn();
 
-  let count = 0;
-
   const defaultState = {
     search: '',
     results: [],
@@ -35,18 +33,11 @@ describe('SearchDropdown', () => {
     onChange: mockOnChange,
   };
 
-  const states = [
-    defaultState, //renders without error
-    defaultState, // shows expected results
-    defaultState, // shows capped (5) expected results
-    defaultState,
-  ];
-
   beforeEach(() => {
     wrapper = shallow(<SearchDropdown {...props} />);
     useStateSpy
-      .mockImplementationOnce(() => [states[count].search, setSearch])
-      .mockImplementationOnce(() => [states[count].results, setResults]);
+      .mockImplementationOnce(() => [defaultState.search, setSearch])
+      .mockImplementationOnce(() => [defaultState.results, setResults]);
   });
 
   it('renders without error', () => {
@@ -65,11 +56,25 @@ describe('SearchDropdown', () => {
     ]);
   });
 
-  it('shows capped (5) expected results', () => {
+  it('handles search', () => {
     const searchField = wrapper.find('[data-test="search-field"]');
     searchField.props().onChange('ab');
 
     expect(setSearch).toHaveBeenCalledWith('ab');
+    expect(setResults).toHaveBeenCalledWith([
+      { value: 'option1', label: 'abc' },
+      { value: 'option2', label: 'abcde' },
+      { value: 'option3', label: 'abcd' },
+      { value: 'option4', label: 'abdec' },
+      { value: 'option5', label: 'abc' },
+    ]);
+  });
+
+  it('handles case insensitive search', () => {
+    const searchField = wrapper.find('[data-test="search-field"]');
+    searchField.props().onChange('AB');
+
+    expect(setSearch).toHaveBeenCalledWith('AB');
     expect(setResults).toHaveBeenCalledWith([
       { value: 'option1', label: 'abc' },
       { value: 'option2', label: 'abcde' },
@@ -85,8 +90,17 @@ describe('SearchDropdown', () => {
     expect(dropdown.props().hasHelper).toEqual(false);
   });
 
+  it('handles onChange', () => {
+    wrapper = shallow(<SearchDropdown {...props} />);
+    const dropdown = wrapper.find('[data-test="results-dropdown"]');
+    dropdown.props().setValue('test');
+
+    expect(mockOnChange).toHaveBeenCalledWith('test');
+    expect(setSearch).toHaveBeenCalledWith('');
+    expect(setResults).toHaveBeenCalledWith([]);
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
-    count++;
   });
 });
