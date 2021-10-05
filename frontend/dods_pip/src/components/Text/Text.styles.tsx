@@ -144,7 +144,7 @@ export const label = styled.label`
   padding: 0;
   margin: 0;
 
-  &.small {
+  &.labelSmall {
     font-size: 12px;
     letter-spacing: 1px;
     line-height: auto;

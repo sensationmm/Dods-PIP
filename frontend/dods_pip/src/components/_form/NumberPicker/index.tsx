@@ -24,7 +24,6 @@ export interface NumberPickerProps {
   onChange: (val: string) => void;
   onFocus?: () => void;
   onBlur?: (val?: string) => void;
-  placeholder?: string;
   tabIndex?: number;
   minVal?: string;
   maxVal?: string;
@@ -35,7 +34,6 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
   size = 'medium',
   label,
   value,
-  placeholder,
   isDisabled = false,
   required,
   optional,
@@ -100,7 +98,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
         >
           <Icon
             src={Icons.IconMinus}
-            size={IconSize.large}
+            size={IconSize.mediumLarge}
             data-test="minus-icon"
             color={
               isDisabled
@@ -129,7 +127,6 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
             })}
             data-test="component-input-number"
             value={validateNumeric(parseInt(value)) ? value : ''}
-            placeholder={placeholder}
             disabled={isDisabled}
             required={required}
           ></Styled.input>
@@ -152,7 +149,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
         >
           <Icon
             src={Icons.IconAdd}
-            size={IconSize.large}
+            size={IconSize.mediumLarge}
             data-test="plus-icon"
             color={
               isDisabled
@@ -170,10 +167,10 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
       {(helperText || typeof error === 'string') && (
         <Text
           data-test="component-input-base-helper"
-          type={'span'}
+          type="labelSmall"
           color={
             isDisabled
-              ? color.base.grey
+              ? color.base.greyDark
               : typeof error === 'string'
               ? color.alert.red
               : color.theme.blueMid

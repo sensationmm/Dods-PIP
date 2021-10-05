@@ -207,7 +207,7 @@ describe('NumberPicker', () => {
         />,
       );
       const minusButton = wrapper.find('[data-test="component-input-base-helper"]');
-      expect(minusButton.find(Text).props().color).toEqual(color.base.grey);
+      expect(minusButton.find(Text).props().color).toEqual(color.base.greyDark);
     });
     it('should show the helper text in red due to the error state', () => {
       const typewatcher = jest.fn();

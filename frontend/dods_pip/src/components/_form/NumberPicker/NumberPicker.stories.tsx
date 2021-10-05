@@ -21,7 +21,6 @@ Primary.args = {
   isDisabled: false,
   error: undefined,
   helperText: undefined,
-  placeholder: '',
   required: false,
   optional: false,
 };
