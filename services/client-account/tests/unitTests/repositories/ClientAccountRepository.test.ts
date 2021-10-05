@@ -30,6 +30,12 @@ const GET_FUNCTION =
 const CREATE_FUNCTION =
     ClientAccountRepository.defaultInstance.createClientAccount.name;
 
+const GET_CLIENT_ACCOUNT_SUBS_SEATS =
+    ClientAccountRepository.defaultInstance.getClientAccountSeats.name;
+
+const GET_CLIENT_ACCOUNT_USERS =
+    ClientAccountRepository.defaultInstance.getClientAccountUsers.name;
+
 const dbMock = new SequelizeMock();
 
 const ClientAccountMock = dbMock.define(
@@ -83,6 +89,25 @@ ClientAccountMock.$queryInterface.$useHandler(function (
                 contractEndDate: new Date('2022-02-01T01:01:01.000Z'),
                 subscription: undefined,
             });
+        } else if (
+            queryOptions[0].where.uuid ===
+            '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e'
+        ) {
+            return ClientAccountMock.build({
+                id: 3,
+                uuid: '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e',
+                name: 'Company Tree',
+                notes: null,
+                contactName: 'Marty MacFly',
+                contactEmailAddress: 'marti@example.com',
+                contactTelephoneNumber: '+122233443',
+                subscriptionSeats: 27,
+                UserProfileModels: {
+                    user1: {},
+                    user2: {},
+                    user3: {},
+                },
+            });
         } else {
             return null;
         }
@@ -119,9 +144,12 @@ SubscriptionTypeMock.$queryInterface.$useHandler(function (
     }
 });
 
+const UserProfileMock = dbMock.define('dods_users', {});
+
 const testRepository = new ClientAccountRepository(
     ClientAccountMock,
-    SubscriptionTypeMock
+    SubscriptionTypeMock,
+    UserProfileMock
 );
 
 afterEach(() => {
@@ -326,6 +354,79 @@ describe(`${CREATE_FUNCTION} handler`, () => {
             //console.log(response);
         } catch (error) {
             expect(error).toEqual('Error: Bad request');
+        }
+    });
+});
+
+describe(`${GET_CLIENT_ACCOUNT_SUBS_SEATS} handler`, () => {
+    test(`${GET_CLIENT_ACCOUNT_SUBS_SEATS} Valid input Happy case `, async () => {
+        const clientAccountId = '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e';
+
+        const expectedAmountSeats = 27;
+
+        const response = await testRepository.getClientAccountSeats(
+            clientAccountId
+        );
+
+        expect(response).toEqual(expectedAmountSeats);
+    });
+
+    test(`${GET_CLIENT_ACCOUNT_SUBS_SEATS} Invalid client account `, async () => {
+        const clientAccountId = '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e';
+        const expectedError = new Error('Error: clientAccount not found');
+        try {
+            await testRepository.getClientAccountSeats(clientAccountId);
+        } catch (error) {
+            expect(error).toEqual(expectedError);
+        }
+    });
+    test(`${GET_CLIENT_ACCOUNT_USERS} empty client Account `, async () => {
+        const clientAccountId = '';
+
+        const expectedError = new Error(
+            'Error: clientAccountId cannot be empty'
+        );
+        try {
+            await testRepository.getClientAccountSeats(clientAccountId);
+        } catch (error) {
+            expect(error).toEqual(expectedError);
+        }
+    });
+});
+
+describe(`${GET_CLIENT_ACCOUNT_USERS} handler`, () => {
+    test(`${GET_CLIENT_ACCOUNT_USERS} Valid input Happy case `, async () => {
+        const clientAccountId = '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e';
+
+        const expectedAmountUsers = 3;
+
+        const response = await testRepository.getClientAccountUsers(
+            clientAccountId
+        );
+        expect(response).toEqual(expectedAmountUsers);
+    });
+
+    test(`${GET_CLIENT_ACCOUNT_USERS} Invalid client account  `, async () => {
+        const clientAccountId = '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e';
+
+        const expectedError = new Error('Error: clientAccount not found');
+        try {
+            await testRepository.getClientAccountUsers(clientAccountId);
+        } catch (error) {
+            expect(error).toEqual(expectedError);
+        }
+    });
+
+    test(`${GET_CLIENT_ACCOUNT_USERS} empty client Account `, async () => {
+        const clientAccountId = '';
+
+        const expectedError = new Error(
+            'Error: clientAccountId cannot be empty'
+        );
+        try {
+            await testRepository.getClientAccountUsers(clientAccountId);
+        } catch (error) {
+            expect(error).toEqual(expectedError);
         }
     });
 });
