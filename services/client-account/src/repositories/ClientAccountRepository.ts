@@ -28,11 +28,16 @@ export class ClientAccountError extends Error {
 }
 export class ClientAccountRepository implements ClientAccountPersister {
     static defaultInstance: ClientAccountPersister =
-        new ClientAccountRepository(ClientAccountModel, SubscriptionTypeModel);
+        new ClientAccountRepository(
+            ClientAccountModel,
+            SubscriptionTypeModel,
+            UserProfileModel
+        );
 
     constructor(
         private model: typeof ClientAccountModel,
-        private subsModel: typeof SubscriptionTypeModel
+        private subsModel: typeof SubscriptionTypeModel,
+        private userModel: typeof UserProfileModel
     ) {}
 
     async createClientAccount(
@@ -180,9 +185,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 throw new Error('Error: Wrong subscription uuid');
             }
 
-            console.log('-------SubsId');
-            console.log(subscriptionId);
-
             // Save directly if comes as a parameter
             //clientAccountToUpdate.subscription=updateParameters.subscription;
 
@@ -203,11 +205,49 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
             const updateRecord = await clientAccountToUpdate.save();
 
-            console.log('----IUpdate ');
-            console.log(updateRecord);
             const newClientAccount = parseResponseFromModel(updateRecord);
 
             return newClientAccount;
+        } else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
+
+    async getClientAccountSeats(
+        clientAccountId: string
+    ): Promise<number | never[]> {
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+
+        const clientAccountModel = await this.model.findOne({
+            where: { uuid: clientAccountId },
+        });
+
+        if (clientAccountModel) {
+            const subscriptionSeats: number =
+                clientAccountModel.subscriptionSeats;
+            return subscriptionSeats;
+        } else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
+
+    async getClientAccountUsers(clientAccountId: string): Promise<number> {
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+
+        const clientAccountModel = await this.model.findOne({
+            where: { uuid: clientAccountId },
+            include: this.userModel,
+        });
+
+        if (clientAccountModel) {
+            const UsersPerClientObj: any =
+                clientAccountModel.get('UserProfileModels');
+            const occupiedSeats = Object.keys(UsersPerClientObj).length;
+            return occupiedSeats;
         } else {
             throw new Error('Error: clientAccount not found');
         }

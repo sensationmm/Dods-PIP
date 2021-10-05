@@ -143,3 +143,11 @@ functions:
             - http:
                   method: put
                   path: clientaccount/{clientAccountId}
+
+    getRemainingSeats:
+        handler: src/handlers/getRemainingSeats/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: clientaccount/{clientAccountId}/seats
