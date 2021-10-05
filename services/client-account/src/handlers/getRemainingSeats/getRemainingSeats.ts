@@ -18,7 +18,6 @@ export const getRemainingSeats: AsyncLambdaMiddleware<GetClientAccountParameters
             await ClientAccountRepository.defaultInstance.getClientAccountSeats(
                 parameters.clientAccountId
             );
-
         const availableSeats: number =
             clientAccountSuscriptedSeats - clientAccountUsers;
 
