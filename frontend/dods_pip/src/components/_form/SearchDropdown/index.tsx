@@ -22,7 +22,9 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 
   const searchHandler = (val: string) => {
     setSearch(val);
-    const res = values.filter((item) => val !== '' && item.label.toLowerCase().indexOf(val) > -1);
+    const res = values.filter(
+      (item) => val !== '' && item.label.toLowerCase().indexOf(val.toLowerCase()) > -1,
+    );
     setResults(res.slice(0, 5));
   };
 
