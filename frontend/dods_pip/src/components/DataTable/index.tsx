@@ -21,17 +21,18 @@ export type DataTableDataProps = {
 
 export interface DataTableProps extends DataTableHeadingProps, DataTableRowProps {}
 
-const DataTableHeading: React.FC<DataTableHeadingProps> = ({ headings, colWidths }) => {
+export const DataTableHeading: React.FC<DataTableHeadingProps> = ({ headings, colWidths }) => {
   const totalWidths = colWidths ? colWidths.reduce((prev, curr) => prev + curr, 0) : 0;
 
   return (
-    <Styled.tableHead>
+    <Styled.tableHead data-test="data-table-headings">
       <Styled.tableRow>
         {headings.map((item, count) => (
           <Styled.tableHeading
             key={`heading-${count}`}
+            data-test={`heading-${count}`}
             style={{
-              width: colWidths ? `${(colWidths[count] / totalWidths) * 100}%` : 'auto',
+              width: colWidths ? `${Math.floor((colWidths[count] / totalWidths) * 100)}%` : 'auto',
             }}
           >
             {item}
@@ -42,11 +43,11 @@ const DataTableHeading: React.FC<DataTableHeadingProps> = ({ headings, colWidths
   );
 };
 
-const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
+export const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
   let block = '';
 
   return (
-    <Styled.tableBody>
+    <Styled.tableBody data-test="data-table-rows">
       {rows.map((item, count) => {
         const row = [];
         if (item[0] !== block) {
@@ -54,7 +55,7 @@ const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
             <Styled.tableRow key="row-header-empty">
               <Styled.tableCellEmpty isFirst={block === ''} colSpan={item.length} />
             </Styled.tableRow>,
-            <Styled.tableRow key={`row-header-${count}`}>
+            <Styled.tableRow data-test="block-header" key={`row-header-${count}`}>
               <Styled.tableBlockHeader colSpan={item.length}>{item[0]}</Styled.tableBlockHeader>
             </Styled.tableRow>,
           );
@@ -80,7 +81,7 @@ const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,  @typescript-eslint/no-explicit-any
 export const DataTableSort = (data: any): any => {
   return data.sort((a: DataObject, b: DataObject) => {
     return a.name >= b.name ? 1 : -1;
@@ -91,14 +92,16 @@ const DataTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => (
   <Styled.wrapper data-test="component-data-table" cellSpacing={0}>
     <DataTableHeading headings={headings} colWidths={colWidths} />
     {rows.length > 0 ? (
-      <DataTableRows rows={rows} />
+      <DataTableRows data-test="data-table-rows" rows={rows} />
     ) : (
       <Styled.tableBody>
         <Styled.tableRow>
           <Styled.tableCellEmpty isFirst colSpan={headings.length} />
         </Styled.tableRow>
         <Styled.tableRow>
-          <Styled.tableCellNoData colSpan={headings.length}>No data to show</Styled.tableCellNoData>
+          <Styled.tableCellNoData data-test="empty-data-warning" colSpan={headings.length}>
+            No data to show
+          </Styled.tableCellNoData>
         </Styled.tableRow>
       </Styled.tableBody>
     )}
