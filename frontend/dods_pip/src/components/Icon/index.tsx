@@ -7,6 +7,7 @@ import * as Styled from './Icon.styles';
 export enum IconSize {
   small = 10,
   medium = 14,
+  mediumLarge = 16,
   large = 18,
   xlarge = 30,
   xxlarge = 60,

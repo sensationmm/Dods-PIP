@@ -86,7 +86,7 @@ export const input = styled.input`
   }
 
   &.disabled {
-    color: ${color.base.grey};
+    color: ${color.base.greyDark};
     border-color: ${color.base.grey};
     background: ${color.base.greyLight};
     pointer-events: none;
