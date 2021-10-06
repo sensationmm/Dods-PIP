@@ -45,14 +45,14 @@ pipelines:
               includePaths:
                 - "services/userProfile/**"
           script:
-            - ./what2build.sh || true
+            - ./what2build.sh
             - cd services/userProfile
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - npm run test
-            - npm run test:coverage
+            - NODE_ENV=test npm run test
+            - NODE_ENV=test npm run test:coverage
             
       - step:
           name: Client Account Service
@@ -64,14 +64,14 @@ pipelines:
               includePaths:
                 - "services/client-account/**"
           script:
-            - ./what2build.sh || true
+            - ./what2build.sh
             - cd services/client-account
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - npm run test || true
-            - npm run test:coverage || true
+            - NODE_ENV=test npm run test
+            - NODE_ENV=test npm run test:coverage
 
       - step:
           name: Validate OpenAPI definitions
@@ -115,8 +115,8 @@ pipelines:
             script:
               - cd services/dods-iam
               - npm install
-              - npm run test || true
-              - npm run test:coverage || true
+              - NODE_ENV=test npm run test 
+              - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
         - step: 
@@ -128,14 +128,14 @@ pipelines:
                 includePaths:
                   - "services/userProfile/**"
             script:
-              - ./what2build.sh || true
+              - ./what2build.sh 
               - cd services/userProfile
               - npm install
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
               - source *.env
-              - npm run test || true
-              - npm run test:coverage || true
+              - NODE_ENV=test npm run test 
+              - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
         - step: 
@@ -153,8 +153,8 @@ pipelines:
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
               - source *.env
-              - npm run test || true
-              - npm run test:coverage || true
+              - NODE_ENV=test npm run test 
+              - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
         - step:
