@@ -161,7 +161,7 @@ function get_last_successful_commit {
     else
         SELECTOR='(.target.selector.type=="branches") and (.target.selector.pattern=="'${BITBUCKET_BRANCH}'")'
     fi
-    get "pipelines/?sort=-created_on&status=PASSED&status=SUCCESSFUL&page=1&pagelen=50" \
+    get "pipelines/?sort=-created_on&status=PASSED&status=SUCCESSFUL&page=1&pagelen=100" \
         | jq --raw-output "[.values[]|select($SELECTOR)] | max_by(.build_number).target.commit.hash"
 }
 
@@ -197,19 +197,22 @@ require_env_var BITBUCKET_REPO_FULL_NAME
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Resolve commit range for current build 
-# LAST_SUCCESSFUL_COMMIT=$(get_last_successful_commit)
-LAST_SUCCESSFUL_COMMIT=$(get_origin_commit)
-echo "Last commit: ${LAST_SUCCESSFUL_COMMIT}"
+LAST_SUCCESSFUL_COMMIT=$(get_last_successful_commit)
+echo "Last commit built on this branch: ${LAST_SUCCESSFUL_COMMIT}"
+
+SHOULD_UNSHALLOW='false'
 if [[ ${LAST_SUCCESSFUL_COMMIT} == "null" ]]; then
-    COMMIT_RANGE="origin/master"
-else
-    COMMIT_RANGE="$(get_current_commit)..${LAST_SUCCESSFUL_COMMIT}"
+    echo "Looking for commit were ${BITBUCKET_BRANCH} was created."
+    LAST_SUCCESSFUL_COMMIT=$(get_origin_commit)
+    SHOULD_UNSHALLOW='true'
 fi
+
+COMMIT_RANGE="$(get_current_commit)..${LAST_SUCCESSFUL_COMMIT}"
 echo "Commit range: $COMMIT_RANGE"
 
 # Ensure we have all changes from last successful build
 if [[ -f $(git rev-parse --git-dir)/shallow ]]; then
-    if [[ ${LAST_SUCCESSFUL_COMMIT} == "null" ]]; then
+    if [[ ${SHOULD_UNSHALLOW} == "true" ]]; then
         git fetch --unshallow
     else 
         DEPTH=1
@@ -223,6 +226,7 @@ if [[ -f $(git rev-parse --git-dir)/shallow ]]; then
 fi
 
 # Collect all modified packages
+echo "Collecting packages to build..."
 PACKAGES_TO_BUILD=$($DIR/tools/list-packages-to-build.sh $COMMIT_RANGE)
 
 # If nothing to build inform and exit
