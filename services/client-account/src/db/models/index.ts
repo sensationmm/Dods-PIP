@@ -1,3 +1,4 @@
+import { config } from '../../domain';
 import ClientAccountModel from './ClientAccount';
 import ClientAccountTeamModel from './ClientAccountTeamModel';
 import SubscriptionTypeModel from './SubscriptionType';
@@ -15,10 +16,14 @@ ClientAccountModel.belongsTo(SubscriptionTypeModel, {
 //     foreignKey: 'clientAccountId',
 //     sourceKey: 'id'
 // });
-ClientAccountModel.belongsTo(ClientAccountTeamModel, {
-    foreignKey: 'id',
-    targetKey: 'clientAccountId',
-});
+
+if (!config.isTestEnv) {
+    ClientAccountModel.belongsTo(ClientAccountTeamModel, {
+        foreignKey: 'id',
+        targetKey: 'clientAccountId',
+    });
+}
+
 ClientAccountTeamModel.hasMany(UserProfileModel, {
     foreignKey: 'id',
     sourceKey: 'userId',

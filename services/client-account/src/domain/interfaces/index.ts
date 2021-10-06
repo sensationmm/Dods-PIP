@@ -4,3 +4,5 @@ export * from './SubscriptionType';
 export * from './SubscriptionTypePersister';
 export * from './Pagination';
 export * from './Parser';
+export * from './ClientAccountTeam';
+export * from './ClientAccountTeamPersister';
