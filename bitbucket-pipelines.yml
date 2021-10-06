@@ -147,7 +147,7 @@ pipelines:
                 includePaths:
                   - "services/client-account/**"
             script:
-              - ./what2buid.sh
+              - ./what2build.sh
               - cd services/client-account
               - npm install
               - export SERVERLESS_STAGE=dev
