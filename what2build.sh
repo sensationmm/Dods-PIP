@@ -197,8 +197,8 @@ require_env_var BITBUCKET_REPO_FULL_NAME
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Resolve commit range for current build 
-LAST_SUCCESSFUL_COMMIT=$(get_last_successful_commit)
-# LAST_SUCCESSFUL_COMMIT=$(get_origin_commit)
+# LAST_SUCCESSFUL_COMMIT=$(get_last_successful_commit)
+LAST_SUCCESSFUL_COMMIT=$(get_origin_commit)
 echo "Last commit: ${LAST_SUCCESSFUL_COMMIT}"
 if [[ ${LAST_SUCCESSFUL_COMMIT} == "null" ]]; then
     COMMIT_RANGE="origin/master"
