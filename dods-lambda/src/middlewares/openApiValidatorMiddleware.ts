@@ -5,7 +5,7 @@ import { awsOpenApiRequestAdapter } from "../validation";
 
 export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices<APIGatewayProxyEvent> = async (event, context, callback, services, next) => {
 
-    const { genericOpenApiValidator, validateRequests, validateResponses } = services;
+    const { genericOpenApiValidator, validateRequests, validateResponses } = services!;
 
     Logger.info(`OpenApiValidatorMiddleware Entry`, { validateRequests, validateResponses });
 
@@ -38,7 +38,7 @@ export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices<APIGa
         }
     }
 
-    const response = await next(data as any, context, callback);
+    const response = await next!(data as any, context, callback);
 
     if (genericOpenApiValidator && openApiRequest) {
         await genericOpenApiValidator.validateResponse(openApiRequest, response);

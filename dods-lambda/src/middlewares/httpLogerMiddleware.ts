@@ -6,7 +6,7 @@ export const httpLogerMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = 
 
     Logger.info(`HttpLogerMiddleware Entry`, { path: event.path, method: event.httpMethod });
 
-    const result = await next(event, context, callback);
+    const result = await next!(event, context, callback);
 
     Logger.info(`HttpLogerMiddleware Success`);
 

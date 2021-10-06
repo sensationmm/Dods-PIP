@@ -9,7 +9,7 @@ export const errorMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = asyn
 
     try {
 
-        const result = await next(event, context, callback);
+        const result = await next!(event, context, callback);
 
         const apiGatewayResult = result as APIGatewayProxyStructuredResultV2;
 
