@@ -1,8 +1,8 @@
-import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { mocked } from 'ts-jest/utils';
 
 import { ClientAccountRepository } from '../../../src/repositories';
 import { ClientAccountResponse } from '../../../src/domain';
-import { mocked } from 'ts-jest/utils';
 import { updateClientAccount } from '../../../src/handlers/updateClientAccount/updateClientAccount';
 
 const FUNCTION_NAME = updateClientAccount.name;
@@ -41,6 +41,8 @@ jest.mock('../../../src/repositories/ClientAccountRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
 
+const defaultContext = createContext();
+
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.updateClientAccount.mockClear();
 });
@@ -69,8 +71,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             expectedRepositoryResponse
         );
 
-        // @ts-ignore
-        const response = await updateClientAccount(clientAccount);
+        const response = await updateClientAccount(clientAccount, defaultContext);
 
         expect(response).toEqual(expectedResponse);
 
@@ -95,9 +96,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: 'End date must be greater than start date',
         });
 
-        // @ts-ignore
 
-        const response = await updateClientAccount(clientAccount);
+        const response = await updateClientAccount(clientAccount, defaultContext);
+
         expect(response).toEqual(expectedResponse);
     });
 
@@ -117,8 +118,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: 'Must provide contract end Date',
         });
 
-        // @ts-ignore
-        const response = await updateClientAccount(clientAccount);
+        const response = await updateClientAccount(clientAccount, defaultContext);
+
         expect(response).toEqual(expectedResponse);
     });
 
@@ -145,8 +146,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 }
             );
 
-            // @ts-ignore
-            await updateClientAccount(clientAccount);
+            await updateClientAccount(clientAccount, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {
@@ -180,8 +180,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 }
             );
 
-            // @ts-ignore
-            await updateClientAccount(clientAccount);
+            await updateClientAccount(clientAccount, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {
@@ -214,8 +213,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 }
             );
 
-            //@ts-ignore
-            await updateClientAccount(clientAccount);
+            await updateClientAccount(clientAccount, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {

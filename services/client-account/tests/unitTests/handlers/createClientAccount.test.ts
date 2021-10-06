@@ -1,12 +1,9 @@
-import {
-    ClientAccountError,
-    ClientAccountRepository,
-} from '../../../src/repositories';
-import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { mocked } from 'ts-jest/utils';
 
 import { ClientAccountParameters } from '../../../src/domain';
+import { ClientAccountError, ClientAccountRepository, } from '../../../src/repositories';
 import { createClientAccount } from '../../../src/handlers/createClientAccount/createClientAccount';
-import { mocked } from 'ts-jest/utils';
 
 const FUNCTION_NAME = createClientAccount.name;
 
@@ -25,9 +22,7 @@ jest.mock('../../../src/repositories/ClientAccountRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
 
-const createClientAccountMock = async (
-    clientAccount: ClientAccountParameters
-) => {
+const createClientAccountMock = async (clientAccount: ClientAccountParameters) => {
     if (!clientAccount.name) {
         throw new ClientAccountError('Error: Bad Request', {
             details: 'error test',
@@ -40,11 +35,13 @@ const createClientAccountMock = async (
 
     return SUCCESS_ACCOUNT_RESPONSE;
 };
+
+const defaultContext = createContext();
+
 beforeEach(() => {
-    mockedClientAccountRepository.defaultInstance.createClientAccount.mockImplementation(
-        createClientAccountMock
-    );
+    mockedClientAccountRepository.defaultInstance.createClientAccount.mockImplementation(createClientAccountMock);
 });
+
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.createClientAccount.mockClear();
 });
@@ -59,20 +56,18 @@ describe(`${FUNCTION_NAME} handler`, () => {
             contact_telephone_number: '+573123456531',
             contract_start_date: '2021-01-01T01:01:01.001Z',
             contract_rollover: false,
-        };
+        } as ClientAccountParameters;
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Client account successfully created.',
             data: SUCCESS_ACCOUNT_RESPONSE,
         });
-        // @ts-ignore
-        const response = await createClientAccount(clientAccount);
+
+        const response = await createClientAccount(clientAccount, defaultContext);
 
         expect(response).toEqual(expectedResponse);
 
-        expect(
-            mockedClientAccountRepository.defaultInstance.createClientAccount
-        ).toHaveBeenCalledTimes(1);
+        expect(mockedClientAccountRepository.defaultInstance.createClientAccount).toHaveBeenCalledTimes(1);
     });
 });

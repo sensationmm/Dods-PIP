@@ -1,8 +1,8 @@
-import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { createApiGatewayProxyEvent, createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { mocked } from 'ts-jest/utils';
 
 import { SubscriptionTypeRepository } from '../../../src/repositories';
 import { getSubscriptionTypes } from '../../../src/handlers/getSubscriptionTypes/getSubscriptionTypes';
-import { mocked } from 'ts-jest/utils';
 
 const FUNCTION_NAME = getSubscriptionTypes.name;
 
@@ -29,10 +29,11 @@ const SUCCESS_SUBSCRIPTION_TYPE_RESPONSE = [
 
 jest.mock('../../../src/repositories/SubscriptionTypeRepository');
 
-const mockedSubscriptionTypeRepository = mocked(
-    SubscriptionTypeRepository,
-    true
-);
+const mockedSubscriptionTypeRepository = mocked(SubscriptionTypeRepository, true);
+
+const defaultApiGatewayEvent = createApiGatewayProxyEvent();
+
+const defaultContext = createContext();
 
 afterEach(() => {
     mockedSubscriptionTypeRepository.defaultInstance.getSubscriptionTypes.mockClear();
@@ -42,22 +43,14 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME} Valid input`, async () => {
         const expectedRepositoryResponse = SUCCESS_SUBSCRIPTION_TYPE_RESPONSE;
 
-        const expectedResponse = new HttpResponse(
-            HttpStatusCode.OK,
-            JSON.stringify(SUCCESS_SUBSCRIPTION_TYPE_RESPONSE)
-        );
+        const expectedResponse = new HttpResponse(HttpStatusCode.OK, JSON.stringify(SUCCESS_SUBSCRIPTION_TYPE_RESPONSE));
 
-        mockedSubscriptionTypeRepository.defaultInstance.getSubscriptionTypes.mockResolvedValue(
-            expectedRepositoryResponse
-        );
-        // @ts-ignore
-        const response = await getSubscriptionTypes();
+        mockedSubscriptionTypeRepository.defaultInstance.getSubscriptionTypes.mockResolvedValue(expectedRepositoryResponse);
+
+        const response = await getSubscriptionTypes(defaultApiGatewayEvent, defaultContext);
 
         expect(response).toEqual(expectedResponse);
 
-        expect(
-            mockedSubscriptionTypeRepository.defaultInstance
-                .getSubscriptionTypes
-        ).toHaveBeenCalledTimes(1);
+        expect(mockedSubscriptionTypeRepository.defaultInstance.getSubscriptionTypes).toHaveBeenCalledTimes(1);
     });
 });

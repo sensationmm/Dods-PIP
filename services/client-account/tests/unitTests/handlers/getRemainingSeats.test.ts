@@ -1,8 +1,9 @@
-import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { mocked } from 'ts-jest/utils';
 
 import { ClientAccountRepository } from '../../../src/repositories';
 import { getRemainingSeats } from '../../../src/handlers/getRemainingSeats/getRemainingSeats';
-import { mocked } from 'ts-jest/utils';
+import { GetClientAccountParameters } from '../../../src/domain';
 
 const FUNCTION_NAME = getRemainingSeats.name;
 
@@ -15,11 +16,11 @@ afterEach(() => {
     mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockClear();
 });
 
+const defaultContext = createContext();
+
 describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME} Valid input`, async () => {
-        const clientAccountId = '1234ABC';
-
-        //const expectedRepositoryResponse = SUCCESS_ACCOUNT_RESPONSE;
+        const clientAccountParameters: GetClientAccountParameters = { clientAccountId: '1234ABC' };
 
         const expectedClientUsersResponse = 3;
 
@@ -31,21 +32,18 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: 14,
         });
 
-        mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockResolvedValue(
-            expectedSubscriptionSeats
-        );
+        mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockResolvedValue(expectedSubscriptionSeats);
 
-        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(
-            expectedClientUsersResponse
-        );
-        // @ts-ignore
-        const response = await getRemainingSeats(clientAccountId);
+        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(expectedClientUsersResponse);
+
+        const response = await getRemainingSeats(clientAccountParameters, defaultContext);
 
         expect(response).toEqual(expectedResponse);
     });
 
     test(`${FUNCTION_NAME} Invalid input`, async () => {
-        const clientAccountId = '';
+        const clientAccountParameters: GetClientAccountParameters = { clientAccountId: '' };
+
         try {
             mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockImplementation(
                 async (clientAccountId: string) => {
@@ -57,8 +55,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
                     return [];
                 }
             );
-            // @ts-ignore
-            await getRemainingSeats(clientAccountId);
+
+            await getRemainingSeats(clientAccountParameters, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {
@@ -69,7 +67,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test(`${FUNCTION_NAME} client account doesn't exist`, async () => {
-        const clientAccountId = '54ee9977-35a8-4cb8-baf3-d1d07920fd5f';
+        const clientAccountParameters: GetClientAccountParameters = { clientAccountId: '54ee9977-35a8-4cb8-baf3-d1d07920fd5f' };
+
         try {
             mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockImplementation(
                 async (clientAccountId: string) => {
@@ -84,8 +83,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
                     return [];
                 }
             );
-            // @ts-ignore
-            await getRemainingSeats(clientAccountId);
+
+            await getRemainingSeats(clientAccountParameters, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {
