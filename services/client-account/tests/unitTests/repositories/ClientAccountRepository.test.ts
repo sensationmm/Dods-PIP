@@ -1,17 +1,17 @@
 import { ClientAccountError, ClientAccountRepository } from '../../../src/repositories';
-import { ClientAccountParameters } from '../../../src/domain';
+
 import { SubscriptionTypeModel } from '../../../src/db';
 
 const SUCCESS_UPDATE_CLIENT_ACCOUNT = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
     name: 'Company One',
-    notes: null,
+    notes: '',
     contact_name: 'Marty MacFly',
     contact_email_address: 'marti@example.com',
     contact_telephone_number: '+122233443',
-    contract_start_date: '2021-01-01T01:01:01.001Z',
+    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
     contract_rollover: false,
-    contract_end_date: '2022-02-01T01:01:01.001Z',
+    contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
     subscription_seats: 32,
     consultant_hours: 13,
 };
@@ -21,27 +21,23 @@ const SequelizeMock = require('sequelize-mock');
 const UPDATE_FUNCTION = ClientAccountRepository.defaultInstance.updateClientAccount.name;
 const GET_FUNCTION = ClientAccountRepository.defaultInstance.getClientAccount.name;
 const CREATE_FUNCTION = ClientAccountRepository.defaultInstance.createClientAccount.name;
-const GET_CLIENT_ACCOUNT_SUBS_SEATS = ClientAccountRepository.defaultInstance.getClientAccountSeats.name;
+const GET_CLIENT_ACCOUNT_SUBS_SEATS =
+    ClientAccountRepository.defaultInstance.getClientAccountSeats.name;
 const GET_CLIENT_ACCOUNT_USERS = ClientAccountRepository.defaultInstance.getClientAccountUsers.name;
 
 const dbMock = new SequelizeMock();
 
-const ClientAccountMock = dbMock.define(
-    'dods_client_accounts',
-    {
-        id: 1,
-        uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
-        name: 'Company One',
-        notes: null,
-        contactName: 'Marty MacFly',
-        contactEmailAddress: 'marti@example.com',
-        contactTelephoneNumber: '+122233443',
-        contract_start_date: '2021-01-01T01:01:01.001Z',
-        contract_rollover: false,
-        contract_end_date: '2022-02-01T01:01:01.001Z',
-    }
-    //{ autoQueryFallback: false }
-);
+const ClientAccountMock = dbMock.define('dods_client_accounts', {
+    id: 1,
+    uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
+    name: 'Company One',
+    contactName: 'Marty MacFly',
+    contactEmailAddress: 'marti@example.com',
+    contactTelephoneNumber: '+122233443',
+    contract_start_date: '2021-01-01T01:01:01.001Z',
+    contract_rollover: false,
+    contract_end_date: '2022-02-01T01:01:01.001Z',
+});
 
 ClientAccountMock.$queryInterface.$useHandler(function (query: any, queryOptions: any) {
     if (query === 'findOne') {
@@ -50,7 +46,7 @@ ClientAccountMock.$queryInterface.$useHandler(function (query: any, queryOptions
                 id: 1,
                 uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
                 name: 'Company One',
-                notes: null,
+                notes: '',
                 contactName: 'Marty MacFly',
                 contactEmailAddress: 'marti@example.com',
                 contactTelephoneNumber: '+122233443',
@@ -59,7 +55,7 @@ ClientAccountMock.$queryInterface.$useHandler(function (query: any, queryOptions
             return ClientAccountMock.build({
                 uuid: 'f4ad407b-6a88-4438-9538-7ef15b61c7fa',
                 name: 'OtherNames',
-                notes: null,
+                notes: '',
                 contactName: 'Mike Fly',
                 contactEmailAddress: 'mike@example.com',
                 contactTelephoneNumber: '313222123',
@@ -73,7 +69,7 @@ ClientAccountMock.$queryInterface.$useHandler(function (query: any, queryOptions
                 id: 3,
                 uuid: '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e',
                 name: 'Company Tree',
-                notes: null,
+                notes: '',
                 contactName: 'Marty MacFly',
                 contactEmailAddress: 'marti@example.com',
                 contactTelephoneNumber: '+122233443',
@@ -100,10 +96,7 @@ const SubscriptionTypeMock = dbMock.define('dods_subscription_types', {
 
 SubscriptionTypeMock.$queryInterface.$useHandler(function (query: any, queryOptions: any) {
     if (query === 'findOne') {
-        if (
-            queryOptions[0].where.uuid ===
-            '4de05e7d-3394-4890-8347-a4db53b3691f'
-        ) {
+        if (queryOptions[0].where.uuid === '4de05e7d-3394-4890-8347-a4db53b3691f') {
             return SubscriptionTypeModel.build({
                 id: 1,
                 uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
@@ -119,7 +112,11 @@ SubscriptionTypeMock.$queryInterface.$useHandler(function (query: any, queryOpti
 
 const UserProfileMock = dbMock.define('dods_users', {});
 
-const testRepository = new ClientAccountRepository(ClientAccountMock, SubscriptionTypeMock, UserProfileMock);
+const testRepository = new ClientAccountRepository(
+    ClientAccountMock,
+    SubscriptionTypeMock,
+    UserProfileMock
+);
 
 afterEach(() => {
     ClientAccountMock.$clearQueue();
@@ -193,9 +190,7 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
             contract_end_date: '2021-02-01T01:01:01.001Z',
         };
 
-        const expectedError = new Error(
-            'Error: clientAccountId cannot be empty'
-        );
+        const expectedError = new Error('Error: clientAccountId cannot be empty');
 
         try {
             await testRepository.updateClientAccount(clientAccount);
@@ -212,14 +207,13 @@ describe(`${GET_FUNCTION} handler`, () => {
         const expectedResponse = {
             uuid: 'f4ad407b-6a88-4438-9538-7ef15b61c7fa',
             name: 'OtherNames',
-            notes: null,
+            notes: '',
             contact_name: 'Mike Fly',
             contact_email_address: 'mike@example.com',
             contact_telephone_number: '313222123',
-            contract_start_date: '2021-01-01T01:01:01.000Z',
+            contract_start_date: new Date('2021-01-01T01:01:01.000Z'),
             contract_rollover: false,
-            contract_end_date: '2022-02-01T01:01:01.000Z',
-            subscription: undefined,
+            contract_end_date: new Date('2022-02-01T01:01:01.000Z'),
         };
 
         const response = await testRepository.getClientAccount(clientAccountId);
@@ -274,14 +268,12 @@ describe(`${CREATE_FUNCTION} handler`, () => {
     });
 
     test(`${CREATE_FUNCTION} Valid input Happy case `, async () => {
-        const clientAccount: ClientAccountParameters | any = {
+        const clientAccount = {
             name: 'Juan account',
             notes: 'This is the account for Juan.',
             contact_name: 'Juan',
             contact_email_address: 'juan@xd.com',
             contact_telephone_number: '+573123456531',
-            contract_start_date: '2021-09-20T03:51:15.226Z',
-            contract_rollover: false,
         };
 
         const expectedResponse = {
@@ -291,30 +283,23 @@ describe(`${CREATE_FUNCTION} handler`, () => {
             contact_name: 'Juan',
             contact_email_address: 'juan@xd.com',
             contact_telephone_number: '+573123456531',
-            contract_start_date: '2021-09-20T03:51:15.226Z',
-            contract_rollover: false,
-            contract_end_date: undefined,
-            subscription: undefined,
         };
 
-        const response = await testRepository.createClientAccount(clientAccount);
+        const response = await testRepository.createClientAccount({ clientAccount });
         expect(response).toEqual(expectedResponse);
     });
 
     test(`${CREATE_FUNCTION} Invalid Input`, async () => {
-        const clientAccount: ClientAccountParameters | any = {
+        const clientAccount = {
             name: '',
             notes: 'This is the account for Juan.',
             contact_name: 'Juan',
             contact_email_address: 'juan@xd.com',
             contact_telephone_number: '+573123456531',
-            contract_start_date: '2021-09-20T03:51:15.226Z',
-            contract_rollover: false,
         };
 
         try {
-            await testRepository.createClientAccount(clientAccount);
-            //console.log(response);
+            await testRepository.createClientAccount({ clientAccount });
         } catch (error) {
             expect(error).toEqual('Error: Bad request');
         }

@@ -18,6 +18,7 @@ CREATE TABLE `dods_client_accounts` (
   `contact_name` varchar(100) NOT NULL,
   `contact_email_address` varchar(100) NOT NULL,
   `contact_telephone_number` varchar(20) NOT NULL,
+  `consultant_hours` int(11) DEFAULT NULL,
   `contract_start_date` datetime DEFAULT NULL,
   `contract_end_date` datetime DEFAULT NULL,
   `contract_rollover` tinyint(1) DEFAULT NULL,
@@ -27,6 +28,7 @@ CREATE TABLE `dods_client_accounts` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_sales_contact_user_id_idx` (`sales_contact`),
+  KEY `FK_subscription_type_id` (`subscription`),
   CONSTRAINT `FK_sales_contact_user_id` FOREIGN KEY (`sales_contact`) REFERENCES `dods_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_subscription_type_id` FOREIGN KEY (`subscription`) REFERENCES `dods_subscription_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

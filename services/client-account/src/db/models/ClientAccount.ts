@@ -26,14 +26,14 @@ class ClientAccountModel
     public id!: number;
     public uuid!: string;
     public name!: string;
-    public notes!: string | null;
+    public notes?: string;
     public contactName!: string;
     public contactEmailAddress!: string;
     public contactTelephoneNumber!: string;
-    public subscriptionSeats!: number;
-    public contractStartDate!: Date;
-    public contractRollover!: boolean;
-    public contractEndDate!: Date | null;
+    public subscriptionSeats?: number;
+    public contractStartDate?: Date;
+    public contractRollover?: boolean;
+    public contractEndDate?: Date;
 
     public SubscriptionType?: SubscriptionType;
     public ClientAccountTeam?: ClientAccountTeam;
@@ -107,7 +107,7 @@ ClientAccountModel.init(
         subscriptionSeats: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
-            allowNull: false,
+            allowNull: true,
         },
 
         consultantHours: {

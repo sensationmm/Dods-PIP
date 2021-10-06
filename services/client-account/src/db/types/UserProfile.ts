@@ -1,21 +1,26 @@
-//import { Optional } from 'sequelize/types';
+import { Optional } from 'sequelize/types';
 
 export interface UserProfileModelAttributes {
     id: number;
     uuid: string;
     roleId: number;
-    firstName:string;
-    lastName:string;
+    firstName: string;
+    lastName: string;
     title: string;
-    primaryEmail:string;
-    secondaryEmail:string;
-    telephoneNumber_1:string;
-    telephoneNumber_2:string;
-    fullName?: string;
+    primaryEmail: string;
+    secondaryEmail?: string;
+    telephoneNumber1?: string;
+    telephoneNumber2?: string;
+    fullName: string;
 }
 
-// export interface ClientAccountModelCreationAttributes
-//     extends Optional<
-//         ClientAccountModelAttributes,
-//         'id' | 'uuid' | 'subscriptionSeats'
-//     > {}
+export interface UserProfileModelCreationAttributes
+    extends Optional<
+        UserProfileModelAttributes,
+        | 'id'
+        | 'uuid'
+        | 'secondaryEmail'
+        | 'telephoneNumber1'
+        | 'telephoneNumber2'
+        | 'fullName'
+    > {}

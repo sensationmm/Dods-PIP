@@ -15,7 +15,7 @@ import {
     parseResponseFromModel,
     parseSearchClientAccountResponse,
 } from '../domain';
-import { Op, ValidationError, WhereOptions } from 'sequelize';
+import { Op, WhereOptions, col, fn, where } from 'sequelize';
 
 export class ClientAccountError extends Error {
     constructor(message: string, cause: any) {
@@ -41,27 +41,26 @@ export class ClientAccountRepository implements ClientAccountPersister {
     ) {}
 
     async createClientAccount(
-        clientAccount: ClientAccountParameters | null
+        clientAccountParameters: ClientAccountParameters | null
     ): Promise<ClientAccountResponse | undefined> {
-        if (!clientAccount) {
+        if (!clientAccountParameters?.clientAccount) {
             throw new Error('Error: clientAccount cannot be empty');
-        }
-
-        try {
-            const newClientAccountModel = await this.model.create(
-                parseModelParameters(clientAccount)
-            );
-            const newClientAccount = parseResponseFromModel(
-                newClientAccountModel
-            );
-
-            return newClientAccount;
-        } catch (error) {
-            if (error instanceof ValidationError) {
-                throw new ClientAccountError(
-                    'Error: Bad request',
-                    error.errors
+        } else {
+            try {
+                const newAccount = parseModelParameters(
+                    clientAccountParameters
                 );
+                const newClientAccountModel = await this.model.create(
+                    newAccount
+                );
+                const newClientAccount = parseResponseFromModel(
+                    newClientAccountModel
+                );
+
+                return newClientAccount;
+            } catch (error) {
+                console.error(error);
+                throw error;
             }
         }
     }
@@ -213,9 +212,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async getClientAccountSeats(
-        clientAccountId: string
-    ): Promise<number | never[]> {
+    async getClientAccountSeats(clientAccountId: string): Promise<number> {
         if (!clientAccountId) {
             throw new Error('Error: clientAccountId cannot be empty');
         }
@@ -225,9 +222,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
         });
 
         if (clientAccountModel) {
-            const subscriptionSeats: number =
-                clientAccountModel.subscriptionSeats;
-            return subscriptionSeats;
+            const subscriptionSeats = clientAccountModel.subscriptionSeats;
+            return subscriptionSeats!;
         } else {
             throw new Error('Error: clientAccount not found');
         }
@@ -251,5 +247,21 @@ export class ClientAccountRepository implements ClientAccountPersister {
         } else {
             throw new Error('Error: clientAccount not found');
         }
+    }
+
+    async checkNameAvailability(name: string): Promise<boolean> {
+        const lowerCaseName = name.trim().toLocaleLowerCase();
+
+        const coincidences = await this.model.findAll({
+            where: {
+                name: where(
+                    fn('LOWER', col('name')),
+                    'LIKE',
+                    '%' + lowerCaseName + '%'
+                ),
+            },
+        });
+
+        return coincidences.length == 0;
     }
 }

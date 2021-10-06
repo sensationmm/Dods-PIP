@@ -3,14 +3,14 @@ import SubscriptionType from '../../db/models/SubscriptionType';
 
 export interface ClientAccount {
     name: string;
-    notes: string | null;
+    notes?: string;
     subscription_seats?: number;
     contact_name: string;
     contact_email_address: string;
     contact_telephone_number: string;
-    contract_start_date: string | Date;
-    contract_rollover: boolean;
-    contract_end_date?: string | Date;
+    contract_start_date?: Date;
+    contract_rollover?: boolean;
+    contract_end_date?: Date;
     consultant_hours?: number;
 }
 
@@ -28,16 +28,14 @@ export interface ClientAccountResponse extends ClientAccount {
 export interface SearchClientAccountResponse {
     id: string;
     name: string;
-    notes: string | null;
-    subscription?: string | undefined;
-    location?: number | undefined;
+    notes?: string;
+    subscription?: string;
+    location?: number;
     projects?: number;
-    team?:
-        | {
-              name: string | undefined;
-              type: 'consultant' | 'client' | undefined;
-          }[]
-        | undefined;
+    team?: {
+        name: string;
+        type?: 'consultant' | 'client';
+    }[];
     completed: boolean;
 }
 
@@ -60,5 +58,3 @@ export interface UpdateClientAccountParameters {
     contract_rollover: boolean;
     contract_end_date?: string;
 }
-
-export interface ClientAccountParameters extends ClientAccount {}
