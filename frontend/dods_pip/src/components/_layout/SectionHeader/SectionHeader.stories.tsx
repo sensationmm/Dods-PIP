@@ -17,5 +17,5 @@ export const Primary = Template.bind({});
 Primary.args = {
   title: 'Section Header',
   subtitle: 'Details about this section',
-  icon: Icons.IconSuitcase,
+  icon: Icons.Suitcase,
 };

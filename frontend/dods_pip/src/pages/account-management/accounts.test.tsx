@@ -64,14 +64,14 @@ describe('Account Management: Clients', () => {
     const filterToggleIcon = wrapper.find('[data-test="filter-toggle"]').find(Icon);
     const filterContent = wrapper.find('[data-test="filter-content"]');
     expect(component.length).toEqual(1);
-    expect(filterToggleIcon.props().src).toEqual(Icons.IconChevronUp);
+    expect(filterToggleIcon.props().src).toEqual(Icons.ChevronUp);
     expect(filterContent.props().open).toEqual(true);
   });
 
   it('renders with closed filter', () => {
     const filterToggleIcon = wrapper.find('[data-test="filter-toggle"]').find(Icon);
     const filterContent = wrapper.find('[data-test="filter-content"]');
-    expect(filterToggleIcon.props().src).toEqual(Icons.IconChevronDown);
+    expect(filterToggleIcon.props().src).toEqual(Icons.ChevronDown);
     expect(filterContent.props().open).toEqual(false);
   });
 

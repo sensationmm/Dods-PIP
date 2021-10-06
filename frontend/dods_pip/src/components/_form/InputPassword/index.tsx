@@ -40,7 +40,7 @@ const InputPassword: React.FC<InputPasswordProps> = ({
       >
         <Styled.toggle onClick={() => setViewPassword(!viewPassword)} data-test="password-toggle">
           <Icon
-            src={viewPassword ? Icons.IconHide : Icons.IconShow}
+            src={viewPassword ? Icons.Hide : Icons.Show}
             size={IconSize.medium}
             color={
               !isDisabled
