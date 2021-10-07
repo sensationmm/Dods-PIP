@@ -14,8 +14,6 @@ const SUCCESS_ACCOUNT_RESPONSE = {
     contact_name: 'Juan',
     contact_email_address: 'juan@xd.com',
     contact_telephone_number: '+573123456531',
-    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
-    contract_rollover: false,
 };
 
 jest.mock('../../../src/repositories/ClientAccountRepository');
@@ -78,6 +76,35 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         expect(
             mockedClientAccountRepository.defaultInstance.createClientAccount
+        ).toHaveBeenCalledTimes(1);
+        expect(
+            mockedClientAccountRepository.defaultInstance.checkNameAvailability
+        ).toHaveBeenCalledTimes(1);
+    });
+
+    test(`${FUNCTION_NAME} account name not available`, async () => {
+        const clientAccount = {
+            name: 'Existing Account',
+            notes: 'This is the account for Juan.',
+            contact_name: 'Juan',
+            contact_email_address: 'juan@xd.com',
+            contact_telephone_number: '+573123456531',
+        };
+
+        const expectedResponse = new HttpResponse(HttpStatusCode.CONFLICT, {
+            success: false,
+            message: `A Client Account already exists with the name: ${clientAccount.name}`,
+        });
+
+        const response = await createClientAccount({ clientAccount }, defaultContext);
+
+        expect(response).toEqual(expectedResponse);
+
+        expect(
+            mockedClientAccountRepository.defaultInstance.createClientAccount
+        ).toHaveBeenCalledTimes(0);
+        expect(
+            mockedClientAccountRepository.defaultInstance.checkNameAvailability
         ).toHaveBeenCalledTimes(1);
     });
 });

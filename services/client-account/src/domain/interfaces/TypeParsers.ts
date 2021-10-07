@@ -1,10 +1,27 @@
-import { ClientAccountParameters, ClientAccountResponse, SearchClientAccountResponse } from '.';
-import { ClientAccountModel } from '../../db';
+import { ClientAccountModel, SubscriptionTypeModel } from '../../db';
+import {
+    ClientAccountParameters,
+    ClientAccountResponse,
+    SearchClientAccountResponse,
+    SubscriptionTypeResponse,
+} from '.';
+
 import { ClientAccountModelCreationAttributes } from '../../db/types';
 
-export function parseResponseFromModel(
-    model: ClientAccountModel
-): ClientAccountResponse {
+export function parseSubscriptionResponseFromModel(
+    model: SubscriptionTypeModel
+): SubscriptionTypeResponse {
+    const response: SubscriptionTypeResponse = {
+        uuid: model.uuid,
+        name: model.name,
+        location: model.location,
+        contentType: model.contentType,
+    };
+
+    return response;
+}
+
+export function parseResponseFromModel(model: ClientAccountModel): ClientAccountResponse {
     const response: ClientAccountResponse = {
         uuid: model.uuid,
         name: model.name,
@@ -17,7 +34,9 @@ export function parseResponseFromModel(
         contract_end_date: model.contractEndDate,
         subscription_seats: model.subscriptionSeats,
         consultant_hours: model.consultantHours,
-        subscription: model.SubscriptionType!,
+        subscription: model.subscriptionType
+            ? parseSubscriptionResponseFromModel(model.subscriptionType!)
+            : undefined,
     };
 
     return response;
@@ -30,10 +49,8 @@ export function parseModelParameters(
         name: requestParameters.clientAccount.name,
         notes: requestParameters.clientAccount.notes,
         contactName: requestParameters.clientAccount.contact_name,
-        contactEmailAddress:
-            requestParameters.clientAccount.contact_email_address,
-        contactTelephoneNumber:
-            requestParameters.clientAccount.contact_telephone_number,
+        contactEmailAddress: requestParameters.clientAccount.contact_email_address,
+        contactTelephoneNumber: requestParameters.clientAccount.contact_telephone_number,
     };
 
     return parameters;
@@ -55,9 +72,7 @@ export function parseSearchClientAccountResponse(
             model.ClientAccountTeam.UserProfileModels.map((item) => {
                 return {
                     name: item.fullName,
-                    type:
-                        model.ClientAccountTeam &&
-                        model.ClientAccountTeam.parsedType,
+                    type: model.ClientAccountTeam && model.ClientAccountTeam.parsedType,
                 };
             }),
         completed: true,

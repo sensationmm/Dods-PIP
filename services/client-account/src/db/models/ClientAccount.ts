@@ -17,10 +17,7 @@ import { SubscriptionTypeModel } from '.';
 import sequelize from '../sequelize';
 
 class ClientAccountModel
-    extends Model<
-        ClientAccountModelAttributes,
-        ClientAccountModelCreationAttributes
-    >
+    extends Model<ClientAccountModelAttributes, ClientAccountModelCreationAttributes>
     implements ClientAccountModelAttributes
 {
     public id!: number;
@@ -34,13 +31,10 @@ class ClientAccountModel
     public contractStartDate?: Date;
     public contractRollover?: boolean;
     public contractEndDate?: Date;
+    public consultantHours?: number;
 
     public SubscriptionType?: SubscriptionType;
     public ClientAccountTeam?: ClientAccountTeam;
-
-    public consultantHours!: number;
-
-    public subscription!: number | string;
 
     //Timestamps
     public readonly createdAt!: Date;

@@ -18,7 +18,12 @@ const UPDATE_REPO_RESPONSE: ClientAccountResponse = {
     contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
     subscription_seats: 20,
     consultant_hours: 13,
-    subscription: 1,
+    subscription: {
+        uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
+        name: 'subs_1',
+        location: 2,
+        contentType: 2,
+    },
 };
 
 const SUCCESS_UPDATE_ACCOUNT = {
@@ -32,7 +37,12 @@ const SUCCESS_UPDATE_ACCOUNT = {
     contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
     subscription_seats: 20,
     consultant_hours: 13,
-    subscription: 1,
+    subscription: {
+        uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
+        name: 'subs_1',
+        location: 2,
+        contentType: 2,
+    },
 };
 
 jest.mock('../../../src/repositories/ClientAccountRepository');

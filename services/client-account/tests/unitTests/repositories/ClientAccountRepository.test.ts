@@ -1,6 +1,6 @@
 import { ClientAccountError, ClientAccountRepository } from '../../../src/repositories';
 
-import { SubscriptionTypeModel } from '../../../src/db';
+const SequelizeMock = require('sequelize-mock');
 
 const SUCCESS_UPDATE_CLIENT_ACCOUNT = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
@@ -14,9 +14,13 @@ const SUCCESS_UPDATE_CLIENT_ACCOUNT = {
     contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
     subscription_seats: 32,
     consultant_hours: 13,
+    subscription: {
+        uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
+        name: 'subs_1',
+        location: 2,
+        contentType: 2,
+    },
 };
-
-const SequelizeMock = require('sequelize-mock');
 
 const UPDATE_FUNCTION = ClientAccountRepository.defaultInstance.updateClientAccount.name;
 const GET_FUNCTION = ClientAccountRepository.defaultInstance.getClientAccount.name;
@@ -97,7 +101,7 @@ const SubscriptionTypeMock = dbMock.define('dods_subscription_types', {
 SubscriptionTypeMock.$queryInterface.$useHandler(function (query: any, queryOptions: any) {
     if (query === 'findOne') {
         if (queryOptions[0].where.uuid === '4de05e7d-3394-4890-8347-a4db53b3691f') {
-            return SubscriptionTypeModel.build({
+            return SubscriptionTypeMock.build({
                 id: 1,
                 uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
                 name: 'subs_1',

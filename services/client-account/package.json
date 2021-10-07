@@ -4,8 +4,8 @@
     "description": "This README would normally document whatever steps are necessary to get your application up and running.",
     "main": "index.js",
     "scripts": {
-        "test": "NODE_ENV=test ./node_modules/.bin/jest",
-        "test:coverage": "NODE_ENV=test ./node_modules/.bin/jest --coverage",
+        "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
+        "test:coverage": "NODE_ENV=test jest --detectOpenHandles --coverage",
         "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
         "test:report": "open coverage/integration-tests-report.html && open coverage/lcov-report/index.html",
         "dev": "scripts/setUpDev.sh && AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=development serverless offline --stage dev && scripts/tearDown.sh",

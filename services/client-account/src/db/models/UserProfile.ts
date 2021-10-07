@@ -15,8 +15,8 @@ class UserProfileModel
     public title!: string;
     public primaryEmail!: string;
     public secondaryEmail!: string;
-    public telephoneNumber_1!: string;
-    public telephoneNumber_2!: string;
+    public telephoneNumber1!: string;
+    public telephoneNumber2!: string;
 
     public fullName!: string;
 
@@ -55,10 +55,7 @@ UserProfileModel.init(
             comment: 'null',
         },
         fullName: {
-            type: DataTypes.VIRTUAL(DataTypes.STRING, [
-                'firstName',
-                'lastName',
-            ]),
+            type: DataTypes.VIRTUAL(DataTypes.STRING, ['firstName', 'lastName']),
             get() {
                 return `${this.firstName} ${this.lastName}`;
             },
@@ -85,11 +82,13 @@ UserProfileModel.init(
             type: DataTypes.STRING(20),
             allowNull: false,
             comment: 'null',
+            field: 'telephone_number_1',
         },
         telephoneNumber2: {
             type: DataTypes.STRING(20),
             allowNull: false,
             comment: 'null',
+            field: 'telephone_number_2',
         },
     },
     {

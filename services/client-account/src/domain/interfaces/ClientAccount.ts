@@ -1,5 +1,5 @@
 import { Pagination } from '../interfaces';
-import SubscriptionType from '../../db/models/SubscriptionType';
+import { SubscriptionTypeResponse } from '..';
 
 export interface ClientAccount {
     name: string;
@@ -22,7 +22,7 @@ export interface ClientAccountResponse extends ClientAccount {
     //id: number;
     uuid: string;
 
-    subscription?: SubscriptionType | number;
+    subscription?: SubscriptionTypeResponse;
 }
 
 export interface SearchClientAccountResponse {
