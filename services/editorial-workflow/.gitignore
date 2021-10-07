@@ -6,16 +6,13 @@
 # Node artifact files
 node_modules/
 dist/
-.env
-.webpack
-.serverless
+.serverless/
+.webpack/
+coverage/
+launch.json
+.offline*
 .vscode
-coverage
-__blobstorage__
-__queuestorage__
-__azurite*
-.env*
-.npmrc
+CertificateAuthorityCertificate.pem
 
 # Compiled Java class files
 *.class

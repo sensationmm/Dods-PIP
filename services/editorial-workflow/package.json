@@ -1,41 +1,74 @@
 {
-  "name": "@dodsgroup/dods-lambda",
-  "version": "1.2.6",
-  "description": "",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "name": "dods-nodejs-lambda-boilerplate",
+  "version": "1.0.0",
+  "description": "This README would normally document whatever steps are necessary to get your application up and running.",
+  "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "predeploy": "npm run build",
-    "deploy": "npm publish"
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
+    "test:report": "open coverage/integration-tests-report.html && open coverage/lcov-report/index.html",
+    "dev": "scripts/setUpDev.sh && AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=dev serverless offline --stage dev && scripts/tearDown.sh",
+    "validate:env": "SERVERLESS_STAGE=prod ts-node ./src/domain/config/index.ts",
+    "package": "serverless package",
+    "deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless deploy --stage dev",
+    "deploy:prod": "AWS_PROFILE=dods-prod AWS_REGION=eu-west-1 serverless deploy --stage prod",
+    "remove:deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage dev",
+    "remove:deploy:prod": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage prod",
+    "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}"
   },
-  "keywords": [],
+  "pre-commit": [
+    "test:coverage",
+    "test:integration"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://kenanhancerdod@bitbucket.org/kenanhancerdod/dods-nodejs-lambda-boilerplate.git"
+  },
+  "keywords": [
+    "node",
+    "typescript",
+    "aws",
+    "lambda"
+  ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@dodsgroup/dods-lambda": "^1.2.8",
-    "aws-lambda": "^1.0.6",
-    "express": "^4.17.1",
-    "express-openapi-validator": "^4.13.1",
-    "joi": "^17.4.2",
-    "lodash": "^4.17.21",
-    "nut-pipe": "^1.2.5",
-    "yamljs": "^0.3.0"
+  "bugs": {
+    "url": "https://bitbucket.org/kenanhancerdod/dods-nodejs-lambda-boilerplate/issues"
   },
+  "homepage": "https://bitbucket.org/kenanhancerdod/dods-nodejs-lambda-boilerplate#readme",
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^10.0.3",
+    "@cucumber/cucumber": "^7.3.1",
+    "@cucumber/pretty-formatter": "^1.0.0-alpha.1",
     "@types/aws-lambda": "^8.10.83",
-    "@types/lodash": "^4.14.173",
-    "@types/yamljs": "^0.2.31",
-    "serverless": "^2.61.0",
+    "@types/axios": "^0.14.0",
+    "@types/jest": "^27.0.1",
+    "copy-webpack-plugin": "^9.0.1",
+    "cucumber-html-reporter": "^5.5.0",
+    "jest": "^27.1.0",
+    "mockserver-client": "^5.11.2",
+    "open": "^8.2.1",
+    "pre-commit": "^1.2.2",
+    "serverless": "^2.60.1",
     "serverless-dependson-plugin": "^1.1.2",
     "serverless-localstack": "^0.4.35",
     "serverless-offline": "^8.2.0",
     "serverless-prune-plugin": "^1.6.0",
     "serverless-webpack": "^5.5.4",
-    "ts-loader": "^9.2.6",
+    "ts-jest": "^27.0.5",
+    "ts-loader": "^9.2.5",
+    "ts-node": "^10.2.1",
     "typescript": "^4.4.3",
-    "webpack": "^5.57.1",
+    "webpack": "^5.55.1",
     "webpack-cli": "^4.8.0",
     "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "@dodsgroup/dods-lambda": "^1.2.6",
+    "aws-lambda": "^1.0.6",
+    "aws-sdk": "^2.979.0",
+    "axios": "^0.21.1",
+    "joi": "^17.4.2"
   }
 }

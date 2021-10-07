@@ -1,23 +1,22 @@
 const path = require('path');
+const slsw = require('serverless-webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   context: __dirname,
-  mode: 'production',
-  devtool: 'source-map',
-  entry: {
-    index: './index.ts'
-  },
+  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
+  entry: slsw.lib.entries,
+  devtool: slsw.lib.webpack.isLocal ? 'eval-cheap-module-source-map' : 'source-map',
   resolve: {
     extensions: ['.mjs', '.json', '.ts', '.yml'],
     symlinks: false,
     cacheWithContext: false,
   },
   output: {
-    libraryTarget: 'commonjs',
-    path: path.join(__dirname, 'dist'),
-    filename: 'index.js',
-    sourceMapFilename: 'index.js.map',
+    libraryTarget: 'commonjs2',
+    path: path.join(__dirname, '.webpack'),
+    filename: '[name].js',
     clean: true,
   },
   target: 'node',
@@ -34,7 +33,11 @@ module.exports = {
         exclude: [
           [
             path.resolve(__dirname, 'node_modules'),
-            path.resolve(__dirname, '.webpack')
+            path.resolve(__dirname, '.serverless'),
+            path.resolve(__dirname, '.webpack'),
+            path.resolve(__dirname, 'images'),
+            path.resolve(__dirname, 'scripts'),
+            path.resolve(__dirname, 'coverage')
           ]
         ],
         options: {
@@ -44,5 +47,11 @@ module.exports = {
       }
     ]
   },
-  plugins: [],
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "src/openApi.yml", to: 'src/openApi.yml' },
+      ],
+    })
+  ],
 };
