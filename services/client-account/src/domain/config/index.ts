@@ -83,7 +83,7 @@ const envVars = loadConfig(envVarsSchema);
 
 export const config = {
     env: envVars.NODE_ENV as string,
-    isTestEnv: envVars.NODE_ENV !== 'test',
+    isTestEnv: envVars.NODE_ENV === 'test',
     openApiPath: resolve(process.cwd(), 'src/openApi.yml'),
     test: {
         stage: envVars.SERVERLESS_STAGE as string,
