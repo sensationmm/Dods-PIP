@@ -1,4 +1,3 @@
-
 import ClientAccountTeamModel from '../db/models/ClientAccountTeamModel';
 import { ClientAccountTeam } from '../domain/interfaces/ClientAccountTeam';
 import { ClientAccountTeamPersister } from '../domain/interfaces/ClientAccountTeamPersister';

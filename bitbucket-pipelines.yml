@@ -1,3 +1,5 @@
+options:
+  max-time: 15
 pipelines:
   default:
     - parallel:
@@ -56,7 +58,7 @@ pipelines:
             
       - step:
           name: Client Account Service
-          image: gioatsomoglobal/devopstools:0.4.3
+          image: gioatsomoglobal/nodejs-builder:0.1
           caches:
             - node
           condition:
@@ -71,7 +73,6 @@ pipelines:
             - ./setenv.sh
             - source *.env
             - NODE_ENV=test npm run test
-            - NODE_ENV=test npm run test:coverage
 
       - step:
           name: Validate OpenAPI definitions

@@ -1,9 +1,4 @@
-import {
-    ClientAccountParameters,
-    ClientAccountResponse,
-    SearchClientAccountResponse,
-} from '.';
-
+import { ClientAccountParameters, ClientAccountResponse, SearchClientAccountResponse } from '.';
 import { ClientAccountModel } from '../../db';
 import { ClientAccountModelCreationAttributes } from '../../db/types';
 
