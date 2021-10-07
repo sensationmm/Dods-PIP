@@ -1,0 +1,41 @@
+{
+  "name": "@dodsgroup/dods-lambda",
+  "version": "1.2.6",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "webpack",
+    "predeploy": "npm run build",
+    "deploy": "npm publish"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dodsgroup/dods-lambda": "^1.2.8",
+    "aws-lambda": "^1.0.6",
+    "express": "^4.17.1",
+    "express-openapi-validator": "^4.13.1",
+    "joi": "^17.4.2",
+    "lodash": "^4.17.21",
+    "nut-pipe": "^1.2.5",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.83",
+    "@types/lodash": "^4.14.173",
+    "@types/yamljs": "^0.2.31",
+    "serverless": "^2.61.0",
+    "serverless-dependson-plugin": "^1.1.2",
+    "serverless-localstack": "^0.4.35",
+    "serverless-offline": "^8.2.0",
+    "serverless-prune-plugin": "^1.6.0",
+    "serverless-webpack": "^5.5.4",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.4.3",
+    "webpack": "^5.57.1",
+    "webpack-cli": "^4.8.0",
+    "webpack-node-externals": "^3.0.0"
+  }
+}
