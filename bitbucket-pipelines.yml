@@ -1,3 +1,5 @@
+options:
+  max-time: 15
 pipelines:
   default:
     - parallel:
