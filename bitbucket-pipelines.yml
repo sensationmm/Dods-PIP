@@ -70,7 +70,7 @@ pipelines:
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - NODE_ENV=test npm run test:coverage
+            - NODE_ENV=test npm run test
 
       - step:
           name: Validate OpenAPI definitions
