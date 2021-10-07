@@ -1,4 +1,7 @@
-export const createEditorialWorkflow = async () => {
+import { AsyncLambdaHandler, HttpStatusCode, HttpResponse } from '@dodsgroup/dods-lambda';
+import { CreateEditorialWorkflowParameters } from '../../domain';
 
-    return 'Hello Potato';
+export const createEditorialWorkflow: AsyncLambdaHandler<CreateEditorialWorkflowParameters> = async () => {
+
+    return new HttpResponse(HttpStatusCode.OK, `Hello potato`);
 };

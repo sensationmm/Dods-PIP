@@ -1,25 +1,21 @@
 import Joi, { Schema } from 'joi';
-
-import { execSync } from 'child_process';
 import { resolve } from 'path';
+import { DownstreamEndpoints } from '../interfaces';
+import { execSync } from 'child_process'
 
-const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage ${
-    process.env.SERVERLESS_STAGE || 'test'
-} --format json${
-    process.env.SERVERLESS_STAGE === 'local' ? ' | tail -n +2' : ''
-}`;
+const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage ${process.env.SERVERLESS_STAGE || 'test'} --format json${process.env.SERVERLESS_STAGE === 'local' ? ' | tail -n +2' : ''}`;
 
-let infoCache = '';
+let infoCache = ''
 const fetchServerlessInfo = (): string => {
     if (infoCache !== '') {
         return infoCache;
     } else {
-        console.debug(`Running \`${fullServerlessInfoCommand}\`...`, null);
-        const info = execSync(fullServerlessInfoCommand).toString();
-        infoCache = info;
+        console.debug(`Running \`${fullServerlessInfoCommand}\`...`, null)
+        const info = execSync(fullServerlessInfoCommand).toString()
+        infoCache = info
         return infoCache;
     }
-};
+}
 
 const setUnitTestEnvironmentVariables = () => {
     if (process.env.NODE_ENV === 'test') {
@@ -37,9 +33,7 @@ const setUnitTestEnvironmentVariables = () => {
         try {
             serverlessInfo = JSON.parse(serverlessInfoJson);
         } catch (error: any) {
-            console.error(
-                `ERROR: when JSON.parse() try to parse the following output. \n\n ${serverlessInfoJson}`
-            );
+            console.error(`ERROR: when JSON.parse() try to parse the following output. \n\n ${serverlessInfoJson}`);
 
             process.exit(1);
         }
@@ -49,11 +43,10 @@ const setUnitTestEnvironmentVariables = () => {
 };
 
 const loadConfig = (schema: Schema) => {
+
     setUnitTestEnvironmentVariables();
 
-    const { value: envVars, error } = schema
-        .prefs({ errors: { label: 'key' } })
-        .validate(process.env);
+    const { value: envVars, error } = schema.prefs({ errors: { label: 'key' } }).validate(process.env);
 
     if (error) {
         console.error(`Config validation error: ${error.message}`);
@@ -69,7 +62,7 @@ const envVarsSchema = Joi.object()
     .keys({
         NODE_ENV: Joi.string().valid(...stages).default('test'),
         SERVERLESS_STAGE: Joi.string().required().valid('prod', 'dev', 'test').default('test'),
-        SERVERLESS_PORT: Joi.number().required().default(3000)
+        SERVERLESS_PORT: Joi.number().required().default(3000),
     })
     .unknown();
 
@@ -82,12 +75,11 @@ export const config = {
     test: {
         stage: envVars.SERVERLESS_STAGE as string,
         port: envVars.SERVERLESS_PORT as number,
-        endpoint:
-            `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string,
+        endpoint: `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string
     },
     dods: {
-        downstreamEndpoints: {},
+        downstreamEndpoints: {
+        } as DownstreamEndpoints
     },
-    aws: {
-    },
+    aws: {}
 };

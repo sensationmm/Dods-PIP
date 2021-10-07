@@ -1,8 +1,8 @@
-service: editorial-workflow
+service: dods-nodejs-lambda-boilerplate
 
 configValidationMode: warn
 
-frameworkVersion: ^2.54.0
+frameworkVersion: ^2.57.0
 
 variablesResolutionMode: 20210326
 
@@ -35,11 +35,15 @@ provider:
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
 
 custom:
+  endpoints:
+    dev:
+      sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
+
+    prod:
+      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
   webpack:
     webpackConfig: ./webpack.config.js
-    includeModules:
-      forceInclude:
-        - express
+    includeModules: true
     keepOutputDirectory: false
   serverless-offline:
     httpPort: 3000
@@ -69,9 +73,6 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
-package:
-  include:
-    - node_modules/**
 
 functions:
   create-editorial-workflow:
