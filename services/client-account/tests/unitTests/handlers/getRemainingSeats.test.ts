@@ -1,9 +1,9 @@
-import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { mocked } from 'ts-jest/utils';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { ClientAccountRepository } from '../../../src/repositories';
-import { getRemainingSeats } from '../../../src/handlers/getRemainingSeats/getRemainingSeats';
 import { GetClientAccountParameters } from '../../../src/domain';
+import { getRemainingSeats } from '../../../src/handlers/getRemainingSeats/getRemainingSeats';
+import { mocked } from 'ts-jest/utils';
 
 const FUNCTION_NAME = getRemainingSeats.name;
 
@@ -32,9 +32,13 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: 14,
         });
 
-        mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockResolvedValue(expectedSubscriptionSeats);
+        mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockResolvedValue(
+            expectedSubscriptionSeats
+        );
 
-        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(expectedClientUsersResponse);
+        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(
+            expectedClientUsersResponse
+        );
 
         const response = await getRemainingSeats(clientAccountParameters, defaultContext);
 
@@ -48,11 +52,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockImplementation(
                 async (clientAccountId: string) => {
                     if (!clientAccountId) {
-                        throw new Error(
-                            'Error: clientAccountId cannot be empty'
-                        );
+                        throw new Error('Error: clientAccountId cannot be empty');
                     }
-                    return [];
+                    return 10;
                 }
             );
 
@@ -60,27 +62,22 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
             expect(true).toBe(false);
         } catch (error: any) {
-            expect(error.message).toEqual(
-                'Error: clientAccountId cannot be empty'
-            );
+            expect(error.message).toEqual('Error: clientAccountId cannot be empty');
         }
     });
 
     test(`${FUNCTION_NAME} client account doesn't exist`, async () => {
-        const clientAccountParameters: GetClientAccountParameters = { clientAccountId: '54ee9977-35a8-4cb8-baf3-d1d07920fd5f' };
+        const clientAccountParameters: GetClientAccountParameters = {
+            clientAccountId: '54ee9977-35a8-4cb8-baf3-d1d07920fd5f',
+        };
 
         try {
             mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockImplementation(
                 async (clientAccountId: string) => {
-                    if (
-                        clientAccountId !==
-                        '54ee9977-35a8-4cb8-baf3-d1d07920fd5ds'
-                    ) {
-                        throw new Error(
-                            'Error: clientAccountId cannot be empty'
-                        );
+                    if (clientAccountId !== '54ee9977-35a8-4cb8-baf3-d1d07920fd5ds') {
+                        throw new Error('Error: clientAccountId cannot be empty');
                     }
-                    return [];
+                    return 10;
                 }
             );
 
@@ -88,9 +85,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
             expect(true).toBe(false);
         } catch (error: any) {
-            expect(error.message).toEqual(
-                'Error: clientAccountId cannot be empty'
-            );
+            expect(error.message).toEqual('Error: clientAccountId cannot be empty');
         }
     });
 });

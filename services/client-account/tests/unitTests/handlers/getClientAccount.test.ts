@@ -14,7 +14,7 @@ const SUCCESS_ACCOUNT_RESPONSE = {
     contact_name: 'Juan',
     contact_email_address: 'juan@xd.com',
     contact_telephone_number: '+573123456531',
-    contract_start_date: '2021-01-01T01:01:01.001Z',
+    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
     contract_rollover: false,
 };
 
