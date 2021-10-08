@@ -264,4 +264,24 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         return coincidences.length == 0;
     }
+
+    async lastStepUpdate(clientAccountId: string): Promise<boolean> {
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+
+        const clientAccountModel = await this.model.findOne({
+            where: { uuid: clientAccountId },
+        });
+
+        if (clientAccountModel) {
+            clientAccountModel.isCompleted = true;
+            clientAccountModel.lastStepCompleted = 3;
+
+            clientAccountModel.save();
+
+            return true;
+        }
+        return false;
+    }
 }

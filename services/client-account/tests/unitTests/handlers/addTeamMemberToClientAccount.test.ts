@@ -67,36 +67,42 @@ describe(`${FUNCTION_NAME} handler`, () => {
         ).toHaveBeenCalledTimes(1);
     });
 
-    // test(`${FUNCTION_NAME} Invalid input`, async () => {
-    //     const clientAccountTeamParameters = {
-    //         clientAccountTeam: {
-    //             userId: 1,
-    //             teamMemberType: 1,
-    //             clientAccountId: 1,
-    //         },
-    //     } as ClientAccountTeamParameters;
+    test(`${FUNCTION_NAME} Invalid input`, async () => {
+        const clientAccountTeamParameters = {
+            clientAccountTeam: {
+                userId: 1,
+                teamMemberType: 1,
+                clientAccountId: 1,
+            },
+        } as ClientAccountTeamParameters;
 
-    //     mockedClientAccountRepository.defaultInstance.findOne.mockImplementation(
-    //         async () => {
-    //             return { subscription_seats: -10 } as ClientAccountResponse;
-    //         }
-    //     );
+        mockedClientAccountRepository.defaultInstance.findOne.mockImplementation(
+            async () => {
+                return { subscription_seats: 0 } as ClientAccountResponse;
+            }
+        );
 
-    //     try {
-    //         await addTeamMemberToClientAccount(
-    //             clientAccountTeamParameters,
-    //             defaultContext
-    //         );
+        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockImplementation(
+            async () => {
+                return 0;
+            }
+        );
 
-    //         expect(true).toEqual(false);
-    //     } catch (error: any) {
-    //         expect(error.message).toEqual(
-    //             'Client Account has not enough available seats'
-    //         );
+        try {
+            await addTeamMemberToClientAccount(
+                clientAccountTeamParameters,
+                defaultContext
+            );
 
-    //         expect(
-    //             mockedClientAccountRepository.defaultInstance.findOne
-    //         ).toHaveBeenCalledTimes(1);
-    //     }
-    // });
+            expect(true).toEqual(false);
+        } catch (error: any) {
+            expect(error.message).toEqual(
+                'Client Account has not enough available seats'
+            );
+
+            expect(
+                mockedClientAccountRepository.defaultInstance.findOne
+            ).toHaveBeenCalledTimes(1);
+        }
+    });
 });

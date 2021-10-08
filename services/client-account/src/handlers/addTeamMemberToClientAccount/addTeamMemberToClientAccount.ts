@@ -5,21 +5,16 @@ import {
     HttpStatusCode,
 } from '@dodsgroup/dods-lambda';
 
-import { ClientAccountModel } from '../../db/models';
 import { ClientAccountRepository } from '../../repositories';
 import { ClientAccountTeamParameters } from '../../domain/interfaces/ClientAccountTeam';
 import { ClientAccountTeamRepository } from '../../repositories/ClientAccountTeamRepository';
 
 export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTeamParameters> =
     async ({ clientAccountTeam }) => {
-        // const clientAccount =
-        //     await ClientAccountRepository.defaultInstance.findOne({
-        //         id: clientAccountTeam.clientAccountId,
-        //     });
-
-        const clientAccount = await ClientAccountModel.findOne({
-            where: { id: clientAccountTeam.clientAccountId },
-        });
+        const clientAccount =
+            await ClientAccountRepository.defaultInstance.findOne({
+                id: clientAccountTeam.clientAccountId,
+            });
 
         let clientAccountTeams = 0;
 
@@ -28,15 +23,12 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
                 await ClientAccountRepository.defaultInstance.getClientAccountUsers(
                     clientAccount.uuid
                 );
-
-            clientAccount.isCompleted = true;
-            clientAccount.lastStepCompleted = 3;
         }
 
         if (
             clientAccount &&
-            clientAccount.subscriptionSeats !== undefined &&
-            clientAccount?.subscriptionSeats - clientAccountTeams < 1
+            clientAccount.subscription_seats !== undefined &&
+            clientAccount?.subscription_seats - clientAccountTeams < 1
         ) {
             throw new HttpError(
                 'Client Account has not enough available seats',
@@ -48,7 +40,9 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
             clientAccountTeam
         );
 
-        clientAccount ? clientAccount.save() : undefined;
+        await ClientAccountRepository.defaultInstance.lastStepUpdate(
+            clientAccount.uuid
+        );
 
         // await ClientAccountRepository.defaultInstance.updateClientAcount({ clientAccountId, subscription_seats: clientAccount.subscription_seats! - 1 })
 
