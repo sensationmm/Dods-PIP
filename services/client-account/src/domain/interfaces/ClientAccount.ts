@@ -12,6 +12,8 @@ export interface ClientAccount {
     contract_rollover?: boolean;
     contract_end_date?: Date;
     consultant_hours?: number;
+    is_completed?: boolean;
+    last_step_completed?: number;
 }
 
 export interface ClientAccountParameters {
@@ -37,6 +39,8 @@ export interface SearchClientAccountResponse {
         type?: 'consultant' | 'client';
     }[];
     completed: boolean;
+    is_completed: boolean;
+    last_step_completed: number;
 }
 
 export interface SearchClientAccountParameters extends Pagination {

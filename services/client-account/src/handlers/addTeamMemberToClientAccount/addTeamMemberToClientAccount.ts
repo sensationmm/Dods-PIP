@@ -1,18 +1,54 @@
-import { AsyncLambdaMiddleware, HttpError, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { ClientAccountTeamParameters } from '../../domain/interfaces/ClientAccountTeam';
+import {
+    AsyncLambdaMiddleware,
+    HttpError,
+    HttpResponse,
+    HttpStatusCode,
+} from '@dodsgroup/dods-lambda';
+
+import { ClientAccountModel } from '../../db/models';
 import { ClientAccountRepository } from '../../repositories';
+import { ClientAccountTeamParameters } from '../../domain/interfaces/ClientAccountTeam';
 import { ClientAccountTeamRepository } from '../../repositories/ClientAccountTeamRepository';
 
 export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTeamParameters> =
     async ({ clientAccountTeam }) => {
+        // const clientAccount =
+        //     await ClientAccountRepository.defaultInstance.findOne({
+        //         id: clientAccountTeam.clientAccountId,
+        //     });
 
-        const clientAccount = await ClientAccountRepository.defaultInstance.findOne({ id: clientAccountTeam.clientAccountId });
+        const clientAccount = await ClientAccountModel.findOne({
+            where: { id: clientAccountTeam.clientAccountId },
+        });
 
-        if (clientAccount && clientAccount.subscription_seats !== undefined && clientAccount.subscription_seats < 1) {
-            throw new HttpError("Client Account has not enough available seats", HttpStatusCode.FORBIDDEN);
+        let clientAccountTeams = 0;
+
+        if (clientAccount) {
+            clientAccountTeams =
+                await ClientAccountRepository.defaultInstance.getClientAccountUsers(
+                    clientAccount.uuid
+                );
+
+            clientAccount.isCompleted = true;
+            clientAccount.lastStepCompleted = 3;
         }
 
-        await ClientAccountTeamRepository.defaultInstance.create(clientAccountTeam);
+        if (
+            clientAccount &&
+            clientAccount.subscriptionSeats !== undefined &&
+            clientAccount?.subscriptionSeats - clientAccountTeams < 1
+        ) {
+            throw new HttpError(
+                'Client Account has not enough available seats',
+                HttpStatusCode.FORBIDDEN
+            );
+        }
+
+        await ClientAccountTeamRepository.defaultInstance.create(
+            clientAccountTeam
+        );
+
+        clientAccount ? clientAccount.save() : undefined;
 
         // await ClientAccountRepository.defaultInstance.updateClientAcount({ clientAccountId, subscription_seats: clientAccount.subscription_seats! - 1 })
 

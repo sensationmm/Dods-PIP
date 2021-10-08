@@ -21,7 +21,9 @@ export function parseSubscriptionResponseFromModel(
     return response;
 }
 
-export function parseResponseFromModel(model: ClientAccountModel): ClientAccountResponse {
+export function parseResponseFromModel(
+    model: ClientAccountModel
+): ClientAccountResponse {
     const response: ClientAccountResponse = {
         uuid: model.uuid,
         name: model.name,
@@ -37,6 +39,8 @@ export function parseResponseFromModel(model: ClientAccountModel): ClientAccount
         subscription: model.subscriptionType
             ? parseSubscriptionResponseFromModel(model.subscriptionType!)
             : undefined,
+        is_completed: model.isCompleted,
+        last_step_completed: model.lastStepCompleted,
     };
 
     return response;
@@ -49,8 +53,10 @@ export function parseModelParameters(
         name: requestParameters.clientAccount.name,
         notes: requestParameters.clientAccount.notes,
         contactName: requestParameters.clientAccount.contact_name,
-        contactEmailAddress: requestParameters.clientAccount.contact_email_address,
-        contactTelephoneNumber: requestParameters.clientAccount.contact_telephone_number,
+        contactEmailAddress:
+            requestParameters.clientAccount.contact_email_address,
+        contactTelephoneNumber:
+            requestParameters.clientAccount.contact_telephone_number,
     };
 
     return parameters;
@@ -72,10 +78,14 @@ export function parseSearchClientAccountResponse(
             model.ClientAccountTeam.UserProfileModels.map((item) => {
                 return {
                     name: item.fullName,
-                    type: model.ClientAccountTeam && model.ClientAccountTeam.parsedType,
+                    type:
+                        model.ClientAccountTeam &&
+                        model.ClientAccountTeam.parsedType,
                 };
             }),
         completed: true,
+        is_completed: model.isCompleted,
+        last_step_completed: model.lastStepCompleted,
     };
     return response;
 }

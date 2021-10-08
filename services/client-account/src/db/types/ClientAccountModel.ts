@@ -13,6 +13,8 @@ export interface ClientAccountModelAttributes {
     contractRollover?: boolean;
     contractEndDate?: Date;
     consultantHours?: number;
+    isCompleted?: boolean;
+    lastStepCompleted?: number;
 }
 
 export interface ClientAccountModelCreationAttributes
@@ -25,4 +27,6 @@ export interface ClientAccountModelCreationAttributes
         | 'contractStartDate'
         | 'contractRollover'
         | 'contractEndDate'
+        | 'isCompleted'
+        | 'lastStepCompleted'
     > {}
