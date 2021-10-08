@@ -4,19 +4,25 @@ export interface ClientAccountModelAttributes {
     id: number;
     uuid: string;
     name: string;
-    notes: string | null;
+    notes?: string;
     contactName: string;
     contactEmailAddress: string;
     contactTelephoneNumber: string;
-    subscriptionSeats: number;
-    contractStartDate: Date;
-    contractRollover: boolean;
-    contractEndDate: Date | null | string;
-    consultantHours: number;
+    subscriptionSeats?: number;
+    contractStartDate?: Date;
+    contractRollover?: boolean;
+    contractEndDate?: Date;
+    consultantHours?: number;
 }
 
 export interface ClientAccountModelCreationAttributes
     extends Optional<
         ClientAccountModelAttributes,
-        'id' | 'uuid' | 'subscriptionSeats' | 'consultantHours'
+        | 'id'
+        | 'uuid'
+        | 'subscriptionSeats'
+        | 'consultantHours'
+        | 'contractStartDate'
+        | 'contractRollover'
+        | 'contractEndDate'
     > {}

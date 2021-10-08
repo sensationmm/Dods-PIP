@@ -1,6 +1,7 @@
-import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { ClientAccountRepository } from '../../../src/repositories';
+import { GetClientAccountParameters } from '../../../src/domain';
 import { getRemainingSeats } from '../../../src/handlers/getRemainingSeats/getRemainingSeats';
 import { mocked } from 'ts-jest/utils';
 
@@ -15,11 +16,11 @@ afterEach(() => {
     mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockClear();
 });
 
+const defaultContext = createContext();
+
 describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME} Valid input`, async () => {
-        const clientAccountId = '1234ABC';
-
-        //const expectedRepositoryResponse = SUCCESS_ACCOUNT_RESPONSE;
+        const clientAccountParameters: GetClientAccountParameters = { clientAccountId: '1234ABC' };
 
         const expectedClientUsersResponse = 3;
 
@@ -38,60 +39,53 @@ describe(`${FUNCTION_NAME} handler`, () => {
         mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(
             expectedClientUsersResponse
         );
-        // @ts-ignore
-        const response = await getRemainingSeats(clientAccountId);
+
+        const response = await getRemainingSeats(clientAccountParameters, defaultContext);
 
         expect(response).toEqual(expectedResponse);
     });
 
     test(`${FUNCTION_NAME} Invalid input`, async () => {
-        const clientAccountId = '';
+        const clientAccountParameters: GetClientAccountParameters = { clientAccountId: '' };
+
         try {
             mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockImplementation(
                 async (clientAccountId: string) => {
                     if (!clientAccountId) {
-                        throw new Error(
-                            'Error: clientAccountId cannot be empty'
-                        );
+                        throw new Error('Error: clientAccountId cannot be empty');
                     }
-                    return [];
+                    return 10;
                 }
             );
-            // @ts-ignore
-            await getRemainingSeats(clientAccountId);
+
+            await getRemainingSeats(clientAccountParameters, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {
-            expect(error.message).toEqual(
-                'Error: clientAccountId cannot be empty'
-            );
+            expect(error.message).toEqual('Error: clientAccountId cannot be empty');
         }
     });
 
     test(`${FUNCTION_NAME} client account doesn't exist`, async () => {
-        const clientAccountId = '54ee9977-35a8-4cb8-baf3-d1d07920fd5f';
+        const clientAccountParameters: GetClientAccountParameters = {
+            clientAccountId: '54ee9977-35a8-4cb8-baf3-d1d07920fd5f',
+        };
+
         try {
             mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockImplementation(
                 async (clientAccountId: string) => {
-                    if (
-                        clientAccountId !==
-                        '54ee9977-35a8-4cb8-baf3-d1d07920fd5ds'
-                    ) {
-                        throw new Error(
-                            'Error: clientAccountId cannot be empty'
-                        );
+                    if (clientAccountId !== '54ee9977-35a8-4cb8-baf3-d1d07920fd5ds') {
+                        throw new Error('Error: clientAccountId cannot be empty');
                     }
-                    return [];
+                    return 10;
                 }
             );
-            // @ts-ignore
-            await getRemainingSeats(clientAccountId);
+
+            await getRemainingSeats(clientAccountParameters, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {
-            expect(error.message).toEqual(
-                'Error: clientAccountId cannot be empty'
-            );
+            expect(error.message).toEqual('Error: clientAccountId cannot be empty');
         }
     });
 });

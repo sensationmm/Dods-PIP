@@ -1,7 +1,7 @@
 import { Association, DataTypes, Model, Optional } from 'sequelize';
-import { UserProfileModel } from '.';
-import { ClientAccountTeam } from '../../domain/interfaces/ClientAccountTeam';
 
+import { ClientAccountTeam } from '../../domain/interfaces/ClientAccountTeam';
+import { UserProfileModel } from '.';
 import sequelize from '../sequelize';
 
 interface ClientAccountTeamAttributes {
@@ -11,17 +11,23 @@ interface ClientAccountTeamAttributes {
     parsedType?: string;
 }
 
-interface ClientAccountTeamCreationAttributes extends Optional<ClientAccountTeamAttributes, 'userId'> { }
+interface ClientAccountTeamCreationAttributes
+    extends Optional<ClientAccountTeamAttributes, 'userId'> {}
 
-class ClientAccountTeamModel extends Model<ClientAccountTeamAttributes, ClientAccountTeamCreationAttributes> implements ClientAccountTeam, ClientAccountTeamAttributes {
+class ClientAccountTeamModel
+    extends Model<
+        ClientAccountTeamAttributes,
+        ClientAccountTeamCreationAttributes
+    >
+    implements ClientAccountTeam, ClientAccountTeamAttributes
+{
     public clientAccountId!: number;
     public userId?: number;
     public teamMemberType!: number;
 
     public UserProfileModels?: UserProfileModel[];
 
-
-    public parsedType?: "consultant" | "client";
+    public parsedType!: 'consultant' | 'client';
 
     //Timestamps
     public readonly createdAt!: Date;
@@ -39,7 +45,7 @@ ClientAccountTeamModel.init(
             type: DataTypes.INTEGER,
             allowNull: false,
             comment: 'null',
-            primaryKey: true
+            primaryKey: true,
         },
         userId: {
             type: DataTypes.INTEGER,
@@ -52,7 +58,7 @@ ClientAccountTeamModel.init(
             comment: 'null',
         },
         parsedType: {
-            type: DataTypes.VIRTUAL,
+            type: DataTypes.VIRTUAL(DataTypes.STRING, ['teamMemberType']),
             get() {
                 switch (this.teamMemberType) {
                     case 1:
@@ -65,7 +71,7 @@ ClientAccountTeamModel.init(
             },
             set(_value) {
                 throw new Error('Do not try to set the `parsedType` value!');
-            }
+            },
         },
     },
     {

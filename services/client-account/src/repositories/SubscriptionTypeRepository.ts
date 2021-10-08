@@ -1,15 +1,15 @@
-import { SubscriptionTypeResponse, } from '../domain';
 import { SubscriptionTypeModel } from '../db/models';
 import { SubscriptionTypePersister } from '../domain/interfaces/SubscriptionTypePersister';
+import { SubscriptionTypeResponse, } from '../domain';
 
 function parseSubscriptionTypesResponseFromModel(modelList: SubscriptionTypeModel[]): SubscriptionTypeResponse[] {
     const response: SubscriptionTypeResponse[] = modelList.map(model => {
         return {
-            id: model.uuid,
+            uuid: model.uuid,
             name: model.name,
             location: model.location,
-            contentType: model.contentType
-        }
+            contentType: model.contentType,
+        };
     });
 
     return response;

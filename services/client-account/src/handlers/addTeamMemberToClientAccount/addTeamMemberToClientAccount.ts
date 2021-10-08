@@ -8,7 +8,7 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
 
         const clientAccount = await ClientAccountRepository.defaultInstance.findOne({ id: clientAccountTeam.clientAccountId });
 
-        if (clientAccount && clientAccount.subscription_seats && clientAccount.subscription_seats < 1) {
+        if (clientAccount && clientAccount.subscription_seats !== undefined && clientAccount.subscription_seats < 1) {
             throw new HttpError("Client Account has not enough available seats", HttpStatusCode.FORBIDDEN);
         }
 
