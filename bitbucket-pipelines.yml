@@ -47,13 +47,11 @@ pipelines:
               includePaths:
                 - "services/userProfile/**"
           script:
-            - ./what2build.sh
             - cd services/userProfile
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - NODE_ENV=test npm run test
             - NODE_ENV=test npm run test:coverage
             
       - step:
@@ -66,13 +64,30 @@ pipelines:
               includePaths:
                 - "services/client-account/**"
           script:
-            - ./what2build.sh
             - cd services/client-account
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - NODE_ENV=test npm run test
+            - npm run test:coverage
+
+      - step:
+          name: Editorial Workflow Service
+          image: gioatsomoglobal/nodejs-builder:0.1
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/editorial-workflow/**"
+          script:
+            - ./what2build.sh
+            - cd services/editorial-workflow
+            - npm install
+            - export SERVERLESS_STAGE=dev
+            - ./setenv.sh
+            - source *.env
+            - npm run test
 
       - step:
           name: Validate OpenAPI definitions
@@ -129,13 +144,11 @@ pipelines:
                 includePaths:
                   - "services/userProfile/**"
             script:
-              - ./what2build.sh 
               - cd services/userProfile
               - npm install
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
               - source *.env
-              - NODE_ENV=test npm run test 
               - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
@@ -154,8 +167,25 @@ pipelines:
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
               - source *.env
-              - NODE_ENV=test npm run test 
-              - NODE_ENV=test npm run test:coverage 
+              - npm run test:coverage 
+              - serverless deploy --stage dev
+
+        - step: 
+            name: Editorial Workflow Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.3
+            condition:
+              changesets:
+                includePaths:
+                  - "services/editorial-workflow/**"
+            script:
+              - ./what2build.sh
+              - cd services/editorial-workflow
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - ./setenv.sh
+              - source *.env
+              - npm run test:coverage 
               - serverless deploy --stage dev
 
         - step:
