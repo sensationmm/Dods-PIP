@@ -131,11 +131,13 @@ ClientAccountModel.init(
         },
         isCompleted: {
             type: DataTypes.BOOLEAN,
+            defaultValue: 0,
             allowNull: false,
         },
         lastStepCompleted: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 1,
         },
     },
     {

@@ -26,6 +26,13 @@ export const createClientAccount: AsyncLambdaMiddleware<ClientAccountParameters>
                 parameters
             );
 
+        if (newClientAccount)
+            await ClientAccountRepository.defaultInstance.UpdateCompletion(
+                newClientAccount.uuid,
+                false,
+                1
+            );
+
         return new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Client account successfully created.',

@@ -51,9 +51,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
                     clientAccountParameters
                 );
 
-                newAccount.isCompleted = false;
-                newAccount.lastStepCompleted = 1;
-
                 const newClientAccountModel = await this.model.create(
                     newAccount
                 );
@@ -199,9 +196,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
                     updateParameters.contract_end_date
                 );
 
-            clientAccountToUpdate.isCompleted = false;
-            clientAccountToUpdate.lastStepCompleted = 2;
-
             const updateRecord = await clientAccountToUpdate.save();
 
             const newClientAccount = parseResponseFromModel(updateRecord);
@@ -265,7 +259,11 @@ export class ClientAccountRepository implements ClientAccountPersister {
         return coincidences.length == 0;
     }
 
-    async lastStepUpdate(clientAccountId: string): Promise<boolean> {
+    async UpdateCompletion(
+        clientAccountId: string,
+        isCompleted: boolean,
+        lastStepCompleted: number
+    ): Promise<boolean> {
         if (!clientAccountId) {
             throw new Error('Error: clientAccountId cannot be empty');
         }
@@ -275,8 +273,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
         });
 
         if (clientAccountModel) {
-            clientAccountModel.isCompleted = true;
-            clientAccountModel.lastStepCompleted = 3;
+            clientAccountModel.isCompleted = isCompleted;
+            clientAccountModel.lastStepCompleted = lastStepCompleted;
 
             clientAccountModel.save();
 

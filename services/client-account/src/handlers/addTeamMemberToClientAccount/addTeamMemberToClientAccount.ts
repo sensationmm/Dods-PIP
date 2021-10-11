@@ -40,8 +40,10 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
             clientAccountTeam
         );
 
-        await ClientAccountRepository.defaultInstance.lastStepUpdate(
-            clientAccount.uuid
+        await ClientAccountRepository.defaultInstance.UpdateCompletion(
+            clientAccount.uuid,
+            true,
+            3
         );
 
         // await ClientAccountRepository.defaultInstance.updateClientAcount({ clientAccountId, subscription_seats: clientAccount.subscription_seats! - 1 })

@@ -17,8 +17,6 @@ const SUCCESS_UPDATE_CLIENT_ACCOUNT = {
     contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
     subscription_seats: 32,
     consultant_hours: 13,
-    is_completed: false,
-    last_step_completed: 2,
     subscription: {
         uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
         name: 'subs_1',
@@ -326,8 +324,6 @@ describe(`${CREATE_FUNCTION} handler`, () => {
             contract_end_date: undefined,
             contract_rollover: undefined,
             contract_start_date: undefined,
-            is_completed: false,
-            last_step_completed: 1,
 
             subscription: undefined,
             subscription_seats: undefined,
