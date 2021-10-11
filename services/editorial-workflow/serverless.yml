@@ -1,4 +1,4 @@
-service: dods-nodejs-lambda-boilerplate
+service: editorial-workflow
 
 configValidationMode: warn
 
@@ -28,6 +28,13 @@ provider:
         - "xray:PutTelemetryRecords"
       Resource:
         - "*"
+    # This section ties the functions to a particular API Gateway instead of creating a new one
+    # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
+    # We will move to dynamic Gateway selection based on sls stage.
+  apiGateway:
+      restApiId: emhumq7ktf
+      restApiRootResourceId: lzvvrnid32
+      description: Default Gateway for dev deployed with dods-ia
 
   environment:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
@@ -37,10 +44,10 @@ provider:
 custom:
   endpoints:
     dev:
-      sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
+      sayTurkishHelloEndpoint: http://localhost:1082/editorial-record
 
     prod:
-      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
+      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/editorial-record
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true

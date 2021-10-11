@@ -1,3 +1,5 @@
+options:
+  max-time: 15
 pipelines:
   default:
     - parallel:
@@ -45,18 +47,18 @@ pipelines:
               includePaths:
                 - "services/userProfile/**"
           script:
-            - ./what2build.sh || true
+            - ./what2build.sh
             - cd services/userProfile
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - npm run test
-            - npm run test:coverage
+            - NODE_ENV=test npm run test
+            - NODE_ENV=test npm run test:coverage
             
       - step:
           name: Client Account Service
-          image: gioatsomoglobal/devopstools:0.4.3
+          image: gioatsomoglobal/nodejs-builder:0.1
           caches:
             - node
           condition:
@@ -64,14 +66,31 @@ pipelines:
               includePaths:
                 - "services/client-account/**"
           script:
-            - ./what2build.sh || true
+            - ./what2build.sh
             - cd services/client-account
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - npm run test || true
-            - npm run test:coverage || true
+            - npm run test
+
+      - step:
+          name: Editorial Workflow Service
+          image: gioatsomoglobal/nodejs-builder:0.1
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/editorial-workflow/**"
+          script:
+            - ./what2build.sh
+            - cd services/editorial-workflow
+            - npm install
+            - export SERVERLESS_STAGE=dev
+            - ./setenv.sh
+            - source *.env
+            - npm run test
 
       - step:
           name: Validate OpenAPI definitions
@@ -115,8 +134,8 @@ pipelines:
             script:
               - cd services/dods-iam
               - npm install
-              - npm run test || true
-              - npm run test:coverage || true
+              - NODE_ENV=test npm run test 
+              - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
         - step: 
@@ -128,14 +147,13 @@ pipelines:
                 includePaths:
                   - "services/userProfile/**"
             script:
-              - ./what2build.sh || true
+              - ./what2build.sh 
               - cd services/userProfile
               - npm install
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
               - source *.env
-              - npm run test || true
-              - npm run test:coverage || true
+              - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
         - step: 
@@ -153,8 +171,26 @@ pipelines:
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
               - source *.env
-              - npm run test || true
-              - npm run test:coverage || true
+              - npm run test:coverage 
+              - serverless deploy --stage dev
+
+        - step:
+            name: Editorial Workflow Service
+            image: gioatsomoglobal/devopstools:0.4.3
+            caches:
+              - node
+            condition:
+              changesets:
+                includePaths:
+                  - "services/editorial-workflow/**"
+            script:
+              - ./what2build.sh
+              - cd services/editorial-workflow
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - ./setenv.sh
+              - source *.env
+              - npm run test:coverage 
               - serverless deploy --stage dev
 
         - step:
