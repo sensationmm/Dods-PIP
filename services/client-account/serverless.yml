@@ -33,7 +33,7 @@ provider:
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
-            -  'AmazonRDSFullAccess'
+            -  'rds:*'
           Resource:
             - '*'
         - Effect: 'Allow'
