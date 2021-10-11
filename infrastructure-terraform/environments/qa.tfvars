@@ -1,2 +1,2 @@
-environment       = "staging"
+environment       = "qa"
 environment_group = "development"

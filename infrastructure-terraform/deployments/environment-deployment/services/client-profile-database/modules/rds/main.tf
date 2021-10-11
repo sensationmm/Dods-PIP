@@ -52,12 +52,12 @@ resource "aws_db_instance" "default" {
     aws_security_group.rds_security_group.id,
   ]
 
-  db_subnet_group_name  = aws_db_subnet_group.db_sub_gr.id
+
   storage_encrypted     = false
   publicly_accessible   = true
   multi_az              = false
 
-  tags {
+  tags = {
     environment = var.environment
     project     = var.project
     version     = "1"
