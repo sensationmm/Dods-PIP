@@ -1,4 +1,4 @@
-import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { ClientAccountRepository } from '../../../src/repositories';
 import { ClientAccountResponse } from '../../../src/domain';
@@ -10,36 +10,46 @@ const FUNCTION_NAME = updateClientAccount.name;
 const UPDATE_REPO_RESPONSE: ClientAccountResponse = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
     name: 'OtherNames',
-    notes: null,
     contact_name: 'Mike Fly',
     contact_email_address: 'mike@example.com',
     contact_telephone_number: '313222123',
-    contract_start_date: '2021-01-01T01:01:01.001Z',
+    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
     contract_rollover: false,
-    contract_end_date: '2022-02-01T01:01:01.001Z',
+    contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
     subscription_seats: 20,
     consultant_hours: 13,
-    subscription: 1,
+    subscription: {
+        uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
+        name: 'subs_1',
+        location: 2,
+        contentType: 2,
+    },
 };
 
 const SUCCESS_UPDATE_ACCOUNT = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
     name: 'OtherNames',
-    notes: null,
     contact_name: 'Mike Fly',
     contact_email_address: 'mike@example.com',
     contact_telephone_number: '313222123',
-    contract_start_date: '2021-01-01T01:01:01.001Z',
+    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
     contract_rollover: false,
-    contract_end_date: '2022-02-01T01:01:01.001Z',
+    contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
     subscription_seats: 20,
     consultant_hours: 13,
-    subscription: 1,
+    subscription: {
+        uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
+        name: 'subs_1',
+        location: 2,
+        contentType: 2,
+    },
 };
 
 jest.mock('../../../src/repositories/ClientAccountRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
+
+const defaultContext = createContext();
 
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.updateClientAccount.mockClear();
@@ -69,8 +79,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             expectedRepositoryResponse
         );
 
-        // @ts-ignore
-        const response = await updateClientAccount(clientAccount);
+        const response = await updateClientAccount(clientAccount, defaultContext);
 
         expect(response).toEqual(expectedResponse);
 
@@ -95,9 +104,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: 'End date must be greater than start date',
         });
 
-        // @ts-ignore
+        const response = await updateClientAccount(clientAccount, defaultContext);
 
-        const response = await updateClientAccount(clientAccount);
         expect(response).toEqual(expectedResponse);
     });
 
@@ -117,8 +125,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: 'Must provide contract end Date',
         });
 
-        // @ts-ignore
-        const response = await updateClientAccount(clientAccount);
+        const response = await updateClientAccount(clientAccount, defaultContext);
+
         expect(response).toEqual(expectedResponse);
     });
 
@@ -136,23 +144,18 @@ describe(`${FUNCTION_NAME} handler`, () => {
             mockedClientAccountRepository.defaultInstance.updateClientAccount.mockImplementation(
                 async (clientAccount) => {
                     if (!clientAccount.clientAccountId) {
-                        throw new Error(
-                            'Error: clientAccountId cannot be empty'
-                        );
+                        throw new Error('Error: clientAccountId cannot be empty');
                     }
 
                     return [];
                 }
             );
 
-            // @ts-ignore
-            await updateClientAccount(clientAccount);
+            await updateClientAccount(clientAccount, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {
-            expect(error.message).toEqual(
-                'Error: clientAccountId cannot be empty'
-            );
+            expect(error.message).toEqual('Error: clientAccountId cannot be empty');
         }
     });
 
@@ -169,10 +172,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         try {
             mockedClientAccountRepository.defaultInstance.updateClientAccount.mockImplementation(
                 async (clientAccount) => {
-                    if (
-                        clientAccount.clientAccountId !==
-                        '1dcad502-0c50-4dab-9192-13b5e882b95f'
-                    ) {
+                    if (clientAccount.clientAccountId !== '1dcad502-0c50-4dab-9192-13b5e882b95f') {
                         throw new Error('Error: clientAccount not found');
                     }
 
@@ -180,8 +180,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 }
             );
 
-            // @ts-ignore
-            await updateClientAccount(clientAccount);
+            await updateClientAccount(clientAccount, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {
@@ -203,10 +202,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         try {
             mockedClientAccountRepository.defaultInstance.updateClientAccount.mockImplementation(
                 async (clientAccount) => {
-                    if (
-                        clientAccount.subscription !==
-                        'efe4bd45-3ccf-4ef7-8c09-f38e1d954a42'
-                    ) {
+                    if (clientAccount.subscription !== 'efe4bd45-3ccf-4ef7-8c09-f38e1d954a42') {
                         throw new Error('Error: Wrong subscription uuid');
                     }
 
@@ -214,8 +210,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 }
             );
 
-            //@ts-ignore
-            await updateClientAccount(clientAccount);
+            await updateClientAccount(clientAccount, defaultContext);
 
             expect(true).toBe(false);
         } catch (error: any) {

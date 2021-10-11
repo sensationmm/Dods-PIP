@@ -124,6 +124,19 @@ paths:
                 '404':
                     $ref: '#/components/responses/NotFound'
 
+    /checkaccountname:
+        post:
+            operationId: checkClientAccountName
+            summary: 'Checks if there is an account with the specified name.'
+            description: 'Checks if there is an account with the specified name.'
+            requestBody:
+                $ref: '#/components/requestBodies/checkAccountName'
+            responses:
+                '200':
+                    $ref: '#/components/responses/CheckAccountNameResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+
 components:
     schemas:
         Message:
@@ -188,6 +201,12 @@ components:
                     type: number
                     required: true
                     enum: [1, 2]
+        Name:
+            type: object
+            properties:
+                name:
+                    type: string
+                    required: true
 
     parameters:
         clientAccountId:
@@ -265,58 +284,76 @@ components:
             required: false
             description: Offset value for pagination
 
-        responses:
-            NotFound:
-                description: The specified resource was not found
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Message'
-            BadRequest:
-                description: Bad Request. Input must be valid
-                content:
-                    application/json:
-                        schema:
-                            allOf:
-                                - $ref: '#/components/schemas/Message'
-                                - $ref: '#/components/schemas/Errors'
-            NotAcceptable:
-                description: Not Acceptable.
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Message'
-            ClientAccount:
-                description: ''
-                content:
-                    application/json:
-                        schema:
-                            type: 'object'
-            SubscriptionTypes:
-                description: ''
-                content:
-                    application/json:
-                        schema:
-                            type: 'object'
-            ClientAccountTeamResponse:
-                description: ''
-                content:
-                    application/json:
-                        schema:
-                            type: 'object'
+    responses:
+        NotFound:
+            description: The specified resource was not found
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Message'
+        BadRequest:
+            description: Bad Request. Input must be valid
+            content:
+                application/json:
+                    schema:
+                        allOf:
+                            - $ref: '#/components/schemas/Message'
+                            - $ref: '#/components/schemas/Errors'
+        NotAcceptable:
+            description: Not Acceptable.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Message'
+        ClientAccount:
+            description: ''
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+        SubscriptionTypes:
+            description: ''
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+        ClientAccountTeamResponse:
+            description: ''
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+        CheckAccountNameResponse:
+            description: ''
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
 
-        requestBodies:
-            clientAccount:
-                description: A JSON object containing pet information
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/ClientAccount'
-            clientAccountTeam:
-                description: A JSON object containing pet information
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/ClientAccountTeam'
+
+    requestBodies:
+        clientAccount:
+            description: A JSON object containing pet information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ClientAccount'
+        clientAccountTeam:
+            description: A JSON object containing pet information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ClientAccountTeam'
+        checkAccountName:
+            description: A JSON object containing pet information
+            required: true
+            content: 
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            name:
+                                type: string
+                                required: true

@@ -1,8 +1,8 @@
-import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { mocked } from 'ts-jest/utils';
 
 import { ClientAccountRepository } from '../../../src/repositories';
 import { SearchClientAccountParameters } from '../../../src/domain';
-import { mocked } from 'ts-jest/utils';
 import { searchClientAccount } from '../../../src/handlers/searchClientAccount/searchClientAccount';
 
 const FUNCTION_NAME = searchClientAccount.name;
@@ -25,6 +25,8 @@ const SUCCESS_SEARCH_RESPONSE = [
 jest.mock('../../../src/repositories/ClientAccountRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
+
+const defaultContext = createContext();
 
 beforeEach(() => {
     mockedClientAccountRepository.defaultInstance.searchClientAccount.mockImplementation(
@@ -60,14 +62,12 @@ describe(`${FUNCTION_NAME} handler`, () => {
             offset: 0,
             data: SUCCESS_SEARCH_RESPONSE,
         });
-        // @ts-ignore
-        const response = await searchClientAccount(searchParams);
+
+        const response = await searchClientAccount(searchParams, defaultContext);
 
         expect(response).toEqual(expectedResponse);
 
-        expect(
-            mockedClientAccountRepository.defaultInstance.searchClientAccount
-        ).toHaveBeenCalledTimes(1);
+        expect(mockedClientAccountRepository.defaultInstance.searchClientAccount).toHaveBeenCalledTimes(1);
     });
 
     test(`${FUNCTION_NAME} Invalid input`, async () => {
@@ -82,13 +82,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: `No matches found for search parameters: ${searchParams}`,
         });
 
-        // @ts-ignore
-        const response: HttpResponse = await searchClientAccount(searchParams);
+        const response = await searchClientAccount(searchParams, defaultContext);
 
         expect(response).toEqual(expectedResponse);
 
-        expect(
-            mockedClientAccountRepository.defaultInstance.searchClientAccount
-        ).toHaveBeenCalledTimes(1);
+        expect(mockedClientAccountRepository.defaultInstance.searchClientAccount).toHaveBeenCalledTimes(1);
     });
 });

@@ -21,6 +21,9 @@ export interface ClientAccountPersister {
         updateParameters: UpdateClientAccountParameters
     ): Promise<ClientAccountResponse | never[]>;
 
-    getClientAccountSeats(clientAccountId: string): Promise<number | never[]>;
+    getClientAccountSeats(clientAccountId: string): Promise<number>;
+
     getClientAccountUsers(clientAccountId: string): Promise<number>;
+
+    checkNameAvailability(name: string): Promise<boolean>;
 }
