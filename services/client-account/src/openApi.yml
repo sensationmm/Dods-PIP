@@ -1,0 +1,359 @@
+openapi: 3.0.0
+info:
+    description: DODS Boilerplate
+    version: 1.0.0
+    title: DODS Boilerplate
+    contact:
+        email: kenanhancer@gmail.com
+    license:
+        name: GPL 3.0
+        url: 'https://www.gnu.org/licenses/gpl-3.0.html'
+servers:
+    - url: /api
+
+paths:
+    /health:
+        get:
+            operationId: health
+            summary: 'Get Health Message'
+            description: 'Get Health Message'
+            responses:
+                '200':
+                '404':
+                    $ref: '#/components/responses/NotFound'
+
+    /client-accounts/{clientAccountId}:
+        get:
+            operationId: getClientAccount
+            summary: 'Get Client Account'
+            description: 'Get Client Account'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
+            responses:
+                '200':
+                    $ref: '#/components/responses/ClientAccount'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '404':
+                    $ref: '#/components/responses/NotFound'
+
+    /clientaccount:
+        get:
+            operationId: searchClientAccount
+            summary: 'Search Client Accounts'
+            description: 'Search Client Accounts'
+            parameters:
+                - $ref: '#/components/parameters/locations'
+                - $ref: '#/components/parameters/subscriptionTypes'
+                - $ref: '#/components/parameters/searchTerm'
+                - $ref: '#/components/parameters/startsBy'
+                - $ref: '#/components/parameters/limit'
+                - $ref: '#/components/parameters/offset'
+            responses:
+                '200':
+                    $ref: '#/components/responses/ClientAccount'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '404':
+                    $ref: '#/components/responses/NotFound'
+        post:
+            operationId: createClientAccount
+            summary: 'Create Client Account'
+            description: 'Create Client Account'
+            requestBody:
+                $ref: '#/components/requestBodies/clientAccount'
+            responses:
+                '200':
+                    $ref: '#/components/responses/ClientAccount'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+
+    /clientaccount/{clientAccountId}/seats:
+        get:
+            operationId: getRemainingSeats
+            summary: 'Get Remaining Seats'
+            description: 'Get Client Account'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
+            responses:
+                '200':
+                    $ref: '#/components/responses/ClientAccount'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '404':
+                    $ref: '#/components/responses/NotFound'
+
+    /subscription-types:
+        get:
+            operationId: getSubscriptionTypes
+            summary: 'Get Subscription Types list'
+            description: 'Get Subscription Types list'
+            responses:
+                '200':
+                    $ref: '#/components/responses/SubscriptionTypes'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '404':
+                    $ref: '#/components/responses/NotFound'
+
+    /client-accounts/{clientAccountId}/team-members:
+        post:
+            operationId: addTeamMemberToClientAccount
+            summary: 'Add Team Member to Client Account'
+            description: 'Add Team Member to Client Account'
+            requestBody:
+                $ref: '#/components/requestBodies/clientAccountTeam'
+            responses:
+                '200':
+                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+
+    /clientaccount/{clientAccountId}:
+        put:
+            operationId: updateClientAccount
+            summary: 'UpdateClient Account'
+            description: 'Update Client Account'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
+            responses:
+                '200':
+                    $ref: '#/components/responses/ClientAccount'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '404':
+                    $ref: '#/components/responses/NotFound'
+
+    /checkaccountname:
+        post:
+            operationId: checkClientAccountName
+            summary: 'Checks if there is an account with the specified name.'
+            description: 'Checks if there is an account with the specified name.'
+            requestBody:
+                $ref: '#/components/requestBodies/checkAccountName'
+            responses:
+                '200':
+                    $ref: '#/components/responses/CheckAccountNameResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+
+components:
+    schemas:
+        Message:
+            type: object
+            properties:
+                message:
+                    type: string
+        Errors:
+            type: object
+            properties:
+                errors:
+                    type: object
+                    additionalProperties:
+                        type: array
+                        items:
+                            type: string
+        ClientAccount:
+            type: object
+            properties:
+                name:
+                    type: string
+                    required: true
+                    example: Dods information
+                notes:
+                    type: string
+                    required: true
+                contact_name:
+                    type: string
+                    required: true
+                    example: Joe Bloggs
+                contact_email_address:
+                    type: string
+                    required: true
+                    example: user@email.com
+                contact_telephone_number:
+                    type: string
+                    required: true
+                    example: '+442071838750'
+                contract_start_date:
+                    type: string
+                    format: date-time
+                    required: true
+                    example: '2000-01-01T01:01:01.001Z'
+                contract_rollover:
+                    type: boolean
+                    required: true
+                contract_end_date:
+                    type: string
+                    format: date-time
+                    required: true
+                    example: '2000-01-01T01:01:01.001Z'
+        ClientAccountTeam:
+            type: object
+            properties:
+                userId:
+                    type: number
+                    required: true
+                clientAccountId:
+                    type: number
+                    required: true
+                teamMemberType:
+                    type: number
+                    required: true
+                    enum: [1, 2]
+        Name:
+            type: object
+            properties:
+                name:
+                    type: string
+                    required: true
+
+    parameters:
+        clientAccountId:
+            in: path
+            name: clientAccountId
+            schema:
+                type: string
+            required: true
+            description: Clint Account UUID
+        locations:
+            in: query
+            name: locations
+            schema:
+                type: array
+                items:
+                    type: integer
+            examples:
+                oneId:
+                    summary: Example of a single location's ID
+                    value: [5] # ?locations=5
+                multipleIds:
+                    summary: Example of multiple location's IDs
+                    value: [1, 5, 7] # ?locations=1,5,7
+            required: false
+            explode: false
+            description: Client Accounts by location
+        subscriptionTypes:
+            in: query
+            name: subscriptionTypes
+            schema:
+                type: array
+                items:
+                    type: integer
+            examples:
+                oneId:
+                    summary: Example of a single location's ID
+                    value: [5] # ?subscriptionTypes=5
+                multipleIds:
+                    summary: Example of multiple location's IDs
+                    value: [1, 5, 7] # ?subscriptionTypes=1,5,7
+            required: false
+            explode: false
+            description: Client Accounts by subscription type
+        searchTerm:
+            in: query
+            name: searchTerm
+            schema:
+                type: string
+            required: false
+            description: Client Accounts by name's filtering using search term
+        startsBy:
+            in: query
+            name: startsBy
+            schema:
+                type: string
+            required: false
+            description: Client Accounts by name's first letter
+        limit:
+            in: query
+            name: limit
+            schema:
+                type: integer
+                default: 10
+                minimum: 0
+                maximum: 100
+            required: false
+            description: maximum number of Client Accounts to return
+        offset:
+            in: query
+            name: offset
+            schema:
+                type: integer
+                default: 0
+                minimum: 0
+            required: false
+            description: Offset value for pagination
+
+    responses:
+        NotFound:
+            description: The specified resource was not found
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Message'
+        BadRequest:
+            description: Bad Request. Input must be valid
+            content:
+                application/json:
+                    schema:
+                        allOf:
+                            - $ref: '#/components/schemas/Message'
+                            - $ref: '#/components/schemas/Errors'
+        NotAcceptable:
+            description: Not Acceptable.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Message'
+        ClientAccount:
+            description: ''
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+        SubscriptionTypes:
+            description: ''
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+        ClientAccountTeamResponse:
+            description: ''
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+        CheckAccountNameResponse:
+            description: ''
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+
+
+    requestBodies:
+        clientAccount:
+            description: A JSON object containing pet information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ClientAccount'
+        clientAccountTeam:
+            description: A JSON object containing pet information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ClientAccountTeam'
+        checkAccountName:
+            description: A JSON object containing pet information
+            required: true
+            content: 
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            name:
+                                type: string
+                                required: true

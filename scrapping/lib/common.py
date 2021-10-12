@@ -1,45 +1,50 @@
 from hashlib import md5
-import re, os
+import re
+import os
+import datetime
 import logging
 from fuzzywuzzy import fuzz
 import operator
 from configs import Config
-from json import loads, dump
+from json import loads
+from bs4 import BeautifulSoup
 
 class Common:
 
-	def regex(self, pattern, data):
+	@staticmethod
+	def regex(pattern, data):
 		data = re.findall(pattern, data)
 		return data[0] if data else None
 
-	def Originator_Check(self, input):
+	@staticmethod
+	def originator_check(input_):
 		try:
 			root_dir = os.path.abspath(os.curdir)
-			config = Config()._config_read((root_dir + "config.ini"))
-			Originator_list = eval(config.get('Originator', 'Originator_list'))
-			Scored_Dict={}
-			Final_Originator=''
-			for Originator in Originator_list:
-				score = fuzz.ratio(input, Originator)
+			config = Config().config_read(root_dir + "config.ini")
+			originator_list = eval(config.get('Originator', 'Originator_list'))
+			scored_dict = {}
+			# Final_Originator = ''
+			for Originator in originator_list:
+				score = fuzz.ratio(input_, Originator)
 				# if int(score) > 50:
-				Scored_Dict[Originator]=score
-			if Scored_Dict:
-				Final_Originator= max(Scored_Dict.items(), key=operator.itemgetter(1))[0]
+				scored_dict[Originator] = score
+			if scored_dict:
+				final_originator = max(scored_dict.items(), key=operator.itemgetter(1))[0]
 
-				input_foratted = re.sub(r'\band\b','&',str(input),re.IGNORECASE)
-				if re.findall(input,Final_Originator,re.IGNORECASE):
+				input_formatted = re.sub(r'\band\b', '&', str(input_), re.IGNORECASE)
+				if re.findall(input_, final_originator, re.IGNORECASE):
 					pass
-				elif re.findall(input_foratted,Final_Originator,re.IGNORECASE):
+				elif re.findall(input_formatted, final_originator, re.IGNORECASE):
 					pass
 				else:
-					Final_Originator=input
+					final_originator = input_
 			else:
-				Final_Originator=input
+				final_originator = input_
 
-			return 	Final_Originator
+			return final_originator
 		except Exception as e:
 			logging.exception(e)
-			return input
+			return input_
 
 	def hash(*args):
 		args = [str(i) for i in args]
@@ -47,8 +52,27 @@ class Common:
 		result = md5(data.encode('utf-8'))
 		return result.hexdigest()
 
-	def get_file_content(self, path):
-
+	@staticmethod
+	def get_file_content(path):
 		with open(path, 'r') as file:
 			schema = loads(file.read())
 		return schema
+
+	@staticmethod
+	def convert_2_xhtml(html):
+		soup = BeautifulSoup(html, "html5lib")
+		[x.extract() for x in soup.find_all() if len(x.text) == 0]
+		[x.extract() for x in soup.find_all('script')]
+		[x.extract() for x in soup.find_all('style')]
+		[x.extract() for x in soup.find_all('noscript')]
+		[x.extract() for x in soup.find_all(r'\s*')]
+		soup.prettify()
+		return soup
+
+	@staticmethod
+	def dateRange(i):
+		today = date_to = datetime.datetime.now()
+		date_from = today - datetime.timedelta(i)
+
+		return date_from.strftime('%Y-%m-%d'), date_to.strftime('%Y-%m-%d')
+

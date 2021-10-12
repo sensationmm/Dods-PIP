@@ -116,7 +116,9 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
         <Panel isWelcome>
           <Columns>
             <div>
-              <Text type={'h1'}>Political Intelligence Platform</Text>
+              <Text type={'h1'} headingStyle="heroExtraLarge">
+                Political Intelligence Platform
+              </Text>
               <Spacer size={12} />
               <Text bold>Better decisions. For a better tomorrow.</Text>
               <Spacer size={4} />

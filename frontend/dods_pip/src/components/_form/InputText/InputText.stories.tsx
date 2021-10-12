@@ -14,10 +14,13 @@ const Template: Story<InputTextProps> = (args) => <InputText {...args} />;
 export const Primary = Template.bind({});
 
 Primary.args = {
-  label: '',
+  label: 'Label',
   value: '',
+  size: 'large',
   isDisabled: false,
   error: undefined,
+  required: false,
+  optional: false,
   helperText: '',
 };
 

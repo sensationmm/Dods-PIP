@@ -1,0 +1,161 @@
+service: client-account
+
+configValidationMode: warn
+
+frameworkVersion: ^2.57.0
+
+variablesResolutionMode: 20210326
+
+provider:
+    name: aws
+    region: eu-west-1
+    runtime: nodejs14.x
+    stage: ${opt:stage, 'dev'}
+    lambdaHashingVersion: 20201221
+    stackTags:
+        service: ${self:service}
+        env: ${self:provider.stage}
+        version: 1
+        teamsEmail: kenan.hancer@somoglobal.com
+        team: dods
+    tags:
+        myTag1: myTag1
+    tracing:
+        apiGateway: true
+        lambda: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - 'xray:PutTraceSegments'
+              - 'xray:PutTelemetryRecords'
+          Resource:
+              - '*'
+    # This section ties the functions to a particular API Gateway instead of creating a new one
+    # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
+    # We will move to dynamic Gateway selection based on sls stage.
+    apiGateway:
+        restApiId: emhumq7ktf
+        restApiRootResourceId: lzvvrnid32
+        description: Default Gateway for dev deployed with dods-iam
+
+    environment:
+        SERVERLESS_STAGE: ${self:provider.stage}
+        SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+        MARIADB_CONNECTION_STRING: 'mariadb://root:rootPass@127.0.0.1:3306/dods?allowPublicKeyRetrieval=true&useSSL=false'
+        MARIADB_CONNECTION_LIMIT: 5
+        MARIA_DB_HOST: 'localhost'
+        MARIA_DB_USERNAME: 'root'
+        MARIA_DB_PASSWORD: 'rootPass'
+        MARIA_DB_DATABASE: 'dods'
+
+custom:
+    webpack:
+        webpackConfig: ./webpack.config.js
+        includeModules:
+            forceInclude:
+                - express
+        keepOutputDirectory: false
+    serverless-offline:
+        httpPort: 3000
+    prune:
+        automatic: true
+        number: 1
+    dependsOn:
+        enabled: true
+        chains: 8
+    localstack:
+        stages:
+            # list of stages for which the plugin should be enabled
+            - local
+        host: http://localhost # optional - LocalStack host to connect to
+        edgePort: 4566 # optional - LocalStack edge port to connect to
+        autostart: false # optional - Start LocalStack in Docker on Serverless deploy
+        # lambda:
+        #   # Enable this flag to improve performance
+        #   mountCode: True
+        docker:
+            # Enable this flag to run "docker ..." commands as sudo
+            sudo: False
+
+plugins:
+    - serverless-webpack
+    - serverless-prune-plugin
+    - serverless-localstack
+    - serverless-dependson-plugin
+    - serverless-offline
+
+functions:
+    health:
+        handler: src/handlers/health/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: health
+                  cors: true
+        tags:
+            foo: bar
+
+    getClientAccounts:
+        handler: src/handlers/getClientAccount/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: client-accounts/{clientAccountId}
+
+    createClientAccount:
+        handler: src/handlers/createClientAccount/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: post
+                  path: clientaccount
+
+    searchClientAccount:
+        handler: src/handlers/searchClientAccount/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: clientaccount
+
+    getSubscriptionTypes:
+        handler: src/handlers/getSubscriptionTypes/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: subscription-types
+
+    addTeamMemberToClientAccount:
+        handler: src/handlers/addTeamMemberToClientAccount/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: post
+                  path: client-accounts/{clientAccountId}/team-members
+
+    updateClientAccount:
+        handler: src/handlers/updateClientAccount/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: put
+                  path: clientaccount/{clientAccountId}
+
+    getRemainingSeats:
+        handler: src/handlers/getRemainingSeats/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: clientaccount/{clientAccountId}/seats
+
+    checkClientAccountName:
+        handler: src/handlers/checkClientAccountName/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: post
+                  path: checkaccountname

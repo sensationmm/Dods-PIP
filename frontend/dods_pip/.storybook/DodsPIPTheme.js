@@ -5,7 +5,7 @@ import color from '../src/globals/color';
 export default create({
   appBg: color.theme.blue,
   appContentBg: color.base.grey,
-  appBorderRadius: 4,
+  appBorderRadius: 2,
   brandTitle: 'Dods PIP Components',
   brandImage: Logo,
 });

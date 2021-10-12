@@ -2,6 +2,7 @@ import { shallow } from 'enzyme';
 import React from 'react';
 
 import InputBase from '.';
+import Label from '../Label';
 
 describe('InputBase onChange={jest.fn}', () => {
   it('renders without error', () => {
@@ -9,6 +10,8 @@ describe('InputBase onChange={jest.fn}', () => {
       <InputBase id="test" onChange={jest.fn} type="text" label="Example" value="Example" />,
     );
     const component = wrapper.find('[data-test="component-input-base"]');
+    const label = wrapper.find(Label);
+    expect(label.length).toEqual(1);
     expect(component.length).toEqual(1);
   });
 
@@ -18,14 +21,6 @@ describe('InputBase onChange={jest.fn}', () => {
     );
     const component = wrapper.find('[data-test="component-input-base-input"]');
     expect(component.props().value).toEqual('Value');
-  });
-
-  it('renders label in field if no value', () => {
-    const wrapper = shallow(
-      <InputBase id="test" onChange={jest.fn} type="text" label="Label" value="" />,
-    );
-    const component = wrapper.find('[data-test="component-input-base-input"]');
-    expect(component.props().value).toEqual('Label');
   });
 
   it('renders helper text if given', () => {

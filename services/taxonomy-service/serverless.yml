@@ -1,0 +1,90 @@
+service: dods-taxonomy-service
+
+configValidationMode: warn
+
+frameworkVersion: ^2.54.0
+
+variablesResolutionMode: 20210326
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'test'}
+  lambdaHashingVersion: 20201221
+  stackTags:
+    service: ${self:service}
+    env: ${self:provider.stage}
+    version: 1
+    teamsEmail: dods.project@somoglobal.com
+    team: dods
+  tags:
+    myTag1: myTag1
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
+
+  environment:
+    NODE_ENV: ${opt:NODE_ENV, 'test'}
+    SERVERLESS_STAGE: ${self:provider.stage}
+    SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
+    ES_KEY_ID: ${env:ES_KEY_ID}
+    ES_API_KEY: ${env:ES_API_KEY}
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules:
+      forceInclude:
+        - express
+    keepOutputDirectory: false
+  serverless-offline:
+    httpPort: 3000
+  prune:
+    automatic: true
+    number: 1
+  dependsOn:
+    enabled: true
+    chains: 8
+  localstack:
+    stages:
+      # list of stages for which the plugin should be enabled
+      - local
+    host: http://localhost # optional - LocalStack host to connect to
+    edgePort: 4566 # optional - LocalStack edge port to connect to
+    autostart: false # optional - Start LocalStack in Docker on Serverless deploy
+    # lambda:
+    #   # Enable this flag to improve performance
+    #   mountCode: True
+    docker:
+      # Enable this flag to run "docker ..." commands as sudo
+      sudo: False
+
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+  - serverless-localstack
+  - serverless-dependson-plugin
+  - serverless-offline
+
+package:
+  include:
+    - node_modules/**
+
+functions:
+
+  taxonomies:
+    handler: src/handlers/taxonomies/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: taxonomies
