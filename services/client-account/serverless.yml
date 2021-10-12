@@ -14,11 +14,11 @@ provider:
     lambdaHashingVersion: 20201221
     vpc:
       securityGroupIds:
-        - sg-337dbd61
+        - sg-0a6ad7ee6ec2af4cb
+        - sg-025e66283dfddeadf
       subnetIds:
-        - subnet-1e55a355
-        - subnet-1882a242
-        - subnet-3c987e45
+        - subnet-08ccfcc105a2bff8f
+        - subnet-0e2cced16bd0b5a94
     stackTags:
         service: ${self:service}
         env: ${self:provider.stage}
