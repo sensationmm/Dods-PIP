@@ -17,7 +17,10 @@ import { SubscriptionTypeModel } from '.';
 import sequelize from '../sequelize';
 
 class ClientAccountModel
-    extends Model<ClientAccountModelAttributes, ClientAccountModelCreationAttributes>
+    extends Model<
+        ClientAccountModelAttributes,
+        ClientAccountModelCreationAttributes
+    >
     implements ClientAccountModelAttributes
 {
     public id!: number;
@@ -32,6 +35,8 @@ class ClientAccountModel
     public contractRollover?: boolean;
     public contractEndDate?: Date;
     public consultantHours?: number;
+    public isCompleted!: boolean;
+    public lastStepCompleted!: number;
 
     public SubscriptionType?: SubscriptionType;
     public ClientAccountTeam?: ClientAccountTeam;
@@ -123,6 +128,16 @@ ClientAccountModel.init(
             type: DataTypes.BOOLEAN,
             allowNull: true,
             comment: 'null',
+        },
+        isCompleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 0,
+            allowNull: false,
+        },
+        lastStepCompleted: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1,
         },
     },
     {

@@ -27,11 +27,12 @@ export class ClientAccountError extends Error {
     public cause: any;
 }
 export class ClientAccountRepository implements ClientAccountPersister {
-    static defaultInstance: ClientAccountPersister = new ClientAccountRepository(
-        ClientAccountModel,
-        SubscriptionTypeModel,
-        UserProfileModel
-    );
+    static defaultInstance: ClientAccountPersister =
+        new ClientAccountRepository(
+            ClientAccountModel,
+            SubscriptionTypeModel,
+            UserProfileModel
+        );
 
     constructor(
         private model: typeof ClientAccountModel,
@@ -46,9 +47,16 @@ export class ClientAccountRepository implements ClientAccountPersister {
             throw new Error('Error: clientAccount cannot be empty');
         } else {
             try {
-                const newAccount = parseModelParameters(clientAccountParameters);
-                const newClientAccountModel = await this.model.create(newAccount);
-                const newClientAccount = parseResponseFromModel(newClientAccountModel);
+                const newAccount = parseModelParameters(
+                    clientAccountParameters
+                );
+
+                const newClientAccountModel = await this.model.create(
+                    newAccount
+                );
+                const newClientAccount = parseResponseFromModel(
+                    newClientAccountModel
+                );
 
                 return newClientAccount;
             } catch (error) {
@@ -58,7 +66,9 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async getClientAccount(clientAccountId: string): Promise<ClientAccountResponse> {
+    async getClientAccount(
+        clientAccountId: string
+    ): Promise<ClientAccountResponse> {
         if (!clientAccountId) {
             throw new Error('Error: clientAccountId cannot be empty');
         }
@@ -95,7 +105,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
     async searchClientAccount(
         searchClientAccountParams: SearchClientAccountParameters
     ): Promise<Array<SearchClientAccountResponse> | undefined> {
-        const { startsBy, locations, subscriptionTypes, searchTerm } = searchClientAccountParams;
+        const { startsBy, locations, subscriptionTypes, searchTerm } =
+            searchClientAccountParams;
         const { limit, offset } = searchClientAccountParams;
 
         let clientAccountWhere: WhereOptions = {};
@@ -135,9 +146,10 @@ export class ClientAccountRepository implements ClientAccountPersister {
             limit: limit,
         });
         if (clientAccountModels) {
-            const clientAccounts: Array<SearchClientAccountResponse> = clientAccountModels.map(
-                (model) => parseSearchClientAccountResponse(model)
-            );
+            const clientAccounts: Array<SearchClientAccountResponse> =
+                clientAccountModels.map((model) =>
+                    parseSearchClientAccountResponse(model)
+                );
 
             return clientAccounts;
         } else {
@@ -170,12 +182,15 @@ export class ClientAccountRepository implements ClientAccountPersister {
             //clientAccountToUpdate.subscription=updateParameters.subscription;
 
             clientAccountToUpdate.subscriptionType = subscriptionData;
-            clientAccountToUpdate.subscriptionSeats = updateParameters.subscription_seats;
-            clientAccountToUpdate.consultantHours = updateParameters.consultant_hours;
+            clientAccountToUpdate.subscriptionSeats =
+                updateParameters.subscription_seats;
+            clientAccountToUpdate.consultantHours =
+                updateParameters.consultant_hours;
             clientAccountToUpdate.contractStartDate = new Date(
                 updateParameters.contract_start_date
             );
-            clientAccountToUpdate.contractRollover = updateParameters.contract_rollover;
+            clientAccountToUpdate.contractRollover =
+                updateParameters.contract_rollover;
             if (updateParameters.contract_end_date)
                 clientAccountToUpdate.contractEndDate = new Date(
                     updateParameters.contract_end_date
@@ -219,7 +234,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
         });
 
         if (clientAccountModel) {
-            const UsersPerClientObj: any = clientAccountModel.get('UserProfileModels');
+            const UsersPerClientObj: any =
+                clientAccountModel.get('UserProfileModels');
             const occupiedSeats = Object.keys(UsersPerClientObj).length;
             return occupiedSeats;
         } else {
@@ -232,10 +248,38 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const coincidences = await this.model.findAll({
             where: {
-                name: where(fn('LOWER', col('name')), 'LIKE', '%' + lowerCaseName + '%'),
+                name: where(
+                    fn('LOWER', col('name')),
+                    'LIKE',
+                    '%' + lowerCaseName + '%'
+                ),
             },
         });
 
         return coincidences.length == 0;
+    }
+
+    async UpdateCompletion(
+        clientAccountId: string,
+        isCompleted: boolean,
+        lastStepCompleted: number
+    ): Promise<boolean> {
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+
+        const clientAccountModel = await this.model.findOne({
+            where: { uuid: clientAccountId },
+        });
+
+        if (clientAccountModel) {
+            clientAccountModel.isCompleted = isCompleted;
+            clientAccountModel.lastStepCompleted = lastStepCompleted;
+
+            clientAccountModel.save();
+
+            return true;
+        }
+        return false;
     }
 }
