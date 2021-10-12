@@ -36,15 +36,15 @@ variable "app_image" {
 
 variable "vpc_id" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 variable "private_subnet_ids" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 variable "public_subnet_ids" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 // --------------------------------------------------------------------------------------------------------------------
 // - Custom Fargate policy Variables

@@ -1,5 +1,5 @@
 locals {
-  application_id = "website-builder"
+  application_id = "pip"
   owner          = "michael.brown@somoglobal.com"
 }
 
@@ -10,7 +10,7 @@ variable "environment" {
 
 variable "project" {
   description = "project name"
-  default     = "website"
+  default     = "pip"
 }
 
 variable "default_tags" {

@@ -22,6 +22,6 @@ variable "environment" {
 }
 
 locals {
-  account_id    = "390773179818"
-  external_id   = "EXTERNAL_ID"
+  account_id  = "390773179818"
+  external_id = "EXTERNAL_ID"
 }

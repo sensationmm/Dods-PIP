@@ -17,11 +17,12 @@ variable "az_count" {
 
 variable "environment" {
   description = "environment passed in"
-  default = "development"
+  default     = "development"
 }
 
 variable "app_image" {}
 variable "account_id" {}
+variable "db_password" {}
 
 locals {
 

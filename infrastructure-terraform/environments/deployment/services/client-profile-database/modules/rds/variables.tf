@@ -29,72 +29,78 @@ variable "project" {
 
 variable "db_sub_gr_name" {
   description = "required database security group name"
-  default    = "mariadbrdssub_gr_name"
-  type       = string
+  default     = "mariadbrdssub_gr_name"
+  type        = string
 }
 variable "sec_grp_rds" {
   description = "required security group for rds"
-  default    = ""
-  type       = string
+  default     = ""
+  type        = string
 }
 variable "identifier" {
   description = "required for rds db definition"
-  default    = "mariadbrds"
-  type       = string
+  default     = "mariadbrds"
+  type        = string
 }
 variable "storage_type" {
   description = "required storage type for rds hard drive gp2 or iops"
-  default    = "gp2"
-  type       = string
+  default     = "gp2"
+  type        = string
 }
 variable "allocated_storage" {
   description = "hard drive size"
-  default    = "50"
-  type       = string
+  default     = "50"
+  type        = string
 }
 variable "db_engine" {
   description = "required db engine"
-  default    = "mariadb"
-  type       = string
+  default     = "mariadb"
+  type        = string
 }
 variable "engine_version" {
   description = "required engine version"
-  default    = "10.3"
-  type       = string
+  default     = "10.3"
+  type        = string
 }
 variable "instance_class" {
   description = "typical instance size medium"
-  default    = "db.t3.micro"
-  type       = string
+  default     = "db.t3.micro"
+  type        = string
 }
 variable "db_username" {
   description = "master username"
-  default    = ""
-  type       = string
+  default     = ""
+  type        = string
 }
 variable "db_password" {
   description = "master password"
-  default    = ""
-  type       = string
+  default     = ""
+  type        = string
 }
 
 variable "vpc_id" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 
 variable "private_subnet_ids" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 
 variable "public_subnet_ids" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 
-variable "cidr_block" {}
-variable "ipv6_cidr_block" {}
+variable "cidr_block" {
+  description = "cidr for network"
+  default     = "172.17.0.0/16"
+}
+variable "ipv6_cidr_block" {
+  description = "cidr for network"
+  default     = ""
+}
 
 variable "default_tags" {
   type = map(any)
@@ -102,4 +108,8 @@ variable "default_tags" {
     Version   = "1"
     ManagedBy = "terraform"
   }
+}
+
+locals {
+  owner = "michael brown"
 }

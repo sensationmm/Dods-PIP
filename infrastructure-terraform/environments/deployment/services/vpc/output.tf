@@ -19,7 +19,7 @@ output "az_count" {
 }
 
 output "cidr_block" {
-  value = aws_vpc.main.cidr_block
+  value = "172.17.0.0/16"
 }
 
 output "ipv6_cidr_block" {

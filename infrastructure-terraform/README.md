@@ -40,11 +40,13 @@ This allows for version controlled, immutable infrastructure.
 - Replace the principal account IDs with your own. Replace the "Terraform" user with the user of your terraform environment
 
 ## Run
+> to run the code you need an IAM user account that can either access all the resources it needs or can assume a role which can
+> in this project arn:aws:iam::390773179818:user/terraform can assume the role of qa and prod environment accounts
 
 > initial set up will require using the -lock=false parameter until the database responsible for storing lock info is created.
 > `terraform init `
 > `terraform plan `
-> `terraform apply`
+> `terraform apply -var db_password="password-from-keystore" `
 
 ## Destroy
 > To remove infrastructure managed by Terraform use `tearraform destroy`

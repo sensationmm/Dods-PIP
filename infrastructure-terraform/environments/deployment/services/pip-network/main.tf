@@ -2,10 +2,10 @@
 // - Builder primary work cluster
 // --------------------------------------------------------------------------------------------------------------------
 module "ecs" {
-  environment             = var.environment
-  project                 = var.project
-  source                  = "./modules/fargate"
-  aws_region              = var.aws_region
+  environment = var.environment
+  project     = var.project
+  source      = "./modules/fargate"
+  aws_region  = var.aws_region
 
 
   //vpc variables
@@ -19,7 +19,7 @@ module "ecs" {
 
 
   //container variables
-  app_image       = var.app_image
+  app_image = var.app_image
 
 
   //new queue variables

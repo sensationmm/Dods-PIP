@@ -14,15 +14,15 @@ module "rds" {
   db_engine         = "mariadb"
   engine_version    = "10.3"
   instance_class    = "db.t3.medium"
-  db_username       = "${var.db_username}"
-  db_password       = "${var.db_password}"
+  db_username       = var.db_username
+  db_password       = var.db_password
 
   //vpc variables
-  vpc_id                  = var.vpc_id
-  private_subnet_ids      = var.private_subnet_ids
-  public_subnet_ids       = var.public_subnet_ids
-  cidr_block = var.cidr_block
-  ipv6_cidr_block = var.ipv6_cidr_block
+  vpc_id             = var.vpc_id
+  private_subnet_ids = var.private_subnet_ids
+  public_subnet_ids  = var.public_subnet_ids
+  cidr_block         = var.cidr_block
+  ipv6_cidr_block    = var.ipv6_cidr_block
 
 
 }

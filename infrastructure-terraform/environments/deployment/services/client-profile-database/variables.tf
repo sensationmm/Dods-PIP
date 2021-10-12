@@ -28,8 +28,8 @@ variable "project" {
 }
 
 locals {
-  account_id    = "390773179818"
-  external_id   = "EXTERNAL_ID"
+  account_id  = "390773179818"
+  external_id = "EXTERNAL_ID"
 }
 
 variable "db_username" {
@@ -46,19 +46,20 @@ variable "db_password" {
 
 variable "vpc_id" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 variable "private_subnet_ids" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 variable "public_subnet_ids" {
   description = "vpc variable"
-  default = ""
+  default     = ""
 }
 
 variable "cidr_block" {
   description = "vpc cidr block"
+  default     = "172.17.0.0/16"
 }
 
 variable "ipv6_cidr_block" {

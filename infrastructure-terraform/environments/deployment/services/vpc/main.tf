@@ -16,12 +16,12 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = "true"
   enable_dns_support   = "true"
 
-  tags = merge(map(
-    "name", "${var.project}-${var.environment}-${local.main_resource_name}-vpc",
-    "owner", local.owner,
-    "environment", var.environment,
-    "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-vpc",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 }
 
 resource "aws_subnet" "private" {
@@ -29,12 +29,12 @@ resource "aws_subnet" "private" {
   cidr_block        = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)
   availability_zone = data.aws_availability_zones.available.names[count.index]
   vpc_id            = aws_vpc.main.id
-  tags = merge(map(
-    "name", "${var.project}-${var.environment}-${local.main_resource_name}-private",
-    "owner", local.owner,
-    "environment", var.environment,
-    "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-private",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 }
 
 resource "aws_subnet" "public" {
@@ -43,22 +43,22 @@ resource "aws_subnet" "public" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   vpc_id                  = aws_vpc.main.id
   map_public_ip_on_launch = true
-  tags = merge(map(
-    "name", "${var.project}-${var.environment}-${local.main_resource_name}-public",
-    "owner", local.owner,
-    "environment", var.environment,
-    "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-public",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 }
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
-  tags = merge(map(
-    "name", "${var.project}-${var.environment}-${local.main_resource_name}-igw",
-    "owner", local.owner,
-    "environment", var.environment,
-    "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-igw",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 }
 
 // - Route the public subnet traffic through the IGW
@@ -184,46 +184,47 @@ resource "aws_vpc_endpoint" "s3" {
 resource "aws_security_group" "privatelink" {
   name        = "${var.project}-${var.environment}-${local.main_resource_name}-privatelink-sg"
   description = "controls access to the AWS PrivateLink"
-  vpc_id = aws_vpc.main.id
+  vpc_id      = aws_vpc.main.id
 
   ingress {
-    protocol    = "tcp"
-    from_port   = 443
-    to_port     = 443
-    cidr_blocks = ["0.0.0.0/0"]
+    protocol         = "tcp"
+    from_port        = 443
+    to_port          = 443
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
   egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
-    protocol        = "tcp"
-    from_port       = 80
-    to_port         = 80
-    cidr_blocks = ["0.0.0.0/0"]
+    protocol         = "tcp"
+    from_port        = 80
+    to_port          = 80
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
   egress {
-    protocol        = "tcp"
-    from_port       = 80
-    to_port         = 80
-    cidr_blocks = ["0.0.0.0/0"]
+    protocol         = "tcp"
+    from_port        = 80
+    to_port          = 80
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  tags = merge(map(
-  "name", "${var.project}-${var.environment}-${local.main_resource_name}-privatelink-sg",
-  "owner", local.owner,
-  "environment", var.environment,
-  "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-privatelink-sg",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
+
 }
 
 //resource "aws_vpc_endpoint" "sqs" {
@@ -258,13 +259,13 @@ resource "aws_vpc_endpoint" "logs" {
   security_group_ids = [
     "${aws_security_group.privatelink.id}"
   ]
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-cloudwatch-logs-endpoint",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 
-  tags = merge(map(
-  "name", "${var.project}-${var.environment}-${local.main_resource_name}-cloudwatch-logs-endpoint",
-  "owner", local.owner,
-  "environment", var.environment,
-  "project", var.project
-  ), var.default_tags)
   depends_on = [aws_security_group.privatelink]
 }
 
@@ -279,13 +280,13 @@ resource "aws_vpc_endpoint" "ecr" {
   security_group_ids = [
     "${aws_security_group.privatelink.id}"
   ]
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-ecr-endpoint",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 
-  tags = merge(map(
-  "name", "${var.project}-${var.environment}-${local.main_resource_name}-ecr-endpoint",
-  "owner", local.owner,
-  "environment", var.environment,
-  "project", var.project
-  ), var.default_tags)
   depends_on = [aws_security_group.privatelink]
 }
 
@@ -308,12 +309,13 @@ resource "aws_route_table" "private" {
   count  = var.az_count
   vpc_id = aws_vpc.main.id
 
-  tags = merge(map(
-    "name", "${var.project}-${var.environment}-${local.main_resource_name}-route-table",
-    "owner", local.owner,
-    "environment", var.environment,
-    "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-route-table",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
+
 }
 
 // - Explicitely associate the newly created route tables to the private subnets (so they don't default to the main route table)
@@ -327,7 +329,7 @@ resource "aws_egress_only_internet_gateway" "eigw" {
   vpc_id = aws_vpc.main.id
 }
 
-resource "aws_route" "outgoing-ip4" {//ipv6 difficult to rename this component
+resource "aws_route" "outgoing-ip4" { //ipv6 difficult to rename this component
   count                       = var.az_count
   route_table_id              = element(aws_route_table.private.*.id, count.index)
   destination_ipv6_cidr_block = "::/0"

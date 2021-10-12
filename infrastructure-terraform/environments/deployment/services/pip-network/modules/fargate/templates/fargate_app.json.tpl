@@ -1,6 +1,6 @@
 [
   {
-    "name": "builder-app",
+    "name": "fargate-app",
     "image": "${app_image}",
     "cpu": ${fargate_cpu},
     "memory": ${fargate_memory},

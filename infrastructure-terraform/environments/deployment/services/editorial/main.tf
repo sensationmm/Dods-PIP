@@ -15,3 +15,12 @@ module "editorial-record-archive" {
   environment = var.environment
   name        = "editorial-record-archive"
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+// - Editorial Record database
+// --------------------------------------------------------------------------------------------------------------------
+module "editorial-record-dynamodb" {
+  source      = "./modules/dynamodb"
+  environment = var.environment
+  name        = "editorial-records"
+}

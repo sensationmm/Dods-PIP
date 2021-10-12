@@ -4,5 +4,5 @@
 module "storybook" {
   source      = "./modules/s3"
   environment = var.environment
-  name = "storybook"
+  name        = "storybook"
 }
