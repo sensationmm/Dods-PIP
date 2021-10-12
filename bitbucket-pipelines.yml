@@ -45,9 +45,9 @@ pipelines:
           condition:
             changesets:
               includePaths:
-                - "services/userProfile/**"
+                - "services/user-profile/**"
           script:
-            - cd services/userProfile
+            - cd services/user-profile
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
@@ -142,9 +142,9 @@ pipelines:
             condition:
               changesets:
                 includePaths:
-                  - "services/userProfile/**"
+                  - "services/user-profile/**"
             script:
-              - cd services/userProfile
+              - cd services/user-profile
               - npm install
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
