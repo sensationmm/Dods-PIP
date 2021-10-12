@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "table" {
-  name         = "${var.name}-${var.environment}-job-table"
+  name         = "${var.name}-${var.environment}-table"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "id"
 
