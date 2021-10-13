@@ -77,3 +77,27 @@ resource "aws_db_instance" "default" {
     managedBy   = "terraform"
   }
 }
+
+output "db_endpoint" {
+  value = aws_db_instance.default.endpoint
+}
+
+output "db_name" {
+  value = aws_db_instance.default.name
+}
+
+output "db_security_group" {
+  value = aws_security_group.rds_security_group.id
+}
+
+output "db_username" {
+  value = aws_db_instance.default.username
+}
+
+output "db_password" {
+  value = aws_db_instance.default.password
+}
+
+output "db_address" {
+  value = aws_db_instance.default.address
+}
