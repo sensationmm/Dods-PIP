@@ -1,11 +1,11 @@
 {
-  "name": "dods-nodejs-lambda-boilerplate",
+  "name": "editorial-workflow",
   "version": "1.0.0",
   "description": "This README would normally document whatever steps are necessary to get your application up and running.",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
+    "test:coverage": "NODE_ENV=test jest --detectOpenHandles --coverage",
     "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
     "test:report": "open coverage/integration-tests-report.html && open coverage/lcov-report/index.html",
     "dev": "scripts/setUpDev.sh && AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=dev serverless offline --stage dev && scripts/tearDown.sh",
@@ -65,7 +65,10 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.36.0",
+    "@aws-sdk/types": "^3.36.0",
     "@dodsgroup/dods-lambda": "^1.2.6",
+    "@types/node": "^16.10.5",
     "aws-lambda": "^1.0.6",
     "aws-sdk": "^2.979.0",
     "axios": "^0.21.1",
