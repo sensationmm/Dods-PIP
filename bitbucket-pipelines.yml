@@ -216,6 +216,19 @@ pipelines:
               - cd ../../tools
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
 
+        - step:
+            name: Terraform Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.3
+            condition:
+              changesets:
+                includePaths:
+                  - "infrastructure-terraform/**"
+            script:
+              - terraform init
+              - terraform plan
+              - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
+
   custom:
     deployment-to-staging:
       - step:
