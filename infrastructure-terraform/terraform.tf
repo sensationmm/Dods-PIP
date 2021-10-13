@@ -6,5 +6,5 @@ terraform {
     dynamodb_table = "terraform-state-lock-dynamo"
     key            = "terraform.tfstate"
   }
-  required_version = ">= 0.12"
+  required_version = ">= 1.0.8"
 }

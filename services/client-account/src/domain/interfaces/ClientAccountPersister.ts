@@ -26,4 +26,10 @@ export interface ClientAccountPersister {
     getClientAccountUsers(clientAccountId: string): Promise<number>;
 
     checkNameAvailability(name: string): Promise<boolean>;
+
+    UpdateCompletion(
+        clientAccountId: string,
+        isCompleted: boolean,
+        lastStepCompleted: number
+    ): Promise<boolean>;
 }

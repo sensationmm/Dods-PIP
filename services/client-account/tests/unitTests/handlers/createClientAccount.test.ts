@@ -1,5 +1,12 @@
-import { ClientAccountError, ClientAccountRepository } from '../../../src/repositories';
-import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+import {
+    ClientAccountError,
+    ClientAccountRepository,
+} from '../../../src/repositories';
+import {
+    HttpResponse,
+    HttpStatusCode,
+    createContext,
+} from '@dodsgroup/dods-lambda';
 
 import { ClientAccountParameters } from '../../../src/domain';
 import { createClientAccount } from '../../../src/handlers/createClientAccount/createClientAccount';
@@ -70,7 +77,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: SUCCESS_ACCOUNT_RESPONSE,
         });
 
-        const response = await createClientAccount({ clientAccount }, defaultContext);
+        const response = await createClientAccount(
+            { clientAccount },
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
 
@@ -96,7 +106,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: `A Client Account already exists with the name: ${clientAccount.name}`,
         });
 
-        const response = await createClientAccount({ clientAccount }, defaultContext);
+        const response = await createClientAccount(
+            { clientAccount },
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
 

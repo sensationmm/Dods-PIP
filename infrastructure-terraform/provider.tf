@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-west-1"
+  region  = "eu-west-1"
   profile = "dods-dev"
 }
 
@@ -26,12 +26,12 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias   = "staging"
+  alias   = "qa"
   region  = "eu-west-1"
   profile = "dods-dev"
   assume_role {
-    role_arn     = local.staging_tf_role
-    session_name = "STAGING"
+    role_arn     = local.qa_tf_role
+    session_name = "QA"
     external_id  = local.external_id
   }
 }
@@ -63,8 +63,8 @@ provider "aws" {
   region  = "us-east-1"
   profile = "dods-dev"
   assume_role {
-    role_arn     = local.staging_tf_role
-    session_name = "STAGING"
+    role_arn     = local.qa_tf_role
+    session_name = "QA"
     external_id  = local.external_id
   }
 }
