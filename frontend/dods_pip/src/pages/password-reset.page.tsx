@@ -29,13 +29,13 @@ interface ApiResponse {
   isRepeatPassword: boolean;
 }
 
-interface PasswordResetProps extends LoadingHOCProps {}
-
 const API_RESPONSE_DEFAULT = {
   isCodeExpired: false,
   isConfirmed: false,
   isRepeatPassword: false,
 };
+
+interface PasswordResetProps extends LoadingHOCProps {}
 
 export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const router = useRouter();
@@ -77,13 +77,9 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
     return Object.keys(formErrors).length === 0;
   };
 
-  function resetApiResponses() {
-    setApiResponse(API_RESPONSE_DEFAULT);
-  }
-
   const onConfirm = async () => {
     setLoading(true);
-    resetApiResponses();
+    setApiResponse(API_RESPONSE_DEFAULT);
 
     if (!validateForm()) return setLoading(false);
 
@@ -95,7 +91,6 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
           verificationCode: code,
         }),
       });
-
       setApiResponse({ ...apiResponse, isConfirmed: true });
     } catch (error) {
       // TODO: Consume an explicit error code here once the api returns relevant data
@@ -143,8 +138,8 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
               <Button type={'secondary'} inline label={'Find out more'} />
             </div>
 
-            <div>
-              {!apiResponse.isConfirmed ? (
+            <div data-test="dialogue-container">
+              {!apiResponse.isConfirmed && (
                 <Box data-test="reset-request">
                   <Text type={'h4'}>Create a new password</Text>
 
@@ -155,7 +150,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                     id="reset-password"
                     label={'Password'}
                     value={password}
-                    error={errors.password}
+                    error={errors?.password}
                     helperText={'Create a unique password'}
                     onChange={(val) => {
                       setPassword(val);
@@ -171,7 +166,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                     label={'Confirm password'}
                     value={passwordConfirm}
                     onChange={setPasswordConfirm}
-                    error={errors.passwordConfirm}
+                    error={errors?.passwordConfirm}
                     helperText={'Re-type the password'}
                   />
 
@@ -204,7 +199,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                         </Text>
                         <Spacer size={2} />
                         <Text type={'bodySmall'}>
-                          Request a new code by clicking{' '}
+                          Request a new code by clicking&nbsp;
                           <Link href="/reset-password">
                             <a>here</a>
                           </Link>
@@ -218,18 +213,22 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
 
                   <Button data-test={'form-button'} label={'Save Changes'} onClick={onConfirm} />
                 </Box>
-              ) : (
-                <Box data-test="reset-confirmation">
-                  <Text type={'h4'}>Your password is now updated!</Text>
+              )}
 
-                  <Spacer size={12} />
+              {apiResponse.isConfirmed && (
+                <>
+                  <Box data-test="reset-confirmation">
+                    <Text type={'h4'}>Your password is now updated!</Text>
 
-                  <Button
-                    data-test={'button-back-to-login'}
-                    label={'Go to Login'}
-                    onClick={() => router.push('/')}
-                  />
-                </Box>
+                    <Spacer size={12} />
+
+                    <Button
+                      data-test={'button-back-to-login'}
+                      label={'Go to Login'}
+                      onClick={() => router.push('/')}
+                    />
+                  </Box>
+                </>
               )}
             </div>
           </Columns>

@@ -26,7 +26,7 @@ export default async function fetchJson(url: string, args?: RequestInit): Promis
 
     const error = new Error(response.statusText) as CustomError;
     error.response = response;
-    error.data = { name: data?.name || 'UnknownError', code: response.status };
+    error.data = { name: data?.name || 'UnknownException', code: response.status };
 
     throw error;
   } catch (error) {
