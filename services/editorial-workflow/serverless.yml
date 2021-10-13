@@ -10,7 +10,7 @@ provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
-  stage: ${opt:stage, 'test'}
+  stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
   stackTags:
     service: ${self:service}
@@ -37,7 +37,7 @@ provider:
     description: Default Gateway for dev deployed with dods-ia
 
   environment:
-    NODE_ENV: ${opt:NODE_ENV, 'test'}
+    NODE_ENV: ${opt:NODE_ENV, 'dev'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
 
