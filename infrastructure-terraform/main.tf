@@ -1,78 +1,55 @@
+terraform {
+  required_version = "~> 1.0.8"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "3.62.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.1.0"
+    }
+  }
+}
+
 // --------------------------------------------------------------------------------------------------------------------
-// - Development Tools
+// - Dev environment
 // --------------------------------------------------------------------------------------------------------------------
-module "dev-devtools" {
-  source      = "./modules/devtools"
+module "development" {
+  source      = "./environments/deployment"
   environment = "development"
-
+  app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:639732e4f367758bb6eddb333fc5f620b4d80029"
+  account_id  = "390773179818"
+  db_password = var.db_password
   providers = {
     aws = aws.dev
   }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-// - Main VPC
+// - prod environment
 // --------------------------------------------------------------------------------------------------------------------
-module "dev-vpc" {
-  source      = "./modules/vpc"
-  environment = "development"
-
+module "production" {
+  source      = "./environments/deployment"
+  environment = "production"
+  app_image   = "186202231680.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:" //non existent
+  account_id  = "186202231680"
+  db_password = var.db_password
   providers = {
-    aws = aws.dev
+    aws = aws.prod
   }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-// - Primary PIP Frontend Network
+// - qa environment
 // --------------------------------------------------------------------------------------------------------------------
-module "dev-pip-network" {
-  source    = "./modules/pip-network"
+module "qa" {
+  source      = "./environments/deployment"
+  environment = "qa"
+  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:" //non existent
+  account_id  = "817206606893"
+  db_password = var.db_password
   providers = {
-    aws = aws.dev
+    aws = aws.qa
   }
-  environment                 = "development"
-  app_image = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:639732e4f367758bb6eddb333fc5f620b4d80029"
-  vpc_id = module.dev-vpc.vpc_id
-  private_subnet_ids = module.dev-vpc.private_subnet_ids
-  public_subnet_ids = module.dev-vpc.public_subnet_ids
 }
-
-// --------------------------------------------------------------------------------------------------------------------
-// - Primary PIP Network
-// --------------------------------------------------------------------------------------------------------------------
-module "dev-client-profile-database" {
-  source    = "./modules/client-profile-database"
-  providers = {
-    aws = aws.dev
-  }
-  environment = "development"
-  vpc_id = module.dev-vpc.vpc_id
-  private_subnet_ids = module.dev-vpc.private_subnet_ids
-  public_subnet_ids = module.dev-vpc.public_subnet_ids
-  cidr_block = module.dev-vpc.cidr_block
-  ipv6_cidr_block = module.dev-vpc.ipv6_cidr_block
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-// - Editorial Document
-// --------------------------------------------------------------------------------------------------------------------
-module "dev-editorial" {
-  source    = "./modules/editorial"
-  providers = {
-    aws = aws.dev
-  }
-  environment = "development"
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-// - "Cross account access"
-// --------------------------------------------------------------------------------------------------------------------
-//module "prod-cross-account-access" {
-//  source                  = "./modules/cross-account-access"
-//  environment             = "production"
-//  providers = {
-//    aws = aws.prod
-//  }
-//}
-
-
