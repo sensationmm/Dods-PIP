@@ -2,6 +2,7 @@ import {
     Association,
     BelongsToCreateAssociationMixin,
     BelongsToGetAssociationMixin,
+    BelongsToSetAssociationMixin,
     DataTypes,
     Model,
 } from 'sequelize';
@@ -47,8 +48,12 @@ class ClientAccountModel
     public readonly deletedAt!: Date | null;
 
     //Model Associations
-    public getSubscription!: BelongsToGetAssociationMixin<SubscriptionType>;
-    public setSubscription!: BelongsToCreateAssociationMixin<SubscriptionType>;
+    public getSubscriptionType!: BelongsToGetAssociationMixin<SubscriptionType>;
+    public setSubscriptionType!: BelongsToSetAssociationMixin<
+        SubscriptionType,
+        number
+    >;
+
     public getTeam!: BelongsToGetAssociationMixin<ClientAccountTeam>;
     public setTeam!: BelongsToCreateAssociationMixin<ClientAccountTeam>;
 
