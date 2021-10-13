@@ -15,10 +15,10 @@ describe('InputSearch', () => {
     expect(component.length).toEqual(1);
   });
 
-  it('renders default label', () => {
+  it('renders default placeholder', () => {
     const wrapper = shallow(<InputSearch id="test" value={''} onChange={jest.fn} />);
     const component = wrapper.find(InputBase);
-    expect(component.props().label).toEqual('Search...');
+    expect(component.props().placeholder).toEqual('Search...');
   });
 
   it('renders label override', () => {
@@ -46,14 +46,15 @@ describe('InputSearch', () => {
   it('fires onChange method', () => {
     const typeWatcher = jest.fn();
     const wrapper = shallow(
-      <InputSearch id="test" label="Example" value={''} onChange={typeWatcher} />,
+      <InputSearch id="test" label="Example" value={'example'} onChange={typeWatcher} />,
     );
-    const component = wrapper.find('[data-test="component-input-search"]');
-    component.simulate('focus');
-    component.simulate('change', { target: { value: 'new' } });
+    const clear = wrapper.find('[data-test="input-clear"]');
+    clear.simulate('click');
     expect(typeWatcher).toHaveBeenCalledTimes(1);
-    expect(typeWatcher).toHaveBeenCalledWith({ target: { value: 'new' } });
+    expect(typeWatcher).toHaveBeenCalledWith('');
   });
+
+  it('clears value', () => {});
 
   afterEach(() => {
     jest.resetAllMocks();

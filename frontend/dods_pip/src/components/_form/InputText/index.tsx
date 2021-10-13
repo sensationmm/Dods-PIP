@@ -13,13 +13,22 @@ export interface InputTextProps extends Omit<InputBaseProps, 'type'> {
 
 const InputText: React.FC<InputTextProps> = ({
   id,
+  size,
+  length,
   label,
   value,
   isDisabled = false,
   error,
+  required,
+  optional,
   helperText,
   onChange,
+  onFocus,
+  onBlur,
+  tabIndex,
   icon,
+  placeholder,
+  children,
 }) => {
   return (
     <Styled.wrapper className={classNames({ icon: icon !== undefined })}>
@@ -27,26 +36,38 @@ const InputText: React.FC<InputTextProps> = ({
         id={id}
         data-test="component-input-text"
         type="text"
+        size={size}
+        length={length}
         label={label}
         value={value}
         isDisabled={isDisabled}
         error={error}
+        required={required}
+        optional={optional}
         helperText={helperText}
         onChange={onChange}
-      />
-      {icon && (
-        <Icon
-          src={icon}
-          size={IconSize.medium}
-          color={
-            !isDisabled
-              ? typeof error !== 'string'
-                ? color.theme.blueMid
-                : color.alert.red
-              : color.base.grey
-          }
-        />
-      )}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        tabIndex={tabIndex}
+        placeholder={placeholder}
+      >
+        {children}
+        {icon && (
+          <div onClick={onFocus}>
+            <Icon
+              src={icon}
+              size={IconSize.medium}
+              color={
+                !isDisabled
+                  ? typeof error !== 'string'
+                    ? color.theme.blueMid
+                    : color.alert.red
+                  : color.base.grey
+              }
+            />
+          </div>
+        )}
+      </Input>
     </Styled.wrapper>
   );
 };

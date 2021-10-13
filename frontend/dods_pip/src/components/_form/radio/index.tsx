@@ -1,20 +1,18 @@
 import classNames from 'classnames';
-import React, { ChangeEventHandler } from 'react';
+import React from 'react';
 
+import color from '../../../globals/color';
+import Spacer from '../../_layout/Spacer';
 import Text from '../../Text';
+import Label from '../Label';
 import * as Styled from './Radio.styles';
-
-export enum RadioType {
-  Default,
-  Button,
-}
 
 export interface IRadioProps extends IRadioConfig {
   name: string;
   id: string;
   isChecked?: boolean;
   isDisabled?: boolean;
-  onChange: ChangeEventHandler<HTMLInputElement>;
+  onChange: (val: string) => void;
 }
 
 interface IRadioConfig {
@@ -25,11 +23,12 @@ interface IRadioConfig {
 export interface IRadioGroupProps {
   items: IRadioConfig[];
   name: string;
-  handleChange: (event: boolean) => void;
-  selectedValue: string;
-  groupLabel?: string;
+  onChange: (val: string) => void;
+  value: string;
+  label?: string;
   isDisabled?: boolean;
-  type?: RadioType;
+  required?: boolean;
+  optional?: boolean;
 }
 
 const Radio: React.FC<IRadioProps> = ({
@@ -48,73 +47,72 @@ const Radio: React.FC<IRadioProps> = ({
         data-test="radio-input"
         id={id}
         name={name}
-        onChange={onChange}
+        onChange={() => onChange(value)}
         type="radio"
         value={value}
         checked={isChecked}
         className={classNames({ disabled: isDisabled })}
       />
-      <Text htmlFor={id} type={'label'}>
+      <Text
+        htmlFor={id}
+        type={'label'}
+        color={!isDisabled ? color.theme.blue : color.base.greyDark}
+      >
         {label}
       </Text>
     </Styled.radio>
   );
 };
 
-// const RadioGroup: React.FC<IRadioGroupProps> = ({
-//   items,
-//   name,
-//   handleChange,
-//   selectedValue,
-//   groupLabel,
-//   type = RadioType.Default,
-//   isDisabled = false,
-// }) => {
-//   const radioValue = selectedValue;
+const RadioGroup: React.FC<IRadioGroupProps> = ({
+  items,
+  name,
+  onChange,
+  value,
+  label,
+  isDisabled = false,
+  required = false,
+  optional = false,
+}) => {
+  const radioValue = value;
 
-//   return (
-//     <fieldset
-//       className={classNames(Styled.radioGroup, { [Styled.button]: type === RadioType.Button })}
-//       data-test="component-radio-group"
-//     >
-//       <Text element="legend" type={TextStyles.label}>
-//         {groupLabel}
-//       </Text>
+  return (
+    <Styled.radioGroup data-test="component-radio-group">
+      {label && (
+        <Label
+          data-test="radio-group-label"
+          label={label}
+          required={required}
+          optional={optional}
+        />
+      )}
 
-//       <div className={Styled.radioGroupWrapper}>
-//         {items &&
-//           items.map((item, i) => {
-//             const { label, value } = item;
-//             const id = `${name}-${i}`;
+      <Spacer size={3} />
 
-//             return (
-//               <Radio
-//                 id={id}
-//                 key={i}
-//                 label={label}
-//                 value={value}
-//                 name={name}
-//                 isChecked={value === radioValue ? true : false}
-//                 isDisabled={isDisabled}
-//                 onChange={(e) => {
-//                   let updatedValue = e.target.value;
+      <Styled.radioGroupWrapper>
+        {items &&
+          items.map((item, i) => {
+            const { label, value } = item;
+            const id = `${name}-${i}`;
 
-//                   if (updatedValue === 'false') {
-//                     updatedValue = false;
-//                   } else if (updatedValue === 'true') {
-//                     updatedValue = true;
-//                   }
-
-//                   handleChange(updatedValue);
-//                 }}
-//               />
-//             );
-//           })}
-//       </div>
-//     </fieldset>
-//   );
-// };
+            return (
+              <Radio
+                id={id}
+                key={i}
+                label={label}
+                value={value}
+                name={name}
+                isChecked={value === radioValue ? true : false}
+                isDisabled={isDisabled}
+                onChange={onChange}
+              />
+            );
+          })}
+      </Styled.radioGroupWrapper>
+    </Styled.radioGroup>
+  );
+};
 
 export { Radio };
 
-// export default RadioGroup;
+export default RadioGroup;

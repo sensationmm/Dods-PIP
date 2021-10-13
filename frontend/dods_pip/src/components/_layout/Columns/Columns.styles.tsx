@@ -1,22 +1,23 @@
 import styled from 'styled-components';
 
+import media from '../../../globals/media';
 import spacing from '../../../globals/spacing';
 
-export const wrapper = styled.div`
-  // > *:first-child {
-  //   margin-bottom: ${spacing(10)};
-  // }
+type WrapperProps = {
+  isWelcome: boolean;
+};
 
-  // > *:last-child {
-  //   padding-top: ${spacing(15)};
-  // }
-
-  @media (min-width: 600px) {
+export const wrapper = styled.div<WrapperProps>`
+  ${({ isWelcome }) => media.greaterThan('md')`
     display: grid;
-    grid-template-columns: ${spacing(22)} calc(50% - ${spacing(44)}) ${spacing(22)} ${spacing(22)} calc(
-        50% - ${spacing(22)}
-      );
-    grid-template-areas: '. main . . sidebar';
+    grid-template-columns: ${
+      !isWelcome
+        ? `calc(50% - ${spacing(15)}) ${spacing(15)} ${spacing(15)} calc(
+      50% - ${spacing(15)})`
+        : `calc(50% - ${spacing(22)}) ${spacing(22)} ${spacing(22)} calc(
+        50% - ${spacing(22)})`
+    };
+    grid-template-areas: 'main . . sidebar';
 
     > *:first-child {
       grid-area: main;
@@ -27,5 +28,7 @@ export const wrapper = styled.div`
       grid-area: sidebar;
       padding-top: 0;
     }
-  }
+
+    
+  `}
 `;

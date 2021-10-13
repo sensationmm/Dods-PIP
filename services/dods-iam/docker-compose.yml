@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  localstack:
+      image: localstack/localstack:latest
+      environment:
+          - DEFAULT_REGION=eu-west-1
+          - DEBUG=true
+          - LAMBDA_EXECUTOR=docker
+      ports:
+          - "4566-4599:4566-4599"
+          - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+      volumes:
+          - '/var/run/docker.sock:/var/run/docker.sock'

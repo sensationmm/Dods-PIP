@@ -1,0 +1,127 @@
+service: dods-nodejs-lambda-boilerplate
+
+configValidationMode: warn
+
+frameworkVersion: ^2.57.0
+
+variablesResolutionMode: 20210326
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'test'}
+  lambdaHashingVersion: 20201221
+  stackTags:
+    service: ${self:service}
+    env: ${self:provider.stage}
+    version: 1
+    teamsEmail: kenan.hancer@somoglobal.com
+    team: dods
+  tags:
+    myTag1: myTag1
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
+
+  environment:
+    NODE_ENV: ${opt:NODE_ENV, 'test'}
+    SERVERLESS_STAGE: ${self:provider.stage}
+    SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint, self:custom.endpoints.dev.sayTurkishHelloEndpoint}
+    SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint, self:custom.endpoints.dev.sayEnglishHelloEndpoint}
+    GET_FULL_NAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getFullNameEndpoint, self:custom.endpoints.dev.getFullNameEndpoint}
+
+custom:
+  endpoints:
+    dev:
+      sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
+      sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
+      getFullNameEndpoint: http://localhost:1083/getFullName
+    prod:
+      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
+      sayEnglishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
+      getFullNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/getFullName
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+    keepOutputDirectory: false
+  serverless-offline:
+    httpPort: 3000
+  prune:
+    automatic: true
+    number: 1
+  dependsOn:
+    enabled: true
+    chains: 8
+  localstack:
+    stages:
+      # list of stages for which the plugin should be enabled
+      - local
+    host: http://localhost # optional - LocalStack host to connect to
+    edgePort: 4566 # optional - LocalStack edge port to connect to
+    autostart: false # optional - Start LocalStack in Docker on Serverless deploy
+    # lambda:
+    #   # Enable this flag to improve performance
+    #   mountCode: True
+    docker:
+      # Enable this flag to run "docker ..." commands as sudo
+      sudo: False
+
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+  - serverless-localstack
+  - serverless-dependson-plugin
+  - serverless-offline
+
+functions:
+  health:
+    handler: src/handlers/health/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: health
+          cors: true
+    tags:
+      foo: bar
+
+  sayHello:
+    handler: src/handlers/sayHello/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: sayHello
+
+  sayEnglishHello:
+    handler: src/handlers/sayEnglishHello/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: sayEnglishHello
+
+  sayTurkishHello:
+    handler: src/handlers/sayTurkishHello/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: sayTurkishHello
+
+  getFullName:
+    handler: src/handlers/getFullName/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: getFullName

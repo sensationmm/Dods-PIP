@@ -1,0 +1,17 @@
+api/*
+boilerplate/*
+dods-lambda/*
+frontend/dods_pip/*
+scrapping/infra/*
+scrapping/lib/*
+scrapping/motions-edm-uk/*
+scrapping/oral-questions-hoc-uk/*
+scrapping/oral-questions-hol-uk/*
+scrapping/templates/*
+scrapping/writtenQuestions-hoc-uk/*
+scrapping/writtenQuestions-hol-uk/*
+services/client-account/*
+services/dods-iam/*
+services/graphologi-integration/*
+services/taxonomy-service/*
+services/userProfile/*

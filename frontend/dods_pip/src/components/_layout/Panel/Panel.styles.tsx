@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import color from '../../../globals/color';
+import media from '../../../globals/media';
 import spacing from '../../../globals/spacing';
 import { wrapper as Columns } from '../Columns/Columns.styles';
 
@@ -8,6 +9,7 @@ export const wrapper = styled.div`
   position: relative;
   display: block;
   width: 100%;
+  z-index: 1;
 
   &.welcome {
     background: linear-gradient(
@@ -56,12 +58,19 @@ export const panel = styled.div`
   position: relative;
   z-index: 2;
   padding: ${spacing(3)} ${spacing(3)};
-  max-width: 1024px;
+  max-width: 1200px;
   margin: 0 auto;
 
   &.padded {
     padding: ${spacing(16)} ${spacing(3)};
   }
+
+  ${media.greaterThan('md')`
+    &.narrow {
+      padding-left: ${spacing(22)};
+      padding-right: ${spacing(22)};
+    }
+  `};
 `;
 
 export const leaves = styled.div`

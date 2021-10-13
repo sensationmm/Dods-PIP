@@ -9,6 +9,7 @@ from logger import logger
 BUCKET = os.environ['CONTENT_BUCKET']
 KEY_BASE = os.environ['S3_KEY_BASE']
 
+
 class State(Enum):
     """
     Manage asset states in dynamo with a string field
@@ -58,7 +59,7 @@ class DataModel(Model):
     def get_upload_url(self, ttl=60):
         """
         :param ttl: url duration in seconds
-        :return: a temporary presigned PUT url
+        :return: a temporary pre-signed PUT url
         """
         s3 = boto3.client('s3')
         put_url = s3.generate_presigned_url(
@@ -76,7 +77,7 @@ class DataModel(Model):
     def get_download_url(self, ttl=60):
         """
         :param ttl: url duration in seconds
-        :return: a temporary presigned download url
+        :return: a temporary pre-signed download url
         """
         s3 = boto3.client('s3')
         if self.state != State.UPLOADED.name:

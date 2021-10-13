@@ -4,18 +4,28 @@ import React from 'react';
 import color from '../../../globals/color';
 import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
-import Text from '../../Text';
+import Label, { LabelProps } from '../Label';
 import * as Styled from './Checkbox.styles';
 
-export interface CheckboxProps {
+export interface CheckboxProps extends LabelProps {
   id: string;
-  label: string;
   isChecked: boolean;
   onChange: (value: boolean) => void;
   isDisabled?: boolean;
+  darkMode?: boolean;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ id, label, isChecked, onChange, isDisabled }) => {
+const Checkbox: React.FC<CheckboxProps> = ({
+  id,
+  label,
+  isChecked,
+  onChange,
+  isDisabled,
+  required,
+  optional,
+  bold,
+  darkMode,
+}) => {
   const Component = isChecked ? Styled.checkboxToggleChecked : Styled.checkboxToggle;
 
   const trigger = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -26,7 +36,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ id, label, isChecked, onChange, isD
   };
 
   return (
-    <Styled.checkbox data-test="component-checkbox">
+    <Styled.checkbox data-test="component-checkbox" id={id}>
       <Styled.checkboxLayout
         data-test="component-checkbox-layout"
         onClick={() => (isDisabled ? null : onChange(!isChecked))}
@@ -34,19 +44,31 @@ const Checkbox: React.FC<CheckboxProps> = ({ id, label, isChecked, onChange, isD
         aria-checked={isChecked}
       >
         <Component
+          darkMode={darkMode}
           data-test="component-checkbox-toggle"
           className={classNames({ disabled: isDisabled })}
           tabIndex={0}
           onKeyDown={trigger}
         >
           {isChecked && (
-            <Icon src={Icons.IconTick} size={IconSize.medium} color={color.base.white} />
+            <Icon
+              src={Icons.IconTick}
+              size={IconSize.medium}
+              data-test="component-icon"
+              color={darkMode ? color.theme.blueDark : color.base.white}
+            />
           )}
         </Component>
         <Styled.checkboxLabelWrapper className={classNames({ disabled: isDisabled })}>
-          <Text type="label" htmlFor={id} color={color.theme.blueMid} bold>
-            {label}
-          </Text>
+          <Label
+            darkMode={darkMode}
+            label={label}
+            required={required}
+            optional={optional}
+            isDisabled={isDisabled}
+            noMargin
+            bold={bold}
+          />
         </Styled.checkboxLabelWrapper>
       </Styled.checkboxLayout>
     </Styled.checkbox>
