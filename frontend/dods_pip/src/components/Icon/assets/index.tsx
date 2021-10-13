@@ -1,4 +1,5 @@
 import Add from './icon-add.svg';
+import Alert from './icon-alert.svg';
 import Avatar from './icon-avatar.svg';
 import AzFilter from './icon-azFilter.svg';
 import Calendar from './icon-calendar.svg';
@@ -10,6 +11,8 @@ import Cross from './icon-cross.svg';
 import CrossBold from './icon-crossBold.svg';
 import Grid from './icon-grid.svg';
 import Hide from './icon-hide.svg';
+import Info from './icon-info.svg';
+import Issue from './icon-issue.svg';
 import Minus from './icon-minus.svg';
 import Person from './icon-person.svg';
 import Search from './icon-search.svg';
@@ -25,6 +28,7 @@ type TypeIconLibrary = {
 
 export enum Icons {
   Add = 'Add',
+  Alert = 'Alert',
   Avatar = 'Avatar',
   AzFilter = 'AzFilter',
   Calendar = 'Calendar',
@@ -36,6 +40,8 @@ export enum Icons {
   CrossBold = 'CrossBold',
   Grid = 'Grid',
   Hide = 'Hide',
+  Info = 'Info',
+  Issue = 'Issue',
   Minus = 'Minus',
   Person = 'Person',
   Search = 'Search',
@@ -50,6 +56,7 @@ export type IconType = keyof typeof Icons;
 
 const IconLibrary = {
   Add,
+  Alert,
   Avatar,
   AzFilter,
   Calendar,
@@ -61,6 +68,8 @@ const IconLibrary = {
   CrossBold,
   Grid,
   Hide,
+  Info,
+  Issue,
   Minus,
   Person,
   Search,

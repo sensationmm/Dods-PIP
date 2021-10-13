@@ -56,7 +56,9 @@ describe('Account Management: Clients', () => {
       .mockImplementationOnce(() => [0, jest.fn]) //Pagination component setState calls
       .mockImplementationOnce(() => [30, jest.fn]); //Pagination component setState calls
 
-    wrapper = shallow(<Accounts isLoading={false} setLoading={setLoadingSpy} />);
+    wrapper = shallow(
+      <Accounts isLoading={false} setLoading={setLoadingSpy} addNotification={jest.fn} />,
+    );
   });
 
   it('renders without error', () => {
