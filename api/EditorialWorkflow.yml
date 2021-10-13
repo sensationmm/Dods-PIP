@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  description: Dods Editorial Workflow API
+  version: "1.0.0"
+  title: Editorial Workflow Service API
+paths:
+  /editorial-record:
+    post:
+      summary: Create new Editorial Record
+      requestBody:
+        $ref: '#/components/requestBodies/EditorialRecord'
+      responses:
+        '200':
+          description: Returned created Editorial Record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditorialRecordResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+
+
+components:
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthenticated:
+      description: Unauthenticated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  requestBodies:
+    EditorialRecord:
+      description: A JSON object containing Editorial Record information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EditorialRecord'
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "4xx"
+        message:
+          type: string
+          example: Error message relevant to error
+      required:
+        - code
+        - message
+    EditorialRecord:
+      type: object
+      required:
+        - document_name
+        - s3_location
+      properties:
+        document_name:
+          type: string
+          example: Some UK Parliament Oral Question
+        s3_location:
+          type: string
+          example: arn:aws:s3:::editorial-workflow-prod/editorial-workflow/01012020/some-question.json
+    EditorialRecordResponse:
+      allOf:
+        - $ref: '#/components/schemas/EditorialRecord'
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ss-6c54-4b01-98e6-d701748f7151
