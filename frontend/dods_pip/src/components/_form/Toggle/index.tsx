@@ -32,7 +32,7 @@ const Toggle: React.FC<ToggleProps> = ({ isActive = false, isDisabled = false, o
       <Component className={classNames({ disabled: isDisabled })}>
         <Styled.control>
           <Icon
-            src={isActive ? Icons.IconTickBold : Icons.IconCrossBold}
+            src={isActive ? Icons.TickBold : Icons.CrossBold}
             color={isActive ? color.theme.blueMid : color.base.grey}
           />
         </Styled.control>

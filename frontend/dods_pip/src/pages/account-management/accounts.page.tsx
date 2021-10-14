@@ -114,7 +114,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
               data-test="btn-create-client-account"
               onClick={() => router.push('/account-management/add-client')}
               isSmall
-              icon={Icons.IconAdd}
+              icon={Icons.Add}
               label="Add Client Account"
             />
           </Styled.header>
@@ -131,7 +131,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   Filter
                 </Text>
                 <Icon
-                  src={showFilter ? Icons.IconChevronUp : Icons.IconChevronDown}
+                  src={showFilter ? Icons.ChevronUp : Icons.ChevronDown}
                   color={color.theme.blueMid}
                 />
               </Styled.filterToggleButon>
@@ -259,7 +259,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
                     <Avatar type="consultant" number={overflowTeamConsultant} size="small" />
                   )}
                 </Styled.teamList>,
-                <Icon key={`account-${count}-link`} src={Icons.IconChevronRight} />,
+                <Icon key={`account-${count}-link`} src={Icons.ChevronRight} />,
               ];
             })}
           />

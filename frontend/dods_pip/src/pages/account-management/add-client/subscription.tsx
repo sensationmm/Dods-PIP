@@ -171,7 +171,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
         <SectionHeader
           title="Subscription Type"
           subtitle="Please select the subscription that suits this Account."
-          icon={Icons.IconSubscription}
+          icon={Icons.Subscription}
         />
 
         <Spacer size={11} />
@@ -264,7 +264,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             'Please choose the date you’d like the Subscription to begin.',
             'The subscription will automatically renew on an annual basis.',
           ]}
-          icon={Icons.IconCalendar}
+          icon={Icons.Calendar}
         />
 
         <Spacer size={9} />
@@ -339,7 +339,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             data-test="continue-button"
             label="Save and continue"
             onClick={onSubmit}
-            icon={Icons.IconChevronRight}
+            icon={Icons.ChevronRight}
             iconAlignment="right"
             disabled={!isComplete}
           />

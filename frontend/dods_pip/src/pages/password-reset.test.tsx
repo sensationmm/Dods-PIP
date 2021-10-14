@@ -68,7 +68,9 @@ describe('PasswordReset', () => {
       .mockImplementationOnce(() => [states[count].confirmed, setState])
       .mockImplementationOnce(() => [states[count].passwordStrength, setState])
       .mockImplementationOnce(() => [states[count].isRepeatPassword, setState]);
-    wrapper = shallow(<PasswordReset isLoading={false} setLoading={setLoadingSpy} />);
+    wrapper = shallow(
+      <PasswordReset isLoading={false} setLoading={setLoadingSpy} addNotification={jest.fn} />,
+    );
     formButton = wrapper.find('[data-test="form-button"]');
     codeExpiredWarning = wrapper.find('[data-test="code-expired-warning"]');
   });

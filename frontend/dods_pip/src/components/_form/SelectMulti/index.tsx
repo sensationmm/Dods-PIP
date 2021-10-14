@@ -91,7 +91,7 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
             optional={optional}
             helperText={helperText}
             onChange={() => setIsOpen(true)}
-            icon={isOpen && !isDisabled ? Icons.IconChevronUp : Icons.IconChevronDown}
+            icon={isOpen && !isDisabled ? Icons.ChevronUp : Icons.ChevronDown}
             css={{ pointerEvents: 'none' }}
             onFocus={() => setIsOpen(true)}
             tabIndex={1}
@@ -132,7 +132,7 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
                 >
                   <Component data-test="component-checkbox-toggle" hasError={error !== undefined}>
                     {inArray(item.value, value) && (
-                      <Icon src={Icons.IconTick} size={IconSize.small} color={color.base.white} />
+                      <Icon src={Icons.Tick} size={IconSize.small} color={color.base.white} />
                     )}
                   </Component>
                   {item.label}

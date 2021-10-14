@@ -81,7 +81,7 @@ const Chips: React.FC<ChipsProps> = ({
         onClick={() => onCloseClick?.(label)}
       >
         <Icon
-          src={Icons.IconCrossBold}
+          src={Icons.CrossBold}
           size={IconSize.small}
           color={color.base.white}
           data-test="closeButtonIcon"

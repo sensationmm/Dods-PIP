@@ -97,7 +97,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
           data-test="minus-button"
         >
           <Icon
-            src={Icons.IconMinus}
+            src={Icons.Minus}
             size={IconSize.mediumLarge}
             data-test="minus-icon"
             color={
@@ -148,7 +148,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
           data-test="plus-button"
         >
           <Icon
-            src={Icons.IconAdd}
+            src={Icons.Add}
             size={IconSize.mediumLarge}
             data-test="plus-icon"
             color={

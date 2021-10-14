@@ -56,7 +56,9 @@ describe('Account Management: Clients', () => {
       .mockImplementationOnce(() => [states[count].contactTelephone, setStateSpy])
       .mockImplementationOnce(() => [states[count].errorsStep1, setErrorSpy]);
 
-    wrapper = shallow(<AddClient isLoading={false} setLoading={setLoadingSpy} />);
+    wrapper = shallow(
+      <AddClient isLoading={false} setLoading={setLoadingSpy} addNotification={jest.fn} />,
+    );
     step1 = wrapper.find('[data-test="step-1"]');
     step2 = wrapper.find('[data-test="step-2"]');
     step3 = wrapper.find('[data-test="step-3"]');
