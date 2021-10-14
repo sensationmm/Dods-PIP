@@ -1,5 +1,5 @@
 output "subnet_private_development" {
-  value = tolist(module.development.subnet_private)
+  value = tolist(module.dev.subnet_private)
 }
 
 output "subnet_private_qa" {
@@ -7,7 +7,7 @@ output "subnet_private_qa" {
 }
 
 output "db_security_group_development" {
-  value = module.development.db_security_group
+  value = module.dev.db_security_group
 }
 
 output "db_security_group_qa" {
@@ -15,9 +15,9 @@ output "db_security_group_qa" {
 }
 
 output "db_endpoint_dev" {
-  value = module.development.db_connection
+  value = module.dev.db_connection
 }
 
 output "db_address_dev" {
-  value = module.development.db_address
+  value = module.dev.db_address
 }

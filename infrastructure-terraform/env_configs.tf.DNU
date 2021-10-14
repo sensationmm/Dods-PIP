@@ -1,15 +1,15 @@
 data "template_file" "vpc_config_dev" {
   template = file("${path.module}/templates/vpc.js.tpl")
   vars = {
-    securityGroupIds = jsonencode(module.development.db_security_group)
-    subnetIds = jsonencode( module.development.subnet_private )
+    securityGroupIds = jsonencode(module.dev.lambda_sg_id)
+    subnetIds = jsonencode( module.dev.subnet_private )
   }
 }
 
 data "template_file" "vpc_config_qa" {
   template = file("${path.module}/templates/vpc.js.tpl")
   vars = {
-    securityGroupIds = jsonencode(module.qa.db_security_group)
+    securityGroupIds = jsonencode(module.qa.lambda_sg_id)
     subnetIds = jsonencode(module.qa.subnet_private)
   }
 }

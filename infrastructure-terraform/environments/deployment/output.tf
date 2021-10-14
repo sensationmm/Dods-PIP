@@ -16,3 +16,7 @@ output "db_connection" {
 output "db_address" {
   value = module.client-profile-database.db_address
 }
+
+output "lambda_sg_id" {
+  value = module.client-profile-database.lambda_sg_id
+}

@@ -5,6 +5,7 @@
 // - IGW for the public subnet
 // --------------------------------------------------------------------------------------------------------------------
 data "aws_availability_zones" "available" {
+  state = "available"
 }
 
 locals {
