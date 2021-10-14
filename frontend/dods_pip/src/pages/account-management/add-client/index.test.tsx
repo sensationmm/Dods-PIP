@@ -31,7 +31,6 @@ describe('Account Management: Clients', () => {
     defaultState, // renders without error and shows step 1
     { ...defaultState, activeStep: 2 }, // shows step 2
     { ...defaultState, activeStep: 3 }, // shows step 3
-    { ...defaultState, activeStep: 4 }, // shows step 4
     defaultState, // exits create account flow on clicking back
     {
       ...defaultState,
@@ -41,10 +40,8 @@ describe('Account Management: Clients', () => {
     }, // submit step1 succeeds
     { ...defaultState, activeStep: 2 }, // proceeds from step 2
     { ...defaultState, activeStep: 3 }, // proceeds from step 3
-    { ...defaultState, activeStep: 4 }, // proceeds from step 4
     { ...defaultState, activeStep: 2 }, // navigates back from step 2
     { ...defaultState, activeStep: 3 }, // navigates back from step 3
-    { ...defaultState, activeStep: 4 }, // navigates back from step 4
   ];
 
   let count = 0;
@@ -89,13 +86,6 @@ describe('Account Management: Clients', () => {
     expect(step4.length).toEqual(0);
   });
 
-  it('shows step 4', () => {
-    expect(step1.length).toEqual(0);
-    expect(step2.length).toEqual(0);
-    expect(step3.length).toEqual(0);
-    expect(step4.length).toEqual(1);
-  });
-
   it('exits create account flow on clicking back', () => {
     step1.props().onBack();
     expect(mockRouterPush).toHaveBeenCalledWith('/account-management/accounts');
@@ -113,12 +103,7 @@ describe('Account Management: Clients', () => {
 
   it('proceeds from step 3', () => {
     step3.props().onSubmit();
-    expect(setActiveStepSpy).toHaveBeenCalledWith(4);
-  });
-
-  it('proceeds from step 4', () => {
-    step4.props().onSubmit();
-    expect(setActiveStepSpy).toHaveBeenCalledWith(1);
+    expect(mockRouterPush).toHaveBeenCalledWith('/account-management/accounts');
   });
 
   it('navigates back from step 2', () => {
@@ -129,11 +114,6 @@ describe('Account Management: Clients', () => {
   it('navigates back from step 3', () => {
     step3.props().onBack();
     expect(setActiveStepSpy).toHaveBeenCalledWith(2);
-  });
-
-  it('navigates back from step 4', () => {
-    step4.props().onBack();
-    expect(setActiveStepSpy).toHaveBeenCalledWith(3);
   });
 
   afterEach(() => {

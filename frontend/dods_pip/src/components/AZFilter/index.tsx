@@ -61,7 +61,8 @@ const AZFilter: React.FC<AZFilterProps> = ({ selectedLetter, setSelectedLetter }
               color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
             />
             <Text
-              type="label"
+              type="bodySmall"
+              bold
               color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
             >
               VIEW ALL

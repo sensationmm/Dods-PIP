@@ -1,45 +1,41 @@
 import {
-    ClientAccountParameters,
-    HttpBadRequestResponse,
-    HttpInternalServerErrorResponse,
-    HttpSuccessResponse,
-} from '../../domain';
+    AsyncLambdaMiddleware,
+    HttpResponse,
+    HttpStatusCode,
+} from '@dodsgroup/dods-lambda';
 
-import { APIGatewayProxyResultV2 } from 'aws-lambda';
-import { ClientAccountRepository } from '../../repositories/ClientAccountRepository';
-import { ValidationError } from 'sequelize';
+import { ClientAccountParameters } from '../../domain';
+import { ClientAccountRepository } from '../../repositories';
 
-export const createClientAccount = async ({
-    clientAccount,
-}: {
-    clientAccount: ClientAccountParameters;
-}): Promise<APIGatewayProxyResultV2> => {
-    try {
-        const newClientAccount =
-            await ClientAccountRepository.defaultInstance.createClientAccount(
-                clientAccount
+export const createClientAccount: AsyncLambdaMiddleware<ClientAccountParameters> =
+    async (parameters) => {
+        const isNewAccountNameAvailable =
+            await ClientAccountRepository.defaultInstance.checkNameAvailability(
+                parameters.clientAccount.name
             );
 
-        return new HttpSuccessResponse({
+        if (!isNewAccountNameAvailable) {
+            return new HttpResponse(HttpStatusCode.CONFLICT, {
+                success: false,
+                message: `A Client Account already exists with the name: ${parameters.clientAccount.name}`,
+            });
+        }
+
+        const newClientAccount =
+            await ClientAccountRepository.defaultInstance.createClientAccount(
+                parameters
+            );
+
+        if (newClientAccount)
+            await ClientAccountRepository.defaultInstance.UpdateCompletion(
+                newClientAccount.uuid,
+                false,
+                1
+            );
+
+        return new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Client account successfully created.',
             data: newClientAccount,
         });
-    } catch (error) {
-        console.error('Error creating client account:', error);
-
-        if (error instanceof ValidationError) {
-            return new HttpBadRequestResponse({
-                success: false,
-                message: 'Error creating client account.',
-                errors: error.errors,
-            });
-        }
-
-        return new HttpInternalServerErrorResponse({
-            success: false,
-            message: 'Error creating client account.',
-            error,
-        });
-    }
-};
+    };

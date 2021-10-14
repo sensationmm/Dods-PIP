@@ -1,3 +1,5 @@
+options:
+  max-time: 15
 pipelines:
   default:
     - parallel:
@@ -43,19 +45,18 @@ pipelines:
           condition:
             changesets:
               includePaths:
-                - "services/userProfile/**"
+                - "services/user-profile/**"
           script:
-            - cd services/userProfile
+            - cd services/user-profile
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - npm run test
-            - npm run test:coverage
+            - NODE_ENV=test npm run test:coverage
             
       - step:
           name: Client Account Service
-          image: gioatsomoglobal/devopstools:0.4.3
+          image: gioatsomoglobal/nodejs-builder:0.1
           caches:
             - node
           condition:
@@ -65,8 +66,28 @@ pipelines:
           script:
             - cd services/client-account
             - npm install
-            - npm run test || true
-            - npm run test:coverage || true
+            - export SERVERLESS_STAGE=dev
+            - ./setenv.sh
+            - source *.env
+            - npm run test:coverage
+
+      - step:
+          name: Editorial Workflow Service
+          image: gioatsomoglobal/nodejs-builder:0.1
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/editorial-workflow/**"
+          script:
+            - ./what2build.sh
+            - cd services/editorial-workflow
+            - npm install
+            - export SERVERLESS_STAGE=dev
+            - ./setenv.sh
+            - source *.env
+            - npm run test
 
       - step:
           name: Validate OpenAPI definitions
@@ -110,8 +131,8 @@ pipelines:
             script:
               - cd services/dods-iam
               - npm install
-              - npm run test || true
-              - npm run test:coverage || true
+              - NODE_ENV=test npm run test 
+              - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
         - step: 
@@ -121,12 +142,14 @@ pipelines:
             condition:
               changesets:
                 includePaths:
-                  - "services/userProfile/**"
+                  - "services/user-profile/**"
             script:
-              - cd services/userProfile
+              - cd services/user-profile
               - npm install
-              - npm run test || true
-              - npm run test:coverage || true
+              - export SERVERLESS_STAGE=dev
+              - ./setenv.sh
+              - source *.env
+              - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
         - step: 
@@ -138,10 +161,31 @@ pipelines:
                 includePaths:
                   - "services/client-account/**"
             script:
+              - ./what2build.sh
               - cd services/client-account
               - npm install
-              - npm run test || true
-              - npm run test:coverage || true
+              - export SERVERLESS_STAGE=dev
+              - ./setenv.sh
+              - source *.env
+              - npm run test:coverage 
+              - serverless deploy --stage dev
+
+        - step: 
+            name: Editorial Workflow Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.3
+            condition:
+              changesets:
+                includePaths:
+                  - "services/editorial-workflow/**"
+            script:
+              - ./what2build.sh
+              - cd services/editorial-workflow
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - ./setenv.sh
+              - source *.env
+              - npm run test:coverage 
               - serverless deploy --stage dev
 
         - step:
@@ -171,6 +215,19 @@ pipelines:
               - docker push ${IMAGE_NAME}
               - cd ../../tools
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+
+        - step:
+            name: Terraform Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.3
+            condition:
+              changesets:
+                includePaths:
+                  - "infrastructure-terraform/**"
+            script:
+              - terraform init
+              - terraform plan
+              - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
 
   custom:
     deployment-to-staging:

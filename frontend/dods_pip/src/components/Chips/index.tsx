@@ -12,35 +12,32 @@ export interface ChipsProps {
   chipsSize?: ChipsSize;
   icon?: Icons;
   label: string;
-  selected?: boolean;
   disabled?: boolean;
   avatarType?: UserType;
-  onClick?: () => void;
-  onCloseClick?: () => void;
+  onCloseClick?: (val: string) => void;
 }
 
 const Chips: React.FC<ChipsProps> = ({
   chipsSize = 'dense',
   label,
   disabled,
-  selected,
   icon,
   avatarType,
-  onClick,
   onCloseClick,
 }) => {
-  const [hovering, setHovering] = React.useState(false);
+  const [hovering, setHovering] = React.useState<boolean>(false);
+  const [active, setActive] = React.useState<boolean>(false);
 
   return (
     <Styled.wrapper
       iconOrAvatar={icon || avatarType ? true : false}
       data-test="component-chip"
-      selected={selected}
+      selected={active}
       disabled={disabled}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
-      <Styled.contentWrapper onClick={onClick}>
+      <Styled.contentWrapper data-test="content-wrapper" onClick={() => setActive(true)}>
         {avatarType && !icon && (
           <Styled.avatarWrapper>
             <Avatar
@@ -56,7 +53,7 @@ const Chips: React.FC<ChipsProps> = ({
             size={chipsSize}
             hovering={hovering}
             disabled={disabled}
-            selected={selected}
+            selected={active}
             data-test="left-icon-wrapper"
           >
             <Icon
@@ -77,13 +74,14 @@ const Chips: React.FC<ChipsProps> = ({
         </Text>
       </Styled.contentWrapper>
       <Styled.closeButton
-        selected={selected}
+        data-test="close-button"
+        selected={active}
         disabled={disabled}
         hovering={hovering}
-        onClick={onCloseClick}
+        onClick={() => onCloseClick?.(label)}
       >
         <Icon
-          src={Icons.IconCross}
+          src={Icons.IconCrossBold}
           size={IconSize.small}
           color={color.base.white}
           data-test="closeButtonIcon"

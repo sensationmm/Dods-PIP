@@ -11,16 +11,20 @@
     "module": "commonJs",
     "target": "es2020",
     "lib": ["es2020"],
-    "sourceMap": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "sourceMap": true,
   },
+  "types": [
+    "jest"
+  ],
   "include": ["./src/**/*.ts"],
   "exclude": [
     "./node_modules/**/*",
     ".serverless/**/*",
     ".webpack/**/*",
     "_warmup/**/*",
-    ".vscode/**/*"
+    ".vscode/**/*",
+    "./mariadb/**/*"
   ]
 }

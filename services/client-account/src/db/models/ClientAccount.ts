@@ -2,6 +2,7 @@ import {
     Association,
     BelongsToCreateAssociationMixin,
     BelongsToGetAssociationMixin,
+    BelongsToSetAssociationMixin,
     DataTypes,
     Model,
 } from 'sequelize';
@@ -10,44 +11,63 @@ import {
     ClientAccountModelCreationAttributes,
 } from '../types';
 
+import ClientAccountTeam from './ClientAccountTeamModel';
 import SubscriptionType from './SubscriptionType';
-import ClientAccountTeam from './ClientAccountTeam';
+//import SubscriptionType from './SubscriptionType';
+import { SubscriptionTypeModel } from '.';
 import sequelize from '../sequelize';
 
 class ClientAccountModel
-    extends Model<ClientAccountModelAttributes, ClientAccountModelCreationAttributes>
+    extends Model<
+        ClientAccountModelAttributes,
+        ClientAccountModelCreationAttributes
+    >
     implements ClientAccountModelAttributes
 {
     public id!: number;
     public uuid!: string;
     public name!: string;
-    public notes!: string | null;
+    public notes?: string;
     public contactName!: string;
     public contactEmailAddress!: string;
     public contactTelephoneNumber!: string;
-    public subscriptionSeats!: number;
-    public contractStartDate!: Date;
-    public contractRollover!: boolean;
-    public contractEndDate!: Date | null;
-    
+    public subscriptionSeats?: number;
+    public contractStartDate?: Date;
+    public contractRollover?: boolean;
+    public contractEndDate?: Date;
+    public consultantHours?: number;
+    public isCompleted!: boolean;
+    public lastStepCompleted!: number;
+
     public SubscriptionType?: SubscriptionType;
     public ClientAccountTeam?: ClientAccountTeam;
-    
+
     //Timestamps
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
     public readonly deletedAt!: Date | null;
 
     //Model Associations
-    public getSubscription!: BelongsToGetAssociationMixin<SubscriptionType>;
-    public setSubscription!: BelongsToCreateAssociationMixin<SubscriptionType>;
+    public getSubscriptionType!: BelongsToGetAssociationMixin<SubscriptionType>;
+    public setSubscriptionType!: BelongsToSetAssociationMixin<
+        SubscriptionType,
+        number
+    >;
+
     public getTeam!: BelongsToGetAssociationMixin<ClientAccountTeam>;
     public setTeam!: BelongsToCreateAssociationMixin<ClientAccountTeam>;
 
-    public static associations: { 
+    public static associations: {
         subscription: Association<ClientAccountModel, SubscriptionType>;
         team: Association<ClientAccountModel, ClientAccountTeam>;
     };
+    //public setSubscription!: BelongsToCreateAssociationMixin<SubscriptionType>;
+
+    public subscriptionType?: SubscriptionTypeModel;
+
+    // public static associations: {
+    //     subscription: Association<ClientAccountModel, SubscriptionTypeModel>;
+    // };
 }
 
 ClientAccountModel.init(
@@ -91,8 +111,14 @@ ClientAccountModel.init(
         subscriptionSeats: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
-            allowNull: false,
+            allowNull: true,
         },
+
+        consultantHours: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+
         contractStartDate: {
             type: DataTypes.DATE,
             allowNull: true,
@@ -107,6 +133,16 @@ ClientAccountModel.init(
             type: DataTypes.BOOLEAN,
             allowNull: true,
             comment: 'null',
+        },
+        isCompleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 0,
+            allowNull: false,
+        },
+        lastStepCompleted: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1,
         },
     },
     {

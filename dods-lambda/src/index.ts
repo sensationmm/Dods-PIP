@@ -7,6 +7,8 @@ export * from "./domain";
 
 export * from 'nut-pipe';
 
+export * from './utility';
+
 export class TriggerMiddlewares {
     static APIGatewayMiddlewares = [httpLogerMiddleware, openApiValidatorMiddleware];
     static EventBridgeMiddlewares = [eventLogerMiddleware];

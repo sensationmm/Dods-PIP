@@ -9,7 +9,7 @@ export const errorMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = asyn
 
     try {
 
-        const result = await next(event, context, callback);
+        const result = await next!(event, context, callback);
 
         const apiGatewayResult = result as APIGatewayProxyStructuredResultV2;
 
@@ -20,8 +20,14 @@ export const errorMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = asyn
         }
 
     } catch (error: any) {
-        const { stack, statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR, message, ...rest } = error;
-        response = new HttpResponse(statusCode, { message, ...rest });
+        const { stack = undefined, statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR, message, ...rest } = typeof error === 'string' ? { message: error } : error;
+
+        response = new HttpResponse(statusCode, {
+            success: false,
+            message,
+            error: rest,
+        });
+
         Logger.error('ErrorMiddleware:', error);
     }
 

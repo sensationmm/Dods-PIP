@@ -63,3 +63,12 @@ export const pageChanger = styled.div`
     pointer-events: none;
   }
 `;
+
+export const perPage = styled.div`
+  display: flex;
+  align-items: center;
+
+  > *:first-child {
+    margin-right: ${spacing(4)};
+  }
+`;

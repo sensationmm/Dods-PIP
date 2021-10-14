@@ -49,3 +49,14 @@ export const filterContentCol = styled.div`
     margin-right: ${spacing(3)};
   }
 `;
+
+export const teamList = styled.div`
+  display: flex;
+
+  > * {
+    margin-right: ${spacing(1)};
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+`;

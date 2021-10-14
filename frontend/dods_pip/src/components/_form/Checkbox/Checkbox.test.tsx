@@ -2,6 +2,8 @@ import { shallow } from 'enzyme';
 import React from 'react';
 
 import Checkbox from '.';
+import color from '../../../globals/color';
+import Icon from '../../Icon';
 
 const clickWatcher = jest.fn();
 const preventDefaultMock = jest.fn();
@@ -57,7 +59,7 @@ describe('Checkbox', () => {
     const component = wrapper.find('[data-test="component-checkbox-toggle"]');
     component.simulate('keyDown', { code: 'Space', preventDefault: preventDefaultMock });
     expect(preventDefaultMock).toHaveBeenCalledTimes(1);
-    expect(clickWatcher).toHaveBeenCalledTimes(1);
+    expect(clickWatcher).toHaveBeenCalledTimes(2);
   });
 
   it('ignores other keypresses', () => {
@@ -66,11 +68,23 @@ describe('Checkbox', () => {
     );
     const component = wrapper.find('[data-test="component-checkbox-toggle"]');
     component.simulate('keyDown', { code: 'Tab', preventDefault: preventDefaultMock });
-    expect(preventDefaultMock).toHaveBeenCalledTimes(0);
-    expect(clickWatcher).toHaveBeenCalledTimes(0);
+    expect(preventDefaultMock).toHaveBeenCalledTimes(1);
+    expect(clickWatcher).toHaveBeenCalledTimes(2);
   });
 
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
+  describe("Dark background", () => {
+
+    it("Should display with dark icon in light mode", () => {
+      const wrapper = shallow(<Checkbox onChange={jest.fn} id="1" isChecked={true} darkMode={false} />)
+      const component = wrapper.find('[data-test="component-icon"]')
+      expect(component.find(Icon).props().color).toEqual(color.base.white)
+    })
+    
+    it("Should display with light icon in dark mode", () => {
+      const wrapper = shallow(<Checkbox onChange={jest.fn} id="1" isChecked={true} darkMode />)
+      const component = wrapper.find('[data-test="component-icon"]')
+      expect(component.find(Icon).props().color).toEqual(color.theme.blueDark)
+    })
+
+  })
 });

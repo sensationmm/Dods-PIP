@@ -8,8 +8,7 @@ import ProgressTracker from '../../../components/ProgressTracker';
 import LoadingHOC, { LoadingHOCProps } from '../../../hoc/LoadingHOC';
 import AccountInfo, { Errors as ErrorsStep1 } from './account-info';
 import Subscription, { Errors as ErrorsStep2 } from './subscription';
-import Tagging from './tagging';
-import Team from './team';
+import Team, { Errors as ErrorsStep3 } from './team';
 
 interface AddClientProps extends LoadingHOCProps {}
 
@@ -35,19 +34,24 @@ export const AddClient: React.FC<AddClientProps> = () => {
   const [endDateType, setEndDateType] = React.useState<string>('');
   const [errorsStep2, setErrorsStep2] = React.useState<ErrorsStep2>({});
 
+  const [teamMembers, setTeamMembers] = React.useState<Array<string>>([]);
+  const [accountManagers, setAccountManagers] = React.useState<Array<string>>([]);
+  const [clientUsers, setClientUsers] = React.useState<Array<string>>([]);
+  const [clientFirstName, setClientFirstName] = React.useState<string>('');
+  const [clientLastName, setClientLastName] = React.useState<string>('');
+  const [clientJobTitle, setClientJobTitle] = React.useState<string>('');
+  const [clientEmail, setClientEmail] = React.useState<string>('');
+  const [clientEmail2, setClientEmail2] = React.useState<string>('');
+  const [clientTelephone, setClientTelephone] = React.useState<string>('');
+  const [clientTelephone2, setClientTelephone2] = React.useState<string>('');
+  const [clientAccess, setClientAccess] = React.useState<string>('');
+  const [errorsStep3, setErrorsStep3] = React.useState<ErrorsStep3>({});
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeStep]);
+
   const steps = [{ label: 'Account Info' }, { label: 'Subscription' }, { label: 'Team' }];
-
-  const onSubmitStep2 = () => {
-    setActiveStep(3);
-  };
-
-  const onSubmitStep3 = () => {
-    setActiveStep(4);
-  };
-
-  const onSubmitStep4 = () => {
-    setActiveStep(1);
-  };
 
   return (
     <div data-test="page-account-management-add-client">
@@ -102,15 +106,41 @@ export const AddClient: React.FC<AddClientProps> = () => {
           setEndDateType={setEndDateType}
           errors={errorsStep2}
           setErrors={setErrorsStep2}
-          onSubmit={onSubmitStep2}
+          onSubmit={() => setActiveStep(3)}
           onBack={() => setActiveStep(1)}
         />
       )}
+
       {activeStep === 3 && (
-        <Team data-test="step-3" onSubmit={onSubmitStep3} onBack={() => setActiveStep(2)} />
-      )}
-      {activeStep === 4 && (
-        <Tagging data-test="step-4" onSubmit={onSubmitStep4} onBack={() => setActiveStep(3)} />
+        <Team
+          data-test="step-3"
+          teamMembers={teamMembers}
+          setTeamMembers={setTeamMembers}
+          accountManagers={accountManagers}
+          setAccountManagers={setAccountManagers}
+          clientUsers={clientUsers}
+          setClientUsers={setClientUsers}
+          clientFirstName={clientFirstName}
+          setClientFirstName={setClientFirstName}
+          clientLastName={clientLastName}
+          setClientLastName={setClientLastName}
+          clientJobTitle={clientJobTitle}
+          setClientJobTitle={setClientJobTitle}
+          clientEmail={clientEmail}
+          setClientEmail={setClientEmail}
+          clientEmail2={clientEmail2}
+          setClientEmail2={setClientEmail2}
+          clientTelephone={clientTelephone}
+          setClientTelephone={setClientTelephone}
+          clientTelephone2={clientTelephone2}
+          setClientTelephone2={setClientTelephone2}
+          clientAccess={clientAccess}
+          setClientAccess={setClientAccess}
+          errors={errorsStep3}
+          setErrors={setErrorsStep3}
+          onSubmit={() => router.push('/account-management/accounts')}
+          onBack={() => setActiveStep(2)}
+        />
       )}
     </div>
   );

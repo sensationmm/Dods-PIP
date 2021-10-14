@@ -5,16 +5,33 @@ import Text from '../../Text';
 import * as Styled from './Label.styles';
 
 export interface LabelProps {
-  label: string;
+  label?: string;
   required?: boolean;
   optional?: boolean;
+  noMargin?: boolean;
+  isDisabled?: boolean;
+  bold?: boolean;
+  darkMode?: boolean;
 }
 
-const Label: React.FC<LabelProps> = ({ label, required = false, optional = false }) => {
+const Label: React.FC<LabelProps> = ({
+  label,
+  required,
+  optional,
+  noMargin,
+  isDisabled,
+  bold,
+  darkMode,
+}) => {
   return (
-    <Styled.label data-test="component-label">
+    <Styled.label data-test="component-label" noMargin={noMargin}>
       {required && <Styled.requiredStar data-test="label-required-star">*</Styled.requiredStar>}
-      <Text type="label" color={color.theme.blue}>
+      <Text
+        type={bold ? 'body' : 'label'}
+        color={isDisabled ? color.base.greyDark : darkMode ? color.base.white : color.theme.blue}
+        bold={bold}
+        data-test="text-component"
+      >
         {label}
       </Text>
       {required && (

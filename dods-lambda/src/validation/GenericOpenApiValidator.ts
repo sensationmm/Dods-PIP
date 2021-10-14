@@ -4,6 +4,8 @@ import { OpenApiSpecLoader, Spec } from 'express-openapi-validator/dist/framewor
 import { HttpRequest } from './HttpRequest';
 import { OpenApiAdaptedRequest } from './OpenApiAdaptedRequest';
 import { OpenApiRequestHandler, OpenAPIV3, OpenApiValidatorOpts } from 'express-openapi-validator/dist/framework/types';
+import { HttpError } from '../domain/error';
+import { HttpStatusCode } from '..';
 
 export class GenericOpenApiValidator {
   private metadataMiddlewareFunction: OpenApiRequestHandler;
@@ -27,7 +29,31 @@ export class GenericOpenApiValidator {
 
   private static getSchema = (spec: Spec, route: string, method: string): OpenAPIV3.OperationObject => {
 
-    const schema: OpenAPIV3.OperationObject = spec.apiDoc.paths[route] && spec.apiDoc.paths[route][(method.toLowerCase() as keyof OpenAPIV3.PathItemObject)] as OpenAPIV3.OperationObject;
+    const methodLowerCase = method.toLocaleLowerCase();
+
+    const pathUrl = route;
+
+    const splittedPathUrl = pathUrl.split('/').slice(1);
+
+    const { paths: swagger_paths } = spec.apiDoc;
+
+    const [swagger_path, swagger_pathMethods] = Object.entries(swagger_paths).find(([key]) => {
+      const splittedKey = key.split('/').slice(1);
+      return key === pathUrl || (splittedKey.length === splittedPathUrl.length && splittedPathUrl.every((item, index) => splittedKey[index].includes('{') || splittedKey[index] == item));
+    }) || [];
+
+    if (!swagger_path || !swagger_pathMethods) {
+      throw new HttpError(`Bad request:: Swagger ${pathUrl} path not found in Swagger definition.`, HttpStatusCode.BAD_REQUEST);
+    }
+
+    const [, swagger_pathMethod] = Object.entries(swagger_pathMethods).find(([key, _]) => key.toLocaleLowerCase() === methodLowerCase) || [];
+
+    if (!swagger_pathMethod) {
+      throw new HttpError(`Bad request:: Swagger ${method} method not found in ${swagger_path} path in Swagger definition.`, HttpStatusCode.BAD_REQUEST);
+    }
+
+    const schema = swagger_pathMethod;
+    // const schema: OpenAPIV3.OperationObject = spec.apiDoc.paths[route] && spec.apiDoc.paths[route][(method.toLowerCase() as keyof OpenAPIV3.PathItemObject)] as OpenAPIV3.OperationObject;
 
     if (!schema) {
       //TODO: Declare error message

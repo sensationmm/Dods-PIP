@@ -1,37 +1,31 @@
-import { APIGatewayProxyResultV2 } from 'aws-lambda';
-import { ClientAccountRepository } from '../../repositories/ClientAccountRepository';
-import { SearchClientAccountParameters, HttpSuccessResponse, HttpBadRequestResponse, HttpInternalServerErrorResponse } from '../../domain';
-import { ValidationError } from 'sequelize';
+import {
+    AsyncLambdaMiddleware,
+    HttpResponse,
+    HttpStatusCode,
+} from '@dodsgroup/dods-lambda';
 
-// export const searchClientAccount = async ({ clientAccountId, }: { clientAccountId: string; }): Promise<APIGatewayProxyResultV2> => {
-export const searchClientAccount = async (params: SearchClientAccountParameters): Promise<APIGatewayProxyResultV2> =>
-{
-    try {
-        const response = await ClientAccountRepository.defaultInstance.searchClientAccount(params);
+import { ClientAccountRepository } from '../../repositories';
+import { SearchClientAccountParameters } from '../../domain';
 
-        return new HttpSuccessResponse(
-            {
-                success: true,
-                message: 'Showing Results.',
-                limit: params?.limit,
-                offset: params?.offset,
-                data: response,
-            }
-        );
-    } catch (error) {
-        console.error('Error searching client accounts:', error);
-        if (error instanceof ValidationError) {
-            return new HttpBadRequestResponse({
+export const searchClientAccount: AsyncLambdaMiddleware<SearchClientAccountParameters> =
+    async (params) => {
+        const response =
+            await ClientAccountRepository.defaultInstance.searchClientAccount(
+                params
+            );
+
+        if (response?.length == 0) {
+            return new HttpResponse(HttpStatusCode.NOT_FOUND, {
                 success: false,
-                message: 'Error searching client accounts.',
-                errors: error.errors,
+                message: `No matches found for search parameters: ${params}`,
             });
         }
-        return new HttpInternalServerErrorResponse({
-            success: false,
-            message: 'Error searching client accounts.',
-            error,
-        });
-    }
 
-};
+        return new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'Showing Results.',
+            limit: params?.limit,
+            offset: params?.offset,
+            data: response,
+        });
+    };

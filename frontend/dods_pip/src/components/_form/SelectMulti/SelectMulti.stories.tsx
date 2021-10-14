@@ -27,6 +27,7 @@ Primary.args = {
   required: false,
   optional: false,
   helperText: '',
+  isFullWidth: true,
 };
 
 Primary.parameters = {

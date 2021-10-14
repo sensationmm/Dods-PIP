@@ -6,7 +6,7 @@ export const eventLogerMiddleware: AsyncLambdaMiddleware<EventBridgeEvent<string
 
     Logger.info(`EventLogerMiddleware Entry`, { source: event.source, detailType: event['detail-type'] });
 
-    await next(event, context, callback);
+    await next!(event, context, callback);
 
     Logger.info(`EventLogerMiddleware Success`);
 };

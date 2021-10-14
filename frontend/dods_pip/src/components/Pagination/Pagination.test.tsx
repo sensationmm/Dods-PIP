@@ -130,9 +130,9 @@ describe('Pagination', () => {
       const { PaginationStats } = Pagination(data.length);
       const wrapper = shallow(<PaginationStats />);
       const numChanger = wrapper.find('[data-test="set-page-count"]');
-      numChanger.simulate('change', { target: { value: 90 } });
+      numChanger.simulate('change', '90');
 
-      expect(setState).toHaveBeenCalledWith(90);
+      expect(setState).toHaveBeenCalledWith('90');
       expect(setState).toHaveBeenCalledWith(0);
     });
   });

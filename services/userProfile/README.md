@@ -1,29 +1,12 @@
 # User Profile Service
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This folder has the code for the different lambdas for the user profile service.
 
-### What is this repository for? ###
+In order to run test succesfully, the terminal were you run the tests needs to have
+setup the environment variables defined on the `serverles.yml` file, to easily accomplish
+this, run the following your terminal:
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* export SERVERLESS_STAGE=dev
+* ./setenv.sh
+* source dev.env
+* npm run test:coverage

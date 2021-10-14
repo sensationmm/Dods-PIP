@@ -3,10 +3,14 @@ import styled from 'styled-components';
 import color from '../../../globals/color';
 import spacing from '../../../globals/spacing';
 
-export const label = styled.div`
+type LabelProps = {
+  noMargin?: boolean;
+};
+
+export const label = styled.div<LabelProps>`
   display: flex;
   align-items: baseline;
-  margin-bottom: ${spacing(3)};
+  margin-bottom: ${({ noMargin }) => (noMargin ? spacing(0) : spacing(3))};
 `;
 
 export const requiredStar = styled.span`

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import media from '../../../globals/media';
 import spacing from '../../../globals/spacing';
 
 export const wrapper = styled.div`
@@ -25,4 +26,16 @@ export const dates = styled.div`
 
 export const allocationTitle = styled.div`
   min-width: 40%;
+`;
+
+export const form = styled.fieldset`
+  border: 0;
+  padding: 0;
+  display: grid;
+  row-gap: ${spacing(6)};
+
+  ${media.greaterThan('md')`
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: ${spacing(5)};
+  `};
 `;

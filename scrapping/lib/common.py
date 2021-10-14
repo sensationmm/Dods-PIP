@@ -1,6 +1,7 @@
 from hashlib import md5
 import re
 import os
+import datetime
 import logging
 from fuzzywuzzy import fuzz
 import operator
@@ -67,3 +68,11 @@ class Common:
 		[x.extract() for x in soup.find_all(r'\s*')]
 		soup.prettify()
 		return soup
+
+	@staticmethod
+	def dateRange(i):
+		today = date_to = datetime.datetime.now()
+		date_from = today - datetime.timedelta(i)
+
+		return date_from.strftime('%Y-%m-%d'), date_to.strftime('%Y-%m-%d')
+

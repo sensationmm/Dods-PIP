@@ -1,0 +1,9 @@
+.env
+.vimrc
+*.tfplan
+*.terraform
+node_modules/
+.tmp/
+.idea
+dist.zip
+.DS_Store
