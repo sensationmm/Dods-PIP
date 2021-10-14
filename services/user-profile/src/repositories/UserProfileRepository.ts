@@ -43,17 +43,25 @@ export class UserProfileRepository implements UserProfilePersister {
             );
         }
 
-        let response: UserProfileModel;
+        let response: UserProfileModel | null = null;
+
         try {
             const newUserProfile = await this.userModel.create(
                 parseUserForCreation(userProfileParameters)
             );
-            newUserProfile.role = newProfileRole;
 
-            response = await newUserProfile.save();
+            await newUserProfile.setRole(newProfileRole);
 
-            return parseUserForResponse(response);
+            response = await this.userModel.findOne({
+                where: {
+                    uuid: newUserProfile.uuid,
+                },
+                include: 'role',
+            });
+
+            return parseUserForResponse(response!);
         } catch (error) {
+            console.debug(error);
             throw new UserProfileError('Error: User Profile creation failed', error);
         }
     }

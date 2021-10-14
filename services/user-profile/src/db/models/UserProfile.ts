@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { BelongsToSetAssociationMixin, DataTypes, Model, Optional } from 'sequelize';
 
 import RoleTypeModel from './RoleType';
 import sequelize from '../sequelize';
@@ -39,6 +39,8 @@ class UserProfileModel
 
     public fullName!: string;
     public role?: RoleTypeModel;
+
+    public setRole!: BelongsToSetAssociationMixin<RoleTypeModel, number>;
 
     //Timestamps
     public readonly createdAt!: Date;

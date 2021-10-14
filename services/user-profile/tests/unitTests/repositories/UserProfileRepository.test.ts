@@ -39,11 +39,11 @@ const UserProfileModelMock = dbMock.define('dods_client_accounts', {
     title: 'Sir.',
     firstName: 'Other',
     lastName: 'Tester',
-    primaryEmailAddress: 'dodstestlocal1@mailinator.com',
-    secondaryEmailAddress: 'dodstestlocal2@mailinator.com',
+    primaryEmail: 'dodstestlocal1@mailinator.com',
+    secondaryEmail: 'dodstestlocal2@mailinator.com',
     telephoneNumber1: '+573214858576',
     telephoneNumber2: '+573214858577',
-    role_id: 1,
+    roleId: 1,
 });
 
 const RoleTypeMock = dbMock.define('dods_roles', {
@@ -69,6 +69,39 @@ RoleTypeMock.$queryInterface.$useHandler((query: any, queryOptions: any) => {
             });
         } else {
             return null;
+        }
+    }
+});
+
+UserProfileModelMock.$queryInterface.$useHandler((query: any, queryOptions: any) => {
+    if (query === 'findOne') {
+        if (queryOptions[0].where.uuid === '0e6c0561-8ff1-4f74-93bc-77444b156c6f') {
+            return UserProfileModelMock.build({
+                id: 1,
+                uuid: '0e6c0561-8ff1-4f74-93bc-77444b156c6f',
+                title: 'Sir.',
+                firstName: 'Other',
+                lastName: 'Tester',
+                primaryEmail: 'dodstestlocal1@mailinator.com',
+                secondaryEmail: 'dodstestlocal2@mailinator.com',
+                telephoneNumber1: '+573214858576',
+                telephoneNumber2: '+573214858577',
+                roleId: 1,
+                role: {
+                    id: 1,
+                    uuid: '24e7ca86-1788-4b6e-b153-9c963dc928cb',
+                    title: 'Regular User',
+                    dodsRole: false,
+                },
+            });
+        } else {
+            return null;
+        }
+    }
+    if (query === 'create') {
+        if (queryOptions[0].firstName === '') {
+            console.log('TETSETSETST');
+            throw new Error('Error: First Name can not be empty');
         }
     }
 });
@@ -99,11 +132,13 @@ describe(`${CREATE_FUNCTION} handler`, () => {
             ...SUCCESS_PROFILE_REQUEST,
             role_id: 'BAD_ROLE',
         };
-
+        let caughtError: any = {};
         try {
             await testRepository.createUserProfile(request);
         } catch (error) {
-            expect(error instanceof UserProfileError).toBe(true);
+            caughtError = error;
         }
+        expect(caughtError instanceof UserProfileError).toBe(true);
+        expect(caughtError.message).toBe('Error: RoleId BAD_ROLE does not exist');
     });
 });
