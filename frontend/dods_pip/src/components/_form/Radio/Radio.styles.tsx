@@ -3,97 +3,100 @@ import styled from 'styled-components';
 import color from '../../../globals/color';
 import opacity from '../../../globals/opacity';
 import spacing from '../../../globals/spacing';
+import { hexAToRGBA } from '../../../utils/color';
 
-const colorDefault = color.theme.blueMid;
-const colorHover = color.theme.blueDark;
-const colorDisabled = color.base.grey;
+const COLOUR_DEFAULT = color.theme.blueMid;
+const COLOUR_HOVER = color.theme.blueDark;
+const COLOUR_DISABLED = color.base.grey;
+const COLOUR_LABEL_DISABLED = color.base.greyDark;
 
-export const radio = styled.div`
-  display: flex;
-  align-items: center;
-`;
+const RADIO_SIZE = 24;
+const RADIO_CHECK_SIZE = 16;
+const RADIO_CHECK_OFFSET = 3;
 
-export const radioInput = styled.input`
+export const radio = styled.label`
+  display: block;
   position: relative;
-  width: 24px !important;
-  height: 24px !important;
-  margin: 0 ${spacing(3)} 0 0;
+  min-height: ${RADIO_SIZE};
+  padding-left: ${spacing(9)};
   cursor: pointer;
-  outline: none;
-  border: 0;
-  background: transparent;
+  user-select: none;
 
-  &:focus::before {
-    content: '';
+  &:hover .radio-button {
+    border-color: ${COLOUR_HOVER};
+    background-color: ${hexAToRGBA(COLOUR_DEFAULT, 0.08)};
+
+    &::after {
+      background-color: ${COLOUR_HOVER};
+    }
+  }
+
+  .radio-button {
     display: block;
     position: absolute;
-    top: -4px;
-    left: -4px;
-    width: 30px;
-    height: 30px;
-    border-radius: 16px;
-    background: ${colorDefault};
-    opacity: ${opacity.high};
+    top: 0;
+    left: 0;
+    height: ${RADIO_SIZE}px;
+    width: ${RADIO_SIZE}px;
+    border-radius: 50%;
+    border: 1px solid ${COLOUR_DEFAULT};
+
+    &::after {
+      content: '';
+      position: absolute;
+      display: none;
+      top: ${RADIO_CHECK_OFFSET}px;
+      left: ${RADIO_CHECK_OFFSET}px;
+      width: ${RADIO_CHECK_SIZE}px;
+      height: ${RADIO_CHECK_SIZE}px;
+      border-radius: 50%;
+      background-color: ${COLOUR_DEFAULT};
+    }
   }
 
-  &::before {
-    content: '';
+  .label {
+    font-size: 16px;
+    line-height: 1.37;
     display: block;
-    width: 22px;
-    height: 22px;
-    border-radius: 12px;
-    border: 1px solid ${colorDefault};
-    background: ${color.base.white};
-    outline: none;
+    margin-top: ${RADIO_CHECK_OFFSET}px;
+    color: ${COLOUR_HOVER};
   }
 
-  &:checked:after {
-    content: '';
-    display: block;
+  input {
     position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 8px;
-    top: 4px;
-    left: 4px;
-    background: ${colorDefault};
-  }
+    opacity: 0;
+    cursor: pointer;
 
-  &:hover::before {
-    border-color: ${colorHover};
-  }
+    &:checked {
+      ~ .radio-button {
+        &::after {
+          display: block;
+        }
+      }
 
-  &:checked:hover:after {
-    background: ${colorHover};
-  }
-`;
+      ~ .label {
+        font-weight: 700;
+      }
+    }
 
-export const radioInputDisabled = styled(radioInput)`
-  pointer-events: none;
-  cursor: not-allowed;
+    &:focus ~ .radio-button {
+      background-color: ${hexAToRGBA(COLOUR_DEFAULT, 0.2)};
+      box-shadow: 0 0 0 4px ${hexAToRGBA(COLOUR_DEFAULT, 0.2)};
+    }
 
-  &::before {
-    border-color: ${colorDisabled};
-  }
-  &:checked:after {
-    background: ${colorDisabled};
-  }
-`;
+    &[disabled] {
+      ~ .radio-button {
+        border-color: ${COLOUR_DISABLED};
+        background-color: ${hexAToRGBA(COLOUR_DISABLED, 0.08)};
 
-export const radioGroup = styled.div`
-  width: 100%;
-`;
+        &::after {
+          background-color: ${COLOUR_DISABLED};
+        }
+      }
 
-export const radioGroupWrapper = styled.fieldset`
-  border: 0;
-  display: flex;
-  padding: 0;
-
-  > div {
-    margin-right: ${spacing(6)};
-
-    &:last-child {
-      margin-right: 0;
+      ~ .label {
+        color: ${COLOUR_LABEL_DISABLED};
+      }
     }
   }
 `;

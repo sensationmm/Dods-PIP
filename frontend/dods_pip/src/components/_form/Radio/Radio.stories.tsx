@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 
-import RadioGroup, { IRadioGroupProps, IRadioProps, Radio } from '.';
+import Radio, { IRadioProps } from '.';
 
 export default {
   component: Radio,
@@ -9,36 +9,17 @@ export default {
   controls: { hideNoControlsWarning: true },
 } as Meta;
 
-const TemplateSingle: Story<IRadioProps> = (args) => <Radio {...args} />;
-const TemplateGroup: Story<IRadioGroupProps> = (args) => <RadioGroup {...args} />;
+const TemplatePrimary: Story<IRadioProps> = (args) => <Radio {...args} />;
 
-export const Single = TemplateSingle.bind({});
-export const Group = TemplateGroup.bind({});
+export const Primary = TemplatePrimary.bind({});
 
-Single.args = {
+Primary.args = {
   label: 'Option 1',
   value: 'option1',
   isChecked: false,
   isDisabled: false,
 };
 
-Single.parameters = {
+Primary.parameters = {
   controls: { exclude: ['name', 'value', 'id'] },
-};
-
-Group.args = {
-  label: 'Radio options',
-  items: [
-    { label: 'Option 1', value: 'option1' },
-    { label: 'Option 2', value: 'option2' },
-    { label: 'Option 3', value: 'option3' },
-  ],
-  value: 'option1',
-  isDisabled: false,
-  required: false,
-  optional: false,
-};
-
-Group.parameters = {
-  controls: { exclude: ['name', 'id', 'isChecked'] },
 };

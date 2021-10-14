@@ -2,7 +2,7 @@ import React from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
 import InputText from '../../../components/_form/InputText';
-import RadioGroup from '../../../components/_form/radio';
+import RadioGroup from '../../../components/_form/Radio';
 import PageActions from '../../../components/_layout/PageActions';
 import Panel from '../../../components/_layout/Panel';
 import SectionHeader from '../../../components/_layout/SectionHeader';

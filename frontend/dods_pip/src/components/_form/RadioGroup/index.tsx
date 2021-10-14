@@ -2,10 +2,11 @@ import React from 'react';
 
 import Spacer from '../../_layout/Spacer';
 import Label from '../Label';
-import { Radio } from '../Radio';
 import * as Styled from './RadioGroup.styles';
+import Radio, { IRadioItem } from '../Radio';
 
 export interface IRadioGroupProps {
+  items: IRadioItem[];
   name: string;
   onChange: (val: string) => void;
   value: string;
