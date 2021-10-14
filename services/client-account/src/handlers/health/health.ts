@@ -1,4 +1,6 @@
-export const health = async () => {
+import { ClientAccountRepository } from '../../repositories';
 
-    return 'healthy';
+export const health = async () => {
+    const getClientAccount = await ClientAccountRepository.defaultInstance.getClientAccount('uuid');
+    return JSON.stringify(getClientAccount);
 };
