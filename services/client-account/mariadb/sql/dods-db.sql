@@ -24,7 +24,7 @@ CREATE TABLE `dods_client_accounts` (
   `contract_rollover` tinyint(1) DEFAULT NULL,
   `sales_contact` int(11) DEFAULT NULL,
   `is_completed` tinyint(1) NOT NULL DEFAULT 0,
-  `last_step_completed` int(11) NOT NULL DEFAULT 0,
+  `last_step_completed` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL,
   `deleted_at` datetime DEFAULT NULL,

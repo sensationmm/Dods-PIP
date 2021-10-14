@@ -1,4 +1,4 @@
 module.exports = {
-    securityGroupIds: "sg-0e3db05a49b67f1cb",
-    subnetIds: ["subnet-0d1a3b3fdac4ce960","subnet-03e4350de2843a163"]
+    securityGroupIds: ["sg-0e34e4300978998b7"],
+    subnetIds: ["subnet-06a9032f3c233a368","subnet-0680c4b06fa0b55ce"]
 }
