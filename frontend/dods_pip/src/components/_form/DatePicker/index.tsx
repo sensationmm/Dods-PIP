@@ -96,7 +96,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
         optional={optional}
         helperText={helperText}
         onChange={() => false}
-        icon={Icons.IconCalendar}
+        icon={Icons.Calendar}
         onFocus={() => setIsOpen(true)}
         tabIndex={1}
         placeholder={placeholder}

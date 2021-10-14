@@ -52,7 +52,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         >
           {isChecked && (
             <Icon
-              src={Icons.IconTick}
+              src={Icons.Tick}
               size={IconSize.medium}
               data-test="component-icon"
               color={darkMode ? color.theme.blueDark : color.base.white}

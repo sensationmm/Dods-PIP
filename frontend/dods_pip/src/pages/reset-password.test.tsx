@@ -42,7 +42,9 @@ describe('ResetPassword', () => {
       .mockImplementationOnce(() => [states[count].emailAddress, setState])
       .mockImplementationOnce(() => [states[count].errors, setState])
       .mockImplementationOnce(() => [states[count].requested, setState]);
-    wrapper = shallow(<ResetPassword isLoading={false} setLoading={setLoadingSpy} />);
+    wrapper = shallow(
+      <ResetPassword isLoading={false} setLoading={setLoadingSpy} addNotification={jest.fn} />,
+    );
     formButton = wrapper.find('[data-test="form-button"]');
   });
 

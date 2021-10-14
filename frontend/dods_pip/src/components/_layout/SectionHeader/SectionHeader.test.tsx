@@ -9,7 +9,7 @@ describe('SectionHeader', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(<SectionHeader title="Title" subtitle="Subtitle" icon={Icons.IconTick} />);
+    wrapper = shallow(<SectionHeader title="Title" subtitle="Subtitle" icon={Icons.Tick} />);
   });
 
   it('renders without error', () => {
@@ -29,7 +29,7 @@ describe('SectionHeader', () => {
 
   it('renders array of subtitles', () => {
     wrapper = shallow(
-      <SectionHeader title="Title" subtitle={['Subtitle 1', 'Subtitle 2']} icon={Icons.IconTick} />,
+      <SectionHeader title="Title" subtitle={['Subtitle 1', 'Subtitle 2']} icon={Icons.Tick} />,
     );
     const subtitle1 = wrapper.find('[data-test="sectionheader-subtitle-0"]');
     const subtitle2 = wrapper.find('[data-test="sectionheader-subtitle-1"]');
@@ -39,7 +39,7 @@ describe('SectionHeader', () => {
 
   it('renders icon', () => {
     const icon = wrapper.find('[data-test="sectionheader-icon"]');
-    expect(icon.props().src).toEqual(Icons.IconTick);
+    expect(icon.props().src).toEqual(Icons.Tick);
   });
 
   it('renders component icon override', () => {

@@ -56,7 +56,7 @@ const AZFilter: React.FC<AZFilterProps> = ({ selectedLetter, setSelectedLetter }
         <div data-test="button-all" onClick={() => selectLetter('')}>
           <Styled.viewAll>
             <Icon
-              src={Icons.IconAzFilter}
+              src={Icons.AzFilter}
               size={IconSize.large}
               color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
             />
