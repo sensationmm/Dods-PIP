@@ -6,33 +6,63 @@ import Icon from '../Icon';
 import { Icons } from '../Icon/assets';
 
 describe('SectionAccordion', () => {
-  it("Should render the component", () => {
-    const wrapper = shallow(<SectionAccordion avatarType="client" />)
-    const component = wrapper.find('[data-test="component-serction-accordion"]')
-    expect(component.length).toEqual(1)
-  })
+  const header = <div>Header</div>;
+  const content = <div>Content</div>;
+  const useStateSpy = jest.spyOn(React, 'useState');
 
-  it("Should show an up chevron icon in an open stage", () => {
-    const wrapper = shallow(<SectionAccordion avatarType="client" open={true} />)
-    const component = wrapper.find('[data-test="icon"]')
-    expect(component.find(Icon).props().src).toEqual(Icons.IconChevronDown)
-  })
+  it('Should render the component', () => {
+    const wrapper = shallow(<SectionAccordion header={header}>{content}</SectionAccordion>);
+    const component = wrapper.find('[data-test="component-section-accordion"]');
+    expect(component.length).toEqual(1);
+  });
 
-  it("Shouldn't show a layer over the component", () => {
-    const wrapper = shallow(<SectionAccordion avatarType="client" open={true} />)
-    const component = wrapper.find('[data-test="layer"]')
-    expect(component.length).toEqual(0)
-  })
+  it('Should show an up chevron icon in an open stage', () => {
+    const wrapper = shallow(
+      <SectionAccordion header={header} isOpen={true}>
+        {content}
+      </SectionAccordion>,
+    );
+    const component = wrapper.find('[data-test="icon"]');
+    expect(component.find(Icon).props().src).toEqual(Icons.ChevronDown);
+  });
 
-  it("Should show a down chevron icon in a closed stage", () => {
-    const wrapper = shallow(<SectionAccordion avatarType="client" open={false} />)
-    const component = wrapper.find('[data-test="icon"]')
-    expect(component.find(Icon).props().src).toEqual(Icons.IconChevronUp)
-  })
+  it('Should show a down chevron icon in a closed stage', () => {
+    const wrapper = shallow(
+      <SectionAccordion header={header} isOpen={false}>
+        {content}
+      </SectionAccordion>,
+    );
+    const component = wrapper.find('[data-test="icon"]');
+    expect(component.find(Icon).props().src).toEqual(Icons.ChevronUp);
+  });
 
-  it("Should show a layer over the component", () => {
-    const wrapper = shallow(<SectionAccordion avatarType="client" open={false} />)
-    const component = wrapper.find('[data-test="layer"]')
-    expect(component.length).toEqual(1)
-  })
+  it('should close', () => {
+    const wrapper = shallow(
+      <SectionAccordion header={header} isOpen={true}>
+        {content}
+      </SectionAccordion>,
+    );
+    const trigger = wrapper.find('[data-test="header"]');
+    trigger.simulate('click');
+    expect(React.useState).toHaveBeenCalledWith(false);
+  });
+
+  it('should open', () => {
+    const wrapper = shallow(<SectionAccordion header={header}>{content}</SectionAccordion>);
+    const trigger = wrapper.find('[data-test="header"]');
+    trigger.simulate('click');
+    expect(React.useState).toHaveBeenCalledWith(true);
+  });
+
+  it('should fire callback if given', () => {
+    const mockCallback = jest.fn();
+    const wrapper = shallow(
+      <SectionAccordion header={header} callback={mockCallback}>
+        {content}
+      </SectionAccordion>,
+    );
+    const trigger = wrapper.find('[data-test="header"]');
+    trigger.simulate('click');
+    expect(mockCallback).toHaveBeenCalledTimes(1);
+  });
 });

@@ -1,55 +1,48 @@
 import React from 'react';
 
 import color from '../../globals/color';
-import Avatar, { UserType } from '../Avatar';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
-import Text from '../Text';
 import * as Styled from './SectionAccordion.styles';
 
 export interface SectionAccordionProps {
   id?: string;
-  avatarType: UserType;
-  header?: string;
-  subheader?: string;
-  open?: boolean;
-  onClick?: () => void;
-  children?: React.ReactNode;
+  header: React.ReactNode;
+  isOpen?: boolean;
+  children: React.ReactNode;
+  callback?: () => void;
 }
 
 const SectionAccordion: React.FC<SectionAccordionProps> = ({
   id,
-  avatarType,
   header,
-  subheader,
-  open = false,
-  onClick,
+  isOpen = false,
   children,
+  callback,
 }) => {
-  return (
-    <Styled.wrapper data-test="component-serction-accordion" id={id} onClick={onClick}>
-      <Styled.topPart>
-        <Styled.headerWrapper>
-          <Avatar type={avatarType} size="medium" />
-          <Styled.header>
-            <Text type="headerTitle" color={color.theme.blue}>
-              {header}
-            </Text>
-            <Text type="bodyLarge" color={color.base.black}>
-              {subheader}
-            </Text>
-          </Styled.header>
-        </Styled.headerWrapper>
+  const [open, setOpen] = React.useState<boolean>(isOpen);
 
+  React.useEffect(() => {
+    setOpen(isOpen);
+  }, [isOpen]);
+
+  const handleOnClick = () => {
+    callback && callback();
+    setOpen(!open);
+  };
+
+  return (
+    <Styled.wrapper data-test="component-section-accordion" id={id}>
+      <Styled.header data-test="header" onClick={handleOnClick}>
+        <Styled.headerContent closed={!open}>{header}</Styled.headerContent>
         <Icon
           data-test="icon"
-          src={open ? Icons.IconChevronDown : Icons.IconChevronUp}
+          src={open ? Icons.ChevronDown : Icons.ChevronUp}
           size={IconSize.large}
           color={color.theme.blue}
         />
-      </Styled.topPart>
-      {children}
-      {!open && <Styled.layer data-test="layer" />}
+      </Styled.header>
+      {open && <Styled.content>{children}</Styled.content>}
     </Styled.wrapper>
   );
 };

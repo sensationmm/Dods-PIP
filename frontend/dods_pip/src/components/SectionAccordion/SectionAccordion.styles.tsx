@@ -7,28 +7,27 @@ export const wrapper = styled.div`
   width: 100%;
 `;
 
-export const topPart = styled.div`
+export const header = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
+type HeaderContentProps = {
+  closed: boolean;
+};
+
+export const headerContent = styled.div<HeaderContentProps>`
+  opacity: ${({ closed }) => (closed ? 0.4 : 1)};
+`;
+
+export const content = styled.div`
+  padding-top: ${spacing(12)};
+`;
+
 export const headerWrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-`;
-
-export const header = styled.div`
-  margin-left: ${spacing(6)};
-`;
-export const layer = styled.div`
-  background-color: rgba(255, 255, 255, 0.7);
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 9;
 `;
