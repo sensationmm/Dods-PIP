@@ -3,7 +3,7 @@ definitions:
     docker:
       memory: 3072
 options:
-  max-time: 15
+  max-time: 45
 pipelines:
   default:
     - parallel:
