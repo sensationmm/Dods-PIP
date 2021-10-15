@@ -1,2 +1,2 @@
-# Build rules definitios for Bazel
+# Build rules definitions for Bazel
 
