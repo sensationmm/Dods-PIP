@@ -10,6 +10,7 @@ pipelines:
       - step:
           name: Test build Frontend
           image: node:alpine
+          size: 2x
           services:
             - docker
           caches:
@@ -106,6 +107,7 @@ pipelines:
       - step:
           name: Deploy Scrapping Lambdas
           image: gioatsomoglobal/devopstools:0.4.2
+          size: 2x
           services:
             - docker
           caches:
