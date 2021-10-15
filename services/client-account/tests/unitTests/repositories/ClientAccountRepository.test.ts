@@ -17,6 +17,8 @@ const SUCCESS_UPDATE_CLIENT_ACCOUNT = {
     contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
     subscription_seats: 32,
     consultant_hours: 13,
+    is_completed: true,
+    last_step_completed: 1,
     subscription: {
         uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
         name: 'subs_1',
@@ -38,17 +40,27 @@ const GET_CLIENT_ACCOUNT_USERS =
 
 const dbMock = new SequelizeMock();
 
-const ClientAccountMock = dbMock.define('dods_client_accounts', {
-    id: 1,
-    uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
-    name: 'Company One',
-    contactName: 'Marty MacFly',
-    contactEmailAddress: 'marti@example.com',
-    contactTelephoneNumber: '+122233443',
-    contract_start_date: '2021-01-01T01:01:01.001Z',
-    contract_rollover: false,
-    contract_end_date: '2022-02-01T01:01:01.001Z',
-});
+const ClientAccountMock = dbMock.define(
+    'dods_client_accounts',
+    {
+        id: 1,
+        uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
+        name: 'Company One',
+        contactName: 'Marty MacFly',
+        contactEmailAddress: 'marti@example.com',
+        contactTelephoneNumber: '+122233443',
+        contract_start_date: '2021-01-01T01:01:01.001Z',
+        contract_rollover: false,
+        contract_end_date: '2022-02-01T01:01:01.001Z',
+    },
+    {
+        instanceMethods: {
+            setSubscriptionType: function () {
+                return true;
+            },
+        },
+    }
+);
 
 ClientAccountMock.$queryInterface.$useHandler(function (
     query: any,
@@ -103,6 +115,34 @@ ClientAccountMock.$queryInterface.$useHandler(function (
                     user3: {},
                 },
             });
+        }
+
+        if (
+            queryOptions[0].where.uuid ===
+            'b0605d89-6200-4861-a9d5-258ccb33cbe3'
+        ) {
+            return ClientAccountMock.build({
+                id: 1,
+                uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
+                name: 'Company One',
+                notes: '',
+                contactName: 'Marty MacFly',
+                contactEmailAddress: 'marti@example.com',
+                contactTelephoneNumber: '+122233443',
+                subscriptionSeats: 32,
+                consultantHours: 13,
+                contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+                contractRollover: false,
+                contractEndDate: new Date('2022-02-01T01:01:01.001Z'),
+                isCompleted: true,
+                lastStepCompleted: 1,
+                subscriptionType: {
+                    uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
+                    name: 'subs_1',
+                    location: 2,
+                    contentType: 2,
+                },
+            });
         } else {
             return null;
         }
@@ -141,6 +181,11 @@ SubscriptionTypeMock.$queryInterface.$useHandler(function (
 
 const UserProfileMock = dbMock.define('dods_users', {});
 
+ClientAccountMock.belongsTo(SubscriptionTypeMock, {
+    foreignKey: 'subscription',
+    as: 'subscriptionType',
+});
+
 const testRepository = new ClientAccountRepository(
     ClientAccountMock,
     SubscriptionTypeMock,
@@ -155,7 +200,7 @@ afterEach(() => {
 describe(`${UPDATE_FUNCTION} handler`, () => {
     test(`${UPDATE_FUNCTION} Valid input Happy case `, async () => {
         const clientAccount = {
-            clientAccountId: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
+            clientAccountId: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
             subscription: '4de05e7d-3394-4890-8347-a4db53b3691f',
             subscription_seats: 32,
             consultant_hours: 13,
@@ -168,7 +213,10 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
             clientAccount
         );
 
-        expect(response).toEqual(SUCCESS_UPDATE_CLIENT_ACCOUNT);
+        expect(response).toEqual({
+            ...SUCCESS_UPDATE_CLIENT_ACCOUNT,
+            uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
+        });
     });
 
     test(`${UPDATE_FUNCTION} invalid client account case `, async () => {

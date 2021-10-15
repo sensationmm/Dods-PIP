@@ -80,7 +80,7 @@ const Select: React.FC<SelectProps> = ({
             optional={optional}
             helperText={helperText}
             onChange={() => setIsOpen(true)}
-            icon={isOpen && !isDisabled ? Icons.IconChevronUp : Icons.IconChevronDown}
+            icon={isOpen && !isDisabled ? Icons.ChevronUp : Icons.ChevronDown}
             css={{ pointerEvents: 'none' }}
             onFocus={() => setIsOpen(true)}
             tabIndex={1}

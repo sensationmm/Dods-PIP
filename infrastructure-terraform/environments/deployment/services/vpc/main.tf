@@ -5,6 +5,7 @@
 // - IGW for the public subnet
 // --------------------------------------------------------------------------------------------------------------------
 data "aws_availability_zones" "available" {
+  state = "available"
 }
 
 locals {
@@ -317,6 +318,12 @@ resource "aws_route_table" "private" {
   }), var.default_tags)
 
 }
+
+#resource "aws_route" "private" {
+#  route_table_id = aws_route_table.private.id
+#  destination_cidr_block = "0.0.0.0/0"
+#  nat_gateway_id = aws_egress_only_internet_gateway.eigw.id
+#}
 
 // - Explicitly associate the newly created route tables to the private subnets (so they don't default to the main route table)
 resource "aws_route_table_association" "private" {

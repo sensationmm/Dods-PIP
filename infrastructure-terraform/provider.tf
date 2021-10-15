@@ -37,6 +37,17 @@ provider "aws" {
 }
 
 provider "aws" {
+  alias   = "test"
+  region  = "eu-west-1"
+  profile = "dods-dev"
+  assume_role {
+    role_arn     = local.test_tf_role
+    session_name = "TEST"
+    external_id  = local.external_id
+  }
+}
+
+provider "aws" {
   alias   = "dev-us-east-1"
   region  = "us-east-1"
   profile = "dods-dev"

@@ -23,7 +23,7 @@ export const wrapper = styled.div<WrapperProps>`
     z-index: 1;
 
     ${Input} {
-      padding-left: ${({ hasSelected }) => (hasSelected ? spacing(12) : spacing(3))};
+      text-indent: ${({ hasSelected }) => (hasSelected ? spacing(10) : 0)};
     }
   }
 

@@ -48,7 +48,7 @@ const Avatar: React.FC<AvatarProps> = ({ type, size, number, disabled, alt }) =>
           </Text>
         ) : (
           <Icon
-            src={Icons.IconAvatar}
+            src={Icons.Avatar}
             size={IconSize[iconSize]}
             color={disabled ? color.base.grey : color.base.white}
             alt={alt}

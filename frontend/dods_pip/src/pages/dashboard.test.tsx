@@ -26,20 +26,24 @@ jest.mock('next/router', () => ({
 
 describe('Dashboard', () => {
   it('renders loader while finding login', () => {
-    const wrapper: ShallowWrapper = shallow(<Dashboard isLoading={false} setLoading={jest.fn} />);
+    const wrapper: ShallowWrapper = shallow(
+      <Dashboard isLoading={false} setLoading={jest.fn} addNotification={jest.fn} />,
+    );
     const component = wrapper.find('[data-test="loader"]');
     expect(component.length).toEqual(1);
   });
 
   it('renders without error', () => {
-    const wrapper: ShallowWrapper = shallow(<Dashboard isLoading={false} setLoading={jest.fn} />);
+    const wrapper: ShallowWrapper = shallow(
+      <Dashboard isLoading={false} setLoading={jest.fn} addNotification={jest.fn} />,
+    );
     const component = wrapper.find('[data-test="page-dashboard"]');
     expect(component.length).toEqual(1);
   });
 
   it('signs out when button clicks', () => {
     const wrapper: ShallowWrapper = shallow(
-      <Dashboard isLoading={false} setLoading={loadingSpy} />,
+      <Dashboard isLoading={false} setLoading={loadingSpy} addNotification={jest.fn} />,
     );
     const button = wrapper.find('[data-test="logout-button"]');
     button.simulate('click');

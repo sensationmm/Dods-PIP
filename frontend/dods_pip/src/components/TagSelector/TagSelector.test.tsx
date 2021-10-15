@@ -19,7 +19,7 @@ describe('TagSelector', () => {
     title: 'Example',
     onChange: mockOnChange,
     emptyMessage: 'Empty',
-    icon: Icons.IconCross,
+    icon: Icons.Cross,
     values: [
       { value: 'test1', label: 'Test 1' },
       { value: 'test2', label: 'Test 2' },

@@ -26,6 +26,7 @@ module.exports = {
     '!src/globals/**/*.{ts,tsx}',
     '!src/components/_example/*',
     '!src/pages/api/*.*',
+    '!src/pages/notifications.*',
     '!src/lib/*.*',
   ],
 };

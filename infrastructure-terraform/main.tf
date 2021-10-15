@@ -15,9 +15,9 @@ terraform {
 // --------------------------------------------------------------------------------------------------------------------
 // - Dev environment
 // --------------------------------------------------------------------------------------------------------------------
-module "development" {
+module "dev" {
   source      = "./environments/deployment"
-  environment = "development"
+  environment = "dev"
   app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:639732e4f367758bb6eddb333fc5f620b4d80029"
   account_id  = "390773179818"
   db_password = var.db_password
@@ -51,5 +51,19 @@ module "qa" {
   db_password = var.db_password
   providers = {
     aws = aws.qa
+  }
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+// - test environment
+// --------------------------------------------------------------------------------------------------------------------
+module "test" {
+  source      = "./environments/deployment"
+  environment = "test"
+  app_image   = "072266309162.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:" //non existent
+  account_id  = "072266309162"
+  db_password = var.db_password
+  providers = {
+    aws = aws.test
   }
 }

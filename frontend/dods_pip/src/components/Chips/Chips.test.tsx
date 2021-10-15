@@ -36,7 +36,7 @@ describe('Core/Chips - tests', () => {
   });
 
   it('shouls show Icon and hide Avatar ', () => {
-    const wrapper = shallow(<Chips label="Label" icon={Icons.IconCross} />);
+    const wrapper = shallow(<Chips label="Label" icon={Icons.Cross} />);
     const avatar = wrapper.find('[data-test="avatar-component"]');
     expect(avatar.length).toEqual(0);
     const leftIcon = wrapper.find('[data-test="left-icon-wrapper"]');
@@ -56,28 +56,26 @@ describe('Core/Chips - tests', () => {
   });
 
   it('should show icon in small version', () => {
-    const wrapper = shallow(<Chips label="Label" chipsSize="dense" icon={Icons.IconCross} />);
+    const wrapper = shallow(<Chips label="Label" chipsSize="dense" icon={Icons.Cross} />);
     const icon = wrapper.find('[data-test="left-icon"]');
     expect(icon.find(Icon).props().size).toEqual(IconSize.small);
   });
 
   it('should show icon in medium version', () => {
-    const wrapper = shallow(<Chips label="Label" chipsSize="medium" icon={Icons.IconCross} />);
+    const wrapper = shallow(<Chips label="Label" chipsSize="medium" icon={Icons.Cross} />);
     const icon = wrapper.find('[data-test="left-icon"]');
     expect(icon.find(Icon).props().size).toEqual(IconSize.large);
   });
 
   it('should show icon in disabled version', () => {
-    const wrapper = shallow(
-      <Chips label="Label" chipsSize="medium" disabled icon={Icons.IconCross} />,
-    );
+    const wrapper = shallow(<Chips label="Label" chipsSize="medium" disabled icon={Icons.Cross} />);
     const icon = wrapper.find('[data-test="left-icon"]');
     expect(icon.find(Icon).props().color).toEqual(color.base.grey);
   });
 
   it('should show icon in enabled version', () => {
     const wrapper = shallow(
-      <Chips label="Label" chipsSize="medium" disabled={false} icon={Icons.IconCross} />,
+      <Chips label="Label" chipsSize="medium" disabled={false} icon={Icons.Cross} />,
     );
     const icon = wrapper.find('[data-test="left-icon"]');
     expect(icon.find(Icon).props().color).toEqual(color.theme.blue);
