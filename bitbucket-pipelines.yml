@@ -1,11 +1,16 @@
+definitions:
+  services:
+    docker:
+      memory: 7128
 options:
-  max-time: 15
+  max-time: 30
 pipelines:
   default:
     - parallel:
       - step:
           name: Test build Frontend
           image: node:alpine
+          size: 2x
           services:
             - docker
           caches:
@@ -21,7 +26,6 @@ pipelines:
             - yarn test
             - yarn lint
             - yarn build
-            - yarn build-storybook
 
       - step:
           name: Deploy Graphologi Webhook
@@ -103,6 +107,7 @@ pipelines:
       - step:
           name: Deploy Scrapping Lambdas
           image: gioatsomoglobal/devopstools:0.4.2
+          size: 2x
           services:
             - docker
           caches:
@@ -206,15 +211,15 @@ pipelines:
               - cd ${FRONTEND_SRC}
               - yarn install
               - yarn lint
-              - yarn build-storybook
               - yarn test
-              - aws s3 rm s3://test-dods-pip-storybook/
-              - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
               - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
               - docker build -t ${IMAGE_NAME} .
               - docker push ${IMAGE_NAME}
               - cd ../../tools
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+              - yarn build-storybook
+              - aws s3 rm s3://test-dods-pip-storybook/
+              - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
 
         - step:
             name: Terraform Deploy
