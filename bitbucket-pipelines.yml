@@ -1,3 +1,7 @@
+definitions:
+  services:
+    docker:
+      memory: 3072
 options:
   max-time: 15
 pipelines:
