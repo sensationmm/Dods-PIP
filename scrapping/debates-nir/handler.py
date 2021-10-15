@@ -84,7 +84,7 @@ def run(event, context):
                         logger.info('Content is not valid')
                         continue
 
-                    hash_code = Common.hash(debate_title_subtitle, url)
+                    hash_code = Common.hash(debate_title_subtitle, url, short_date)
 
                     document = object
                     try:

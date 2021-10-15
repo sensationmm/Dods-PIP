@@ -59,7 +59,7 @@ def run(event, context):
 
             title = dict_content['Question']['Text']
 
-            hash_code = Common.hash(title, qnaxml_url, short_date + '3')
+            hash_code = Common.hash(title, qnaxml_url, short_date)
 
             document = object
             try:

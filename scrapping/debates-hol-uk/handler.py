@@ -118,7 +118,7 @@ def run(event, context):
                         continue
 
                     short_date = datetime.now().strftime("%Y-%m-%d")
-                    hash_code = Common.hash(title, link, short_date + '3')
+                    hash_code = Common.hash(title, link, short_date)
                     document = object
                     try:
                         document = DataModel.get(hash_code)

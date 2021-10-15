@@ -57,7 +57,8 @@ def run(event, context):
                     item['questionText'],
                     item['Location']['@href'],
                     item['tablingMemberPrinted']['item'],
-                    item['AnswerDate']['#text']
+                    item['AnswerDate']['#text'],
+                    short_date
                 )
 
                 document = object
