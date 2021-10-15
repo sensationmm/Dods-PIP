@@ -22,7 +22,7 @@ describe('InputText', () => {
         label="Example"
         value={'Example'}
         onChange={jest.fn}
-        icon={Icons.IconCross}
+        icon={Icons.Cross}
       />,
     );
     const component = wrapper.find(Icon);
@@ -37,7 +37,7 @@ describe('InputText', () => {
         isDisabled={true}
         value={''}
         onChange={jest.fn}
-        icon={Icons.IconCross}
+        icon={Icons.Cross}
       />,
     );
     const component = wrapper.find(Icon);
@@ -52,7 +52,7 @@ describe('InputText', () => {
         error={'yes'}
         value={''}
         onChange={jest.fn}
-        icon={Icons.IconCross}
+        icon={Icons.Cross}
       />,
     );
     const component = wrapper.find(Icon);

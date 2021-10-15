@@ -178,10 +178,10 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 throw new Error('Error: Wrong subscription uuid');
             }
 
-            // Save directly if comes as a parameter
-            //clientAccountToUpdate.subscription=updateParameters.subscription;
+            //clientAccountToUpdate.SubscriptionType = subscriptionData;
 
-            clientAccountToUpdate.subscriptionType = subscriptionData;
+            await clientAccountToUpdate.setSubscriptionType(subscriptionData);
+
             clientAccountToUpdate.subscriptionSeats =
                 updateParameters.subscription_seats;
             clientAccountToUpdate.consultantHours =
@@ -196,11 +196,19 @@ export class ClientAccountRepository implements ClientAccountPersister {
                     updateParameters.contract_end_date
                 );
 
-            const updateRecord = await clientAccountToUpdate.save();
+            await clientAccountToUpdate.save();
 
-            const newClientAccount = parseResponseFromModel(updateRecord);
+            let updatedClientAccount = await this.model.findOne({
+                where: { uuid: updateParameters.clientAccountId },
+                include: 'subscriptionType',
+            });
 
-            return newClientAccount;
+            if (updatedClientAccount) {
+                const newClientAccount =
+                    parseResponseFromModel(updatedClientAccount);
+                return newClientAccount;
+            }
+            return [];
         } else {
             throw new Error('Error: clientAccount not found');
         }

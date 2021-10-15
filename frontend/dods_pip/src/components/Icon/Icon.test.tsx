@@ -6,7 +6,7 @@ import { Icons } from './assets';
 
 describe('Icon', () => {
   it('renders without error', () => {
-    const wrapper = shallow(<Icon src={Icons.IconCross} />);
+    const wrapper = shallow(<Icon src={Icons.Cross} />);
     const component = wrapper.find('[data-test="component-icon"]');
     expect(component.length).toEqual(1);
   });

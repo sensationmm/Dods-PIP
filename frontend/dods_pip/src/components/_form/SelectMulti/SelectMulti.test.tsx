@@ -98,7 +98,7 @@ describe('SelectMulti', () => {
       const icon = wrapper.find('[data-test="selected-icon"]');
       expect(icon.length).toEqual(0);
       expect(input.props().value).toEqual('Choose an option...');
-      expect(input.props().icon).toEqual(Icons.IconChevronDown);
+      expect(input.props().icon).toEqual(Icons.ChevronDown);
     });
 
     it('renders custom placeholder', () => {
@@ -255,7 +255,7 @@ describe('SelectMulti', () => {
 
     it('shows correct open state', () => {
       const input = wrapper.find('[data-test="select-input"]');
-      expect(input.props().icon).toEqual(Icons.IconChevronUp);
+      expect(input.props().icon).toEqual(Icons.ChevronUp);
     });
 
     it('renders disabled state', () => {

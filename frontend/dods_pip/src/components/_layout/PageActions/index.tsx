@@ -26,7 +26,7 @@ const PageActions: React.FC<PageActionsProps> = ({
         <Button
           data-test="actions-back-button"
           type="secondary"
-          icon={Icons.IconChevronLeft}
+          icon={Icons.ChevronLeft}
           label={backLabel}
           onClick={backHandler ? backHandler : router.back}
         />

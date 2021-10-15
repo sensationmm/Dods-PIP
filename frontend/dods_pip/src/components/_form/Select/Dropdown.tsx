@@ -61,7 +61,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             {isActive && (
               <Icon
                 data-test="selected-icon"
-                src={Icons.IconTickBold}
+                src={Icons.TickBold}
                 size={IconSize.medium}
                 color={hasError ? color.alert.red : color.theme.blueMid}
               />
