@@ -67,7 +67,7 @@ const InputBase: React.FC<InputBaseProps> = ({
           onFocus={onFocus}
           onBlur={onBlur}
           tabIndex={tabIndex}
-          size={Math.max(placeholder?.length || 1, length, value.length)}
+          size={Math.max(placeholder?.length || 1, length, value?.length)}
           autoComplete="off"
         />
         {children}
