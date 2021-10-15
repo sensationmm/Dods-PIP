@@ -190,7 +190,7 @@ pipelines:
 
         - step:
             name: Frontend Build and Deploy 
-            size: 2x
+            size: 3x
             image: gioatsomoglobal/devopstools:0.4.3
             deployment: Test
             services:
