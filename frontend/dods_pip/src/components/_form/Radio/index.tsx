@@ -1,8 +1,5 @@
-import classNames from 'classnames';
 import React from 'react';
 
-import color from '../../../globals/color';
-import Text from '../../Text';
 import * as Styled from './Radio.styles';
 
 export interface IRadioProps extends IRadioItem {
@@ -10,6 +7,7 @@ export interface IRadioProps extends IRadioItem {
   id: string;
   isChecked?: boolean;
   isDisabled?: boolean;
+  theme: radioTheme;
   onChange: (val: string) => void;
 }
 
@@ -18,17 +16,21 @@ export interface IRadioItem {
   value: string;
 }
 
+// Maybe could move higher up the tree for global use
+export type radioTheme = 'dark' | 'light';
+
 const Radio: React.FC<IRadioProps> = ({
   id,
   isChecked = false,
   isDisabled,
+  theme = 'dark',
   label,
   name,
   value,
   onChange,
 }) => {
   return (
-    <Styled.radio data-test="component-radio" htmlFor={id}>
+    <Styled.Radio data-test="component-radio" htmlFor={id} theme={theme}>
       <input
         data-test="radio-input"
         id={id}
@@ -41,7 +43,7 @@ const Radio: React.FC<IRadioProps> = ({
       />
       <span className="radio-button" />
       <span className="label">{label}</span>
-    </Styled.radio>
+    </Styled.Radio>
   );
 };
 

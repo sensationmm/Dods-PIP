@@ -1,20 +1,37 @@
 import styled from 'styled-components';
 
 import color from '../../../globals/color';
-import opacity from '../../../globals/opacity';
 import spacing from '../../../globals/spacing';
 import { hexAToRGBA } from '../../../utils/color';
+import { radioTheme } from './index';
 
-const COLOUR_DEFAULT = color.theme.blueMid;
-const COLOUR_HOVER = color.theme.blueDark;
-const COLOUR_DISABLED = color.base.grey;
-const COLOUR_LABEL_DISABLED = color.base.greyDark;
+const THEME: Record<radioTheme, Record<string, any>> = {
+  dark: {
+    colourDefault: color.theme.blueMid,
+    colourHover: color.theme.blueDark,
+    colourDisabled: color.base.grey,
+    colourLabelDisabled: color.base.greyDark,
+    opacityDefault: 0.08,
+    opacityFocused: 0.2,
+  },
+  light: {
+    colourDefault: color.base.white,
+    colourHover: color.base.white,
+    colourDisabled: color.base.grey,
+    colourLabelDisabled: color.base.greyDark,
+    opacityDefault: 0.18,
+    opacityFocused: 0.28,
+  },
+};
 
 const RADIO_SIZE = 24;
 const RADIO_CHECK_SIZE = 16;
 const RADIO_CHECK_OFFSET = 3;
 
-export const radio = styled.label`
+export const Radio = styled.label.attrs((props) => ({
+  theme: THEME[props.theme as radioTheme],
+}))`
+  ${({ theme }) => `
   display: block;
   position: relative;
   min-height: ${RADIO_SIZE};
@@ -23,11 +40,11 @@ export const radio = styled.label`
   user-select: none;
 
   &:hover .radio-button {
-    border-color: ${COLOUR_HOVER};
-    background-color: ${hexAToRGBA(COLOUR_DEFAULT, 0.08)};
+    border-color: ${theme.colourDefault};
+    background-color: ${hexAToRGBA(theme.colourDefault, theme.opacityDefault)};
 
     &::after {
-      background-color: ${COLOUR_HOVER};
+      background-color: ${theme.colourHover};
     }
   }
 
@@ -39,7 +56,7 @@ export const radio = styled.label`
     height: ${RADIO_SIZE}px;
     width: ${RADIO_SIZE}px;
     border-radius: 50%;
-    border: 1px solid ${COLOUR_DEFAULT};
+    border: 1px solid ${theme.colourDefault};
 
     &::after {
       content: '';
@@ -50,7 +67,7 @@ export const radio = styled.label`
       width: ${RADIO_CHECK_SIZE}px;
       height: ${RADIO_CHECK_SIZE}px;
       border-radius: 50%;
-      background-color: ${COLOUR_DEFAULT};
+      background-color: ${theme.colourDefault};
     }
   }
 
@@ -59,7 +76,7 @@ export const radio = styled.label`
     line-height: 1.37;
     display: block;
     margin-top: ${RADIO_CHECK_OFFSET}px;
-    color: ${COLOUR_HOVER};
+    color: ${theme.colourHover};
   }
 
   input {
@@ -80,23 +97,24 @@ export const radio = styled.label`
     }
 
     &:focus ~ .radio-button {
-      background-color: ${hexAToRGBA(COLOUR_DEFAULT, 0.2)};
-      box-shadow: 0 0 0 4px ${hexAToRGBA(COLOUR_DEFAULT, 0.2)};
+      background-color: ${hexAToRGBA(theme.colourDefault, theme.opacityFocused)};
+      box-shadow: 0 0 0 4px ${hexAToRGBA(theme.colourDefault, theme.opacityFocused)};
     }
 
     &[disabled] {
       ~ .radio-button {
-        border-color: ${COLOUR_DISABLED};
-        background-color: ${hexAToRGBA(COLOUR_DISABLED, 0.08)};
+        border-color: ${theme.colourDisabled};
+        background-color: ${hexAToRGBA(theme.colourDisabled, theme.opacityDefault)};
 
         &::after {
-          background-color: ${COLOUR_DISABLED};
+          background-color: ${theme.colourDisabled};
         }
       }
 
       ~ .label {
-        color: ${COLOUR_LABEL_DISABLED};
+        color: ${theme.colourTextDisabled};
       }
     }
   }
+`}
 `;
