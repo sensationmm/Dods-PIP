@@ -1,0 +1,28 @@
+{
+  "name": "db-test",
+  "version": "1.0.0",
+  "description": "Small function to test RDS connectivity",
+  "main": "handler.js",
+  "scripts": {
+    "test": "serverless invoke -f hello --stage dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/DodsGroup/dodsmlp.git"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "no-middleware"
+  ],
+  "author": "Gio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/DodsGroup/dodsmlp/issues"
+  },
+  "homepage": "https://bitbucket.org/DodsGroup/dodsmlp#readme",
+  "dependencies": {
+    "axios": "^0.23.0",
+    "mariadb": "^2.5.4"
+  }
+}

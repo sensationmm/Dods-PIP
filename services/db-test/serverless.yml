@@ -1,0 +1,59 @@
+service: db-test
+frameworkVersion: '2'
+projectDir: ../
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'local'}
+  lambdaHashingVersion: 20201221
+
+  vpc:
+    securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds}
+    subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds}
+
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        -  'rds:*'
+      Resource:
+        - '*'
+    - Effect: 'Allow'
+      Action:
+        - 'xray:PutTraceSegments'
+        - 'xray:PutTelemetryRecords'
+      Resource:
+        - '*'
+  apiGateway:
+    restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId}
+    restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId}
+    description: Default Gateway for ${self:provider.stage} deployed with dods-iam
+
+  environment:
+    SERVERLESS_STAGE: ${self:provider.stage}
+    MARIADB_CONNECTION_LIMIT: 5
+    MARIA_DB_DATABASE: 'dods'
+    MARIA_DB_HOST: ${self:custom.envs.${self:provider.stage}.MARIA_DB_HOST}
+    MARIA_DB_USERNAME: ${self:custom.envs.${self:provider.stage}.MARIA_DB_USERNAME}
+    MARIA_DB_PASSWORD: ${self:custom.envs.${self:provider.stage}.MARIA_DB_PASSWORD}
+    MARIADB_CONNECTION_STRING: 'mariadb://${self:provider.environment.MARIA_DB_USERNAME}:${self:provider.environment.MARIA_DB_PASSWORD}@${self:provider.environment.MARIA_DB_HOST}:3306/dods?allowPublicKeyRetrieval=true&useSSL=false'
+
+custom:
+    envs:
+      dev:
+        MARIA_DB_HOST: ${ssm:/infra/dev/rds/endpoint}
+        MARIA_DB_USERNAME: ${ssm:/infra/dev/rds/username}
+        MARIA_DB_PASSWORD: ${ssm:/infra/dev/rds/password}
+        apiGatewayId: emhumq7ktf
+        apiRootResourceId: lzvvrnid32
+
+      local:
+        MARIA_DB_HOST: 'localhost'
+        MARIA_DB_USERNAME: 'root'
+        MARIA_DB_PASSWORD: 'rootPass'
+
+functions:
+  hello:
+    handler: handler.hello
+    timeout: 30
