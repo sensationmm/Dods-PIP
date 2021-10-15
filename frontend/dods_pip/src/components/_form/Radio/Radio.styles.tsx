@@ -39,7 +39,7 @@ export const Radio = styled.label.attrs((props) => ({
   cursor: pointer;
   user-select: none;
 
-  &:hover .radio-button {
+  &:hover .custom-radio {
     border-color: ${theme.colourDefault};
     background-color: ${hexAToRGBA(theme.colourDefault, theme.opacityDefault)};
 
@@ -48,7 +48,7 @@ export const Radio = styled.label.attrs((props) => ({
     }
   }
 
-  .radio-button {
+  .custom-radio {
     display: block;
     position: absolute;
     top: 0;
@@ -71,7 +71,7 @@ export const Radio = styled.label.attrs((props) => ({
     }
   }
 
-  .label {
+  .custom-label {
     font-size: 16px;
     line-height: 1.37;
     display: block;
@@ -85,24 +85,24 @@ export const Radio = styled.label.attrs((props) => ({
     cursor: pointer;
 
     &:checked {
-      ~ .radio-button {
+      ~ .custom-radio {
         &::after {
           display: block;
         }
       }
 
-      ~ .label {
+      ~ .custom-label {
         font-weight: 700;
       }
     }
 
-    &:focus ~ .radio-button {
+    &:focus ~ .custom-radio {
       background-color: ${hexAToRGBA(theme.colourDefault, theme.opacityFocused)};
       box-shadow: 0 0 0 4px ${hexAToRGBA(theme.colourDefault, theme.opacityFocused)};
     }
 
     &[disabled] {
-      ~ .radio-button {
+      ~ .custom-radio {
         border-color: ${theme.colourDisabled};
         background-color: ${hexAToRGBA(theme.colourDisabled, theme.opacityDefault)};
 
@@ -111,7 +111,7 @@ export const Radio = styled.label.attrs((props) => ({
         }
       }
 
-      ~ .label {
+      ~ .custom-label{
         color: ${theme.colourTextDisabled};
       }
     }

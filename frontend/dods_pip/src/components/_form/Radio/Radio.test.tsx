@@ -1,73 +1,63 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 
-import { Radio } from '.';
+import Radio, { IRadioProps } from '.';
 
-const exampleArgs = {
+const TEST_PROPS: IRadioProps = {
+  label: 'test radio',
   id: 'test',
   name: 'Example',
-  items: [
-    { label: 'first', value: 'first' },
-    { label: 'second', value: 'second' },
-    { label: 'third', value: 'third' },
-  ],
-  selectedValue: 'first',
+  value: 'test value',
+  theme: 'dark',
   onChange: jest.fn(),
 };
+
+const SELECTOR_COMPONENT = '[data-test="component"]';
+const SELECTOR_RADIO_INPUT = '[data-test="radio-input"]';
+const SELECTOR_CUSTOM_LABEL = '[data-test="custom-label"]';
+const SELECTOR_CUSTOM_RADIO = '[data-test="custom-radio"]';
+
+const getWrapper = (props: IRadioProps = TEST_PROPS) => shallow(<Radio {...props} />);
 
 describe('Radio', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(
-      <Radio
-        id={'test'}
-        name={exampleArgs.name}
-        onChange={exampleArgs.onChange}
-        {...exampleArgs.items[0]}
-      />,
-    );
+    wrapper = getWrapper();
   });
 
-  it('renders without error', () => {
-    const component = wrapper.find('[data-test="component-Radio"]');
-    const input = component.find('[data-test="Radio-input"]');
+  it('renders all required elements', () => {
+    const component = wrapper.find(SELECTOR_COMPONENT);
+    const radioInput = component.find(SELECTOR_RADIO_INPUT);
+    const customLabel = component.find(SELECTOR_CUSTOM_LABEL);
+    const customRadio = component.find(SELECTOR_CUSTOM_RADIO);
     expect(component.length).toEqual(1);
-    expect(input.props().checked).toEqual(false);
+    expect(radioInput.length).toEqual(1);
+    expect(customLabel.length).toEqual(1);
+    expect(customRadio.length).toEqual(1);
   });
 
   it('handles click', () => {
-    const input = wrapper.find('[data-test="Radio-input"]');
-    input.props().onChange();
-    expect(exampleArgs.onChange).toHaveBeenCalledWith('first');
+    wrapper.find(SELECTOR_RADIO_INPUT).props().onChange();
+    expect(TEST_PROPS.onChange).toHaveBeenCalledWith(TEST_PROPS.value);
+    expect(TEST_PROPS.onChange).toHaveBeenCalledTimes(1);
   });
 
-  it('renders checked state', () => {
-    wrapper = shallow(
-      <Radio
-        id={'test'}
-        name={exampleArgs.name}
-        onChange={exampleArgs.onChange}
-        {...exampleArgs.items[0]}
-        isChecked={true}
-      />,
-    );
-    const component = wrapper.find('[data-test="component-Radio"]');
-    const input = component.find('[data-test="Radio-input"]');
-    expect(input.props().checked).toEqual(true);
+  it.each([
+    ['truthy', true],
+    ['falsey', false],
+  ])('renders %s checked state', (name, isChecked) => {
+    const input = getWrapper({ ...TEST_PROPS, isChecked }).find(SELECTOR_RADIO_INPUT);
+    if (name === 'truthy') expect(input.props().checked).toEqual(isChecked);
+    if (name === 'falsey') expect(input.props()).not.toContain('checked');
   });
 
-  it('renders disabled state', () => {
-    wrapper = shallow(
-      <Radio
-        id={'test'}
-        name={exampleArgs.name}
-        onChange={exampleArgs.onChange}
-        {...exampleArgs.items[0]}
-        isDisabled={true}
-      />,
-    );
-    const component = wrapper.find('[data-test="component-Radio"]');
-    expect(component.children().first().hasClass('disabled')).toEqual(true);
+  it.each([
+    ['truthy', true],
+    ['falsey', false],
+  ])('renders $% disabled state', (name, isDisabled) => {
+    const input = getWrapper({ ...TEST_PROPS, isDisabled }).find(SELECTOR_RADIO_INPUT);
+    if (name === 'truthy') expect(input.props().disabled).toEqual(isDisabled);
+    if (name === 'falsey') expect(input.props()).not.toContain('disabled');
   });
 });

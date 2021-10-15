@@ -22,7 +22,7 @@ export type radioTheme = 'dark' | 'light';
 const Radio: React.FC<IRadioProps> = ({
   id,
   isChecked = false,
-  isDisabled,
+  isDisabled = false,
   theme = 'dark',
   label,
   name,
@@ -30,7 +30,7 @@ const Radio: React.FC<IRadioProps> = ({
   onChange,
 }) => {
   return (
-    <Styled.Radio data-test="component-radio" htmlFor={id} theme={theme}>
+    <Styled.Radio data-test="component" htmlFor={id} theme={theme}>
       <input
         data-test="radio-input"
         id={id}
@@ -41,8 +41,10 @@ const Radio: React.FC<IRadioProps> = ({
         {...(isDisabled && { disabled: true })}
         {...(isChecked && { checked: true })}
       />
-      <span className="radio-button" />
-      <span className="label">{label}</span>
+      <span className="custom-radio" data-test="custom-radio" />
+      <span className="custom-label" data-test="custom-label">
+        {label}
+      </span>
     </Styled.Radio>
   );
 };
