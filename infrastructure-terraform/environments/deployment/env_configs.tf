@@ -1,4 +1,3 @@
-// Do not use, this is the elegant way to do it but "development" messes my flow
 data "template_file" "vpc_config_dev" {
   template = file("${path.module}/../../templates/vpc.js.tpl")
   vars = {
