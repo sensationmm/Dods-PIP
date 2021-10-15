@@ -382,7 +382,7 @@ const Team: React.FC<TeamProps> = ({
                 data-test="create-user-button"
                 label="Create User"
                 onClick={addClientUser}
-                icon={Icons.ChevronRight}
+                  icon={Icons.ChevronRightBold}
                 iconAlignment="right"
                 disabled={!isUserComplete}
               />
@@ -409,7 +409,7 @@ const Team: React.FC<TeamProps> = ({
             data-test="continue-button"
             label="Save and continue"
             onClick={onSubmit}
-            icon={Icons.ChevronRight}
+            icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete || addUser}
           />
