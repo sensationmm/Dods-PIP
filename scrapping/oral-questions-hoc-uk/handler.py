@@ -44,6 +44,7 @@ def run(event, context):
                 content['contentSourceURL'] = config.get('parser', 'sourceUrl')
                 content['extractDate'] = datetime.now().isoformat()
                 content['content'] = item
+                content['metadata']['jurisdiction'] = 'UK'
 
                 short_date = datetime.now().strftime("%Y-%m-%d")
                 try:

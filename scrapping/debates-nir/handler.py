@@ -75,6 +75,7 @@ def run(event, context):
                     final_content['content'] = {
                         'html_content': html_content
                     }
+                    content['metadata']['jurisdiction'] = 'UK'
 
                     short_date = datetime.now().strftime("%Y-%m-%d")
                     try:

@@ -110,6 +110,7 @@ def run(event, context):
                     content['content'] = {
                         'html_content': soup
                     }
+                    content['metadata']['jurisdiction'] = 'UK'
                     try:
                         Validator().content_schema_validator(content)
                     except Exception as e:
