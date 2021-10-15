@@ -14,7 +14,5 @@ SUBDIR_COMMIT=$(get_commit services/client-account)
 if [ "$SUBDIR_COMMIT" == "$ROOT_COMMIT" ]; then
 	cd services/client-account
 	echo 'Pre-commit checks... linting, tests and build... please fix any errors'
-	npm run test
 	npm run test:coverage
-	npm run test:integration
 fi
