@@ -201,7 +201,8 @@ pipelines:
             services:
               - docker
             caches:
-              - node
+              - frontend/dods-pip/node_modules
+              
             condition:
               changesets:
                 includePaths:
@@ -217,6 +218,8 @@ pipelines:
               - docker push ${IMAGE_NAME}
               - cd ../../tools
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+              - cd ..
+              - cd ${FRONTEND_SRC}
               - yarn build-storybook
               - aws s3 rm s3://test-dods-pip-storybook/
               - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
