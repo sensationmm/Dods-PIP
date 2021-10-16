@@ -15,28 +15,32 @@ export interface LogObject {
 export class Logger {
 
     private static log(logObject: LogObject): LogObject {
-        const { level, message, data } = logObject;
+        const { level, message, data = '' } = logObject;
 
         if (isLocalOrTestStage()) {
             const time = new Date().toISOString();
-            const log = { time, message, data };
+            const log = [time, level, message, data];
 
             switch (level) {
                 case 'DEBUG':
-                    console.debug(log);
+                    console.debug(...log);
                     break;
                 case 'INFO':
-                    console.info(log);
+                    console.info(...log);
                     break;
                 case 'WARN':
-                    console.warn(log);
+                    console.warn(...log);
                     break;
                 case 'ERROR':
-                    console.error(log);
+                    console.error(...log);
                     break;
             }
         } else {
-            console.log({ message, data });
+            if (level === 'INFO') {
+                console.log(message, data);
+            } else {
+                console.log(level, message, data);
+            }
         }
 
         return logObject;
