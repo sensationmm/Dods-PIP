@@ -1,4 +1,6 @@
 definitions:
+  caches:
+    fe-node: frontend/dods-pip/node_modules
   services:
     docker:
       memory: 7128
@@ -201,8 +203,8 @@ pipelines:
             services:
               - docker
             caches:
-              - frontend/dods-pip/node_modules
-              
+              - fe-node
+
             condition:
               changesets:
                 includePaths:
