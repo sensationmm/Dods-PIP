@@ -107,6 +107,3 @@ Task.init({
     sequelize: sequelizeConnection,
     // paranoid: true
 });
-
-Task.belongsTo(User, { targetKey: "id", foreignKey: 'assignedTo' });
-Task.belongsTo(User, { targetKey: "id", foreignKey: 'createdby' });

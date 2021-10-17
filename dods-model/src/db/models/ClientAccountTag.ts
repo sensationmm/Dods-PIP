@@ -2,7 +2,7 @@ import { BelongsTo, BelongsToCreateAssociationMixin, BelongsToGetAssociationMixi
 import sequelizeConnection from '../config/sequelizeConnection';
 import { ClientAccount } from '.';
 
-interface ClientAccountTagsAttributes {
+interface ClientAccountTagAttributes {
   id: number;
   uuid: string;
   clientAccountId: number;
@@ -11,11 +11,11 @@ interface ClientAccountTagsAttributes {
   tagText: string;
 }
 
-export interface ClientAccountTagsInput extends Optional<ClientAccountTagsAttributes, 'id' | 'uuid'> { }
+export interface ClientAccountTagInput extends Optional<ClientAccountTagAttributes, 'id' | 'uuid'> { }
 
-export interface ClientAccountTagsOutput extends Required<ClientAccountTagsAttributes> { }
+export interface ClientAccountTagOutput extends Required<ClientAccountTagAttributes> { }
 
-export class ClientAccountTags extends Model<ClientAccountTagsAttributes, ClientAccountTagsInput> implements ClientAccountTagsAttributes {
+export class ClientAccountTag extends Model<ClientAccountTagAttributes, ClientAccountTagInput> implements ClientAccountTagAttributes {
   public id!: number;
   public uuid!: string;
   public tagType!: number;
@@ -30,7 +30,7 @@ export class ClientAccountTags extends Model<ClientAccountTagsAttributes, Client
   public createClientAccount!: BelongsToCreateAssociationMixin<ClientAccount>;
 
   public static associations: {
-    clientAccountModel: BelongsTo<ClientAccountTags, ClientAccount>,
+    clientAccountModel: BelongsTo<ClientAccountTag, ClientAccount>,
   };
 
   // Timestamps
@@ -39,7 +39,7 @@ export class ClientAccountTags extends Model<ClientAccountTagsAttributes, Client
   public readonly deletedAt!: Date | null;
 }
 
-ClientAccountTags.init({
+ClientAccountTag.init({
   id: {
     type: DataTypes.INTEGER({ length: 11 }),
     allowNull: false,
@@ -80,5 +80,3 @@ ClientAccountTags.init({
   sequelize: sequelizeConnection,
   // paranoid: true
 });
-
-ClientAccountTags.belongsTo(ClientAccount, { targetKey: "id", foreignKey: 'clientAccountId' });
