@@ -12,9 +12,9 @@
     "target": "es2020",
     "lib": ["es2020"],
     "outDir": "dist",
-    "declaration": false,
-    "declarationMap": false,
-    "sourceMap": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
   },

@@ -19,19 +19,19 @@ export class ProjectUser extends Model<ProjectUserAttributes, ProjectUserInput> 
 
     // mixins for association (optional)
     public readonly projects!: Project[]; // Note this is optional since it's only populated when explicitly requested in code
-    public getProject!: HasManyGetAssociationsMixin<Project>; // Note the null assertions!
+    public getProjects!: HasManyGetAssociationsMixin<Project>; // Note the null assertions!
     public addProject!: HasManyAddAssociationMixin<Project, number>;
     public hasProject!: HasManyHasAssociationMixin<Project, number>;
-    public countProject!: HasManyCountAssociationsMixin;
+    public countProjects!: HasManyCountAssociationsMixin;
     public createProject!: HasManyCreateAssociationMixin<Project>;
 
 
     // mixins for association (optional)
     public readonly users!: User[]; // Note this is optional since it's only populated when explicitly requested in code
-    public getUser!: HasManyGetAssociationsMixin<User>; // Note the null assertions!
+    public getUsers!: HasManyGetAssociationsMixin<User>; // Note the null assertions!
     public addUser!: HasManyAddAssociationMixin<User, number>;
     public hasUser!: HasManyHasAssociationMixin<User, number>;
-    public countUser!: HasManyCountAssociationsMixin;
+    public countUsers!: HasManyCountAssociationsMixin;
     public createUser!: HasManyCreateAssociationMixin<User>;
 
     public static associations: {

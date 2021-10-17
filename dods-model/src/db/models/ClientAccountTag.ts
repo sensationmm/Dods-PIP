@@ -24,13 +24,13 @@ export class ClientAccountTag extends Model<ClientAccountTagAttributes, ClientAc
 
   // mixins for association (optional)
   public clientAccountId!: number;
-  public readonly clientAccountModel!: ClientAccount;
+  public readonly clientAccount!: ClientAccount;
   public getClientAccount!: BelongsToGetAssociationMixin<ClientAccount>;
   public setClientAccount!: BelongsToSetAssociationMixin<ClientAccount, number>;
   public createClientAccount!: BelongsToCreateAssociationMixin<ClientAccount>;
 
   public static associations: {
-    clientAccountModel: BelongsTo<ClientAccountTag, ClientAccount>,
+    clientAccount: BelongsTo<ClientAccountTag, ClientAccount>
   };
 
   // Timestamps

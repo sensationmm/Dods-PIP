@@ -11,7 +11,7 @@ services:
       MARIADB_USER: "dods"
       MARIADB_PASSWORD: "dods"
     ports:
-      - 3307:3306
+      - 3306:3306
     volumes:
       - ${PWD}/docker/mariadb/data:/var/lib/mysql:rw
       - ${PWD}/docker/mariadb/initdb_sql_scripts:/docker-entrypoint-initdb.d/:ro

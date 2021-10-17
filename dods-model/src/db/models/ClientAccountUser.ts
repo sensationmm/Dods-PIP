@@ -2,23 +2,23 @@ import { Association, DataTypes, HasManyAddAssociationMixin, HasManyCountAssocia
 import sequelizeConnection from '../config/sequelizeConnection';
 import { User, ClientAccount } from '.';
 
-interface ClientAccountTeamUserAttributes {
+interface ClientAccountUserAttributes {
     clientAccountId: number;
     userId: number | null;
     userType: number;
 }
 
-export interface ClientAccountTeamUserInput extends Optional<ClientAccountTeamUserAttributes, 'userId'> { }
+export interface ClientAccountUserInput extends Optional<ClientAccountUserAttributes, 'userId'> { }
 
-export interface ClientAccountTeamUserOutput extends Required<ClientAccountTeamUserAttributes> { }
+export interface ClientAccountUserOutput extends Required<ClientAccountUserAttributes> { }
 
-export class ClientAccountTeamUser extends Model<ClientAccountTeamUserAttributes, ClientAccountTeamUserInput> implements ClientAccountTeamUserAttributes {
+export class ClientAccountUser extends Model<ClientAccountUserAttributes, ClientAccountUserInput> implements ClientAccountUserAttributes {
     public clientAccountId!: number;
     public userId!: number | null;
     public userType!: number;
 
     // mixins for association (optional)
-    public readonly clientAccounts!: ClientAccountTeamUser[]; // Note this is optional since it's only populated when explicitly requested in code
+    public readonly clientAccounts!: ClientAccountUser[]; // Note this is optional since it's only populated when explicitly requested in code
     public getClientAccount!: HasManyGetAssociationsMixin<ClientAccount>; // Note the null assertions!
     public addClientAccount!: HasManyAddAssociationMixin<ClientAccount, number>;
     public hasClientAccount!: HasManyHasAssociationMixin<ClientAccount, number>;
@@ -35,8 +35,8 @@ export class ClientAccountTeamUser extends Model<ClientAccountTeamUserAttributes
     public createUser!: HasManyCreateAssociationMixin<User>;
 
     public static associations: {
-        clientAccounts: Association<ClientAccountTeamUser, ClientAccount>,
-        users: Association<ClientAccountTeamUser, User>
+        clientAccounts: Association<ClientAccountUser, ClientAccount>,
+        users: Association<ClientAccountUser, User>
     };
 
     // Timestamps
@@ -45,7 +45,7 @@ export class ClientAccountTeamUser extends Model<ClientAccountTeamUserAttributes
     public readonly deletedAt!: Date | null;
 }
 
-ClientAccountTeamUser.init({
+ClientAccountUser.init({
     clientAccountId: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,

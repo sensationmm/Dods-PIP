@@ -22,13 +22,13 @@ export class ProjectDate extends Model<ProjectDateAttributes, ProjectDateInput> 
 
   // mixins for association (optional)
   public projectId!: number;
-  public readonly projectModel!: Project;
+  public readonly project!: Project;
   public getProject!: BelongsToGetAssociationMixin<Project>;
   public setProject!: BelongsToSetAssociationMixin<Project, number>;
   public createProject!: BelongsToCreateAssociationMixin<Project>;
 
   public static associations: {
-    projectModel: BelongsTo<ProjectDate, Project>,
+    project: BelongsTo<ProjectDate, Project>
   };
 
   // Timestamps

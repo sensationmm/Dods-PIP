@@ -1,11 +1,13 @@
 {
   "name": "@dodsgroup/dods-model",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
     "dev": "npm run build && node dist/index.js",
+    "migrate": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:migrate",
+    "migrate:undo": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:migrate:undo",
     "build": "webpack",
     "predeploy": "npm run build",
     "deploy": "npm publish"

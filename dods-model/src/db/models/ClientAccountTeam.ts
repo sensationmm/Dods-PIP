@@ -22,19 +22,19 @@ export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, Client
 
     // mixins for association (optional)
     public readonly clientAccounts!: ClientAccountTeam[]; // Note this is optional since it's only populated when explicitly requested in code
-    public getClientAccount!: HasManyGetAssociationsMixin<ClientAccount>; // Note the null assertions!
+    public getClientAccounts!: HasManyGetAssociationsMixin<ClientAccount>; // Note the null assertions!
     public addClientAccount!: HasManyAddAssociationMixin<ClientAccount, number>;
     public hasClientAccount!: HasManyHasAssociationMixin<ClientAccount, number>;
-    public countClientAccount!: HasManyCountAssociationsMixin;
+    public countClientAccounts!: HasManyCountAssociationsMixin;
     public createClientAccount!: HasManyCreateAssociationMixin<ClientAccount>;
 
 
     // mixins for association (optional)
     public readonly users!: User[]; // Note this is optional since it's only populated when explicitly requested in code
-    public getUser!: HasManyGetAssociationsMixin<User>; // Note the null assertions!
+    public getUsers!: HasManyGetAssociationsMixin<User>; // Note the null assertions!
     public addUser!: HasManyAddAssociationMixin<User, number>;
     public hasUser!: HasManyHasAssociationMixin<User, number>;
-    public countUser!: HasManyCountAssociationsMixin;
+    public countUsers!: HasManyCountAssociationsMixin;
     public createUser!: HasManyCreateAssociationMixin<User>;
 
     public static associations: {
