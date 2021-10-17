@@ -1,4 +1,4 @@
-import { BelongsTo, BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, DataTypes, Model, Optional } from 'sequelize';
+import { Association, BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, DataTypes, Model, Optional } from 'sequelize';
 import sequelizeConnection from '../config/sequelizeConnection';
 import { SubscriptionType, User } from './';
 
@@ -25,7 +25,7 @@ export interface ClientAccountInput
 
 export interface ClientAccountOutput extends Required<ClientAccountAttributes> { }
 
-export class ClientAccount extends Model<ClientAccountAttributes, ClientAccountInput> implements ClientAccountAttributes {
+export class ClientAccount extends Model<ClientAccountAttributes, ClientAccountInput> implements ClientAccountAttributes, ClientAccountOutput {
   public id!: number;
   public uuid!: string;
   public subscriptionSeats!: number;
@@ -42,21 +42,21 @@ export class ClientAccount extends Model<ClientAccountAttributes, ClientAccountI
 
   // mixins for association (optional)
   public subscription!: number | null;
-  public readonly subscriptionModel!: SubscriptionType;
-  public getSubscription!: BelongsToGetAssociationMixin<SubscriptionType>;
-  public setSubscription!: BelongsToSetAssociationMixin<SubscriptionType, number>;
-  public createSubscription!: BelongsToCreateAssociationMixin<SubscriptionType>;
+  public readonly subscriptionType!: SubscriptionType;
+  public getSubscriptionType!: BelongsToGetAssociationMixin<SubscriptionType>;
+  public setSubscriptionType!: BelongsToSetAssociationMixin<SubscriptionType, number>;
+  public createSubscriptionType!: BelongsToCreateAssociationMixin<SubscriptionType>;
 
   // mixins for association (optional)
   public salesContact!: number | null;
-  public readonly salesContactModel!: User;
-  public getSalesContact!: BelongsToGetAssociationMixin<SubscriptionType>;
-  public setSalesContact!: BelongsToSetAssociationMixin<SubscriptionType, number>;
-  public createSalesContact!: BelongsToCreateAssociationMixin<SubscriptionType>;
+  public readonly salesContactUser!: User;
+  public getSalesContactUser!: BelongsToGetAssociationMixin<User>;
+  public setSalesContactUser!: BelongsToSetAssociationMixin<User, number>;
+  public createSalesContactUser!: BelongsToCreateAssociationMixin<User>;
 
   public static associations: {
-    subscriptionModel: BelongsTo<ClientAccount, SubscriptionType>,
-    salesContactModel: BelongsTo<ClientAccount, User>
+    subscriptionType: Association<ClientAccount, SubscriptionType>,
+    salesContactUser: Association<ClientAccount, User>
   };
 
   // Timestamps

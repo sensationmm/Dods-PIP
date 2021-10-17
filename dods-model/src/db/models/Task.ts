@@ -28,21 +28,21 @@ export class Task extends Model<TaskAttributes, TaskInput> implements TaskAttrib
 
     // mixins for association (optional)
     public assignedTo!: number | null;
-    public readonly assignedToUserModel!: User;
-    public getAssignedTo!: BelongsToGetAssociationMixin<User>;
-    public setAssignedTo!: BelongsToSetAssociationMixin<User, number>;
-    public createAssignedTo!: BelongsToCreateAssociationMixin<User>;
+    public readonly assignedToUser!: User;
+    public getAssignedToUser!: BelongsToGetAssociationMixin<User>;
+    public setAssignedToUser!: BelongsToSetAssociationMixin<User, number>;
+    public createAssignedToUser!: BelongsToCreateAssociationMixin<User>;
 
     // mixins for association (optional)
     public createdBy!: number;
-    public readonly createdByModel!: User;
-    public getCreatedBy!: BelongsToGetAssociationMixin<User>;
-    public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
-    public createCreatedBy!: BelongsToCreateAssociationMixin<User>;
+    public readonly createdByUser!: User;
+    public getCreatedByUser!: BelongsToGetAssociationMixin<User>;
+    public setCreatedByUser!: BelongsToSetAssociationMixin<User, number>;
+    public createCreatedByUser!: BelongsToCreateAssociationMixin<User>;
 
     public static associations: {
-        assignedToUserModel: BelongsTo<Task, User>,
-        createdByModel: BelongsTo<Task, User>,
+        assignedToUser: BelongsTo<Task, User>,
+        createdByUser: BelongsTo<Task, User>
     };
 
     //Timestamps

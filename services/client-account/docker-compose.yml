@@ -7,7 +7,7 @@ services:
     volumes: 
       - "./mariadb_data:/var/lib/mysql"
       - ./mariadb/conf/mysql/data/:/var/lib/mysql/:rw
-      - ./mariadb/sql/:/docker-entrypoint-initdb.d/:ro
+      # - ./mariadb/sql/:/docker-entrypoint-initdb.d/:ro
     ports:
       - "3306:3306"
     environment:

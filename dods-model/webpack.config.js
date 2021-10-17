@@ -23,6 +23,7 @@ const seedersEntry = glob.sync('./src/db/seeders/**.ts').reduce(function (obj, e
 }, {});
 
 const entry = {
+  "index": "./index.ts",
   "config/index": {
     import: './src/db/config/index.ts',
     library: {

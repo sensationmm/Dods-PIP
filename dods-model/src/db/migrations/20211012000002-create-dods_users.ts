@@ -22,7 +22,8 @@ export = {
           model: 'dods_roles',
           key: 'id'
         },
-        onUpdate: 'CASCADE'
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       first_name: {
         type: DataTypes.STRING({ length: 50 }),

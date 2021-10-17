@@ -35,13 +35,13 @@ export class User extends Model<UserAttributes, UserInput> implements UserAttrib
 
     // mixins for association (optional)
     public roleId!: number | null;
-    public readonly roleModel!: Role;
+    public readonly role!: Role;
     public getRole!: BelongsToGetAssociationMixin<Role>;
     public setRole!: BelongsToSetAssociationMixin<Role, number>;
     public createRole!: BelongsToCreateAssociationMixin<Role>;
 
     public static associations: {
-        roleModel: BelongsTo<User, Role>
+        role: BelongsTo<User, Role>
     };
 
     //Timestamps
@@ -70,7 +70,8 @@ User.init({
             model: 'dods_roles',
             key: 'id'
         },
-        onUpdate: 'CASCADE'
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     },
     firstName: {
         type: DataTypes.STRING({ length: 50 }),

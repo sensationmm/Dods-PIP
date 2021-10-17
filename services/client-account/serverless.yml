@@ -41,12 +41,12 @@ provider:
     environment:
         SERVERLESS_STAGE: ${self:provider.stage}
         SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-        MARIADB_CONNECTION_STRING: 'mariadb://root:rootPass@127.0.0.1:3306/dods?allowPublicKeyRetrieval=true&useSSL=false'
-        MARIADB_CONNECTION_LIMIT: 5
-        MARIA_DB_HOST: 'localhost'
-        MARIA_DB_USERNAME: 'root'
-        MARIA_DB_PASSWORD: 'rootPass'
-        MARIA_DB_DATABASE: 'dods'
+        DB_DRIVER: mariadb
+        DB_HOST: localhost
+        DB_USER: root
+        DB_PASSWORD: rootPass
+        DB_NAME: dods
+        DB_CONNECTION_LIMIT: 5
 
 custom:
     webpack:
