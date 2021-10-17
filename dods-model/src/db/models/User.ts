@@ -121,5 +121,3 @@ User.init({
     sequelize: sequelizeConnection,
     // paranoid: true
 });
-
-User.belongsTo(Role, { targetKey: "id", foreignKey: 'roleId' });

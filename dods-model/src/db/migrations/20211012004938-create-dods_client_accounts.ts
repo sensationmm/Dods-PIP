@@ -76,6 +76,16 @@ export = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
+      is_completed: {
+        type: DataTypes.TINYINT({ length: 1 }),
+        allowNull: false,
+        defaultValue: 0
+      },
+      last_step_completed: {
+        type: DataTypes.INTEGER({ length: 11 }),
+        allowNull: false,
+        defaultValue: 4
+      },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,

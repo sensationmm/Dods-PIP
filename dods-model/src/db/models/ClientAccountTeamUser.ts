@@ -2,26 +2,23 @@ import { Association, DataTypes, HasManyAddAssociationMixin, HasManyCountAssocia
 import sequelizeConnection from '../config/sequelizeConnection';
 import { User, ClientAccount } from '.';
 
-interface ClientAccountTeamAttributes {
+interface ClientAccountTeamUserAttributes {
     clientAccountId: number;
     userId: number | null;
-    teamMemberType: number;
-    parsedType: string;
+    userType: number;
 }
 
-export interface ClientAccountTeamInput extends Optional<ClientAccountTeamAttributes, 'userId'> { }
+export interface ClientAccountTeamUserInput extends Optional<ClientAccountTeamUserAttributes, 'userId'> { }
 
-export interface ClientAccountTeamOutput extends Required<ClientAccountTeamAttributes> { }
+export interface ClientAccountTeamUserOutput extends Required<ClientAccountTeamUserAttributes> { }
 
-export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, ClientAccountTeamInput> implements ClientAccountTeamAttributes {
+export class ClientAccountTeamUser extends Model<ClientAccountTeamUserAttributes, ClientAccountTeamUserInput> implements ClientAccountTeamUserAttributes {
     public clientAccountId!: number;
     public userId!: number | null;
-    public teamMemberType!: number;
-
-    public parsedType!: 'consultant' | 'client';
+    public userType!: number;
 
     // mixins for association (optional)
-    public readonly clientAccounts!: ClientAccountTeam[]; // Note this is optional since it's only populated when explicitly requested in code
+    public readonly clientAccounts!: ClientAccountTeamUser[]; // Note this is optional since it's only populated when explicitly requested in code
     public getClientAccount!: HasManyGetAssociationsMixin<ClientAccount>; // Note the null assertions!
     public addClientAccount!: HasManyAddAssociationMixin<ClientAccount, number>;
     public hasClientAccount!: HasManyHasAssociationMixin<ClientAccount, number>;
@@ -38,8 +35,8 @@ export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, Client
     public createUser!: HasManyCreateAssociationMixin<User>;
 
     public static associations: {
-        clientAccounts: Association<ClientAccountTeam, ClientAccount>,
-        users: Association<ClientAccountTeam, User>
+        clientAccounts: Association<ClientAccountTeamUser, ClientAccount>,
+        users: Association<ClientAccountTeamUser, User>
     };
 
     // Timestamps
@@ -48,7 +45,7 @@ export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, Client
     public readonly deletedAt!: Date | null;
 }
 
-ClientAccountTeam.init({
+ClientAccountTeamUser.init({
     clientAccountId: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
@@ -70,28 +67,12 @@ ClientAccountTeam.init({
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
-    teamMemberType: {
+    userType: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
     },
-    parsedType: {
-        type: DataTypes.VIRTUAL(DataTypes.STRING, ['teamMemberType']),
-        get() {
-            switch (this.teamMemberType) {
-                case 1:
-                    return 'consultant';
-                case 2:
-                    return 'client';
-                default:
-                    return 'Invalid Type';
-            }
-        },
-        set(_value) {
-            throw new Error('Do not try to set the `parsedType` value!');
-        },
-    },
 }, {
-    tableName: 'dods_client_account_teams',
+    tableName: 'dods_client_account_users',
     underscored: true,
     timestamps: true,
     sequelize: sequelizeConnection,

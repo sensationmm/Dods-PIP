@@ -16,6 +16,8 @@ interface ClientAccountAttributes {
   contractEndDate: Date | null;
   contractRollover: boolean | null;
   salesContact: number | null;
+  isCompleted: boolean;
+  lastStepCompleted: number;
 }
 
 export interface ClientAccountInput
@@ -35,6 +37,8 @@ export class ClientAccount extends Model<ClientAccountAttributes, ClientAccountI
   public contractStartDate!: Date | null;
   public contractEndDate!: Date | null;
   public contractRollover!: boolean | null;
+  public isCompleted!: boolean;
+  public lastStepCompleted!: number;
 
   // mixins for association (optional)
   public subscription!: number | null;
@@ -135,6 +139,16 @@ ClientAccount.init({
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
+  isCompleted: {
+    type: DataTypes.TINYINT({ length: 1 }),
+    allowNull: false,
+    defaultValue: 0
+  },
+  lastStepCompleted: {
+    type: DataTypes.INTEGER({ length: 11 }),
+    allowNull: false,
+    defaultValue: 4
+  }
 }, {
   tableName: 'dods_client_accounts',
   underscored: true,
@@ -142,6 +156,3 @@ ClientAccount.init({
   sequelize: sequelizeConnection,
   // paranoid: true
 });
-
-ClientAccount.belongsTo(SubscriptionType, { targetKey: "id", foreignKey: 'subscription' });
-ClientAccount.belongsTo(User, { targetKey: "id", foreignKey: 'salesContact' });

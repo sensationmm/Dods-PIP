@@ -1,3 +1,1 @@
-import dbInit from './db';
-
-dbInit();
+export * from './db';
