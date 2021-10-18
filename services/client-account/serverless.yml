@@ -75,7 +75,6 @@ custom:
         webpackConfig: ./webpack.config.js
         includeModules:
             forceInclude:
-                - express
                 - mariadb
         keepOutputDirectory: false
     serverless-offline:

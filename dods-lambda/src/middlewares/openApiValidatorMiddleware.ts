@@ -7,7 +7,7 @@ export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices<APIGa
 
     const { genericOpenApiValidator, validateRequests, validateResponses } = services!;
 
-    Logger.info(`OpenApiValidatorMiddleware Entry`, { validateRequests, validateResponses });
+    Logger.info('OpenApiValidatorMiddleware Entry', { validateRequests, validateResponses });
 
     let data;
     let openApiRequest;
@@ -44,7 +44,7 @@ export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices<APIGa
         await genericOpenApiValidator.validateResponse(openApiRequest, response);
     }
 
-    Logger.info(`OpenApiValidatorMiddleware Success`);
+    Logger.info('OpenApiValidatorMiddleware Success');
 
     return response;
 };
