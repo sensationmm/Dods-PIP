@@ -5,14 +5,13 @@ import Radio, { IRadioProps } from '.';
 
 const TEST_PROPS: IRadioProps = {
   label: 'test radio',
-  id: 'test',
   name: 'Example',
   value: 'test value',
   theme: 'dark',
   onChange: jest.fn(),
 };
 
-const SELECTOR_COMPONENT = '[data-test="component"]';
+const SELECTOR_COMPONENT = '[data-test="component-radio"]';
 const SELECTOR_RADIO_INPUT = '[data-test="radio-input"]';
 const SELECTOR_CUSTOM_LABEL = '[data-test="custom-label"]';
 const SELECTOR_CUSTOM_RADIO = '[data-test="custom-radio"]';
@@ -48,8 +47,8 @@ describe('Radio', () => {
     ['falsey', false],
   ])('renders %s checked state', (name, isChecked) => {
     const input = getWrapper({ ...TEST_PROPS, isChecked }).find(SELECTOR_RADIO_INPUT);
-    if (name === 'truthy') expect(input.props().checked).toEqual(isChecked);
-    if (name === 'falsey') expect(input.props()).not.toContain('checked');
+    if (name === 'truthy') expect(input.props().defaultChecked).toEqual(isChecked);
+    if (name === 'falsey') expect(input.props()).not.toContain('defaultChecked');
   });
 
   it.each([
@@ -59,5 +58,19 @@ describe('Radio', () => {
     const input = getWrapper({ ...TEST_PROPS, isDisabled }).find(SELECTOR_RADIO_INPUT);
     if (name === 'truthy') expect(input.props().disabled).toEqual(isDisabled);
     if (name === 'falsey') expect(input.props()).not.toContain('disabled');
+  });
+
+  // Just for test coverage satisfaction
+  describe('when no value is set', () => {
+    let wrapper;
+    beforeEach(() => {
+      const props = { ...TEST_PROPS };
+      delete props.value;
+      wrapper = getWrapper(props);
+    });
+    it('sets an empty value', () => {
+      const input = wrapper.find(SELECTOR_RADIO_INPUT);
+      expect(input.props().value).toBe('');
+    });
   });
 });

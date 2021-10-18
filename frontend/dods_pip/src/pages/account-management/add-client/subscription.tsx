@@ -5,7 +5,7 @@ import Checkbox from '../../../components/_form/Checkbox';
 import DatePicker from '../../../components/_form/DatePicker';
 import Label from '../../../components/_form/Label';
 import NumberPicker from '../../../components/_form/NumberPicker';
-import RadioGroup from '../../../components/_form/Radio';
+import RadioGroup from '../../../components/_form/RadioGroup';
 import Select from '../../../components/_form/Select';
 import SelectMulti from '../../../components/_form/SelectMulti';
 import PageActions from '../../../components/_layout/PageActions';
@@ -271,15 +271,15 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
         <Styled.wrapper>
           <RadioGroup
-            name="renewal-type"
+            groupName="renewal-type"
             label="Renewal type"
-            required
+            required={true}
             onChange={setRenewalType}
             items={[
               { label: 'Annual Renewal', value: 'annual' },
               { label: 'End date', value: 'endDate' },
             ]}
-            value={renewalType}
+            selectedValue={renewalType}
           />
         </Styled.wrapper>
 

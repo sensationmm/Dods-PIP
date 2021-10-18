@@ -19,7 +19,3 @@ Primary.args = {
   isChecked: false,
   isDisabled: false,
 };
-
-Primary.parameters = {
-  controls: { exclude: ['name', 'value', 'id'] },
-};

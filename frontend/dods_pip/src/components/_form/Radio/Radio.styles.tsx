@@ -5,7 +5,7 @@ import spacing from '../../../globals/spacing';
 import { hexAToRGBA } from '../../../utils/color';
 import { radioTheme } from './index';
 
-const THEME: Record<radioTheme, Record<string, any>> = {
+const THEME: Record<radioTheme, Record<string, string | number>> = {
   dark: {
     colourDefault: color.theme.blueMid,
     colourHover: color.theme.blueDark,

@@ -2,65 +2,55 @@ import React from 'react';
 
 import Spacer from '../../_layout/Spacer';
 import Label from '../Label';
+import Radio, { IRadioItem, radioTheme } from '../Radio';
 import * as Styled from './RadioGroup.styles';
-import Radio, { IRadioItem } from '../Radio';
 
 export interface IRadioGroupProps {
   items: IRadioItem[];
-  name: string;
+  groupName?: string;
   onChange: (val: string) => void;
-  value: string;
   label?: string;
+  theme?: radioTheme;
+  selectedValue?: string;
   isDisabled?: boolean;
   required?: boolean;
   optional?: boolean;
-  theme: 'dark' | 'light';
 }
 
 const RadioGroup: React.FC<IRadioGroupProps> = ({
   items,
-  name,
+  groupName = `group_${+new Date()}`,
+  theme = 'dark',
   onChange,
-  value,
   label,
+  selectedValue,
   isDisabled = false,
   required = false,
   optional = false,
 }) => {
-  const radioValue = value;
+  const darkMode = theme === 'light';
 
   return (
     <Styled.radioGroup data-test="component-radio-group">
       {label && (
-        <Label
-          data-test="radio-group-label"
-          label={label}
-          required={required}
-          optional={optional}
-        />
+        <>
+          <Label data-test="radio-group-label" {...{ label, required, optional, darkMode }} />
+          <Spacer size={3} />
+        </>
       )}
 
-      <Spacer size={3} />
+      <Styled.radioGroupWrapper data-test="radio-group-items">
+        {items?.map((item, i) => {
+          const { label, value } = item;
+          const isChecked = selectedValue === value;
 
-      <Styled.radioGroupWrapper>
-        {items &&
-          items.map((item, i) => {
-            const { label, value } = item;
-            const id = `${name}-${i}`;
-
-            return (
-              <Radio
-                id={id}
-                key={i}
-                label={label}
-                value={value}
-                name={name}
-                isChecked={value === radioValue}
-                isDisabled={isDisabled}
-                onChange={onChange}
-              />
-            );
-          })}
+          return (
+            <Radio
+              key={`${groupName}-${i}`}
+              {...{ theme, label, value, name: groupName, isDisabled, isChecked, onChange }}
+            />
+          );
+        })}
       </Styled.radioGroupWrapper>
     </Styled.radioGroup>
   );
