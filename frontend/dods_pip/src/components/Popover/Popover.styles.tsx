@@ -1,39 +1,36 @@
-import styled from 'styled-components'
-import color from '../../globals/color'
-import spacing from '../../globals/spacing'
+import styled from 'styled-components';
+
+import color from '../../globals/color';
 
 export const popoverWrapper = styled.div`
-
   .btnTrigger {
     background-color: ${color.base.transparent};
     border: 0;
     cursor: pointer;
   }
 
-  div[class^="Tooltipstyles__tooltipStyle"] {
-    left: -12px;
+  div[class^='Tooltipstyles__tooltipStyle'] {
+    left: -15px;
 
-    &:focus,
-    &:hover {
-      &.hover {
-        opacity: 0;
-        visibility: hidden;
-      }
+    &.popover {
+      opacity: 0;
+      transition: opacity 0.5s;
+      visibility: hidden;
     }
 
-    &.hover.show {
+    &.show {
       opacity: 1;
-      transition: opacity 0.5s;
       visibility: visible;
     }
 
     &.alignTopRight {
       left: auto;
-      right: -12px;
+      right: -15px;
     }
 
-    &.right {
+    &.alignRight {
       left: 100%;
+      margin-left: 15px;
     }
   }
-`
+`;
