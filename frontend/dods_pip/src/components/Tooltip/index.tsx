@@ -50,21 +50,11 @@ const Tooltip: React.FC<TooltipProps> = ({
       >
         <div className="inner">
           {title && (
-            <Text
-              data-test="component-title"
-              color={colorType === 'Dark' ? color.base.white : color.theme.blue}
-              type="body"
-            >
+            <Text color={colorType === 'Dark' ? color.base.white : color.theme.blue} type="body">
               {title}
             </Text>
           )}
-          (
-          <Text
-            data-test="component-body"
-            color={colorType === 'Dark' ? color.base.white : color.theme.blue}
-            type="bodySmall"
-          >
-            )
+          <Text color={colorType === 'Dark' ? color.base.white : color.theme.blue} type="bodySmall">
             {icon && (
               <Icon
                 src={icon}
