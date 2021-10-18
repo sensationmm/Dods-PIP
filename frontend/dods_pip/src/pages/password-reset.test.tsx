@@ -98,6 +98,26 @@ describe('PasswordReset', () => {
       expect(dialogueContainer.children().getElements()).toHaveLength(1);
     });
 
+    describe('and password field is modified', () => {
+      beforeEach(() => {
+        (validationMock.validatePassword as jest.Mock).mockReturnValue({
+          results: {
+            number: true,
+            uppercase: true,
+            lowercase: true,
+            special: true,
+            length8: true,
+            disabled: true,
+          },
+        });
+
+        getWrapper().find(SELECTOR_INPUT).simulate('change', 'test');
+      });
+      it('should attempt to validate input', () => {
+        expect(validationMock.validatePassword).toHaveBeenCalledWith('test');
+      });
+    });
+
     describe('and valid password fields are successfully submitted', () => {
       beforeEach(() => {
         fetchJsonMock.mockResolvedValueOnce({});
