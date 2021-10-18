@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import color from '../../globals/color'
-import spacing from '../../globals/spacing'
-import dropShadow from '../../globals/elevation'
+
+import color from '../../globals/color';
+import dropShadow from '../../globals/elevation';
+import spacing from '../../globals/spacing';
 
 export const wrapper = styled.div`
   position: relative;
@@ -41,17 +42,17 @@ export const tooltipStyle = styled.div`
     border-radius: ${spacing(1)};
     box-shadow: ${dropShadow.dropShadow2};
     padding: ${spacing(3)};
-  
+
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       width: 0;
       height: 0;
       border-width: 10px;
       border-style: solid;
-      border-color: #FFFFFF transparent transparent transparent;
+      border-color: #ffffff transparent transparent transparent;
       left: ${spacing(5)};
-      bottom: ${spacing(-5)}
+      bottom: ${spacing(-5)};
     }
 
     p {
@@ -63,12 +64,12 @@ export const tooltipStyle = styled.div`
         font-weight: 700;
         margin-bottom: ${spacing(5)};
         position: relative;
-  
+
         &::after {
           content: '';
           width: 100%;
           height: 2px;
-          background-color: rgba(0,0,0, 0.1);
+          background-color: rgba(0, 0, 0, 0.1);
           position: absolute;
           bottom: ${spacing(-2.5)};
           left: 0;
@@ -79,14 +80,14 @@ export const tooltipStyle = styled.div`
         font-size: 12px;
         font-weight: 400;
         margin-bottom: 0;
-  
+
         &::after {
           display: none;
         }
       }
 
       > div {
-        margin-right: ${spacing(2.5)}
+        margin-right: ${spacing(2.5)};
       }
     }
   }
@@ -113,7 +114,7 @@ export const tooltipStyle = styled.div`
 
     .inner {
       &::after {
-        border-color: transparent #FFFFFF transparent transparent;
+        border-color: transparent #ffffff transparent transparent;
         left: ${spacing(-5)};
         top: ${spacing(2.5)};
         bottom: auto;
@@ -144,4 +145,4 @@ export const tooltipStyle = styled.div`
       }
     }
   }
-`
+`;

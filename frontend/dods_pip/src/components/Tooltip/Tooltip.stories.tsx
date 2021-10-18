@@ -1,5 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
+
 import Tooltips, { TooltipProps } from '.';
 
 export default {
@@ -16,5 +17,5 @@ Primary.args = {
   alignment: 'topLeft',
   colorType: 'Light',
   body: 'Tooltip here',
-  trigger: <span>Hover me!</span>
+  trigger: <span>Hover me!</span>,
 };
