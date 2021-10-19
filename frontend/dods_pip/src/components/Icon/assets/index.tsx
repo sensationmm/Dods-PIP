@@ -4,9 +4,13 @@ import Avatar from './icon-avatar.svg';
 import AzFilter from './icon-azFilter.svg';
 import Calendar from './icon-calendar.svg';
 import ChevronDown from './icon-chevronDown.svg';
+import ChevronDownBold from './icon-chevronDownBold.svg';
 import ChevronLeft from './icon-chevronLeft.svg';
+import ChevronLeftBold from './icon-chevronLeftBold.svg';
 import ChevronRight from './icon-chevronRight.svg';
+import ChevronRightBold from './icon-chevronRightBold.svg';
 import ChevronUp from './icon-chevronUp.svg';
+import ChevronUpBold from './icon-chevronUpBold.svg';
 import Cross from './icon-cross.svg';
 import CrossBold from './icon-crossBold.svg';
 import Grid from './icon-grid.svg';
@@ -33,9 +37,13 @@ export enum Icons {
   AzFilter = 'AzFilter',
   Calendar = 'Calendar',
   ChevronDown = 'ChevronDown',
+  ChevronDownBold = 'ChevronDownBold',
   ChevronLeft = 'ChevronLeft',
+  ChevronLeftBold = 'ChevronLeftBold',
   ChevronRight = 'ChevronRight',
+  ChevronRightBold = 'ChevronRightBold',
   ChevronUp = 'ChevronUp',
+  ChevronUpBold = 'ChevronUpBold',
   Cross = 'Cross',
   CrossBold = 'CrossBold',
   Grid = 'Grid',
@@ -61,9 +69,13 @@ const IconLibrary = {
   AzFilter,
   Calendar,
   ChevronDown,
+  ChevronDownBold,
   ChevronLeft,
+  ChevronLeftBold,
   ChevronRight,
+  ChevronRightBold,
   ChevronUp,
+  ChevronUpBold,
   Cross,
   CrossBold,
   Grid,

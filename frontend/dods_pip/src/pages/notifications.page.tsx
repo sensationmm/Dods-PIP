@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import InputText from '../components/_form/InputText';
-import RadioGroup from '../components/_form/radio';
+import RadioGroup from '../components/_form/RadioGroup';
 import Panel from '../components/_layout/Panel';
 import Spacer from '../components/_layout/Spacer';
 import Button from '../components/Button';
@@ -23,9 +23,9 @@ export const Notifications: React.FC<NotificationsProps> = ({ addNotification })
         <Panel>
           <RadioGroup
             required
-            name="type"
+            groupName="type"
             label="Type"
-            value={type}
+            selectedValue={type}
             onChange={setType}
             items={[
               { label: 'info', value: 'info' },
