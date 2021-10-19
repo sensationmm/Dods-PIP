@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 
-import Radio, { IRadioProps } from '.';
+import Radio, { IRadioProps } from './index';
 
 export default {
   component: Radio,

@@ -424,16 +424,16 @@ const Team: React.FC<TeamProps> = ({
 
               <Spacer size={10} />
 
-            <RadioGroup
-              groupName="client-access"
-              label="Assign access"
-              items={[
-                { label: 'Admin', value: 'admin' },
-                { label: 'User', value: 'user' },
-              ]}
-              selectedValue={clientAccess}
-              onChange={setClientAccess}
-            />
+              <RadioGroup
+                groupName="client-access"
+                label="Assign access"
+                items={[
+                  { label: 'Admin', value: 'admin' },
+                  { label: 'User', value: 'user' },
+                ]}
+                selectedValue={clientAccess}
+                onChange={setClientAccess}
+              />
 
               <Spacer size={10} />
 
