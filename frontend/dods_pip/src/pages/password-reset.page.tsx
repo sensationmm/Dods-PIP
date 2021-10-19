@@ -23,6 +23,18 @@ type Errors = {
   form?: string | undefined;
 };
 
+interface ApiResponse {
+  isConfirmed: boolean;
+  isCodeExpired: boolean;
+  isRepeatPassword: boolean;
+}
+
+const API_RESPONSE_DEFAULT = {
+  isCodeExpired: false,
+  isConfirmed: false,
+  isRepeatPassword: false,
+};
+
 interface PasswordResetProps extends LoadingHOCProps {}
 
 export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
@@ -31,9 +43,8 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
   const [password, setPassword] = React.useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Errors>({});
-  const [confirmed, setConfirmed] = React.useState<boolean>(false);
+  const [apiResponse, setApiResponse] = React.useState<ApiResponse>(API_RESPONSE_DEFAULT);
   const [passwordStrength, setPasswordStrength] = React.useState<PasswordStrengthProps>({});
-  const [isRepeatPassword] = React.useState<boolean>(false);
 
   useEffect(() => {
     /* istanbul ignore next*/
@@ -63,44 +74,36 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
 
     setErrors(formErrors);
 
-    if (Object.keys(formErrors).length === 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return Object.keys(formErrors).length === 0;
   };
 
   const onConfirm = async () => {
     setLoading(true);
+    setApiResponse(API_RESPONSE_DEFAULT);
 
-    if (validateForm() && !isRepeatPassword) {
-      try {
-        await fetchJson('/api/resetPassword', {
-          body: JSON.stringify({
-            email: uid,
-            newPassword: password,
-            verificationCode: code,
-          }),
-        });
-        setConfirmed(true);
-        setLoading(false);
-      } catch (error) {
-        if (
-          error.data?.name === 'CodeMismatchException' ||
-          error.data?.name === 'ExpiredCodeException'
-        ) {
-          const formErrors = { ...errors };
-          formErrors.form = 'EXPIRED';
-          setLoading(false);
-          setErrors(formErrors);
-        } else {
-          setErrors({ form: 'FAIL' });
-          setLoading(false);
-        }
+    if (!validateForm()) return setLoading(false);
+
+    try {
+      await fetchJson('/api/resetPassword', {
+        body: JSON.stringify({
+          email: uid,
+          newPassword: password,
+          verificationCode: code,
+        }),
+      });
+      setApiResponse({ ...apiResponse, isConfirmed: true });
+    } catch (error) {
+      // TODO: Consume an explicit error code here once the api returns relevant data
+      if (error.data?.code === 401) {
+        setApiResponse({ ...apiResponse, isRepeatPassword: true });
       }
-    } else {
-      setLoading(false);
+
+      if (/CodeMismatchException|ExpiredCodeException/.test(error.data?.name)) {
+        setApiResponse({ ...apiResponse, isCodeExpired: true });
+      }
     }
+
+    setLoading(false);
   };
 
   if (!code) return <Loader data-test="no-code-loader" inline />;
@@ -135,8 +138,8 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
               <Button type={'secondary'} inline label={'Find out more'} />
             </div>
 
-            <div>
-              {!confirmed ? (
+            <div data-test="dialogue-container">
+              {!apiResponse.isConfirmed && (
                 <Box data-test="reset-request">
                   <Text type={'h4'}>Create a new password</Text>
 
@@ -147,7 +150,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                     id="reset-password"
                     label={'Password'}
                     value={password}
-                    error={errors.password}
+                    error={errors?.password}
                     helperText={'Create a unique password'}
                     onChange={(val) => {
                       setPassword(val);
@@ -163,7 +166,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                     label={'Confirm password'}
                     value={passwordConfirm}
                     onChange={setPasswordConfirm}
-                    error={errors.passwordConfirm}
+                    error={errors?.passwordConfirm}
                     helperText={'Re-type the password'}
                   />
 
@@ -171,7 +174,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
 
                   <PasswordStrength disabled={!password} {...passwordStrength} />
 
-                  {isRepeatPassword && (
+                  {apiResponse.isRepeatPassword && (
                     <>
                       <Spacer size={4} />
                       <ErrorBox data-test="repeat-password-warning">
@@ -181,13 +184,13 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                         <Spacer size={2} />
                         <Text type={'bodySmall'}>
                           You need to set a unique password that hasn’t previously been used in the
-                          last [X amount of time].
+                          last 6 months.
                         </Text>
                       </ErrorBox>
                     </>
                   )}
 
-                  {errors.form === 'EXPIRED' && (
+                  {apiResponse.isCodeExpired && (
                     <>
                       <Spacer size={4} />
                       <ErrorBox data-test={'code-expired-warning'}>
@@ -196,7 +199,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
                         </Text>
                         <Spacer size={2} />
                         <Text type={'bodySmall'}>
-                          Request a new code by clicking{' '}
+                          Request a new code by clicking&nbsp;
                           <Link href="/reset-password">
                             <a>here</a>
                           </Link>
@@ -210,18 +213,22 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
 
                   <Button data-test={'form-button'} label={'Save Changes'} onClick={onConfirm} />
                 </Box>
-              ) : (
-                <Box data-test="reset-confirmation">
-                  <Text type={'h4'}>Your password is now updated!</Text>
+              )}
 
-                  <Spacer size={12} />
+              {apiResponse.isConfirmed && (
+                <>
+                  <Box data-test="reset-confirmation">
+                    <Text type={'h4'}>Your password is now updated!</Text>
 
-                  <Button
-                    data-test={'button-back-to-login'}
-                    label={'Go to Login'}
-                    onClick={() => router.push('/')}
-                  />
-                </Box>
+                    <Spacer size={12} />
+
+                    <Button
+                      data-test={'button-back-to-login'}
+                      label={'Go to Login'}
+                      onClick={() => router.push('/')}
+                    />
+                  </Box>
+                </>
               )}
             </div>
           </Columns>

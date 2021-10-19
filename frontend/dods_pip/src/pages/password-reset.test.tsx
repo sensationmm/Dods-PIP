@@ -1,208 +1,226 @@
 import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
+import { useRouter } from 'next/router';
+import fetchJson from '../lib/fetchJson';
 import * as Validation from '../utils/validation';
 import { PasswordReset } from './password-reset.page';
 
-const mockRouterPush = jest.fn();
+jest.mock('../lib/fetchJson', () => jest.fn());
+jest.mock('../utils/validation', () => ({
+  validateRequired: jest.fn(),
+  validatePassword: jest.fn(),
+  validateMatching: jest.fn(),
+}));
 jest.mock('next/router', () => ({
-  useRouter: jest
-    .fn()
-    .mockReturnValueOnce({ push: (arg) => mockRouterPush(arg), query: {} })
-    .mockReturnValue({ push: (arg) => mockRouterPush(arg), query: { code: 'abc' } }),
+  useRouter: jest.fn(),
 }));
 
-jest.mock('../lib/fetchJson', () => {
-  return jest
-    .fn()
-    .mockImplementationOnce(() => Promise.reject({ data: { name: 'CodeMismatchException' } }))
-    .mockImplementationOnce(() => Promise.reject({ data: { name: 'ExpiredCodeException' } }))
-    .mockImplementationOnce(() => Promise.reject({ data: { name: 'OtherException' } }))
-    .mockImplementation(() => Promise.resolve());
-});
+const SELECTOR_DIALOGUE_CONTAINER = '[data-test="dialogue-container"]';
+const SELECTOR_DIALOGUE_CONFIRMATION = '[data-test="reset-confirmation"]';
+const SELECTOR_WARNING_EXPIRED = '[data-test="code-expired-warning"]';
+const SELECTOR_WARNING_REPEAT = '[data-test="repeat-password-warning"]';
+const SELECTOR_LOADER = '[data-test="no-code-loader"]';
+const SELECTOR_COMPONENT_ROOT = '[data-test="page-password-reset"]';
+const SELECTOR_REQUEST_FORM = '[data-test="reset-request"]';
+const SELECTOR_FORM_BUTTON = '[data-test="form-button"]';
+const SELECTOR_BACK_BUTTON = '[data-test="button-back-to-login"]';
+const SELECTOR_INPUT = '[data-test="reset-password"]';
+const SELECTOR_INPUT_CONFIRM = '[data-test="reset-password-confirm"]';
 
 describe('PasswordReset', () => {
-  let wrapper: ShallowWrapper, formButton: ShallowWrapper, codeExpiredWarning;
-  const validateRequiredSpy = jest.spyOn(Validation, 'validateRequired');
-  const validatePasswordSpy = jest.spyOn(Validation, 'validatePassword');
-  const validateMatchingSpy = jest.spyOn(Validation, 'validateMatching');
-  const setLoadingSpy = jest.fn();
-  const setState = jest.fn();
-  const useStateSpy = jest.spyOn(React, 'useState');
+  let dialogueContainer: ShallowWrapper;
+  let wrapper: ShallowWrapper;
 
-  const defaultState = {
-    password: undefined,
-    passwordConfirm: undefined,
-    errors: {},
-    confirmed: false,
-    passwordStrength: {},
-    isRepeatPassword: false,
+  const useRouterMock = useRouter as jest.Mock;
+  const fetchJsonMock = fetchJson as jest.Mock;
+  const validationMock = Validation;
+
+  const getWrapper = () => shallow(<PasswordReset isLoading={false} setLoading={jest.fn()} />);
+  const getDialogueContainer = () => wrapper?.find(SELECTOR_DIALOGUE_CONTAINER);
+
+  const setFieldValidation = (required = false, password = false, matching = false) => {
+    (validationMock.validateRequired as jest.Mock).mockReturnValue(required);
+    (validationMock.validatePassword as jest.Mock).mockReturnValue({ valid: password });
+    (validationMock.validateMatching as jest.Mock).mockReturnValue(matching);
   };
 
-  const states = [
-    defaultState, // shows loader if no code found
-    defaultState, // renders without error
-    defaultState, // renders password reset
-    { ...defaultState, confirmed: true }, // renders password reset confirmation
-    defaultState, // returns empty form errors
-    { ...defaultState, password: 'invalid' }, // returns invalid password error
-    { ...defaultState, password: 'Valid123!' }, // returns missing passwordConfirm error
-    { ...defaultState, password: 'Valid123!', passwordConfirm: 'invalid' }, // eturns unmatching passwordConfirm error
-    { ...defaultState, password: 'Valid123!', passwordConfirm: 'Valid123!' }, // handles CodeMismatchException exception
-    { ...defaultState, password: 'Valid123!', passwordConfirm: 'Valid123!' }, // handles ExpiredCodeException exception
-    { ...defaultState, password: 'Valid123!', passwordConfirm: 'Valid123!' }, // handles generic exception
-    { ...defaultState, password: 'Valid123!', passwordConfirm: 'Valid123!' }, // clears errors on successful form completion
-    defaultState, // executes password onChange funcs
-    { ...defaultState, confirmed: true }, // navigates back to login at end of flow
-    { ...defaultState, isRepeatPassword: true }, // shows repeat password warning
-    { ...defaultState, errors: { form: 'EXPIRED' } }, //shows repeat password warning
-  ];
+  describe('when `code` is NOT defined', () => {
+    beforeEach(() => {
+      useRouterMock.mockReturnValueOnce({ query: {} });
+      wrapper = getWrapper();
+    });
 
-  let count = 0;
+    it('renders the loader', () => {
+      const noCodeLoader = wrapper.find(SELECTOR_LOADER);
+      expect(noCodeLoader.exists()).toBe(true);
+      expect(wrapper.getElements()).toHaveLength(1);
+    });
 
-  beforeEach(() => {
-    useStateSpy
-      .mockImplementationOnce(() => [states[count].password, setState])
-      .mockImplementationOnce(() => [states[count].passwordConfirm, setState])
-      .mockImplementationOnce(() => [states[count].errors, setState])
-      .mockImplementationOnce(() => [states[count].confirmed, setState])
-      .mockImplementationOnce(() => [states[count].passwordStrength, setState])
-      .mockImplementationOnce(() => [states[count].isRepeatPassword, setState]);
-    wrapper = shallow(
-      <PasswordReset isLoading={false} setLoading={setLoadingSpy} addNotification={jest.fn} />,
-    );
-    formButton = wrapper.find('[data-test="form-button"]');
-    codeExpiredWarning = wrapper.find('[data-test="code-expired-warning"]');
-  });
+    describe('and router is ready', () => {
+      const pushFn = jest.fn();
 
-  it('show loader if no code found', () => {
-    const noCodeLoader = wrapper.find('[data-test="no-code-loader"]');
-    expect(noCodeLoader.length).toEqual(1);
-  });
+      beforeEach(() => {
+        useRouterMock.mockReturnValueOnce({
+          query: {},
+          isReady: true,
+          push: pushFn,
+        });
+      });
 
-  it('renders without error', () => {
-    const component = wrapper.find('[data-test="page-password-reset"]');
-    expect(component.length).toEqual(1);
-    expect(formButton.length).toEqual(1);
-  });
-
-  it('renders password reset', () => {
-    const request = wrapper.find('[data-test="reset-request"]');
-    const confirmation = wrapper.find('[data-test="reset-confirmation"]');
-    expect(request.length).toEqual(1);
-    expect(confirmation.length).toEqual(0);
-  });
-
-  it('renders password reset confirmation', () => {
-    const request = wrapper.find('[data-test="reset-request"]');
-    const confirmation = wrapper.find('[data-test="reset-confirmation"]');
-    expect(request.length).toEqual(0);
-    expect(confirmation.length).toEqual(1);
-  });
-
-  it('returns empty form errors', () => {
-    formButton.simulate('click');
-    expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
-    expect(validatePasswordSpy).toHaveBeenCalledTimes(0);
-    expect(validateMatchingSpy).toHaveBeenCalledTimes(0);
-    expect(setState).toHaveBeenCalledWith({
-      password: 'Password is required',
-      passwordConfirm: 'Confirm password is required',
+      it('redirects to the home page', () => {
+        wrapper = getWrapper();
+        expect(pushFn).toHaveBeenCalledWith('/');
+        expect(pushFn).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
-  it('returns invalid password error', () => {
-    formButton.simulate('click');
-    expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
-    expect(validatePasswordSpy).toHaveBeenCalledTimes(1);
-    expect(validatePasswordSpy).toHaveBeenCalledWith('invalid');
-    expect(validateMatchingSpy).toHaveBeenCalledTimes(0);
-    expect(setState).toHaveBeenCalledWith({
-      password: 'Password must meet all criteria',
-      passwordConfirm: 'Confirm password is required',
+  describe('when a `code` IS defined', () => {
+    const pushFn = jest.fn();
+
+    beforeEach(() => {
+      useRouterMock.mockReturnValue({ query: { code: '12345' }, push: pushFn });
+      wrapper = getWrapper();
     });
-  });
 
-  it('returns missing passwordConfirm error', () => {
-    formButton.simulate('click');
-    expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
-    expect(validatePasswordSpy).toHaveBeenCalledTimes(1);
-    expect(validatePasswordSpy).toHaveBeenCalledWith('Valid123!');
-    expect(validateMatchingSpy).toHaveBeenCalledTimes(0);
-    expect(setState).toHaveBeenCalledWith({
-      passwordConfirm: 'Confirm password is required',
+    it('renders the component', () => {
+      const component = wrapper.find(SELECTOR_COMPONENT_ROOT);
+      expect(component.exists()).toBe(true);
+      expect(wrapper.getElements()).toHaveLength(1);
     });
-  });
 
-  it('returns unmatching passwordConfirm error', () => {
-    formButton.simulate('click');
-    expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
-    expect(validatePasswordSpy).toHaveBeenCalledTimes(1);
-    expect(validatePasswordSpy).toHaveBeenCalledWith('Valid123!');
-    expect(validateMatchingSpy).toHaveBeenCalledTimes(1);
-    expect(validateMatchingSpy).toHaveBeenCalledWith('invalid', 'Valid123!');
-    expect(setState).toHaveBeenCalledWith({
-      passwordConfirm: 'Passwords must match',
+    it('renders password reset form', () => {
+      const requestForm = wrapper.find(SELECTOR_REQUEST_FORM);
+      dialogueContainer = getDialogueContainer();
+
+      expect(requestForm.exists()).toBe(true);
+      expect(dialogueContainer.children().getElements()).toHaveLength(1);
     });
-  });
 
-  it('handles CodeMismatchException exception', async () => {
-    await formButton.simulate('click');
-    expect(setLoadingSpy).toHaveBeenCalledWith(false);
-    expect(setState).toHaveBeenCalledWith({ form: 'EXPIRED' });
-    wrapper.update();
-  });
+    describe('and password field is modified', () => {
+      beforeEach(() => {
+        (validationMock.validatePassword as jest.Mock).mockReturnValue({
+          results: {
+            number: true,
+            uppercase: true,
+            lowercase: true,
+            special: true,
+            length8: true,
+            disabled: true,
+          },
+        });
 
-  it('handles ExpiredCodeException exception', async () => {
-    await formButton.simulate('click');
-    expect(setLoadingSpy).toHaveBeenCalledWith(false);
-    expect(setState).toHaveBeenCalledWith({ form: 'EXPIRED' });
-  });
+        getWrapper().find(SELECTOR_INPUT).simulate('change', 'test');
+      });
+      it('should attempt to validate input', () => {
+        expect(validationMock.validatePassword).toHaveBeenCalledWith('test');
+      });
+    });
 
-  it('handles generic exception', async () => {
-    await formButton.simulate('click');
-    expect(setLoadingSpy).toHaveBeenCalledWith(false);
-    expect(setState).toHaveBeenCalledWith({ form: 'FAIL' });
-  });
+    describe('and valid password fields are successfully submitted', () => {
+      beforeEach(() => {
+        fetchJsonMock.mockResolvedValueOnce({});
 
-  it('clears errors on successful form completion', async () => {
-    await formButton.simulate('click');
-    expect(validateRequiredSpy).toHaveBeenCalledTimes(2);
-    expect(validatePasswordSpy).toHaveBeenCalledTimes(1);
-    expect(validatePasswordSpy).toHaveBeenCalledWith('Valid123!');
-    expect(validateMatchingSpy).toHaveBeenCalledTimes(1);
-    expect(validateMatchingSpy).toHaveBeenCalledWith('Valid123!', 'Valid123!');
-    expect(setLoadingSpy).toHaveBeenCalledWith(false);
-    expect(setState).toHaveBeenCalledWith({});
-    expect(setState).toHaveBeenCalledWith(true);
-  });
+        setFieldValidation(true, true, true);
 
-  it('executes password onChange funcs', () => {
-    const passwordInput = wrapper.find('[data-test="reset-password"]');
-    expect(passwordInput.length).toBe(1);
-    passwordInput.props().onChange('Test123!');
-    expect(setState).toHaveBeenCalledWith('Test123!');
-    expect(validatePasswordSpy).toHaveBeenCalledWith('Test123!');
-  });
+        const formButton = wrapper.find(SELECTOR_FORM_BUTTON);
+        formButton.simulate('click');
+      });
 
-  it('navigates back to login at end of flow', () => {
-    const backToLogin = wrapper.find('[data-test="button-back-to-login"]');
-    backToLogin.simulate('click');
-    expect(mockRouterPush).toHaveBeenCalledWith('/');
-  });
+      it('renders password reset confirmation', () => {
+        dialogueContainer = getDialogueContainer();
+        const confirmation = wrapper.find(SELECTOR_DIALOGUE_CONFIRMATION);
+        expect(confirmation.exists()).toBe(true);
+        expect(dialogueContainer.children().getElements()).toHaveLength(1);
+      });
 
-  it('shows repeat password warning', () => {
-    const warning = wrapper.find('[data-test="repeat-password-warning"]');
-    expect(warning.length).toEqual(1);
-  });
+      describe('and back to login button is clicked', () => {
+        beforeEach(() => wrapper.find(SELECTOR_BACK_BUTTON).simulate('click'));
 
-  it('shows code expired warning', () => {
-    codeExpiredWarning = wrapper.find('[data-test="code-expired-warning"]');
-    expect(codeExpiredWarning.length).toEqual(1);
+        it('navigates back to home page', () => {
+          expect(pushFn).toHaveBeenCalledWith('/');
+          expect(pushFn).toHaveBeenCalledTimes(1);
+        });
+      });
+    });
+
+    describe('and previously used passwords are submitted', () => {
+      beforeEach(() => {
+        fetchJsonMock.mockRejectedValueOnce({ data: { code: 401 } });
+
+        setFieldValidation(true, true, true);
+
+        const formButton = wrapper.find(SELECTOR_FORM_BUTTON);
+        formButton.simulate('click');
+      });
+
+      it('renders repeat password warning in reset form', () => {
+        dialogueContainer = getDialogueContainer();
+        const resetForm = dialogueContainer.find(SELECTOR_REQUEST_FORM);
+        const repeatPasswordWarning = dialogueContainer.find(SELECTOR_WARNING_REPEAT);
+
+        expect(repeatPasswordWarning.exists()).toBe(true);
+        expect(resetForm.exists()).toBe(true);
+        expect(dialogueContainer.children().getElements()).toHaveLength(1);
+      });
+    });
+
+    describe.each([
+      ['expired', 'ExpiredCodeException'],
+      ['mismatched', 'CodeMismatchException'],
+    ])('and %s code is submitted', (name, codeName) => {
+      beforeEach(() => {
+        fetchJsonMock.mockRejectedValueOnce({ data: { name: codeName } });
+
+        setFieldValidation(true, true, true);
+
+        const formButton = wrapper.find(SELECTOR_FORM_BUTTON);
+        formButton.simulate('click');
+      });
+
+      it('renders code expired warning in reset form', () => {
+        dialogueContainer = getDialogueContainer();
+        const resetForm = dialogueContainer.find(SELECTOR_REQUEST_FORM);
+        const codeExpiredWarning = dialogueContainer.find(SELECTOR_WARNING_EXPIRED);
+
+        expect(codeExpiredWarning.exists()).toBe(true);
+        expect(resetForm.exists()).toBe(true);
+        expect(dialogueContainer.children().getElements()).toHaveLength(1);
+      });
+    });
+
+    describe.each([
+      ['password is invalid', 1],
+      ["passwords don't match", 2],
+      ['passwords are empty', 3],
+    ])('and %s', (name, testCase) => {
+      beforeEach(() => {
+        if (testCase === 1) setFieldValidation(true, false, true);
+        if (testCase === 2) setFieldValidation(true, true, false);
+        if (testCase === 3) setFieldValidation(false, true, true);
+        wrapper.find(SELECTOR_FORM_BUTTON).simulate('click');
+      });
+
+      it('should not submit data', () => {
+        expect(fetchJsonMock).not.toHaveBeenCalled();
+      });
+
+      it('renders correct validation messages', () => {
+        const resetPassword = wrapper.find(SELECTOR_INPUT).html();
+        const resetPasswordConfirm = wrapper.find(SELECTOR_INPUT_CONFIRM).html();
+
+        if (testCase === 1) expect(resetPassword).toContain('Password must meet all criteria');
+        if (testCase === 2) expect(resetPasswordConfirm).toContain('Passwords must match');
+        if (testCase === 3) {
+          expect(resetPassword).toContain('Password is required');
+          expect(resetPasswordConfirm).toContain('Confirm password is required');
+        }
+      });
+    });
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    count++;
   });
 });
