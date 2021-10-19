@@ -12,6 +12,7 @@ interface ClientAccountAttributes {
   contactName: string;
   contactEmailAddress: string;
   contactTelephoneNumber: string;
+  consultantHours: number | null;
   contractStartDate: Date | null;
   contractEndDate: Date | null;
   contractRollover: boolean | null;
@@ -34,6 +35,8 @@ export class ClientAccount extends Model<ClientAccountAttributes, ClientAccountI
   public contactName!: string;
   public contactEmailAddress!: string;
   public contactTelephoneNumber!: string;
+  
+  public consultantHours!: number | null;
   public contractStartDate!: Date | null;
   public contractEndDate!: Date | null;
   public contractRollover!: boolean | null;
@@ -112,6 +115,11 @@ ClientAccount.init({
   contactTelephoneNumber: {
     type: DataTypes.STRING(20),
     allowNull: false,
+  },
+  consultantHours: {
+    type: DataTypes.INTEGER({ length: 11 }),
+    allowNull: true,
+    defaultValue: true
   },
   contractStartDate: {
     type: DataTypes.DATE,
