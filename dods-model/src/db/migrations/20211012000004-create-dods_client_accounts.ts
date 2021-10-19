@@ -50,6 +50,11 @@ export = {
         type: DataTypes.STRING(20),
         allowNull: false,
       },
+      consultant_hours: {
+        type: DataTypes.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: true
+      },
       contract_start_date: {
         type: DataTypes.DATE,
         allowNull: true,
