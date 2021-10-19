@@ -8,6 +8,8 @@ provider:
   region: eu-west-1
   lambdaHashingVersion: '20201221'
   stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: services
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}

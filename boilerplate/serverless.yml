@@ -11,6 +11,8 @@ provider:
   region: eu-west-1
   runtime: nodejs14.x
   stage: ${opt:stage, 'test'}
+  deploymentBucket:
+    name: scrapping
   lambdaHashingVersion: 20201221
   stackTags:
     service: ${self:service}

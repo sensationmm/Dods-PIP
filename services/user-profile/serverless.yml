@@ -11,6 +11,8 @@ provider:
   region: eu-west-1
   runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: services
   lambdaHashingVersion: 20201221
   apiGateway:
     restApiId: emhumq7ktf
