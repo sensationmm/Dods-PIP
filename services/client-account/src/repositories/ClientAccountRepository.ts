@@ -1,9 +1,4 @@
-import {
-    ClientAccountModel,
-    ClientAccountTeamModel,
-    SubscriptionTypeModel,
-    UserProfileModel,
-} from '../db/models';
+import { ClientAccountModel, SubscriptionTypeModel } from '../db/models';
 import {
     ClientAccountParameters,
     ClientAccountPersister,
@@ -31,14 +26,12 @@ export class ClientAccountError extends Error {
 export class ClientAccountRepository implements ClientAccountPersister {
     static defaultInstance: ClientAccountPersister = new ClientAccountRepository(
         ClientAccountModel,
-        SubscriptionTypeModel,
-        UserProfileModel
+        SubscriptionTypeModel
     );
 
     constructor(
         private model: typeof ClientAccountModel,
-        private subsModel: typeof SubscriptionTypeModel,
-        private userModel: typeof UserProfileModel
+        private subsModel: typeof SubscriptionTypeModel
     ) {}
 
     async createClientAccount(
@@ -126,14 +119,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         const clientAccountModels = await this.model.findAll({
             where: clientAccountWhere,
             subQuery: false,
-            include: [
-                'subscriptionType',
-                {
-                    model: ClientAccountTeamModel,
-                    required: false,
-                    include: [this.userModel],
-                },
-            ],
+            include: ['subscriptionType', 'team'],
             offset: offset,
             limit: limit,
         });
@@ -225,13 +211,11 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: this.userModel,
+            include: ['team'],
         });
 
         if (clientAccountModel) {
-            const UsersPerClientObj: any = clientAccountModel.get('UserProfileModels');
-            const occupiedSeats = Object.keys(UsersPerClientObj).length;
-            return occupiedSeats;
+            return clientAccountModel.team!.length;
         } else {
             throw new Error('Error: clientAccount not found');
         }
