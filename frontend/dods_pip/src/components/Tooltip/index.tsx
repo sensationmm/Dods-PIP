@@ -17,7 +17,6 @@ export interface TooltipProps {
   icon?: Icons;
   trigger?: JSX.Element;
   classShow?: boolean;
-  classHover?: boolean;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -28,9 +27,9 @@ const Tooltip: React.FC<TooltipProps> = ({
   icon,
   trigger,
   classShow,
-  classHover,
 }) => {
   const Component = Styled.tooltipStyle;
+  const darkColor = colorType === 'Dark' ? color.base.white : color.theme.blue;
 
   return (
     <Styled.wrapper data-test="component-tooltip">
@@ -44,17 +43,15 @@ const Tooltip: React.FC<TooltipProps> = ({
           colorLight: colorType === 'Light',
           colorDark: colorType === 'Dark',
           show: classShow ? 'show' : '',
-          hover: classHover ? '' : 'hover',
-          popover: 'popover',
         })}
       >
         <div className="inner">
           {title && (
-            <Text color={colorType === 'Dark' ? color.base.white : color.theme.blue} type="body">
+            <Text color={darkColor} type="body">
               {title}
             </Text>
           )}
-          <Text color={colorType === 'Dark' ? color.base.white : color.theme.blue} type="bodySmall">
+          <Text color={darkColor} type="bodySmall">
             {icon && (
               <Icon
                 src={icon}
