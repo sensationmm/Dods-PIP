@@ -4,9 +4,9 @@ import { Logger } from '../utility';
 
 export const eventLogerMiddleware: AsyncLambdaMiddleware<EventBridgeEvent<string, any>> = async (event, context, callback, next) => {
 
-    Logger.info(`EventLogerMiddleware Entry`, { source: event.source, detailType: event['detail-type'] });
+    Logger.info('EventLogerMiddleware Entry', { source: event.source, detailType: event['detail-type'] });
 
-    await next(event, context, callback);
+    await next!(event, context, callback);
 
-    Logger.info(`EventLogerMiddleware Success`);
+    Logger.info('EventLogerMiddleware Success');
 };

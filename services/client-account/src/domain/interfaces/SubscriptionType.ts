@@ -5,7 +5,7 @@ export interface SubscriptionType {
 }
 
 export interface SubscriptionTypeResponse extends SubscriptionType {
-    id: string;
+    uuid: string;
 }
 
 export interface SubscriptionTypeParameters extends SubscriptionType {}

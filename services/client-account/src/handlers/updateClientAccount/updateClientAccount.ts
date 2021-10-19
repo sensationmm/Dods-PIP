@@ -34,6 +34,12 @@ export const updateClientAccount: AsyncLambdaMiddleware<UpdateClientAccountParam
             }
         }
 
+        await ClientAccountRepository.defaultInstance.UpdateCompletion(
+            clientAccount.clientAccountId,
+            false,
+            2
+        );
+
         const response =
             await ClientAccountRepository.defaultInstance.updateClientAccount(
                 clientAccount

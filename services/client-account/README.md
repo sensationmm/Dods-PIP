@@ -2,6 +2,12 @@
 
 This README would normally document whatever steps are necessary to get your application up and running.
 
+### Local Development
+This is what you need to setup your local development with in order to work on this service:
+* <step 1>
+* <step 2>
+* <step 3>
+
 ### What is this repository for? ###
 
 * Quick summary

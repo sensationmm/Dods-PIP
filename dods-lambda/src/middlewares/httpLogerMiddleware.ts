@@ -4,11 +4,11 @@ import { Logger } from "../utility";
 
 export const httpLogerMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = async (event, context, callback, next) => {
 
-    Logger.info(`HttpLogerMiddleware Entry`, { path: event.path, method: event.httpMethod });
+    Logger.info('HttpLogerMiddleware Entry', { path: event.path, method: event.httpMethod });
 
-    const result = await next(event, context, callback);
+    const result = await next!(event, context, callback);
 
-    Logger.info(`HttpLogerMiddleware Success`);
+    Logger.info('HttpLogerMiddleware Success');
 
     return result;
 };

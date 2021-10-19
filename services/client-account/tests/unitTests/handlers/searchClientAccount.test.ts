@@ -1,4 +1,8 @@
-import { HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import {
+    HttpResponse,
+    HttpStatusCode,
+    createContext,
+} from '@dodsgroup/dods-lambda';
 
 import { ClientAccountRepository } from '../../../src/repositories';
 import { SearchClientAccountParameters } from '../../../src/domain';
@@ -13,18 +17,24 @@ const SUCCESS_SEARCH_RESPONSE = [
         name: 'Juan account',
         notes: 'This is the account for Juan.',
         completed: false,
+        is_completed: false,
+        last_step_completed: 1,
     },
     {
         id: '1dcad502-0c50-4dab-9192-13b5e882b97d',
         name: 'Juan Other account',
         notes: 'This is the account for Juan.',
         completed: false,
+        is_completed: false,
+        last_step_completed: 1,
     },
 ];
 
 jest.mock('../../../src/repositories/ClientAccountRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
+
+const defaultContext = createContext();
 
 beforeEach(() => {
     mockedClientAccountRepository.defaultInstance.searchClientAccount.mockImplementation(
@@ -60,8 +70,11 @@ describe(`${FUNCTION_NAME} handler`, () => {
             offset: 0,
             data: SUCCESS_SEARCH_RESPONSE,
         });
-        // @ts-ignore
-        const response = await searchClientAccount(searchParams);
+
+        const response = await searchClientAccount(
+            searchParams,
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
 
@@ -82,8 +95,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: `No matches found for search parameters: ${searchParams}`,
         });
 
-        // @ts-ignore
-        const response: HttpResponse = await searchClientAccount(searchParams);
+        const response = await searchClientAccount(
+            searchParams,
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
 

@@ -44,6 +44,7 @@ def run(event, context):
                 content['contentSourceURL'] = config.get('parser', 'sourceUrl')
                 content['extractDate'] = datetime.now().isoformat()
                 content['content'] = item
+                content['metadata']['jurisdiction'] = 'UK'
 
                 short_date = datetime.now().strftime("%Y-%m-%d")
                 try:
@@ -56,7 +57,8 @@ def run(event, context):
                     item['questionText'],
                     item['Location']['@href'],
                     item['tablingMemberPrinted']['item'],
-                    item['AnswerDate']['#text']
+                    item['AnswerDate']['#text'],
+                    short_date
                 )
 
                 document = object

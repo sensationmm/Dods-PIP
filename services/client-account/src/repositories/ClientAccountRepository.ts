@@ -15,7 +15,7 @@ import {
     parseResponseFromModel,
     parseSearchClientAccountResponse,
 } from '../domain';
-import { Op, ValidationError, WhereOptions } from 'sequelize';
+import { Op, WhereOptions, col, fn, where } from 'sequelize';
 
 export class ClientAccountError extends Error {
     constructor(message: string, cause: any) {
@@ -41,27 +41,27 @@ export class ClientAccountRepository implements ClientAccountPersister {
     ) {}
 
     async createClientAccount(
-        clientAccount: ClientAccountParameters | null
+        clientAccountParameters: ClientAccountParameters | null
     ): Promise<ClientAccountResponse | undefined> {
-        if (!clientAccount) {
+        if (!clientAccountParameters?.clientAccount) {
             throw new Error('Error: clientAccount cannot be empty');
-        }
-
-        try {
-            const newClientAccountModel = await this.model.create(
-                parseModelParameters(clientAccount)
-            );
-            const newClientAccount = parseResponseFromModel(
-                newClientAccountModel
-            );
-
-            return newClientAccount;
-        } catch (error) {
-            if (error instanceof ValidationError) {
-                throw new ClientAccountError(
-                    'Error: Bad request',
-                    error.errors
+        } else {
+            try {
+                const newAccount = parseModelParameters(
+                    clientAccountParameters
                 );
+
+                const newClientAccountModel = await this.model.create(
+                    newAccount
+                );
+                const newClientAccount = parseResponseFromModel(
+                    newClientAccountModel
+                );
+
+                return newClientAccount;
+            } catch (error) {
+                console.error(error);
+                throw error;
             }
         }
     }
@@ -75,7 +75,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: [this.subsModel],
+            include: ['subscriptionType'],
         });
 
         if (clientAccountModel) {
@@ -90,7 +90,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
     async findOne(where: Record<string, any>): Promise<ClientAccountResponse> {
         const clientAccountModel = await this.model.findOne({
             where,
-            include: [this.subsModel],
+            include: ['subscriptionType'],
         });
 
         if (clientAccountModel) {
@@ -135,14 +135,11 @@ export class ClientAccountRepository implements ClientAccountPersister {
             where: clientAccountWhere,
             subQuery: false,
             include: [
-                {
-                    model: SubscriptionTypeModel,
-                    required: false,
-                },
+                'subscriptionType',
                 {
                     model: ClientAccountTeamModel,
                     required: false,
-                    include: [UserProfileModel],
+                    include: [this.userModel],
                 },
             ],
             offset: offset,
@@ -177,18 +174,14 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 where: { uuid: updateParameters.subscription },
             });
 
-            let subscriptionId: number;
-
-            if (subscriptionData) {
-                subscriptionId = subscriptionData.id;
-            } else {
+            if (!subscriptionData) {
                 throw new Error('Error: Wrong subscription uuid');
             }
 
-            // Save directly if comes as a parameter
-            //clientAccountToUpdate.subscription=updateParameters.subscription;
+            //clientAccountToUpdate.SubscriptionType = subscriptionData;
 
-            clientAccountToUpdate.subscription = subscriptionId;
+            await clientAccountToUpdate.setSubscriptionType(subscriptionData);
+
             clientAccountToUpdate.subscriptionSeats =
                 updateParameters.subscription_seats;
             clientAccountToUpdate.consultantHours =
@@ -203,19 +196,25 @@ export class ClientAccountRepository implements ClientAccountPersister {
                     updateParameters.contract_end_date
                 );
 
-            const updateRecord = await clientAccountToUpdate.save();
+            await clientAccountToUpdate.save();
 
-            const newClientAccount = parseResponseFromModel(updateRecord);
+            let updatedClientAccount = await this.model.findOne({
+                where: { uuid: updateParameters.clientAccountId },
+                include: 'subscriptionType',
+            });
 
-            return newClientAccount;
+            if (updatedClientAccount) {
+                const newClientAccount =
+                    parseResponseFromModel(updatedClientAccount);
+                return newClientAccount;
+            }
+            return [];
         } else {
             throw new Error('Error: clientAccount not found');
         }
     }
 
-    async getClientAccountSeats(
-        clientAccountId: string
-    ): Promise<number | never[]> {
+    async getClientAccountSeats(clientAccountId: string): Promise<number> {
         if (!clientAccountId) {
             throw new Error('Error: clientAccountId cannot be empty');
         }
@@ -225,9 +224,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
         });
 
         if (clientAccountModel) {
-            const subscriptionSeats: number =
-                clientAccountModel.subscriptionSeats;
-            return subscriptionSeats;
+            const subscriptionSeats = clientAccountModel.subscriptionSeats;
+            return subscriptionSeats!;
         } else {
             throw new Error('Error: clientAccount not found');
         }
@@ -251,5 +249,45 @@ export class ClientAccountRepository implements ClientAccountPersister {
         } else {
             throw new Error('Error: clientAccount not found');
         }
+    }
+
+    async checkNameAvailability(name: string): Promise<boolean> {
+        const lowerCaseName = name.trim().toLocaleLowerCase();
+
+        const coincidences = await this.model.findAll({
+            where: {
+                name: where(
+                    fn('LOWER', col('name')),
+                    'LIKE',
+                    '%' + lowerCaseName + '%'
+                ),
+            },
+        });
+
+        return coincidences.length == 0;
+    }
+
+    async UpdateCompletion(
+        clientAccountId: string,
+        isCompleted: boolean,
+        lastStepCompleted: number
+    ): Promise<boolean> {
+        if (!clientAccountId) {
+            throw new Error('Error: clientAccountId cannot be empty');
+        }
+
+        const clientAccountModel = await this.model.findOne({
+            where: { uuid: clientAccountId },
+        });
+
+        if (clientAccountModel) {
+            clientAccountModel.isCompleted = isCompleted;
+            clientAccountModel.lastStepCompleted = lastStepCompleted;
+
+            clientAccountModel.save();
+
+            return true;
+        }
+        return false;
     }
 }

@@ -8,54 +8,61 @@ export type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
 
 export interface LogObject {
     level: LogLevel;
-    msg: string | unknown;
+    message: string | unknown;
     data?: LogData;
 }
 
 export class Logger {
 
-    private static log(o: LogObject): LogObject {
-        const time = new Date().toISOString();
-        const msg = typeof o.msg === 'string' ? o.msg : JSON.stringify(o.msg)
+    private static log(logObject: LogObject): LogObject {
+        const { level, message, data = '' } = logObject;
 
         if (isLocalOrTestStage()) {
-            switch (o.level) {
+            const time = new Date().toISOString();
+            const log = [time, level, message, data];
+
+            switch (level) {
                 case 'DEBUG':
-                    console.debug(time, msg, o.data);
+                    console.debug(...log);
                     break;
                 case 'INFO':
-                    console.info(time, msg, o.data);
+                    console.info(...log);
                     break;
                 case 'WARN':
-                    console.warn(time, msg, o.data);
+                    console.warn(...log);
                     break;
                 case 'ERROR':
-                    console.error(time, msg, o.data);
+                    console.error(...log);
                     break;
             }
         } else {
-            console.log(time, o.level, msg, o.data);
+            if (level === 'INFO') {
+                console.log(message, data);
+            } else {
+                console.log(level, message, data);
+            }
         }
-        return o;
+
+        return logObject;
     }
 
-    static debug(msg: string | unknown, data?: LogData): LogObject {
-        return Logger.log({ level: 'DEBUG', msg, data });
+    static debug(message: string | unknown, data?: LogData): LogObject {
+        return Logger.log({ level: 'DEBUG', message, data });
     }
 
-    static info(msg: string | unknown, data?: LogData): LogObject {
-        return Logger.log({ level: 'INFO', msg, data });
+    static info(message: string | unknown, data?: LogData): LogObject {
+        return Logger.log({ level: 'INFO', message, data });
     }
 
-    static warn(msg: string | unknown, data?: LogData): LogObject {
-        return Logger.log({ level: 'WARN', msg, data });
+    static warn(message: string | unknown, data?: LogData): LogObject {
+        return Logger.log({ level: 'WARN', message, data });
     }
 
-    static error(msg: string | unknown, data?: unknown): LogObject {
+    static error(message: string | unknown, data?: unknown): LogObject {
         if (data instanceof Error) {
             data = { ...data, message: data.message, stack: data.stack, name: data.name };
         }
 
-        return Logger.log({ level: 'ERROR', msg, data: data as LogData });
+        return Logger.log({ level: 'ERROR', message, data: data as LogData });
     }
 }

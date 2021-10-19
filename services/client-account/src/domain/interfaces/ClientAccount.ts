@@ -1,17 +1,19 @@
 import { Pagination } from '../interfaces';
-import SubscriptionType from '../../db/models/SubscriptionType';
+import { SubscriptionTypeResponse } from '..';
 
 export interface ClientAccount {
     name: string;
-    notes: string | null;
+    notes?: string;
     subscription_seats?: number;
     contact_name: string;
     contact_email_address: string;
     contact_telephone_number: string;
-    contract_start_date: string | Date;
-    contract_rollover: boolean;
-    contract_end_date?: string | Date;
+    contract_start_date?: Date;
+    contract_rollover?: boolean;
+    contract_end_date?: Date;
     consultant_hours?: number;
+    is_completed?: boolean;
+    last_step_completed?: number;
 }
 
 export interface ClientAccountParameters {
@@ -22,23 +24,23 @@ export interface ClientAccountResponse extends ClientAccount {
     //id: number;
     uuid: string;
 
-    subscription?: SubscriptionType | number;
+    subscription?: SubscriptionTypeResponse;
 }
 
 export interface SearchClientAccountResponse {
     id: string;
     name: string;
-    notes: string | null;
-    subscription?: string | undefined;
-    location?: number | undefined;
+    notes?: string;
+    subscription?: string;
+    location?: number;
     projects?: number;
-    team?:
-        | {
-              name: string | undefined;
-              type: 'consultant' | 'client' | undefined;
-          }[]
-        | undefined;
+    team?: {
+        name: string;
+        type?: 'consultant' | 'client';
+    }[];
     completed: boolean;
+    is_completed: boolean;
+    last_step_completed: number;
 }
 
 export interface SearchClientAccountParameters extends Pagination {
@@ -60,5 +62,3 @@ export interface UpdateClientAccountParameters {
     contract_rollover: boolean;
     contract_end_date?: string;
 }
-
-export interface ClientAccountParameters extends ClientAccount {}
