@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
@@ -10,7 +11,15 @@ export type alignmentType = 'topLeft' | 'topRight' | 'right';
 export interface PopoverProps extends Omit<TooltipProps, 'trigger' | 'colorType' | 'icon'> {}
 
 const Popover: React.FC<PopoverProps> = ({ ...rest }) => {
-  const [show, setShow] = useState(false);
+  const firstRun = React.useRef(true);
+  const [show, setShow] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+  }, [show]);
 
   const toggleClass = () => setShow(!show);
 
@@ -22,7 +31,9 @@ const Popover: React.FC<PopoverProps> = ({ ...rest }) => {
 
   return (
     <Styled.popoverWrapper data-test="popover">
-      <Tooltip {...rest} trigger={customButton} classShow={show} classHover={true}></Tooltip>
+      <OutsideClickHandler onOutsideClick={() => setShow(false)}>
+        <Tooltip {...rest} trigger={customButton} classShow={show}></Tooltip>
+      </OutsideClickHandler>
     </Styled.popoverWrapper>
   );
 };
