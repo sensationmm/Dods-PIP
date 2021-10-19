@@ -14,6 +14,7 @@ launch.json
 .vscode
 CertificateAuthorityCertificate.pem
 mariadb/conf
+docker/*/data
 
 # Compiled Java class files
 *.class
