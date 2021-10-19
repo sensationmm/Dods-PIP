@@ -103,6 +103,7 @@ def run(event, context):
                     final_content['contentSourceURL'] = link
                     final_content['extractDate'] = datetime.now().isoformat()
                     final_content['content'] = content_field
+                    final_content['metadata']['jurisdiction'] = 'UK'
 
                     try:
                         Validator().content_schema_validator(final_content)
@@ -112,7 +113,7 @@ def run(event, context):
                         continue
 
                     short_date = datetime.now().strftime("%Y-%m-%d")
-                    hash_code = Common.hash(title, link, short_date + '3')
+                    hash_code = Common.hash(title, link, short_date)
                     document = object
                     try:
                         document = DataModel.get(hash_code)
