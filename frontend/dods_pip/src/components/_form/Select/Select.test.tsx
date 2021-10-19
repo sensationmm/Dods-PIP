@@ -90,7 +90,7 @@ describe('Select', () => {
       const icon = wrapper.find('[data-test="selected-icon"]');
       expect(icon.length).toEqual(0);
       expect(input.props().value).toEqual('Choose an option...');
-      expect(input.props().icon).toEqual(Icons.ChevronDown);
+      expect(input.props().icon).toEqual(Icons.ChevronDownBold);
     });
 
     it('renders custom placeholder', () => {
@@ -150,7 +150,7 @@ describe('Select', () => {
 
     it('shows correct open state', () => {
       const input = wrapper.find('[data-test="select-input"]');
-      expect(input.props().icon).toEqual(Icons.ChevronUp);
+      expect(input.props().icon).toEqual(Icons.ChevronUpBold);
     });
 
     it('renders disabled state', () => {

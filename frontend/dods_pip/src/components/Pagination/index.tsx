@@ -125,7 +125,7 @@ const Pagination = (dataLength: number): PaginationType => {
           >
             <Icon
               size={IconSize.medium}
-              src={Icons.ChevronLeft}
+              src={Icons.ChevronLeftBold}
               color={hasPrev ? color.theme.blueMid : color.base.grey}
             />
           </Styled.pageChanger>
@@ -139,7 +139,7 @@ const Pagination = (dataLength: number): PaginationType => {
           >
             <Icon
               size={IconSize.medium}
-              src={Icons.ChevronRight}
+              src={Icons.ChevronRightBold}
               color={hasNext ? color.theme.blueMid : color.base.grey}
             />
           </Styled.pageChanger>
