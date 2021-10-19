@@ -56,9 +56,36 @@ export const textarea = styled.textarea<TextAreaProps>`
   &:disabled {
     color: ${color.base.grey};
     border-color: ${color.base.grey};
-    background: ${color.shadow.grey};
+    background: ${color.base.greyLight};
     pointer-events: none;
     cursor: not-allowed;
+    ::-webkit-input-placeholder {
+      /* WebKit, Blink, Edge */
+      color: ${color.base.greyDark};
+    }
+    :-moz-placeholder {
+      /* Mozilla Firefox 4 to 18 */
+      color: ${color.base.greyDark};
+      opacity: 1;
+    }
+    ::-moz-placeholder {
+      /* Mozilla Firefox 19+ */
+      color: ${color.base.greyDark};
+      opacity: 1;
+    }
+    :-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      color: ${color.base.greyDark};
+    }
+    ::-ms-input-placeholder {
+      /* Microsoft Edge */
+      color: ${color.base.greyDark};
+    }
+
+    ::placeholder {
+      /* Most modern browsers support this now. */
+      color: ${color.alert.red};
+    }
   }
 `;
 
