@@ -61,19 +61,26 @@ provider:
 
 custom:
     envs:
-      dev:
-        DB_HOST: ${ssm:/infra/dev/rds/endpoint}
-        DB_NAME: dods
-        DB_USER: ${ssm:/infra/dev/rds/username}
-        DB_PASSWORD: ${ssm:/infra/dev/rds/password}
-        apiGatewayId: emhumq7ktf
-        apiRootResourceId: lzvvrnid32
+        dev:
+            DB_HOST: ${ssm:/infra/dev/rds/endpoint}
+            DB_NAME: dods
+            DB_USER: ${ssm:/infra/dev/rds/username}
+            DB_PASSWORD: ${ssm:/infra/dev/rds/password}
+            apiGatewayId: emhumq7ktf
+            apiRootResourceId: lzvvrnid32
 
-      local:
-        DB_HOST: localhost
-        DB_NAME: dods
-        DB_USER: dods
-        DB_PASSWORD: dods
+        test:
+            DB_HOST: localhost
+            DB_NAME: dods
+            DB_USER: dods
+            DB_PASSWORD: dods
+    
+        local:
+            DB_HOST: localhost
+            DB_NAME: dods
+            DB_USER: dods
+            DB_PASSWORD: dods
+
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -159,7 +166,15 @@ functions:
         events:
             - http:
                   method: post
-                  path: client-accounts/{clientAccountId}/team-members
+                  path: clientaccount/{clientAccountId}/teammember
+    
+    getClientAccountTeamMembers:
+        handler: src/handlers/getClientAccountTeamMembers/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: clientaccount/{clientAccountId}/teammember
 
     updateClientAccount:
         handler: src/handlers/updateClientAccount/index.handle

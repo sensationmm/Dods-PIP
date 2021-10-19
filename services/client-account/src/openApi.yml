@@ -96,7 +96,16 @@ paths:
                 '404':
                     $ref: '#/components/responses/NotFound'
 
-    /client-accounts/{clientAccountId}/team-members:
+    /clientaccount/{clientAccountId}/teammember:
+        get:
+            operationId: getClientAccountTeamMembers
+            summary: 'Get Team Members from Client Account'
+            description: 'Add Team Member to Client Account'
+            responses:
+                '200':
+                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
         post:
             operationId: addTeamMemberToClientAccount
             summary: 'Add Team Member to Client Account'
