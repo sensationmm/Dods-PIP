@@ -7,20 +7,6 @@ import spacing from '../../globals/spacing';
 export const wrapper = styled.div`
   position: relative;
 
-  &:focus,
-  &:hover {
-    .hover {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-
-  .hover {
-    opacity: 0;
-    transition: opacity 0.5s;
-    visibility: hidden;
-  }
-
   > span {
     display: inline-block;
     padding: ${spacing(1)} ${spacing(0.25)};
@@ -29,12 +15,21 @@ export const wrapper = styled.div`
 `;
 
 export const tooltipStyle = styled.div`
+  opacity: 0;
+  transition: opacity 0.5s;
+  visibility: hidden;
   position: absolute;
   bottom: 100%;
   left: 0;
   margin-bottom: ${spacing(5)};
   max-width: ${spacing(70)};
   width: 100vw;
+
+  ${wrapper}:focus &,
+  ${wrapper}:hover & {
+    opacity: 1;
+    visibility: visible;
+  }
 
   .inner {
     display: inline-block;
