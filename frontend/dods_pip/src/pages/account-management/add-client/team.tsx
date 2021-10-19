@@ -2,7 +2,7 @@ import React from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
 import InputText from '../../../components/_form/InputText';
-import RadioGroup from '../../../components/_form/radio';
+import RadioGroup from '../../../components/_form/RadioGroup';
 import PageActions from '../../../components/_layout/PageActions';
 import Panel from '../../../components/_layout/Panel';
 import SectionHeader from '../../../components/_layout/SectionHeader';
@@ -425,13 +425,13 @@ const Team: React.FC<TeamProps> = ({
               <Spacer size={10} />
 
               <RadioGroup
-                name="client-access"
+                groupName="client-access"
                 label="Assign access"
                 items={[
                   { label: 'Admin', value: 'admin' },
                   { label: 'User', value: 'user' },
                 ]}
-                value={clientAccess}
+                selectedValue={clientAccess}
                 onChange={setClientAccess}
               />
 
