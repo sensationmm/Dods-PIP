@@ -32,11 +32,19 @@ variable "db_sub_gr_name" {
   default     = "mariadbrdssub_gr_name"
   type        = string
 }
-variable "sec_grp_rds" {
-  description = "required security group for rds"
+
+variable "sec_grp_bastion" {
+  description = "required security group for bastion"
   default     = ""
   type        = string
 }
+
+variable "bastion_host_key_pair_name" {
+  description = "User provided key pair for SSH connectivity"
+  default     = "dods-bastion-key"
+  type        = string
+}
+
 variable "identifier" {
   description = "required for rds db definition"
   default     = "mariadbrds"

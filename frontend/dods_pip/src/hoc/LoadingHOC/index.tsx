@@ -4,7 +4,6 @@ import React from 'react';
 
 import Loader from '../../components/Loader';
 import Notification, { NotificationProps } from '../../components/Notification';
-import { getIndexById } from '../../utils/array';
 import * as Styled from './LoadingHOC.styles';
 
 export type LoadingHOCProps = {
@@ -40,8 +39,7 @@ const LoadingHOC = (WrappedComponent: React.FC<any>): unknown => {
 
     const popNotification = (id: PushNotification['id']) => {
       const current = notificationsRef.current.slice();
-
-      const removeIndex = getIndexById(current, 'id', id) || -1;
+      const removeIndex = current.findIndex((item) => item.id === id);
 
       current.splice(removeIndex, 1);
 

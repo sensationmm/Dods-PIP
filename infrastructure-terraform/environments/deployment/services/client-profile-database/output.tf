@@ -17,3 +17,7 @@ output "db_password" {
 output "db_address" {
   value = module.rds.db_address
 }
+
+output "lambda_sg_id" {
+  value = module.rds.lambda_sg_id
+}

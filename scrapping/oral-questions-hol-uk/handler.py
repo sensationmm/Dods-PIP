@@ -56,7 +56,7 @@ def run(event, context):
                 if Title is None or Title == '':
                     continue
 
-                hash_code = Common.hash(Title, Link)
+                hash_code = Common.hash(Title, Link, short_date)
 
                 Link = urljoin(mainUrl, Link)
 
@@ -110,6 +110,7 @@ def run(event, context):
                     content['content'] = {
                         'html_content': soup
                     }
+                    content['metadata']['jurisdiction'] = 'UK'
                     try:
                         Validator().content_schema_validator(content)
                     except Exception as e:

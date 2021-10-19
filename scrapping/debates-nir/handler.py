@@ -75,6 +75,7 @@ def run(event, context):
                     final_content['content'] = {
                         'html_content': html_content
                     }
+                    content['metadata']['jurisdiction'] = 'UK'
 
                     short_date = datetime.now().strftime("%Y-%m-%d")
                     try:
@@ -83,7 +84,7 @@ def run(event, context):
                         logger.info('Content is not valid')
                         continue
 
-                    hash_code = Common.hash(debate_title_subtitle, url)
+                    hash_code = Common.hash(debate_title_subtitle, url, short_date)
 
                     document = object
                     try:
