@@ -240,3 +240,14 @@ pipelines:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
             - cd tools
             - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+
+    storybook-deployment:
+      - step:
+          name: Storybook deployment (dev)
+          image: gioatsomoglobal/devopstools:0.4.3
+          size: 2x
+          script:
+            - cd ${FRONTEND_SRC}
+            - yarn build-storybook
+            - aws s3 rm s3://test-dods-pip-storybook/
+            - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
