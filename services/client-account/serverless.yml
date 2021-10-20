@@ -1,11 +1,7 @@
 service: client-account
-
 configValidationMode: warn
-
 frameworkVersion: ^2.64.0
-
 variablesResolutionMode: 20210326
-
 projectDir: ../
 
 provider:

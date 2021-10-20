@@ -73,8 +73,6 @@ pipelines:
             - cd services/client-account
             - npm install
             - export SERVERLESS_STAGE=dev
-            - ./setenv.sh
-            - source *.env
             - npm run test:coverage
 
       - step:
@@ -172,8 +170,6 @@ pipelines:
               - cd services/client-account
               - npm install
               - export SERVERLESS_STAGE=dev
-              - ./setenv.sh
-              - source *.env
               - npm run test:coverage 
               - serverless deploy --stage dev
 
