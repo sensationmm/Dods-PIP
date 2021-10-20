@@ -13,6 +13,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
     name: services-lambdas
+
   lambdaHashingVersion: 20201221
   apiGateway:
     restApiId: emhumq7ktf
