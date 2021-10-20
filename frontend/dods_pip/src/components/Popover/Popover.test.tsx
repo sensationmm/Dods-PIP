@@ -14,5 +14,7 @@ describe('Popover', () => {
     const btn = wrapper.find('.btnTrigger');
     btn.simulate('click');
     expect(wrapper.find('.show').length).toEqual(2);
+    btn.simulate('click');
+    expect(wrapper.find('.show').length).toEqual(0);
   });
 });
