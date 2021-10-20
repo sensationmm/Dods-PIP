@@ -116,7 +116,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
         <SectionHeader
           title="About the Account"
           subtitle="Please add the client details below."
-          icon={Icons.IconSuitcase}
+          icon={Icons.Suitcase}
         />
 
         <Spacer size={9} />
@@ -164,7 +164,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
             'Please create a primary contact for the account.',
             'You can assign them to a project once the account is created.',
           ]}
-          icon={Icons.IconPerson}
+          icon={Icons.Person}
         />
 
         <Spacer size={9} />
@@ -219,7 +219,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
             data-test="continue-button"
             label="Save and continue"
             onClick={onSubmit}
-            icon={Icons.IconChevronRight}
+            icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete}
           />

@@ -6,12 +6,17 @@ frameworkVersion: ^2.57.0
 
 variablesResolutionMode: 20210326
 
+projectDir: ../
+
 provider:
     name: aws
     region: eu-west-1
     runtime: nodejs14.x
-    stage: ${opt:stage, 'dev'}
+    stage: ${opt:stage, 'local'}
     lambdaHashingVersion: 20201221
+    vpc:
+      securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds}
+      subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds}
     stackTags:
         service: ${self:service}
         env: ${self:provider.stage}
@@ -26,34 +31,53 @@ provider:
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
-              - 'xray:PutTraceSegments'
-              - 'xray:PutTelemetryRecords'
+            -  'rds:*'
           Resource:
-              - '*'
+            - '*'
+        - Effect: 'Allow'
+          Action:
+            - 'xray:PutTraceSegments'
+            - 'xray:PutTelemetryRecords'
+          Resource:
+            - '*'
     # This section ties the functions to a particular API Gateway instead of creating a new one
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
     apiGateway:
-        restApiId: emhumq7ktf
-        restApiRootResourceId: lzvvrnid32
-        description: Default Gateway for dev deployed with dods-iam
+        restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId}
+        restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId}
+        description: Default Gateway for ${self:provider.stage} deployed with dods-iam
 
     environment:
         SERVERLESS_STAGE: ${self:provider.stage}
         SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-        MARIADB_CONNECTION_STRING: 'mariadb://root:rootPass@127.0.0.1:3306/dods?allowPublicKeyRetrieval=true&useSSL=false'
-        MARIADB_CONNECTION_LIMIT: 5
-        MARIA_DB_HOST: 'localhost'
-        MARIA_DB_USERNAME: 'root'
-        MARIA_DB_PASSWORD: 'rootPass'
-        MARIA_DB_DATABASE: 'dods'
+        DB_DRIVER: mariadb
+        DB_HOST: ${self:custom.envs.${self:provider.stage}.DB_HOST}
+        DB_NAME: ${self:custom.envs.${self:provider.stage}.DB_NAME}
+        DB_USER: ${self:custom.envs.${self:provider.stage}.DB_USER}
+        DB_PASSWORD: ${self:custom.envs.${self:provider.stage}.DB_PASSWORD}
+        DB_CONNECTION_LIMIT: 5
 
 custom:
+    envs:
+      dev:
+        DB_HOST: ${ssm:/infra/dev/rds/endpoint}
+        DB_NAME: dods
+        DB_USER: ${ssm:/infra/dev/rds/username}
+        DB_PASSWORD: ${ssm:/infra/dev/rds/password}
+        apiGatewayId: emhumq7ktf
+        apiRootResourceId: lzvvrnid32
+
+      local:
+        DB_HOST: localhost
+        DB_NAME: dods
+        DB_USER: dods
+        DB_PASSWORD: dods
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
             forceInclude:
-                - express
+                - mariadb
         keepOutputDirectory: false
     serverless-offline:
         httpPort: 3000
@@ -151,3 +175,11 @@ functions:
             - http:
                   method: get
                   path: clientaccount/{clientAccountId}/seats
+
+    checkClientAccountName:
+        handler: src/handlers/checkClientAccountName/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: post
+                  path: checkaccountname

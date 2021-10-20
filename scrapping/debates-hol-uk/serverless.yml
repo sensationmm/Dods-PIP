@@ -13,9 +13,10 @@ plugins:
 # un-comment the resource section if you need a DynamoDB for this lambda
 custom:
   resource_prefix: debates-hol-uk
+  app_acronym: dods-debates-hol-bucket
   default_stage: dev
   stage: ${opt:stage, self:custom.default_stage}
-  stack_name: ${self:custom.resource_prefix}-${self:custom.stage}
+  stack_name: ${self:custom.app_acronym}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
   dynamodb_table: ${self:custom.stack_name}
@@ -57,22 +58,22 @@ provider:
         - s3:*        
       Resource: "arn:aws:s3:::*"
 
-    # - Effect: Allow
-    #   Action:
-    #     - dynamodb:Query
-    #     - dynamodb:Scan
-    #     - dynamodb:GetItem
-    #     - dynamodb:PutItem
-    #     - dynamodb:UpdateItem
-    #     - dynamodb:DeleteItem
-    #     - dynamodb:DescribeTable
-    #   Resource:
-    #     - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource:
+        - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
 
 functions:
   scrape:
     name: scraper-debates-hol-uk-${sls:stage}
-    # description: 
+    description: Ingest Debate HOL Data
     handler: handler.run
     events:
       ## Invoke Lambda function on Mon-Fri at 15:05
@@ -80,21 +81,21 @@ functions:
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 
-# resources:
-#   Resources:
-#     assetDynamoDbTable:
-#       Type: 'AWS::DynamoDB::Table'
-#       DeletionPolicy: ${self:custom.deletion_policy}
-#       Properties:
-#         AttributeDefinitions:
-#           -
-#             AttributeName: document_hash
-#             AttributeType: S
-#         KeySchema:
-#           -
-#             AttributeName: document_hash
-#             KeyType: HASH
-#         ProvisionedThroughput:
-#           ReadCapacityUnits: 5
-#           WriteCapacityUnits: 5
-#         TableName: ${self:custom.dynamodb_table}
+resources:
+  Resources:
+    assetDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: ${self:custom.deletion_policy}
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: document_hash
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: document_hash
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: ${self:custom.dynamodb_table}

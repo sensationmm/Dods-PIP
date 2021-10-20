@@ -11,7 +11,7 @@ export default {
   controls: { hideNoControlsWarning: true },
   argTypes: {
     src: {
-      defaultValue: Icons.IconCross,
+      defaultValue: Icons.Cross,
       options: Object.keys(Icons),
       mapping: Icons,
       control: {

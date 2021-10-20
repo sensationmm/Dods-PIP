@@ -1,9 +1,16 @@
-import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { mocked } from 'ts-jest/utils';
+import {
+    ClientAccountError,
+    ClientAccountRepository,
+} from '../../../src/repositories';
+import {
+    HttpResponse,
+    HttpStatusCode,
+    createContext,
+} from '@dodsgroup/dods-lambda';
 
 import { ClientAccountParameters } from '../../../src/domain';
-import { ClientAccountError, ClientAccountRepository, } from '../../../src/repositories';
 import { createClientAccount } from '../../../src/handlers/createClientAccount/createClientAccount';
+import { mocked } from 'ts-jest/utils';
 
 const FUNCTION_NAME = createClientAccount.name;
 
@@ -14,36 +21,44 @@ const SUCCESS_ACCOUNT_RESPONSE = {
     contact_name: 'Juan',
     contact_email_address: 'juan@xd.com',
     contact_telephone_number: '+573123456531',
-    contract_start_date: '2021-01-01T01:01:01.001Z',
-    contract_rollover: false,
 };
 
 jest.mock('../../../src/repositories/ClientAccountRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
 
-const createClientAccountMock = async (clientAccount: ClientAccountParameters) => {
-    if (!clientAccount.name) {
+const createClientAccountMock = async (params: ClientAccountParameters) => {
+    if (!params.clientAccount.name) {
         throw new ClientAccountError('Error: Bad Request', {
             details: 'error test',
         });
     }
 
-    if (clientAccount.name === 'Error Generator') {
+    if (params.clientAccount.name === 'Error Generator') {
         throw new Error('General error');
     }
 
     return SUCCESS_ACCOUNT_RESPONSE;
 };
 
+const checkClientAccountNameMock = async (name: string) => {
+    return name !== 'Existing Account';
+};
+
 const defaultContext = createContext();
 
 beforeEach(() => {
-    mockedClientAccountRepository.defaultInstance.createClientAccount.mockImplementation(createClientAccountMock);
+    mockedClientAccountRepository.defaultInstance.createClientAccount.mockImplementation(
+        createClientAccountMock
+    );
+    mockedClientAccountRepository.defaultInstance.checkNameAvailability.mockImplementation(
+        checkClientAccountNameMock
+    );
 });
 
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.createClientAccount.mockClear();
+    mockedClientAccountRepository.defaultInstance.checkNameAvailability.mockClear();
 });
 
 describe(`${FUNCTION_NAME} handler`, () => {
@@ -54,9 +69,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             contact_name: 'Juan',
             contact_email_address: 'juan@xd.com',
             contact_telephone_number: '+573123456531',
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-        } as ClientAccountParameters;
+        };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
@@ -64,10 +77,47 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: SUCCESS_ACCOUNT_RESPONSE,
         });
 
-        const response = await createClientAccount(clientAccount, defaultContext);
+        const response = await createClientAccount(
+            { clientAccount },
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
 
-        expect(mockedClientAccountRepository.defaultInstance.createClientAccount).toHaveBeenCalledTimes(1);
+        expect(
+            mockedClientAccountRepository.defaultInstance.createClientAccount
+        ).toHaveBeenCalledTimes(1);
+        expect(
+            mockedClientAccountRepository.defaultInstance.checkNameAvailability
+        ).toHaveBeenCalledTimes(1);
+    });
+
+    test(`${FUNCTION_NAME} account name not available`, async () => {
+        const clientAccount = {
+            name: 'Existing Account',
+            notes: 'This is the account for Juan.',
+            contact_name: 'Juan',
+            contact_email_address: 'juan@xd.com',
+            contact_telephone_number: '+573123456531',
+        };
+
+        const expectedResponse = new HttpResponse(HttpStatusCode.CONFLICT, {
+            success: false,
+            message: `A Client Account already exists with the name: ${clientAccount.name}`,
+        });
+
+        const response = await createClientAccount(
+            { clientAccount },
+            defaultContext
+        );
+
+        expect(response).toEqual(expectedResponse);
+
+        expect(
+            mockedClientAccountRepository.defaultInstance.createClientAccount
+        ).toHaveBeenCalledTimes(0);
+        expect(
+            mockedClientAccountRepository.defaultInstance.checkNameAvailability
+        ).toHaveBeenCalledTimes(1);
     });
 });

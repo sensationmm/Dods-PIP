@@ -44,7 +44,7 @@ describe('Button', () => {
   });
 
   it('renders small variant', () => {
-    const wrapper = shallow(<Button isSmall icon={Icons.IconAdd} />);
+    const wrapper = shallow(<Button isSmall icon={Icons.Add} />);
     const button = wrapper.childAt(0);
     const icon = wrapper.find(Icon);
 
@@ -54,7 +54,7 @@ describe('Button', () => {
   });
 
   it('renders primary icon variant', () => {
-    const wrapper = shallow(<Button type={'primary'} icon={Icons.IconAdd} />);
+    const wrapper = shallow(<Button type={'primary'} icon={Icons.Add} />);
     const button = wrapper.childAt(0);
 
     const icon = wrapper.find(Icon);
@@ -67,7 +67,7 @@ describe('Button', () => {
   });
 
   it('renders secondary icon variant', () => {
-    const wrapper = shallow(<Button type={'secondary'} icon={Icons.IconAdd} />);
+    const wrapper = shallow(<Button type={'secondary'} icon={Icons.Add} />);
     const button = wrapper.childAt(0);
 
     const icon = wrapper.find(Icon);

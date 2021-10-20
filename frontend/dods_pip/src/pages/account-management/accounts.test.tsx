@@ -56,7 +56,9 @@ describe('Account Management: Clients', () => {
       .mockImplementationOnce(() => [0, jest.fn]) //Pagination component setState calls
       .mockImplementationOnce(() => [30, jest.fn]); //Pagination component setState calls
 
-    wrapper = shallow(<Accounts isLoading={false} setLoading={setLoadingSpy} />);
+    wrapper = shallow(
+      <Accounts isLoading={false} setLoading={setLoadingSpy} addNotification={jest.fn} />,
+    );
   });
 
   it('renders without error', () => {
@@ -64,14 +66,14 @@ describe('Account Management: Clients', () => {
     const filterToggleIcon = wrapper.find('[data-test="filter-toggle"]').find(Icon);
     const filterContent = wrapper.find('[data-test="filter-content"]');
     expect(component.length).toEqual(1);
-    expect(filterToggleIcon.props().src).toEqual(Icons.IconChevronUp);
+    expect(filterToggleIcon.props().src).toEqual(Icons.ChevronUpBold);
     expect(filterContent.props().open).toEqual(true);
   });
 
   it('renders with closed filter', () => {
     const filterToggleIcon = wrapper.find('[data-test="filter-toggle"]').find(Icon);
     const filterContent = wrapper.find('[data-test="filter-content"]');
-    expect(filterToggleIcon.props().src).toEqual(Icons.IconChevronDown);
+    expect(filterToggleIcon.props().src).toEqual(Icons.ChevronDownBold);
     expect(filterContent.props().open).toEqual(false);
   });
 

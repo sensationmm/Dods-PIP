@@ -1,10 +1,11 @@
-# websites2020 deployment
+# Dods PIP Infrastructure
 
 This directory manages deployment for the Dods Political intelligence platform and infrastructure.
 Centrally managed and self-documented deployment of new resources and apply CI/CD to the process.
 This allows for version controlled, immutable infrastructure.
 
 ## Requirements
+
 - set up an account area for you project in AWS console
 - set up keypair
   - terraform-key
@@ -41,13 +42,16 @@ This allows for version controlled, immutable infrastructure.
 
 ## Run
 
+> to run the code you need an IAM user account that can either access all the resources it needs or can assume a role which can
+> in this project arn:aws:iam::390773179818:user/terraform can assume the role of qa and prod environment accounts
+
 > initial set up will require using the -lock=false parameter until the database responsible for storing lock info is created.
-> `terraform init `
-> `terraform plan `
-> `terraform apply`
+> `terraform init ` > `terraform plan ` > `terraform apply -var db_password="password-from-keystore" `
 
 ## Destroy
+
 > To remove infrastructure managed by Terraform use `tearraform destroy`
+
 - on destruction the remaining components may not be removed:
   - S3 buckets with content
   - dynamoDB Databases
@@ -57,10 +61,10 @@ This allows for version controlled, immutable infrastructure.
 
 Resources should have the following tag convention, camelcase tags, lower case values:
 
-|Name|Default|Options|
-|---|---|---|
-|`environment`|-|`development`, `production`, `staging`, `test`|
-|`project`|-|`pip`, `project-2`|
-|`version`|`1`|`1`, `2`, `3` etc|
-|`owner`|-|`michael brown`, `giovanni espinosa`|
-|`managedBy`|-|`terraform`, `serverless`, `console`|
+| Name          | Default | Options                                        |
+| ------------- | ------- | ---------------------------------------------- |
+| `environment` | -       | `development`, `production`, `staging`, `test` |
+| `project`     | -       | `pip`, `project-2`                             |
+| `version`     | `1`     | `1`, `2`, `3` etc                              |
+| `owner`       | -       | `michael brown`, `giovanni espinosa`           |
+| `managedBy`   | -       | `terraform`, `serverless`, `console`           |

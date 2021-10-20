@@ -11,6 +11,7 @@ provider:
   region: eu-west-1
   runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
+
   lambdaHashingVersion: 20201221
   stackTags:
     service: ${self:service}
@@ -28,16 +29,16 @@ provider:
         - "xray:PutTelemetryRecords"
       Resource:
         - "*"
-  # This section ties the functions to a particular API Gateway instead of creating a new one
-  # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
-  # We will move to dynamic Gateway selection based on sls stage.
+    # This section ties the functions to a particular API Gateway instead of creating a new one
+    # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
+    # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-    restApiId: emhumq7ktf
-    restApiRootResourceId: lzvvrnid32
-    description: Default Gateway for dev deployed with dods-ia
+      restApiId: emhumq7ktf
+      restApiRootResourceId: lzvvrnid32
+      description: Default Gateway for dev deployed with dods-ia
 
   environment:
-    NODE_ENV: ${opt:NODE_ENV, 'dev'}
+    NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
 

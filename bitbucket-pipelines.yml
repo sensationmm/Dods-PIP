@@ -1,11 +1,18 @@
+definitions:
+  caches:
+    fe-node: frontend/dods-pip/node_modules
+  services:
+    docker:
+      memory: 7128
 options:
-  max-time: 15
+  max-time: 30
 pipelines:
   default:
     - parallel:
       - step:
           name: Test build Frontend
           image: node:alpine
+          size: 2x
           services:
             - docker
           caches:
@@ -21,7 +28,6 @@ pipelines:
             - yarn test
             - yarn lint
             - yarn build
-            - yarn build-storybook
 
       - step:
           name: Deploy Graphologi Webhook
@@ -45,15 +51,13 @@ pipelines:
           condition:
             changesets:
               includePaths:
-                - "services/userProfile/**"
+                - "services/user-profile/**"
           script:
-            - ./what2build.sh
-            - cd services/userProfile
+            - cd services/user-profile
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - NODE_ENV=test npm run test
             - NODE_ENV=test npm run test:coverage
             
       - step:
@@ -66,13 +70,30 @@ pipelines:
               includePaths:
                 - "services/client-account/**"
           script:
-            - ./what2build.sh
             - cd services/client-account
             - npm install
             - export SERVERLESS_STAGE=dev
             - ./setenv.sh
             - source *.env
-            - NODE_ENV=test npm run test
+            - npm run test:coverage
+
+      - step:
+          name: Editorial Workflow Service
+          image: gioatsomoglobal/nodejs-builder:0.1
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/editorial-workflow/**"
+          script:
+            - ./what2build.sh
+            - cd services/editorial-workflow
+            - npm install
+            - export SERVERLESS_STAGE=dev
+            - ./setenv.sh
+            - source *.env
+            - npm run test
 
       - step:
           name: Validate OpenAPI definitions
@@ -88,6 +109,7 @@ pipelines:
       - step:
           name: Deploy Scrapping Lambdas
           image: gioatsomoglobal/devopstools:0.4.2
+          size: 2x
           services:
             - docker
           caches:
@@ -127,15 +149,13 @@ pipelines:
             condition:
               changesets:
                 includePaths:
-                  - "services/userProfile/**"
+                  - "services/user-profile/**"
             script:
-              - ./what2build.sh 
-              - cd services/userProfile
+              - cd services/user-profile
               - npm install
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
               - source *.env
-              - NODE_ENV=test npm run test 
               - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
@@ -154,8 +174,25 @@ pipelines:
               - export SERVERLESS_STAGE=dev
               - ./setenv.sh
               - source *.env
-              - NODE_ENV=test npm run test 
-              - NODE_ENV=test npm run test:coverage 
+              - npm run test:coverage 
+              - serverless deploy --stage dev
+
+        - step: 
+            name: Editorial Workflow Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.3
+            condition:
+              changesets:
+                includePaths:
+                  - "services/editorial-workflow/**"
+            script:
+              - ./what2build.sh
+              - cd services/editorial-workflow
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - ./setenv.sh
+              - source *.env
+              - npm run test:coverage 
               - serverless deploy --stage dev
 
         - step:
@@ -166,7 +203,8 @@ pipelines:
             services:
               - docker
             caches:
-              - node
+              - fe-node
+
             condition:
               changesets:
                 includePaths:
@@ -176,15 +214,25 @@ pipelines:
               - cd ${FRONTEND_SRC}
               - yarn install
               - yarn lint
-              - yarn build-storybook
               - yarn test
-              - aws s3 rm s3://test-dods-pip-storybook/
-              - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
               - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
               - docker build -t ${IMAGE_NAME} .
               - docker push ${IMAGE_NAME}
               - cd ../../tools
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+
+        - step:
+            name: Terraform Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.3
+            condition:
+              changesets:
+                includePaths:
+                  - "infrastructure-terraform/**"
+            script:
+              - terraform init
+              - terraform plan
+              - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
 
   custom:
     deployment-to-staging:
