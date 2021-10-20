@@ -29,8 +29,6 @@ export const errorMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = asyn
         });
 
         Logger.error('ErrorMiddleware:', error);
-
-        throw error;
     }
 
     return response;

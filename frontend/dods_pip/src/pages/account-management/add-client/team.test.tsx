@@ -6,6 +6,7 @@ import Team from './team';
 describe('Team', () => {
   let wrapper, setActiveStep;
   let count = 0;
+  const mockSetCreateUser = jest.fn();
   const mockSetAddUser = jest.fn();
   const mockSetErrors = jest.fn();
   const mockSetClientUsers = jest.fn();
@@ -42,21 +43,21 @@ describe('Team', () => {
   };
 
   const props = [
-    defaultProps,
-    defaultProps,
-    defaultProps,
-    defaultProps,
-    defaultProps,
-    { ...defaultProps, clientEmail: 'test' },
-    { ...defaultProps, clientEmail2: 'test' },
-    { ...defaultProps, clientTelephone: '123' },
-    { ...defaultProps, clientTelephone2: '123' },
-    { ...defaultProps, clientFirstName: 'test', errors: { clientFirstName: 'error' } },
-    { ...defaultProps, clientLastName: 'test', errors: { clientLastName: 'error' } },
-    { ...defaultProps, clientEmail: 'test@test.com', errors: { clientEmail: 'error' } },
-    { ...defaultProps, clientEmail2: 'test@test.com', errors: { clientEmail2: 'error' } },
-    { ...defaultProps, clientTelephone: '123456789', errors: { clientTelephone: 'error' } },
-    { ...defaultProps, clientTelephone2: '123456789', errors: { clientTelephone2: 'error' } },
+    defaultProps, // renders without error
+    defaultProps, // opens add client
+    defaultProps, // fails empty client first name
+    defaultProps, // fails empty client last name
+    defaultProps, // fails empty client email
+    { ...defaultProps, clientEmail: 'test' }, // fails invalid client email
+    { ...defaultProps, clientEmail2: 'test' }, // fails empty client email
+    { ...defaultProps, clientTelephone: '123' }, // fails invalid client telephone
+    { ...defaultProps, clientTelephone2: '123' }, // fails invalid client telephone 2
+    { ...defaultProps, clientFirstName: 'test', errors: { clientFirstName: 'error' } }, // clears first name error
+    { ...defaultProps, clientLastName: 'test', errors: { clientLastName: 'error' } }, // clears last name error
+    { ...defaultProps, clientEmail: 'test@test.com', errors: { clientEmail: 'error' } }, // clears email error
+    { ...defaultProps, clientEmail2: 'test@test.com', errors: { clientEmail2: 'error' } }, // clears email 2 error
+    { ...defaultProps, clientTelephone: '123456789', errors: { clientTelephone: 'error' } }, // clears telephone error
+    { ...defaultProps, clientTelephone2: '123456789', errors: { clientTelephone2: 'error' } }, // clears telephone 2 error
     {
       ...defaultProps,
       teamMembers: [],
@@ -65,34 +66,47 @@ describe('Team', () => {
       clientLastName: 'Test',
       clientEmail: 'test@test.com',
       clientAccess: 'user',
-    },
-    defaultProps,
-    { ...defaultProps, clientUsers: ['team member 1', 'team member 1'] },
+    }, // adds client
+    defaultProps, // cancels add client
+    { ...defaultProps, clientUsers: ['team member 1', 'team member 1'] }, // shows added users
+    { ...defaultProps, teamMembers: ['team member 1', 'team member 2', 'team member 3'] }, // shows added team members in closed state
+    {
+      ...defaultProps,
+      accountManagers: ['team member 1', 'team member 2', 'team member 3', 'team member 4'],
+    }, // shows added account managers in closed state
+    defaultProps, // closing team toggles users
+    defaultProps, // closing users toggles team
   ];
 
   const states = [
-    { addUser: false },
-    { addUser: false },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: true },
-    { addUser: false },
+    { createUser: false, addUser: false }, // renders without error
+    { createUser: false, addUser: false }, // opens add client
+    { createUser: false, addUser: true }, // fails empty client first name
+    { createUser: false, addUser: true }, // fails empty client last name
+    { createUser: false, addUser: true }, // fails empty client email
+    { createUser: false, addUser: true }, // fails invalid client email
+    { createUser: false, addUser: true }, // fails empty client email
+    { createUser: false, addUser: true }, // fails invalid client telephone
+    { createUser: false, addUser: true }, // fails invalid client telephone 2
+    { createUser: false, addUser: true }, // clears first name error
+    { createUser: false, addUser: true }, // clears last name error
+    { createUser: false, addUser: true }, // clears email error
+    { createUser: false, addUser: true }, // clears email 2 error
+    { createUser: false, addUser: true }, // clears telephone error
+    { createUser: false, addUser: true }, // clears telephone 2 error
+    { createUser: false, addUser: true }, // adds client
+    { createUser: false, addUser: true }, // cancels add client
+    { createUser: false, addUser: false }, // shows added users
+    { createUser: true, addUser: false }, // shows added team members in closed state
+    { createUser: true, addUser: false }, // shows added account managers in closed state
+    { createUser: false, addUser: false }, // closing team toggles users
+    { createUser: true, addUser: false }, // closing users toggles team
   ];
 
   beforeEach(() => {
-    useStateSpy.mockImplementationOnce(() => [states[count].addUser, mockSetAddUser]);
+    useStateSpy
+      .mockImplementationOnce(() => [states[count].createUser, mockSetCreateUser])
+      .mockImplementationOnce(() => [states[count].addUser, mockSetAddUser]);
     setActiveStep = jest.fn();
     wrapper = shallow(<Team {...props[count]} />);
   });
@@ -204,6 +218,28 @@ describe('Team', () => {
   it('shows added users', () => {
     const addedUsers = wrapper.find('[data-test="added-client-users"]');
     expect(addedUsers.length).toEqual(2);
+  });
+
+  it('shows added team members in closed state', () => {
+    const addedTeamMembers = wrapper.find('[id="consultant"]').props().header.props.children[1]
+      .props.children[1].props.children[2].props.children;
+    expect(addedTeamMembers.length).toEqual(3);
+  });
+
+  it('shows added account managers in closed state', () => {
+    const addedAccountManagers = wrapper.find('[id="consultant"]').props().header.props.children[1]
+      .props.children[2].props.children[1].props.children[1].props.children;
+    expect(addedAccountManagers.length).toEqual(4);
+  });
+
+  it('closing team toggles users', () => {
+    const addedAccountManagers = wrapper.find('[id="consultant"]').props().callback();
+    expect(mockSetCreateUser).toHaveBeenCalledWith(true);
+  });
+
+  it('closing users toggles team', () => {
+    const addedAccountManagers = wrapper.find('[id="client"]').props().callback();
+    expect(mockSetCreateUser).toHaveBeenCalledWith(false);
   });
 
   afterEach(() => {

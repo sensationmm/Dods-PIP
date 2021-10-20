@@ -219,7 +219,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
             data-test="continue-button"
             label="Save and continue"
             onClick={onSubmit}
-            icon={Icons.ChevronRight}
+            icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete}
           />

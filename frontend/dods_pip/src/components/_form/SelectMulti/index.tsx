@@ -91,7 +91,7 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
             optional={optional}
             helperText={helperText}
             onChange={() => setIsOpen(true)}
-            icon={isOpen && !isDisabled ? Icons.ChevronUp : Icons.ChevronDown}
+            icon={isOpen && !isDisabled ? Icons.ChevronUpBold : Icons.ChevronDownBold}
             css={{ pointerEvents: 'none' }}
             onFocus={() => setIsOpen(true)}
             tabIndex={1}

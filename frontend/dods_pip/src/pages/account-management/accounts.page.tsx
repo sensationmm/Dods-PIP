@@ -131,7 +131,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   Filter
                 </Text>
                 <Icon
-                  src={showFilter ? Icons.ChevronUp : Icons.ChevronDown}
+                  src={showFilter ? Icons.ChevronUpBold : Icons.ChevronDownBold}
                   color={color.theme.blueMid}
                 />
               </Styled.filterToggleButon>
@@ -259,7 +259,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
                     <Avatar type="consultant" number={overflowTeamConsultant} size="small" />
                   )}
                 </Styled.teamList>,
-                <Icon key={`account-${count}-link`} src={Icons.ChevronRight} />,
+                <Icon key={`account-${count}-link`} src={Icons.ChevronRightBold} />,
               ];
             })}
           />
