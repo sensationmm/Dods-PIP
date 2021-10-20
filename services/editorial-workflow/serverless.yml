@@ -12,7 +12,7 @@ provider:
   runtime: nodejs14.x
   stage: ${opt:stage, 'test'}
   deploymentBucket:
-    name: services
+    name: services-lambdas
   lambdaHashingVersion: 20201221
   stackTags:
     service: ${self:service}

@@ -13,6 +13,8 @@ provider:
     region: eu-west-1
     runtime: nodejs14.x
     stage: ${opt:stage, 'local'}
+    deploymentBucket:
+      name: services-lambdas
     lambdaHashingVersion: 20201221
     vpc:
       securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds}

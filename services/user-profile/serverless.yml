@@ -12,7 +12,7 @@ provider:
   runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
-    name: services
+    name: services-lambdas
   lambdaHashingVersion: 20201221
   apiGateway:
     restApiId: emhumq7ktf
