@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 
+import { ClientAccountTeamModel } from '.';
 import { UserProfileModelAttributes } from '../types';
 import sequelize from '../sequelize';
 
@@ -19,6 +20,7 @@ class UserProfileModel
     public telephoneNumber2!: string;
 
     public fullName!: string;
+    public ClientAccountTeamModel?: ClientAccountTeamModel;
 
     //Timestamps
     public readonly createdAt!: Date;

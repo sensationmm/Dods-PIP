@@ -1,11 +1,7 @@
 service: client-account
-
 configValidationMode: warn
-
 frameworkVersion: ^2.64.0
-
 variablesResolutionMode: 20210326
-
 projectDir: ../
 
 provider:
@@ -13,7 +9,7 @@ provider:
     region: eu-west-1
     runtime: nodejs14.x
     stage: ${opt:stage, 'local'}
-    profile: dods-dev
+    # profile: dods-dev
     lambdaHashingVersion: 20201221
     vpc:
       securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
@@ -61,19 +57,20 @@ provider:
 
 custom:
     envs:
-      dev:
-        DB_HOST: ${ssm:/infra/dev/rds/endpoint}
-        DB_NAME: dods
-        DB_USER: ${ssm:/infra/dev/rds/username}
-        DB_PASSWORD: ${ssm:/infra/dev/rds/password}
-        apiGatewayId: emhumq7ktf
-        apiRootResourceId: lzvvrnid32
+        dev:
+            DB_HOST: ${ssm:/infra/dev/rds/endpoint}
+            DB_NAME: dods
+            DB_USER: ${ssm:/infra/dev/rds/username}
+            DB_PASSWORD: ${ssm:/infra/dev/rds/password}
+            apiGatewayId: emhumq7ktf
+            apiRootResourceId: lzvvrnid32
 
-      local:
-        DB_HOST: localhost
-        DB_NAME: dods
-        DB_USER: dods
-        DB_PASSWORD: dods
+        local:
+            DB_HOST: localhost
+            DB_NAME: dods
+            DB_USER: dods
+            DB_PASSWORD: dods
+
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -159,7 +156,15 @@ functions:
         events:
             - http:
                   method: post
-                  path: client-accounts/{clientAccountId}/team-members
+                  path: clientaccount/{clientAccountId}/teammember
+    
+    getClientAccountTeamMembers:
+        handler: src/handlers/getClientAccountTeamMembers/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: clientaccount/{clientAccountId}/teammember
 
     updateClientAccount:
         handler: src/handlers/updateClientAccount/index.handle

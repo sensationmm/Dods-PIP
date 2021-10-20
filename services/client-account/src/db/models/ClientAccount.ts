@@ -1,27 +1,19 @@
 import {
-    Association,
-    BelongsToCreateAssociationMixin,
     BelongsToGetAssociationMixin,
+    BelongsToManyGetAssociationsMixin,
     BelongsToSetAssociationMixin,
     DataTypes,
     Model,
 } from 'sequelize';
-import {
-    ClientAccountModelAttributes,
-    ClientAccountModelCreationAttributes,
-} from '../types';
-
-import ClientAccountTeam from './ClientAccountTeamModel';
-import SubscriptionType from './SubscriptionType';
+import { ClientAccountModelAttributes, ClientAccountModelCreationAttributes } from '../types';
 //import SubscriptionType from './SubscriptionType';
-import { SubscriptionTypeModel } from '.';
+import { SubscriptionTypeModel, UserProfileModel } from '.';
+
+import SubscriptionType from './SubscriptionType';
 import sequelize from '../sequelize';
 
 class ClientAccountModel
-    extends Model<
-        ClientAccountModelAttributes,
-        ClientAccountModelCreationAttributes
-    >
+    extends Model<ClientAccountModelAttributes, ClientAccountModelCreationAttributes>
     implements ClientAccountModelAttributes
 {
     public id!: number;
@@ -39,9 +31,6 @@ class ClientAccountModel
     public isCompleted!: boolean;
     public lastStepCompleted!: number;
 
-    public SubscriptionType?: SubscriptionType;
-    public ClientAccountTeam?: ClientAccountTeam;
-
     //Timestamps
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -49,21 +38,12 @@ class ClientAccountModel
 
     //Model Associations
     public getSubscriptionType!: BelongsToGetAssociationMixin<SubscriptionType>;
-    public setSubscriptionType!: BelongsToSetAssociationMixin<
-        SubscriptionType,
-        number
-    >;
+    public setSubscriptionType!: BelongsToSetAssociationMixin<SubscriptionType, number>;
 
-    public getTeam!: BelongsToGetAssociationMixin<ClientAccountTeam>;
-    public setTeam!: BelongsToCreateAssociationMixin<ClientAccountTeam>;
-
-    public static associations: {
-        subscription: Association<ClientAccountModel, SubscriptionType>;
-        team: Association<ClientAccountModel, ClientAccountTeam>;
-    };
-    //public setSubscription!: BelongsToCreateAssociationMixin<SubscriptionType>;
+    public getTeam!: BelongsToManyGetAssociationsMixin<UserProfileModel>;
 
     public subscriptionType?: SubscriptionTypeModel;
+    public team?: UserProfileModel[];
 
     // public static associations: {
     //     subscription: Association<ClientAccountModel, SubscriptionTypeModel>;

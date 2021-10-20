@@ -1,9 +1,10 @@
-import { ClientAccountModel, SubscriptionTypeModel } from '../../db';
+import { ClientAccountModel, SubscriptionTypeModel, UserProfileModel } from '../../db';
 import {
     ClientAccountParameters,
     ClientAccountResponse,
     SearchClientAccountResponse,
     SubscriptionTypeResponse,
+    TeamMemberResponse,
 } from '.';
 
 import { ClientAccountModelCreationAttributes } from '../../db/types';
@@ -21,9 +22,7 @@ export function parseSubscriptionResponseFromModel(
     return response;
 }
 
-export function parseResponseFromModel(
-    model: ClientAccountModel
-): ClientAccountResponse {
+export function parseResponseFromModel(model: ClientAccountModel): ClientAccountResponse {
     const response: ClientAccountResponse = {
         uuid: model.uuid,
         name: model.name,
@@ -53,10 +52,8 @@ export function parseModelParameters(
         name: requestParameters.clientAccount.name,
         notes: requestParameters.clientAccount.notes,
         contactName: requestParameters.clientAccount.contact_name,
-        contactEmailAddress:
-            requestParameters.clientAccount.contact_email_address,
-        contactTelephoneNumber:
-            requestParameters.clientAccount.contact_telephone_number,
+        contactEmailAddress: requestParameters.clientAccount.contact_email_address,
+        contactTelephoneNumber: requestParameters.clientAccount.contact_telephone_number,
     };
 
     return parameters;
@@ -69,23 +66,21 @@ export function parseSearchClientAccountResponse(
         id: model.uuid,
         name: model.name,
         notes: model.notes,
-        subscription: model.SubscriptionType && model.SubscriptionType.name,
-        location: model.SubscriptionType && model.SubscriptionType.location,
+        subscription: model.subscriptionType && model.subscriptionType.name,
+        location: model.subscriptionType && model.subscriptionType.location,
         projects: 0,
-        team:
-            model.ClientAccountTeam &&
-            model.ClientAccountTeam.UserProfileModels &&
-            model.ClientAccountTeam.UserProfileModels.map((item) => {
-                return {
-                    name: item.fullName,
-                    type:
-                        model.ClientAccountTeam &&
-                        model.ClientAccountTeam.parsedType,
-                };
-            }),
+        team: model.team && model.team.map(parseTeamMember),
         completed: true,
         is_completed: model.isCompleted,
         last_step_completed: model.lastStepCompleted,
     };
     return response;
+}
+
+export function parseTeamMember(item: UserProfileModel): TeamMemberResponse {
+    return {
+        id: item.uuid,
+        name: item.fullName,
+        type: item.ClientAccountTeamModel!.parsedType,
+    };
 }
