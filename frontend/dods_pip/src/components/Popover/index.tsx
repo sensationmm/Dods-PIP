@@ -25,7 +25,7 @@ const Popover: React.FC<PopoverProps> = ({ ...rest }) => {
 
   const customButton = (
     <button className="btnTrigger" onClick={toggleClass}>
-      <Icon src={Icons.IconInfo} size={IconSize.large} />
+      <Icon src={Icons.Info} size={IconSize.large} />
     </button>
   );
 
