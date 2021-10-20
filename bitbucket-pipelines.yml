@@ -62,7 +62,7 @@ pipelines:
             
       - step:
           name: Client Account Service
-          image: gioatsomoglobal/nodejs-builder:0.1
+          image: gioatsomoglobal/nodejs-builder:0.2
           caches:
             - node
           condition:

@@ -69,12 +69,6 @@ custom:
             apiGatewayId: emhumq7ktf
             apiRootResourceId: lzvvrnid32
 
-        test:
-            DB_HOST: localhost
-            DB_NAME: dods
-            DB_USER: dods
-            DB_PASSWORD: dods
-    
         local:
             DB_HOST: localhost
             DB_NAME: dods
