@@ -248,6 +248,7 @@ pipelines:
           size: 2x
           script:
             - cd ${FRONTEND_SRC}
+            - yarn install
             - yarn build-storybook
             - aws s3 rm s3://test-dods-pip-storybook/
             - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
