@@ -6,14 +6,15 @@
 # Node artifact files
 node_modules/
 dist/
-.serverless/
-.webpack/
-coverage/
-launch.json
-.offline*
+.env
+.webpack
+.serverless
 .vscode
-CertificateAuthorityCertificate.pem
-mariadb/conf
+coverage
+__blobstorage__
+__queuestorage__
+__azurite*
+.env*
 docker/*/data
 
 # Compiled Java class files

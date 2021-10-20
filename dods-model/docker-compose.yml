@@ -16,3 +16,4 @@ services:
       - ${PWD}/docker/mariadb/data:/var/lib/mysql:rw
       - ${PWD}/docker/mariadb/initdb_sql_scripts:/docker-entrypoint-initdb.d/:ro
       - ${PWD}/docker/mariadb/mariadb.conf:/etc/mysql/conf.d
+      
