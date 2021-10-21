@@ -8,7 +8,7 @@ export const getUserData: AsyncLambdaMiddleware<GetUserDataParameters> = async (
         throw new HttpError("Request QueryString should contain Email field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: HttpResponse<string>;
+    let response: HttpResponse;
 
     try {
         const result = await AwsCognito.defaultInstance.getUserData(accessToken);

@@ -43,8 +43,6 @@
         "@types/axios": "^0.14.0",
         "@types/jest": "^27.0.2",
         "@types/node": "^16.10.2",
-        "@types/nut-pipe": "^1.1.2",
-        "@types/yamljs": "^0.2.31",
         "copy-webpack-plugin": "^9.0.1",
         "cucumber-html-reporter": "^5.5.0",
         "grunt": "^1.4.1",
@@ -52,6 +50,7 @@
         "jest": "^27.2.4",
         "mockserver-client": "^5.11.2",
         "open": "^8.2.1",
+        "openapi-types": "^9.3.0",
         "pre-commit": "^1.2.2",
         "sequelize-mock": "^0.10.2",
         "serverless": "^2.64.0",
@@ -76,9 +75,6 @@
         "axios": "^0.21.4",
         "joi": "^17.4.2",
         "mariadb": "^2.5.4",
-        "nut-pipe": "^1.1.6",
-        "openapi-types": "^9.3.0",
-        "sequelize": "^6.6.5",
-        "yamljs": "^0.3.0"
+        "sequelize": "^6.6.5"
     }
 }
