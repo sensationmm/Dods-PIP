@@ -10,7 +10,7 @@ export const deleteUser: AsyncLambdaMiddleware<DeleteUserParameters> = async ({ 
         throw new HttpError("Request Body should contain Password field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: HttpResponse<string>;
+    let response: HttpResponse;
 
     try {
         const result = await AwsCognito.defaultInstance.deleteUser(email, password);

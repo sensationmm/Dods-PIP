@@ -12,7 +12,7 @@ export const signUp: AsyncLambdaMiddleware<SignUpParameters> = async ({ email, p
         throw new HttpError("Request Body should contain Password field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: HttpResponse<string>;
+    let response: HttpResponse;
 
     try {
         await AwsCognito.defaultInstance.signUp(email, password);
