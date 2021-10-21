@@ -33,8 +33,8 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-      restApiId: emhumq7ktf
-      restApiRootResourceId: lzvvrnid32
+      restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId}
+      restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId}
       description: Default Gateway for dev deployed with dods-ia
 
   environment:
@@ -43,6 +43,10 @@ provider:
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
 
 custom:
+  envs:
+    dev:
+      apiGatewayId: emhumq7ktf
+      apiRootResourceId: lzvvrnid32
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
