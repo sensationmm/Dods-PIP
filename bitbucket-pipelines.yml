@@ -79,7 +79,7 @@ pipelines:
 
       - step:
           name: Editorial Workflow Service
-          image: gioatsomoglobal/nodejs-builder:0.1
+          image: gioatsomoglobal/nodejs-builder:0.2
           caches:
             - node
           condition:
@@ -87,7 +87,6 @@ pipelines:
               includePaths:
                 - "services/editorial-workflow/**"
           script:
-            - ./what2build.sh
             - cd services/editorial-workflow
             - npm install
             - export SERVERLESS_STAGE=dev
