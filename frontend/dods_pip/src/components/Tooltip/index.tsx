@@ -33,7 +33,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <Styled.wrapper data-test="component-tooltip">
-      {trigger && trigger}
+      {trigger}
 
       <Component
         className={classNames({
@@ -47,13 +47,14 @@ const Tooltip: React.FC<TooltipProps> = ({
       >
         <div className="inner">
           {title && (
-            <Text color={darkColor} type="body">
+            <Text data-test="component-title" color={darkColor} type="body">
               {title}
             </Text>
           )}
           <Text color={darkColor} type="bodySmall">
             {icon && (
               <Icon
+                data-test="component-icon"
                 src={icon}
                 size={IconSize.medium}
                 color={colorType === 'Light' ? color.theme.blue : color.base.white}
