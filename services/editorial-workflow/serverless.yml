@@ -35,7 +35,7 @@ provider:
   apiGateway:
       restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId}
       restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId}
-      description: Default Gateway for dev deployed with dods-ia
+      description: Default Gateway for ${self:provider.stage} deployed with dods-ia
 
   environment:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
@@ -48,6 +48,10 @@ custom:
     dev:
       apiGatewayId: emhumq7ktf
       apiRootResourceId: lzvvrnid32
+    qa:
+      apiGatewayId: e5txxyf6ik
+      apiRootResourceId: bxik56m9t1
+      
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true

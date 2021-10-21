@@ -73,6 +73,17 @@ custom:
       getUserByNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
       getRoleEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
 
+    qa:
+      DB_HOST: ${ssm:/infra/qa/rds/endpoint}
+      DB_NAME: dods
+      DB_USER: ${ssm:/infra/qa/rds/username}
+      DB_PASSWORD: ${ssm:/infra/qa/rds/password}
+      apiGatewayId: e5txxyf6ik
+      apiRootResourceId: bxik56m9t1
+      getUserEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
+      getUserByNameEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
+      getRoleEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
+
     local:
       getUserEndpoint: http://localhost:1081/user
       getUserByNameEndpoint: http://localhost:1081/userByName

@@ -9,7 +9,6 @@ provider:
     region: eu-west-1
     runtime: nodejs14.x
     stage: ${opt:stage, 'local'}
-    # profile: dods-dev
     lambdaHashingVersion: 20201221
     vpc:
       securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
@@ -64,6 +63,14 @@ custom:
             DB_PASSWORD: ${ssm:/infra/dev/rds/password}
             apiGatewayId: emhumq7ktf
             apiRootResourceId: lzvvrnid32
+
+        qa:
+            DB_HOST: ${ssm:/infra/qa/rds/endpoint}
+            DB_NAME: dods
+            DB_USER: ${ssm:/infra/qa/rds/username}
+            DB_PASSWORD: ${ssm:/infra/qa/rds/password}
+            apiGatewayId: e5txxyf6ik
+            apiRootResourceId: bxik56m9t1
 
         local:
             DB_HOST: localhost
