@@ -1,12 +1,11 @@
 import { EditorialRepository } from "./EditorialRepository";
 import { CreateEditorialRecordParameters, EditorialRecord} from "../domain";
 import dynamoDB from "../dynamodb"
+import { config } from '../domain';
 
 import { v4 as uuidv4 } from 'uuid';
 import {AWSError} from "aws-sdk";
 const AWS = require("aws-sdk");
-
-const DYNAMO_TABLE = 'editorial-records-development-job-table'
 
 export class EditorialRecordRepository implements EditorialRepository {
     constructor(private dynamoDB: typeof AWS.DynamoDB.DocumentClient) {}
@@ -14,7 +13,7 @@ export class EditorialRecordRepository implements EditorialRepository {
     static defaultInstance: EditorialRepository = new EditorialRecordRepository(dynamoDB);
 
     static async createEditorialRecordPutRequest(data: EditorialRecord): Promise<any> {
-        return { TableName: DYNAMO_TABLE, Item: data };
+        return { TableName: config.dynamodb.dynamoTable, Item: data };
     }
 
     async sendPutRequestToDynamo(request: any): Promise<any> {

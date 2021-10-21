@@ -41,6 +41,7 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    DYNAMO_TABLE: editorial-records-${self:provider.stage}-table
 
 custom:
   envs:

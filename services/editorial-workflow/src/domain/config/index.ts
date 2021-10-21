@@ -81,5 +81,8 @@ export const config = {
         downstreamEndpoints: {
         } as DownstreamEndpoints
     },
-    aws: {}
+    aws: {},
+    dynamodb: {
+        dynamoTable: envVars.DYNAMO_TABLE as string,
+    }
 };
