@@ -10,7 +10,8 @@ provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
-  stage: ${opt:stage, 'test'}
+  stage: ${opt:stage, 'dev'}
+
   lambdaHashingVersion: 20201221
   stackTags:
     service: ${self:service}
@@ -32,22 +33,21 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-      restApiId: emhumq7ktf
-      restApiRootResourceId: lzvvrnid32
+      restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId}
+      restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId}
       description: Default Gateway for dev deployed with dods-ia
 
   environment:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    DYNAMO_TABLE: editorial-records-${self:provider.stage}-table
 
 custom:
-  endpoints:
+  envs:
     dev:
-      sayTurkishHelloEndpoint: http://localhost:1082/editorial-record
-
-    prod:
-      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/editorial-record
+      apiGatewayId: emhumq7ktf
+      apiRootResourceId: lzvvrnid32
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -82,8 +82,8 @@ plugins:
   - serverless-offline
 
 functions:
-  create-editorial-workflow:
-    handler: src/handlers/createEditorialWorkflow/index.handle
+  create-editorial-record:
+    handler: src/handlers/createEditorialRecord/index.handle
     description: Triggered on HTTP request
     events:
       - http:

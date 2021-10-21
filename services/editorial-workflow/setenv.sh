@@ -25,8 +25,8 @@ for line in "${ENVS[@]}"; do
    DEF=${line%,}
 
    # Split variable name and value
-   VAR=${DEF%: *} 
-   VALUE=${DEF#*: } 
+   VAR=${DEF%: *}
+   VALUE=${DEF#*: }
 
    # Get rid of all double quotes in var name
    VAR=${VAR//\"/}
