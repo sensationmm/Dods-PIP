@@ -11,26 +11,26 @@ export const wrapper = styled.div`
   }
 `;
 
-const base = styled.button`
+type ButtonProps = {
+  disabled: boolean;
+};
+
+const base = styled.button<ButtonProps>`
   font-family: 'Open Sans Bold';
   font-size: 16px;
-  outline: 0;
   border-width: 1px;
   border-style: solid;
   width: 135px;
   padding: 0 ${spacing(4)};
   height: 40px;
   border-radius: 4px;
-  cursor: pointer;
+  cursor: ${({ disabled }) => !disabled && 'pointer'};
+  pointer-events: ${({ disabled }) => !disabled && 'none'};
   position: relative;
   width: 100%;
 
   &.inline {
     width: auto;
-  }
-
-  &.disabled {
-    pointer-events: none;
   }
 
   &.small {
@@ -65,50 +65,39 @@ const base = styled.button`
   }
 `;
 
-export const primary = styled(base)`
+export const primary = styled(base)<ButtonProps>`
   color: ${color.base.white};
-  background-color: ${color.theme.blueMid};
-  border-color: ${color.theme.blueMid};
+  border-color: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)}; 
+  background ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)};
 
+  &:active,
   &:hover,
   &:focus {
     background-color: ${color.theme.blueDark};
     border-color: ${color.theme.blueDark};
   }
-
-  &.disabled {
-    background-color: ${color.shadow.grey};
-    border-color: ${color.shadow.grey};
-  }
 `;
 
 export const secondary = styled(base)`
-  color: ${color.theme.blueMid};
+  color: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)};
   background-color: ${color.base.white};
-  border-color: ${color.theme.blueMid};
+  border-color: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)};
 
+  &:active,
   &:hover,
   &:focus {
     background-color: ${color.shadow.grey};
-  }
-
-  &.disabled {
-    color: ${color.shadow.grey};
-    border-color: ${color.shadow.grey};
   }
 `;
 
 export const text = styled(base)`
-  color: ${color.theme.blueMid};
+  color: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)};
   background-color: transparent;
   border-color: transparent;
 
+  &:active,
   &:hover,
   &:focus {
     background-color: ${color.shadow.grey};
-  }
-
-  &.disabled {
-    color: ${color.shadow.grey};
   }
 `;
