@@ -22,6 +22,58 @@ paths:
           $ref: '#/components/responses/Unauthenticated'
         '403':
           $ref: '#/components/responses/Unauthorized'
+    get:
+      summary: List Editorial Records found by search parameters
+      parameters:
+        - in: query
+          name: searchTerm
+          description: Search Criteria
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: contentSource
+          description: Search Criteria
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: informationType
+          description: Search Criteria
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: status
+          description: Search Criteria
+          schema:
+            type: integer
+          required: false
+        - in: query
+          name: page
+          description: Current page selected in pagination
+          schema:
+            type: integer
+          required: false
+        - in: query
+          name: pageSize
+          description: Quantity of items per page in pagination
+          schema:
+            type: integer
+          required: false
+      responses:
+        '200':
+          description: Returned Editorial Records found with search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditorialRecordListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
 
 
 components:
@@ -75,16 +127,50 @@ components:
         - message
     EditorialRecord:
       type: object
-      required:
-        - document_name
-        - s3_location
       properties:
-        document_name:
+        documentName:
           type: string
           example: Some UK Parliament Oral Question
-        s3_location:
+          required: true
+        s3Location:
           type: string
           example: arn:aws:s3:::editorial-workflow-prod/editorial-workflow/01012020/some-question.json
+          required: true
+        assignedEditor:
+          oneOf: 
+            - type: string 
+            - type: null
+          required: false
+        editorStartTime:
+          type: string
+          format: date
+          example: '2020-09-02 09:30:26'
+          required: false
+        editorFinishTime:
+          type: string
+          format: date
+          example: '2020-09-03 09:30:26'
+          required: false
+        status:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: In Progress
+          required: false
+        size:
+          type: string
+          example: '300 KB'
+          required: false
+        createdAt:
+          type: string
+          format: date
+          example: '2020-09-01 09:30:26'
+          required: false
+
     EditorialRecordResponse:
       allOf:
         - $ref: '#/components/schemas/EditorialRecord'
@@ -96,3 +182,19 @@ components:
           type: string
           format: uuid
           example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    EditorialRecordListResponse:
+      type: 'object'
+      properties:
+        totalRecords:
+          type: integer
+          required: true
+          example: 1
+        filteredRecords:
+          type: integer
+          required: true
+          example: 1
+        results:
+          type: 'array'
+          required: true
+          items:
+            $ref: '#/components/schemas/EditorialRecordResponse'
