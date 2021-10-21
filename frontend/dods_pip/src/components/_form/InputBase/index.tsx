@@ -54,9 +54,9 @@ const InputBase: React.FC<InputBaseProps> = ({
         <Styled.input
           id={id}
           data-test="component-input-base-input"
+          disabled={isDisabled}
           className={classNames({
             error: typeof error === 'string',
-            disabled: isDisabled,
             small: size === 'small',
             medium: size === 'medium',
           })}

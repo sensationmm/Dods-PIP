@@ -44,8 +44,8 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <Styled.wrapper data-test="component-button">
       <Component
+        disabled={disabled}
         className={classNames({
-          disabled: disabled,
           small: isSmall,
           icon: icon,
           iconLeft: icon && iconAlignment === 'left',
