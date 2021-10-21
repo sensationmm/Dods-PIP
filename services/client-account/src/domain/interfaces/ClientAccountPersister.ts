@@ -3,6 +3,7 @@ import {
     ClientAccountResponse,
     SearchClientAccountParameters,
     SearchClientAccountResponse,
+    TeamMemberResponse,
     UpdateClientAccountParameters,
 } from '.';
 
@@ -24,6 +25,8 @@ export interface ClientAccountPersister {
     getClientAccountSeats(clientAccountId: string): Promise<number>;
 
     getClientAccountUsers(clientAccountId: string): Promise<number>;
+
+    getClientAccountTeam(clientAccountId: string): Promise<TeamMemberResponse[]>;
 
     checkNameAvailability(name: string): Promise<boolean>;
 

@@ -1,3 +1,7 @@
+const { setEnvironmentVariablesForTest } = require('./setEnvironmentVariablesForTest');
+
+setEnvironmentVariablesForTest();
+
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',

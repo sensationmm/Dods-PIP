@@ -8,7 +8,7 @@ export const resendConfirmationCode: AsyncLambdaMiddleware<ResendConfirmationCod
         throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: HttpResponse<string>;
+    let response: HttpResponse;
 
     try {
         await AwsCognito.defaultInstance.resendConfirmationCode(email);

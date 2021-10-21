@@ -1,11 +1,7 @@
 service: client-account
-
 configValidationMode: warn
-
-frameworkVersion: ^2.57.0
-
+frameworkVersion: ^2.64.0
 variablesResolutionMode: 20210326
-
 projectDir: ../
 
 provider:
@@ -14,11 +10,12 @@ provider:
     runtime: nodejs14.x
     stage: ${opt:stage, 'local'}
     deploymentBucket:
-      name: services-lambdas
+      name: pip-${self:provider.stage}-services-lambdas
+
     lambdaHashingVersion: 20201221
     vpc:
-      securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds}
-      subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds}
+      securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
+      subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
     stackTags:
         service: ${self:service}
         env: ${self:provider.stage}
@@ -46,33 +43,36 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
     apiGateway:
-        restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId}
-        restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId}
+        restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId, ""}
+        restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId, ""}
         description: Default Gateway for ${self:provider.stage} deployed with dods-iam
 
     environment:
         SERVERLESS_STAGE: ${self:provider.stage}
         SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-        MARIADB_CONNECTION_LIMIT: 5
-        MARIA_DB_DATABASE: 'dods'
-        MARIA_DB_HOST: ${self:custom.envs.${self:provider.stage}.MARIA_DB_HOST}
-        MARIA_DB_USERNAME: ${self:custom.envs.${self:provider.stage}.MARIA_DB_USERNAME}
-        MARIA_DB_PASSWORD: ${self:custom.envs.${self:provider.stage}.MARIA_DB_PASSWORD}
-        MARIADB_CONNECTION_STRING: 'mariadb://${self:provider.environment.MARIA_DB_USERNAME}:${self:provider.environment.MARIA_DB_PASSWORD}@${self:provider.environment.MARIA_DB_HOST}:3306/dods?allowPublicKeyRetrieval=true&useSSL=false'
+        DB_DRIVER: mariadb
+        DB_HOST: ${self:custom.envs.${self:provider.stage}.DB_HOST, self:custom.envs.local.DB_HOST}
+        DB_NAME: ${self:custom.envs.${self:provider.stage}.DB_NAME, self:custom.envs.local.DB_NAME}
+        DB_USER: ${self:custom.envs.${self:provider.stage}.DB_USER, self:custom.envs.local.DB_USER}
+        DB_PASSWORD: ${self:custom.envs.${self:provider.stage}.DB_PASSWORD, self:custom.envs.local.DB_PASSWORD}
+        DB_CONNECTION_LIMIT: 5
 
 custom:
     envs:
-      dev:
-        MARIA_DB_HOST: ${ssm:/infra/dev/rds/endpoint}
-        MARIA_DB_USERNAME: ${ssm:/infra/dev/rds/username}
-        MARIA_DB_PASSWORD: ${ssm:/infra/dev/rds/password}
-        apiGatewayId: emhumq7ktf
-        apiRootResourceId: lzvvrnid32
+        dev:
+            DB_HOST: ${ssm:/infra/dev/rds/endpoint}
+            DB_NAME: dods
+            DB_USER: ${ssm:/infra/dev/rds/username}
+            DB_PASSWORD: ${ssm:/infra/dev/rds/password}
+            apiGatewayId: emhumq7ktf
+            apiRootResourceId: lzvvrnid32
 
-      local:
-        MARIA_DB_HOST: 'localhost'
-        MARIA_DB_USERNAME: 'root'
-        MARIA_DB_PASSWORD: 'rootPass'
+        local:
+            DB_HOST: localhost
+            DB_NAME: dods
+            DB_USER: dods
+            DB_PASSWORD: dods
+
     webpack:
         webpackConfig: ./webpack.config.js
         includeModules:
@@ -90,7 +90,7 @@ custom:
     localstack:
         stages:
             # list of stages for which the plugin should be enabled
-            - local
+            - passive
         host: http://localhost # optional - LocalStack host to connect to
         edgePort: 4566 # optional - LocalStack edge port to connect to
         autostart: false # optional - Start LocalStack in Docker on Serverless deploy
@@ -158,7 +158,15 @@ functions:
         events:
             - http:
                   method: post
-                  path: client-accounts/{clientAccountId}/team-members
+                  path: clientaccount/{clientAccountId}/teammember
+    
+    getClientAccountTeamMembers:
+        handler: src/handlers/getClientAccountTeamMembers/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: get
+                  path: clientaccount/{clientAccountId}/teammember
 
     updateClientAccount:
         handler: src/handlers/updateClientAccount/index.handle

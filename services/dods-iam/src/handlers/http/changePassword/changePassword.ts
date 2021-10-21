@@ -13,7 +13,7 @@ export const changePassword: AsyncLambdaMiddleware<ChangePasswordParameters> = a
         throw new HttpError("Request Body should contain NewPassword field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: HttpResponse<string>;
+    let response: HttpResponse;
 
     try {
         await AwsCognito.defaultInstance.signIn(email, password);

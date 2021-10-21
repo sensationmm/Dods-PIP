@@ -2,18 +2,22 @@ service: dods-nodejs-lambda-boilerplate
 
 configValidationMode: warn
 
-frameworkVersion: ^2.57.0
+frameworkVersion: ^2.64.0
 
 variablesResolutionMode: 20210326
+
+projectDir: ../
 
 provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
-  stage: ${opt:stage, 'test'}
   deploymentBucket:
-    name: scrapping
+    name: pip-${self:provider.stage}-scrapping-lambdas
+  stage: ${opt:stage, 'local'}
+  profile: dods-dev
   lambdaHashingVersion: 20201221
+  
   stackTags:
     service: ${self:service}
     env: ${self:provider.stage}
@@ -66,7 +70,7 @@ custom:
   localstack:
     stages:
       # list of stages for which the plugin should be enabled
-      - local
+      - passive
     host: http://localhost # optional - LocalStack host to connect to
     edgePort: 4566 # optional - LocalStack edge port to connect to
     autostart: false # optional - Start LocalStack in Docker on Serverless deploy

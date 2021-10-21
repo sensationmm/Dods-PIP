@@ -13,7 +13,7 @@ export const resetPassword: AsyncLambdaMiddleware<ResetPasswordParameters> = asy
         throw new HttpError("Request Body should contain VerificationCode field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: HttpResponse<string>;
+    let response: HttpResponse;
 
     try {
         const decodedEmail = Buffer.from(decodeURIComponent(email), 'base64').toString();

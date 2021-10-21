@@ -1,4 +1,3 @@
-import { config } from '../../domain';
 import ClientAccountModel from './ClientAccount';
 import ClientAccountTeamModel from './ClientAccountTeamModel';
 import SubscriptionTypeModel from './SubscriptionType';
@@ -17,13 +16,6 @@ ClientAccountModel.belongsTo(SubscriptionTypeModel, {
 //     sourceKey: 'id'
 // });
 
-if (!config.isTestEnv) {
-    ClientAccountModel.belongsTo(ClientAccountTeamModel, {
-        foreignKey: 'id',
-        targetKey: 'clientAccountId',
-    });
-}
-
 ClientAccountTeamModel.hasMany(UserProfileModel, {
     foreignKey: 'id',
     sourceKey: 'userId',
@@ -34,17 +26,14 @@ ClientAccountTeamModel.hasMany(UserProfileModel, {
 // });
 
 ClientAccountModel.belongsToMany(UserProfileModel, {
-    through: 'dods_client_account_teams',
+    through: ClientAccountTeamModel,
     foreignKey: 'client_account_id',
+    as: 'team',
 });
 UserProfileModel.belongsToMany(ClientAccountModel, {
-    through: 'dods_client_account_teams',
+    through: ClientAccountTeamModel,
     foreignKey: 'user_id',
+    as: 'account',
 });
 
-export {
-    ClientAccountModel,
-    SubscriptionTypeModel,
-    UserProfileModel,
-    ClientAccountTeamModel,
-};
+export { ClientAccountModel, SubscriptionTypeModel, UserProfileModel, ClientAccountTeamModel };

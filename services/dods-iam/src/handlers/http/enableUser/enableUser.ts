@@ -8,7 +8,7 @@ export const enableUser: AsyncLambdaMiddleware<EnableUserParameters> = async ({ 
         throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
     }
 
-    let response: HttpResponse<string>;
+    let response: HttpResponse;
 
     try {
         const result = await AwsCognito.defaultInstance.enableUUser(email);

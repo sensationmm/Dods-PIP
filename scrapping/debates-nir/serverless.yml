@@ -41,7 +41,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
-    name: scrapping-lambdas
+    name: pip-${self:provider.stage}-scrapping-lambdas
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}

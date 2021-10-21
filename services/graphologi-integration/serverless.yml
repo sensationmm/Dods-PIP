@@ -9,7 +9,7 @@ provider:
   lambdaHashingVersion: '20201221'
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
-    name: services-lambdas
+    name: pip-${self:provider.stage}-services-lambdas
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}

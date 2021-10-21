@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: "rootPass"
+      MARIADB_DATABASE: "dods"
+      MARIADB_USER: "dods"
+      MARIADB_PASSWORD: "dods"
+    ports:
+      - 3306:3306
+    volumes:
+      - ${PWD}/docker/mariadb/data:/var/lib/mysql:rw
+      - ${PWD}/docker/mariadb/initdb_sql_scripts:/docker-entrypoint-initdb.d/:ro
+      - ${PWD}/docker/mariadb/mariadb.conf:/etc/mysql/conf.d
+      
