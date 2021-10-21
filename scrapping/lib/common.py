@@ -9,6 +9,7 @@ from configs import Config
 from json import loads
 from bs4 import BeautifulSoup
 
+
 class Common:
 
 	@staticmethod
