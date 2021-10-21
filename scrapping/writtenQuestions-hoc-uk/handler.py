@@ -47,7 +47,9 @@ def run(event, context):
             content['contentSourceURL'] = qnaxml_url
             content['extractDate'] = datetime.now().isoformat()
             content['content'] = dict_content
-            content['metadata']['jurisdiction'] = 'UK'
+            content['metadata'].append({
+                'jurisdiction': 'UK'
+            })
 
             short_date = datetime.now().strftime("%Y-%m-%d")
             # noinspection PyBroadException
