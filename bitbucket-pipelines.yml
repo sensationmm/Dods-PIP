@@ -55,8 +55,7 @@ pipelines:
           script:
             - cd services/user-profile
             - npm install
-            - export SERVERLESS_STAGE=dev
-            - ./setenv.sh
+            - SERVERLESS_STAGE=dev ./setenv.sh
             - source *.env
             - NODE_ENV=test npm run test:coverage
             
@@ -135,7 +134,6 @@ pipelines:
             script:
               - cd services/dods-iam
               - npm install
-              - NODE_ENV=test npm run test 
               - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
@@ -150,8 +148,7 @@ pipelines:
             script:
               - cd services/user-profile
               - npm install
-              - export SERVERLESS_STAGE=dev
-              - ./setenv.sh
+              - SERVERLESS_STAGE=dev ./setenv.sh
               - source *.env
               - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
@@ -165,7 +162,6 @@ pipelines:
                 includePaths:
                   - "services/client-account/**"
             script:
-              - ./what2build.sh
               - cd services/client-account
               - npm install
               - export SERVERLESS_STAGE=dev
@@ -181,11 +177,9 @@ pipelines:
                 includePaths:
                   - "services/editorial-workflow/**"
             script:
-              - ./what2build.sh
               - cd services/editorial-workflow
               - npm install
-              - export SERVERLESS_STAGE=dev
-              - ./setenv.sh
+              - SERVERLESS_STAGE=dev ./setenv.sh
               - source *.env
               - npm run test:coverage 
               - serverless deploy --stage dev
@@ -225,9 +219,10 @@ pipelines:
                 includePaths:
                   - "infrastructure-terraform/**"
             script:
+              - cd infrastructure-terraform
               - terraform init
-              - terraform plan
-              - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
+              - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" 
+              # - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve 
 
   custom:
     deployment-to-staging:
