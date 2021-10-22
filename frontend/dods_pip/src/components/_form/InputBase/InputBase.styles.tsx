@@ -20,6 +20,7 @@ export const inputWrapper = styled.div`
 
 type inputBaseProps = {
   disabled: boolean;
+  titleField?: boolean;
 };
 export const input = styled.input<inputBaseProps>`
   width: 100%;
@@ -33,7 +34,7 @@ export const input = styled.input<inputBaseProps>`
   padding: ${spacing(3)};
   box-sizing: border-box;
   font-family: 'Open Sans';
-  font-size: 16px;
+  font-size: ${({ titleField }) => (titleField ? '24px' : '16px')};
   pointer-events: ${({ disabled }) => disabled && 'none'};
   cursor: ${({ disabled }) => disabled && 'not-allowed'};
 
@@ -122,5 +123,8 @@ export const input = styled.input<inputBaseProps>`
 
   &.medium {
     padding: ${spacing(2)} ${spacing(3)};
+  }
+  &.titleField {
+    padding: ${spacing(4)} ${spacing(3)};
   }
 `;
