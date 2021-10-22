@@ -9,7 +9,7 @@ import * as Styled from './InputText.styles';
 
 export interface InputTextProps extends Omit<InputBaseProps, 'type'> {
   icon?: Icons;
-  masive?: boolean;
+  titleField?: boolean;
 }
 
 const InputText: React.FC<InputTextProps> = ({
@@ -30,11 +30,12 @@ const InputText: React.FC<InputTextProps> = ({
   icon,
   placeholder,
   children,
-  masive,
+  titleField,
 }) => {
   return (
     <Styled.wrapper className={classNames({ icon: icon !== undefined })}>
       <Input
+        titleField={titleField}
         id={id}
         data-test="component-input-text"
         type="text"

@@ -26,6 +26,7 @@ export interface InputBaseProps {
   onBlur?: () => void;
   placeholder?: string;
   tabIndex?: number;
+  titleField?: boolean;
 }
 
 const InputBase: React.FC<InputBaseProps> = ({
@@ -46,12 +47,14 @@ const InputBase: React.FC<InputBaseProps> = ({
   children,
   placeholder,
   tabIndex,
+  titleField,
 }) => {
   return (
     <Styled.wrapper data-test="component-input-base">
       {label && <Label label={label} required={required} optional={optional} />}
       <Styled.inputWrapper>
         <Styled.input
+          titleField={titleField}
           id={id}
           data-test="component-input-base-input"
           disabled={isDisabled}
@@ -59,6 +62,7 @@ const InputBase: React.FC<InputBaseProps> = ({
             error: typeof error === 'string',
             small: size === 'small',
             medium: size === 'medium',
+            titleField: titleField,
           })}
           type={type}
           value={value}
