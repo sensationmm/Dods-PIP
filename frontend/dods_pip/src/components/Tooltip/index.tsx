@@ -42,7 +42,7 @@ const Tooltip: React.FC<TooltipProps> = ({
           alignRight: alignment === 'right',
           colorLight: colorType === 'Light',
           colorDark: colorType === 'Dark',
-          show: classShow ? 'show' : '',
+          show: classShow,
         })}
       >
         <div className="inner">
