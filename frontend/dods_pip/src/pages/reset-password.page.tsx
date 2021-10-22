@@ -11,6 +11,7 @@ import Button from '../components/Button';
 import Text from '../components/Text';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
 import fetchJson from '../lib/fetchJson';
+import { Api, BASE_URI } from '../utils/api';
 import * as Validation from '../utils/validation';
 
 type Errors = {
@@ -50,7 +51,7 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
 
     if (validateForm()) {
       try {
-        await fetchJson('/api/forgotPassword', {
+        await fetchJson(`${BASE_URI}${Api.ResetPassword}`, {
           body: JSON.stringify({ email: emailAddress }),
         });
 

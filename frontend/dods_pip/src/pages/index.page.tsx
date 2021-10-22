@@ -18,6 +18,7 @@ import color from '../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
 import fetchJson from '../lib/fetchJson';
 import useUser from '../lib/useUser';
+import { Api, BASE_URI } from '../utils/api';
 import * as Validation from '../utils/validation';
 import * as Styled from './index.styles';
 
@@ -88,7 +89,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
       };
 
       try {
-        const user = await fetchJson('/api/login', {
+        const user = await fetchJson(`${BASE_URI}${Api.Login}`, {
           body: JSON.stringify(body),
         });
         mutateUser(user);
@@ -116,7 +117,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
     setLoading(true);
 
     try {
-      await fetchJson('/api/enableUser', {
+      await fetchJson(`${BASE_URI}${Api.EnableUser}`, {
         body: JSON.stringify({ email: emailAddress }),
       });
       setFailureCount(0);
