@@ -133,7 +133,7 @@ pipelines:
               - cd services/dods-iam
               - npm install
               - NODE_ENV=test npm run test:coverage 
-              - serverless deploy --stage dev
+              - npx serverless deploy --stage dev
 
         - step: 
             name: User Profile Deploy
@@ -149,7 +149,7 @@ pipelines:
               - SERVERLESS_STAGE=dev ./setenv.sh
               - source *.env
               - NODE_ENV=test npm run test:coverage 
-              - serverless deploy --stage dev
+              - npx serverless deploy --stage dev
 
         - step: 
             name: Client Account Deploy
@@ -164,7 +164,7 @@ pipelines:
               - npm install
               - export SERVERLESS_STAGE=dev
               - npm run test:coverage 
-              - serverless deploy --stage dev
+              - npx serverless deploy --stage dev
 
         - step: 
             name: Editorial Workflow Deploy
@@ -180,7 +180,7 @@ pipelines:
               - SERVERLESS_STAGE=dev ./setenv.sh
               - source *.env
               - npm run test
-              - serverless deploy --stage dev
+              - npx serverless deploy --stage dev
 
         - step:
             name: Frontend Build and Deploy 
