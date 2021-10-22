@@ -5,13 +5,15 @@ import Router from 'next/router';
 import { useEffect } from 'react';
 import useSWR from 'swr';
 
+import { Api, BASE_URI } from '../utils/api';
+
 type UseUser = {
   user: Record<string, unknown>;
   mutateUser: (data?: any, shouldRevalidate?: boolean | undefined) => Promise<any>;
 };
 
 export default function useUser({ redirectTo = '', redirectIfFound = false } = {}): UseUser {
-  const { data: user, mutate: mutateUser } = useSWR('/api/user');
+  const { data: user, mutate: mutateUser } = useSWR(`${BASE_URI}${Api.User}`);
 
   useEffect(() => {
     // if no redirect needed, just return (example: already on /dashboard)

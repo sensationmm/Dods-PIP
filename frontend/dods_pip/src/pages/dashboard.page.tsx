@@ -12,6 +12,7 @@ import Text from '../components/Text';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
 import fetchJson from '../lib/fetchJson';
 import useUser from '../lib/useUser';
+import { Api, BASE_URI } from '../utils/api';
 
 interface DashboardProps extends LoadingHOCProps {}
 
@@ -66,7 +67,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setLoading }) => {
                   label={'Logout'}
                   onClick={async () => {
                     setLoading(true);
-                    mutateUser(await fetchJson('/api/logout'), false);
+                    mutateUser(await fetchJson(`${BASE_URI}${Api.Logout}`), false);
                     router.push('/');
                   }}
                 />

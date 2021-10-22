@@ -15,6 +15,7 @@ import PasswordStrength, { PasswordStrengthProps } from '../components/PasswordS
 import Text from '../components/Text';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
 import fetchJson from '../lib/fetchJson';
+import { Api, BASE_URI } from '../utils/api';
 import * as Validation from '../utils/validation';
 
 type Errors = {
@@ -84,7 +85,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({ setLoading }) => {
     if (!validateForm()) return setLoading(false);
 
     try {
-      await fetchJson('/api/resetPassword', {
+      await fetchJson(`${BASE_URI}${Api.ResetPassword}`, {
         body: JSON.stringify({
           email: uid,
           newPassword: password,
