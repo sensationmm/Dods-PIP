@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: Dods Client Accounts API
-  version: "1.0.1"
+  version: "1.0.0"
   title: Client Account API
 paths:
   /clientaccount:
