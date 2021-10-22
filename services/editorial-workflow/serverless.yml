@@ -9,6 +9,9 @@ provider:
   region: eu-west-1
   runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: pip-${self:provider.stage}-services-lambdas
+
 
   lambdaHashingVersion: 20201221
   stackTags:
