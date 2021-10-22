@@ -336,6 +336,53 @@ paths:
                   remaining_seats:
                     type: integer
                     example: 10
+                    
+  /clientaccount/{accountId}/header:
+    parameters:
+      - in: path
+        name: accountId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: UUID of the Client Account to Update Header
+    put:
+      summary: Update client by ID
+      requestBody:
+        description: Client Account to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientAccountUpdateHeader'
+      responses:
+        '200':
+          description: Updated Client Account Header
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Client account was updated
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ClientAccountResponse'
+                  
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/InvalidName'
 
 components:
   responses:
@@ -363,8 +410,23 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    InvalidName:
+      description: The Name is not available
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NameInvalid'
 
   schemas:
+    NameInvalid:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Client account name already exists"
     Error:
       type: object
       properties:
@@ -417,6 +479,36 @@ components:
           type: string
           format: uuid
           example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        is_completed:
+          type: boolean
+          example: false
+        last_step_completed:
+          type: number
+          example: 2
+    ClientAccountUpdateHeader:
+      type: object
+      required:
+        - name
+        - notes
+        - contact_name
+        - contact_email_address
+        - contact_telephone_number
+      properties:
+        name:
+         type: string
+         example: Dods information
+        notes:
+          type: string
+        contact_name:
+          type: string
+          example: Joe Bloggs
+        contact_email_address:
+          type: string
+          example: user@email.com
+        contact_telephone_number:
+          type: string
+          example: '+442071838750'
+       
     ClientAccountResponse:
       allOf:
         - $ref: '#/components/schemas/ClientAccount'

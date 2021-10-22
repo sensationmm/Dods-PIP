@@ -145,9 +145,35 @@ paths:
                     $ref: '#/components/responses/CheckAccountNameResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
+                    
+    /clientaccount/{clientAccountId}/header:
+        put:
+            operationId: updateClientAccountHeader
+            summary: 'Update ClientAccount Header'
+            description: 'Update Client Account Header first step'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
+            requestBody:
+                $ref: '#/components/requestBodies/clientAccountUpdateHeader'
+            responses:
+                '200':
+                    $ref: '#/components/responses/UpdateHeaderAccount'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '409':
+                    $ref: '#/components/responses/NameInvalid'
 
 components:
     schemas:
+        InvalidName:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                    example: false
+                message:
+                    type: string
+                    example: 'Client account name already exists'
         Message:
             type: object
             properties:
@@ -162,6 +188,19 @@ components:
                         type: array
                         items:
                             type: string
+        UpdateHeaderSuccess:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                    example: true
+                message:
+                    type: string
+                    example: Client account was updated
+                data:
+                    type: object
+                    properties:
+                    $ref: '#/components/schemas/ClientAccount'
         ClientAccount:
             type: object
             properties:
@@ -216,6 +255,30 @@ components:
                 name:
                     type: string
                     required: true
+            
+        ClientAccountUpdateHeader:
+            type: object
+            properties:
+                name:
+                    type: string
+                    required: false
+                    example: Company 1
+                notes:
+                    type: string
+                    required: false
+                    example: This is the account for Company 1
+                contact_name:
+                    type: string
+                    required: false
+                    example: Joe Bloggs
+                contact_email_address:
+                    type: string
+                    required: false
+                    example: user@email.com
+                contact_telephone_number:
+                    type: string
+                    required: false
+                    example: '+442071838750'
 
     parameters:
         clientAccountId:
@@ -314,6 +377,12 @@ components:
                 application/json:
                     schema:
                         $ref: '#/components/schemas/Message'
+        NameInvalid:
+            description: Client Account Name Invalid
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/InvalidName'
         ClientAccount:
             description: ''
             content:
@@ -338,6 +407,12 @@ components:
                 application/json:
                     schema:
                         type: 'object'
+        UpdateHeaderAccount:
+            description: Successfully client account header updated.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/UpdateHeaderSuccess'
 
 
     requestBodies:
@@ -366,3 +441,12 @@ components:
                             name:
                                 type: string
                                 required: true
+        clientAccountUpdateHeader:
+            description: A JSON object with the header parameters to update
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ClientAccountUpdateHeader'
+
+                  
