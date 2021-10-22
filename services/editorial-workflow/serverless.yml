@@ -21,6 +21,22 @@ provider:
     apiGateway: true
     lambda: true
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*        
+      Resource: "arn:aws:s3:::*"
+
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: ${self:custom.envs.${self:provider.stage}.editorialDynamoARN}
+
     - Effect: "Allow"
       Action:
         - "xray:PutTraceSegments"
@@ -42,6 +58,12 @@ provider:
     DYNAMO_TABLE: editorial-records-${self:provider.stage}-table
 
 custom:
+  envs:
+    dev:
+      editorialDynamoARN: "arn:aws:dynamodb:eu-west-1:390773179818:table/editorial-records-dev-table"
+    qa:
+      editorialDynamoARN: "arn:aws:dynamodb:eu-west-1:817206606893:table/editorial-records-qa-table"
+
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
