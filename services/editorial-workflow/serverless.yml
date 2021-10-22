@@ -1,10 +1,8 @@
 service: editorial-workflow
-
 configValidationMode: warn
-
 frameworkVersion: ^2.57.0
-
 variablesResolutionMode: 20210326
+projectDir: ../
 
 provider:
   name: aws
@@ -33,9 +31,9 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-      restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId}
-      restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId}
-      description: Default Gateway for dev deployed with dods-ia
+      restApiId: ${file(../apig.${self:provider.stage}.yml):apiGatewayId, ""} 
+      restApiRootResourceId: ${file(../apig.${self:provider.stage}.yml):apiRootResourceId, ""} 
+      description: Default Gateway for ${self:provider.stage} deployed with dods-ia
 
   environment:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
@@ -44,10 +42,6 @@ provider:
     DYNAMO_TABLE: editorial-records-${self:provider.stage}-table
 
 custom:
-  envs:
-    dev:
-      apiGatewayId: emhumq7ktf
-      apiRootResourceId: lzvvrnid32
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true

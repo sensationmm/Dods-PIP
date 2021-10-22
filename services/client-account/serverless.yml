@@ -8,8 +8,7 @@ provider:
     name: aws
     region: eu-west-1
     runtime: nodejs14.x
-    stage: ${opt:stage, 'local'}
-    # profile: dods-dev
+    stage: ${opt:stage, 'dev'}
     lambdaHashingVersion: 20201221
     vpc:
       securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
@@ -41,35 +40,33 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
     apiGateway:
-        restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId, ""}
-        restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId, ""}
+        restApiId: ${file(../apig.${self:provider.stage}.yml):apiGatewayId, ""} 
+        restApiRootResourceId: ${file(../apig.${self:provider.stage}.yml):apiRootResourceId, ""} 
         description: Default Gateway for ${self:provider.stage} deployed with dods-iam
 
     environment:
         SERVERLESS_STAGE: ${self:provider.stage}
         SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-        DB_DRIVER: mariadb
-        DB_HOST: ${self:custom.envs.${self:provider.stage}.DB_HOST, self:custom.envs.local.DB_HOST}
-        DB_NAME: ${self:custom.envs.${self:provider.stage}.DB_NAME, self:custom.envs.local.DB_NAME}
-        DB_USER: ${self:custom.envs.${self:provider.stage}.DB_USER, self:custom.envs.local.DB_USER}
-        DB_PASSWORD: ${self:custom.envs.${self:provider.stage}.DB_PASSWORD, self:custom.envs.local.DB_PASSWORD}
         DB_CONNECTION_LIMIT: 5
+        DB_DRIVER: mariadb
+        DB_NAME: dods
+        DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
+        DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'root' }
+        DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'rootPass'}
 
 custom:
-    envs:
-        dev:
-            DB_HOST: ${ssm:/infra/dev/rds/endpoint}
-            DB_NAME: dods
-            DB_USER: ${ssm:/infra/dev/rds/username}
-            DB_PASSWORD: ${ssm:/infra/dev/rds/password}
-            apiGatewayId: emhumq7ktf
-            apiRootResourceId: lzvvrnid32
+    # envs:
+    #     dev:
+    #         DB_NAME: dods
 
-        local:
-            DB_HOST: localhost
-            DB_NAME: dods
-            DB_USER: dods
-            DB_PASSWORD: dods
+    #     qa:
+    #         DB_NAME: dods
+
+    #     local:
+    #         DB_HOST: localhost
+    #         DB_NAME: dods
+    #         DB_USER: dods
+    #         DB_PASSWORD: dods
 
     webpack:
         webpackConfig: ./webpack.config.js

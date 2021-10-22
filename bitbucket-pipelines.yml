@@ -55,8 +55,7 @@ pipelines:
           script:
             - cd services/user-profile
             - npm install
-            - export SERVERLESS_STAGE=dev
-            - ./setenv.sh
+            - SERVERLESS_STAGE=dev ./setenv.sh
             - source *.env
             - NODE_ENV=test npm run test:coverage
             
@@ -72,8 +71,7 @@ pipelines:
           script:
             - cd services/client-account
             - npm install
-            - export SERVERLESS_STAGE=dev
-            - npm run test:coverage
+            - SERVERLESS_STAGE=dev npm run test:coverage
 
       - step:
           name: Editorial Workflow Service
@@ -87,8 +85,7 @@ pipelines:
           script:
             - cd services/editorial-workflow
             - npm install
-            - export SERVERLESS_STAGE=dev
-            - ./setenv.sh
+            - SERVERLESS_STAGE=dev ./setenv.sh
             - source *.env
             - npm run test
 
@@ -101,7 +98,7 @@ pipelines:
                 - "api/**"
           script:
             - cd api
-            - for i in *.yml; do; openapi-generator-cli validate $i; done
+            - for i in *.yml; do; openapi-generator-cli validate -i $i; done
 
       - step:
           name: Deploy Scrapping Lambdas
@@ -127,7 +124,7 @@ pipelines:
         - step: 
             name: Auth-Authz Deploy
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.3
+            image: gioatsomoglobal/devopstools:0.4.5
             condition:
               changesets:
                 includePaths:
@@ -135,14 +132,13 @@ pipelines:
             script:
               - cd services/dods-iam
               - npm install
-              - NODE_ENV=test npm run test 
               - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
 
         - step: 
             name: User Profile Deploy
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.3
+            image: gioatsomoglobal/devopstools:0.4.5
             condition:
               changesets:
                 includePaths:
@@ -150,8 +146,7 @@ pipelines:
             script:
               - cd services/user-profile
               - npm install
-              - export SERVERLESS_STAGE=dev
-              - ./setenv.sh
+              - SERVERLESS_STAGE=dev ./setenv.sh
               - source *.env
               - NODE_ENV=test npm run test:coverage 
               - serverless deploy --stage dev
@@ -159,13 +154,12 @@ pipelines:
         - step: 
             name: Client Account Deploy
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.3
+            image: gioatsomoglobal/devopstools:0.4.5
             condition:
               changesets:
                 includePaths:
                   - "services/client-account/**"
             script:
-              - ./what2build.sh
               - cd services/client-account
               - npm install
               - export SERVERLESS_STAGE=dev
@@ -175,17 +169,15 @@ pipelines:
         - step: 
             name: Editorial Workflow Deploy
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.3
+            image: gioatsomoglobal/devopstools:0.4.5
             condition:
               changesets:
                 includePaths:
                   - "services/editorial-workflow/**"
             script:
-              - ./what2build.sh
               - cd services/editorial-workflow
               - npm install
-              - export SERVERLESS_STAGE=dev
-              - ./setenv.sh
+              - SERVERLESS_STAGE=dev ./setenv.sh
               - source *.env
               - npm run test:coverage 
               - serverless deploy --stage dev
@@ -193,7 +185,7 @@ pipelines:
         - step:
             name: Frontend Build and Deploy 
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.3
+            image: gioatsomoglobal/devopstools:0.4.5
             deployment: Test
             services:
               - docker
@@ -219,21 +211,22 @@ pipelines:
         - step:
             name: Terraform Deploy
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.3
+            image: gioatsomoglobal/devopstools:0.4.5
             condition:
               changesets:
                 includePaths:
                   - "infrastructure-terraform/**"
             script:
+              - cd infrastructure-terraform
               - terraform init
-              - terraform plan
-              - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
+              - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" 
+              # - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve 
 
   custom:
     deployment-to-staging:
       - step:
           name: Deploy to staging environment
-          image: gioatsomoglobal/devopstools:0.4.3
+          image: gioatsomoglobal/devopstools:0.4.5
           deployment: Staging
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
@@ -243,7 +236,7 @@ pipelines:
     storybook-deployment:
       - step:
           name: Storybook deployment (dev)
-          image: gioatsomoglobal/devopstools:0.4.3
+          image: gioatsomoglobal/devopstools:0.4.5
           size: 2x
           script:
             - cd ${FRONTEND_SRC}
