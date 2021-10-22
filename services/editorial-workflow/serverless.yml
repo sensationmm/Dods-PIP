@@ -57,7 +57,7 @@ custom:
   localstack:
     stages:
       # list of stages for which the plugin should be enabled
-      - local
+      - passive
     host: http://localhost # optional - LocalStack host to connect to
     edgePort: 4566 # optional - LocalStack edge port to connect to
     autostart: false # optional - Start LocalStack in Docker on Serverless deploy
