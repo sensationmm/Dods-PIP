@@ -11,7 +11,11 @@ interface ServerData {
 }
 
 const downstreamDefinitionsPath = `${process.cwd()}/tests/integrationTests/downstreamDefinitions`;
-const filenames: string[] = fs.readdirSync(downstreamDefinitionsPath);
+let filenames: string[] = [];
+
+if (fs.existsSync(downstreamDefinitionsPath)) {
+    filenames = fs.readdirSync(downstreamDefinitionsPath);
+}
 
 export const setupMockServers = async () => {
 

@@ -1,81 +1,36 @@
 import Joi, { Schema } from 'joi';
-
-import { DownstreamEndpoints } from '../interfaces';
-import { execSync } from 'child_process';
 import { resolve } from 'path';
-
-const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage ${
-    process.env.SERVERLESS_STAGE || 'dev'
-} --format json${process.env.SERVERLESS_STAGE === 'local' ? ' | tail -n +2' : ''}`;
-
-let infoCache = '';
-const fetchServerlessInfo = (): string => {
-    if (infoCache !== '') {
-        return infoCache;
-    } else {
-        console.debug(`Running \`${fullServerlessInfoCommand}\`...`, null);
-        const info = execSync(fullServerlessInfoCommand).toString();
-        infoCache = info;
-        return infoCache;
-    }
-};
-
-const setUnitTestEnvironmentVariables = () => {
-    if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'dev') {
-        let serverlessInfoJson;
-
-        try {
-            serverlessInfoJson = fetchServerlessInfo();
-        } catch (error: any) {
-            console.error(error.stdout.toString('utf8'));
-
-            process.exit(1);
-        }
-
-        let serverlessInfo;
-        try {
-            serverlessInfo = JSON.parse(serverlessInfoJson);
-        } catch (error: any) {
-            console.error(
-                `ERROR: when JSON.parse() try to parse the following output. \n\n ${serverlessInfoJson}`
-            );
-
-            process.exit(1);
-        }
-
-        Object.assign(process.env, serverlessInfo.provider.environment);
-    }
-};
+import { DownstreamEndpoints } from '../interfaces';
 
 const loadConfig = (schema: Schema) => {
-    setUnitTestEnvironmentVariables();
-
     const { value: envVars, error } = schema
         .prefs({ errors: { label: 'key' } })
         .validate(process.env);
 
     if (error) {
-        console.log(`Config validation error: ${error.message}`);
+        console.error(`Config validation error: ${error.message}`);
         process.exit(1);
     }
 
     return envVars;
 };
 
-const stages = ['prod', 'dev', 'test'];
+const stages = ['production', 'development', 'test'];
 
 const envVarsSchema = Joi.object()
     .keys({
-        NODE_ENV: Joi.string()
-            .valid(...stages)
-            .default('dev'),
-        SERVERLESS_STAGE: Joi.string().required().valid('prod', 'dev', 'test').default('dev'),
+        NODE_ENV: Joi.string().valid(...stages).default('test'),
+        SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
         GET_USER_ENDPOINT: Joi.string().required(),
         GET_USERBYNAME_ENDPOINT: Joi.string().required(),
         GET_ROLE_ENDPOINT: Joi.string().required(),
-        MARIADB_CONNECTION_STRING: Joi.string().required(),
-        MARIADB_CONNECTION_LIMIT: Joi.string().required(),
+        DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
+        DB_HOST: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
+        DB_USER: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_CONNECTION_LIMIT: Joi.number().default(5),
     })
     .unknown();
 
@@ -83,13 +38,12 @@ const envVars = loadConfig(envVarsSchema);
 
 export const config = {
     env: envVars.NODE_ENV as string,
-    isTestEnv: envVars.NODE_ENV !== 'dev',
+    isTestEnv: envVars.NODE_ENV === 'test',
     openApiPath: resolve(process.cwd(), 'src/openApi.yml'),
-    local: {
+    test: {
         stage: envVars.SERVERLESS_STAGE as string,
         port: envVars.SERVERLESS_PORT as number,
-        endpoint:
-            `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string,
+        endpoint: `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string,
     },
     dods: {
         downstreamEndpoints: {
@@ -100,8 +54,12 @@ export const config = {
     },
     aws: {
         mariaDb: {
-            connectionString: envVars.MARIADB_CONNECTION_STRING as string,
-            connectionLimit: envVars.MARIADB_CONNECTION_LIMIT as number,
+            dbDriver: envVars.DB_DRIVER as string,
+            host: envVars.DB_HOST as string,
+            database: envVars.DB_NAME as string,
+            username: envVars.DB_USER as string,
+            password: envVars.DB_PASSWORD as string,
+            connectionLimit: envVars.DB_CONNECTION_LIMIT as number
         },
     },
 };

@@ -2,7 +2,7 @@ import axios from "axios";
 import expect from 'expect'
 import { When, Then, Given } from "@cucumber/cucumber";
 import { config } from '../../../src/domain/config'
-import HttpStatusCode from '../../../src/domain/http/HttpStatusCode'
+import { HttpStatusCode } from '@dodsgroup/dods-lambda'
 
 Given('lambda function name is {string}', function (lambdaFunction) {
     this.lambdaFunction = lambdaFunction;
