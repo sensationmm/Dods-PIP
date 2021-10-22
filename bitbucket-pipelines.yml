@@ -71,8 +71,7 @@ pipelines:
           script:
             - cd services/client-account
             - npm install
-            - export SERVERLESS_STAGE=dev
-            - npm run test:coverage
+            - SERVERLESS_STAGE=dev npm run test:coverage
 
       - step:
           name: Editorial Workflow Service
@@ -86,8 +85,7 @@ pipelines:
           script:
             - cd services/editorial-workflow
             - npm install
-            - export SERVERLESS_STAGE=dev
-            - ./setenv.sh
+            - SERVERLESS_STAGE=dev ./setenv.sh
             - source *.env
             - npm run test
 
@@ -100,7 +98,7 @@ pipelines:
                 - "api/**"
           script:
             - cd api
-            - for i in *.yml; do; openapi-generator-cli validate $i; done
+            - for i in *.yml; do; openapi-generator-cli validate -i $i; done
 
       - step:
           name: Deploy Scrapping Lambdas

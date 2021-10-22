@@ -1,10 +1,8 @@
 service: editorial-workflow
-
 configValidationMode: warn
-
 frameworkVersion: ^2.57.0
-
 variablesResolutionMode: 20210326
+projectDir: ../
 
 provider:
   name: aws
