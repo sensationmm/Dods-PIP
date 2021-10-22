@@ -75,7 +75,7 @@ describe('InputBase onChange={jest.fn}', () => {
       />,
     );
     const component = wrapper.find('[data-test="component-input-base-input"]');
-    expect(component.hasClass('disabled')).toEqual(true);
+    expect(component.props().disabled).toEqual(true);
     expect(component.hasClass('error')).toEqual(false);
   });
 
@@ -112,7 +112,7 @@ describe('InputBase onChange={jest.fn}', () => {
       />,
     );
     const component = wrapper.find('[data-test="component-input-base-input"]');
-    expect(component.hasClass('disabled')).toEqual(true);
+    expect(component.props().disabled).toEqual(true);
     expect(component.hasClass('error')).toEqual(true);
   });
 

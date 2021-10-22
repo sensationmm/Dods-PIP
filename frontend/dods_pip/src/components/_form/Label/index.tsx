@@ -12,6 +12,7 @@ export interface LabelProps {
   isDisabled?: boolean;
   bold?: boolean;
   darkMode?: boolean;
+  htmlFor?: string;
 }
 
 const Label: React.FC<LabelProps> = ({
@@ -22,11 +23,13 @@ const Label: React.FC<LabelProps> = ({
   isDisabled,
   bold,
   darkMode,
+  htmlFor,
 }) => {
   return (
     <Styled.label data-test="component-label" noMargin={noMargin}>
       {required && <Styled.requiredStar data-test="label-required-star">*</Styled.requiredStar>}
       <Text
+        htmlFor={htmlFor}
         type={bold ? 'body' : 'label'}
         color={isDisabled ? color.base.greyDark : darkMode ? color.base.white : color.theme.blue}
         bold={bold}

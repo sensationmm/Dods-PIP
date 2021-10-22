@@ -18,18 +18,51 @@ export const inputWrapper = styled.div`
   position: relative;
 `;
 
-export const input = styled.input`
+type inputBaseProps = {
+  disabled: boolean;
+};
+export const input = styled.input<inputBaseProps>`
   width: 100%;
   border: 0;
+  border-color: ${({ disabled }) => disabled && color.base.greyMid};
   outline: 0;
-  background: ${color.shadow.blue};
+  background: ${({ disabled }) => (!disabled ? color.shadow.blue : color.base.greyLight)};
   margin-bottom: 2px;
   border-radius: 8px;
-  color: ${color.theme.blueMid};
+  color: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)};
   padding: ${spacing(3)};
   box-sizing: border-box;
   font-family: 'Open Sans';
   font-size: 16px;
+  pointer-events: ${({ disabled }) => disabled && 'none'};
+  cursor: ${({ disabled }) => disabled && 'not-allowed'};
+
+  ::-webkit-input-placeholder {
+    /* WebKit, Blink, Edge */
+    color: ${color.base.grey};
+  }
+  :-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: ${color.base.grey};
+    opacity: 1;
+  }
+  ::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: ${color.base.grey};
+    opacity: 1;
+  }
+  :-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: ${color.base.grey};
+  }
+  ::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: ${color.base.grey};
+  }
+  ::placeholder {
+    /* Most modern browsers support this now. */
+    color: ${color.base.grey};
+  }
 
   &:hover {
     margin-bottom: 1px;
@@ -47,18 +80,40 @@ export const input = styled.input`
     color: ${color.base.black};
   }
 
+  &:disabled {
+    ::-webkit-input-placeholder {
+      /* WebKit, Blink, Edge */
+      color: ${color.base.greyDark};
+    }
+    :-moz-placeholder {
+      /* Mozilla Firefox 4 to 18 */
+      color: ${color.base.greyDark};
+      opacity: 1;
+    }
+    ::-moz-placeholder {
+      /* Mozilla Firefox 19+ */
+      color: ${color.base.greyDark};
+      opacity: 1;
+    }
+    :-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      color: ${color.base.greyDark};
+    }
+    ::-ms-input-placeholder {
+      /* Microsoft Edge */
+      color: ${color.base.greyDark};
+    }
+
+    ::placeholder {
+      /* Most modern browsers support this now. */
+      color: ${color.base.greyDark};
+    }
+  }
+
   &.error {
     color: ${color.alert.red};
     border-color: ${color.alert.red};
     background: ${color.shadow.red};
-  }
-
-  &.disabled {
-    color: ${color.base.grey};
-    border-color: ${color.base.grey};
-    background: ${color.shadow.grey};
-    pointer-events: none;
-    cursor: not-allowed;
   }
 
   &.small {
