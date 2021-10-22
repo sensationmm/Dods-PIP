@@ -11,15 +11,7 @@ export type alignmentType = 'topLeft' | 'topRight' | 'right';
 export interface PopoverProps extends Omit<TooltipProps, 'trigger' | 'colorType' | 'icon'> {}
 
 const Popover: React.FC<PopoverProps> = ({ ...rest }) => {
-  const firstRun = React.useRef(true);
   const [show, setShow] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    if (firstRun.current) {
-      firstRun.current = false;
-      return;
-    }
-  }, [show]);
 
   const toggleClass = () => setShow(!show);
 
