@@ -47,34 +47,35 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-    restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId}
-    restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId}
+    restApiId: ${file(../apig.${self:provider.stage}.yml):apiGatewayId, ""} 
+    restApiRootResourceId: ${file(../apig.${self:provider.stage}.yml):apiRootResourceId, ""} 
     description: Default Gateway for ${self:provider.stage} deployed with dods-iam  
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
     MARIADB_CONNECTION_LIMIT: 5
+    DB_DRIVER: mariadb
     MARIA_DB_DATABASE: 'dods'
-    MARIA_DB_HOST: ${self:custom.envs.${self:provider.stage}.MARIA_DB_HOST}
-    MARIA_DB_USERNAME: ${self:custom.envs.${self:provider.stage}.MARIA_DB_USERNAME}
-    MARIA_DB_PASSWORD: ${self:custom.envs.${self:provider.stage}.MARIA_DB_PASSWORD}
+    MARIA_DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
+    MARIA_DB_USERNAME: ${ssm:/infra/${self:provider.stage}/rds/username, 'root' }
+    MARIA_DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'rootPass'}
     MARIADB_CONNECTION_STRING: 'mariadb://${self:provider.environment.MARIA_DB_USERNAME}:${self:provider.environment.MARIA_DB_PASSWORD}@${self:provider.environment.MARIA_DB_HOST}:3306/dods?allowPublicKeyRetrieval=true&useSSL=false'
-    GET_USER_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getUserEndpoint}
-    GET_USERBYNAME_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getUserByNameEndpoint}
-    GET_ROLE_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getRoleEndpoint}
+    GET_USER_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getUserEndpoint, "http://localhost:1081/user"}
+    GET_USERBYNAME_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getUserByNameEndpoint, "http://localhost:1081/userByName"}
+    GET_ROLE_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getRoleEndpoint, "http://localhost:1081/role"}
 
 custom:
   envs:
     dev:
-      MARIA_DB_HOST: ${ssm:/infra/dev/rds/endpoint}
-      MARIA_DB_USERNAME: ${ssm:/infra/dev/rds/username}
-      MARIA_DB_PASSWORD: ${ssm:/infra/dev/rds/password}
-      apiGatewayId: emhumq7ktf
-      apiRootResourceId: lzvvrnid32
       getUserEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
       getUserByNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
       getRoleEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
+
+    qa:
+      getUserEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
+      getUserByNameEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
+      getRoleEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
 
     local:
       getUserEndpoint: http://localhost:1081/user
@@ -98,7 +99,7 @@ custom:
   localstack:
     stages:
       # list of stages for which the plugin should be enabled
-      - test
+      - passive
     host: http://localhost # optional - LocalStack host to connect to
     edgePort: 4566 # optional - LocalStack edge port to connect to
     autostart: false # optional - Start LocalStack in Docker on Serverless deploy

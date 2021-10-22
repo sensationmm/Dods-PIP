@@ -1,18 +1,18 @@
 service: editorial-workflow
-
 configValidationMode: warn
-
 frameworkVersion: ^2.57.0
-
 variablesResolutionMode: 20210326
+projectDir: ../
 
 provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
-  stage: ${opt:stage, 'test'}
+  stage: ${opt:stage, 'dev'}
   deploymentBucket:
     name: pip-${self:provider.stage}-services-lambdas
+
+
   lambdaHashingVersion: 20201221
   stackTags:
     service: ${self:service}
@@ -24,6 +24,22 @@ provider:
     apiGateway: true
     lambda: true
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*        
+      Resource: "arn:aws:s3:::*"
+
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: ${self:custom.envs.${self:provider.stage}.editorialDynamoARN}
+
     - Effect: "Allow"
       Action:
         - "xray:PutTraceSegments"
@@ -34,22 +50,23 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-      restApiId: emhumq7ktf
-      restApiRootResourceId: lzvvrnid32
-      description: Default Gateway for dev deployed with dods-ia
+      restApiId: ${file(../apig.${self:provider.stage}.yml):apiGatewayId, ""} 
+      restApiRootResourceId: ${file(../apig.${self:provider.stage}.yml):apiRootResourceId, ""} 
+      description: Default Gateway for ${self:provider.stage} deployed with dods-ia
 
   environment:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    DYNAMO_TABLE: editorial-records-${self:provider.stage}-table
 
 custom:
-  endpoints:
+  envs:
     dev:
-      sayTurkishHelloEndpoint: http://localhost:1082/editorial-record
+      editorialDynamoARN: "arn:aws:dynamodb:eu-west-1:390773179818:table/editorial-records-dev-table"
+    qa:
+      editorialDynamoARN: "arn:aws:dynamodb:eu-west-1:817206606893:table/editorial-records-qa-table"
 
-    prod:
-      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/editorial-record
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -65,7 +82,7 @@ custom:
   localstack:
     stages:
       # list of stages for which the plugin should be enabled
-      - local
+      - passive
     host: http://localhost # optional - LocalStack host to connect to
     edgePort: 4566 # optional - LocalStack edge port to connect to
     autostart: false # optional - Start LocalStack in Docker on Serverless deploy
@@ -84,8 +101,8 @@ plugins:
   - serverless-offline
 
 functions:
-  create-editorial-workflow:
-    handler: src/handlers/createEditorialWorkflow/index.handle
+  create-editorial-record:
+    handler: src/handlers/createEditorialRecord/index.handle
     description: Triggered on HTTP request
     events:
       - http:
