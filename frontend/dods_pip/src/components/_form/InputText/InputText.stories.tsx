@@ -25,5 +25,24 @@ Primary.args = {
 };
 
 Primary.parameters = {
+  controls: { exclude: ['type', 'titleField'] },
+};
+
+export const Title = Template.bind({});
+
+Title.args = {
+  label: 'Label',
+  value: '',
+  size: 'large',
+  isDisabled: false,
+  error: undefined,
+  required: false,
+  optional: false,
+  helperText: '',
+  titleField: true,
+};
+
+Title.parameters = {
   controls: { exclude: ['type'] },
+  layout: 'fullscreen',
 };
