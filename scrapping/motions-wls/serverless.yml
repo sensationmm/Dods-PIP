@@ -24,6 +24,7 @@ custom:
   dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
   s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
+  lambdas_root_folder: ..
 
 package:
   patterns:
@@ -51,6 +52,7 @@ provider:
     REGION: ${file(../serverless.common.yml):custom.region}
     CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
+    ROOT_FOLDER: ${self:custom.lambdas_root_folder}
 
   iamRoleStatements:
     - Effect: Allow
@@ -73,7 +75,7 @@ provider:
 functions:
   scrape:
     name: scraper-motions-wls-${sls:stage}
-    # description: 
+    description: Ingest Motions Wales data
     handler: handler.run
     events:
       ## Invoke Lambda function on Mon-Fri at 15:05
