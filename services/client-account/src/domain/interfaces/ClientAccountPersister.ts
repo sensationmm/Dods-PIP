@@ -4,6 +4,7 @@ import {
     SearchClientAccountParameters,
     SearchClientAccountResponse,
     TeamMemberResponse,
+    UpdateClientAccountHeaderParameters,
     UpdateClientAccountParameters,
 } from '.';
 
@@ -26,7 +27,9 @@ export interface ClientAccountPersister {
 
     getClientAccountUsers(clientAccountId: string): Promise<number>;
 
-    getClientAccountTeam(clientAccountId: string): Promise<TeamMemberResponse[]>;
+    getClientAccountTeam(
+        clientAccountId: string
+    ): Promise<TeamMemberResponse[]>;
 
     checkNameAvailability(name: string): Promise<boolean>;
 
@@ -35,4 +38,8 @@ export interface ClientAccountPersister {
         isCompleted: boolean,
         lastStepCompleted: number
     ): Promise<boolean>;
+
+    updateClientAccountHeader(
+        updateParameters: UpdateClientAccountHeaderParameters
+    ): Promise<ClientAccountResponse | never[]>;
 }
