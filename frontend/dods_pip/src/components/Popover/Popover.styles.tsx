@@ -45,5 +45,16 @@ export const popoverWrapper = styled.div`
       left: 100%;
       margin-left: 15px;
     }
+
+    &.alignLeft {
+      left: auto;
+      margin-right: 15px;
+    }
+
+    .inner-body {
+      max-height: 112px;
+      overflow-y: scroll;
+      padding-right: 4px;
+    }
   }
 `;

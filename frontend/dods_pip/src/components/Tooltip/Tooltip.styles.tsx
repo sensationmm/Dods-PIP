@@ -20,7 +20,7 @@ export const tooltipStyle = styled.div`
   visibility: hidden;
   position: absolute;
   bottom: 100%;
-  left: 0;
+  left: ${spacing(-5)};
   margin-bottom: ${spacing(5)};
   max-width: ${spacing(70)};
   width: 100vw;
@@ -91,7 +91,7 @@ export const tooltipStyle = styled.div`
     display: flex;
     justify-content: flex-end;
     left: auto;
-    right: 0;
+    right: ${spacing(-5)};
 
     .inner {
       &::after {
@@ -120,6 +120,35 @@ export const tooltipStyle = styled.div`
       .inner {
         &::after {
           border-color: transparent ${color.theme.blue} transparent transparent;
+        }
+      }
+    }
+  }
+
+  &.alignLeft {
+    display: flex;
+    justify-content: flex-end;
+    top: ${spacing(-2.5)};
+    right: 100%;
+    bottom: auto;
+    left: auto;
+    margin-left: 0;
+    margin-right: ${spacing(5)};
+
+    .inner {
+      &::after {
+        border-color: transparent transparent transparent #ffffff;
+        top: ${spacing(2.5)};
+        right: ${spacing(-5)};
+        bottom: auto;
+        left: auto;
+      }
+    }
+
+    &.colorDark {
+      .inner {
+        &::after {
+          border-color: transparent transparent transparent ${color.theme.blue};
         }
       }
     }
