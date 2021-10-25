@@ -28,8 +28,8 @@ export class User extends Model<UserAttributes, UserInput> implements UserAttrib
     public title!: string;
     public primaryEmail!: string;
     public secondaryEmail!: string | null;
-    public telephoneNumber1!: string;
-    public telephoneNumber2!: string;
+    public telephoneNumber1!: string | null;
+    public telephoneNumber2!: string | null;
 
     public fullName!: string;
 
