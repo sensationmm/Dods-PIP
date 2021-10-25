@@ -6,7 +6,7 @@ import { Icons } from '../Icon/assets';
 import Text from '../Text';
 import * as Styled from './Tooltip.styles';
 
-export type alignmentType = 'topLeft' | 'topRight' | 'right';
+export type alignmentType = 'topLeft' | 'topRight' | 'right' | 'left';
 export type colorMode = 'Light' | 'Dark';
 
 export interface TooltipProps {
@@ -40,6 +40,7 @@ const Tooltip: React.FC<TooltipProps> = ({
           alignTopLeft: alignment === 'topLeft',
           alignTopRight: alignment === 'topRight',
           alignRight: alignment === 'right',
+          alignLeft: alignment === 'left',
           colorLight: colorType === 'Light',
           colorDark: colorType === 'Dark',
           show: classShow,
@@ -51,17 +52,19 @@ const Tooltip: React.FC<TooltipProps> = ({
               {title}
             </Text>
           )}
-          <Text color={darkColor} type="bodySmall">
-            {icon && (
-              <Icon
-                data-test="component-icon"
-                src={icon}
-                size={IconSize.medium}
-                color={colorType === 'Light' ? color.theme.blue : color.base.white}
-              />
-            )}
-            {body}
-          </Text>
+          <div className="inner-body">
+            <Text color={darkColor} type="bodySmall">
+              {icon && (
+                <Icon
+                  data-test="component-icon"
+                  src={icon}
+                  size={IconSize.medium}
+                  color={colorType === 'Light' ? color.theme.blue : color.base.white}
+                />
+              )}
+              {body}
+            </Text>
+          </div>
         </div>
       </Component>
     </Styled.wrapper>
