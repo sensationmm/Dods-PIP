@@ -15,8 +15,10 @@ BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Written Questions HOL (UK)'
 
-content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
+content_template_file_path = os.path.abspath(os.curdir) + '/templates/content_template.json'
 config = Config().config_read(("config.ini"))
+
+
 def run(event, context):
     logger.debug('Starting scrapping process with BUCKET: "%s", prefix: "%s" ', BUCKET, PREFIX)
     s3 = boto3.client('s3')
@@ -44,7 +46,9 @@ def run(event, context):
             content['contentSourceURL'] = qnaxml_url
             content['extractDate'] = datetime.now().isoformat()
             content['content'] = dict_content
-            content['metadata']['jurisdiction'] = 'UK'
+            content['metadata'].append({
+                'jurisdiction': 'UK'
+            })
 
             short_date = datetime.now().strftime("%Y-%m-%d")
             try:

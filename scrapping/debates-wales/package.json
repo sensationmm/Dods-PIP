@@ -1,7 +1,7 @@
 {
-  "name": "scraper-debates-nir",
+  "name": "scraper-debates-wales",
   "version": "1.0.0",
-  "description": "Lambda function to scrape debates from northern ireland parliament",
+  "description": "Lambda function to scrape debates from wales parliament",
   "author": "",
   "license": "MIT",
   "devDependencies": {

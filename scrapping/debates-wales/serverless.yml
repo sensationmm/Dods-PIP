@@ -1,4 +1,4 @@
-service: scraper-debates-nir
+service: scraper-debates-wales
 
 frameworkVersion: '2'
 projectDir: ../
@@ -9,8 +9,8 @@ plugins:
   - serverless-python-requirements
   - serverless-offline
 custom:
-  resource_prefix: debates-nir
-  app_acronym: dods-debates-nir-bucket
+  resource_prefix: debates-wales
+  app_acronym: dods-debates-wales-bucket
   default_stage: dev
   stage: ${opt:stage, self:custom.default_stage}
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
@@ -69,8 +69,8 @@ provider:
 
 functions:
   scrape:
-    name: scraper-debates-nir-${sls:stage}
-    description: Ingest Debate Northern Ireland Data
+    name: scraper-debates-wales-${sls:stage}
+    description: Ingest Debate Wales Data
     handler: handler.run
     events:
       ## Invoke Lambda function on Mon-Fri at 15:05

@@ -1,31 +1,29 @@
 import requests
 from lib.data_model import DataModel
-from urllib.parse import urljoin
 from lib.logger import logger
 import re
 import boto3
 import os
-from datetime import datetime
-from json import dumps
+import datetime
+from json import dumps, loads
 from lib.common import Common
 from lib.configs import Config
 from lib.validation import Validator
 from dateutil.parser import parse
-from lxml import html, etree
-
+from lxml import etree
 
 BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Debates (Wales)'
 
-content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
+content_template_file_path = os.path.abspath(os.curdir) + '/templates/content_template.json'
 config = Config().config_read(("config.ini"))
+s3 = boto3.client('s3')
+
 
 def run(event, context):
     logger.debug('Starting scrapping process with BUCKET: "%s", prefix: "%s" ', BUCKET, PREFIX)
-    s3 = boto3.client('s3')
     try:
-        scraper_url = config.get('parser', 'sourceUrl', fallback=None)
         for i in range(-10, 5, 1):
             date = datetime.datetime.now() + datetime.timedelta(i)
             day = date.day
@@ -33,19 +31,17 @@ def run(event, context):
             year = date.year
             print("###################################################################")
             print("Date=>", day, "/", month, "/", year)
-
             j = 1
-            Insert_Rows = []
+            scraper_url = "http://record.assembly.wales/Search/SeeMore?Query=&MemberID=-1&Type=2&Start={day}%2F{month}%2F{year}&End=01%2F01%2F0001&MeetingType=401&OrderPaperFilter=False&Page={PageNumber}".format(
+                year=year, month=month, day=day, PageNumber=j)
             while True:
                 print("Inside the While Looop")
-                mainUrl = scraper_url.format(
-                    year=year, month=month, day=day, PageNumber=j)
 
-                print("mainUrl::", mainUrl)
-                response = requests.get(mainUrl)
-                if response.url == "http://record.assembly.wales/Error/Error" or response.url == "https://record.assembly.wales/Error/Error":
+                print("mainUrl::", scraper_url)
+                response = requests.get(scraper_url)
+                dct = loads(response.content.decode('utf-8'))
+                if dct['Results'] == []:
                     break
-                print(mainUrl)
                 content = response.content.decode('utf-8', errors='ignore')
 
                 for meetingID in re.findall(r'href\=\\\"\.\.([^>]*?)\\"', str(content), re.I):
@@ -54,45 +50,9 @@ def run(event, context):
                     MeetingUrl = 'http://record.assembly.wales/Plenary/' + str(meetingID)
                     print("meetingID::", meetingID)
                     try:
-                        html_content = get_qa(meetingID, MeetingUrl)
-                        final_content = Common().get_file_content(content_template_file_path)
-                        final_content['contentType'] = content_type
-                        final_content['contentSource'] = config.get('parser', 'contentSource')
-                        final_content['contentSourceURL'] = MeetingUrl
-                        final_content['extractDate'] = datetime.now().isoformat()
-                        final_content['content'] = {
-                            'html_content': html_content
-                        }
-
-                        short_date = datetime.now().strftime("%Y-%m-%d")
-                        try:
-                            Validator().content_schema_validator(final_content)
-                        except Exception as e:
-                            logger.info('Content is not valid')
-                            continue
-
-                        hash_code = Common.hash(html_content, MeetingUrl, short_date)
-
-                        document = object
-                        try:
-                            document = DataModel.get(hash_code)
-                        except DataModel.DoesNotExist:
-                            logger.info(DataModel.DoesNotExist.msg)
-
-                        if hasattr(document, 'document_hash'):
-                            continue
-                        else:
-                            s3_response = s3.put_object(
-                                Body=dumps(final_content).encode('UTF-8'),
-                                Bucket=BUCKET,
-                                Key=(PREFIX + '/' + short_date + '/' + hash_code)
-                            )
-                            logger.info('Object upload respondend with: %s', s3_response)
-                            asset = DataModel()
-                            asset.document_hash = hash_code
-                            asset.save()
-                            logger.info('Scraper %s : Completed', MeetingUrl)
-                    except:
+                        get_qa(meetingID, MeetingUrl)
+                    except Exception as e:
+                        logger.exception(e)
                         continue
                 # print ("Answers::",Answers)
                 # data = etree.tostring(Answers, pretty_print=True, encoding='UTF-8', xml_declaration=True)
@@ -143,17 +103,12 @@ def get_qa(meetingID, MeetingUrl):
     # response = requests.get('http://record.assembly.wales/XMLExport/Download?meetingID={}&xmlDownloadType=EnglishTranscript'.format('5568')).content
     tree = etree.fromstring(response)
 
-    elementsList = tree.findall('XML_Plenary_English')
-    processed_agendas = []
+    elementsList = tree.findall('XML_Plenary-FifthSenedd_English')
+    html = ''
     for id, element in enumerate(elementsList):
-        # print ("Count::",id)
         html = '<html><head><meta charset="utf-8"/></head><body>'
         if element.find('contribution_type').text == "C":
             agendaID = elementsList[id].find('Agenda_Item_ID').text
-
-            # if agendaID in processed_agendas:
-            # continue
-            processed_agendas.append(agendaID)
 
             title, MeetingDate, SessionStarttime, Volume = '', '', '', ''
             title_debate = elementsList[id - 1].find('contribution_type').text
@@ -218,4 +173,44 @@ def get_qa(meetingID, MeetingUrl):
                     pass
                 html = html + AnswerText
                 html = html + '</body></html>'
-    return html
+                final_content = Common().get_file_content(content_template_file_path)
+                final_content['contentType'] = content_type
+                final_content['contentSource'] = config.get('parser', 'contentSource')
+                final_content['contentSourceURL'] = MeetingUrl
+                final_content['extractDate'] = datetime.datetime.now().isoformat()
+                final_content['content'] = {
+                    'html_content': html
+                }
+                final_content['metadata'].append({
+                    'jurisdiction': 'UK'
+                })
+
+                short_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                try:
+                    Validator().content_schema_validator(final_content)
+                except Exception as e:
+                    logger.info('Content is not valid')
+                    continue
+
+                hash_code = Common.hash(html, MeetingUrl, short_date)
+
+                document = object
+                try:
+                    document = DataModel.get(hash_code)
+                except DataModel.DoesNotExist:
+                    logger.info(DataModel.DoesNotExist.msg)
+
+                if hasattr(document, 'document_hash'):
+                    continue
+                else:
+                    s3_response = s3.put_object(
+                        Body=dumps(final_content).encode('UTF-8'),
+                        Bucket=BUCKET,
+                        Key=(PREFIX + '/' + short_date + '/' + hash_code)
+                    )
+                    logger.info('Object upload respondend with: %s', s3_response)
+                    asset = DataModel()
+                    asset.document_hash = hash_code
+                    asset.save()
+                    logger.info('Scraper %s : Completed', MeetingUrl)
+    return True

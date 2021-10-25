@@ -16,7 +16,7 @@ from urllib.parse import urljoin
 BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 
-content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
+content_template_file_path = os.path.abspath(os.curdir) + '/templates/content_template.json'
 config = Config().config_read(("config.ini"))
 content_type = config.get('parser', 'informationType', fallback=None)
 content_source = config.get('parser', 'contentSource', fallback=None)
@@ -32,7 +32,7 @@ def run(event, context):
         links = content.xpath(
             "//tr[@class='calendar-week']/descendant::a[contains(@aria-label,'This day has business')]/@href")
 
-        Insert_Rows = [] # Is this really needed ? don't see where is being used
+        Insert_Rows = []  # Is this really needed ? don't see where is being used
         # Looping the calendar if aria-label value is ('This day has business')
         for i, active_links in enumerate(links[::-1]):
             qalink = urljoin(mainUrl, active_links.extract())
@@ -110,7 +110,9 @@ def run(event, context):
                     content['content'] = {
                         'html_content': soup
                     }
-                    content['metadata']['jurisdiction'] = 'UK'
+                    content['metadata'].append({
+                        'jurisdiction': 'UK'
+                    })
                     try:
                         Validator().content_schema_validator(content)
                     except Exception as e:
@@ -129,6 +131,7 @@ def run(event, context):
                     logger.info('Scraper %s : Completed', Link)
     except Exception as e:
         logger.exception(e)
+
 
 def clean(text):
     text = re.sub(r"<[^>]*?>", " ", str(text))
@@ -162,13 +165,13 @@ def specific_formatting(pagecontent):
 
 
 def payloadCreation(pageContent):
-
     # pageContent = re.sub(
     # r'(<div[^>]*?class\=\"[^>]*?debate-item[^>]*?>)', r'<block1><block2>\1', pageContent)
     pageContent = re.sub(r'<p\s*class\=\"hs_para\">\s*<\/p>', '', pageContent)
 
     pageContent = re.sub(
-        r'class\=\"debate-item\s*debate-item-contributiondebateitem\"', 'class="content-item" id="contribution-id" ', pageContent)
+        r'class\=\"debate-item\s*debate-item-contributiondebateitem\"', 'class="content-item" id="contribution-id" ',
+        pageContent)
     tabled_date = clean(re.findall(
         r'<h2[^>]*?heading-level-3[^>]*?>[^>]*?debated\s*[^>]*?([\d]+[^>]*?)\s*<\/h2>', pageContent, re.IGNORECASE)[0])
 
@@ -178,10 +181,11 @@ def payloadCreation(pageContent):
     pageContent = re.sub(r'<h1[^>]*?>([\w\W]*?)</h1>',
                          r'<div class="title">\1</div>', pageContent)
     date_substitute_regex = r'</h2><div class="debate-date"><strong>' + \
-        str(tabled_date) + r'</strong></div>'
+                            str(tabled_date) + r'</strong></div>'
     pageContent = re.sub(r'<\/h2>', date_substitute_regex, pageContent)
 
     pageContent = re.sub(
-        r'<div[^>]*?class\=\"primary\-text\"[^>]*?>\s*([\w\W]*?)\s*<\/div>\s*(?:<div[^>]*?class\=\"secondary\-text\"[^>]*?>\s*([\w\W]*?)\s*<\/div>)?', r'<h2 class="memberLink">\1 \2</h2>', pageContent)
+        r'<div[^>]*?class\=\"primary\-text\"[^>]*?>\s*([\w\W]*?)\s*<\/div>\s*(?:<div[^>]*?class\=\"secondary\-text\"[^>]*?>\s*([\w\W]*?)\s*<\/div>)?',
+        r'<h2 class="memberLink">\1 \2</h2>', pageContent)
 
     return pageContent
