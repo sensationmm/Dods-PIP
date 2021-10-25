@@ -489,7 +489,6 @@ components:
       type: object
       required:
         - name
-        - notes
         - contact_name
         - contact_email_address
         - contact_telephone_number
