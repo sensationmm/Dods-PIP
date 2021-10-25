@@ -1,0 +1,11 @@
+{
+  "name": "scraper-motions-nir",
+  "version": "1.0.0",
+  "description": "Lambda function to scrape motions from northern ireland parliament",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless-offline": "^8.0.0",
+    "serverless-python-requirements": "^5.1.1"
+  }
+}
