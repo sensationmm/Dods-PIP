@@ -16,7 +16,7 @@
         "remove:deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage dev",
         "remove:deploy:prod": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage prod",
         "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}",
-        "postinstall": "cd ../.. && husky install services/client-account/.husky"
+        "postinstall": "cd ../.. && husky install services/user-profile/.husky"
     },
     "pre-commit": [
         "test:coverage",
@@ -45,6 +45,7 @@
         "copy-webpack-plugin": "^9.0.1",
         "cucumber-html-reporter": "^5.5.0",
         "grunt": "^1.0.0",
+        "husky": "^7.0.2",
         "inquirer": "8.1.5",
         "jest": "^27.1.0",
         "mockserver-client": "^5.11.2",

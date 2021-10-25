@@ -119,16 +119,6 @@ plugins:
   - serverless-offline
 
 functions:
-  health:
-    handler: src/handlers/health/index.handle
-    description: Triggered when http request comes
-    events:
-      - http:
-          method: get
-          path: health
-          cors: true
-    tags:
-      foo: bar
   createUserProfile:
     handler: src/handlers/createUserProfile/index.handle
     description: Triggered when http request comes

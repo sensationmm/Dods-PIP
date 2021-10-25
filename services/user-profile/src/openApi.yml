@@ -7,15 +7,6 @@ servers:
   - url: /api
 
 paths:
-  /health:
-    get:
-      operationId: health
-      summary: "Get Health Message"
-      description: "Get Health Message"
-      responses:
-        "200":
-        "404":
-          $ref: "#/components/responses/NotFound"
   /user:
     get:
       summary: List all User Profiles
@@ -325,10 +316,3 @@ components:
       required: false
       description: Offset value for pagination
 
-  responses:
-    NotFound:
-      description: The specified resource was not found
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Message"

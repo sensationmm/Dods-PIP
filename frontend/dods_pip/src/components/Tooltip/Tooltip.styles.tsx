@@ -19,9 +19,8 @@ export const tooltipStyle = styled.div`
   transition: opacity 0.5s;
   visibility: hidden;
   position: absolute;
-  bottom: 100%;
-  left: 0;
-  margin-bottom: ${spacing(5)};
+  bottom: calc(100% + ${spacing(5)});
+  left: ${spacing(-5)};
   max-width: ${spacing(70)};
   width: 100vw;
 
@@ -45,7 +44,7 @@ export const tooltipStyle = styled.div`
       height: 0;
       border-width: 10px;
       border-style: solid;
-      border-color: #ffffff transparent transparent transparent;
+      border-color: ${color.base.white} transparent transparent transparent;
       left: ${spacing(5)};
       bottom: ${spacing(-5)};
     }
@@ -91,7 +90,7 @@ export const tooltipStyle = styled.div`
     display: flex;
     justify-content: flex-end;
     left: auto;
-    right: 0;
+    right: ${spacing(-5)};
 
     .inner {
       &::after {
@@ -104,12 +103,11 @@ export const tooltipStyle = styled.div`
   &.alignRight {
     top: ${spacing(-2.5)};
     bottom: auto;
-    left: 100%;
-    margin-left: ${spacing(5)};
+    left: calc(100% + ${spacing(5)});
 
     .inner {
       &::after {
-        border-color: transparent #ffffff transparent transparent;
+        border-color: transparent ${color.base.white} transparent transparent;
         left: ${spacing(-5)};
         top: ${spacing(2.5)};
         bottom: auto;
@@ -120,6 +118,33 @@ export const tooltipStyle = styled.div`
       .inner {
         &::after {
           border-color: transparent ${color.theme.blue} transparent transparent;
+        }
+      }
+    }
+  }
+
+  &.alignLeft {
+    display: flex;
+    justify-content: flex-end;
+    top: ${spacing(-2.5)};
+    right: calc(100% + ${spacing(5)});
+    bottom: auto;
+    left: auto;
+
+    .inner {
+      &::after {
+        border-color: transparent transparent transparent ${color.base.white};
+        top: ${spacing(2.5)};
+        right: ${spacing(-5)};
+        bottom: auto;
+        left: auto;
+      }
+    }
+
+    &.colorDark {
+      .inner {
+        &::after {
+          border-color: transparent transparent transparent ${color.theme.blue};
         }
       }
     }

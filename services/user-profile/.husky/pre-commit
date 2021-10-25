@@ -1,0 +1,18 @@
+#!/bin/sh
+
+. "$(dirname "$0")/_/husky.sh"
+
+[ -n "$CI" ] && exit 0
+
+function get_commit {
+	git log --oneline -- $1 | head -n 1 | cut -d " " -f1
+}
+
+ROOT_COMMIT=$(get_commit)
+SUBDIR_COMMIT=$(get_commit services/user-profile)
+
+if [ "$SUBDIR_COMMIT" == "$ROOT_COMMIT" ]; then
+	cd services/client-account
+	echo 'Pre-commit checks... linting, tests and build... please fix any errors'
+	npm run test:coverage
+fi

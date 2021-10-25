@@ -6,8 +6,6 @@ import { Icons } from '../Icon/assets';
 import Tooltip, { TooltipProps } from '../Tooltip';
 import * as Styled from './Popover.styles';
 
-export type alignmentType = 'topLeft' | 'topRight' | 'right';
-
 export interface PopoverProps extends Omit<TooltipProps, 'trigger' | 'colorType' | 'icon'> {}
 
 const Popover: React.FC<PopoverProps> = ({ ...rest }) => {

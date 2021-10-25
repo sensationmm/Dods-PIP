@@ -16,11 +16,11 @@ Given('lambda function name is {string} and i set language as {string}', functio
 When('I send HTTP {string} request', async function (method) {
     const url = `${config.test.endpoint}/${this.lambdaFunction}`;
 
-    try {
-        this.response = (await axios({ url, method, headers: this.data })).data;
-    } catch (error) {
-        this.error = error;
-    }
+    // try {
+    //     this.response = (await axios({ url, method, headers: this.data })).data;
+    // } catch (error) {
+    //     this.error = error;
+    // }
 });
 
 Then('I should receive {string}', function (expectedAnswer) {
