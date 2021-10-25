@@ -14,8 +14,8 @@ provider:
 
     lambdaHashingVersion: 20201221
     vpc:
-        securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
-        subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
+      securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
+      subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
     stackTags:
         service: ${self:service}
         env: ${self:provider.stage}
@@ -30,40 +30,32 @@ provider:
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
-              - 'rds:*'
+            -  'rds:*'
           Resource:
-              - '*'
+            - '*'
         - Effect: 'Allow'
           Action:
-              - 'xray:PutTraceSegments'
-              - 'xray:PutTelemetryRecords'
+            - 'xray:PutTraceSegments'
+            - 'xray:PutTelemetryRecords'
           Resource:
-              - '*'
+            - '*'
     # This section ties the functions to a particular API Gateway instead of creating a new one
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
     apiGateway:
-        restApiId: ${file(../apig.${self:provider.stage}.yml):apiGatewayId, ""}
-        restApiRootResourceId: ${file(../apig.${self:provider.stage}.yml):apiRootResourceId, ""}
+        restApiId: ${file(../apig.${self:provider.stage}.yml):apiGatewayId, ""} 
+        restApiRootResourceId: ${file(../apig.${self:provider.stage}.yml):apiRootResourceId, ""} 
         description: Default Gateway for ${self:provider.stage} deployed with dods-iam
 
     environment:
         SERVERLESS_STAGE: ${self:provider.stage}
         SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-        DB_DRIVER: mariadb
-        DB_HOST: ${self:custom.envs.${self:provider.stage}.DB_HOST, self:custom.envs.local.DB_HOST}
-        DB_NAME: ${self:custom.envs.${self:provider.stage}.DB_NAME, self:custom.envs.local.DB_NAME}
-        DB_USER: ${self:custom.envs.${self:provider.stage}.DB_USER, self:custom.envs.local.DB_USER}
-        DB_PASSWORD: ${self:custom.envs.${self:provider.stage}.DB_PASSWORD, self:custom.envs.local.DB_PASSWORD}
         DB_CONNECTION_LIMIT: 5
-        # SERVERLESS_STAGE: ${self:provider.stage}
-        # SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-        # DB_CONNECTION_LIMIT: 5
-        # DB_DRIVER: mariadb
-        # DB_NAME: dods
-        # DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
-        # DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'root' }
-        # DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'rootPass'}
+        DB_DRIVER: mariadb
+        DB_NAME: dods
+        DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
+        DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'root' }
+        DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'rootPass'}
 
 custom:
     # envs:
@@ -78,20 +70,6 @@ custom:
     #         DB_NAME: dods
     #         DB_USER: dods
     #         DB_PASSWORD: dods
-    envs:
-        dev:
-            DB_HOST: 'localhost'
-            DB_NAME: dods
-            DB_USER: 'root'
-            DB_PASSWORD: 'rootPass'
-            apiGatewayId: emhumq7ktf
-            apiRootResourceId: lzvvrnid32
-
-        local:
-            DB_HOST: localhost
-            DB_NAME: dods
-            DB_USER: 'root'
-            DB_PASSWORD: 'rootPass'
 
     webpack:
         webpackConfig: ./webpack.config.js
@@ -179,7 +157,7 @@ functions:
             - http:
                   method: post
                   path: clientaccount/{clientAccountId}/teammember
-
+    
     getClientAccountTeamMembers:
         handler: src/handlers/getClientAccountTeamMembers/index.handle
         description: Triggered when http request comes
@@ -211,11 +189,3 @@ functions:
             - http:
                   method: post
                   path: checkaccountname
-
-    updateClientAccountHeader:
-        handler: src/handlers/updateClientAccountHeader/index.handle
-        description: Triggered when http request comes
-        events:
-            - http:
-                  method: put
-                  path: clientaccount/{clientAccountId}/header
