@@ -1,5 +1,4 @@
 import { UserInput } from '@dodsgroup/dods-model';
-import { UserProfileCreate, UserProfileResponse } from '.';
 
 export type SearchUsersInput = {
     name: string;
@@ -8,7 +7,6 @@ export type SearchUsersInput = {
 }
 export type SearchUsersOutput = Pick<UserInput, 'id' | 'firstName' | 'lastName'>;
 
-export interface UserProfilePersister {
-    createUserProfile(userProfileParameters: UserProfileCreate): Promise<UserProfileResponse>;
+export interface UserProfilePersisterV2 {
     searchUsers(parameters: SearchUsersInput): Promise<Array<SearchUsersOutput>>;
 }
