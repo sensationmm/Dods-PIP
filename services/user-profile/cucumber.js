@@ -1,3 +1,7 @@
+const { setEnvironmentVariablesForTest } = require('./setEnvironmentVariablesForTest');
+
+setEnvironmentVariablesForTest();
+
 let common = [
   'tests/integrationTests/features',
   '--require-module ts-node/register',
