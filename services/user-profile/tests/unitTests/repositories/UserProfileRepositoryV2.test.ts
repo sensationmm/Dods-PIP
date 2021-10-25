@@ -4,8 +4,8 @@ import { mocked } from 'ts-jest/utils';
 import { UserProfileRepositoryV2 } from '../../../src/repositories/UserProfileRepositoryV2';
 
 const defaultSearchUsersResult: Array<any> = [
-    { id: 1, firstName: 'Test First Name1', lastName: 'Test Last Name1' },
-    { id: 2, firstName: 'Test First Name2', lastName: 'Test Last Name2' },
+    { uuid: '14e7ca86-1788-4b6e-b153-9c963dc928cb', firstName: 'Test First Name1', lastName: 'Test Last Name1' },
+    { uuid: '24e7ca86-1788-4b6e-b153-9c963dc928cb', firstName: 'Test First Name2', lastName: 'Test Last Name2' },
 ];
 
 jest.mock('@dodsgroup/dods-model');
