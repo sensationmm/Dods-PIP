@@ -14,8 +14,10 @@ import SectionHeader from '../../../components/_layout/SectionHeader';
 import Spacer from '../../../components/_layout/Spacer';
 import Button from '../../../components/Button';
 import { Icons } from '../../../components/Icon/assets';
+import { NotificationProps } from '../../../components/Notification';
 import Text from '../../../components/Text';
 import color from '../../../globals/color';
+import fetchJson from '../../../lib/fetchJson';
 import { inArray } from '../../../utils/array';
 import * as Styled from './index.styles';
 
@@ -31,6 +33,9 @@ export type Errors = {
 };
 
 export interface SubscriptionProps {
+  accountId: string;
+  addNotification: (props: NotificationProps) => void;
+  setLoading: (state: boolean) => void;
   location: Array<string>;
   setLocation: (val: Array<string>) => void;
   contentType: Array<string>;
@@ -75,18 +80,30 @@ const Subscription: React.FC<SubscriptionProps> = ({
   onSubmit,
   onBack,
 }) => {
+  enum RenewalType {
+    Annual = 'annual',
+    EndDate = 'endDate',
+  }
+
+  enum EndDateType {
+    One = '1year',
+    Two = '2year',
+    Three = '3year',
+    Custom = 'custom',
+  }
+
   React.useEffect(() => {
     switch (endDateType) {
-      case '1year':
+      case EndDateType.One:
         setEndDate(format(add(new Date(startDate), { years: 1 }), 'yyyy-MM-dd'));
         break;
-      case '2year':
+      case EndDateType.Two:
         setEndDate(format(add(new Date(startDate), { years: 2 }), 'yyyy-MM-dd'));
         break;
-      case '3year':
+      case EndDateType.Three:
         setEndDate(format(add(new Date(startDate), { years: 3 }), 'yyyy-MM-dd'));
         break;
-      case 'custom':
+      case EndDateType.Custom:
         setEndDate('');
         break;
     }
@@ -99,9 +116,13 @@ const Subscription: React.FC<SubscriptionProps> = ({
     consultantHours !== '' &&
     renewalType !== '' &&
     startDate !== '' &&
-    (renewalType === 'annual' ||
-      (renewalType === 'endDate' && endDateType !== '' && endDateType !== 'custom') ||
-      (renewalType === 'endDate' && endDateType === 'custom' && endDate !== '')) &&
+    (renewalType === RenewalType.Annual ||
+      (renewalType === RenewalType.EndDate &&
+        endDateType !== '' &&
+        endDateType !== EndDateType.Custom) ||
+      (renewalType === RenewalType.EndDate &&
+        endDateType === EndDateType.Custom &&
+        endDate !== '')) &&
     Object.keys(errors).length === 0;
 
   const handleSetLocation = (val: string) => {
@@ -276,8 +297,8 @@ const Subscription: React.FC<SubscriptionProps> = ({
             required={true}
             onChange={setRenewalType}
             items={[
-              { label: 'Annual Renewal', value: 'annual' },
-              { label: 'End date', value: 'endDate' },
+              { label: 'Annual Renewal', value: RenewalType.Annual },
+              { label: 'End date', value: RenewalType.EndDate },
             ]}
             selectedValue={renewalType}
           />
@@ -297,7 +318,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             maxDate={endDate}
           />
 
-          {renewalType === 'endDate' && endDateType === 'custom' && (
+          {renewalType === RenewalType.EndDate && endDateType === EndDateType.Custom && (
             <DatePicker
               id="end-date"
               label="Assign an end date"
@@ -311,7 +332,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             />
           )}
 
-          {renewalType === 'endDate' && (
+          {renewalType === RenewalType.EndDate && (
             <Select
               id="end-date-type"
               label="End date"
@@ -321,10 +342,10 @@ const Subscription: React.FC<SubscriptionProps> = ({
               placeholder="Choose"
               onChange={setEndDateType}
               options={[
-                { label: 'In 1 year', value: '1year' },
-                { label: 'In 2 years', value: '2year' },
-                { label: 'In 3 years', value: '3year' },
-                { label: 'Custom', value: 'custom' },
+                { label: 'In 1 year', value: EndDateType.One },
+                { label: 'In 2 years', value: EndDateType.Two },
+                { label: 'In 3 years', value: EndDateType.Three },
+                { label: 'Custom', value: EndDateType.Custom },
               ]}
               onBlur={validateEndDateType}
               error={errors.endDateType}

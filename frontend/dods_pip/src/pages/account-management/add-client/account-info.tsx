@@ -11,6 +11,9 @@ import Spacer from '../../../components/_layout/Spacer';
 import Button from '../../../components/Button';
 import { Icons } from '../../../components/Icon/assets';
 import color from '../../../globals/color';
+import { PushNotificationProps } from '../../../hoc/LoadingHOC';
+import fetchJson from '../../../lib/fetchJson';
+import { Api, BASE_URI } from '../../../utils/api';
 import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
 
@@ -23,6 +26,10 @@ export type Errors = {
 };
 
 export interface AccountInfoProps {
+  addNotification: (props: PushNotificationProps) => void;
+  setLoading: (state: boolean) => void;
+  accountId: string;
+  setAccountId: (val: string) => void;
   accountName: string;
   setAccountName: (val: string) => void;
   accountNotes: string;
@@ -40,6 +47,10 @@ export interface AccountInfoProps {
 }
 
 const AccountInfo: React.FC<AccountInfoProps> = ({
+  addNotification,
+  setLoading,
+  accountId,
+  setAccountId,
   accountName,
   setAccountName,
   accountNotes,
@@ -62,15 +73,76 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     contactTelephone != '' &&
     contactEmail !== '';
 
-  const validateAccountName = () => {
+  const handleSave = async () => {
+    if (!isComplete) {
+      // incomple form inputs
+      return false;
+    }
+
+    setLoading(true);
+
+    const payload = {
+      name: accountName,
+      notes: accountNotes,
+      contact_name: contactName,
+      contact_email_address: contactEmail,
+      contact_telephone_number: contactTelephone,
+    };
+
+    const postBody = {
+      clientAccount: payload,
+    };
+    const body = accountId === '' ? postBody : payload;
+    const method = accountId === '' ? 'POST' : 'PUT';
+    let uri = `${BASE_URI}${Api.ClientAccount}`;
+
+    if (method === 'PUT') {
+      uri += `/${accountId}`;
+    }
+
+    const response = await fetchJson(uri, {
+      method,
+      body: JSON.stringify(body),
+    });
+    const { data = {}, message = '' } = response;
+    const { uuid = '' } = data;
+
+    setLoading(false);
+
+    if (uuid !== '') {
+      // all good
+      if (method === 'POST') {
+        setAccountId(uuid as string);
+      }
+      onSubmit(); // go to next step
+    } else {
+      // show server error
+      addNotification({
+        type: 'warn',
+        title: 'Error',
+        text: message,
+      });
+    }
+  };
+
+  const validateAccountName = async () => {
     const formErrors = { ...errors };
     if (accountName === '') {
       formErrors.accountName = 'This field is required';
-    } else if (accountName.replace(' ', '').toLowerCase() === 'somo') {
-      formErrors.accountName = 'An account with this name already exists';
     } else {
       delete formErrors.accountName;
+      const response = await fetchJson(`${BASE_URI}${Api.CheckAccountName}`, {
+        body: JSON.stringify({ name: accountName }),
+      });
+
+      const { data = {} } = response;
+      const { isNameAvailable = false } = data;
+
+      if (!isNameAvailable) {
+        formErrors.accountName = 'An account with this name already exists';
+      }
     }
+
     setErrors(formErrors);
   };
 
@@ -218,7 +290,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
           <Button
             data-test="continue-button"
             label="Save and continue"
-            onClick={onSubmit}
+            onClick={handleSave}
             icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete}
