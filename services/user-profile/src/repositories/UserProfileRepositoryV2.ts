@@ -30,6 +30,6 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             limit: limit,
         });
 
-        return users.map(({ id, firstName, lastName }) => ({ id, firstName, lastName }));
+        return users.map(({ uuid, firstName, lastName }) => ({ uuid, firstName, lastName }));
     }
 }
