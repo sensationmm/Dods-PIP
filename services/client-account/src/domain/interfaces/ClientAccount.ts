@@ -62,3 +62,12 @@ export interface UpdateClientAccountParameters {
     contract_rollover: boolean;
     contract_end_date?: string;
 }
+
+export interface UpdateClientAccountHeaderParameters {
+    clientAccountId: string;
+    name: string;
+    notes: string;
+    contact_name: string;
+    contact_email_address: string;
+    contact_telephone_number: string;
+}
