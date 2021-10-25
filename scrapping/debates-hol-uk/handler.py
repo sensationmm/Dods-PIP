@@ -34,10 +34,6 @@ def run(event, context):
     try:
         # get main url from config
         main_url = config.get('parser', 'sourceUrl')
-
-        # TODO delete next line
-        main_url = 'https://hansard.parliament.uk/commons/2021-09-23'
-
         response = requests.get(main_url).content
 
         content = Selector(text=response.decode('utf-8', errors='ignore'))
@@ -102,7 +98,6 @@ def run(event, context):
 
                     final_content = Common().get_file_content(content_template_file_path)
                     final_content['contentType'] = content_type
-                    # final_content['jurisdiction'] = 'uk'
                     final_content['contentSource'] = config.get(
                         'parser', 'contentSource')
                     final_content['contentSourceURL'] = link
