@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import React from 'react';
 
 import Icon, { IconSize } from '../Icon';
@@ -77,5 +77,29 @@ describe('Button', () => {
     expect(button.type().componentStyle.componentId).toEqual(
       Styled.secondary.componentStyle.componentId,
     );
+  });
+
+  describe('verify click event', () => {
+    const onClick = jest.fn();
+
+    it('by default can click', () => {
+      const wrapper = mount(<Button label="Label" onClick={onClick} />);
+      const button = wrapper.find('button');
+      button.simulate('click');
+  
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  
+    it('when disabled cannot click', () => {
+      const wrapper = mount(<Button label="Label" onClick={onClick} disabled={true} />);
+      const button = wrapper.find('button');
+      button.simulate('click');
+  
+      expect(onClick).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });
