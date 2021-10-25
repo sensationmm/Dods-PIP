@@ -108,7 +108,9 @@ def run(event, context):
                     final_content['contentSourceURL'] = link
                     final_content['extractDate'] = datetime.now().isoformat()
                     final_content['content'] = content_field
-                    final_content['metadata']['jurisdiction'] = 'UK'
+                    final_content['metadata'].append({
+                        'jurisdiction': 'UK'
+                    })
 
                     try:
                         Validator().content_schema_validator(final_content)
