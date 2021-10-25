@@ -42,13 +42,12 @@ export const popoverWrapper = styled.div`
     }
 
     &.alignRight {
-      left: 100%;
-      margin-left: 15px;
+      left: calc(100% + 15px);
     }
 
     &.alignLeft {
       left: auto;
-      margin-right: 15px;
+      right: calc(100% + 15px);
     }
 
     .inner-body {
