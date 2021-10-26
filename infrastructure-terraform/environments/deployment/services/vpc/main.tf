@@ -70,65 +70,65 @@ resource "aws_route" "internet_access" {
 }
 
 // - Create a NAT gateway with an EIP for each private subnet to get internet connectivity
-//resource "aws_instance" "nat_Instance" {
-//  count      = var.az_count
-//  ami           = data.aws_ami.amazon_linux_2.id
-//  instance_type = "t3.nano"
-//
-//  network_interface {
-//    network_interface_id =  element(aws_network_interface.nat_Instance.*.id, count.index)
-//    device_index         = 0
-//  }
-//  user_data = file("nat_startup.sh")
-//
-//  tags = merge(map(
-//  "name", "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-${count.index}",
-//  "owner", local.owner,
-//  "environment", var.environment,
-//  "project", var.project
-//  ), var.default_tags)
-//}
+resource "aws_instance" "nat_Instance" {
+  count      = var.az_count
+  ami           = data.aws_ami.amazon_linux_2.id
+  instance_type = "t3.nano"
 
-//resource "aws_security_group" "nat_instance" {
-//  name        = "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-sg"
-//  description = "allows outbound traffic from private subnet"
-//  vpc_id = aws_vpc.main.id
-//
-//  egress {
-//    from_port   = 443
-//    to_port     = 443
-//    protocol    = "tcp"
-//    cidr_blocks = ["0.0.0.0/0"]
-//  }
-//
-//  egress {
-//    protocol        = "tcp"
-//    from_port       = 80
-//    to_port         = 80
-//    cidr_blocks = ["0.0.0.0/0"]
-//  }
-//
-//  ingress {
-//    protocol        = "tcp"
-//    from_port       = 443
-//    to_port         = 443
-//    cidr_blocks = ["172.17.0.0/16"]
-//  }
-//
-//  ingress {
-//    protocol        = "tcp"
-//    from_port       = 80
-//    to_port         = 80
-//    cidr_blocks = ["172.17.0.0/16"]
-//  }
-//
-//  tags = merge(map(
-//  "name", "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-sg",
-//  "owner", local.owner,
-//  "environment", var.environment,
-//  "project", var.project
-//  ), var.default_tags)
-//}
+  network_interface {
+    network_interface_id =  element(aws_network_interface.nat_Instance.*.id, count.index)
+    device_index         = 0
+  }
+  user_data = file("nat_startup.sh")
+
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-${count.index}",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
+}
+
+resource "aws_security_group" "nat_instance" {
+  name        = "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-sg"
+  description = "allows outbound traffic from private subnet"
+  vpc_id = aws_vpc.main.id
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol        = "tcp"
+    from_port       = 80
+    to_port         = 80
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    protocol        = "tcp"
+    from_port       = 443
+    to_port         = 443
+    cidr_blocks = ["172.17.0.0/16"]
+  }
+
+  ingress {
+    protocol        = "tcp"
+    from_port       = 80
+    to_port         = 80
+    cidr_blocks = ["172.17.0.0/16"]
+  }
+
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-sg",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
+}
 
 
 data "aws_ami" "amazon_linux_2" {
@@ -147,31 +147,31 @@ data "aws_ami" "amazon_linux_2" {
   owners = ["amazon"]
 }
 
-//resource "aws_network_interface" "nat_Instance" {
-//  count      = var.az_count
-//  subnet_id   = element(aws_subnet.public.*.id, count.index)
-//  source_dest_check = false
-//  security_groups = [aws_security_group.nat_instance.id]
-//
-//  tags = {
-//    name        = "${var.project}-${var.environment}-${local.main_resource_name}-primary-network-interface",
-//    owner       =  local.owner,
-//    environment = var.environment,
-//    project     = var.project
-//  }
-//}
+resource "aws_network_interface" "nat_Instance" {
+  count      = var.az_count
+  subnet_id   = element(aws_subnet.public.*.id, count.index)
+  source_dest_check = false
+  security_groups = [aws_security_group.nat_instance.id]
 
-//resource "aws_eip" "NAT_Instance" {
-//  count      = var.az_count
-//  vpc        = true
-//  depends_on = [aws_internet_gateway.gw]
-//  tags = merge(map(
-//    "name", "${var.project}-${var.environment}-${local.main_resource_name}-eip",
-//    "owner", local.owner,
-//    "environment", var.environment,
-//    "project", var.project
-//  ), var.default_tags)
-//}
+  tags = {
+    name        = "${var.project}-${var.environment}-${local.main_resource_name}-primary-network-interface",
+    owner       =  local.owner,
+    environment = var.environment,
+    project     = var.project
+  }
+}
+
+resource "aws_eip" "NAT_Instance" {
+  count      = var.az_count
+  vpc        = true
+  depends_on = [aws_internet_gateway.gw]
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-eip",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
+}
 
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id       = aws_vpc.main.id
@@ -319,11 +319,12 @@ resource "aws_route_table" "private" {
 
 }
 
-#resource "aws_route" "private" {
-#  route_table_id = aws_route_table.private.id
-#  destination_cidr_block = "0.0.0.0/0"
-#  nat_gateway_id = aws_egress_only_internet_gateway.eigw.id
-#}
+resource "aws_route" "outgoing-nat" {
+  count                       = var.az_count
+  route_table_id              = element(aws_route_table.private.*.id, count.index)
+  destination_cidr_block      = "0.0.0.0/0"
+  instance_id                 = element(aws_instance.nat_Instance.*.id, count.index)
+}
 
 // - Explicitly associate the newly created route tables to the private subnets (so they don't default to the main route table)
 resource "aws_route_table_association" "private" {
@@ -342,6 +343,5 @@ resource "aws_route" "outgoing-ip4" { //ipv6 difficult to rename this component
   destination_ipv6_cidr_block = "::/0"
   egress_only_gateway_id      = aws_egress_only_internet_gateway.eigw.id
 }
-
 
 //ipv4 route added manually as it was causing existence conflicts

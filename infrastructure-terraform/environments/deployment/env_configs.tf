@@ -9,7 +9,7 @@ data "template_file" "vpc_config_dev" {
 resource "local_file" "vpc_config" {
   filename = "${path.module}/../../vpc.${var.environment}.js"
   content  = data.template_file.vpc_config_dev.rendered
-
-
 }
+
+
 

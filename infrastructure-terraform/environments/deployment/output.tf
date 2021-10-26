@@ -20,3 +20,7 @@ output "db_address" {
 output "lambda_sg_id" {
   value = module.client-profile-database.lambda_sg_id
 }
+
+output "frontend_url" {
+  value = module.pip-network.frontend_url
+}
