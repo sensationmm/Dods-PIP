@@ -25,7 +25,7 @@ const base = styled.button<ButtonProps>`
   height: 40px;
   border-radius: 4px;
   cursor: ${({ disabled }) => !disabled && 'pointer'};
-  pointer-events: ${({ disabled }) => !disabled && 'none'};
+  pointer-events: ${({ disabled }) => disabled && 'none'};
   position: relative;
   width: 100%;
 

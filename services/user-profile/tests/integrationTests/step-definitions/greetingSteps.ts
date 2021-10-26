@@ -2,7 +2,7 @@ import axios from "axios";
 import expect from 'expect'
 import { When, Then, Given } from "@cucumber/cucumber";
 import { config } from '../../../src/domain/config'
-import HttpStatusCode from '../../../src/domain/http/HttpStatusCode'
+import { HttpStatusCode } from '@dodsgroup/dods-lambda'
 
 Given('lambda function name is {string}', function (lambdaFunction) {
     this.lambdaFunction = lambdaFunction;
@@ -16,11 +16,11 @@ Given('lambda function name is {string} and i set language as {string}', functio
 When('I send HTTP {string} request', async function (method) {
     const url = `${config.test.endpoint}/${this.lambdaFunction}`;
 
-    try {
-        this.response = (await axios({ url, method, headers: this.data })).data;
-    } catch (error) {
-        this.error = error;
-    }
+    // try {
+    //     this.response = (await axios({ url, method, headers: this.data })).data;
+    // } catch (error) {
+    //     this.error = error;
+    // }
 });
 
 Then('I should receive {string}', function (expectedAnswer) {

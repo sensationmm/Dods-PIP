@@ -5,6 +5,9 @@ interface CustomError extends Error {
 
 interface customResponse extends Response {
   accessToken?: string;
+  data?: Record<string, unknown>;
+  message?: string;
+  success?: boolean;
 }
 
 export default async function fetchJson(url: string, args?: RequestInit): Promise<customResponse> {
@@ -26,7 +29,11 @@ export default async function fetchJson(url: string, args?: RequestInit): Promis
 
     const error = new Error(response.statusText) as CustomError;
     error.response = response;
-    error.data = { name: data?.name || 'UnknownException', code: response.status };
+    error.data = {
+      name: data?.name || 'UnknownException',
+      code: response.status,
+      message: 'An error happened. Please try again.',
+    };
 
     throw error;
   } catch (error) {

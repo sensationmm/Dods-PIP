@@ -189,3 +189,11 @@ functions:
             - http:
                   method: post
                   path: checkaccountname
+
+    updateClientAccountHeader:
+        handler: src/handlers/updateClientAccountHeader/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: put
+                  path: clientaccount/{clientAccountId}/header

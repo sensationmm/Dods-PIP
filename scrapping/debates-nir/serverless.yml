@@ -40,6 +40,7 @@ provider:
   lambdaHashingVersion: 20201221
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
+
   deploymentBucket:
     name: pip-${self:provider.stage}-scrapping-lambdas
 

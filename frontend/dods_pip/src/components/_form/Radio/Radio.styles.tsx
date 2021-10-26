@@ -112,7 +112,7 @@ export const Radio = styled.label.attrs((props) => ({
       }
 
       ~ .custom-label{
-        color: ${theme.colourTextDisabled};
+        color: ${theme.colourLabelDisabled};
       }
     }
   }

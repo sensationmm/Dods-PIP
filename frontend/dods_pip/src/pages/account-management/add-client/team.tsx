@@ -11,6 +11,7 @@ import Avatar from '../../../components/Avatar';
 import Button from '../../../components/Button';
 import Chips from '../../../components/Chips';
 import { Icons } from '../../../components/Icon/assets';
+import { NotificationProps } from '../../../components/Notification';
 import SectionAccordion from '../../../components/SectionAccordion';
 import TagSelector from '../../../components/TagSelector';
 import * as TagSelectorStyles from '../../../components/TagSelector/TagSelector.styles';
@@ -32,6 +33,9 @@ export type Errors = {
 };
 
 export interface TeamProps {
+  addNotification: (props: NotificationProps) => void;
+  setLoading: (state: boolean) => void;
+  accountId: string;
   teamMembers: Array<string>;
   setTeamMembers: (vals: Array<string>) => void;
   accountManagers: Array<string>;

@@ -12,9 +12,10 @@ import Team, { Errors as ErrorsStep3 } from './team';
 
 interface AddClientProps extends LoadingHOCProps {}
 
-export const AddClient: React.FC<AddClientProps> = () => {
+export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoading }) => {
   const router = useRouter();
   const [activeStep, setActiveStep] = React.useState<number>(1);
+  const [accountId, setAccountId] = React.useState<string>(''); // returned by API after a POST (or get from URL for incomplete flow)
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
   const [contactName, setContactName] = React.useState<string>('');
@@ -68,6 +69,10 @@ export const AddClient: React.FC<AddClientProps> = () => {
       {activeStep === 1 && (
         <AccountInfo
           data-test="step-1"
+          addNotification={addNotification}
+          setLoading={setLoading}
+          accountId={accountId}
+          setAccountId={setAccountId}
           accountName={accountName}
           setAccountName={setAccountName}
           accountNotes={accountNotes}
@@ -88,6 +93,9 @@ export const AddClient: React.FC<AddClientProps> = () => {
       {activeStep === 2 && (
         <Subscription
           data-test="step-2"
+          addNotification={addNotification}
+          setLoading={setLoading}
+          accountId={accountId}
           location={location}
           setLocation={setLocation}
           contentType={contentType}
@@ -114,6 +122,9 @@ export const AddClient: React.FC<AddClientProps> = () => {
       {activeStep === 3 && (
         <Team
           data-test="step-3"
+          addNotification={addNotification}
+          setLoading={setLoading}
+          accountId={accountId}
           teamMembers={teamMembers}
           setTeamMembers={setTeamMembers}
           accountManagers={accountManagers}

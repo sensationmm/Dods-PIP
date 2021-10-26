@@ -1,13 +1,36 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-
 import AccountInfo from './account-info';
+
+const uuid = 'uuid-edf-abc';
+
+jest.mock('../../../lib/fetchJson', () => {
+  return jest
+    .fn()
+    .mockImplementationOnce(() =>
+      Promise.resolve({ data: { isNameAvailable: false } }),
+    )
+    .mockImplementationOnce(() =>
+      Promise.resolve({ data: { isNameAvailable: true } }),
+    )
+    .mockImplementationOnce(() =>
+      Promise.resolve({ data: { uuid } }),
+    ).mockImplementationOnce(() =>
+      Promise.resolve({ data: { message: 'server error' } }),
+    )
+});
 
 describe('AccountInfo', () => {
   let wrapper;
 
+  const addNotification = jest.fn();
   const setErrors = jest.fn();
+  const setAccountId = jest.fn();
+  const setLoading = jest.fn();
+  const onSubmit = jest.fn();
   const defaultProps = {
+    accountId: '',
+    setAccountId,
     accountName: '',
     setAccountName: jest.fn,
     accountNotes: '',
@@ -18,10 +41,12 @@ describe('AccountInfo', () => {
     setContactTelephone: jest.fn,
     contactEmail: '',
     setContactEmail: jest.fn,
-    onSubmit: jest.fn,
+    onSubmit,
     onBack: jest.fn,
     errors: {},
     setErrors: setErrors,
+    setLoading,
+    addNotification
   };
 
   beforeEach(() => {
@@ -42,10 +67,10 @@ describe('AccountInfo', () => {
     expect(button.props().disabled).toEqual(true);
   });
 
-  it('fails duplicate account name', () => {
+  it('fails duplicate account name', async() => {
     wrapper = shallow(<AccountInfo {...defaultProps} accountName={'somo'} />);
     const input = wrapper.find('[id="account-info-account-name"]');
-    input.props().onBlur();
+    await input.props().onBlur();
     expect(setErrors).toHaveBeenCalledWith({
       accountName: 'An account with this name already exists',
     });
@@ -53,7 +78,7 @@ describe('AccountInfo', () => {
     expect(button.props().disabled).toEqual(true);
   });
 
-  it('clears account name error', () => {
+  it('clears account name error', async() => {
     wrapper = shallow(
       <AccountInfo
         {...defaultProps}
@@ -64,7 +89,7 @@ describe('AccountInfo', () => {
       />,
     );
     const input = wrapper.find('[id="account-info-account-name"]');
-    input.props().onBlur();
+    await input.props().onBlur();
     expect(setErrors).toHaveBeenCalledWith({});
   });
 
@@ -169,6 +194,40 @@ describe('AccountInfo', () => {
     expect(component.length).toEqual(1);
     const button = wrapper.find('[data-test="continue-button"]');
     expect(button.props().disabled).toEqual(false);
+  });
+
+  describe('when clicking on "Save and Continue"', () => {
+    let button;
+
+    beforeEach(() => {
+      wrapper = shallow(
+        <AccountInfo
+          {...defaultProps}
+          accountName="example"
+          contactName="example"
+          contactEmail="example@example.com"
+          contactTelephone="123456789"
+        />,
+      );
+      button = wrapper.find('[data-test="continue-button"]');
+    });
+
+    it('and creating a client account is successful', async() => {
+      await button.simulate('click');
+      
+      expect(setAccountId).toHaveBeenCalledWith(uuid)
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(setLoading).toHaveBeenCalledTimes(2);
+    });
+
+    it('and a creating client account is not successful', async() => {
+      await button.simulate('click');
+      
+      expect(setAccountId).toHaveBeenCalledTimes(0)
+      expect(onSubmit).toHaveBeenCalledTimes(0);
+      expect(setLoading).toHaveBeenCalledTimes(2);
+      expect(addNotification).toHaveBeenCalledWith({ text: expect.any(String), type: 'warn', title: 'Error' });
+    });
   });
 
   afterEach(() => {

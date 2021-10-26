@@ -12,7 +12,7 @@ export type LoadingHOCProps = {
   addNotification: (props: PushNotificationProps) => void;
 };
 
-interface PushNotificationProps extends Omit<NotificationProps, 'onClose'> {}
+export interface PushNotificationProps extends Omit<NotificationProps, 'onClose'> {}
 
 interface PushNotification extends PushNotificationProps {
   [key: string]: unknown;

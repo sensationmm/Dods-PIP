@@ -15,9 +15,11 @@ BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Oral Questions HOC (UK)'
 
-content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
+content_template_file_path = os.path.abspath(os.curdir) + '/templates/content_template.json'
 config = Config().config_read(("config.ini"))
 common = Common()
+
+
 def run(event, context):
     logger.debug('Starting scrapping process with BUCKET: "%s", prefix: "%s" ', BUCKET, PREFIX)
     s3 = boto3.client('s3')
@@ -32,7 +34,7 @@ def run(event, context):
             json_content = dumps(xmltodict.parse(response))
             dict_content = loads(json_content)
 
-            data = response.decode('utf-8', errors = 'ignore')
+            data = response.decode('utf-8', errors='ignore')
             data = BeautifulSoup(data, 'html5lib')
             items = data.findChild('items').find_all('item')
             Originator_list = eval(config.get('Originator', 'Originator_list'))
@@ -44,7 +46,9 @@ def run(event, context):
                 content['contentSourceURL'] = config.get('parser', 'sourceUrl')
                 content['extractDate'] = datetime.now().isoformat()
                 content['content'] = item
-                content['metadata']['jurisdiction'] = 'UK'
+                content['metadata'].append({
+                    'jurisdiction': 'UK'
+                })
 
                 short_date = datetime.now().strftime("%Y-%m-%d")
                 try:

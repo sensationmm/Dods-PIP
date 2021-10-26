@@ -61,7 +61,7 @@ module.exports = {
         { from: "package.json" },
         { from: "package-lock.json" },
         { from: ".sequelizerc" },
-        // { from: ".env" },
+        { from: ".env" },
       ],
     }),
   ],

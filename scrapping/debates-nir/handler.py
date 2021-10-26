@@ -12,13 +12,13 @@ from lib.configs import Config
 from lib.validation import Validator
 from dateutil.parser import parse
 
-
 BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Debates (Northern Ireland)'
 
-content_template_file_path = os.path.abspath(os.curdir)+'/templates/content_template.json'
+content_template_file_path = os.path.abspath(os.curdir) + '/templates/content_template.json'
 config = Config().config_read(("config.ini"))
+
 
 def run(event, context):
     logger.debug('Starting scrapping process with BUCKET: "%s", prefix: "%s" ', BUCKET, PREFIX)
@@ -38,9 +38,9 @@ def run(event, context):
             print("StatusCode::", res1.status_code)
             debate_content = res1.content.decode('utf-8', errors='ignore')
             debate_content = re.sub(r'(<div[^>]*?\'Header1\'>)', r'<block1><block2>\1', debate_content,
-                                   flags=re.IGNORECASE)
+                                    flags=re.IGNORECASE)
             debate_content = re.sub(r'<div\s*class\=\"top\">\s*[\w\W]*?\s*<\/div>', '', debate_content,
-                                   flags=re.IGNORECASE)
+                                    flags=re.IGNORECASE)
 
             # Debate_section,Volume='',''
             debate_date = regex(r'Official\s*Report\s*\:\s*([\w\W]*?)<\/span>', debate_content)
@@ -75,7 +75,9 @@ def run(event, context):
                     final_content['content'] = {
                         'html_content': html_content
                     }
-                    content['metadata']['jurisdiction'] = 'UK'
+                    content['metadata'].append({
+                        'jurisdiction': 'UK'
+                    })
 
                     short_date = datetime.now().strftime("%Y-%m-%d")
                     try:
