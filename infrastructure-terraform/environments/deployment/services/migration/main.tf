@@ -15,3 +15,12 @@ module "migration-stage-1-sqs-queue" {
   environment = var.environment
   queue_name  = "migration-stage-1-queue"
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+// - Migration stage 1. output storage
+// --------------------------------------------------------------------------------------------------------------------
+module "migration-stage-1-s3-output" {
+  source      = "./modules/s3"
+  environment = var.environment
+  name        = "migration-stage-1-output"
+}
