@@ -17,7 +17,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, subtitle }) 
   return (
     <Styled.wrapper data-test="component-section-header">
       {typeof icon == 'string' ? (
-        <Icon src={icon} size={IconSize.xxlarge} data-test="sectionheader-icon" />
+        <Icon src={icon} size={IconSize.xxxlarge} data-test="sectionheader-icon" />
       ) : (
         icon
       )}
