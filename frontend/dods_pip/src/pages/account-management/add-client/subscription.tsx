@@ -259,21 +259,21 @@ const Subscription: React.FC<SubscriptionProps> = ({
             id="user-seats"
             label="User Seats"
             required
-            value={userSeats}
-            onChange={setUserSeats}
+            value={parseInt(userSeats)}
+            onChange={(value) => setUserSeats(value.toString())}
             error={errors.userSeats}
-            minVal={'1'}
-            onBlur={setUserSeatsError}
+            minVal={1}
+            onBlur={(error) => setUserSeatsError(error)}
           />
 
           <NumberPicker
             id="consultant-hours"
             label="Consultant hours"
             required
-            value={consultantHours}
-            onChange={setConsultantHours}
+            value={parseInt(consultantHours)}
+            onChange={(value) => setConsultantHours(value.toString())}
             error={errors.consultantHours}
-            onBlur={setConsultantHoursError}
+            onBlur={(error) => setConsultantHoursError(error)}
           />
         </Styled.locations>
 
