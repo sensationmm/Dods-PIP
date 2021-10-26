@@ -18,7 +18,7 @@ terraform {
 module "dev" {
   source      = "./environments/deployment"
   environment = "dev"
-  app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:3cd393ea57c29d570f13272ee00b1c7822b3e7c8"
+  app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:16b08e28e248eb993a5701b44788dc26bfecd399"
   account_id  = "390773179818"
   db_password = var.db_password
   providers = {
