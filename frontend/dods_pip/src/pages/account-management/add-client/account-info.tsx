@@ -84,9 +84,9 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     const payload = {
       name: accountName,
       notes: accountNotes,
-      contact_name: contactName,
-      contact_email_address: contactEmail,
-      contact_telephone_number: contactTelephone,
+      contactName,
+      contactEmailAddress: contactEmail,
+      contactTelephoneNumber: contactTelephone,
     };
 
     const postBody = {
@@ -97,7 +97,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     let uri = `${BASE_URI}${Api.ClientAccount}`;
 
     if (method === 'PUT') {
-      uri += `/${accountId}`;
+      uri += `/${accountId}/header`;
     }
 
     const response = await fetchJson(uri, {
