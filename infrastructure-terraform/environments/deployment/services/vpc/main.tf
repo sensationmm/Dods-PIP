@@ -81,12 +81,12 @@ resource "aws_instance" "nat_Instance" {
   }
   user_data = file("nat_startup.sh")
 
-  tags = merge(map(
-  "name", "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-${count.index}",
-  "owner", local.owner,
-  "environment", var.environment,
-  "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-${count.index}",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 }
 
 resource "aws_security_group" "nat_instance" {
@@ -122,12 +122,12 @@ resource "aws_security_group" "nat_instance" {
     cidr_blocks = ["172.17.0.0/16"]
   }
 
-  tags = merge(map(
-  "name", "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-sg",
-  "owner", local.owner,
-  "environment", var.environment,
-  "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-nat-instance-sg",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 }
 
 
@@ -165,12 +165,12 @@ resource "aws_eip" "NAT_Instance" {
   count      = var.az_count
   vpc        = true
   depends_on = [aws_internet_gateway.gw]
-  tags = merge(map(
-    "name", "${var.project}-${var.environment}-${local.main_resource_name}-eip",
-    "owner", local.owner,
-    "environment", var.environment,
-    "project", var.project
-  ), var.default_tags)
+  tags = merge(tomap({
+    "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-eip",
+    "owner"       = local.owner,
+    "environment" = var.environment,
+    "project"     = var.project
+  }), var.default_tags)
 }
 
 resource "aws_vpc_endpoint" "dynamodb" {
@@ -323,7 +323,7 @@ resource "aws_route" "outgoing-nat" {
   count                       = var.az_count
   route_table_id              = element(aws_route_table.private.*.id, count.index)
   destination_cidr_block      = "0.0.0.0/0"
-  instance_id                 = aws_instance.nat_Instance.id
+  instance_id                 = element(aws_instance.nat_Instance.*.id, count.index)
 }
 
 // - Explicitly associate the newly created route tables to the private subnets (so they don't default to the main route table)

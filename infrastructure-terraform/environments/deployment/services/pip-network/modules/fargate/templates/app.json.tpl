@@ -6,7 +6,7 @@
     "memory": ${fargate_memory},
     "networkMode": "awsvpc",
     "environment": [
-        {"name": "ENVIRONMENT", "value": "${environment}"},
+        {"name": "ENVIRONMENT", "value": "${environment}"}
     ],
     "logConfiguration": {
         "logDriver": "awslogs",
