@@ -319,11 +319,12 @@ resource "aws_route_table" "private" {
 
 }
 
-#resource "aws_route" "private" {
-#  route_table_id = aws_route_table.private.id
-#  destination_cidr_block = "0.0.0.0/0"
-#  nat_gateway_id = aws_egress_only_internet_gateway.eigw.id
-#}
+resource "aws_route" "private" {
+  count                       = var.az_count
+  route_table_id              = element(aws_route_table.private.*.id, count.index)
+  destination_cidr_blockcidr_block = "0.0.0.0/0"
+  egress_only_gateway_id      = aws_internet_gateway.gw.id
+}
 
 // - Explicitly associate the newly created route tables to the private subnets (so they don't default to the main route table)
 resource "aws_route_table_association" "private" {
@@ -342,6 +343,5 @@ resource "aws_route" "outgoing-ip4" { //ipv6 difficult to rename this component
   destination_ipv6_cidr_block = "::/0"
   egress_only_gateway_id      = aws_egress_only_internet_gateway.eigw.id
 }
-
 
 //ipv4 route added manually as it was causing existence conflicts

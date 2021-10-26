@@ -59,7 +59,7 @@ variable "app_port" {
   default     = 3000
 }
 variable "log_group_name" {
-  default = "builder-app"
+  default = "fargate-app"
 }
 
 variable "minimum_container_count" {

@@ -251,6 +251,7 @@ data "template_file" "app" {
     fargate_memory = var.fargate_memory
     aws_region     = var.aws_region
     environment    = var.environment
+    log_group_name = var.log_group_name
   }
 }
 
