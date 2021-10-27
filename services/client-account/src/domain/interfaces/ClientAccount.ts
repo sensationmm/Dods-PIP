@@ -12,8 +12,8 @@ export interface ClientAccount {
     contractRollover?: boolean;
     contractEndDate?: Date;
     consultantHours?: number;
-    isUk?: boolean;
-    isEu?: boolean;
+    isUK?: boolean;
+    isEU?: boolean;
     isCompleted?: boolean;
     lastStepCompleted?: number;
 }
@@ -40,8 +40,8 @@ export interface SearchClientAccountResponse {
         name: string;
         type?: 'consultant' | 'client';
     }[];
-    isUk: boolean;
-    isEu: boolean;
+    isUK: boolean;
+    isEU: boolean;
     isCompleted: boolean;
     lastStepCompleted: number;
 }

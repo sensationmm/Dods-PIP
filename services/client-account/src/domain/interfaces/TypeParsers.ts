@@ -44,8 +44,8 @@ export function parseResponseFromModel(
         subscription: model.subscriptionType
             ? parseSubscriptionResponseFromModel(model.subscriptionType!)
             : undefined,
-        isEu: model.isEu,
-        isUk: model.isUk,
+        isEU: model.isEu,
+        isUK: model.isUk,
         isCompleted: model.isCompleted,
         lastStepCompleted: model.lastStepCompleted,
     };
@@ -80,8 +80,8 @@ export function parseSearchClientAccountResponse(
         location: model.subscriptionType && model.subscriptionType.location,
         projects: 0,
         team: model.team && model.team.map(parseTeamMember),
-        isEu: model.isEu ? true : false,
-        isUk: model.isUk ? true : false,
+        isEU: model.isEu ? true : false,
+        isUK: model.isUk ? true : false,
         isCompleted: model.isCompleted,
         lastStepCompleted: model.lastStepCompleted,
     };
