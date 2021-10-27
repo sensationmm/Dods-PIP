@@ -1,5 +1,6 @@
 import {
     BelongsToGetAssociationMixin,
+    BelongsToManyAddAssociationMixin,
     BelongsToManyGetAssociationsMixin,
     BelongsToSetAssociationMixin,
     DataTypes,
@@ -41,6 +42,7 @@ class ClientAccountModel
     public setSubscriptionType!: BelongsToSetAssociationMixin<SubscriptionType, number>;
 
     public getTeam!: BelongsToManyGetAssociationsMixin<UserProfileModel>;
+    public addTeam!: BelongsToManyAddAssociationMixin<UserProfileModel, number>;
 
     public subscriptionType?: SubscriptionTypeModel;
     public team?: UserProfileModel[];

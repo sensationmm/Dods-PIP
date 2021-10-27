@@ -118,6 +118,19 @@ paths:
                 '400':
                     $ref: '#/components/responses/BadRequest'
 
+    /clientaccount/{clientAccountId}/teammember/new:
+        post:
+            operationId: addTeamMemberToClientAccount
+            summary: 'Add Team Member to Client Account'
+            description: 'Add Team Member to Client Account'
+            requestBody:
+                $ref: '#/components/requestBodies/clientAccountTeam'
+            responses:
+                '200':
+                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+
     /clientaccount/{clientAccountId}:
         put:
             operationId: updateClientAccount
