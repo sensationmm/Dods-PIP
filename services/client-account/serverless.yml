@@ -181,7 +181,7 @@ functions:
         events:
             - http:
                   method: put
-                  path: clientaccount/{clientAccountId}
+                  path: client-accounts/{clientAccountId}/subscription
 
     getRemainingSeats:
         handler: src/handlers/getRemainingSeats/index.handle

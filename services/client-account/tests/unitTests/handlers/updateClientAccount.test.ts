@@ -1,4 +1,8 @@
-import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+import {
+    HttpResponse,
+    HttpStatusCode,
+    createContext,
+} from '@dodsgroup/dods-lambda';
 
 import { ClientAccountRepository } from '../../../src/repositories';
 import { ClientAccountResponse } from '../../../src/domain';
@@ -10,14 +14,14 @@ const FUNCTION_NAME = updateClientAccount.name;
 const UPDATE_REPO_RESPONSE: ClientAccountResponse = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
     name: 'OtherNames',
-    contact_name: 'Mike Fly',
-    contact_email_address: 'mike@example.com',
-    contact_telephone_number: '313222123',
-    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
-    contract_rollover: false,
-    contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
-    subscription_seats: 20,
-    consultant_hours: 13,
+    contactName: 'MikeFly',
+    contactEmailAddress: 'mike@example.com',
+    contactTelephoneNumber: '313222123',
+    contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+    contractRollover: false,
+    contractEndDate: new Date('2022-02-01T01:01:01.001Z'),
+    subscriptionSeats: 20,
+    consultantHours: 13,
     subscription: {
         uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
         name: 'subs_1',
@@ -29,14 +33,14 @@ const UPDATE_REPO_RESPONSE: ClientAccountResponse = {
 const SUCCESS_UPDATE_ACCOUNT = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
     name: 'OtherNames',
-    contact_name: 'Mike Fly',
-    contact_email_address: 'mike@example.com',
-    contact_telephone_number: '313222123',
-    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
-    contract_rollover: false,
-    contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
-    subscription_seats: 20,
-    consultant_hours: 13,
+    contactName: 'MikeFly',
+    contactEmailAddress: 'mike@example.com',
+    contactTelephoneNumber: '313222123',
+    contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+    contractRollover: false,
+    contractEndDate: new Date('2022-02-01T01:01:01.001Z'),
+    subscriptionSeats: 20,
+    consultantHours: 13,
     subscription: {
         uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
         name: 'subs_1',
@@ -60,11 +64,13 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const clientAccount = {
             clientAccountId: '1dcad502-0c50-4dab-9192-13b5e882b95d',
             subscription: 'efe4bd45-3ccf-4ef7-8c09-f38e1d954a45',
-            subscription_seats: 20,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: true,
-            contract_end_date: '2022-02-01T01:01:01.001Z',
+            subscriptionSeats: 20,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: true,
+            contractEndDate: '2022-02-01T01:01:01.001Z',
+            isUk: true,
+            isEu: false,
         };
 
         const expectedRepositoryResponse = UPDATE_REPO_RESPONSE;
@@ -79,7 +85,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             expectedRepositoryResponse
         );
 
-        const response = await updateClientAccount(clientAccount, defaultContext);
+        const response = await updateClientAccount(
+            clientAccount,
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
 
@@ -92,11 +101,13 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const clientAccount = {
             clientAccountId: '1dcad502-0c50-4dab-9192-13b5e882b95d',
             subscription: 'efe4bd45-3ccf-4ef7-8c09-f38e1d954a45',
-            subscription_seats: 20,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '2020-02-01T01:01:01.001Z',
+            subscriptionSeats: 20,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '2020-02-01T01:01:01.001Z',
+            isUk: true,
+            isEu: false,
         };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
@@ -104,7 +115,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: 'End date must be greater than start date',
         });
 
-        const response = await updateClientAccount(clientAccount, defaultContext);
+        const response = await updateClientAccount(
+            clientAccount,
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
     });
@@ -113,11 +127,13 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const clientAccount = {
             clientAccountId: '1dcad502-0c50-4dab-9192-13b5e882b95d',
             subscription: 'efe4bd45-3ccf-4ef7-8c09-f38e1d954a45',
-            subscription_seats: 20,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '',
+            subscriptionSeats: 20,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '',
+            isUk: true,
+            isEu: false,
         };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
@@ -125,7 +141,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: 'Must provide contract end Date',
         });
 
-        const response = await updateClientAccount(clientAccount, defaultContext);
+        const response = await updateClientAccount(
+            clientAccount,
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
     });
@@ -134,17 +153,21 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const clientAccount = {
             clientAccountId: '',
             subscription: 'efe4bd45-3ccf-4ef7-8c09-f38e1d954a45',
-            subscription_seats: 20,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '2022-02-01T01:01:01.001Z',
+            subscriptionSeats: 20,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '2022-02-01T01:01:01.001Z',
+            isUk: true,
+            isEu: false,
         };
         try {
             mockedClientAccountRepository.defaultInstance.updateClientAccount.mockImplementation(
                 async (clientAccount) => {
                     if (!clientAccount.clientAccountId) {
-                        throw new Error('Error: clientAccountId cannot be empty');
+                        throw new Error(
+                            'Error: clientAccountId cannot be empty'
+                        );
                     }
 
                     return [];
@@ -155,7 +178,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
             expect(true).toBe(false);
         } catch (error: any) {
-            expect(error.message).toEqual('Error: clientAccountId cannot be empty');
+            expect(error.message).toEqual(
+                'Error: clientAccountId cannot be empty'
+            );
         }
     });
 
@@ -163,16 +188,21 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const clientAccount = {
             clientAccountId: '1dcad502-0c50-4dab-9192-13b5e882b95d',
             subscription: 'efe4bd45-3ccf-4ef7-8c09-f38e1d954a45',
-            subscription_seats: 20,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '2022-02-01T01:01:01.001Z',
+            subscriptionSeats: 20,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '2022-02-01T01:01:01.001Z',
+            isUk: true,
+            isEu: false,
         };
         try {
             mockedClientAccountRepository.defaultInstance.updateClientAccount.mockImplementation(
                 async (clientAccount) => {
-                    if (clientAccount.clientAccountId !== '1dcad502-0c50-4dab-9192-13b5e882b95f') {
+                    if (
+                        clientAccount.clientAccountId !==
+                        '1dcad502-0c50-4dab-9192-13b5e882b95f'
+                    ) {
                         throw new Error('Error: clientAccount not found');
                     }
 
@@ -192,17 +222,22 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const clientAccount = {
             clientAccountId: '1dcad502-0c50-4dab-9192-13b5e882b95d',
             subscription: 'efe4bd45-3ccf-4ef7-8c09-f38e1d954a45',
-            subscription_seats: 20,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '2022-02-01T01:01:01.001Z',
+            subscriptionSeats: 20,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '2022-02-01T01:01:01.001Z',
+            isUk: true,
+            isEu: false,
         };
 
         try {
             mockedClientAccountRepository.defaultInstance.updateClientAccount.mockImplementation(
                 async (clientAccount) => {
-                    if (clientAccount.subscription !== 'efe4bd45-3ccf-4ef7-8c09-f38e1d954a42') {
+                    if (
+                        clientAccount.subscription !==
+                        'efe4bd45-3ccf-4ef7-8c09-f38e1d954a42'
+                    ) {
                         throw new Error('Error: Wrong subscription uuid');
                     }
 

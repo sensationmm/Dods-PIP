@@ -51,7 +51,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         mockedClientAccountRepository.defaultInstance.findOne.mockImplementation(
             async () => {
-                return { subscription_seats: 2 } as ClientAccountResponse;
+                return { subscriptionSeats: 2 } as ClientAccountResponse;
             }
         );
 
@@ -78,7 +78,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         mockedClientAccountRepository.defaultInstance.findOne.mockImplementation(
             async () => {
-                return { subscription_seats: 0 } as ClientAccountResponse;
+                return { subscriptionSeats: 0 } as ClientAccountResponse;
             }
         );
 
