@@ -46,8 +46,8 @@ module "production" {
 module "qa" {
   source      = "./environments/deployment"
   environment = "qa"
-  #  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend:" //non existent
-  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:3cd393ea57c29d570f13272ee00b1c7822b3e7c8"
+  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:917fcd42dc52dfe2679963de280fe87ea7907ed9"
+  # app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:3cd393ea57c29d570f13272ee00b1c7822b3e7c8"
   account_id  = "817206606893"
   db_password = var.db_password
   providers = {

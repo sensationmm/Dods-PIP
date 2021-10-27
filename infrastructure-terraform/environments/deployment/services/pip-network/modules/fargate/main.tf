@@ -42,6 +42,14 @@ resource "aws_security_group" "lb" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
+  egress {
+    from_port        = var.app_port
+    to_port          = var.app_port
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
   tags = merge(tomap({
     "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-alb-sg",
     "owner"       = local.owner,
@@ -138,7 +146,7 @@ resource "aws_alb_target_group" "app_target_group" {
 
 resource "aws_alb_listener" "front_end" {
   load_balancer_arn = aws_alb.builder.id
-  port              = var.app_port
+  port              = 80
   protocol          = "HTTP"
 
   default_action {
@@ -229,7 +237,7 @@ resource "aws_secretsmanager_secret" "ecr" {
 }
 
 resource "aws_secretsmanager_secret_version" "ecr" {
-  secret_id = aws_secretsmanager_secret.ecr.id
+  secret_id     = aws_secretsmanager_secret.ecr.id
   secret_string = jsonencode(local.ecr_secret)
 }
 
