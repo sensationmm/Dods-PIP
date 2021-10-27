@@ -118,7 +118,7 @@ paths:
                 '400':
                     $ref: '#/components/responses/BadRequest'
 
-    /clientaccount/{clientAccountId}:
+    /client-accounts/{clientAccountId}/subscription:
         put:
             operationId: updateClientAccount
             summary: 'UpdateClient Account'

@@ -42,4 +42,6 @@ export interface ClientAccountPersister {
     updateClientAccountHeader(
         updateParameters: UpdateClientAccountHeaderParameters
     ): Promise<ClientAccountResponse | never[]>;
+
+    checkSameName(name: string, clientAccountId: string): Promise<boolean>;
 }

@@ -5,7 +5,10 @@ import {
     DataTypes,
     Model,
 } from 'sequelize';
-import { ClientAccountModelAttributes, ClientAccountModelCreationAttributes } from '../types';
+import {
+    ClientAccountModelAttributes,
+    ClientAccountModelCreationAttributes,
+} from '../types';
 //import SubscriptionType from './SubscriptionType';
 import { SubscriptionTypeModel, UserProfileModel } from '.';
 
@@ -13,7 +16,10 @@ import SubscriptionType from './SubscriptionType';
 import sequelize from '../sequelize';
 
 class ClientAccountModel
-    extends Model<ClientAccountModelAttributes, ClientAccountModelCreationAttributes>
+    extends Model<
+        ClientAccountModelAttributes,
+        ClientAccountModelCreationAttributes
+    >
     implements ClientAccountModelAttributes
 {
     public id!: number;
@@ -28,6 +34,8 @@ class ClientAccountModel
     public contractRollover?: boolean;
     public contractEndDate?: Date;
     public consultantHours?: number;
+    public isUk?: boolean;
+    public isEu?: boolean;
     public isCompleted!: boolean;
     public lastStepCompleted!: number;
 
@@ -38,7 +46,10 @@ class ClientAccountModel
 
     //Model Associations
     public getSubscriptionType!: BelongsToGetAssociationMixin<SubscriptionType>;
-    public setSubscriptionType!: BelongsToSetAssociationMixin<SubscriptionType, number>;
+    public setSubscriptionType!: BelongsToSetAssociationMixin<
+        SubscriptionType,
+        number
+    >;
 
     public getTeam!: BelongsToManyGetAssociationsMixin<UserProfileModel>;
 
@@ -113,6 +124,16 @@ ClientAccountModel.init(
             type: DataTypes.BOOLEAN,
             allowNull: true,
             comment: 'null',
+        },
+        isUk: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 0,
+            allowNull: true,
+        },
+        isEu: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 0,
+            allowNull: true,
         },
         isCompleted: {
             type: DataTypes.BOOLEAN,

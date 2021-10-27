@@ -110,9 +110,18 @@ export class ClientAccountRepository implements ClientAccountPersister {
             };
         }
         if (locations) {
-            clientAccountWhere['$SubscriptionType.location$'] = {
-                [Op.in]: locations,
-            };
+            if (locations === 'eu') clientAccountWhere['is_eu'] = true;
+
+            if (locations === 'uk') clientAccountWhere['is_uk'] = true;
+
+            if (locations == 'eu,uk') {
+                clientAccountWhere['is_uk'] = true;
+                clientAccountWhere['is_eu'] = true;
+            }
+
+            // clientAccountWhere['$SubscriptionType.location$'] = {
+            //     [Op.in]: locations,
+            // };
         }
         if (subscriptionTypes) {
             clientAccountWhere['$SubscriptionType.id$'] = {
@@ -169,18 +178,20 @@ export class ClientAccountRepository implements ClientAccountPersister {
             await clientAccountToUpdate.setSubscriptionType(subscriptionData);
 
             clientAccountToUpdate.subscriptionSeats =
-                updateParameters.subscription_seats;
+                updateParameters.subscriptionSeats;
             clientAccountToUpdate.consultantHours =
-                updateParameters.consultant_hours;
+                updateParameters.consultantHours;
             clientAccountToUpdate.contractStartDate = new Date(
-                updateParameters.contract_start_date
+                updateParameters.contractStartDate
             );
             clientAccountToUpdate.contractRollover =
-                updateParameters.contract_rollover;
-            if (updateParameters.contract_end_date)
+                updateParameters.contractRollover;
+            if (updateParameters.contractEndDate)
                 clientAccountToUpdate.contractEndDate = new Date(
-                    updateParameters.contract_end_date
+                    updateParameters.contractEndDate
                 );
+            clientAccountToUpdate.isEu = updateParameters.isEu;
+            clientAccountToUpdate.isUk = updateParameters.isUk;
 
             await clientAccountToUpdate.save();
 
@@ -305,13 +316,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
             clientAccountToUpdate.notes = updateParameters.notes;
 
-            clientAccountToUpdate.contactName = updateParameters.contact_name;
+            clientAccountToUpdate.contactName = updateParameters.contactName;
 
             clientAccountToUpdate.contactEmailAddress =
-                updateParameters.contact_email_address;
+                updateParameters.contactEmailAddress;
 
             clientAccountToUpdate.contactTelephoneNumber =
-                updateParameters.contact_telephone_number;
+                updateParameters.contactTelephoneNumber;
 
             await clientAccountToUpdate.save();
 
@@ -326,6 +337,21 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 return newClientAccount;
             }
             return [];
+        } else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
+
+    async checkSameName(
+        name: string,
+        clientAccountId: string
+    ): Promise<boolean> {
+        let foundClientModel = await this.model.findOne({
+            where: { uuid: clientAccountId },
+        });
+        if (foundClientModel) {
+            if (name === foundClientModel.name) return true;
+            else return false;
         } else {
             throw new Error('Error: clientAccount not found');
         }
