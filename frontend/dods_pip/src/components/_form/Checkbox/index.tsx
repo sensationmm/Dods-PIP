@@ -59,7 +59,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
             />
           )}
         </Component>
-        <Styled.checkboxLabelWrapper className={classNames({ disabled: isDisabled })}>
+        <Styled.checkboxLabelWrapper>
           <Label
             darkMode={darkMode}
             label={label}

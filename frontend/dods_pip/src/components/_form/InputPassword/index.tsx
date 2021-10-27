@@ -19,6 +19,7 @@ const InputPassword: React.FC<InputPasswordProps> = ({
   optional,
   helperText,
   onChange,
+  placeholder,
 }) => {
   const [viewPassword, setViewPassword] = React.useState<boolean>(false);
 
@@ -37,6 +38,7 @@ const InputPassword: React.FC<InputPasswordProps> = ({
         optional={optional}
         helperText={helperText}
         onChange={onChange}
+        placeholder={placeholder}
       >
         <Styled.toggle onClick={() => setViewPassword(!viewPassword)} data-test="password-toggle">
           <Icon

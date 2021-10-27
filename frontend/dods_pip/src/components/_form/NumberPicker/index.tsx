@@ -105,7 +105,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
     <div data-test="number-picker-component">
       {label && (
         <>
-          <Label data-test="number-picker-label" {...{ required, optional, label }} />
+          <Label data-test="number-picker-label" {...{ required, optional, label, isDisabled }} />
           <Spacer size={3} />
         </>
       )}
