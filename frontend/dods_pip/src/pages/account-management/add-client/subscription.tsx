@@ -17,7 +17,6 @@ import { Icons } from '../../../components/Icon/assets';
 import { NotificationProps } from '../../../components/Notification';
 import Text from '../../../components/Text';
 import color from '../../../globals/color';
-import fetchJson from '../../../lib/fetchJson';
 import { inArray } from '../../../utils/array';
 import * as Styled from './index.styles';
 
