@@ -5,28 +5,30 @@ import {
 } from '@dodsgroup/dods-lambda';
 
 import { ClientAccountRepository } from '../../../src/repositories';
-import { SearchClientAccountParameters } from '../../../src/domain';
+import { SearchClientAccountParameters, SearchClientAccountResponse } from '../../../src/domain';
 import { mocked } from 'ts-jest/utils';
 import { searchClientAccount } from '../../../src/handlers/searchClientAccount/searchClientAccount';
 
 const FUNCTION_NAME = searchClientAccount.name;
 
-const SUCCESS_SEARCH_RESPONSE = [
+const SUCCESS_SEARCH_RESPONSE: Array<SearchClientAccountResponse> = [
     {
         id: '1dcad502-0c50-4dab-9192-13b5e882b95d',
         name: 'Juan account',
         notes: 'This is the account for Juan.',
-        completed: false,
-        is_completed: false,
-        last_step_completed: 1,
+        isCompleted: false,
+        lastStepCompleted: 1,
+        isUk: false,
+        isEu: false
     },
     {
         id: '1dcad502-0c50-4dab-9192-13b5e882b97d',
         name: 'Juan Other account',
         notes: 'This is the account for Juan.',
-        completed: false,
-        is_completed: false,
-        last_step_completed: 1,
+        isCompleted: false,
+        lastStepCompleted: 1,
+        isUk: false,
+        isEu: false
     },
 ];
 
