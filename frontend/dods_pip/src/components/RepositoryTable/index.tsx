@@ -39,7 +39,7 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const isMobile = useMediaQuery({ query: breakpoints.mobileOrTablet });
+  const isMobileOrTablet = useMediaQuery({ query: breakpoints.mobileOrTablet });
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
 
   const date = new Date(data.updated);
@@ -51,12 +51,12 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
       <Styled.tableRow
         data-test="component-repository-row"
         key={keyString}
-        onMouseEnter={() => !rowIsLocked && !isMobile && setIsHovered(true)}
-        onMouseLeave={() => !rowIsLocked && !isMobile && setIsHovered(false)}
+        onMouseEnter={() => !rowIsLocked && !isMobileOrTablet && setIsHovered(true)}
+        onMouseLeave={() => !rowIsLocked && !isMobileOrTablet && setIsHovered(false)}
         locked={rowIsLocked}
       >
         <div>
-          {isMobile && (
+          {isMobileOrTablet && (
             <Styled.mobileStatus>
               <RepositoryStatus type={data.status} size="small" width="auto" />
             </Styled.mobileStatus>
@@ -68,7 +68,7 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
                 trigger={
                   <Icon src={Icons.Lock} size={IconSize.xlarge} color={color.accent.orange} />
                 }
-                alignment={isMobile ? 'topRight' : 'topLeft'}
+                alignment={isMobileOrTablet ? 'topRight' : 'topLeft'}
               />
             )}
             <Styled.titleText locked={rowIsLocked}>
@@ -86,7 +86,7 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
               {format(date, "dd MMM yyyy 'at' HH:mm")}
             </Text>
 
-            {isHovered && !isMobile && (
+            {isHovered && !isMobileOrTablet && (
               <>
                 <RepositoryStatus data-test="hovered-status" type={data.status} width="auto" />
                 <Button
@@ -99,14 +99,14 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
                 <Button label="Edit" icon={Icons.Pencil} isSmall onClick={onEdit} />
               </>
             )}
-            {!isHovered && !isMobile && (
+            {!isHovered && !isMobileOrTablet && (
               <Styled.tableStatus data-test="unhovered-status">
                 <RepositoryStatus type={data.status} width="fixed" />
               </Styled.tableStatus>
             )}
           </Styled.tableStats>
         </div>
-        {isMobile && (
+        {isMobileOrTablet && (
           <Styled.mobileActions>
             <Button type="secondary" label="Delete" icon={Icons.Bin} onClick={onDelete} />
             <Button label="Edit" icon={Icons.Pencil} onClick={onEdit} />

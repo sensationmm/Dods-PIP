@@ -8,10 +8,10 @@ import Tooltip from '../Tooltip';
 jest.mock('react-responsive', () => ({
   useMediaQuery: jest
     .fn()
-    .mockReturnValueOnce(true)
-    .mockReturnValueOnce(true)
-    .mockReturnValueOnce(true)
-    .mockReturnValue(false),
+    .mockReturnValueOnce(true) // renders mobile variant without error
+    .mockReturnValueOnce(true) // renders mobile locked variant
+    .mockReturnValueOnce(true) // renders without error
+    .mockReturnValue(false), // ...rest
 }));
 
 describe('RepositoryTable', () => {
@@ -53,13 +53,12 @@ describe('RepositoryRow', () => {
   const mockSetHover = jest.fn();
   const useStateSpy = jest
     .spyOn(React, 'useState')
-    .mockImplementationOnce(() => [false, mockSetHover])
-    .mockImplementationOnce(() => [false, mockSetHover])
-    .mockImplementationOnce(() => [false, mockSetHover])
-    .mockImplementationOnce(() => [false, mockSetHover])
-    .mockImplementationOnce(() => [true, mockSetHover])
-    .mockImplementationOnce(() => [false, mockSetHover])
-    .mockImplementationOnce(() => [false, mockSetHover]);
+    .mockImplementationOnce(() => [false, mockSetHover]) // renders mobile variant without error
+    .mockImplementationOnce(() => [false, mockSetHover]) // renders mobile locked variant
+    .mockImplementationOnce(() => [false, mockSetHover]) // renders without error
+    .mockImplementationOnce(() => [false, mockSetHover]) // fires mouseEnter
+    .mockImplementationOnce(() => [true, mockSetHover]) // fires mouseLeave
+    .mockImplementation(() => [false, mockSetHover]); // ...rest
 
   beforeEach(() => {
     mockOnEdit = jest.fn();
