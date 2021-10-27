@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-    description: DODS Boilerplate
+    description: Dods Client Account API
     version: 1.0.0
-    title: DODS Boilerplate
+    title: Dods Client Account API
     contact:
         email: kenanhancer@gmail.com
     license:
@@ -19,6 +19,7 @@ paths:
             description: 'Get Health Message'
             responses:
                 '200':
+                    description: OK
                 '404':
                     $ref: '#/components/responses/NotFound'
 
@@ -88,6 +89,8 @@ paths:
             operationId: getSubscriptionTypes
             summary: 'Get Subscription Types list'
             description: 'Get Subscription Types list'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
             responses:
                 '200':
                     $ref: '#/components/responses/SubscriptionTypes'
@@ -101,6 +104,8 @@ paths:
             operationId: getClientAccountTeamMembers
             summary: 'Get Team Members from Client Account'
             description: 'Add Team Member to Client Account'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
             responses:
                 '200':
                     $ref: '#/components/responses/ClientAccountTeamResponse'
@@ -110,6 +115,8 @@ paths:
             operationId: addTeamMemberToClientAccount
             summary: 'Add Team Member to Client Account'
             description: 'Add Team Member to Client Account'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
             requestBody:
                 $ref: '#/components/requestBodies/clientAccountTeam'
             responses:
@@ -211,87 +218,81 @@ components:
                     type: string
                     example: Client account was updated
                 data:
-                    type: object
-                    properties:
                     $ref: '#/components/schemas/ClientAccount'
         ClientAccount:
             type: object
             properties:
                 name:
                     type: string
-                    required: true
                     example: Dods information
                 notes:
                     type: string
-                    required: true
                 contact_name:
                     type: string
-                    required: true
                     example: Joe Bloggs
                 contact_email_address:
                     type: string
-                    required: true
                     example: user@email.com
                 contact_telephone_number:
                     type: string
-                    required: true
                     example: '+442071838750'
                 contract_start_date:
                     type: string
                     format: date-time
-                    required: true
                     example: '2000-01-01T01:01:01.001Z'
                 contract_rollover:
                     type: boolean
-                    required: true
                 contract_end_date:
                     type: string
                     format: date-time
-                    required: true
                     example: '2000-01-01T01:01:01.001Z'
+            required:
+              - name
+              - notes
+              - contact_name
+              - contact_email_address
+              - contact_telephone_number
+              - contract_start_date
+              - contract_rollover
+              - contract_end_date
         ClientAccountTeam:
             type: object
             properties:
                 userId:
                     type: number
-                    required: true
                 clientAccountId:
                     type: number
-                    required: true
                 teamMemberType:
                     type: number
-                    required: true
                     enum: [1, 2]
-        Name:
-            type: object
-            properties:
-                name:
-                    type: string
-                    required: true
-            
+            required:
+              - userId
+              - clientAccountId
+              - teamMemberType
         ClientAccountUpdateHeader:
             type: object
             properties:
                 name:
                     type: string
-                    required: false
                     example: Company 1
                 notes:
                     type: string
-                    required: false
                     example: This is the account for Company 1
                 contact_name:
                     type: string
-                    required: false
                     example: Joe Bloggs
                 contact_email_address:
                     type: string
-                    required: false
                     example: user@email.com
                 contact_telephone_number:
                     type: string
-                    required: false
                     example: '+442071838750'
+            required:
+              - name
+              - notes
+              - contact_name
+              - contact_email_address
+              - contact_telephone_number
 
     parameters:
         clientAccountId:
@@ -453,7 +454,8 @@ components:
                         properties:
                             name:
                                 type: string
-                                required: true
+                        required:
+                          - name
         clientAccountUpdateHeader:
             description: A JSON object with the header parameters to update
             required: true

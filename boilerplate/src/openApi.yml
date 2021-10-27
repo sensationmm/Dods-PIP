@@ -19,6 +19,7 @@ paths:
       description: "Get Health Message"
       responses:
         "200":
+          description: OK
         "404":
           $ref: "#/components/responses/NotFound"
 
