@@ -13,15 +13,15 @@ export interface TooltipProps {
   alignment?: alignmentType;
   colorType?: colorMode;
   title?: string;
-  body?: string;
+  body: string;
   icon?: Icons;
-  trigger?: JSX.Element;
+  trigger: JSX.Element;
   classShow?: boolean;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
-  alignment,
-  colorType,
+  alignment = 'topLeft',
+  colorType = 'Light',
   title,
   body,
   icon,

@@ -27,6 +27,7 @@ module.exports = {
     '!src/components/_example/*',
     '!src/pages/api/*.*',
     '!src/pages/notifications.*',
+    '!src/pages/editorial.*',
     '!src/lib/*.*',
   ],
 };

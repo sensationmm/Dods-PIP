@@ -2,6 +2,7 @@ import Add from './icon-add.svg';
 import Alert from './icon-alert.svg';
 import Avatar from './icon-avatar.svg';
 import AzFilter from './icon-azFilter.svg';
+import Bin from './icon-bin.svg';
 import Calendar from './icon-calendar.svg';
 import ChevronDown from './icon-chevronDown.svg';
 import ChevronDownBold from './icon-chevronDownBold.svg';
@@ -11,13 +12,17 @@ import ChevronRight from './icon-chevronRight.svg';
 import ChevronRightBold from './icon-chevronRightBold.svg';
 import ChevronUp from './icon-chevronUp.svg';
 import ChevronUpBold from './icon-chevronUpBold.svg';
+import Clock from './icon-clock.svg';
 import Cross from './icon-cross.svg';
 import CrossBold from './icon-crossBold.svg';
+import Disk from './icon-disk.svg';
 import Grid from './icon-grid.svg';
 import Hide from './icon-hide.svg';
 import Info from './icon-info.svg';
 import Issue from './icon-issue.svg';
+import Lock from './icon-lock.svg';
 import Minus from './icon-minus.svg';
+import Pencil from './icon-pencil.svg';
 import Person from './icon-person.svg';
 import Search from './icon-search.svg';
 import Show from './icon-show.svg';
@@ -35,6 +40,7 @@ export enum Icons {
   Alert = 'Alert',
   Avatar = 'Avatar',
   AzFilter = 'AzFilter',
+  Bin = 'Bin',
   Calendar = 'Calendar',
   ChevronDown = 'ChevronDown',
   ChevronDownBold = 'ChevronDownBold',
@@ -44,13 +50,17 @@ export enum Icons {
   ChevronRightBold = 'ChevronRightBold',
   ChevronUp = 'ChevronUp',
   ChevronUpBold = 'ChevronUpBold',
+  Clock = 'Clock',
   Cross = 'Cross',
   CrossBold = 'CrossBold',
+  Disk = 'Disk',
   Grid = 'Grid',
   Hide = 'Hide',
   Info = 'Info',
   Issue = 'Issue',
+  Lock = 'Lock',
   Minus = 'Minus',
+  Pencil = 'Pencil',
   Person = 'Person',
   Search = 'Search',
   Show = 'Show',
@@ -67,6 +77,7 @@ const IconLibrary = {
   Alert,
   Avatar,
   AzFilter,
+  Bin,
   Calendar,
   ChevronDown,
   ChevronDownBold,
@@ -76,13 +87,17 @@ const IconLibrary = {
   ChevronRightBold,
   ChevronUp,
   ChevronUpBold,
+  Clock,
   Cross,
   CrossBold,
+  Disk,
   Grid,
   Hide,
   Info,
   Issue,
+  Lock,
   Minus,
+  Pencil,
   Person,
   Search,
   Show,
