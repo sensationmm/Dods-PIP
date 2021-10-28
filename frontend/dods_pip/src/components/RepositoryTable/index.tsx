@@ -106,7 +106,7 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
             )}
           </Styled.tableStats>
         </div>
-        {isMobileOrTablet && (
+        {isMobileOrTablet && !rowIsLocked && (
           <Styled.mobileActions>
             <Button type="secondary" label="Delete" icon={Icons.Bin} onClick={onDelete} />
             <Button label="Edit" icon={Icons.Pencil} onClick={onEdit} />
