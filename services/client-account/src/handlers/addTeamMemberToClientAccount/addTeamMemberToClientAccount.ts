@@ -27,8 +27,8 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
 
         if (
             clientAccount &&
-            clientAccount.subscription_seats !== undefined &&
-            clientAccount?.subscription_seats - clientAccountTeams < 1
+            clientAccount.subscriptionSeats !== undefined &&
+            clientAccount?.subscriptionSeats - clientAccountTeams < 1
         ) {
             throw new HttpError(
                 'Client Account has not enough available seats',

@@ -4,16 +4,18 @@ import { SubscriptionTypeResponse } from '..';
 export interface ClientAccount {
     name: string;
     notes?: string;
-    subscription_seats?: number;
-    contact_name: string;
-    contact_email_address: string;
-    contact_telephone_number: string;
-    contract_start_date?: Date;
-    contract_rollover?: boolean;
-    contract_end_date?: Date;
-    consultant_hours?: number;
-    is_completed?: boolean;
-    last_step_completed?: number;
+    subscriptionSeats?: number;
+    contactName: string;
+    contactEmailAddress: string;
+    contactTelephoneNumber: string;
+    contractStartDate?: Date;
+    contractRollover?: boolean;
+    contractEndDate?: Date;
+    consultantHours?: number;
+    isUK?: boolean;
+    isEU?: boolean;
+    isCompleted?: boolean;
+    lastStepCompleted?: number;
 }
 
 export interface ClientAccountParameters {
@@ -38,14 +40,16 @@ export interface SearchClientAccountResponse {
         name: string;
         type?: 'consultant' | 'client';
     }[];
-    completed: boolean;
-    is_completed: boolean;
-    last_step_completed: number;
+    isUK: boolean;
+    isEU: boolean;
+    isCompleted: boolean;
+    lastStepCompleted: number;
 }
 
 export interface SearchClientAccountParameters extends Pagination {
-    locations?: number[] | null;
-    subscriptionTypes?: number[] | null;
+    //locations?: number[] | null;
+    locations?: string | null;
+    subscriptionTypes?: string | null;
     searchTerm?: string | null;
     startsBy?: string | null;
 }
@@ -56,18 +60,20 @@ export interface GetClientAccountParameters {
 export interface UpdateClientAccountParameters {
     clientAccountId: string;
     subscription: string;
-    subscription_seats: number;
-    consultant_hours: number;
-    contract_start_date: string;
-    contract_rollover: boolean;
-    contract_end_date?: string;
+    subscriptionSeats: number;
+    consultantHours: number;
+    contractStartDate: string;
+    contractRollover: boolean;
+    contractEndDate?: string;
+    isUK: boolean;
+    isEU: boolean;
 }
 
 export interface UpdateClientAccountHeaderParameters {
     clientAccountId: string;
     name: string;
     notes: string;
-    contact_name: string;
-    contact_email_address: string;
-    contact_telephone_number: string;
+    contactName: string;
+    contactEmailAddress: string;
+    contactTelephoneNumber: string;
 }

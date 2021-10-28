@@ -15,13 +15,13 @@ const SUCCESS_ACCOUNT_RESPONSE = {
     uuid: '1dcad502-0c50-4dab-9192-13b5e882b95d',
     name: 'Juan account',
     notes: 'This is the account for Juan.',
-    contact_name: 'Juan',
-    contact_email_address: 'juan@xd.com',
-    contact_telephone_number: '+573123456531',
-    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
-    contract_rollover: false,
-    is_completed: false,
-    last_step_completed: 1,
+    contactName: 'Juan',
+    contactEmailAddress: 'juan@xd.com',
+    contactTelephoneNumber: '+573123456531',
+    contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+    contractRollover: false,
+    isCompleted: false,
+    lastStepCompleted: 1,
 };
 
 jest.mock('../../../src/repositories/ClientAccountRepository');

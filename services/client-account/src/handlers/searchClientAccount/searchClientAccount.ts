@@ -26,6 +26,7 @@ export const searchClientAccount: AsyncLambdaMiddleware<SearchClientAccountParam
             message: 'Showing Results.',
             limit: params?.limit,
             offset: params?.offset,
+            totalRecords: response?.length,
             data: response,
         });
     };

@@ -1,4 +1,8 @@
-import { ClientAccountModel, SubscriptionTypeModel, UserProfileModel } from '../../db';
+import {
+    ClientAccountModel,
+    SubscriptionTypeModel,
+    UserProfileModel,
+} from '../../db';
 import {
     ClientAccountParameters,
     ClientAccountResponse,
@@ -22,24 +26,28 @@ export function parseSubscriptionResponseFromModel(
     return response;
 }
 
-export function parseResponseFromModel(model: ClientAccountModel): ClientAccountResponse {
+export function parseResponseFromModel(
+    model: ClientAccountModel
+): ClientAccountResponse {
     const response: ClientAccountResponse = {
         uuid: model.uuid,
         name: model.name,
         notes: model.notes,
-        contact_name: model.contactName,
-        contact_email_address: model.contactEmailAddress,
-        contact_telephone_number: model.contactTelephoneNumber,
-        contract_start_date: model.contractStartDate,
-        contract_rollover: model.contractRollover,
-        contract_end_date: model.contractEndDate,
-        subscription_seats: model.subscriptionSeats,
-        consultant_hours: model.consultantHours,
+        contactName: model.contactName,
+        contactEmailAddress: model.contactEmailAddress,
+        contactTelephoneNumber: model.contactTelephoneNumber,
+        contractStartDate: model.contractStartDate,
+        contractRollover: model.contractRollover,
+        contractEndDate: model.contractEndDate,
+        subscriptionSeats: model.subscriptionSeats,
+        consultantHours: model.consultantHours,
         subscription: model.subscriptionType
             ? parseSubscriptionResponseFromModel(model.subscriptionType!)
             : undefined,
-        is_completed: model.isCompleted,
-        last_step_completed: model.lastStepCompleted,
+        isEU: model.isEu,
+        isUK: model.isUk,
+        isCompleted: model.isCompleted,
+        lastStepCompleted: model.lastStepCompleted,
     };
 
     return response;
@@ -51,9 +59,11 @@ export function parseModelParameters(
     const parameters: ClientAccountModelCreationAttributes = {
         name: requestParameters.clientAccount.name,
         notes: requestParameters.clientAccount.notes,
-        contactName: requestParameters.clientAccount.contact_name,
-        contactEmailAddress: requestParameters.clientAccount.contact_email_address,
-        contactTelephoneNumber: requestParameters.clientAccount.contact_telephone_number,
+        contactName: requestParameters.clientAccount.contactName,
+        contactEmailAddress:
+            requestParameters.clientAccount.contactEmailAddress,
+        contactTelephoneNumber:
+            requestParameters.clientAccount.contactTelephoneNumber,
     };
 
     return parameters;
@@ -70,9 +80,10 @@ export function parseSearchClientAccountResponse(
         location: model.subscriptionType && model.subscriptionType.location,
         projects: 0,
         team: model.team && model.team.map(parseTeamMember),
-        completed: true,
-        is_completed: model.isCompleted,
-        last_step_completed: model.lastStepCompleted,
+        isEU: model.isEu ? true : false,
+        isUK: model.isUk ? true : false,
+        isCompleted: model.isCompleted,
+        lastStepCompleted: model.lastStepCompleted,
     };
     return response;
 }

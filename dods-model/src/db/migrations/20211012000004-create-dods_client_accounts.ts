@@ -86,6 +86,16 @@ export = {
         allowNull: false,
         defaultValue: 0
       },
+      isUk: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: 0,
+        allowNull: true,
+    },
+    isEu: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: 0,
+        allowNull: true,
+    },
       last_step_completed: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,

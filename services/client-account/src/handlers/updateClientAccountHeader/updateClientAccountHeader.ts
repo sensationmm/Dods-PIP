@@ -14,7 +14,13 @@ export const updateClientAccountHeader: AsyncLambdaMiddleware<UpdateClientAccoun
                 clientAccount.name
             );
 
-        if (!isNameAvailable && clientAccount.name !== '') {
+        const isSameName =
+            await ClientAccountRepository.defaultInstance.checkSameName(
+                clientAccount.name,
+                clientAccount.clientAccountId
+            );
+
+        if (!isNameAvailable && clientAccount.name !== '' && !isSameName) {
             return new HttpResponse(HttpStatusCode.CONFLICT, {
                 success: false,
                 message: 'Client account name already exists',
