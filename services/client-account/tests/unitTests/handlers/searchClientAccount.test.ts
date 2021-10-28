@@ -3,9 +3,12 @@ import {
     HttpStatusCode,
     createContext,
 } from '@dodsgroup/dods-lambda';
+import {
+    SearchClientAccountParameters,
+    SearchClientAccountResponse,
+} from '../../../src/domain';
 
 import { ClientAccountRepository } from '../../../src/repositories';
-import { SearchClientAccountParameters, SearchClientAccountResponse } from '../../../src/domain';
 import { mocked } from 'ts-jest/utils';
 import { searchClientAccount } from '../../../src/handlers/searchClientAccount/searchClientAccount';
 
@@ -18,8 +21,8 @@ const SUCCESS_SEARCH_RESPONSE: Array<SearchClientAccountResponse> = [
         notes: 'This is the account for Juan.',
         isCompleted: false,
         lastStepCompleted: 1,
-        isUk: false,
-        isEu: false
+        isUK: false,
+        isEU: false,
     },
     {
         id: '1dcad502-0c50-4dab-9192-13b5e882b97d',
@@ -27,8 +30,8 @@ const SUCCESS_SEARCH_RESPONSE: Array<SearchClientAccountResponse> = [
         notes: 'This is the account for Juan.',
         isCompleted: false,
         lastStepCompleted: 1,
-        isUk: false,
-        isEu: false
+        isUK: false,
+        isEU: false,
     },
 ];
 

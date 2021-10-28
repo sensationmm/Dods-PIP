@@ -69,8 +69,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: true,
             contractEndDate: '2022-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
 
         const expectedRepositoryResponse = UPDATE_REPO_RESPONSE;
@@ -106,8 +106,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '2020-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
@@ -132,8 +132,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
@@ -158,8 +158,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '2022-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
         try {
             mockedClientAccountRepository.defaultInstance.updateClientAccount.mockImplementation(
@@ -193,8 +193,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '2022-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
         try {
             mockedClientAccountRepository.defaultInstance.updateClientAccount.mockImplementation(
@@ -227,8 +227,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '2022-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
 
         try {

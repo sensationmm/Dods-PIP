@@ -202,8 +202,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 clientAccountToUpdate.contractEndDate = new Date(
                     updateParameters.contractEndDate
                 );
-            clientAccountToUpdate.isEu = updateParameters.isEu;
-            clientAccountToUpdate.isUk = updateParameters.isUk;
+            clientAccountToUpdate.isEu = updateParameters.isEU;
+            clientAccountToUpdate.isUk = updateParameters.isUK;
 
             await clientAccountToUpdate.save();
 

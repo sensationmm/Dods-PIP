@@ -65,8 +65,8 @@ export interface UpdateClientAccountParameters {
     contractStartDate: string;
     contractRollover: boolean;
     contractEndDate?: string;
-    isUk: boolean;
-    isEu: boolean;
+    isUK: boolean;
+    isEU: boolean;
 }
 
 export interface UpdateClientAccountHeaderParameters {

@@ -32,7 +32,7 @@ paths:
                 - $ref: '#/components/parameters/clientAccountId'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccount'
+                    $ref: '#/components/responses/ClientAccountGet'
                 '400':
                     $ref: '#/components/responses/BadRequest'
                 '404':
@@ -52,7 +52,7 @@ paths:
                 - $ref: '#/components/parameters/offset'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccount'
+                    $ref: '#/components/responses/ClientAccountUpdate'
                 '400':
                     $ref: '#/components/responses/BadRequest'
                 '404':
@@ -65,7 +65,7 @@ paths:
                 $ref: '#/components/requestBodies/clientAccount'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccount'
+                    $ref: '#/components/responses/ClientAccountCreate'
                 '400':
                     $ref: '#/components/responses/BadRequest'
 
@@ -78,7 +78,7 @@ paths:
                 - $ref: '#/components/parameters/clientAccountId'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccount'
+                    $ref: '#/components/responses/getReaminingSeatsResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
                 '404':
@@ -145,9 +145,11 @@ paths:
             description: 'Update Client Account'
             parameters:
                 - $ref: '#/components/parameters/clientAccountId'
+            requestBody:
+                $ref: '#/components/requestBodies/clientAccountUpdateSubscription'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccount'
+                    $ref: '#/components/responses/ClientAccountUpdate'
                 '400':
                     $ref: '#/components/responses/BadRequest'
                 '404':
@@ -177,7 +179,7 @@ paths:
                 $ref: '#/components/requestBodies/clientAccountUpdateHeader'
             responses:
                 '200':
-                    $ref: '#/components/responses/UpdateHeaderAccount'
+                    $ref: '#/components/responses/ClientAccountUpdate'
                 '400':
                     $ref: '#/components/responses/BadRequest'
                 '409':
@@ -219,6 +221,39 @@ components:
                     example: Client account was updated
                 data:
                     $ref: '#/components/schemas/ClientAccount'
+        GetClientSuccess:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: Client account found
+                data:
+                    $ref: '#/components/schemas/ClientAccount'
+        GetReaminingSeatsSuccess:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                    example: true
+                message:
+                    type: string
+                    example: Remaining Seats 21
+                data:
+                    type: number
+                    example: 21
+                    
+            
+        ClientCreateSuccess:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                    example: true
+                message:
+                    type: string
+                    example: Client create success
+                data:
+                    $ref: '#/components/schemas/ClientAccount'
         ClientAccount:
             type: object
             properties:
@@ -227,34 +262,75 @@ components:
                     example: Dods information
                 notes:
                     type: string
-                contact_name:
+                contactName:
                     type: string
                     example: Joe Bloggs
-                contact_email_address:
+                contactEmailAddress:
                     type: string
                     example: user@email.com
-                contact_telephone_number:
+                contactTelephoneNumber:
                     type: string
                     example: '+442071838750'
-                contract_start_date:
+                contractStartDate:
                     type: string
                     format: date-time
                     example: '2000-01-01T01:01:01.001Z'
-                contract_rollover:
+                contractRollover:
                     type: boolean
-                contract_end_date:
+                contractEndDate:
                     type: string
                     format: date-time
                     example: '2000-01-01T01:01:01.001Z'
+                lastStepCompleted:
+                    type: number
+                    example: 1
+                isCompleted:
+                    type: boolean
+                    example: false
+                isEU:
+                    type: boolean
+                    example: false
+                isUK:
+                    type: boolean
+                    example: true
             required:
               - name
               - notes
-              - contact_name
-              - contact_email_address
-              - contact_telephone_number
-              - contract_start_date
-              - contract_rollover
-              - contract_end_date
+              - contactName
+              - contactEmailAddress
+              - contactTelephoneNumber
+              - contractStartDate
+              - contractRollover
+              - contractEndDate
+              - lastStepCompleted
+              - isCompleted
+              - isEU
+              - isUK
+        ClientAccountCreateHeader:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: Dods information
+                notes:
+                    type: string
+                contactName:
+                    type: string
+                    example: Joe Bloggs
+                contactEmailAddress:
+                    type: string
+                    example: user@email.com
+                contactTelephoneNumber:
+                    type: string
+                    example: '+442071838750'
+                
+            required:
+              - name
+              - notes
+              - contactName
+              - contactEmailAddress
+              - contactTelephoneNumber
+
         ClientAccountTeam:
             type: object
             properties:
@@ -278,21 +354,59 @@ components:
                 notes:
                     type: string
                     example: This is the account for Company 1
-                contact_name:
+                contactName:
                     type: string
                     example: Joe Bloggs
-                contact_email_address:
+                contactEmailAddress:
                     type: string
                     example: user@email.com
-                contact_telephone_number:
+                contactTelephoneNumber:
                     type: string
                     example: '+442071838750'
             required:
               - name
-              - notes
-              - contact_name
-              - contact_email_address
-              - contact_telephone_number
+              - contactName
+              - contactEmailAddress
+              - contactTelephoneNumber
+              
+        ClientAccountUpdateSubscription:
+            type: object
+            properties:
+                subscription:
+                    type: string
+                    example: 7af7c9c8-8075-4e36-8d2b-475cdbe4a655
+                subscriptionSeats:
+                    type: number
+                    example: 20
+                consultantHours:
+                    type: number
+                    example: 10
+                contractStartDate:
+                    type: string
+                    format: date-time
+                    example: '2000-01-01T01:01:01.001Z'
+                contractRollover:
+                    type: boolean
+                contractEndDate:
+                    type: string
+                    format: date-time
+                    example: '2000-01-01T01:01:01.001Z'
+                isUK:
+                    type: boolean
+                    example: true
+                isEU:
+                    type: boolean
+                    example: false
+
+            required:
+              - subscription
+              - subscriptionSeats
+              - consultantHours
+              - contractStartDate
+              - contractRollover
+              - contractEndDate
+              - isUK
+              - isEU
 
     parameters:
         clientAccountId:
@@ -301,7 +415,7 @@ components:
             schema:
                 type: string
             required: true
-            description: Clint Account UUID
+            description: Client Account UUID
         locations:
             in: query
             name: locations
@@ -397,12 +511,26 @@ components:
                 application/json:
                     schema:
                         $ref: '#/components/schemas/InvalidName'
-        ClientAccount:
-            description: ''
+        ClientAccountUpdate:
+            description: Successfull Client Account
             content:
                 application/json:
                     schema:
-                        type: 'object'
+                        $ref: '#/components/schemas/UpdateHeaderSuccess'
+                        
+        ClientAccountGet:
+            description: Successfull Client Account
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/GetClientSuccess'
+        ClientAccountCreate:
+            description: Successfull Client Account
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ClientCreateSuccess'
+                        
         SubscriptionTypes:
             description: ''
             content:
@@ -421,12 +549,18 @@ components:
                 application/json:
                     schema:
                         type: 'object'
-        UpdateHeaderAccount:
+        UpdateAccount:
             description: Successfully client account header updated.
             content:
                 application/json:
                     schema:
                         $ref: '#/components/schemas/UpdateHeaderSuccess'
+        getReaminingSeatsResponse:
+            description: Get Remining seats of client account.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/GetReaminingSeatsSuccess'
 
 
     requestBodies:
@@ -436,7 +570,7 @@ components:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/ClientAccount'
+                        $ref: '#/components/schemas/ClientAccountCreateHeader'
         clientAccountTeam:
             description: A JSON object containing pet information
             required: true
@@ -463,5 +597,12 @@ components:
                 application/json:
                     schema:
                         $ref: '#/components/schemas/ClientAccountUpdateHeader'
+        clientAccountUpdateSubscription:
+            description: A JSON object with the header parameters to update subscription
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ClientAccountUpdateSubscription'
 
                   

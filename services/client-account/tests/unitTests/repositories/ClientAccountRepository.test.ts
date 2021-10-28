@@ -240,8 +240,8 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '2022-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
 
         const response = await testRepository.updateClientAccount(
@@ -263,8 +263,8 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '2021-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
 
         const expectedError = new Error('Error: clientAccount not found');
@@ -284,8 +284,8 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '2021-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
 
         const expectedError = new Error('Error: Wrong subscription uuid');
@@ -306,8 +306,8 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
             contractStartDate: '2021-01-01T01:01:01.001Z',
             contractRollover: false,
             contractEndDate: '2021-02-01T01:01:01.001Z',
-            isUk: true,
-            isEu: false,
+            isUK: true,
+            isEU: false,
         };
 
         const expectedError = new Error(
