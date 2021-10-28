@@ -110,15 +110,15 @@ export class ClientAccountRepository implements ClientAccountPersister {
     async searchClientAccount(
         searchClientAccountParams: SearchClientAccountParameters
     ): Promise<Array<SearchClientAccountResponse> | undefined> {
-        let { startsBy, locations, subscriptionTypes, searchTerm } =
+        let { startsWith, locations, subscriptionTypes, searchTerm } =
             searchClientAccountParams;
-        const { limit, offset } = searchClientAccountParams;
-
+        const { limitNum, offsetNum } = searchClientAccountParams;
+        console.log(searchClientAccountParams);
         let clientAccountWhere: WhereOptions = {};
 
-        if (startsBy) {
+        if (startsWith) {
             clientAccountWhere['name'] = {
-                [Op.like]: `${startsBy}%`,
+                [Op.like]: `${startsWith}%`,
             };
         }
         if (locations) {
@@ -136,7 +136,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         if (subscriptionTypes) {
             let searchSubscriptions = subscriptionTypes.split(',');
 
-            clientAccountWhere['$SubscriptionType.uuid$'] = {
+            clientAccountWhere['$subscriptionType.uuid$'] = {
                 [Op.or]: searchSubscriptions.map((uuid) => uuid),
             };
         }
@@ -149,8 +149,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
             where: clientAccountWhere,
             subQuery: false,
             include: ['subscriptionType', 'team'],
-            offset: offset,
-            limit: limit,
+            offset: offsetNum,
+            limit: limitNum,
         });
         if (clientAccountModels) {
             const clientAccounts: Array<SearchClientAccountResponse> =
@@ -211,7 +211,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 where: { uuid: updateParameters.clientAccountId },
                 include: {
                     model: this.subsModel,
-                    as:'subscriptionType'
+                    as: 'subscriptionType',
                 },
             });
 
@@ -252,7 +252,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
             where: { uuid: clientAccountId },
             include: {
                 model: this.userModel,
-                as: 'team'
+                as: 'team',
             },
         });
 
@@ -345,7 +345,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 ],
             });
 
-            console.log('RESPONSE: ', updatedClientAccount?.team)
+            console.log('RESPONSE: ', updatedClientAccount?.team);
 
             return await updatedClientAccount!.team!.map(parseTeamMember);
         } else {

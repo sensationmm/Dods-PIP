@@ -9,6 +9,11 @@ import { SearchClientAccountParameters } from '../../domain';
 
 export const searchClientAccount: AsyncLambdaMiddleware<SearchClientAccountParameters> =
     async (params) => {
+        let limitNum = params.limit ? parseInt(params.limit) : 20;
+        let offsetNum = params.offset ? parseInt(params.offset) : 0;
+
+        params.limitNum = limitNum;
+        params.offsetNum = offsetNum;
         const response =
             await ClientAccountRepository.defaultInstance.searchClientAccount(
                 params
@@ -24,8 +29,8 @@ export const searchClientAccount: AsyncLambdaMiddleware<SearchClientAccountParam
         return new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Showing Results.',
-            limit: params?.limit,
-            offset: params?.offset,
+            limit: params?.limitNum,
+            offset: params?.offsetNum,
             totalRecords: response?.length,
             data: response,
         });
