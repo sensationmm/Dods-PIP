@@ -1,0 +1,11 @@
+{
+  "data": [
+    {"id": "abcde", "documentName": "Title goes here", "status": "ingested", "updated": "2021-11-11 14:55"},
+    {"id": "bcdef", "documentName":"Title of ingested content goes here, a long one works well too here", "status": "draft", "updated": "2021-11-11 14:55"},
+    {"id": "cdefg", "documentName":"Title of ingested content goes here, a long one works well too here", "status": "draft", "updated": "2021-11-11 14:55"},
+    {"id": "defgh", "assignedEditor": "Kevin Reynolds", "documentName":"Title of ingested content goes here, a long one works well too here", "status": "draft", "updated": "2021-11-11 14:55"},
+    {"id": "efghi", "documentName":"Title of ingested content goes here, a long one works well too here", "status": "scheduled", "updated": "2021-11-11 14:55"},
+    {"id": "fghij", "assignedEditor": "Kevin Reynolds", "documentName":"Title of ingested content goes here, a long one works well too here", "status": "published", "updated": "2021-11-11 14:55"},
+    {"id": "ghijk", "documentName":"Title of ingested content goes here, a long one works well too here", "status": "draft", "updated": "2021-11-11 14:55"}
+  ]
+}

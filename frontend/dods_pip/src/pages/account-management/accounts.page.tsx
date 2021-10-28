@@ -17,6 +17,7 @@ import Pagination from '../../components/Pagination';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
+import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import MockDataClientAccounts from '../../mocks/data/client-accounts.json';
 import MockUserData from '../../mocks/data/users.json';
 import * as Styled from './accounts.styles';
@@ -88,6 +89,9 @@ export const Accounts: React.FC<AccountsProps> = () => {
     filterAccounts(DataTableSort(accountsList)),
   );
 
+  const subscriptionPlaceholder = 'All Subscriptions';
+  const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
+
   return (
     <div data-test="page-account-management-clients">
       <Head>
@@ -152,17 +156,10 @@ export const Accounts: React.FC<AccountsProps> = () => {
                 <Select
                   id="filter-subscription"
                   size="small"
-                  options={[
-                    { value: '', label: 'All Subscriptions' },
-                    { value: 'Level 1', label: 'Level 1' },
-                    { value: 'Level 2', label: 'Level 2' },
-                    { value: 'Level 3', label: 'Level 3' },
-                    { value: 'Level 4', label: 'Level 4' },
-                    { value: 'Level 5', label: 'Level 5' },
-                  ]}
+                  options={subscriptionList}
                   onChange={setFilterSubscription}
                   value={filterSubscription}
-                  placeholder="All Subscriptions"
+                  placeholder={subscriptionPlaceholder}
                   isFilter
                 />
                 <Select

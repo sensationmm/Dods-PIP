@@ -7,14 +7,15 @@ import spacing from '../../globals/spacing';
 export const wrapper = styled.div`
   position: relative;
 
-  > span {
+  > span,
+  > div {
     display: inline-block;
-    padding: ${spacing(1)} ${spacing(0.25)};
     cursor: pointer;
   }
 `;
 
 export const tooltipStyle = styled.div`
+  display: block;
   opacity: 0;
   transition: opacity 0.5s;
   visibility: hidden;

@@ -6,16 +6,33 @@ import React from 'react';
 import PageHeader from '../../../components/_layout/PageHeader';
 import ProgressTracker from '../../../components/ProgressTracker';
 import LoadingHOC, { LoadingHOCProps } from '../../../hoc/LoadingHOC';
+import fetchJson from '../../../lib/fetchJson';
+import { Api, BASE_URI } from '../../../utils/api';
 import AccountInfo, { Errors as ErrorsStep1 } from './account-info';
 import Subscription, { Errors as ErrorsStep2 } from './subscription';
 import Team, { Errors as ErrorsStep3 } from './team';
+
+export enum RenewalType {
+  Annual = 'annual',
+  EndDate = 'endDate',
+}
+
+type Subscription = {
+  id: string;
+  name: string;
+};
 
 interface AddClientProps extends LoadingHOCProps {}
 
 export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoading }) => {
   const router = useRouter();
+  const { id = '' } = router.query;
+  const userSeatsDefault = '5';
+  const consultantHoursDefault = '10';
+  const LAST_STEP = 3;
+
   const [activeStep, setActiveStep] = React.useState<number>(1);
-  const [accountId, setAccountId] = React.useState<string>(''); // returned by API after a POST (or get from URL for incomplete flow)
+  const [accountId, setAccountId] = React.useState<string>(id as string); // returned by API after a POST (or get from URL for incomplete flow)
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
   const [contactName, setContactName] = React.useState<string>('');
@@ -23,11 +40,12 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
   const [contactTelephone, setContactTelephone] = React.useState<string>('');
   const [errorsStep1, setErrorsStep1] = React.useState<ErrorsStep1>({});
 
-  const [location, setLocation] = React.useState<Array<string>>([]);
-  const [contentType, setContentType] = React.useState<Array<string>>([]);
-  const [userSeats, setUserSeats] = React.useState<string>('5');
-  const [consultantHours, setConsultantHours] = React.useState<string>('10');
-  const [renewalType, setRenewalType] = React.useState<string>('annual');
+  const [isEU, setIsEU] = React.useState<boolean>(false);
+  const [isUK, setIsUK] = React.useState<boolean>(false);
+  const [subscriptionType, setSubscriptionType] = React.useState<string>('');
+  const [userSeats, setUserSeats] = React.useState<string>(userSeatsDefault);
+  const [consultantHours, setConsultantHours] = React.useState<string>(consultantHoursDefault);
+  const [renewalType, setRenewalType] = React.useState<string>(RenewalType.Annual);
   const [startDate, setStartDate] = React.useState<string>(
     format(new Date(), 'yyyy-MM-dd').toString(),
   );
@@ -51,6 +69,69 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
   React.useEffect(() => {
     window.scrollTo(0, 0);
   }, [activeStep]);
+
+  const loadAccount = async () => {
+    if (id === '') {
+      return false;
+    }
+
+    // get account info
+    setLoading(true);
+    const response = await fetchJson(`${BASE_URI}${Api.ClientAccounts}/${id}`, { method: 'GET' });
+    const { data = {} } = response;
+    const { uuid = '', isCompleted = false } = data;
+    if (uuid === id && !isCompleted) {
+      // client exist and not completed
+      const {
+        name = '',
+        notes = '',
+        contactName = '',
+        contactEmailAddress = '',
+        contactTelephoneNumber = '',
+        contractStartDate = '',
+        contractEndDate = '',
+        contractRollover = true,
+        subscriptionSeats = userSeatsDefault,
+        consultantHours = consultantHoursDefault,
+        isEU = false,
+        isUK = false,
+        subscription = {},
+        lastStepCompleted = 1,
+      } = data;
+      setAccountId(uuid as string);
+      setAccountName(name as string);
+      setAccountNotes(notes as string);
+      setContactName(contactName as string);
+      setContactEmail(contactEmailAddress as string);
+      setContactTelephone(contactTelephoneNumber as string);
+      setStartDate(contractStartDate as string);
+      setEndDate(contractEndDate as string);
+
+      contractRollover ? setRenewalType(RenewalType.Annual) : setRenewalType(RenewalType.EndDate);
+
+      setUserSeats(subscriptionSeats as string);
+      setConsultantHours(consultantHours as string);
+      setIsEU(isEU as boolean);
+      setIsUK(isUK as boolean);
+
+      const { id = '' } = subscription as Subscription;
+      setSubscriptionType(id);
+
+      let step = (lastStepCompleted as number) + 1;
+      if (step > LAST_STEP) {
+        step = LAST_STEP;
+      }
+      setActiveStep(step);
+    } else {
+      // incorrect client
+      setAccountId('');
+    }
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    loadAccount();
+  }, [id]);
 
   const steps = [{ label: 'Account Info' }, { label: 'Subscription' }, { label: 'Team' }];
 
@@ -96,10 +177,12 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
           addNotification={addNotification}
           setLoading={setLoading}
           accountId={accountId}
-          location={location}
-          setLocation={setLocation}
-          contentType={contentType}
-          setContentType={setContentType}
+          isEU={isEU}
+          setIsEU={setIsEU}
+          isUK={isUK}
+          setIsUK={setIsUK}
+          subscriptionType={subscriptionType}
+          setSubscriptionType={setSubscriptionType}
           userSeats={userSeats}
           setUserSeats={setUserSeats}
           consultantHours={consultantHours}
@@ -119,7 +202,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
         />
       )}
 
-      {activeStep === 3 && (
+      {activeStep === LAST_STEP && (
         <Team
           data-test="step-3"
           addNotification={addNotification}

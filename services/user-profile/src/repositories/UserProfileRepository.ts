@@ -1,15 +1,16 @@
-import { User } from '@dodsgroup/dods-model';
 import { Op, WhereOptions } from 'sequelize';
 import { RoleTypeModel, UserProfileModel } from '../db/models';
 import {
+    SearchUsersInput,
+    SearchUsersOutput,
     UserProfileCreate,
     UserProfilePersister,
     UserProfileResponse,
     parseUserForCreation,
     parseUserForResponse,
-    SearchUsersInput,
-    SearchUsersOutput,
-} from '../domain';
+} from '../domain/interfaces';
+
+import { User } from '@dodsgroup/dods-model';
 
 export class UserProfileError extends Error {
     constructor(message: string, cause: any) {

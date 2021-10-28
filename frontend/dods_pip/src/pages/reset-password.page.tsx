@@ -51,7 +51,7 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
 
     if (validateForm()) {
       try {
-        await fetchJson(`${BASE_URI}${Api.ResetPassword}`, {
+        await fetchJson(`${BASE_URI}${Api.ForgotPassword}`, {
           body: JSON.stringify({ email: emailAddress }),
         });
 

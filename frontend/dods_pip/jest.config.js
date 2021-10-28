@@ -13,6 +13,7 @@ module.exports = {
   testPathIgnorePatterns: ['node_modules', '.cache'],
   globals: {
     __PATH_PREFIX__: ``,
+    mockSubscriptionList: true,
   },
   setupFiles: ['jest-canvas-mock'],
   setupFilesAfterEnv: ['<rootDir>/setup-test-env.js'],
@@ -25,8 +26,9 @@ module.exports = {
     '!coverage',
     '!src/globals/**/*.{ts,tsx}',
     '!src/components/_example/*',
-    '!src/pages/api/*.*',
+    '!src/pages/api/**/*.*',
     '!src/pages/notifications.*',
+    '!src/pages/editorial.*',
     '!src/lib/*.*',
   ],
 };

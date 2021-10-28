@@ -18,7 +18,7 @@
   "types": [
     "jest"
   ],
-  "include": ["./src/**/*.ts"],
+  "include": ["./src/**/*.ts", "./tests/unitTests/**/*.ts"],
   "exclude": [
     "./node_modules/**/*",
     ".serverless/**/*",

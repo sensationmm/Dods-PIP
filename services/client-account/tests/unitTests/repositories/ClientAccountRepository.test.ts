@@ -194,6 +194,25 @@ SubscriptionTypeMock.$queryInterface.$useHandler(function (
     }
 });
 
+const UserProfileModelMock = dbMock.define('dods_client_accounts', {
+    id: 1,
+    uuid: '0e6c0561-8ff1-4f74-93bc-77444b156c6f',
+    title: 'Sir.',
+    firstName: 'Other',
+    lastName: 'Tester',
+    primaryEmail: 'dodstestlocal1@mailinator.com',
+    secondaryEmail: 'dodstestlocal2@mailinator.com',
+    telephoneNumber1: '+573214858576',
+    telephoneNumber2: '+573214858577',
+    roleId: 1,
+});
+
+const ClientAccountTeamModelMock = dbMock.define('dods_client_account_teams', {
+    clientAccountId: 1,
+    userId: 1,
+    teamMemberType: 1,
+});
+
 ClientAccountMock.belongsTo(SubscriptionTypeMock, {
     foreignKey: 'subscription',
     as: 'subscriptionType',
@@ -201,7 +220,9 @@ ClientAccountMock.belongsTo(SubscriptionTypeMock, {
 
 const testRepository = new ClientAccountRepository(
     ClientAccountMock,
-    SubscriptionTypeMock
+    SubscriptionTypeMock,
+    UserProfileModelMock,
+    ClientAccountTeamModelMock
 );
 
 afterEach(() => {

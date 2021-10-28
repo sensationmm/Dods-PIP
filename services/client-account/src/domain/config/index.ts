@@ -1,4 +1,5 @@
 import Joi, { Schema } from 'joi';
+
 import { resolve } from 'path';
 
 const loadConfig = (schema: Schema) => {
@@ -18,7 +19,9 @@ const stages = ['production', 'development', 'test'];
 
 const envVarsSchema = Joi.object()
     .keys({
-        NODE_ENV: Joi.string().valid(...stages).default('test'),
+        NODE_ENV: Joi.string()
+            .valid(...stages)
+            .default('test'),
         SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
         DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
@@ -27,6 +30,7 @@ const envVarsSchema = Joi.object()
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_CONNECTION_LIMIT: Joi.number().default(5),
+        BASE_URL: Joi.string().required(),
     })
     .unknown();
 
@@ -43,7 +47,9 @@ export const config = {
             `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string,
     },
     dods: {
-        downstreamEndpoints: {},
+        downstreamEndpoints: {
+            userProfile: envVars.BASE_URL as string,
+        },
     },
     aws: {
         mariaDb: {
@@ -52,7 +58,7 @@ export const config = {
             database: envVars.DB_NAME as string,
             username: envVars.DB_USER as string,
             password: envVars.DB_PASSWORD as string,
-            connectionLimit: envVars.DB_CONNECTION_LIMIT as number
+            connectionLimit: envVars.DB_CONNECTION_LIMIT as number,
         },
     },
 };
