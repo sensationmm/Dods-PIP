@@ -8,6 +8,7 @@ export class UserProfileServiceRepository {
     async createUser(userParameters: any) {
         const user = await this.gateway.post('/user', userParameters);
 
-        if (user.data.success) return user.data;
+        console.log('Internal services call worked, response from UserProfile: ', user.data);
+        if (user.data.success) return user.data.data;
     }
 }

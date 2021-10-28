@@ -74,9 +74,8 @@ custom:
 
     webpack:
         webpackConfig: ./webpack.config.js
-        includeModules:
-            forceInclude:
-                - mariadb
+        includeModules: true # Node modules configuration for packaging
+        packager: 'npm' # Packager that will be used to package your external modules
         keepOutputDirectory: false
     serverless-offline:
         httpPort: 3000

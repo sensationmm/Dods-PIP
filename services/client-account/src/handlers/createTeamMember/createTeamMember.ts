@@ -4,10 +4,9 @@ import {
     HttpResponse,
     HttpStatusCode,
 } from '@dodsgroup/dods-lambda';
+import { ClientAccountRepository, UserProfileServiceRepository } from '../../repositories';
 
-import { ClientAccountRepository } from '../../repositories';
 import { NewTeamMemberParameters } from '../../domain/interfaces/ClientAccountTeam';
-import { UserProfileRepository } from '../../../../user-profile/src/repositories/UserProfileRepository';
 
 export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> = async ({
     teamMemberType,
@@ -26,7 +25,7 @@ export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> = 
         );
     }
 
-    const newUser = await UserProfileRepository.defaultInstance.createUserProfile(userProfile);
+    const newUser = await UserProfileServiceRepository.defaultInstance.createUser(userProfile);
 
     if (!newUser) {
         return new HttpResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, {
