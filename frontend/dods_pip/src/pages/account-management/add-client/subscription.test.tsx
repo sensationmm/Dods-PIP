@@ -5,16 +5,41 @@ import { act } from 'react-dom/test-utils';
 
 import Subscription from './subscription';
 
+jest.mock('../../../lib/fetchJson', () => {
+  return jest
+    .fn()
+    /* @todo - remove this when API new version is ready
+    .mockImplementationOnce(() =>
+      Promise.resolve(mockSubscriptionList)
+    ).mockImplementationOnce(() =>
+      Promise.resolve({ success: true })
+    ).mockImplementationOnce(() =>
+      Promise.resolve(mockSubscriptionList)
+    ).mockImplementationOnce(() =>
+      Promise.resolve({ message: 'server error', success: false }),
+    )*/
+    .mockImplementation(() =>
+      Promise.resolve(mockSubscriptionList)
+    )
+});
+
 describe('Subscription', () => {
-  let wrapper, setActiveStep;
+  let wrapper;
 
   const setErrors = jest.fn();
   const setValue = jest.fn();
+  const addNotification = jest.fn();
+  const setLoading = jest.fn();
+  const onSubmit = jest.fn();
   const defaultProps = {
-    location: [],
-    setLocation: setValue,
-    contentType: [],
-    setContentType: setValue,
+    addNotification,
+    setLoading,
+    isEU: false,
+    setIsEU: setValue,
+    isUK: false,
+    setIsUK: setValue,
+    subscriptionType: '',
+    setSubscriptionType: setValue,
     userSeats: '',
     setUserSeats: setValue,
     consultantHours: '',
@@ -29,25 +54,60 @@ describe('Subscription', () => {
     setEndDateType: setValue,
     errors: {},
     setErrors: setErrors,
-    onSubmit: jest.fn,
+    onSubmit,
     onBack: jest.fn,
   };
 
   beforeEach(() => {
-    setActiveStep = jest.fn();
     wrapper = shallow(<Subscription {...defaultProps} />);
   });
 
+  // @todo - remove this when API new version is ready
+  xdescribe('when clicking on "Save and Continue"', () => {
+    let button;    
+
+    beforeEach(() => {
+      wrapper = shallow(
+        <Subscription
+          {...defaultProps}
+          isEU={true}
+          subscriptionType="example"
+          renewalType="endDate"
+          endDateType="custom"
+          startDate="2022-01-01"
+          endDate="2024-01-01"
+          userSeats="5"
+          consultantHours="10"
+        />,
+      );
+      button = wrapper.find('[data-test="continue-button"]');
+    });
+
+    it('and updating a client account is successful', async() => {
+      await button.simulate('click');
+      
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(setLoading).toHaveBeenCalledTimes(2);
+    });
+
+    it('and updating a client account is not successful', async() => {
+      await button.simulate('click');
+      
+      expect(onSubmit).toHaveBeenCalledTimes(0);
+      expect(setLoading).toHaveBeenCalledTimes(2);
+      expect(addNotification).toHaveBeenCalledWith({ text: expect.any(String), type: 'warn', title: 'Error' });
+    });
+  });
+
   it('prevents submission if form empty', () => {
-    wrapper = shallow(<Subscription {...defaultProps} />);
     const button = wrapper.find('[data-test="continue-button"]');
     expect(button.props().disabled).toEqual(true);
   });
 
-  it('fails empty content type', () => {
-    const input = wrapper.find('[id="content-type"]');
+  it('fails empty subscription type', () => {
+    const input = wrapper.find('[id="subscription-type"]');
     input.simulate('blur');
-    expect(setErrors).toHaveBeenCalledWith({ contentType: 'You must choose at least one' });
+    expect(setErrors).toHaveBeenCalledWith({ subscriptionType: 'You must choose one' });
     const button = wrapper.find('[data-test="continue-button"]');
     expect(button.props().disabled).toEqual(true);
   });
@@ -88,15 +148,15 @@ describe('Subscription', () => {
     expect(button.props().disabled).toEqual(true);
   });
 
-  it('clears content type error', () => {
+  it('clears subscription type error', () => {
     wrapper = shallow(
       <Subscription
         {...defaultProps}
-        contentType={['option1']}
-        errors={{ contentType: 'error' }}
+        subscriptionType="option1"
+        errors={{ subscriptionType: 'error' }}
       />,
     );
-    const input = wrapper.find('[id="content-type"]');
+    const input = wrapper.find('[id="subscription-type"]');
     input.props().onBlur();
     expect(setErrors).toHaveBeenCalledWith({});
   });
@@ -151,21 +211,21 @@ describe('Subscription', () => {
   it('adds a location', () => {
     const location = wrapper.find('[id="location-eu"]');
     location.props().onChange();
-    expect(setValue).toHaveBeenCalledWith(['eu']);
+    expect(setValue).toHaveBeenCalledWith(true);
   });
 
   it('adds additional location', () => {
-    wrapper = shallow(<Subscription {...defaultProps} location={['eu']} />);
+    wrapper = shallow(<Subscription {...defaultProps} isEU={true} />);
     const location = wrapper.find('[id="location-uk"]');
     location.props().onChange();
-    expect(setValue).toHaveBeenCalledWith(['eu', 'uk']);
+    expect(setValue).toHaveBeenCalledWith(true);
   });
 
   it('unsets a location', () => {
-    wrapper = shallow(<Subscription {...defaultProps} location={['eu', 'uk']} />);
+    wrapper = shallow(<Subscription {...defaultProps} isEU={true} />);
     const location = wrapper.find('[id="location-eu"]');
     location.props().onChange();
-    expect(setValue).toHaveBeenCalledWith(['uk']);
+    expect(setValue).toHaveBeenCalledWith(false);
   });
 
   it('sets end date for auto end 1 year', () => {
@@ -209,8 +269,8 @@ describe('Subscription', () => {
     wrapper = shallow(
       <Subscription
         {...defaultProps}
-        location={['option1']}
-        contentType={['example']}
+        isEU={true}
+        subscriptionType="example"
         renewalType="annual"
         startDate="2022-01-01"
         userSeats="5"
@@ -227,8 +287,8 @@ describe('Subscription', () => {
     wrapper = shallow(
       <Subscription
         {...defaultProps}
-        location={['option1']}
-        contentType={['example']}
+        isEU={true}
+        subscriptionType="example"
         renewalType="endDate"
         endDateType="2year"
         startDate="2022-01-01"
@@ -246,8 +306,8 @@ describe('Subscription', () => {
     wrapper = shallow(
       <Subscription
         {...defaultProps}
-        location={['option1']}
-        contentType={['example']}
+        isEU={true}
+        subscriptionType="example"
         renewalType="endDate"
         endDateType="custom"
         startDate="2022-01-01"

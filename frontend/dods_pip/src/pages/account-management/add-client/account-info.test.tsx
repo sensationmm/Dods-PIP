@@ -216,7 +216,7 @@ describe('AccountInfo', () => {
     it('and creating a client account is successful', async() => {
       await button.simulate('click');
       
-      expect(setAccountId).toHaveBeenCalledWith(uuid)
+      expect(setAccountId).toHaveBeenCalledWith(uuid);
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(setLoading).toHaveBeenCalledTimes(2);
     });
