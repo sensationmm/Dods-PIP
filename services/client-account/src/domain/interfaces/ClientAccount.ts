@@ -49,7 +49,7 @@ export interface SearchClientAccountResponse {
 export interface SearchClientAccountParameters extends Pagination {
     //locations?: number[] | null;
     locations?: string | null;
-    subscriptionTypes?: number[] | null;
+    subscriptionTypes?: string | null;
     searchTerm?: string | null;
     startsBy?: string | null;
 }

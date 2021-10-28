@@ -110,7 +110,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
     async searchClientAccount(
         searchClientAccountParams: SearchClientAccountParameters
     ): Promise<Array<SearchClientAccountResponse> | undefined> {
-        const { startsBy, locations, subscriptionTypes, searchTerm } =
+        let { startsBy, locations, subscriptionTypes, searchTerm } =
             searchClientAccountParams;
         const { limit, offset } = searchClientAccountParams;
 
@@ -122,22 +122,22 @@ export class ClientAccountRepository implements ClientAccountPersister {
             };
         }
         if (locations) {
+            locations = locations.toLowerCase();
+
             if (locations === 'eu') clientAccountWhere['is_eu'] = true;
 
             if (locations === 'uk') clientAccountWhere['is_uk'] = true;
 
-            if (locations == 'eu,uk') {
+            if (locations == 'eu,uk' || locations == 'uk,eu') {
                 clientAccountWhere['is_uk'] = true;
                 clientAccountWhere['is_eu'] = true;
             }
-
-            // clientAccountWhere['$SubscriptionType.location$'] = {
-            //     [Op.in]: locations,
-            // };
         }
         if (subscriptionTypes) {
-            clientAccountWhere['$SubscriptionType.id$'] = {
-                [Op.in]: subscriptionTypes,
+            let searchSubscriptions = subscriptionTypes.split(',');
+
+            clientAccountWhere['$SubscriptionType.uuid$'] = {
+                [Op.or]: searchSubscriptions.map((uuid) => uuid),
             };
         }
         if (searchTerm) {

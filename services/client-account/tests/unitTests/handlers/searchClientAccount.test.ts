@@ -73,6 +73,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: 'Showing Results.',
             limit: 2,
             offset: 0,
+            totalRecords: 2,
             data: SUCCESS_SEARCH_RESPONSE,
         });
 
