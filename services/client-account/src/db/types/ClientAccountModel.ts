@@ -13,6 +13,8 @@ export interface ClientAccountModelAttributes {
     contractRollover?: boolean;
     contractEndDate?: Date;
     consultantHours?: number;
+    isUk?: boolean;
+    isEu?: boolean;
     isCompleted?: boolean;
     lastStepCompleted?: number;
 }
@@ -29,4 +31,6 @@ export interface ClientAccountModelCreationAttributes
         | 'contractEndDate'
         | 'isCompleted'
         | 'lastStepCompleted'
+        | 'isUk'
+        | 'isEu'
     > {}

@@ -9,16 +9,16 @@ const SUCCESS_UPDATE_CLIENT_ACCOUNT = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
     name: 'Company One',
     notes: '',
-    contact_name: 'Marty MacFly',
-    contact_email_address: 'marti@example.com',
-    contact_telephone_number: '+122233443',
-    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
-    contract_rollover: false,
-    contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
-    subscription_seats: 32,
-    consultant_hours: 13,
-    is_completed: true,
-    last_step_completed: 1,
+    contactName: 'Marty MacFly',
+    contactEmailAddress: 'marti@example.com',
+    contactTelephoneNumber: '+122233443',
+    contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+    contractRollover: false,
+    contractEndDate: new Date('2022-02-01T01:01:01.001Z'),
+    subscriptionSeats: 32,
+    consultantHours: 13,
+    isCompleted: true,
+    lastStepCompleted: 1,
     subscription: {
         uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
         name: 'subs_1',
@@ -53,9 +53,9 @@ const ClientAccountMock = dbMock.define(
         contactName: 'Marty MacFly',
         contactEmailAddress: 'marti@example.com',
         contactTelephoneNumber: '+122233443',
-        contract_start_date: '2021-01-01T01:01:01.001Z',
-        contract_rollover: false,
-        contract_end_date: '2022-02-01T01:01:01.001Z',
+        contractStartDate: '2021-01-01T01:01:01.001Z',
+        contractRollover: false,
+        contractEndDate: '2022-02-01T01:01:01.001Z',
     },
     {
         instanceMethods: {
@@ -194,6 +194,25 @@ SubscriptionTypeMock.$queryInterface.$useHandler(function (
     }
 });
 
+const UserProfileModelMock = dbMock.define('dods_client_accounts', {
+    id: 1,
+    uuid: '0e6c0561-8ff1-4f74-93bc-77444b156c6f',
+    title: 'Sir.',
+    firstName: 'Other',
+    lastName: 'Tester',
+    primaryEmail: 'dodstestlocal1@mailinator.com',
+    secondaryEmail: 'dodstestlocal2@mailinator.com',
+    telephoneNumber1: '+573214858576',
+    telephoneNumber2: '+573214858577',
+    roleId: 1,
+});
+
+const ClientAccountTeamModelMock = dbMock.define('dods_client_account_teams', {
+    clientAccountId: 1,
+    userId: 1,
+    teamMemberType: 1,
+});
+
 ClientAccountMock.belongsTo(SubscriptionTypeMock, {
     foreignKey: 'subscription',
     as: 'subscriptionType',
@@ -201,7 +220,9 @@ ClientAccountMock.belongsTo(SubscriptionTypeMock, {
 
 const testRepository = new ClientAccountRepository(
     ClientAccountMock,
-    SubscriptionTypeMock
+    SubscriptionTypeMock,
+    UserProfileModelMock,
+    ClientAccountTeamModelMock
 );
 
 afterEach(() => {
@@ -214,11 +235,13 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
         const clientAccount = {
             clientAccountId: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
             subscription: '4de05e7d-3394-4890-8347-a4db53b3691f',
-            subscription_seats: 32,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '2022-02-01T01:01:01.001Z',
+            subscriptionSeats: 32,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '2022-02-01T01:01:01.001Z',
+            isUK: true,
+            isEU: false,
         };
 
         const response = await testRepository.updateClientAccount(
@@ -235,11 +258,13 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
         const clientAccount = {
             clientAccountId: 'edae80fd-12e6-4a8e-9e69-32775b3538b6',
             subscription: '4de05e7d-3394-4890-8347-a4db53b3691f',
-            subscription_seats: 32,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '2021-02-01T01:01:01.001Z',
+            subscriptionSeats: 32,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '2021-02-01T01:01:01.001Z',
+            isUK: true,
+            isEU: false,
         };
 
         const expectedError = new Error('Error: clientAccount not found');
@@ -254,11 +279,13 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
         const clientAccount = {
             clientAccountId: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
             subscription: '4de05e7d-3394-4890-8347-a4db53b3691',
-            subscription_seats: 32,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '2021-02-01T01:01:01.001Z',
+            subscriptionSeats: 32,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '2021-02-01T01:01:01.001Z',
+            isUK: true,
+            isEU: false,
         };
 
         const expectedError = new Error('Error: Wrong subscription uuid');
@@ -274,11 +301,13 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
         const clientAccount = {
             clientAccountId: '',
             subscription: '4de05e7d-3394-4890-8347-a4db53b3691f',
-            subscription_seats: 32,
-            consultant_hours: 13,
-            contract_start_date: '2021-01-01T01:01:01.001Z',
-            contract_rollover: false,
-            contract_end_date: '2021-02-01T01:01:01.001Z',
+            subscriptionSeats: 32,
+            consultantHours: 13,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+            contractRollover: false,
+            contractEndDate: '2021-02-01T01:01:01.001Z',
+            isUK: true,
+            isEU: false,
         };
 
         const expectedError = new Error(
@@ -301,12 +330,12 @@ describe(`${GET_FUNCTION} handler`, () => {
             uuid: 'f4ad407b-6a88-4438-9538-7ef15b61c7fa',
             name: 'OtherNames',
             notes: '',
-            contact_name: 'Mike Fly',
-            contact_email_address: 'mike@example.com',
-            contact_telephone_number: '313222123',
-            contract_start_date: new Date('2021-01-01T01:01:01.000Z'),
-            contract_rollover: false,
-            contract_end_date: new Date('2022-02-01T01:01:01.000Z'),
+            contactName: 'Mike Fly',
+            contactEmailAddress: 'mike@example.com',
+            contactTelephoneNumber: '313222123',
+            contractStartDate: new Date('2021-01-01T01:01:01.000Z'),
+            contractRollover: false,
+            contractEndDate: new Date('2022-02-01T01:01:01.000Z'),
         };
 
         const response = await testRepository.getClientAccount(clientAccountId);
@@ -366,27 +395,32 @@ describe(`${CREATE_FUNCTION} handler`, () => {
         const clientAccount = {
             name: 'Juan account',
             notes: 'This is the account for Juan.',
-            contact_name: 'Juan',
-            contact_email_address: 'juan@xd.com',
-            contact_telephone_number: '+573123456531',
+            contactName: 'Juan',
+            contactEmailAddress: 'juan@xd.com',
+            contactTelephoneNumber: '+573123456531',
         };
 
         const expectedResponse = {
             uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
             name: 'Juan account',
             notes: 'This is the account for Juan.',
-            contact_name: 'Juan',
-            contact_email_address: 'juan@xd.com',
-            contact_telephone_number: '+573123456531',
+            contactName: 'Juan',
+            contactEmailAddress: 'juan@xd.com',
+            contactTelephoneNumber: '+573123456531',
 
-            consultant_hours: undefined,
+            consultantHours: undefined,
 
-            contract_end_date: undefined,
-            contract_rollover: undefined,
-            contract_start_date: undefined,
+            contractEndDate: '2022-02-01T01:01:01.001Z',
+            contractRollover: false,
+            contractStartDate: '2021-01-01T01:01:01.001Z',
+
+            isCompleted: undefined,
+            lastStepCompleted: undefined,
+            isEu: undefined,
+            isUk: undefined,
 
             subscription: undefined,
-            subscription_seats: undefined,
+            subscriptionSeats: undefined,
         };
 
         const response = await testRepository.createClientAccount({
@@ -399,9 +433,9 @@ describe(`${CREATE_FUNCTION} handler`, () => {
         const clientAccount = {
             name: '',
             notes: 'This is the account for Juan.',
-            contact_name: 'Juan',
-            contact_email_address: 'juan@xd.com',
-            contact_telephone_number: '+573123456531',
+            contactName: 'Juan',
+            contactEmailAddress: 'juan@xd.com',
+            contactTelephoneNumber: '+573123456531',
         };
 
         try {
@@ -494,9 +528,9 @@ describe(`${UPDATE_CLIENT_ACCOUNT_HEADER} handler`, () => {
             clientAccountId: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
             name: 'Company_4',
             notes: 'this is the compnay 1 ',
-            contact_name: 'George Beckamn',
-            contact_email_address: 'george@gmail.com',
-            contact_telephone_number: '',
+            contactName: 'George Beckamn',
+            contactEmailAddress: 'george@gmail.com',
+            contactTelephoneNumber: '',
         };
 
         const response = await testRepository.updateClientAccountHeader(
@@ -514,9 +548,9 @@ describe(`${UPDATE_CLIENT_ACCOUNT_HEADER} handler`, () => {
             clientAccountId: 'edae80fd-12e6-4a8e-9e69-32775b3538b6',
             name: 'Company_4',
             notes: 'this is the compnay 1 ',
-            contact_name: 'George Beckamn',
-            contact_email_address: 'george@gmail.com',
-            contact_telephone_number: '',
+            contactName: 'George Beckamn',
+            contactEmailAddress: 'george@gmail.com',
+            contactTelephoneNumber: '',
         };
 
         const expectedError = new Error('Error: clientAccount not found');
@@ -532,9 +566,9 @@ describe(`${UPDATE_CLIENT_ACCOUNT_HEADER} handler`, () => {
             clientAccountId: '',
             name: 'Company_4',
             notes: 'this is the compnay 1 ',
-            contact_name: 'George Beckamn',
-            contact_email_address: 'george@gmail.com',
-            contact_telephone_number: '',
+            contactName: 'George Beckamn',
+            contactEmailAddress: 'george@gmail.com',
+            contactTelephoneNumber: '',
         };
 
         const expectedError = new Error(
@@ -582,5 +616,31 @@ describe(`${UPDATE_COMPLETION} handler`, () => {
         } catch (error) {
             expect(error).toEqual(expectedError);
         }
+    });
+});
+
+describe(`Check same name client `, () => {
+    test(`Name is equal`, async () => {
+        const clientAccountId = 'b0605d89-6200-4861-a9d5-258ccb33cbe3';
+        const name = 'Company One';
+
+        const response = await testRepository.checkSameName(
+            name,
+            clientAccountId
+        );
+
+        expect(response).toEqual(true);
+    });
+
+    test(`Name is different`, async () => {
+        const clientAccountId = 'b0605d89-6200-4861-a9d5-258ccb33cbe3';
+        const name = 'Wrong Name';
+
+        const response = await testRepository.checkSameName(
+            name,
+            clientAccountId
+        );
+
+        expect(response).toEqual(false);
     });
 });

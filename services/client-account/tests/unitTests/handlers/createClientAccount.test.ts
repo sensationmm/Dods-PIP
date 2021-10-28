@@ -18,9 +18,9 @@ const SUCCESS_ACCOUNT_RESPONSE = {
     uuid: 'ba52a39b-814a-41df-a0b8-60083f25ec9a',
     name: 'Juan account',
     notes: 'This is the account for Juan.',
-    contact_name: 'Juan',
-    contact_email_address: 'juan@xd.com',
-    contact_telephone_number: '+573123456531',
+    contactName: 'Juan',
+    contactEmailAddress: 'juan@xd.com',
+    contactTelephoneNumber: '+573123456531',
 };
 
 jest.mock('../../../src/repositories/ClientAccountRepository');
@@ -45,6 +45,10 @@ const checkClientAccountNameMock = async (name: string) => {
     return name !== 'Existing Account';
 };
 
+const updateCompletionMock = async () => {
+    return true;
+};
+
 const defaultContext = createContext();
 
 beforeEach(() => {
@@ -54,11 +58,16 @@ beforeEach(() => {
     mockedClientAccountRepository.defaultInstance.checkNameAvailability.mockImplementation(
         checkClientAccountNameMock
     );
+
+    mockedClientAccountRepository.defaultInstance.UpdateCompletion.mockImplementation(
+        updateCompletionMock
+    );
 });
 
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.createClientAccount.mockClear();
     mockedClientAccountRepository.defaultInstance.checkNameAvailability.mockClear();
+    mockedClientAccountRepository.defaultInstance.UpdateCompletion.mockClear();
 });
 
 describe(`${FUNCTION_NAME} handler`, () => {
@@ -66,9 +75,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const clientAccount = {
             name: 'Juan account',
             notes: 'This is the account for Juan.',
-            contact_name: 'Juan',
-            contact_email_address: 'juan@xd.com',
-            contact_telephone_number: '+573123456531',
+            contactName: 'Juan',
+            contactEmailAddress: 'juan@xd.com',
+            contactTelephoneNumber: '+573123456531',
         };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
@@ -96,9 +105,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const clientAccount = {
             name: 'Existing Account',
             notes: 'This is the account for Juan.',
-            contact_name: 'Juan',
-            contact_email_address: 'juan@xd.com',
-            contact_telephone_number: '+573123456531',
+            contactName: 'Juan',
+            contactEmailAddress: 'juan@xd.com',
+            contactTelephoneNumber: '+573123456531',
         };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.CONFLICT, {

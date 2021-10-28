@@ -3,10 +3,24 @@ import React from 'react';
 import { AddClient } from './index.page';
 
 global.scrollTo = jest.fn();
+const uuid = 'uid-123-456';
 const mockRouterPush = jest.fn();
 jest.mock('next/router', () => ({
-  useRouter: jest.fn().mockReturnValue({ push: (val) => mockRouterPush(val) }),
+  useRouter: jest.fn()
+  .mockImplementationOnce(() =>
+    ({ push: (val) => mockRouterPush(val), query: { id: uuid } })
+  ).mockReturnValue({ push: (val) => mockRouterPush(val), query: {} }),
 }));
+
+jest.mock('../../../lib/fetchJson', () => {
+  return jest
+    .fn()
+    .mockImplementationOnce(() =>
+      Promise.resolve({ data: { uuid, isCompleted: false, contactName: 'jane doe' } })
+    ).mockImplementationOnce(() =>
+      Promise.resolve({ message: 'server error', success: false }),
+    )
+});
 
 describe('Account Management: Clients', () => {
   let wrapper, step1, step2, step3, step4;
@@ -14,11 +28,13 @@ describe('Account Management: Clients', () => {
   const setLoadingSpy = jest.fn();
   const setStateSpy = jest.fn();
   const setActiveStepSpy = jest.fn();
+  const setAccountIdSpy = jest.fn();
   const setErrorSpy = jest.fn();
   const useStateSpy = jest.spyOn(React, 'useState');
 
   const defaultState = {
     activeStep: 1,
+    setAccountId: jest.fn(),
     accountName: '',
     accountNotes: '',
     contactName: '',
@@ -28,6 +44,7 @@ describe('Account Management: Clients', () => {
   };
 
   const states = [
+    defaultState, // when query.id exist load client account
     defaultState, // renders without error and shows step 1
     { ...defaultState, activeStep: 2 }, // shows step 2
     { ...defaultState, activeStep: 3 }, // shows step 3
@@ -49,6 +66,7 @@ describe('Account Management: Clients', () => {
   beforeEach(() => {
     useStateSpy
       .mockImplementationOnce(() => [states[count].activeStep, setActiveStepSpy])
+      .mockImplementationOnce(() => [states[count].setAccountId, setAccountIdSpy])
       .mockImplementationOnce(() => [states[count].accountName, setStateSpy])
       .mockImplementationOnce(() => [states[count].accountNotes, setStateSpy])
       .mockImplementationOnce(() => [states[count].contactName, setStateSpy])
@@ -63,6 +81,11 @@ describe('Account Management: Clients', () => {
     step2 = wrapper.find('[data-test="step-2"]');
     step3 = wrapper.find('[data-test="step-3"]');
     step4 = wrapper.find('[data-test="step-4"]');
+  });
+
+  it('when query.id exist load client account', () => {
+    expect(setLoadingSpy).toHaveBeenCalledTimes(2);
+    expect(setAccountIdSpy).toHaveBeenCalledWith(uuid);
   });
 
   it('renders without error and shows step 1', () => {

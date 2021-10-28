@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// - Migration stage 1. inout storage
+// - Migration stage 1. input storage
 // --------------------------------------------------------------------------------------------------------------------
 module "migration-stage-1-s3-input" {
   source      = "./modules/s3"
@@ -14,4 +14,13 @@ module "migration-stage-1-sqs-queue" {
   source      = "./modules/sqs"
   environment = var.environment
   queue_name  = "migration-stage-1-queue"
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+// - Migration stage 1. output storage
+// --------------------------------------------------------------------------------------------------------------------
+module "migration-stage-1-s3-output" {
+  source      = "./modules/s3"
+  environment = var.environment
+  name        = "migration-stage-1-output"
 }

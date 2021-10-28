@@ -14,14 +14,14 @@ const FUNCTION_NAME = updateClientAccountHeader.name;
 const UPDATE_REPO_RESPONSE: ClientAccountResponse = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
     name: 'OtherNames',
-    contact_name: 'Mike Fly',
-    contact_email_address: 'mike@example.com',
-    contact_telephone_number: '313222123',
-    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
-    contract_rollover: false,
-    contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
-    subscription_seats: 20,
-    consultant_hours: 13,
+    contactName: 'Mike Fly',
+    contactEmailAddress: 'mike@example.com',
+    contactTelephoneNumber: '313222123',
+    contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+    contractRollover: false,
+    contractEndDate: new Date('2022-02-01T01:01:01.001Z'),
+    subscriptionSeats: 20,
+    consultantHours: 13,
     subscription: {
         uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
         name: 'subs_1',
@@ -33,14 +33,14 @@ const UPDATE_REPO_RESPONSE: ClientAccountResponse = {
 const SUCCESS_UPDATE_ACCOUNT = {
     uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
     name: 'OtherNames',
-    contact_name: 'Mike Fly',
-    contact_email_address: 'mike@example.com',
-    contact_telephone_number: '313222123',
-    contract_start_date: new Date('2021-01-01T01:01:01.001Z'),
-    contract_rollover: false,
-    contract_end_date: new Date('2022-02-01T01:01:01.001Z'),
-    subscription_seats: 20,
-    consultant_hours: 13,
+    contactName: 'Mike Fly',
+    contactEmailAddress: 'mike@example.com',
+    contactTelephoneNumber: '313222123',
+    contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+    contractRollover: false,
+    contractEndDate: new Date('2022-02-01T01:01:01.001Z'),
+    subscriptionSeats: 20,
+    consultantHours: 13,
     subscription: {
         uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
         name: 'subs_1',
@@ -66,9 +66,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             clientAccountId: '1dcad502-0c50-4dab-9192-13b5e882b95d',
             name: 'Company_4',
             notes: 'this is the compnay 1 ',
-            contact_name: 'George Beckamn',
-            contact_email_address: 'george@gmail.com',
-            contact_telephone_number: '+576933792',
+            contactName: 'George Beckamn',
+            contactEmailAddress: 'george@gmail.com',
+            contactTelephoneNumber: '+576933792',
         };
 
         mockedClientAccountRepository.defaultInstance.checkNameAvailability.mockImplementation(
@@ -102,9 +102,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             clientAccountId: '1dcad502-0c50-4dab-9192-13b5e882b95d',
             name: 'Company_4',
             notes: 'this is the compnay 1 ',
-            contact_name: 'George Beckamn',
-            contact_email_address: 'george@gmail.com',
-            contact_telephone_number: '+576933792',
+            contactName: 'George Beckamn',
+            contactEmailAddress: 'george@gmail.com',
+            contactTelephoneNumber: '+576933792',
         };
 
         mockedClientAccountRepository.defaultInstance.checkNameAvailability.mockImplementation(

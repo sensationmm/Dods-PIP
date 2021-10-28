@@ -1,17 +1,17 @@
 [
   {
-    "name": "${name}-app",
+    "name": "frontend-app",
     "image": "${app_image}",
     "cpu": ${fargate_cpu},
     "memory": ${fargate_memory},
     "networkMode": "awsvpc",
     "environment": [
-
+        {"name": "ENVIRONMENT", "value": "${environment}"}
     ],
     "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/fargate-app",
+          "awslogs-group": "/ecs/${log_group_name}",
           "awslogs-region": "${aws_region}",
           "awslogs-stream-prefix": "ecs"
         }

@@ -42,6 +42,14 @@ resource "aws_security_group" "lb" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
+  egress {
+    from_port        = var.app_port
+    to_port          = var.app_port
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
   tags = merge(tomap({
     "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-alb-sg",
     "owner"       = local.owner,
@@ -96,7 +104,7 @@ resource "aws_security_group" "ecs_tasks" {
 
 resource "aws_alb" "builder" {
   name            = "${var.project}-${var.environment}-${local.main_resource_name}-lb"
-  subnets         = var.private_subnet_ids
+  subnets         = var.public_subnet_ids
   security_groups = [aws_security_group.lb.id]
   tags = merge(tomap({
     "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-load-balancer",
@@ -107,7 +115,7 @@ resource "aws_alb" "builder" {
 }
 
 resource "aws_alb_target_group" "app_target_group" {
-  name        = "${var.project}-${var.environment}-${local.main_resource_name}-tg"
+  name        = "${var.project}-${var.environment}-${local.main_resource_name}-${substr(uuid(), 0, 3)}"
   port        = var.app_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -117,11 +125,17 @@ resource "aws_alb_target_group" "app_target_group" {
     healthy_threshold   = "3"
     interval            = "120"
     protocol            = "HTTP"
+    port                = "3000"
     matcher             = "200"
     timeout             = "3"
-    path                = "/health"
+    path                = "/"
     unhealthy_threshold = "5"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = merge(tomap({
     "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-target-group",
     "owner"       = local.owner,
@@ -132,7 +146,7 @@ resource "aws_alb_target_group" "app_target_group" {
 
 resource "aws_alb_listener" "front_end" {
   load_balancer_arn = aws_alb.builder.id
-  port              = var.app_port
+  port              = 80
   protocol          = "HTTP"
 
   default_action {
@@ -146,7 +160,7 @@ resource "aws_alb_listener" "front_end" {
 // --------------------------------------------------------------------------------------------------------------------
 resource "aws_appautoscaling_target" "target" {
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.ecs_cluster.name}/${aws_ecs_service.service.name}"
+  resource_id        = "service/${aws_ecs_cluster.ecs_cluster.name}/${aws_ecs_service.frontend.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   role_arn           = aws_iam_role.ecs_auto_scale_role.arn
   min_capacity       = var.minimum_container_count
@@ -157,7 +171,7 @@ resource "aws_appautoscaling_target" "target" {
 resource "aws_appautoscaling_policy" "up" {
   name               = "${var.project}-${var.environment}-${local.main_resource_name}-scale-up"
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.ecs_cluster.name}/${aws_ecs_service.service.name}"
+  resource_id        = "service/${aws_ecs_cluster.ecs_cluster.name}/${aws_ecs_service.frontend.name}"
   scalable_dimension = "ecs:service:DesiredCount"
 
   step_scaling_policy_configuration {
@@ -178,7 +192,7 @@ resource "aws_appautoscaling_policy" "up" {
 resource "aws_appautoscaling_policy" "down" {
   name               = "${var.project}-${var.environment}-${local.main_resource_name}-scale-down"
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.ecs_cluster.name}/${aws_ecs_service.service.name}"
+  resource_id        = "service/${aws_ecs_cluster.ecs_cluster.name}/${aws_ecs_service.frontend.name}"
   scalable_dimension = "ecs:service:DesiredCount"
 
   step_scaling_policy_configuration {
@@ -203,6 +217,30 @@ variable "low_threshold" {
   default = 0
 }
 
+resource "aws_ecr_repository" "frontend" {
+  name = "pip/frontend"
+}
+
+data "aws_ecr_authorization_token" "token" {
+  registry_id = aws_ecr_repository.frontend.registry_id
+}
+
+locals {
+  ecr_secret = {
+    username = data.aws_ecr_authorization_token.token.user_name
+    password = data.aws_ecr_authorization_token.token.password
+  }
+}
+
+resource "aws_secretsmanager_secret" "ecr" {
+  name = "all/loginECR"
+}
+
+resource "aws_secretsmanager_secret_version" "ecr" {
+  secret_id     = aws_secretsmanager_secret.ecr.id
+  secret_string = jsonencode(local.ecr_secret)
+}
+
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "${var.project}-${var.environment}-${local.main_resource_name}-cluster"
 }
@@ -213,7 +251,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 data "template_file" "app" {
   template = file("${path.module}/templates/app.json.tpl")
   vars = {
-    host_port      = 80
+    host_port      = var.app_port
     name           = local.main_resource_name
     app_image      = var.app_image
     app_port       = var.app_port
@@ -221,10 +259,9 @@ data "template_file" "app" {
     fargate_memory = var.fargate_memory
     aws_region     = var.aws_region
     environment    = var.environment
+    log_group_name = var.log_group_name
   }
 }
-
-
 
 resource "aws_ecs_task_definition" "app_task" {
   family                   = "${var.project}-${var.environment}-${local.main_resource_name}-task-definition"
@@ -243,8 +280,8 @@ resource "aws_ecs_task_definition" "app_task" {
   }), var.default_tags)
 }
 
-resource "aws_ecs_service" "service" {
-  name            = "fargate-service"
+resource "aws_ecs_service" "frontend" {
+  name            = "frontend-service"
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.app_task.arn
   desired_count   = var.app_count
@@ -258,7 +295,7 @@ resource "aws_ecs_service" "service" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.app_target_group.id
-    container_name   = "fargate-app"
+    container_name   = "frontend-app"
     container_port   = var.app_port
   }
 

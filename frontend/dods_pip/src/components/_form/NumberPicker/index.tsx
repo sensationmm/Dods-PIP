@@ -1,8 +1,7 @@
-import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import color from '../../../globals/color';
-import { validateNumeric } from '../../../utils/validation';
+import Spacer from '../../_layout/Spacer';
 import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
 import Text from '../../Text';
@@ -15,171 +14,148 @@ export interface NumberPickerProps {
   id?: string;
   size?: InputSize;
   label?: string;
-  value: string;
+  value?: number;
   isDisabled?: boolean;
-  error?: string | undefined;
+  error?: string;
   required?: boolean;
   optional?: boolean;
   helperText?: string;
-  onChange: (val: string) => void;
+  onChange: (val: number) => void;
+  onBlur?: (val: string | undefined) => void;
   onFocus?: () => void;
-  onBlur?: (val?: string) => void;
   tabIndex?: number;
-  minVal?: string;
-  maxVal?: string;
+  minVal?: number;
+  maxVal?: number;
 }
+
+const RANGE_MAX = 999;
+const RANGE_MIN = 0;
+
+const ERROR_ID = 'NumberPicker component';
+
+const validateMaxAndMinValues = (min: number, max: number) => {
+  const CURRENT_RANGE = `(min: ${min}, max: ${max})`;
+
+  if (min >= max)
+    throw new TypeError(`${ERROR_ID}: ${CURRENT_RANGE} - Min should be less than max`);
+  if (min < RANGE_MIN)
+    throw new TypeError(`${ERROR_ID}: ${CURRENT_RANGE} - Min should be a positive integer`);
+  if (max > RANGE_MAX)
+    throw new TypeError(
+      `${ERROR_ID}: ${CURRENT_RANGE} - Max should less than or equal to ${RANGE_MAX}`,
+    );
+};
 
 const NumberPicker: React.FC<NumberPickerProps> = ({
   id,
   size = 'medium',
   label,
-  value,
+  value = -1,
   isDisabled = false,
   required,
   optional,
   error,
   helperText,
   onChange,
-  onFocus,
   onBlur,
+  onFocus,
   tabIndex,
-  minVal = '0',
-  maxVal = '999',
+  minVal = RANGE_MIN,
+  maxVal = RANGE_MAX,
 }) => {
-  const [hoverPlusButton, setHoverPlusButton] = React.useState(false);
-  const [hoverMinusButton, setHoverMinusButton] = React.useState(false);
-  const valueConverter = (value: string) => value.substr(0, 3);
-  value = valueConverter(value);
-  const onBlurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
-    const val = e.target.value;
+  validateMaxAndMinValues(minVal, maxVal);
 
-    if (validateNumeric(parseInt(e.target.value))) {
-      if (parseInt(val) < parseInt(minVal) || parseInt(val) > parseInt(maxVal)) {
-        parseInt(minVal) > -1 &&
-          parseInt(maxVal) <= 999 &&
-          onBlur?.(`Must be in range ${minVal}-${maxVal}`);
-        parseInt(minVal) > 0 && maxVal === '999' && onBlur?.(`Minimum value is ${minVal}`);
-        minVal === '0' && parseInt(maxVal) < 999 && onBlur?.(`Maximum value is ${maxVal}`);
-      } else {
-        onBlur?.(undefined);
-      }
+  const [currentValue, setCurrentValue] = React.useState<number>(value);
+  const [internalError, setInternalError] = React.useState<string | undefined>(error);
 
-      if ((val as unknown as number) % 1 !== 0) {
-        onChange(Math.round(parseInt(val)).toString());
-      }
-    } else {
-      onBlur?.('This field is required');
-    }
+  useEffect(() => {
+    setInternalError(error?.length ? error : undefined);
+  }, [error]);
+
+  const updateValue = (direction: 'decrement' | 'increment') => {
+    if (isDisabled) return;
+    if (currentValue > maxVal) return onChangeHandler(maxVal - 1);
+    if (currentValue < minVal) return onChangeHandler(minVal);
+
+    if (direction === 'increment' && currentValue <= maxVal)
+      return onChangeHandler(currentValue + 1);
+
+    // erroneous low coverage report
+    /* istanbul ignore next */
+    if (direction === 'decrement' && currentValue >= minVal)
+      return onChangeHandler(currentValue - 1);
+  };
+
+  const onChangeHandler = (value: number) => {
+    setCurrentValue(value);
+    setInternalError(undefined);
+
+    if (required && value < RANGE_MIN) return setInternalError('This field is required');
+    if (value < minVal) return setInternalError(`Minimum value is ${minVal}`);
+    if (value > maxVal) return setInternalError(`Maximum value is ${maxVal}`);
+
+    onChange(value);
+  };
+
+  const handleInputChange = (e: any) => {
+    /[^0-9]/g.test(e.key) && e.preventDefault();
   };
 
   return (
-    <div data-test="number-input-component">
+    <div data-test="number-picker-component">
       {label && (
-        <Styled.labelWrapper>
-          <Label required={required} optional={optional} label={label} />
-        </Styled.labelWrapper>
+        <>
+          <Label data-test="number-picker-label" {...{ required, optional, label, isDisabled }} />
+          <Spacer size={3} />
+        </>
       )}
-      <Styled.InputArea disabled={isDisabled} error={error} size={size}>
-        <Styled.iconWrapper
-          size={size}
-          disabled={isDisabled || parseInt(value) <= parseInt(minVal)}
-          error={error}
-          onClick={() => {
-            if (parseInt(value) > parseInt(minVal)) {
-              onChange((parseInt(valueConverter(value)) - 1).toString());
-            }
-            if (parseInt(value) - 1 <= parseInt(maxVal)) {
-              onBlur?.(undefined);
-            }
-          }}
-          onMouseEnter={() => setHoverMinusButton(true)}
-          onMouseLeave={() => setHoverMinusButton(false)}
-          data-test="minus-button"
-        >
-          <Icon
-            src={Icons.Minus}
-            size={IconSize.mediumLarge}
-            data-test="minus-icon"
-            color={
-              isDisabled
-                ? color.base.greyDark
-                : typeof error === 'string'
-                ? color.base.white
-                : !hoverMinusButton
-                ? color.base.grey
-                : color.theme.blue
-            }
-          />
-        </Styled.iconWrapper>
-        <Styled.inputWrapper>
-          <Styled.input
-            tabIndex={tabIndex}
-            onBlur={onBlurHandler}
-            onFocus={onFocus}
-            onChange={(e) => onChange(e.target.value)}
-            id={id}
-            type="number"
-            className={classNames({
-              error: typeof error === 'string',
-              disabled: isDisabled,
-              small: size === 'small',
-              medium: size === 'medium',
-            })}
-            data-test="component-input-number"
-            value={validateNumeric(parseInt(value)) ? value : ''}
-            disabled={isDisabled}
-            required={required}
-          ></Styled.input>
-        </Styled.inputWrapper>
-        <Styled.iconWrapper
-          size={size}
-          disabled={isDisabled || parseInt(value) >= parseInt(maxVal)}
-          error={error}
-          onClick={() => {
-            if (parseInt(value) < parseInt(maxVal)) {
-              onChange((parseInt(value) + 1).toString());
-            }
-            if (parseInt(value) + 1 >= parseInt(minVal)) {
-              onBlur?.(undefined);
-            }
-          }}
-          onMouseEnter={() => setHoverPlusButton(true)}
-          onMouseLeave={() => setHoverPlusButton(false)}
-          data-test="plus-button"
-        >
-          <Icon
-            src={Icons.Add}
-            size={IconSize.mediumLarge}
-            data-test="plus-icon"
-            color={
-              isDisabled
-                ? color.base.greyDark
-                : typeof error === 'string'
-                ? color.base.white
-                : !hoverPlusButton
-                ? color.base.grey
-                : color.theme.blue
-            }
-          />
-        </Styled.iconWrapper>
-      </Styled.InputArea>
 
-      {(helperText || typeof error === 'string') && (
-        <Text
-          data-test="component-input-base-helper"
-          type="labelSmall"
-          color={
-            isDisabled
-              ? color.base.greyDark
-              : typeof error === 'string'
-              ? color.alert.red
-              : color.theme.blueMid
-          }
-          bold
+      <Styled.numberPicker
+        isDisabled={isDisabled}
+        hasError={Boolean(internalError)}
+        size={size}
+        data-test="number-picker-container"
+      >
+        <button
+          data-test="number-picker-minus"
+          className="icon-button"
+          disabled={isDisabled || (currentValue as number) <= minVal}
+          onClick={() => updateValue('decrement')}
         >
-          {typeof error !== 'string' ? helperText : error}
-        </Text>
-      )}
+          <Icon src={Icons.Minus} size={IconSize.mediumLarge} color={color.theme.blue} />
+        </button>
+        <input
+          data-test="number-picker-input"
+          tabIndex={tabIndex}
+          onFocus={onFocus}
+          onKeyPress={(e) => handleInputChange(e)}
+          onChange={(e: any) => onChangeHandler(parseInt(e.target.value))}
+          onBlur={() => onBlur && onBlur(internalError)}
+          id={id}
+          type="number"
+          disabled={isDisabled}
+          required={required}
+          value={currentValue < RANGE_MIN ? '' : currentValue.toString()}
+        />
+        <button
+          data-test="number-picker-plus"
+          className="icon-button"
+          disabled={isDisabled || (currentValue as number) >= maxVal}
+          onClick={() => updateValue('increment')}
+        >
+          <Icon src={Icons.Add} size={IconSize.mediumLarge} color={color.theme.blue} />
+        </button>
+      </Styled.numberPicker>
+      <Text
+        data-test="number-picker-helper-text"
+        type="labelSmall"
+        color={
+          isDisabled ? color.base.greyDark : internalError ? color.alert.red : color.theme.blueMid
+        }
+        bold
+      >
+        {internalError ? internalError : helperText}
+      </Text>
     </div>
   );
 };

@@ -52,7 +52,11 @@ const TextArea: React.FC<TextAreaProps> = ({
   return (
     <Styled.wrapper data-test="component-textarea">
       <Styled.topArea>
-        <div>{label && <Label label={label} required={required} optional={optional} />}</div>
+        <div>
+          {label && (
+            <Label label={label} required={required} optional={optional} isDisabled={isDisabled} />
+          )}
+        </div>
         {hasCharacterLimit && (
           <Styled.requiredHelper>
             <Text data-test="textarea-label-character-limit" type={'span'}>

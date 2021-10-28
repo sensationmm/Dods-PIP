@@ -23,13 +23,19 @@ export interface ClientAccountPersister {
         updateParameters: UpdateClientAccountParameters
     ): Promise<ClientAccountResponse | never[]>;
 
+    addTeamMember(params: {
+        clientAccountId: string;
+        userId: string;
+        teamMemberType: number;
+    }): Promise<TeamMemberResponse[]>;
+
     getClientAccountSeats(clientAccountId: string): Promise<number>;
 
     getClientAccountUsers(clientAccountId: string): Promise<number>;
 
-    getClientAccountTeam(
-        clientAccountId: string
-    ): Promise<TeamMemberResponse[]>;
+    getClientAccountAvailableSeats(clientAccountId: string): Promise<number>;
+
+    getClientAccountTeam(clientAccountId: string): Promise<TeamMemberResponse[]>;
 
     checkNameAvailability(name: string): Promise<boolean>;
 
@@ -42,4 +48,6 @@ export interface ClientAccountPersister {
     updateClientAccountHeader(
         updateParameters: UpdateClientAccountHeaderParameters
     ): Promise<ClientAccountResponse | never[]>;
+
+    checkSameName(name: string, clientAccountId: string): Promise<boolean>;
 }

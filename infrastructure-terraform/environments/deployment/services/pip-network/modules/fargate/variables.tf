@@ -56,10 +56,10 @@ variable "app_count" {
 
 variable "app_port" {
   description = "Port exposed by builder to redirect traffic to"
-  default     = 80
+  default     = 3000
 }
 variable "log_group_name" {
-  default = "builder-app"
+  default = "fargate-app"
 }
 
 variable "minimum_container_count" {

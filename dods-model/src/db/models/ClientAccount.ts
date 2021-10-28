@@ -18,6 +18,8 @@ interface ClientAccountAttributes {
   contractRollover: boolean | null;
   salesContact: number | null;
   isCompleted: boolean;
+  isUk: boolean | null;
+  isEu: boolean | null;
   lastStepCompleted: number;
 }
 
@@ -35,12 +37,14 @@ export class ClientAccount extends Model<ClientAccountAttributes, ClientAccountI
   public contactName!: string;
   public contactEmailAddress!: string;
   public contactTelephoneNumber!: string;
-  
+
   public consultantHours!: number | null;
   public contractStartDate!: Date | null;
   public contractEndDate!: Date | null;
   public contractRollover!: boolean | null;
   public isCompleted!: boolean;
+  public isUk!: boolean | null;
+  public isEu!: boolean | null;
   public lastStepCompleted!: number;
 
   // mixins for association (optional)
@@ -151,6 +155,16 @@ ClientAccount.init({
     type: DataTypes.TINYINT({ length: 1 }),
     allowNull: false,
     defaultValue: 0
+  },
+  isUk: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: 0,
+    allowNull: true,
+  },
+  isEu: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: 0,
+    allowNull: true,
   },
   lastStepCompleted: {
     type: DataTypes.INTEGER({ length: 11 }),

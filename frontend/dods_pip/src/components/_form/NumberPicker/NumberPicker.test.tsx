@@ -1,410 +1,363 @@
-import { shallow } from 'enzyme';
 import React from 'react';
+import { shallow } from 'enzyme';
 
-import color from '../../../globals/color';
-import Icon from '../../Icon';
-import Text from '../../Text';
-import NumberPicker from '.';
+import NumberPicker, { NumberPickerProps } from '.';
+
+const ERROR_MSG_PROP = 'test error';
+const HELPER_MSG_PROP = 'test helper';
+
+const SELECTOR_CONTAINER = '[data-test="number-picker-container"]';
+const SELECTOR_MINUS = '[data-test="number-picker-minus"]';
+const SELECTOR_INPUT = '[data-test="number-picker-input"]';
+const SELECTOR_PLUS = '[data-test="number-picker-plus"]';
+const SELECTOR_HELPER_TEXT = '[data-test="number-picker-helper-text"]';
+const SELECTOR_LABEL = '[data-test="number-picker-label"]';
+
+const MOCK_CHANGE_FN = jest.fn();
+const MOCK_BLUR_FN = jest.fn();
+const MOCK_SET_STATE = jest.fn();
+const DEFAULT_PROPS = {
+  onChange: MOCK_CHANGE_FN,
+  onBlur: MOCK_BLUR_FN,
+};
+
+const getWrapper = (props: NumberPickerProps = DEFAULT_PROPS) =>
+  shallow(<NumberPicker {...props} />);
 
 describe('NumberPicker', () => {
-  describe('functionality', () => {
-    it('renders without error', () => {
-      const wrapper = shallow(<NumberPicker label="Example" value="Example" onChange={jest.fn} />);
-      const component = wrapper.find('[data-test="number-input-component"]');
-      expect(component.length).toEqual(1);
-    });
+  const useStateSpy = jest.spyOn(React, 'useState');
 
-    it('should return 4', () => {
-      const typeWatcher = jest.fn();
-      const wrapper = shallow(<NumberPicker value="" onChange={typeWatcher} />);
-      const input = wrapper.find('[data-test="component-input-number"]');
-      input.simulate('focus');
-      input.simulate('change', { target: { value: '4' } });
+  beforeEach(() => {
+    useStateSpy.mockImplementation((init) => [init, MOCK_SET_STATE]);
+  });
 
-      expect(typeWatcher).toHaveBeenCalledTimes(1);
-      expect(typeWatcher).toHaveBeenCalledWith('4');
-    });
-
-    it('should return 5', () => {
-      const typeWatcher = jest.fn();
-      const wrapper = shallow(<NumberPicker value="4" onChange={typeWatcher} />);
-      const plusButton = wrapper.find('[data-test="plus-button"]');
-      plusButton.simulate('click');
-
-      expect(typeWatcher).toHaveBeenCalledTimes(1);
-      expect(typeWatcher).toHaveBeenCalledWith('5');
-    });
-
-    it('increment should fail if number outside of maximum bound', () => {
-      const typeWatcher = jest.fn();
-      const wrapper = shallow(<NumberPicker value="5" maxVal={'5'} onChange={typeWatcher} />);
-      const plusButton = wrapper.find('[data-test="plus-button"]');
-      plusButton.simulate('click');
-
-      expect(typeWatcher).toHaveBeenCalledTimes(0);
-    });
-
-    it('decrement should fail if number outside of minimum bound', () => {
-      const typeWatcher = jest.fn();
-      const wrapper = shallow(<NumberPicker value="5" minVal={'5'} onChange={typeWatcher} />);
-      const minusButton = wrapper.find('[data-test="minus-button"]');
-      minusButton.simulate('click');
-
-      expect(typeWatcher).toHaveBeenCalledTimes(0);
-    });
-
-    it('should return 3', () => {
-      const typeWatcher = jest.fn();
-      const wrapper = shallow(<NumberPicker value="4" onChange={typeWatcher} />);
-      const plusButton = wrapper.find('[data-test="minus-button"]');
-      plusButton.simulate('click');
-
-      expect(typeWatcher).toHaveBeenCalledTimes(1);
-      expect(typeWatcher).toHaveBeenCalledWith('3');
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
+  describe.each([
+    // prettier-ignore
+    ['minVal > maxVal', 10, 9, 'NumberPicker component: (min: 10, max: 9) - Min should be less than max'],
+    // prettier-ignore
+    ['minVal = maxVal', 10, 10, 'NumberPicker component: (min: 10, max: 10) - Min should be less than max'],
+    // prettier-ignore
+    ['minVal < 0', -1, 9, 'NumberPicker component: (min: -1, max: 9) - Min should be a positive integer'],
+    // prettier-ignore
+    ['maxVal > 999', 10, 1000, 'NumberPicker component: (min: 10, max: 1000) - Max should less than or equal to 999'],
+  ])('when %s', (condition, min, max, errorMsg) => {
+    it('should throw type error', () => {
+      try {
+        getWrapper({ ...DEFAULT_PROPS, minVal: min, maxVal: max });
+      } catch (error) {
+        expect(error).toBeInstanceOf(TypeError);
+        expect(error).toHaveProperty('message', errorMsg);
+      }
     });
   });
 
-  describe('on blur tests', () => {
-    it('should warn that the number is out of the limits!', () => {
-      const onBlur = jest.fn();
-      const minVal = '5';
-      const maxVal = '10';
-      const outOfVbondrVal = '20';
+  it('should render default composition', () => {
+    const wrapper = getWrapper();
+    const container = wrapper.find(SELECTOR_CONTAINER);
+    const buttonMinus = container.find(SELECTOR_MINUS);
+    const buttonPlus = container.find(SELECTOR_PLUS);
+    const input = container.find(SELECTOR_INPUT);
+    const helperText = wrapper.find(SELECTOR_HELPER_TEXT);
+    const label = wrapper.find(SELECTOR_LABEL);
 
-      const wrapper = shallow(
-        <NumberPicker
-          onChange={jest.fn}
-          value="5"
-          minVal={minVal}
-          maxVal={maxVal}
-          onBlur={onBlur}
-        />,
-      );
-      const component = wrapper.find('[data-test="component-input-number"]');
+    expect(wrapper.children()).toHaveLength(2);
+    expect(container.children()).toHaveLength(3);
+    expect(buttonMinus).toHaveLength(1);
+    expect(buttonPlus).toHaveLength(1);
+    expect(input).toHaveLength(1);
+    expect(helperText).toHaveLength(1);
+    expect(label).toHaveLength(0);
+  });
 
-      component.simulate('blur', { target: { value: outOfVbondrVal } });
-      expect(onBlur).toHaveBeenCalledTimes(1);
-      expect(onBlur).toHaveBeenCalledWith(`Must be in range ${minVal}-${maxVal}`);
+  it('should set default styling', () => {
+    const container = getWrapper().find(SELECTOR_CONTAINER);
+
+    expect(container.props()).toHaveProperty('isDisabled', false);
+    expect(container.props()).toHaveProperty('hasError', false);
+    expect(container.props()).toHaveProperty('size', 'medium');
+  });
+
+  it('should conditionally render a label', () => {
+    let wrapper = getWrapper();
+    let label = wrapper.find(SELECTOR_LABEL);
+
+    expect(label).toHaveLength(0);
+
+    wrapper = getWrapper({ ...DEFAULT_PROPS, label: 'test label' });
+    label = wrapper.find(SELECTOR_LABEL);
+
+    expect(label).toHaveLength(1);
+    expect(label.props().label).toBe('test label');
+  });
+
+  it('should not respond to non numeric inputs', () => {
+    const wrapper = getWrapper();
+    const input = wrapper.find(SELECTOR_INPUT);
+    const preventDefault = jest.fn();
+
+    input.simulate('keyPress', { key: 'enzyme', preventDefault });
+    input.simulate('keyPress', { key: 'is garbage', preventDefault });
+
+    input.simulate('keyPress', { key: '23', preventDefault });
+
+    expect(preventDefault).toHaveBeenCalledTimes(2);
+  });
+
+  describe('when value > minVal && value < maxVal', () => {
+    let wrapper, buttonPlus, buttonMinus;
+    const TEST_CASE_PROPS = { ...DEFAULT_PROPS, value: 5, minVal: 0, maxVal: 10 };
+    beforeEach(() => {
+      wrapper = getWrapper(TEST_CASE_PROPS);
+      buttonMinus = wrapper.find(SELECTOR_MINUS);
+      buttonPlus = wrapper.find(SELECTOR_PLUS);
     });
 
-    it('should show minimum value warning', () => {
-      const onBlur = jest.fn();
-      const minVal = '5';
-      const outOfVbondrVal = '3';
-
-      const wrapper = shallow(
-        <NumberPicker onChange={jest.fn} value="5" minVal={minVal} onBlur={onBlur} />,
-      );
-      const component = wrapper.find('[data-test="component-input-number"]');
-
-      component.simulate('blur', { target: { value: outOfVbondrVal } });
-      expect(onBlur).toHaveBeenCalledWith(`Minimum value is ${minVal}`);
+    it('plus and minus buttons should be active', () => {
+      expect(buttonPlus.props().disabled).toBe(false);
+      expect(buttonMinus.props().disabled).toBe(false);
     });
 
-    it('should show maximum value warning', () => {
-      const onBlur = jest.fn();
-      const maxVal = '10';
-      const outOfVbondrVal = '20';
+    describe('and minus button is clicked', () => {
+      beforeEach(() => {
+        wrapper = getWrapper(TEST_CASE_PROPS);
+        buttonMinus.simulate('click');
+      });
 
-      const wrapper = shallow(
-        <NumberPicker onChange={jest.fn} value="5" maxVal={maxVal} onBlur={onBlur} />,
-      );
-      const component = wrapper.find('[data-test="component-input-number"]');
-
-      component.simulate('blur', { target: { value: outOfVbondrVal } });
-      expect(onBlur).toHaveBeenCalledWith(`Maximum value is ${maxVal}`);
+      it('should decrement value', () => {
+        expect(MOCK_CHANGE_FN).toHaveBeenCalledWith(4);
+        expect(MOCK_CHANGE_FN).toHaveBeenCalledTimes(1);
+      });
     });
 
-    it("shouldn't warn that the number is out of the limits!", () => {
-      const onBlur = jest.fn();
-      const minVal = '5';
-      const maxVal = '10';
-      const notOutOfVbondrVal = '7';
+    describe('and plus button is clicked', () => {
+      beforeEach(() => {
+        wrapper = getWrapper(TEST_CASE_PROPS);
+        buttonPlus.simulate('click');
+      });
 
-      const wrapper = shallow(
-        <NumberPicker
-          onChange={jest.fn}
-          value="5"
-          minVal={minVal}
-          maxVal={maxVal}
-          onBlur={onBlur}
-        />,
-      );
-      const component = wrapper.find('[data-test="component-input-number"]');
-
-      component.simulate('blur', { target: { value: notOutOfVbondrVal } });
-      expect(onBlur).toHaveBeenCalledTimes(1);
-      expect(onBlur).toHaveBeenCalledWith(undefined);
-    });
-
-    it("shouldn't return a valid value, as the input of the function doesn't have a correct number format", () => {
-      const onBlur = jest.fn();
-      const minVal = '5';
-      const maxVal = '10';
-      const notOutOfVbondrVal = 'A';
-
-      const wrapper = shallow(
-        <NumberPicker
-          onChange={jest.fn}
-          value="5"
-          minVal={minVal}
-          maxVal={maxVal}
-          onBlur={onBlur}
-        />,
-      );
-      const component = wrapper.find('[data-test="component-input-number"]');
-
-      component.simulate('blur', { target: { value: notOutOfVbondrVal } });
-      expect(onBlur).toHaveBeenCalledTimes(1);
-      expect(onBlur).toHaveBeenCalledWith('This field is required');
-    });
-
-    it('should correct non-integers', () => {
-      const mockOnChange = jest.fn();
-      const wrapper = shallow(<NumberPicker onChange={mockOnChange} value="5" />);
-      const input = wrapper.find('[data-test="component-input-number"]');
-      input.simulate('blur', { target: { value: '5.4' } });
-      expect(mockOnChange).toHaveBeenCalledTimes(1);
-      expect(mockOnChange).toHaveBeenCalledWith('5');
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
+      it('should increment value', () => {
+        expect(MOCK_CHANGE_FN).toHaveBeenCalledWith(6);
+        expect(MOCK_CHANGE_FN).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
-  describe('styles', () => {
-    it('should show the minus button in grey due to the disabled state', () => {
-      const typewatcher = jest.fn();
-      const wrapper = shallow(
-        <NumberPicker label="Example" onChange={typewatcher} value="5" isDisabled />,
-      );
-      const minusButton = wrapper.find('[data-test="minus-icon"]');
-      expect(minusButton.find(Icon).props().color).toEqual(color.base.greyDark);
-    });
-    it('should show the minus button in red due to the error state', () => {
-      const typewatcher = jest.fn();
-      const wrapper = shallow(
-        <NumberPicker label="Example" onChange={typewatcher} value="5" error="example" />,
-      );
-      const minusButton = wrapper.find('[data-test="minus-icon"]');
-      expect(minusButton.find(Icon).props().color).toEqual(color.base.white);
+  describe('when value < minVal', () => {
+    let wrapper, buttonMinus, buttonPlus, input;
+    beforeEach(() => {
+      wrapper = getWrapper({ ...DEFAULT_PROPS, value: -5, minVal: 10 });
+      buttonMinus = wrapper.find(SELECTOR_MINUS);
+      buttonPlus = wrapper.find(SELECTOR_PLUS);
     });
 
-    it('should show the helper text in grey due to the disabled state', () => {
-      const typewatcher = jest.fn();
-      const wrapper = shallow(
-        <NumberPicker
-          label="Example"
-          onChange={typewatcher}
-          value="5"
-          helperText="example"
-          isDisabled
-        />,
-      );
-      const minusButton = wrapper.find('[data-test="component-input-base-helper"]');
-      expect(minusButton.find(Text).props().color).toEqual(color.base.greyDark);
-    });
-    it('should show the helper text in red due to the error state', () => {
-      const typewatcher = jest.fn();
-      const wrapper = shallow(
-        <NumberPicker label="Example" onChange={typewatcher} value="5" error="example" />,
-      );
-      const minusButton = wrapper.find('[data-test="component-input-base-helper"]');
-      expect(minusButton.find(Text).props().color).toEqual(color.alert.red);
+    it('should set the minus button to disabled', () => {
+      expect(buttonMinus.props().disabled).toBe(true);
     });
 
-    it('should show the helper text in red due to the error state', () => {
-      const typewatcher = jest.fn();
-      const wrapper = shallow(
-        <NumberPicker label="Example" onChange={typewatcher} value="5" helperText="example" />,
-      );
-      const minusButton = wrapper.find('[data-test="component-input-base-helper"]');
-      expect(minusButton.find(Text).props().color).toEqual(color.theme.blueMid);
+    describe('and plus button is clicked', () => {
+      beforeEach(() => {
+        buttonPlus.simulate('click');
+        wrapper.update();
+        input = wrapper.find(SELECTOR_INPUT);
+      });
+
+      it('should decrement value starting from minVal value', () => {
+        expect(MOCK_CHANGE_FN).toHaveBeenCalledWith(10);
+        expect(MOCK_CHANGE_FN).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
-  describe('Hover styles', () => {
-    let wrapper,
-      count = 0,
-      setState,
-      onChange,
-      useStateSpy;
+  describe('when value > maxVal', () => {
+    let wrapper, buttonPlus, buttonMinus, input;
+    beforeEach(() => {
+      wrapper = getWrapper({ ...DEFAULT_PROPS, value: 50, maxVal: 30 });
+      buttonMinus = wrapper.find(SELECTOR_MINUS);
+      buttonPlus = wrapper.find(SELECTOR_PLUS);
+    });
 
-    const states = [{ hoverMinusButton: true }, { hoverMinusButton: false }];
+    it('should set the plus button to disabled', () => {
+      expect(buttonPlus.props().disabled).toBe(true);
+    });
+
+    describe('and minus button is clicked', () => {
+      beforeEach(() => {
+        buttonMinus.simulate('click');
+        wrapper.update();
+        input = wrapper.find(SELECTOR_INPUT);
+      });
+
+      it('should decrement value starting from maxVal value', () => {
+        expect(MOCK_CHANGE_FN).toHaveBeenCalledWith(29);
+        expect(MOCK_CHANGE_FN).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('when disabled is true', () => {
+    let wrapper;
+    beforeEach(() => {
+      wrapper = getWrapper({ ...DEFAULT_PROPS, isDisabled: true });
+    });
+
+    it('should disable all interactions', () => {
+      const buttonMinus = wrapper.find(SELECTOR_MINUS);
+      const buttonPlus = wrapper.find(SELECTOR_PLUS);
+      const input = wrapper.find(SELECTOR_INPUT);
+
+      expect(buttonMinus.props().disabled).toBe(true);
+      expect(buttonPlus.props().disabled).toBe(true);
+      expect(input.props().disabled).toBe(true);
+
+      buttonMinus.simulate('click');
+      expect(MOCK_CHANGE_FN).not.toHaveBeenCalled();
+
+      buttonPlus.simulate('click');
+      expect(MOCK_CHANGE_FN).not.toHaveBeenCalled();
+    });
+
+    it('should set disabled styling', () => {
+      expect(wrapper.find(SELECTOR_CONTAINER).props()).toHaveProperty('isDisabled', true);
+    });
+  });
+
+  describe('when there is an error value', () => {
+    let wrapper;
+    beforeEach(() => {
+      wrapper = getWrapper({ ...DEFAULT_PROPS, error: ERROR_MSG_PROP });
+    });
+
+    it('should render error message', () => {
+      const helperText = wrapper.find(SELECTOR_HELPER_TEXT);
+      expect(helperText).toHaveLength(1);
+      expect(helperText.html()).toContain(ERROR_MSG_PROP);
+      expect(helperText.props()).toHaveProperty('color', '#EB1413');
+    });
+
+    it('should set error styling', () => {
+      expect(wrapper.find(SELECTOR_CONTAINER).props()).toHaveProperty('hasError', true);
+    });
+  });
+
+  describe('when there is helper text', () => {
+    let wrapper, helperText;
 
     beforeEach(() => {
-      setState = jest.fn();
-      onChange = jest.fn();
-      useStateSpy = jest.spyOn(React, 'useState');
-      useStateSpy
-        .mockImplementationOnce(() => [states[count].hoverMinusButton, setState])
-        .mockImplementationOnce(() => [states[count].hoverMinusButton, setState]);
-
-      wrapper = shallow(<NumberPicker value="4" onChange={onChange} />);
+      wrapper = getWrapper({ ...DEFAULT_PROPS, helperText: HELPER_MSG_PROP });
+      helperText = wrapper.find(SELECTOR_HELPER_TEXT);
     });
 
-    it('should show the minus button in blue due to the hover state', () => {
-      const minusButton = wrapper.find('[data-test="minus-icon"]');
-      expect(minusButton.find(Icon).props().color).toEqual(color.theme.blue);
+    it('should render helper text', () => {
+      expect(helperText).toHaveLength(1);
+      expect(helperText.html()).toContain(HELPER_MSG_PROP);
+      expect(helperText.props()).toHaveProperty('color', '#124384');
     });
 
-    it('should show the minus button in grey due to the lack of activity with it', () => {
-      const minusButton = wrapper.find('[data-test="minus-icon"]');
-      expect(minusButton.find(Icon).props().color).toEqual(color.base.grey);
+    describe('and component is disabled', () => {
+      beforeEach(() => {
+        wrapper = getWrapper({ ...DEFAULT_PROPS, helperText: HELPER_MSG_PROP, isDisabled: true });
+        helperText = wrapper.find(SELECTOR_HELPER_TEXT);
+      });
+
+      it('disabled colour should take precedence', () => {
+        expect(helperText.props()).toHaveProperty('color', '#757575');
+      });
     });
 
-    afterEach(() => {
-      jest.resetAllMocks();
-      count++;
+    describe('and there is an error value', () => {
+      beforeEach(() => {
+        wrapper = getWrapper({
+          ...DEFAULT_PROPS,
+          helperText: HELPER_MSG_PROP,
+          error: ERROR_MSG_PROP,
+        });
+        helperText = wrapper.find(SELECTOR_HELPER_TEXT);
+      });
+
+      it('error text should take precedence', () => {
+        expect(helperText.html()).not.toContain(HELPER_MSG_PROP);
+        expect(helperText.html()).toContain(ERROR_MSG_PROP);
+      });
+
+      it('error colour should take precedence', () => {
+        expect(helperText.props()).toHaveProperty('color', '#EB1413');
+      });
     });
   });
 
-  describe('hover and click events ', () => {
-    let wrapper,
-      count = 0,
-      setState,
-      onChange,
-      useStateSpy;
-    const defaultState = { hoverPlusButton: false, hoverMinusButton: false };
+  describe('when required is true', () => {
+    let wrapper, input;
+    beforeEach(() => {
+      wrapper = getWrapper({ ...DEFAULT_PROPS, required: true });
+      input = wrapper.find(SELECTOR_INPUT);
+    });
+    describe('and value is set to < 0', () => {
+      beforeEach(() => {
+        input.simulate('change', { target: { value: '-1' } });
+        input.simulate('blur');
+      });
+      it('should set error message', () => {
+        expect(MOCK_SET_STATE).toHaveBeenCalledWith('This field is required');
+        expect(MOCK_BLUR_FN).toHaveBeenCalled();
+        expect(MOCK_CHANGE_FN).not.toHaveBeenCalled();
+      });
+    });
+  });
 
-    const states = [
-      defaultState, // should return true on mouse enter on minus button
-      defaultState, // should return false on mouse leave on minus button
-      defaultState,
-      defaultState,
-      defaultState,
-      { hoverPlusButton: false, hoverMinusButton: true },
-    ];
+  describe('when value < minVal', () => {
+    let wrapper, input;
+    beforeEach(() => {
+      wrapper = getWrapper({ ...DEFAULT_PROPS, minVal: 10 });
+      input = wrapper.find(SELECTOR_INPUT);
+    });
+    describe('and input value is set to < minVal', () => {
+      beforeEach(() => {
+        input.simulate('change', { target: { value: '9' } });
+        input.simulate('blur');
+      });
+      it('should set error message', () => {
+        expect(MOCK_SET_STATE).toHaveBeenCalledWith('Minimum value is 10');
+        expect(MOCK_BLUR_FN).toHaveBeenCalled();
+        expect(MOCK_CHANGE_FN).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('when value > maxVal', () => {
+    let wrapper, input;
+    beforeEach(() => {
+      wrapper = getWrapper({ ...DEFAULT_PROPS, maxVal: 10 });
+      input = wrapper.find(SELECTOR_INPUT);
+    });
+    describe('and input value changes', () => {
+      beforeEach(() => {
+        input.simulate('change', { target: { value: '15' } });
+        input.simulate('blur');
+      });
+      it('should set error message', () => {
+        expect(MOCK_SET_STATE).toHaveBeenCalledWith('Maximum value is 10');
+        expect(MOCK_BLUR_FN).toHaveBeenCalled();
+        expect(MOCK_CHANGE_FN).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('when input value changes', () => {
+    let wrapper, input;
 
     beforeEach(() => {
-      setState = jest.fn();
-      onChange = jest.fn();
-      useStateSpy = jest.spyOn(React, 'useState');
-      useStateSpy
-        .mockImplementationOnce(() => [states[count].hoverMinusButton, setState])
-        .mockImplementationOnce(() => [states[count].hoverPlusButton, setState]);
-      wrapper = shallow(<NumberPicker value="4" onChange={onChange} />);
+      wrapper = getWrapper();
+      input = wrapper.find(SELECTOR_INPUT);
+      input.simulate('change', { target: { value: '15' } });
+      input.simulate('blur');
     });
 
-    it('should return true on mouse enter on minus button', () => {
-      const component = wrapper.find('[data-test="minus-button"]');
-      component.simulate('mouseenter');
-      expect(setState).toHaveBeenCalledTimes(1);
-      expect(setState).toHaveBeenCalledWith(true);
-    });
-
-    it('should return false on mouse leave on minus button', () => {
-      const component = wrapper.find('[data-test="minus-button"]');
-      component.simulate('mouseleave');
-      expect(setState).toHaveBeenCalledTimes(1);
-      expect(setState).toHaveBeenCalledWith(false);
-    });
-
-    it('should return true on mouse enter on plus button', () => {
-      const component = wrapper.find('[data-test="plus-button"]');
-      component.simulate('mouseenter');
-      expect(setState).toHaveBeenCalledTimes(1);
-      expect(setState).toHaveBeenCalledWith(true);
-    });
-
-    it('should return false on mouse leave on plus button', () => {
-      const component = wrapper.find('[data-test="plus-button"]');
-      component.simulate('mouseleave');
-      expect(setState).toHaveBeenCalledTimes(1);
-      expect(setState).toHaveBeenCalledWith(false);
-    });
-
-    afterEach(() => {
-      jest.resetAllMocks();
-      count++;
+    it('should emit empty message and value', () => {
+      expect(MOCK_SET_STATE).toHaveBeenCalledWith(undefined);
+      expect(MOCK_BLUR_FN).toHaveBeenCalled();
+      expect(MOCK_CHANGE_FN).toHaveBeenCalledWith(15);
     });
   });
 
-  describe('error handling', () => {
-    const mockOnBlur = jest.fn();
-    const mockSetState = jest.fn();
-    let useStateSpy;
-
-    beforeEach(() => {
-      const defaultState = { hoverPlusButton: false, hoverMinusButton: false };
-
-      useStateSpy = jest.spyOn(React, 'useState');
-      useStateSpy
-        .mockImplementationOnce(() => [defaultState.hoverMinusButton, mockSetState])
-        .mockImplementationOnce(() => [defaultState.hoverPlusButton, mockSetState]);
-    });
-
-    it('clears min value error on clicking plus if now within bounds', () => {
-      const wrapper = shallow(
-        <NumberPicker
-          label="Example"
-          value="4"
-          minVal="5"
-          onChange={jest.fn}
-          error="error"
-          onBlur={mockOnBlur}
-        />,
-      );
-      const incrementer = wrapper.find('[data-test="plus-button"]');
-      incrementer.simulate('click');
-      expect(mockOnBlur).toHaveBeenCalledWith(undefined);
-    });
-
-    it('maintains min value error on clicking plus if still outside of bounds', () => {
-      const wrapper = shallow(
-        <NumberPicker
-          label="Example"
-          value="3"
-          minVal="5"
-          onChange={jest.fn}
-          error="error"
-          onBlur={mockOnBlur}
-        />,
-      );
-      const incrementer = wrapper.find('[data-test="plus-button"]');
-      incrementer.simulate('click');
-      expect(mockOnBlur).toHaveBeenCalledTimes(0);
-    });
-
-    it('clears max value error on clicking minus if now within bounds', () => {
-      const wrapper = shallow(
-        <NumberPicker
-          label="Example"
-          value="6"
-          maxVal="5"
-          onChange={jest.fn}
-          error="error"
-          onBlur={mockOnBlur}
-        />,
-      );
-      const decrementer = wrapper.find('[data-test="minus-button"]');
-      decrementer.simulate('click');
-      expect(mockOnBlur).toHaveBeenCalledWith(undefined);
-    });
-
-    it('maintains max value error on clicking minus if still outside of bounds', () => {
-      const wrapper = shallow(
-        <NumberPicker
-          label="Example"
-          value="7"
-          maxVal="5"
-          onChange={jest.fn}
-          error="error"
-          onBlur={mockOnBlur}
-        />,
-      );
-      const decrementer = wrapper.find('[data-test="minus-button"]');
-      decrementer.simulate('click');
-      expect(mockOnBlur).toHaveBeenCalledTimes(0);
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-  });
+  afterEach(jest.clearAllMocks);
 });

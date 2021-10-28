@@ -13,6 +13,12 @@ jest.mock('next/router', () => ({
     .mockReturnValue({ push: (arg) => mockRouterPush(arg), query: { code: 'abc' } }),
 }));
 
+jest.mock('../../lib/useSubscriptionTypes', () => {
+  return jest
+    .fn()
+    .mockReturnValue({ subscriptionList: mockSubscriptionList })
+});
+
 describe('Account Management: Clients', () => {
   let wrapper;
 

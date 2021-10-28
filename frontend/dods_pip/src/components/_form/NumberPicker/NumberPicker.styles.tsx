@@ -1,103 +1,117 @@
 import styled from 'styled-components';
 
 import color from '../../../globals/color';
-import spacing from '../../../globals/spacing';
 import { InputSize } from '.';
 
-export const labelWrapper = styled.div`
-  display: flex;
-  margin-bottom: ${spacing(3)};
-`;
-
-export const requiredAsterisk = styled.div`
-  margin-right: ${spacing(1)};
-`;
-
-export const requiredHelper = styled.div`
-  margin-left: ${spacing(1)};
-`;
-
-type NumberInputType = {
+interface NumberPickerStyleProps {
   size?: InputSize;
-  disabled?: boolean;
-  error?: string | undefined;
+  isDisabled?: boolean;
+  hasError?: boolean;
+}
+
+const BORDER_RADIUS = '8px';
+
+const THEME = {
+  small: {
+    containerWidth: '116px',
+    iconButtonSize: '32px',
+  },
+  medium: {
+    containerWidth: '132px',
+    iconButtonSize: '40px',
+  },
+  large: {
+    containerWidth: '148px',
+    iconButtonSize: '48px',
+  },
+  standard: {
+    iconButtonBg: color.shadow.blue,
+    iconButtonColor: color.base.grey,
+    inputBg: color.base.white,
+    inputColor: color.theme.blue,
+  },
+  disabled: {
+    iconButtonBg: color.base.greyMid,
+    iconButtonColor: color.base.greyDark,
+    inputBg: color.base.greyLight,
+    inputColor: color.base.greyDark,
+  },
+  error: {
+    iconButtonBg: color.alert.red,
+    iconButtonColor: color.base.white,
+    inputBg: color.shadow.red,
+    inputColor: color.alert.red,
+  },
 };
-export const InputArea = styled.div<NumberInputType>`
+
+export const numberPicker = styled.div.attrs(
+  ({ size, isDisabled, hasError }: NumberPickerStyleProps) => {
+    let colors = THEME.standard;
+    if (hasError) colors = THEME.error;
+    if (isDisabled) colors = THEME.disabled;
+
+    const sizes = THEME[size as InputSize];
+    return {
+      sizes,
+      colors,
+      size,
+      isDisabled,
+      hasError,
+    };
+  },
+)`
+  width: ${({ sizes }) => sizes.containerWidth};
   display: flex;
-  background: ${({ error, disabled }) =>
-    disabled
-      ? color.base.greyLight
-      : typeof error === 'string'
-      ? color.shadow.red
-      : color.base.white};
-  width: ${({ size }) =>
-    size === 'large' ? spacing(38) : size === 'medium' ? spacing(34) : spacing(30)};
-  border-radius: 8px;
-  margin-bottom: ${spacing(2)};
-`;
-export const inputWrapper = styled.div`
-  width: ${spacing(13)};
-`;
+  border-radius: ${BORDER_RADIUS};
+  background-color: ${({ colors }) => colors.inputBg};
+  color: ${({ colors }) => colors.inputColor};
 
-type iconWrapperProps = {
-  size?: InputSize;
-  disabled?: boolean;
-  error?: string | undefined;
-};
-export const iconWrapper = styled.button<iconWrapperProps>`
-  background: ${({ error, disabled }) =>
-    disabled
-      ? color.base.greyMid
-      : typeof error === 'string'
-      ? color.alert.red
-      : color.shadow.blue};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: ${({ size }) =>
-    size === 'large' ? spacing(12) : size === 'medium' ? spacing(10) : spacing(8)};
-  height: ${({ size }) =>
-    size === 'large' ? spacing(12) : size === 'medium' ? spacing(10) : spacing(8)};
-  border-radius: 8px;
-  border: 0;
-  margin-right: 1px;
-  margin-left: 1px;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-`;
+  .icon-button {
+    padding: 0;
+    border: none;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    width: ${({ sizes }) => sizes.iconButtonSize};
+    height: ${({ sizes }) => sizes.iconButtonSize};
+    border-radius: ${BORDER_RADIUS};
+    background-color: ${({ colors }) => colors.iconButtonBg};
+    cursor: pointer;
+    outline: 0;
 
-export const input = styled.input`
-  width: 100%;
-  border: 0;
-  background: ${color.base.white};
-  color: ${color.theme.blue};
-  padding: ${spacing(3)};
-  box-sizing: border-box;
-  font-family: 'Open Sans';
-  font-size: 16px;
-  text-align: center;
+    &[disabled] {
+      cursor: not-allowed;
 
-  &:focus {
-    color: ${color.theme.blue};
+      & > * {
+        color: ${THEME.disabled.iconButtonColor};
+      }
+    }
+
+    & > * {
+      color: ${({ colors }) => colors.iconButtonColor} !important;
+      margin: auto;
+    }
+
+    ${({ hasError }) =>
+      !hasError &&
+      `
+        &:not([disabled]):hover,
+        &:not([disabled]):focus {
+          & > * {
+            color: ${color.theme.blue} !important;
+          }
+        }
+    `}
   }
 
-  &.error {
-    color: ${color.alert.red};
-    background: ${color.shadow.red};
-  }
-
-  &.disabled {
-    color: ${color.base.greyDark};
-    border-color: ${color.base.grey};
-    background: ${color.base.greyLight};
-    pointer-events: none;
-    cursor: not-allowed;
-  }
-
-  &.small {
-    padding: ${spacing(1)} ${spacing(3)};
-  }
-
-  &.medium {
-    padding: ${spacing(2)} ${spacing(3)};
+  input[type='number'] {
+    border: 0;
+    outline: 0;
+    min-width: 0;
+    text-align: center;
+    font-size: 16px;
+    background: transparent;
+    color: currentColor;
   }
 `;

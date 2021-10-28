@@ -21,3 +21,11 @@ output "db_endpoint_dev" {
 output "db_address_dev" {
   value = module.dev.db_address
 }
+
+output "frontend_url_dev" {
+  value = module.dev.frontend_url
+}
+
+output "frontend_url_qa" {
+  value = module.qa.frontend_url
+}

@@ -13,4 +13,7 @@ const Template: Story<LabelProps> = (args) => <Label {...args} />;
 
 export const Primary = Template.bind({});
 
-Primary.args = {};
+Primary.args = {
+  label: '',
+  isDisabled: false,
+};

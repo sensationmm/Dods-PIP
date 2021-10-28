@@ -120,10 +120,6 @@ export const checkboxToggleChecked = styled(checkboxToggle)`
 `;
 
 export const checkboxLabelWrapper = styled.div`
-  &.disabled {
-    color: var(--color-grey-mid);
-  }
-
   a {
     color: var(--color-brand-main);
     text-decoration: underline;
