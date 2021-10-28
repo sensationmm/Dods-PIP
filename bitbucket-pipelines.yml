@@ -11,7 +11,7 @@ pipelines:
     - parallel:
       - step:
           name: Test build Frontend
-          image: node:alpine
+          image: node:lts-alpine3.14
           size: 2x
           services:
             - docker
