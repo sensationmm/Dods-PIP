@@ -28,7 +28,7 @@ module "migration-stage-1-s3-output" {
 // --------------------------------------------------------------------------------------------------------------------
 // - Migration stage 2. output storage
 // --------------------------------------------------------------------------------------------------------------------
-module "migration-stage-1-s3-output" {
+module "migration-stage-2-s3-output" {
   source      = "./modules/s3"
   environment = var.environment
   name        = "migration-stage-2-output"
