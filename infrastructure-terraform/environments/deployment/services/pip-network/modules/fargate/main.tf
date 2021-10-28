@@ -104,7 +104,7 @@ resource "aws_security_group" "ecs_tasks" {
 
 resource "aws_alb" "builder" {
   name            = "${var.project}-${var.environment}-${local.main_resource_name}-lb"
-  subnets         = var.private_subnet_ids
+  subnets         = var.public_subnet_ids
   security_groups = [aws_security_group.lb.id]
   tags = merge(tomap({
     "name"        = "${var.project}-${var.environment}-${local.main_resource_name}-load-balancer",
