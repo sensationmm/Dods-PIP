@@ -9,6 +9,6 @@ export class UserProfileServiceRepository {
         const user = await this.gateway.post('/user', userParameters);
 
         console.log('Internal services call worked, response from UserProfile: ', user.data);
-        if (user.data.success) return user.data;
+        if (user.data.success) return user.data.data;
     }
 }

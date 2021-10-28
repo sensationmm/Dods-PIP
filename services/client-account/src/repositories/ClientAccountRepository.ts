@@ -209,7 +209,10 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
             let updatedClientAccount = await this.model.findOne({
                 where: { uuid: updateParameters.clientAccountId },
-                include: 'subscriptionType',
+                include: {
+                    model: this.subsModel,
+                    as:'subscriptionType'
+                },
             });
 
             if (updatedClientAccount) {
@@ -247,7 +250,10 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: ['team'],
+            include: {
+                model: this.userModel,
+                as: 'team'
+            },
         });
 
         if (clientAccountModel) {
@@ -331,8 +337,15 @@ export class ClientAccountRepository implements ClientAccountPersister {
             });
             const updatedClientAccount = await this.model.findOne({
                 where: { uuid: clientAccountId },
-                include: ['team'],
+                include: [
+                    {
+                        model: this.userModel,
+                        as: 'team',
+                    },
+                ],
             });
+
+            console.log('RESPONSE: ', updatedClientAccount?.team)
 
             return await updatedClientAccount!.team!.map(parseTeamMember);
         } else {

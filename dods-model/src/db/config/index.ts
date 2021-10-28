@@ -1,5 +1,7 @@
 require('dotenv').config();
+
 import { Dialect } from 'sequelize';
+import mariaDb from 'mariadb';
 
 const nodeEnv = process.env.NODE_ENV as string;
 const dbName = process.env.DB_NAME as string;
@@ -16,6 +18,7 @@ export default {
     username: dbUser,
     password: dbPassword,
     dialect: dbDriver,
+    dialectModule: mariaDb,
     pool: {
       max: dbConnectionLimit, // Maximum number of connection in pool
       min: 0, // Minimum number of connection in pool

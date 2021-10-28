@@ -1,6 +1,6 @@
 {
   "name": "@dodsgroup/dods-model",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -17,8 +17,8 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^10.0.0",
-    "mariadb": "^2.5.4",
-    "sequelize": "^6.6.5"
+    "mariadb": "^2.5.5",
+    "sequelize": "^6.8.0"
   },
   "devDependencies": {
     "@types/node": "^16.10.3",
