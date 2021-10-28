@@ -12,6 +12,10 @@ module.exports = {
       type: 'asset/resource',
     });
 
+    output: {
+      hashFunction: "xxhash64"
+    }
+
     return config;
   },
 };
