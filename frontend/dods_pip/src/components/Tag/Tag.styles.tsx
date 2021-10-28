@@ -13,6 +13,7 @@ export const wrapper = styled.div<WrapperProps>`
   cursor: pointer;
   display: inline-block;
   border: 1px solid ${color.base.greyLight};
+  background: ${color.base.white};
   border-radius: 20px;
   padding: ${spacing(1)};
   display: flex;
