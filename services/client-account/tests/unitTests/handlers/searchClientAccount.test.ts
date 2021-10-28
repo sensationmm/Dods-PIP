@@ -64,8 +64,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME} Valid input`, async () => {
         const searchParams = {
             searchTerm: 'Juan',
-            limit: 2,
-            offset: 0,
+            limit: '2',
+            offset: '0',
         };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
@@ -92,8 +92,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME} Invalid input`, async () => {
         const searchParams = {
             searchTerm: 'Failed Search',
-            limit: 1,
-            offset: 0,
+            limit: '1',
+            offset: '0',
         };
 
         const expectedResponse = new HttpResponse(HttpStatusCode.NOT_FOUND, {

@@ -1,4 +1,6 @@
 export interface Pagination {
-    limit: number;
-    offset: number;
+    limit: string;
+    offset: string;
+    limitNum?: number;
+    offsetNum?: number;
 }
