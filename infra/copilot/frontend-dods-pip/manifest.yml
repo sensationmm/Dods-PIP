@@ -16,7 +16,7 @@ http:
 
 # Configuration for your containers and service.
 image:
-  location: 390773179818.dkr.ecr.eu-west-1.amazonaws.com/somo4dods:13
+  location: 390773179818.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:d796fd76640da9d3b5590eda73e9566eaec6fGio
   # Port exposed through your container to route traffic to it.
   port: 3000
 
@@ -29,6 +29,7 @@ variables:
   SECRET_COOKIE_PASSWORD: 2gyZ3GDw3LHZQKDhPmPDL3sjREVRXPr8
   BACKEND_API_KEY: 8b8pv1rGpssR8eeUMjQPjsi8dC2ztrP1GTG1K2w
   APP_API_URL: https://emhumq7ktf.execute-api.eu-west-1.amazonaws.com/dev  
+  NODE_ENV: dev
 
 #secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
 #  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
