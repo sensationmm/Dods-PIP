@@ -124,7 +124,7 @@ functions:
         events:
             - http:
                   method: get
-                  path: clientaccounts/{clientAccountId}
+                  path: clientaccount/{clientAccountId}
 
     createClientAccount:
         handler: src/handlers/createClientAccount/index.handle
@@ -180,7 +180,7 @@ functions:
         events:
             - http:
                   method: put
-                  path: clientaccounts/{clientAccountId}/subscription
+                  path: clientaccount/{clientAccountId}/subscription
 
     getRemainingSeats:
         handler: src/handlers/getRemainingSeats/index.handle
