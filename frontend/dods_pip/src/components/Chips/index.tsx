@@ -15,6 +15,7 @@ export interface ChipsProps {
   disabled?: boolean;
   avatarType?: UserType;
   onCloseClick?: (val: string) => void;
+  theme?: 'dark' | 'light';
 }
 
 const Chips: React.FC<ChipsProps> = ({
@@ -24,6 +25,7 @@ const Chips: React.FC<ChipsProps> = ({
   icon,
   avatarType,
   onCloseClick,
+  theme = 'light',
 }) => {
   const [hovering, setHovering] = React.useState<boolean>(false);
   const [active, setActive] = React.useState<boolean>(false);
@@ -34,10 +36,11 @@ const Chips: React.FC<ChipsProps> = ({
       data-test="component-chip"
       selected={active}
       disabled={disabled}
+      theme={theme}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
-      <Styled.contentWrapper data-test="content-wrapper" onClick={() => setActive(true)}>
+      <Styled.contentWrapper data-test="content-wrapper" onClick={() => setActive(!active)}>
         {avatarType && !icon && (
           <Styled.avatarWrapper>
             <Avatar

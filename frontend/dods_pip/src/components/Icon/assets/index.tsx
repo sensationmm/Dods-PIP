@@ -21,6 +21,7 @@ import Hide from './icon-hide.svg';
 import Info from './icon-info.svg';
 import Issue from './icon-issue.svg';
 import Lock from './icon-lock.svg';
+import Menu from './icon-menu.svg';
 import Minus from './icon-minus.svg';
 import Pencil from './icon-pencil.svg';
 import Person from './icon-person.svg';
@@ -28,6 +29,7 @@ import Search from './icon-search.svg';
 import Show from './icon-show.svg';
 import Subscription from './icon-subscription.svg';
 import Suitcase from './icon-suitcase.svg';
+import Tag from './icon-tag.svg';
 import Tick from './icon-tick.svg';
 import TickBold from './icon-tickBold.svg';
 
@@ -59,6 +61,7 @@ export enum Icons {
   Info = 'Info',
   Issue = 'Issue',
   Lock = 'Lock',
+  Menu = 'Menu',
   Minus = 'Minus',
   Pencil = 'Pencil',
   Person = 'Person',
@@ -66,6 +69,7 @@ export enum Icons {
   Show = 'Show',
   Subscription = 'Subscription',
   Suitcase = 'Suitcase',
+  Tag = 'Tag',
   Tick = 'Tick',
   TickBold = 'TickBold',
 }
@@ -96,6 +100,7 @@ const IconLibrary = {
   Info,
   Issue,
   Lock,
+  Menu,
   Minus,
   Pencil,
   Person,
@@ -103,6 +108,7 @@ const IconLibrary = {
   Show,
   Subscription,
   Suitcase,
+  Tag,
   Tick,
   TickBold,
 } as TypeIconLibrary;

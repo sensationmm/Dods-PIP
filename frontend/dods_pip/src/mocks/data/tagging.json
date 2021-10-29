@@ -1,0 +1,25 @@
+{
+  "tags": [
+    { "id": "united_kingdom", "label":"United Kingdom", "type":"geographies", "children": [
+      { "id": "london", "label":"London", "type":"geographies"},
+      { "id": "glasgow", "label":"Glasgow", "type":"geographies"}
+    ]},
+    { "id": "ron_fisherman", "label":"Ron Fisherman", "type":"people"},
+    { "id": "berlin", "label":"Berlin", "type":"geographies"},
+    { "id": "cop26", "label":"COP26", "type":"organisations"},
+    { "id": "santiago_network_systems", "label":"Santiago Network Systems", "type":"organisations"},
+    { "id": "los_angeles", "label":"Los Angeles", "type":"geographies"},
+    { "id": "paris", "label":"Paris", "type":"geographies"},
+    { "id": "unfccc", "label":"UNFCCC", "type":"organisations"}
+  ],
+  "activeTags": [
+    { "id": "united_kingdom", "label": "United Kingdom", "type": "geographies", "instances": 1},
+    { "id": "london", "label": "London", "type": "geographies", "instances": 2},
+    { "id": "ron_fisherman", "label": "Ron Fisherman", "type":"people", "instances": 2},
+    { "id": "cop26", "label": "COP26", "type":"organisations", "instances": 10},
+    { "id": "glasgow", "label": "Glasgow", "type": "geographies", "instances": 9},
+    { "id": "santiago_network_systems", "label": "Santiago Network Systems", "type":"organisations", "instances": 2},
+    { "id": "paris", "label": "Paris", "type": "geographies", "instances": 2},
+    { "id": "unfccc", "label": "UNFCCC", "type":"organisations", "instances": 1}
+  ]
+}

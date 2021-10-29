@@ -149,6 +149,12 @@ export const label = styled.label`
     letter-spacing: 1px;
     line-height: auto;
   }
+
+  &.bold,
+  bold,
+  strong {
+    font-family: 'Open Sans Bold';
+  }
 `;
 
 export const span = styled.span`

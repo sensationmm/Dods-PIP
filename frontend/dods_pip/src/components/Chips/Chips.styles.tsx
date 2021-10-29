@@ -8,14 +8,23 @@ type WrapperProps = {
   selected?: boolean;
   disabled?: boolean;
   iconOrAvatar?: boolean;
+  theme: string;
 };
 
 export const wrapper = styled.div<WrapperProps>`
   cursor: pointer;
   display: inline-block;
   border: 1px solid ${color.base.greyLight};
-  background: ${({ selected, disabled }) =>
-    disabled ? color.base.ivory : selected ? color.shadow.blue : color.base.white};
+  background: ${({ selected, disabled, theme }) =>
+    disabled
+      ? color.base.ivory
+      : selected
+      ? theme === 'light'
+        ? color.shadow.blue
+        : color.base.white
+      : theme === 'light'
+      ? color.base.white
+      : color.shadow.blue};
   color: ${({ disabled }) => disabled && color.base.grey};
   border-radius: 60px;
   padding: ${({ iconOrAvatar }) => (iconOrAvatar ? '4px 8px 4px 4px' : '4px 8px 4px 8px')};
@@ -23,8 +32,16 @@ export const wrapper = styled.div<WrapperProps>`
   justify-content: center;
   align-items: center;
   &:hover {
-    background: ${({ disabled, selected }) =>
-      disabled ? color.base.ivory : selected ? color.shadow.blue : color.shadow.blue};
+    background: ${({ disabled, selected, theme }) =>
+      disabled
+        ? color.base.ivory
+        : selected
+        ? theme === 'light'
+          ? color.base.white
+          : color.shadow.blue
+        : theme === 'light'
+        ? color.shadow.blue
+        : color.base.white};
   }
 `;
 
