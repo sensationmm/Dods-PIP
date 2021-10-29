@@ -3,8 +3,9 @@ import React from 'react';
 
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
-import Button from '.';
+import Button, { ButtonProps } from '.';
 import * as Styled from './Button.styles';
+import color from '../../globals/color';
 
 describe('Button', () => {
   it('renders without error', () => {
@@ -13,28 +14,14 @@ describe('Button', () => {
     expect(component.length).toEqual(1);
   });
 
-  it('renders primary variant', () => {
-    const wrapper = shallow(<Button type={'primary'} />);
+  it.each([
+    ['primary', Styled.primary],
+    ['secondary', Styled.secondary],
+    ['text', Styled.text],
+  ])('renders `%s` variant', (type, style) => {
+    const wrapper = shallow(<Button type={type as ButtonProps['type']} />);
     const button = wrapper.childAt(0);
-    expect(button.type().componentStyle.componentId).toEqual(
-      Styled.primary.componentStyle.componentId,
-    );
-  });
-
-  it('renders secondary variant', () => {
-    const wrapper = shallow(<Button type={'secondary'} />);
-    const button = wrapper.childAt(0);
-    expect(button.type().componentStyle.componentId).toEqual(
-      Styled.secondary.componentStyle.componentId,
-    );
-  });
-
-  it('renders text variant', () => {
-    const wrapper = shallow(<Button type={'text'} />);
-    const button = wrapper.childAt(0);
-    expect(button.type().componentStyle.componentId).toEqual(
-      Styled.text.componentStyle.componentId,
-    );
+    expect(button.type().componentStyle.componentId).toEqual(style.componentStyle.componentId);
   });
 
   it('renders small variant', () => {
@@ -43,7 +30,7 @@ describe('Button', () => {
     expect(button.hasClass('small')).toEqual(true);
   });
 
-  it('renders small variant', () => {
+  it('renders small icon variant', () => {
     const wrapper = shallow(<Button isSmall icon={Icons.Add} />);
     const button = wrapper.childAt(0);
     const icon = wrapper.find(Icon);
@@ -53,30 +40,29 @@ describe('Button', () => {
     expect(button.hasClass('small')).toEqual(true);
   });
 
-  it('renders primary icon variant', () => {
-    const wrapper = shallow(<Button type={'primary'} icon={Icons.Add} />);
+  it.each([
+    ['primary', Styled.primary],
+    ['secondary', Styled.secondary],
+  ])('renders `%s` icon variant', (type, style) => {
+    const wrapper = shallow(<Button type={type as ButtonProps['type']} icon={Icons.Add} />);
     const button = wrapper.childAt(0);
 
     const icon = wrapper.find(Icon);
 
     expect(icon.length).toEqual(1);
     expect(icon.props().size).toEqual(IconSize.large);
-    expect(button.type().componentStyle.componentId).toEqual(
-      Styled.primary.componentStyle.componentId,
-    );
+    expect(button.type().componentStyle.componentId).toEqual(style.componentStyle.componentId);
   });
 
-  it('renders secondary icon variant', () => {
-    const wrapper = shallow(<Button type={'secondary'} icon={Icons.Add} />);
-    const button = wrapper.childAt(0);
-
-    const icon = wrapper.find(Icon);
-
-    expect(icon.length).toEqual(1);
-    expect(icon.props().size).toEqual(IconSize.large);
-    expect(button.type().componentStyle.componentId).toEqual(
-      Styled.secondary.componentStyle.componentId,
+  it.each([
+    ['primary', color.base.greyDark],
+    ['text', color.base.greyDark],
+  ])('renders `%s` disabled icon variant', (type, iconColor) => {
+    const wrapper = shallow(
+      <Button icon={Icons.Add} type={type as ButtonProps['type']} disabled />,
     );
+    const icon = wrapper.find(Icon);
+    expect(icon.props().color).toEqual(iconColor);
   });
 
   describe('verify click event', () => {
@@ -86,15 +72,15 @@ describe('Button', () => {
       const wrapper = mount(<Button label="Label" onClick={onClick} />);
       const button = wrapper.find('button');
       button.simulate('click');
-  
+
       expect(onClick).toHaveBeenCalledTimes(1);
     });
-  
+
     it('when disabled cannot click', () => {
       const wrapper = mount(<Button label="Label" onClick={onClick} disabled={true} />);
       const button = wrapper.find('button');
       button.simulate('click');
-  
+
       expect(onClick).toHaveBeenCalledTimes(0);
     });
   });
