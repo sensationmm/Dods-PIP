@@ -18,7 +18,7 @@ export enum RenewalType {
 }
 
 type Subscription = {
-  id: string;
+  uuid: string;
   name: string;
 };
 
@@ -79,8 +79,8 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
     setLoading(true);
     const response = await fetchJson(`${BASE_URI}${Api.ClientAccounts}/${id}`, { method: 'GET' });
     const { data = {} } = response;
-    const { uuid = '', isCompleted = false } = data;
-    if (uuid === id && !isCompleted) {
+    const { uuid = '' } = data;
+    if (uuid === id) {
       // client exist and not completed
       const {
         name = '',
@@ -89,7 +89,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
         contactEmailAddress = '',
         contactTelephoneNumber = '',
         contractStartDate = '',
-        contractEndDate = '',
+        // contractEndDate = '',  // @todo - handle contract end date in DOD-636?
         contractRollover = true,
         subscriptionSeats = userSeatsDefault,
         consultantHours = consultantHoursDefault,
@@ -105,7 +105,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
       setContactEmail(contactEmailAddress as string);
       setContactTelephone(contactTelephoneNumber as string);
       setStartDate(contractStartDate as string);
-      setEndDate(contractEndDate as string);
+      // setEndDateType(contractEndDate as string); @todo - API returns a date but UI needs a type. todo in DOD-636?
 
       contractRollover ? setRenewalType(RenewalType.Annual) : setRenewalType(RenewalType.EndDate);
 
@@ -114,8 +114,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
       setIsEU(isEU as boolean);
       setIsUK(isUK as boolean);
 
-      const { id = '' } = subscription as Subscription;
-      setSubscriptionType(id);
+      setSubscriptionType((subscription as Subscription).uuid);
 
       let step = (lastStepCompleted as number) + 1;
       if (step > LAST_STEP) {

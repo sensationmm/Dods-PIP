@@ -290,7 +290,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
           <Button
             data-test="continue-button"
             label="Save and continue"
-            onClick={onSubmit} // @todo use handleSave when API is ready
+            onClick={handleSave}
             icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete}

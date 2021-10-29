@@ -131,6 +131,8 @@ const Subscription: React.FC<SubscriptionProps> = ({
   const subscriptionPlaceholder = 'Select a subscription type';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
 
+  // @todo - handleSave will be used when API is ready
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSave = async () => {
     if (!isComplete) {
       // incomple form inputs

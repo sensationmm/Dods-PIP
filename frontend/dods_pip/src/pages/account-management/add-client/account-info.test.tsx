@@ -196,8 +196,7 @@ describe('AccountInfo', () => {
     expect(button.props().disabled).toEqual(false);
   });
 
-  // @todo - stop skipping test when API is ready
-  xdescribe('when clicking on "Save and Continue"', () => {
+  describe('when clicking on "Save and Continue"', () => {
     let button;
 
     beforeEach(() => {
