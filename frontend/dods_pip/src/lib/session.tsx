@@ -15,11 +15,11 @@ const withSession = (handler: NextIronHandler): (() => Promise<any>) =>
     cookieName: 'next-iron-session/examples/next.js',
     cookieOptions: {
       // from https://github.com/jshttp/cookie#cookieserializename-value-options
-      // note be careful when setting this to true, as compliant clients will not allow 
+      // note be careful when setting this to true, as compliant clients will not allow
       //  client-side JavaScript to see the cookie in document.cookie.
       // setting to true since our dev servers are using http
       httpOnly: true,
-      secure: false
+      secure: false,
 
       // the next line allows to use the session in non-https environments like
       // Next.js dev mode (http://localhost:3000)
