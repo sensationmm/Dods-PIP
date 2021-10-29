@@ -23,6 +23,7 @@ export const Default = Template.bind({});
 
 Default.args = {
   type: 'primary',
+  width: 'auto',
   label: 'Label',
   disabled: false,
   isSmall: false,

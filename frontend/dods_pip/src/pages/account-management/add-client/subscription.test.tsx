@@ -8,7 +8,6 @@ import Subscription from './subscription';
 jest.mock('../../../lib/fetchJson', () => {
   return jest
     .fn()
-    /* @todo - remove this when API new version is ready
     .mockImplementationOnce(() =>
       Promise.resolve(mockSubscriptionList)
     ).mockImplementationOnce(() =>
@@ -17,8 +16,7 @@ jest.mock('../../../lib/fetchJson', () => {
       Promise.resolve(mockSubscriptionList)
     ).mockImplementationOnce(() =>
       Promise.resolve({ message: 'server error', success: false }),
-    )*/
-    .mockImplementation(() =>
+    ).mockImplementation(() =>
       Promise.resolve(mockSubscriptionList)
     )
 });
@@ -62,9 +60,8 @@ describe('Subscription', () => {
     wrapper = shallow(<Subscription {...defaultProps} />);
   });
 
-  // @todo - remove this when API new version is ready
-  xdescribe('when clicking on "Save and Continue"', () => {
-    let button;    
+  describe('when clicking on "Save and Continue"', () => {
+    let button;
 
     beforeEach(() => {
       wrapper = shallow(
@@ -83,19 +80,23 @@ describe('Subscription', () => {
       button = wrapper.find('[data-test="continue-button"]');
     });
 
-    it('and updating a client account is successful', async() => {
+    it('and updating a client account is successful', async () => {
       await button.simulate('click');
-      
+
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(setLoading).toHaveBeenCalledTimes(2);
     });
 
-    it('and updating a client account is not successful', async() => {
+    it('and updating a client account is not successful', async () => {
       await button.simulate('click');
-      
+
       expect(onSubmit).toHaveBeenCalledTimes(0);
       expect(setLoading).toHaveBeenCalledTimes(2);
-      expect(addNotification).toHaveBeenCalledWith({ text: expect.any(String), type: 'warn', title: 'Error' });
+      expect(addNotification).toHaveBeenCalledWith({
+        text: expect.any(String),
+        type: 'warn',
+        title: 'Error',
+      });
     });
   });
 
@@ -252,6 +253,14 @@ describe('Subscription', () => {
     expect(setValue).toHaveBeenCalledWith(format(new Date('2025-01-01'), 'yyyy-MM-dd'));
   });
 
+  it('sets end date for auto end 2 week trial', () => {
+    wrapper = mount(
+      <Subscription {...defaultProps} startDate={'2022-01-01'} renewalType={'endDate'} />,
+    );
+    wrapper.setProps({ endDateType: '2weektrial' });
+    expect(setValue).toHaveBeenCalledWith(format(new Date('2022-01-15'), 'yyyy-MM-dd'));
+  });
+
   it('sets end date for custom end date', () => {
     wrapper = mount(
       <Subscription
@@ -262,7 +271,7 @@ describe('Subscription', () => {
       />,
     );
     wrapper.setProps({ endDateType: 'custom' });
-    expect(setValue).toHaveBeenCalledWith('');
+    expect(setValue).toHaveBeenCalledWith('2024-01-01');
   });
 
   it('renders without error and allows submission for annual renewal', () => {
