@@ -6,9 +6,10 @@ import { act } from 'react-dom/test-utils';
 import Subscription from './subscription';
 
 jest.mock('../../../lib/fetchJson', () => {
-  return jest
-    .fn()
-    /* @todo - remove this when API new version is ready
+  return (
+    jest
+      .fn()
+      /* @todo - remove this when API new version is ready
     .mockImplementationOnce(() =>
       Promise.resolve(mockSubscriptionList)
     ).mockImplementationOnce(() =>
@@ -18,9 +19,8 @@ jest.mock('../../../lib/fetchJson', () => {
     ).mockImplementationOnce(() =>
       Promise.resolve({ message: 'server error', success: false }),
     )*/
-    .mockImplementation(() =>
-      Promise.resolve(mockSubscriptionList)
-    )
+      .mockImplementation(() => Promise.resolve(mockSubscriptionList))
+  );
 });
 
 describe('Subscription', () => {
@@ -64,7 +64,7 @@ describe('Subscription', () => {
 
   // @todo - remove this when API new version is ready
   xdescribe('when clicking on "Save and Continue"', () => {
-    let button;    
+    let button;
 
     beforeEach(() => {
       wrapper = shallow(
@@ -83,19 +83,23 @@ describe('Subscription', () => {
       button = wrapper.find('[data-test="continue-button"]');
     });
 
-    it('and updating a client account is successful', async() => {
+    it('and updating a client account is successful', async () => {
       await button.simulate('click');
-      
+
       expect(onSubmit).toHaveBeenCalledTimes(1);
       expect(setLoading).toHaveBeenCalledTimes(2);
     });
 
-    it('and updating a client account is not successful', async() => {
+    it('and updating a client account is not successful', async () => {
       await button.simulate('click');
-      
+
       expect(onSubmit).toHaveBeenCalledTimes(0);
       expect(setLoading).toHaveBeenCalledTimes(2);
-      expect(addNotification).toHaveBeenCalledWith({ text: expect.any(String), type: 'warn', title: 'Error' });
+      expect(addNotification).toHaveBeenCalledWith({
+        text: expect.any(String),
+        type: 'warn',
+        title: 'Error',
+      });
     });
   });
 
@@ -250,6 +254,14 @@ describe('Subscription', () => {
     );
     wrapper.setProps({ endDateType: '3year' });
     expect(setValue).toHaveBeenCalledWith(format(new Date('2025-01-01'), 'yyyy-MM-dd'));
+  });
+
+  it('sets end date for auto end 2 week trial', () => {
+    wrapper = mount(
+      <Subscription {...defaultProps} startDate={'2022-01-01'} renewalType={'endDate'} />,
+    );
+    wrapper.setProps({ endDateType: '2weektrial' });
+    expect(setValue).toHaveBeenCalledWith(format(new Date('2022-01-15'), 'yyyy-MM-dd'));
   });
 
   it('sets end date for custom end date', () => {

@@ -31,7 +31,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
   const consultantHoursDefault = '10';
   const LAST_STEP = 3;
 
-  const [activeStep, setActiveStep] = React.useState<number>(1);
+  const [activeStep, setActiveStep] = React.useState<number>(2);
   const [accountId, setAccountId] = React.useState<string>(id as string); // returned by API after a POST (or get from URL for incomplete flow)
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
