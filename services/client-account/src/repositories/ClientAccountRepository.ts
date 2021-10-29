@@ -43,7 +43,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         private subsModel: typeof SubscriptionTypeModel,
         private userModel: typeof UserProfileModel,
         private teamModel: typeof ClientAccountTeamModel
-    ) {}
+    ) { }
 
     async createClientAccount(
         clientAccountParameters: ClientAccountParameters | null
@@ -116,11 +116,25 @@ export class ClientAccountRepository implements ClientAccountPersister {
         console.log(searchClientAccountParams);
         let clientAccountWhere: WhereOptions = {};
 
-        if (startsWith) {
+        if (startsWith && searchTerm) {
+            clientAccountWhere['name'] = {
+                [Op.or]: [
+                    { [Op.like]: `${startsWith}%` },
+                    { [Op.like]: `%${searchTerm}%` }
+                ]
+            }
+        }
+        else if (startsWith) {
             clientAccountWhere['name'] = {
                 [Op.like]: `${startsWith}%`,
             };
         }
+        else if (searchTerm) {
+            clientAccountWhere['name'] = {
+                [Op.like]: `%${searchTerm}%`,
+            };
+        }
+
         if (locations) {
             locations = locations.toLowerCase();
 
@@ -140,15 +154,14 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 [Op.or]: searchSubscriptions.map((uuid) => uuid),
             };
         }
-        if (searchTerm) {
-            clientAccountWhere['name'] = {
-                [Op.like]: `%${searchTerm}%`,
-            };
-        }
+
         const clientAccountModels = await this.model.findAll({
             where: clientAccountWhere,
             subQuery: false,
             include: ['subscriptionType', 'team'],
+            order: [
+                ['name', 'ASC'],
+            ],
             offset: offsetNum,
             limit: limitNum,
         });
