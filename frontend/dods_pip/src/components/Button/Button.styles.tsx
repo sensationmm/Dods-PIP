@@ -127,6 +127,6 @@ export const text = styled(base)`
   &:active,
   &:hover,
   &:focus {
-    background-color: ${color.shadow.grey};
+    background-color: ${color.shadow.blue};
   }
 `;
