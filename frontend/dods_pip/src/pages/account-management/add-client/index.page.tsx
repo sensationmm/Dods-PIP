@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { add, format } from 'date-fns';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -17,12 +17,62 @@ export enum RenewalType {
   EndDate = 'endDate',
 }
 
+export enum DateFormat {
+  UI = 'dd/MM/yyyy',
+  API = 'yyyy-MM-dd',
+}
+
+export enum EndDateType {
+  One = '1year',
+  Two = '2year',
+  Three = '3year',
+  Trial = '2weektrial',
+  Custom = 'custom',
+}
+
 type Subscription = {
   uuid: string;
   name: string;
 };
 
 interface AddClientProps extends LoadingHOCProps {}
+
+export const getEndDateType = ({ contractStartDate = '', contractEndDate = '' }): string => {
+  let endDateType = 'custom';
+
+  if (contractStartDate === '' || contractEndDate === '') {
+    return '';
+  }
+
+  const formattedEndDate = format(new Date(contractEndDate), DateFormat.API);
+  const startDate = new Date(contractStartDate);
+
+  let formattedDate = format(add(startDate, { weeks: 2 }), DateFormat.API);
+  if (formattedDate === formattedEndDate) {
+    endDateType = EndDateType.Trial;
+    return endDateType;
+  }
+
+  formattedDate = format(add(startDate, { years: 1 }), DateFormat.API);
+  if (formattedDate === formattedEndDate) {
+    endDateType = EndDateType.One;
+    return endDateType;
+  }
+
+  formattedDate = format(add(startDate, { years: 2 }), DateFormat.API);
+  if (formattedDate === formattedEndDate) {
+    endDateType = EndDateType.Two;
+    return endDateType;
+  }
+
+  formattedDate = format(add(startDate, { years: 3 }), DateFormat.API);
+  if (formattedDate === formattedEndDate) {
+    endDateType = EndDateType.Three;
+    return endDateType;
+  }
+
+  return endDateType;
+};
 
 export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoading }) => {
   const router = useRouter();
@@ -77,7 +127,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
 
     // get account info
     setLoading(true);
-    const response = await fetchJson(`${BASE_URI}${Api.ClientAccounts}/${id}`, { method: 'GET' });
+    const response = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${id}`, { method: 'GET' });
     const { data = {} } = response;
     const { uuid = '' } = data;
     if (uuid === id) {
@@ -88,8 +138,6 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
         contactName = '',
         contactEmailAddress = '',
         contactTelephoneNumber = '',
-        contractStartDate = '',
-        // contractEndDate = '',  // @todo - handle contract end date in DOD-636?
         contractRollover = true,
         subscriptionSeats = userSeatsDefault,
         consultantHours = consultantHoursDefault,
@@ -98,6 +146,9 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
         subscription = {},
         lastStepCompleted = 1,
       } = data;
+      let { contractStartDate = '', contractEndDate = '' } = data;
+      contractEndDate = contractEndDate === null ? '' : contractEndDate;
+      contractStartDate = contractStartDate === null ? '' : contractStartDate;
       setAccountId(uuid as string);
       setAccountName(name as string);
       setAccountNotes(notes as string);
@@ -105,9 +156,18 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
       setContactEmail(contactEmailAddress as string);
       setContactTelephone(contactTelephoneNumber as string);
       setStartDate(contractStartDate as string);
-      // setEndDateType(contractEndDate as string); @todo - API returns a date but UI needs a type. todo in DOD-636?
+      setEndDate(contractEndDate as string);
+      const dateType = getEndDateType({
+        contractStartDate: contractStartDate as string,
+        contractEndDate: contractEndDate as string,
+      });
+      setEndDateType(dateType);
 
-      contractRollover ? setRenewalType(RenewalType.Annual) : setRenewalType(RenewalType.EndDate);
+      if (contractRollover) {
+        setRenewalType(RenewalType.Annual);
+      } else {
+        setRenewalType(RenewalType.EndDate);
+      }
 
       setUserSeats(subscriptionSeats as string);
       setConsultantHours(consultantHours as string);

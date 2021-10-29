@@ -6,10 +6,8 @@ import { act } from 'react-dom/test-utils';
 import Subscription from './subscription';
 
 jest.mock('../../../lib/fetchJson', () => {
-  return (
-    jest
-      .fn()
-      /* @todo - remove this when API new version is ready
+  return jest
+    .fn()
     .mockImplementationOnce(() =>
       Promise.resolve(mockSubscriptionList)
     ).mockImplementationOnce(() =>
@@ -18,9 +16,9 @@ jest.mock('../../../lib/fetchJson', () => {
       Promise.resolve(mockSubscriptionList)
     ).mockImplementationOnce(() =>
       Promise.resolve({ message: 'server error', success: false }),
-    )*/
-      .mockImplementation(() => Promise.resolve(mockSubscriptionList))
-  );
+    ).mockImplementation(() =>
+      Promise.resolve(mockSubscriptionList)
+    )
 });
 
 describe('Subscription', () => {
@@ -62,8 +60,7 @@ describe('Subscription', () => {
     wrapper = shallow(<Subscription {...defaultProps} />);
   });
 
-  // @todo - remove this when API new version is ready
-  xdescribe('when clicking on "Save and Continue"', () => {
+  describe('when clicking on "Save and Continue"', () => {
     let button;
 
     beforeEach(() => {
@@ -274,7 +271,7 @@ describe('Subscription', () => {
       />,
     );
     wrapper.setProps({ endDateType: 'custom' });
-    expect(setValue).toHaveBeenCalledWith('');
+    expect(setValue).toHaveBeenCalledWith('2024-01-01');
   });
 
   it('renders without error and allows submission for annual renewal', () => {

@@ -19,7 +19,7 @@ import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import useSubscriptionTypes from '../../../lib/useSubscriptionTypes';
 import { Api, BASE_URI } from '../../../utils/api';
-import { RenewalType } from './index.page';
+import { DateFormat, EndDateType, RenewalType } from './index.page';
 import * as Styled from './index.styles';
 
 export type Errors = {
@@ -88,14 +88,6 @@ const Subscription: React.FC<SubscriptionProps> = ({
   onSubmit,
   onBack,
 }) => {
-  enum EndDateType {
-    One = '1year',
-    Two = '2year',
-    Three = '3year',
-    Trial = '2weektrial',
-    Custom = 'custom',
-  }
-
   const [endDateHelper, setEndDateHelper] = React.useState<string>('');
 
   React.useEffect(() => {
@@ -103,26 +95,29 @@ const Subscription: React.FC<SubscriptionProps> = ({
     switch (endDateType) {
       case EndDateType.One:
         date = add(new Date(startDate), { years: 1 });
-        setEndDate(format(date, 'yyyy-MM-dd'));
-        setEndDateHelper(`Expires on: ${format(date, 'dd/MM/yyyy')}`);
+        setEndDate(format(date, DateFormat.API));
+        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
         break;
       case EndDateType.Two:
         date = add(new Date(startDate), { years: 2 });
-        setEndDate(format(date, 'yyyy-MM-dd'));
-        setEndDateHelper(`Expires on: ${format(date, 'dd/MM/yyyy')}`);
+        setEndDate(format(date, DateFormat.API));
+        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
         break;
       case EndDateType.Three:
         date = add(new Date(startDate), { years: 3 });
-        setEndDate(format(date, 'yyyy-MM-dd'));
-        setEndDateHelper(`Expires on: ${format(date, 'dd/MM/yyyy')}`);
+        setEndDate(format(date, DateFormat.API));
+        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
         break;
       case EndDateType.Trial:
         date = add(new Date(startDate), { weeks: 2 });
-        setEndDate(format(date, 'yyyy-MM-dd'));
-        setEndDateHelper(`Expires on: ${format(date, 'dd/MM/yyyy')}`);
+        setEndDate(format(date, DateFormat.API));
+        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
         break;
       case EndDateType.Custom:
-        setEndDate('');
+        if (endDate !== '') {
+          date = new Date(endDate);
+          setEndDate(format(date, DateFormat.API));
+        }
         setEndDateHelper('');
         break;
     }
@@ -147,11 +142,9 @@ const Subscription: React.FC<SubscriptionProps> = ({
   const subscriptionPlaceholder = 'Select a subscription type';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
 
-  // @todo - handleSave will be used when API is ready
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSave = async () => {
     if (!isComplete) {
-      // incomple form inputs
+      // incomplete form inputs
       return false;
     }
 
@@ -358,7 +351,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             label="Assign a start date"
             required
             value={startDate}
-            minDate={format(new Date(), 'yyyy-MM-dd').toString()}
+            minDate={format(new Date(), DateFormat.API).toString()}
             onChange={setStartDate}
             helperText="dd/mm/yyyy format"
             maxDate={endDate}
@@ -407,7 +400,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
           <Button
             data-test="continue-button"
             label="Save and continue"
-            onClick={onSubmit} // @todo use handleSave when API is ready
+            onClick={handleSave}
             icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete}
