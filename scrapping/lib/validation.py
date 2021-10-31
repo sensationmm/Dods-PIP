@@ -23,3 +23,17 @@ class Validator:
         except SchemaError as schemaError:
             logger.exception(schemaError)
             raise Exception('Content is not valid!')
+
+    @staticmethod
+    def migration_content_file_paths_validator(body: dict):
+        required_paths = {
+            'file_path_content': '',
+            'file_path_metadata': '',
+            'file_path_html': ''
+        }
+        if (required_paths.keys() <= body.keys()):
+            logger.info(f'Message body: {body}')
+            return True
+        else:
+            logger.exception('File paths are not valid!')
+            return False

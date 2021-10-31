@@ -1,0 +1,114 @@
+service: migration-step-1
+
+frameworkVersion: '2'
+projectDir: ../
+variablesResolutionMode: 20210326
+configValidationMode: error
+
+plugins:
+  - serverless-python-requirements
+  - serverless-offline
+custom:
+  resource_prefix: migration-step-1
+  app_acronym: migration-step-1-bucket
+  default_stage: dev
+  stage: ${opt:stage, self:custom.default_stage}
+  stack_name: ${self:custom.app_acronym}-${self:custom.stage}
+  region: ${opt:region, self:provider.region}
+  deletion_policy: Delete
+  dynamodb_table: ${self:custom.stack_name}
+  dynamodb_arn: arn:aws:dynamodb:${self:custom.region}:*:table/${self:custom.dynamodb_table}
+  dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
+  s3_input_bucket: pip-dev-migration-input
+  s3_output_bucket: pip-dev-migration-stage-1-output
+  s3_key_base: ${opt:s3_key_base, self:custom.stage}
+  queue_name: pip-dev-migration-stage-1-queue.fifo
+  pythonRequirements:
+    pythonBin: python3
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!.idea/**'
+    - '!env/**'
+    - '!README.md'
+    - '!package.json'
+    - '!package-lock.json'
+    - '!.requirements/**'
+    - '!requirements.txt'
+
+provider:
+  name: aws
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: pip-${self:provider.stage}-scrapping-lambdas
+
+  environment:
+    SERVERLESS_STAGE: ${self:provider.stage}
+    KEY_PREFIX: ${self:custom.resource_prefix}
+    DYNAMODB_TABLE: ${self:custom.dynamodb_table}
+    DYNAMODB_HOST: ${self:custom.dynamodb_host}
+    REGION: ${file(../serverless.common.yml):custom.region}
+    INPUT_BUCKET: ${self:custom.s3_input_bucket}
+    OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
+    S3_KEY_BASE: ${self:custom.s3_key_base}
+    SQS_QUEUE: ${self:custom.queue_name}
+    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
+    DEBUGKEY: "SLS_DEBUG=*"
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*        
+      Resource: "arn:aws:s3:::*"
+
+    - Effect: "Allow"
+      Action:
+        - "sqs:*"
+      Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-1-queue.fifo"
+
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource:
+        - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
+
+functions:
+  migrate:
+    name: migration-step-1-publisher-${sls:stage}
+    description: Publish filepath to SQS for migration content from DODS step-1
+    handler: handler.run
+  receiver:
+    name: migration-step-1-receiver-${sls:stage}
+    description: Receive filepath to SQS for migration content from DODS step-1
+    handler: handler.consumer
+    events:
+      - sqs: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-1-queue.fifo
+
+resources:
+  Resources:
+    assetDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: ${self:custom.deletion_policy}
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: document_hash
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: document_hash
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: ${self:custom.dynamodb_table}
