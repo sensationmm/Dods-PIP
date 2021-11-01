@@ -74,11 +74,6 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     contactEmail !== '';
 
   const handleSave = async () => {
-    if (!isComplete) {
-      // incomple form inputs
-      return false;
-    }
-
     setLoading(true);
 
     const payload = {
