@@ -16,11 +16,11 @@ jest.mock('../../../lib/fetchJson', () => {
     .mockImplementationOnce(() =>
       Promise.resolve({ data: { uuid } }),
     ).mockImplementationOnce(() =>
-      Promise.resolve({ data: { message: 'server error' } }),
+      Promise.reject({ data: { message: 'server error' } }),
     ).mockImplementationOnce(() =>
       Promise.resolve({ data: { uuid } }),
     ).mockImplementationOnce(() =>
-      Promise.resolve({ data: { message: 'server error' } }),
+      Promise.reject({ data: { message: 'server error' } }),
     )
 });
 
