@@ -2,7 +2,7 @@ import {
     ClientAccountParameters,
     ClientAccountResponse,
     SearchClientAccountParameters,
-    SearchClientAccountResponse,
+    SearchClientAccountTotalRecords,
     TeamMemberResponse,
     UpdateClientAccountHeaderParameters,
     UpdateClientAccountParameters,
@@ -17,7 +17,7 @@ export interface ClientAccountPersister {
 
     searchClientAccount(
         clientAccount: SearchClientAccountParameters
-    ): Promise<Array<SearchClientAccountResponse> | undefined>;
+    ): Promise<SearchClientAccountTotalRecords | undefined>;
 
     updateClientAccount(
         updateParameters: UpdateClientAccountParameters
@@ -35,7 +35,9 @@ export interface ClientAccountPersister {
 
     getClientAccountAvailableSeats(clientAccountId: string): Promise<number>;
 
-    getClientAccountTeam(clientAccountId: string): Promise<TeamMemberResponse[]>;
+    getClientAccountTeam(
+        clientAccountId: string
+    ): Promise<TeamMemberResponse[]>;
 
     checkNameAvailability(name: string): Promise<boolean>;
 
