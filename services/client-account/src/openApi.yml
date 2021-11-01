@@ -23,7 +23,7 @@ paths:
                 '404':
                     $ref: '#/components/responses/NotFound'
 
-    /client-accounts/{clientAccountId}:
+    /clientaccount/{clientAccountId}:
         get:
             operationId: getClientAccount
             summary: 'Get Client Account'
@@ -138,7 +138,7 @@ paths:
                 '400':
                     $ref: '#/components/responses/BadRequest'
 
-    /client-accounts/{clientAccountId}/subscription:
+    /clientaccount/{clientAccountId}/subscription:
         put:
             operationId: updateClientAccount
             summary: 'UpdateClient Account'

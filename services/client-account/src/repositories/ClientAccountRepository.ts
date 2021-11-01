@@ -10,6 +10,7 @@ import {
     ClientAccountResponse,
     SearchClientAccountParameters,
     SearchClientAccountResponse,
+    SearchClientAccountTotalRecords,
     TeamMemberResponse,
     UpdateClientAccountHeaderParameters,
     UpdateClientAccountParameters,
@@ -109,18 +110,30 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
     async searchClientAccount(
         searchClientAccountParams: SearchClientAccountParameters
-    ): Promise<Array<SearchClientAccountResponse> | undefined> {
+    ): Promise<SearchClientAccountTotalRecords | undefined> {
         let { startsWith, locations, subscriptionTypes, searchTerm } =
             searchClientAccountParams;
         const { limitNum, offsetNum } = searchClientAccountParams;
-        console.log(searchClientAccountParams);
         let clientAccountWhere: WhereOptions = {};
+        let clientAccountResponse: SearchClientAccountTotalRecords = {};
 
-        if (startsWith) {
+        if (startsWith && searchTerm) {
+            clientAccountWhere['name'] = {
+                [Op.or]: [
+                    { [Op.like]: `${startsWith}%` },
+                    { [Op.like]: `%${searchTerm}%` },
+                ],
+            };
+        } else if (startsWith) {
             clientAccountWhere['name'] = {
                 [Op.like]: `${startsWith}%`,
             };
+        } else if (searchTerm) {
+            clientAccountWhere['name'] = {
+                [Op.like]: `%${searchTerm}%`,
+            };
         }
+
         if (locations) {
             locations = locations.toLowerCase();
 
@@ -140,15 +153,20 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 [Op.or]: searchSubscriptions.map((uuid) => uuid),
             };
         }
-        if (searchTerm) {
-            clientAccountWhere['name'] = {
-                [Op.like]: `%${searchTerm}%`,
-            };
-        }
+
+        const totalRecordsModels = await this.model.findAll({
+            where: clientAccountWhere,
+            subQuery: false,
+            include: ['subscriptionType', 'team'],
+        });
+
+        const totalRecords = totalRecordsModels.length;
+
         const clientAccountModels = await this.model.findAll({
             where: clientAccountWhere,
             subQuery: false,
             include: ['subscriptionType', 'team'],
+            order: [['name', 'ASC']],
             offset: offsetNum,
             limit: limitNum,
         });
@@ -157,10 +175,9 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 clientAccountModels.map((model) =>
                     parseSearchClientAccountResponse(model)
                 );
-
-            return clientAccounts;
-        } else {
-            return [];
+            clientAccountResponse.clientAccountsData = clientAccounts;
+            clientAccountResponse.totalRecordsModels = totalRecords;
+            return clientAccountResponse;
         }
     }
 

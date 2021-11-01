@@ -74,11 +74,6 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     contactEmail !== '';
 
   const handleSave = async () => {
-    if (!isComplete) {
-      // incomple form inputs
-      return false;
-    }
-
     setLoading(true);
 
     const payload = {
@@ -100,29 +95,30 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       uri += `/${accountId}/header`;
     }
 
-    const response = await fetchJson(uri, {
-      method,
-      body: JSON.stringify(body),
-    });
-    const { data = {}, message = '' } = response;
-    const { uuid = '' } = data;
-
-    setLoading(false);
-
-    if (uuid !== '') {
-      // all good
-      if (method === 'POST') {
-        setAccountId(uuid as string);
+    try {
+      const response = await fetchJson(uri, {
+        method,
+        body: JSON.stringify(body),
+      });
+      const { data = {} } = response;
+      const { uuid = '' } = data;
+      if (uuid !== '') {
+        // all good
+        if (method === 'POST') {
+          setAccountId(uuid as string);
+        }
+        onSubmit(); // go to next step
       }
-      onSubmit(); // go to next step
-    } else {
+    } catch (e) {
       // show server error
       addNotification({
         type: 'warn',
         title: 'Error',
-        text: message,
+        text: e.data.message,
       });
     }
+
+    setLoading(false);
   };
 
   const validateAccountName = async () => {
@@ -290,7 +286,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
           <Button
             data-test="continue-button"
             label="Save and continue"
-            onClick={onSubmit} // @todo use handleSave when API is ready
+            onClick={handleSave}
             icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete}

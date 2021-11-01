@@ -5,7 +5,7 @@ import {
 } from '@dodsgroup/dods-lambda';
 import {
     SearchClientAccountParameters,
-    SearchClientAccountResponse,
+    SearchClientAccountTotalRecords,
 } from '../../../src/domain';
 
 import { ClientAccountRepository } from '../../../src/repositories';
@@ -14,27 +14,29 @@ import { searchClientAccount } from '../../../src/handlers/searchClientAccount/s
 
 const FUNCTION_NAME = searchClientAccount.name;
 
-const SUCCESS_SEARCH_RESPONSE: Array<SearchClientAccountResponse> = [
-    {
-        id: '1dcad502-0c50-4dab-9192-13b5e882b95d',
-        name: 'Juan account',
-        notes: 'This is the account for Juan.',
-        isCompleted: false,
-        lastStepCompleted: 1,
-        isUK: false,
-        isEU: false,
-    },
-    {
-        id: '1dcad502-0c50-4dab-9192-13b5e882b97d',
-        name: 'Juan Other account',
-        notes: 'This is the account for Juan.',
-        isCompleted: false,
-        lastStepCompleted: 1,
-        isUK: false,
-        isEU: false,
-    },
-];
-
+const SUCCESS_SEARCH_RESPONSE: SearchClientAccountTotalRecords = {
+    totalRecordsModels: 2,
+    clientAccountsData: [
+        {
+            id: '1dcad502-0c50-4dab-9192-13b5e882b95d',
+            name: 'Juan account',
+            notes: 'This is the account for Juan.',
+            isCompleted: false,
+            lastStepCompleted: 1,
+            isUK: false,
+            isEU: false,
+        },
+        {
+            id: '1dcad502-0c50-4dab-9192-13b5e882b97d',
+            name: 'Juan Other account',
+            notes: 'This is the account for Juan.',
+            isCompleted: false,
+            lastStepCompleted: 1,
+            isUK: false,
+            isEU: false,
+        },
+    ],
+};
 jest.mock('../../../src/repositories/ClientAccountRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
@@ -47,7 +49,7 @@ beforeEach(() => {
             const { searchTerm } = searchParams;
 
             if (searchTerm === 'Failed Search') {
-                return [];
+                return { totalRecordsModels: 0, clientAccountsData: [] };
             }
             if (searchTerm === 'Juan') {
                 return SUCCESS_SEARCH_RESPONSE;
@@ -74,7 +76,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             limit: 2,
             offset: 0,
             totalRecords: 2,
-            data: SUCCESS_SEARCH_RESPONSE,
+            data: SUCCESS_SEARCH_RESPONSE.clientAccountsData,
         });
 
         const response = await searchClientAccount(

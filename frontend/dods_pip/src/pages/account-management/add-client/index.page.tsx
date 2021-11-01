@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { add, format } from 'date-fns';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -17,12 +17,62 @@ export enum RenewalType {
   EndDate = 'endDate',
 }
 
+export enum DateFormat {
+  UI = 'dd/MM/yyyy',
+  API = 'yyyy-MM-dd',
+}
+
+export enum EndDateType {
+  One = '1year',
+  Two = '2year',
+  Three = '3year',
+  Trial = '2weektrial',
+  Custom = 'custom',
+}
+
 type Subscription = {
-  id: string;
+  uuid: string;
   name: string;
 };
 
 interface AddClientProps extends LoadingHOCProps {}
+
+export const getEndDateType = ({ contractStartDate = '', contractEndDate = '' }): string => {
+  let endDateType = 'custom';
+
+  if (contractStartDate === '' || contractEndDate === '') {
+    return '';
+  }
+
+  const formattedEndDate = format(new Date(contractEndDate), DateFormat.API);
+  const startDate = new Date(contractStartDate);
+
+  let formattedDate = format(add(startDate, { weeks: 2 }), DateFormat.API);
+  if (formattedDate === formattedEndDate) {
+    endDateType = EndDateType.Trial;
+    return endDateType;
+  }
+
+  formattedDate = format(add(startDate, { years: 1 }), DateFormat.API);
+  if (formattedDate === formattedEndDate) {
+    endDateType = EndDateType.One;
+    return endDateType;
+  }
+
+  formattedDate = format(add(startDate, { years: 2 }), DateFormat.API);
+  if (formattedDate === formattedEndDate) {
+    endDateType = EndDateType.Two;
+    return endDateType;
+  }
+
+  formattedDate = format(add(startDate, { years: 3 }), DateFormat.API);
+  if (formattedDate === formattedEndDate) {
+    endDateType = EndDateType.Three;
+    return endDateType;
+  }
+
+  return endDateType;
+};
 
 export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoading }) => {
   const router = useRouter();
@@ -77,10 +127,10 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
 
     // get account info
     setLoading(true);
-    const response = await fetchJson(`${BASE_URI}${Api.ClientAccounts}/${id}`, { method: 'GET' });
+    const response = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${id}`, { method: 'GET' });
     const { data = {} } = response;
-    const { uuid = '', isCompleted = false } = data;
-    if (uuid === id && !isCompleted) {
+    const { uuid = '' } = data;
+    if (uuid === id) {
       // client exist and not completed
       const {
         name = '',
@@ -88,8 +138,6 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
         contactName = '',
         contactEmailAddress = '',
         contactTelephoneNumber = '',
-        contractStartDate = '',
-        contractEndDate = '',
         contractRollover = true,
         subscriptionSeats = userSeatsDefault,
         consultantHours = consultantHoursDefault,
@@ -98,6 +146,9 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
         subscription = {},
         lastStepCompleted = 1,
       } = data;
+      let { contractStartDate = '', contractEndDate = '' } = data;
+      contractEndDate = contractEndDate === null ? '' : contractEndDate;
+      contractStartDate = contractStartDate === null ? '' : contractStartDate;
       setAccountId(uuid as string);
       setAccountName(name as string);
       setAccountNotes(notes as string);
@@ -106,16 +157,24 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
       setContactTelephone(contactTelephoneNumber as string);
       setStartDate(contractStartDate as string);
       setEndDate(contractEndDate as string);
+      const dateType = getEndDateType({
+        contractStartDate: contractStartDate as string,
+        contractEndDate: contractEndDate as string,
+      });
+      setEndDateType(dateType);
 
-      contractRollover ? setRenewalType(RenewalType.Annual) : setRenewalType(RenewalType.EndDate);
+      if (contractRollover) {
+        setRenewalType(RenewalType.Annual);
+      } else {
+        setRenewalType(RenewalType.EndDate);
+      }
 
       setUserSeats(subscriptionSeats as string);
       setConsultantHours(consultantHours as string);
       setIsEU(isEU as boolean);
       setIsUK(isUK as boolean);
 
-      const { id = '' } = subscription as Subscription;
-      setSubscriptionType(id);
+      setSubscriptionType((subscription as Subscription).uuid);
 
       let step = (lastStepCompleted as number) + 1;
       if (step > LAST_STEP) {

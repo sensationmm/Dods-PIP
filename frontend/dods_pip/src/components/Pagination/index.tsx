@@ -15,6 +15,8 @@ export type PaginationProps = {
 };
 
 type PaginationType = {
+  activePage: number;
+  numPerPage: number;
   PaginationStats: React.FC;
   PaginationContent: <Type>(data: Type) => Type;
   PaginationButtons: React.FC;
@@ -148,7 +150,13 @@ const Pagination = (dataLength: number): PaginationType => {
     );
   };
 
-  return { PaginationStats, PaginationContent, PaginationButtons };
+  return {
+    activePage,
+    numPerPage: parseInt(numPerPage, 10),
+    PaginationStats,
+    PaginationContent,
+    PaginationButtons,
+  };
 };
 
 export default Pagination;

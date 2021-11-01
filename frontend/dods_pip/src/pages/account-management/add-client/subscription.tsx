@@ -19,7 +19,7 @@ import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import useSubscriptionTypes from '../../../lib/useSubscriptionTypes';
 import { Api, BASE_URI } from '../../../utils/api';
-import { RenewalType } from './index.page';
+import { DateFormat, EndDateType, RenewalType } from './index.page';
 import * as Styled from './index.styles';
 
 export type Errors = {
@@ -88,26 +88,37 @@ const Subscription: React.FC<SubscriptionProps> = ({
   onSubmit,
   onBack,
 }) => {
-  enum EndDateType {
-    One = '1year',
-    Two = '2year',
-    Three = '3year',
-    Custom = 'custom',
-  }
+  const [endDateHelper, setEndDateHelper] = React.useState<string>('');
 
   React.useEffect(() => {
+    let date;
     switch (endDateType) {
       case EndDateType.One:
-        setEndDate(format(add(new Date(startDate), { years: 1 }), 'yyyy-MM-dd'));
+        date = add(new Date(startDate), { years: 1 });
+        setEndDate(format(date, DateFormat.API));
+        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
         break;
       case EndDateType.Two:
-        setEndDate(format(add(new Date(startDate), { years: 2 }), 'yyyy-MM-dd'));
+        date = add(new Date(startDate), { years: 2 });
+        setEndDate(format(date, DateFormat.API));
+        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
         break;
       case EndDateType.Three:
-        setEndDate(format(add(new Date(startDate), { years: 3 }), 'yyyy-MM-dd'));
+        date = add(new Date(startDate), { years: 3 });
+        setEndDate(format(date, DateFormat.API));
+        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
+        break;
+      case EndDateType.Trial:
+        date = add(new Date(startDate), { weeks: 2 });
+        setEndDate(format(date, DateFormat.API));
+        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
         break;
       case EndDateType.Custom:
-        setEndDate('');
+        if (endDate !== '') {
+          date = new Date(endDate);
+          setEndDate(format(date, DateFormat.API));
+        }
+        setEndDateHelper('');
         break;
     }
   }, [endDateType]);
@@ -133,7 +144,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
   const handleSave = async () => {
     if (!isComplete) {
-      // incomple form inputs
+      // incomplete form inputs
       return false;
     }
 
@@ -226,7 +237,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
     <main data-test="subscription">
       <Panel isNarrow bgColor={color.base.ivory}>
         <SectionHeader
-          title="Subscription Type"
+          title="Subscription details "
           subtitle="Please select the subscription that suits this Account."
           icon={Icons.Subscription}
         />
@@ -311,11 +322,8 @@ const Subscription: React.FC<SubscriptionProps> = ({
         <Spacer size={12} />
 
         <SectionHeader
-          title="Subscription Time"
-          subtitle={[
-            'Please choose the date you’d like the Subscription to begin.',
-            'The subscription will automatically renew on an annual basis.',
-          ]}
+          title="Subscription Period"
+          subtitle={'Please select a subscription renewal type for this account.'}
           icon={Icons.Calendar}
         />
 
@@ -343,7 +351,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             label="Assign a start date"
             required
             value={startDate}
-            minDate={format(new Date(), 'yyyy-MM-dd').toString()}
+            minDate={format(new Date(), DateFormat.API).toString()}
             onChange={setStartDate}
             helperText="dd/mm/yyyy format"
             maxDate={endDate}
@@ -376,10 +384,12 @@ const Subscription: React.FC<SubscriptionProps> = ({
                 { label: 'In 1 year', value: EndDateType.One },
                 { label: 'In 2 years', value: EndDateType.Two },
                 { label: 'In 3 years', value: EndDateType.Three },
+                { label: 'Trial (2 weeks)', value: EndDateType.Trial },
                 { label: 'Custom', value: EndDateType.Custom },
               ]}
               onBlur={validateEndDateType}
               error={errors.endDateType}
+              helperText={endDateHelper}
             />
           )}
         </Styled.dates>
@@ -390,7 +400,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
           <Button
             data-test="continue-button"
             label="Save and continue"
-            onClick={onSubmit} // @todo use handleSave when API is ready
+            onClick={handleSave}
             icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete}

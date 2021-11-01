@@ -6,6 +6,7 @@ interface CustomError extends Error {
 interface customResponse extends Response {
   accessToken?: string;
   data?: Record<string, unknown>;
+  totalRecords?: number;
   message?: string;
   success?: boolean;
 }

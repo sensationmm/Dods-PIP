@@ -46,6 +46,11 @@ export interface SearchClientAccountResponse {
     lastStepCompleted: number;
 }
 
+export interface SearchClientAccountTotalRecords {
+    totalRecordsModels?: number;
+    clientAccountsData?: Array<SearchClientAccountResponse>;
+}
+
 export interface SearchClientAccountParameters extends Pagination {
     //locations?: number[] | null;
     locations?: string | null;
