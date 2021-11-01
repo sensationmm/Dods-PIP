@@ -1,10 +1,11 @@
 import fetchJson from '../../lib/fetchJson';
 import withSession from '../../lib/session';
-import { Api } from '../../utils/api';
+import { Api, toQueryString } from '../../utils/api';
 
 export default withSession(async (req, res) => {
   try {
-    const result = await fetchJson(`${process.env.APP_API_URL}${Api.SubscriptionTypes}`, {
+    const queryString = toQueryString(req.query);
+    const result = await fetchJson(`${process.env.APP_API_URL}${Api.ClientAccount}${queryString}`, {
       method: 'GET',
     });
     res.json(result);

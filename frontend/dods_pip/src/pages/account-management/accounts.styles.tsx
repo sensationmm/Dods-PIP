@@ -52,7 +52,7 @@ export const filterContentCol = styled.div`
 
 export const teamList = styled.div`
   display: flex;
-
+  min-width: 178px;
   > * {
     margin-right: ${spacing(1)};
     &:last-of-type {

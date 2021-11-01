@@ -10,21 +10,21 @@ import Avatar from '../../components/Avatar';
 import AZFilter from '../../components/AZFilter';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Button from '../../components/Button';
-import DataTable, { DataTableSort } from '../../components/DataTable';
+import DataTable from '../../components/DataTable';
 import Icon from '../../components/Icon';
 import { Icons } from '../../components/Icon/assets';
+import IconButton from '../../components/IconButton';
 import Pagination from '../../components/Pagination';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
+import fetchJson from '../../lib/fetchJson';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
-import MockDataClientAccounts from '../../mocks/data/client-accounts.json';
-import MockUserData from '../../mocks/data/users.json';
+import { Api, BASE_URI, toQueryString } from '../../utils/api';
 import * as Styled from './accounts.styles';
 
-type AccountSubscription = 'level1' | 'level2' | 'level3' | 'level4';
-
 type ClientAccountTeamMember = {
+  id: string;
   name: string;
   type: 'consultant' | 'client';
 };
@@ -32,65 +32,141 @@ type ClientAccountTeamMember = {
 type ClientAccount = {
   id: string;
   name: string;
-  subscription: AccountSubscription;
-  location: string;
+  subscription: {
+    id: string;
+    name: string;
+  };
+  isEU: boolean;
+  isUK: boolean;
   projects: number;
   team: ClientAccountTeamMember[];
-  completed: boolean;
+  isCompleted: boolean;
 };
 
 type ClientAccounts = ClientAccount[];
 
+type FilterParams = {
+  locations?: string;
+  isCompleted?: boolean;
+  subscriptionTypes?: string;
+  limit?: number;
+  offset?: number;
+  startsWith?: string;
+  searchTerm?: string;
+};
+
+enum AccountValue {
+  Completed = 'completed',
+  Incomplete = 'incomplete',
+}
+
+enum LocationValue {
+  EU = 'EU',
+  UK = 'UK',
+}
+
 interface AccountsProps extends LoadingHOCProps {}
 
-export const Accounts: React.FC<AccountsProps> = () => {
-  const accountsList = MockDataClientAccounts.accounts as ClientAccounts;
+export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
   const [showFilter, setShowFilter] = React.useState<boolean>(true);
   const [filterSearchText, setFilterSearchText] = React.useState<string>('');
   const [filterAZ, setFilterAZ] = React.useState<string>('');
+  const [filterAccount, setFilterAccount] = React.useState<string>('');
   const [filterSubscription, setFilterSubscription] = React.useState<string>('');
   const [filterLocation, setFilterLocation] = React.useState<string>('');
+  const [accountsList, setAccountsList] = React.useState<ClientAccounts>([]);
+  const [total, setTotal] = React.useState<number>(0);
   const router = useRouter();
 
-  const filterAccounts = (data: ClientAccounts) => {
-    let filteredData: ClientAccounts = data;
+  const { activePage, numPerPage, PaginationStats, PaginationButtons } = Pagination(total);
 
-    if (filterSearchText !== '' && typeof filterSearchText === 'string') {
-      filteredData = filteredData.filter(
-        (item: ClientAccount) =>
-          item.name.toLowerCase().indexOf(filterSearchText.toLowerCase()) >= 0,
-      );
-    }
-
-    if (filterAZ !== '') {
-      filteredData = filteredData.filter(
-        (item: ClientAccount) => item.name.substr(0, 1) === filterAZ,
-      );
-    }
+  const getFilterQueryString = () => {
+    const params: FilterParams = {
+      limit: numPerPage,
+      offset: activePage * numPerPage,
+    };
 
     if (filterSubscription !== '') {
-      filteredData = filteredData.filter(
-        (item: ClientAccount) => item.subscription === filterSubscription,
-      );
+      params.subscriptionTypes = filterSubscription;
+    }
+
+    if (filterAccount !== '') {
+      params.isCompleted = filterAccount === AccountValue.Completed;
     }
 
     if (filterLocation !== '') {
-      filteredData = filteredData.filter((item: ClientAccount) => item.location === filterLocation);
+      params.locations = filterLocation === LocationValue.UK ? LocationValue.UK : LocationValue.EU;
     }
 
-    return filteredData;
+    if (filterAZ !== '') {
+      params.startsWith = filterAZ;
+    }
+
+    if (filterSearchText !== '') {
+      params.searchTerm = filterSearchText;
+    }
+
+    return toQueryString(params);
   };
 
-  const { PaginationStats, PaginationContent, PaginationButtons } = Pagination(
-    filterAccounts(accountsList).length,
-  );
+  const loadFilteredAccounts = async () => {
+    setLoading(true);
+    const queryString = getFilterQueryString();
+    try {
+      const results = await fetchJson(`${BASE_URI}${Api.ClientAccount}${queryString}`, {
+        method: 'GET',
+      });
 
-  const accountsData = PaginationContent<ClientAccounts>(
-    filterAccounts(DataTableSort(accountsList)),
-  );
+      const { data = [], totalRecords } = results;
+      setAccountsList(data as ClientAccounts);
+      setTotal(totalRecords as number);
+    } catch (e) {
+      setAccountsList([] as ClientAccounts);
+      setTotal(0);
+    }
+
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    loadFilteredAccounts();
+  }, [
+    filterSubscription,
+    filterAccount,
+    filterLocation,
+    filterAZ,
+    filterSearchText,
+    numPerPage,
+    activePage,
+  ]);
 
   const subscriptionPlaceholder = 'All Subscriptions';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
+
+  const goToClientAccount = (id: string): void => {
+    router.push(`/account-management/add-client?id=${id}`);
+  };
+
+  const renderInCompletedRow = (account: ClientAccount): Array<any> => {
+    const { id } = account;
+    return [
+      account.name.substring(0, 1),
+      <Text key={`account-${id}-name`} bold>
+        {account.name}
+      </Text>,
+      <Text key={`account-${id}-subscription`}>Account incomplete</Text>,
+      <Text key={`account-${id}-projects`}></Text>,
+      <Styled.teamList key={`account-${id}-team`}>
+        <Button type="text" label="Click to complete" onClick={() => goToClientAccount(id)} />
+      </Styled.teamList>,
+      <IconButton
+        key={`account-${id}-link`}
+        onClick={() => goToClientAccount(id)}
+        icon={Icons.ChevronRightBold}
+        type="text"
+      />,
+    ];
+  };
 
   return (
     <div data-test="page-account-management-clients">
@@ -144,7 +220,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
                 <Text type="bodySmall" color={color.base.grey}>
                   Total{' '}
                   <span style={{ color: color.theme.blueMid }}>
-                    <strong data-test="items-count">{filterAccounts(accountsList).length}</strong>
+                    <strong data-test="items-count">{accountsList.length}</strong>
                   </span>{' '}
                   items
                 </Text>
@@ -163,14 +239,25 @@ export const Accounts: React.FC<AccountsProps> = () => {
                   isFilter
                 />
                 <Select
+                  id="filter-account"
+                  size="small"
+                  options={[
+                    { value: '', label: 'All Accounts' },
+                    { value: AccountValue.Completed, label: 'Only Completed' },
+                    { value: AccountValue.Incomplete, label: 'Only Incomplete' },
+                  ]}
+                  onChange={setFilterAccount}
+                  value={filterAccount}
+                  placeholder="All Accounts"
+                  isFilter
+                />
+                <Select
                   id="filter-location"
                   size="small"
                   options={[
                     { value: '', label: 'All Locations' },
-                    { value: 'europe', label: 'Europe' },
-                    { value: 'north-america', label: 'North America' },
-                    { value: 'south-america', label: 'South America' },
-                    { value: 'asia', label: 'Asia' },
+                    { value: LocationValue.EU, label: 'Europe' },
+                    { value: LocationValue.UK, label: 'UK' },
                   ]}
                   onChange={setFilterLocation}
                   value={filterLocation}
@@ -203,7 +290,12 @@ export const Accounts: React.FC<AccountsProps> = () => {
           <DataTable
             headings={['Name', 'Subscription', 'Live projects', 'Team', '']}
             colWidths={[8, 4, 4, 4, 1]}
-            rows={accountsData.map((account: ClientAccount, count: number) => {
+            rows={accountsList.map((account: ClientAccount) => {
+              if (!account.isCompleted) {
+                return renderInCompletedRow(account);
+              }
+              const { id } = account;
+
               const teamClient = account.team
                 .slice(3)
                 .filter((team) => team.type === 'client').length;
@@ -213,6 +305,7 @@ export const Accounts: React.FC<AccountsProps> = () => {
 
               let team = account.team;
 
+              /* istanbul ignore else */
               if (account.team.length > 5) {
                 if (teamClient > 0 && teamConsultant > 0) {
                   team = account.team.slice(0, 3);
@@ -230,22 +323,19 @@ export const Accounts: React.FC<AccountsProps> = () => {
 
               return [
                 account.name.substring(0, 1),
-                <Text key={`account-${count}-name`} bold>
+                <Text key={`account-${id}-name`} bold>
                   {account.name}
                 </Text>,
-                <Text key={`account-${count}-subscription`}>{account.subscription}</Text>,
-                <Text key={`account-${count}-projects`}>{account.projects}</Text>,
-                <Styled.teamList key={`account-${count}-team`}>
-                  {team.map((member, count2) => {
-                    const randomName =
-                      MockUserData.users[Math.floor(Math.random() * MockUserData.users.length)]
-                        .label;
+                <Text key={`account-${id}-subscription`}>{account.subscription}</Text>,
+                <Text key={`account-${id}-projects`}>{account.projects}</Text>,
+                <Styled.teamList key={`account-${id}-team`}>
+                  {team.map((member) => {
                     return (
                       <Avatar
-                        key={`team-${count2}`}
+                        key={`team-${member.id}`}
                         type={member.type}
                         size="small"
-                        alt={randomName}
+                        alt={member.name}
                       />
                     );
                   })}
@@ -256,7 +346,12 @@ export const Accounts: React.FC<AccountsProps> = () => {
                     <Avatar type="consultant" number={overflowTeamConsultant} size="small" />
                   )}
                 </Styled.teamList>,
-                <Icon key={`account-${count}-link`} src={Icons.ChevronRightBold} />,
+                <IconButton
+                  key={`account-${id}-link`}
+                  onClick={() => goToClientAccount(id)}
+                  icon={Icons.ChevronRightBold}
+                  type="text"
+                />,
               ];
             })}
           />
