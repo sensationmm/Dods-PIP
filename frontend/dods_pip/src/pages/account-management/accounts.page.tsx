@@ -30,7 +30,7 @@ type ClientAccountTeamMember = {
 };
 
 type ClientAccount = {
-  id: string;
+  uuid: string;
   name: string;
   subscription: {
     id: string;
@@ -148,20 +148,20 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
   };
 
   const renderInCompletedRow = (account: ClientAccount): Array<any> => {
-    const { id } = account;
+    const { uuid } = account;
     return [
       account.name.substring(0, 1),
-      <Text key={`account-${id}-name`} bold>
+      <Text key={`account-${uuid}-name`} bold>
         {account.name}
       </Text>,
-      <Text key={`account-${id}-subscription`}>Account incomplete</Text>,
-      <Text key={`account-${id}-projects`}></Text>,
-      <Styled.teamList key={`account-${id}-team`}>
-        <Button type="text" label="Click to complete" onClick={() => goToClientAccount(id)} />
+      <Text key={`account-${uuid}-subscription`}>Account incomplete</Text>,
+      <Text key={`account-${uuid}-projects`}></Text>,
+      <Styled.teamList key={`account-${uuid}-team`}>
+        <Button type="text" label="Click to complete" onClick={() => goToClientAccount(uuid)} />
       </Styled.teamList>,
       <IconButton
-        key={`account-${id}-link`}
-        onClick={() => goToClientAccount(id)}
+        key={`account-${uuid}-link`}
+        onClick={() => goToClientAccount(uuid)}
         icon={Icons.ChevronRightBold}
         type="text"
       />,
@@ -294,7 +294,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
               if (!account.isCompleted) {
                 return renderInCompletedRow(account);
               }
-              const { id } = account;
+              const { uuid } = account;
 
               const teamClient = account.team
                 .slice(3)
@@ -323,12 +323,12 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
 
               return [
                 account.name.substring(0, 1),
-                <Text key={`account-${id}-name`} bold>
+                <Text key={`account-${uuid}-name`} bold>
                   {account.name}
                 </Text>,
-                <Text key={`account-${id}-subscription`}>{account.subscription}</Text>,
-                <Text key={`account-${id}-projects`}>{account.projects}</Text>,
-                <Styled.teamList key={`account-${id}-team`}>
+                <Text key={`account-${uuid}-subscription`}>{account.subscription}</Text>,
+                <Text key={`account-${uuid}-projects`}>{account.projects}</Text>,
+                <Styled.teamList key={`account-${uuid}-team`}>
                   {team.map((member) => {
                     return (
                       <Avatar
@@ -347,8 +347,8 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   )}
                 </Styled.teamList>,
                 <IconButton
-                  key={`account-${id}-link`}
-                  onClick={() => goToClientAccount(id)}
+                  key={`account-${uuid}-link`}
+                  onClick={() => goToClientAccount(uuid)}
                   icon={Icons.ChevronRightBold}
                   type="text"
                 />,
