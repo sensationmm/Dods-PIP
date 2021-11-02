@@ -18,7 +18,7 @@ const SUCCESS_SEARCH_RESPONSE: SearchClientAccountTotalRecords = {
     totalRecordsModels: 2,
     clientAccountsData: [
         {
-            id: '1dcad502-0c50-4dab-9192-13b5e882b95d',
+            uuid: '1dcad502-0c50-4dab-9192-13b5e882b95d',
             name: 'Juan account',
             notes: 'This is the account for Juan.',
             isCompleted: false,
@@ -27,7 +27,7 @@ const SUCCESS_SEARCH_RESPONSE: SearchClientAccountTotalRecords = {
             isEU: false,
         },
         {
-            id: '1dcad502-0c50-4dab-9192-13b5e882b97d',
+            uuid: '1dcad502-0c50-4dab-9192-13b5e882b97d',
             name: 'Juan Other account',
             notes: 'This is the account for Juan.',
             isCompleted: false,

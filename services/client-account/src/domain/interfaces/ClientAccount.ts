@@ -30,7 +30,7 @@ export interface ClientAccountResponse extends ClientAccount {
 }
 
 export interface SearchClientAccountResponse {
-    id: string;
+    uuid: string;
     name: string;
     notes?: string;
     subscription?: string;

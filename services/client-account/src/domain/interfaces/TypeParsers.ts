@@ -73,7 +73,7 @@ export function parseSearchClientAccountResponse(
     model: ClientAccountModel
 ): SearchClientAccountResponse {
     const response: SearchClientAccountResponse = {
-        id: model.uuid,
+        uuid: model.uuid,
         name: model.name,
         notes: model.notes,
         subscription: model.subscriptionType && model.subscriptionType.name,
