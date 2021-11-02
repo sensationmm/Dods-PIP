@@ -85,11 +85,13 @@ functions:
   migrate:
     name: migration-step-1-publisher-${sls:stage}
     description: Publish filepath to SQS for migration content from DODS step-1
-    handler: handler.run
+    handler: stage1/handler.run
+    timeout: 900
   receiver:
     name: migration-step-1-receiver-${sls:stage}
     description: Receive filepath to SQS for migration content from DODS step-1
-    handler: handler.consumer
+    handler: stage1/handler.consumer
+    timeout: 30
     events:
       - sqs: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-1-queue.fifo
 
