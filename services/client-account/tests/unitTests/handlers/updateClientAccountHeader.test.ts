@@ -125,4 +125,32 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         expect(response).toEqual(expectedResponse);
     });
+    test(`${FUNCTION_NAME} Empty required parameter`, async () => {
+        const clientAccount = {
+            clientAccountId: '1dcad502-0c50-4dab-9192-13b5e882b95d',
+            name: ' ',
+            notes: 'this is the compnay 1 ',
+            contactName: 'George Beckamn',
+            contactEmailAddress: 'george@gmail.com',
+            contactTelephoneNumber: '+576933792',
+        };
+
+        mockedClientAccountRepository.defaultInstance.checkNameAvailability.mockImplementation(
+            async () => {
+                return true;
+            }
+        );
+
+        const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+            success: false,
+            message: 'Required field empty',
+        });
+
+        const response = await updateClientAccountHeader(
+            clientAccount,
+            defaultContext
+        );
+
+        expect(response).toEqual(expectedResponse);
+    });
 });
