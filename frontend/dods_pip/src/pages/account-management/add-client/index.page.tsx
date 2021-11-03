@@ -84,6 +84,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
 
   const [activeStep, setActiveStep] = React.useState<number>(1);
   const [accountId, setAccountId] = React.useState<string>(id as string); // returned by API after a POST (or get from URL for incomplete flow)
+  const [savedAccountName, setSavedAccountName] = React.useState<string>('');
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
   const [contactName, setContactName] = React.useState<string>('');
@@ -152,6 +153,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
       contractStartDate = contractStartDate === null ? '' : contractStartDate;
       setAccountId(uuid as string);
       setAccountName(name as string);
+      setSavedAccountName(name as string);
       setAccountNotes(notes as string);
       setContactName(contactName as string);
       setContactEmail(contactEmailAddress as string);
@@ -215,6 +217,8 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
           accountId={accountId}
           setAccountId={setAccountId}
           accountName={accountName}
+          savedAccountName={savedAccountName}
+          setSavedAccountName={setSavedAccountName}
           setAccountName={setAccountName}
           accountNotes={accountNotes}
           setAccountNotes={setAccountNotes}
