@@ -288,7 +288,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
           <Spacer size={5} />
 
           <DataTable
-            headings={['Name', 'Subscription', 'Live projects', 'Team', '']}
+            headings={['Name', 'Subscription', 'Live Collections', 'Team', '']}
             colWidths={[8, 4, 4, 4, 1]}
             rows={accountsList.map((account: ClientAccount) => {
               if (!account.isCompleted) {
