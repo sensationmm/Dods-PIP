@@ -16,7 +16,7 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
             throw new HttpError('Client Account has not enough available seats', HttpStatusCode.FORBIDDEN);
         }
 
-        const userProfile = await UserProfileRepository.defaultInstance.findOne({ uuid: clientAccount.uuid });
+        const userProfile = await UserProfileRepository.defaultInstance.findOne({ uuid: clientAccountTeam.userUuid });
 
         await ClientAccountTeamRepository.defaultInstance.create({ clientAccountId: clientAccount.id, userId: userProfile.id, teamMemberType: clientAccountTeam.teamMemberType });
 
