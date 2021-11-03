@@ -1,3 +1,4 @@
+import trim from 'lodash/trim';
 import React from 'react';
 
 import * as Styled from './DataTable.styles';
@@ -44,22 +45,32 @@ export const DataTableHeading: React.FC<DataTableHeadingProps> = ({ headings, co
 };
 
 export const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
-  let block = '';
+  const headers: string[] = [];
+  rows.forEach((item) => {
+    const col1 = trim(item[0] as string).toUpperCase();
+    if (!headers.includes(col1) && col1 !== '') {
+      headers.push(col1);
+    }
+  });
+  const renderedHeaders: string[] = [];
 
   return (
     <Styled.tableBody data-test="data-table-rows">
       {rows.map((item, count) => {
         const row = [];
-        if (item[0] !== block) {
+        const col1 = trim(item[0] as string).toUpperCase();
+        if (!renderedHeaders.includes(col1) && col1 !== '') {
+          renderedHeaders.push(col1);
           row.push(
             <Styled.tableRow key="row-header-empty">
-              <Styled.tableCellEmpty isFirst={block === ''} colSpan={item.length} />
+              <Styled.tableCellEmpty isFirst={true} colSpan={item.length} />
             </Styled.tableRow>,
             <Styled.tableRow data-test="block-header" key={`row-header-${count}`}>
-              <Styled.tableBlockHeader colSpan={item.length}>{item[0]}</Styled.tableBlockHeader>
+              <Styled.tableBlockHeader colSpan={item.length}>{col1}</Styled.tableBlockHeader>
             </Styled.tableRow>,
           );
         }
+
         row.push(
           <Styled.tableRow key={`row-${count}`}>
             {item.slice(1).map((col, count2) => {
@@ -74,7 +85,6 @@ export const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
             })}
           </Styled.tableRow>,
         );
-        block = item[0] as string;
         return row;
       })}
     </Styled.tableBody>

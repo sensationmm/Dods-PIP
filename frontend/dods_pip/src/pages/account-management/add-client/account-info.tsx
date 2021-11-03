@@ -1,3 +1,4 @@
+import trim from 'lodash/trim';
 import React from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
@@ -77,11 +78,11 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     setLoading(true);
 
     const payload = {
-      name: accountName,
+      name: trim(accountName),
       notes: accountNotes,
-      contactName,
-      contactEmailAddress: contactEmail,
-      contactTelephoneNumber: contactTelephone,
+      contactName: trim(contactName),
+      contactEmailAddress: trim(contactEmail),
+      contactTelephoneNumber: trim(contactTelephone),
     };
 
     const postBody = {
@@ -128,7 +129,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     } else {
       delete formErrors.accountName;
       const response = await fetchJson(`${BASE_URI}${Api.CheckAccountName}`, {
-        body: JSON.stringify({ name: accountName }),
+        body: JSON.stringify({ name: trim(accountName) }),
       });
 
       const { data = {} } = response;

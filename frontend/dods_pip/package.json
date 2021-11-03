@@ -18,9 +18,11 @@
     "git-prune": "git branch --merged master | grep -v '^[ *]*master$' | xargs git branch -d"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.176",
     "classnames": "^2.3.1",
     "cookie-cutter": "^0.2.0",
     "date-fns": "^2.24.0",
+    "lodash": "^4.17.21",
     "next": "11.0.1",
     "next-iron-session": "^4.2.0",
     "react": "17.0.2",
