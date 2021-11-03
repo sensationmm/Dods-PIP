@@ -4,6 +4,6 @@ import { updateClientAccountHeader } from './updateClientAccountHeader';
 
 export const handle = buildLambdaFunction(updateClientAccountHeader, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
 });
