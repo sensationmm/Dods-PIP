@@ -37,6 +37,7 @@ type Subscription = {
 
 interface AddClientProps extends LoadingHOCProps {}
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getEndDateType = ({ contractStartDate = '', contractEndDate = '' }): string => {
   let endDateType = 'custom';
 

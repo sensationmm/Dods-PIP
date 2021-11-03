@@ -10,6 +10,7 @@ import Avatar from '../../components/Avatar';
 import AZFilter from '../../components/AZFilter';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Button from '../../components/Button';
+import DataCount from '../../components/DataCount';
 import DataTable from '../../components/DataTable';
 import Icon from '../../components/Icon';
 import { Icons } from '../../components/Icon/assets';
@@ -176,7 +177,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       </Head>
 
       <main>
-        <Panel>
+        <Panel bgColor={color.base.greyLighter}>
           <Breadcrumbs
             history={[
               { href: '/account-management', label: 'Account Management' },
@@ -216,15 +217,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                 />
               </Styled.filterToggleButon>
 
-              <Styled.dataCount>
-                <Text type="bodySmall" color={color.base.grey}>
-                  Total{' '}
-                  <span style={{ color: color.theme.blueMid }}>
-                    <strong data-test="items-count">{accountsList.length}</strong>
-                  </span>{' '}
-                  items
-                </Text>
-              </Styled.dataCount>
+              <DataCount total={accountsList.length} />
             </Styled.filterToggle>
 
             <Styled.filterContent open={showFilter} data-test="filter-content">
