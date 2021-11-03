@@ -21,7 +21,7 @@ const envVarsSchema = Joi.object()
     .keys({
         NODE_ENV: Joi.string()
             .valid(...stages)
-            .default('test'),
+            .default('development'),
         SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
         DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
