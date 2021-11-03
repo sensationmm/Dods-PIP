@@ -511,7 +511,7 @@ describe(`${GET_CLIENT_ACCOUNT_USERS} handler`, () => {
         const clientAccountId = '';
 
         const expectedError = new Error(
-            'Error: clientAccountId cannot be empty'
+            'Error: clientAccountUuid cannot be empty'
         );
 
         try {

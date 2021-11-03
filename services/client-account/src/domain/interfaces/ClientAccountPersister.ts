@@ -7,13 +7,14 @@ import {
     UpdateClientAccountHeaderParameters,
     UpdateClientAccountParameters,
 } from '.';
+import { ClientAccountModel, ClientAccountModelAttributes } from '../../db';
 
 export interface ClientAccountPersister {
     createClientAccount(
         clientAccount: ClientAccountParameters
     ): Promise<ClientAccountResponse | undefined>;
     getClientAccount(clientAccountId: string): Promise<ClientAccountResponse>;
-    findOne(where: Record<string, any>): Promise<ClientAccountResponse>;
+    findOne(where: Partial<ClientAccountModelAttributes>): Promise<ClientAccountModel>;
 
     searchClientAccount(
         clientAccount: SearchClientAccountParameters
@@ -31,7 +32,7 @@ export interface ClientAccountPersister {
 
     getClientAccountSeats(clientAccountId: string): Promise<number>;
 
-    getClientAccountUsers(clientAccountId: string): Promise<number>;
+    getClientAccountUsers(clientAccountUuid: string): Promise<number>;
 
     getClientAccountAvailableSeats(clientAccountId: string): Promise<number>;
 
@@ -42,7 +43,7 @@ export interface ClientAccountPersister {
     checkNameAvailability(name: string): Promise<boolean>;
 
     UpdateCompletion(
-        clientAccountId: string,
+        clientAccountUuid: string,
         isCompleted: boolean,
         lastStepCompleted: number
     ): Promise<boolean>;
