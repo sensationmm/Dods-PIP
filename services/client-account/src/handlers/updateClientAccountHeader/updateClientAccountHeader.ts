@@ -9,17 +9,6 @@ import { UpdateClientAccountHeaderParameters } from '../../domain';
 
 export const updateClientAccountHeader: AsyncLambdaMiddleware<UpdateClientAccountHeaderParameters> =
     async (clientAccount) => {
-        if (
-            !clientAccount.contactName.trim() ||
-            !clientAccount.name.trim() ||
-            !clientAccount.contactEmailAddress.trim() ||
-            !clientAccount.contactTelephoneNumber.trim()
-        ) {
-            return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
-                success: false,
-                message: 'Required field empty',
-            });
-        }
         const isNameAvailable =
             await ClientAccountRepository.defaultInstance.checkNameAvailability(
                 clientAccount.name
