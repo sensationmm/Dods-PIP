@@ -41,10 +41,10 @@ const mockTeam = [
 ];
 
 const mockResponse = {
-  search: [ { id: '10', name: 'Foo 1', projects: 0, team: [], isCompleted: false }, { id: '11', name: 'Somo', projects: 2, team: mockTeamClient, isCompleted: true }],
-  filterAZ: [ { id: '20', name: 'Foo 2', projects: 2, team: [], isCompleted: false }, { id: '21', name: 'Somo', projects: 1, team: mockTeam, isCompleted: true }],
-  location: [ { id: '30', name: 'Foo 3', projects: 2, team: mockTeam, isCompleted: true }, { id: '31', name: 'Somo', projects: 2, team: mockTeamConsultant, isCompleted: true }],
-  subscription: [ { id: '40', name: 'Foo 4', projects: 0, team: [], isCompleted: false }, { id: '41', name: 'Somo', projects: 4, team: mockTeam, isCompleted: true }],
+  search: [ { uuid: '10', name: 'Foo 1', projects: 0, team: [], isCompleted: false }, { uuid: '11', name: 'Somo', projects: 2, team: mockTeamClient, isCompleted: true }],
+  filterAZ: [ { uuid: '20', name: 'Foo 2', projects: 2, team: [], isCompleted: false }, { uuid: '21', name: 'Somo', projects: 1, team: mockTeam, isCompleted: true }],
+  location: [ { uuid: '30', name: 'Foo 3', projects: 2, team: mockTeam, isCompleted: true }, { uuid: '31', name: 'Somo', projects: 2, team: mockTeamConsultant, isCompleted: true }],
+  subscription: [ { uuid: '40', name: 'Foo 4', projects: 0, team: [], isCompleted: false }, { uuid: '41', name: 'Somo', projects: 4, team: mockTeam, isCompleted: true }],
 };
 
 jest.mock('../../lib/fetchJson', () => {

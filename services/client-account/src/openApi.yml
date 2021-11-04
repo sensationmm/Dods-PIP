@@ -334,17 +334,14 @@ components:
         ClientAccountTeam:
             type: object
             properties:
-                userId:
-                    type: number
-                clientAccountId:
-                    type: number
+                userUuid:
+                    type: string
+                clientAccountUuid:
+                    type: string
                 teamMemberType:
                     type: number
                     enum: [1, 2]
-            required:
-              - userId
-              - clientAccountId
-              - teamMemberType
+   
         ClientAccountUpdateHeader:
             type: object
             properties:

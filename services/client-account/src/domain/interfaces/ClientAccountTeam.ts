@@ -11,7 +11,11 @@ export interface TeamMemberResponse {
 }
 
 export interface ClientAccountTeamParameters {
-    clientAccountTeam: ClientAccountTeam;
+    clientAccountTeam: {
+        clientAccountUuid: string;
+        userUuid?: string;
+        teamMemberType: number;
+    }
 }
 
 export interface NewTeamMemberParameters {

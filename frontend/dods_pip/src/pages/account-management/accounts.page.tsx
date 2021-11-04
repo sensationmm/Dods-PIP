@@ -10,6 +10,7 @@ import Avatar from '../../components/Avatar';
 import AZFilter from '../../components/AZFilter';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Button from '../../components/Button';
+import DataCount from '../../components/DataCount';
 import DataTable from '../../components/DataTable';
 import Icon from '../../components/Icon';
 import { Icons } from '../../components/Icon/assets';
@@ -30,7 +31,7 @@ type ClientAccountTeamMember = {
 };
 
 type ClientAccount = {
-  id: string;
+  uuid: string;
   name: string;
   subscription: {
     id: string;
@@ -148,20 +149,20 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
   };
 
   const renderInCompletedRow = (account: ClientAccount): Array<any> => {
-    const { id } = account;
+    const { uuid } = account;
     return [
       account.name.substring(0, 1),
-      <Text key={`account-${id}-name`} bold>
+      <Text key={`account-${uuid}-name`} bold>
         {account.name}
       </Text>,
-      <Text key={`account-${id}-subscription`}>Account incomplete</Text>,
-      <Text key={`account-${id}-projects`}></Text>,
-      <Styled.teamList key={`account-${id}-team`}>
-        <Button type="text" label="Click to complete" onClick={() => goToClientAccount(id)} />
+      <Text key={`account-${uuid}-subscription`}>Account incomplete</Text>,
+      <Text key={`account-${uuid}-projects`}></Text>,
+      <Styled.teamList key={`account-${uuid}-team`}>
+        <Button type="text" label="Click to complete" onClick={() => goToClientAccount(uuid)} />
       </Styled.teamList>,
       <IconButton
-        key={`account-${id}-link`}
-        onClick={() => goToClientAccount(id)}
+        key={`account-${uuid}-link`}
+        onClick={() => goToClientAccount(uuid)}
         icon={Icons.ChevronRightBold}
         type="text"
       />,
@@ -176,7 +177,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       </Head>
 
       <main>
-        <Panel>
+        <Panel bgColor={color.base.greyLighter}>
           <Breadcrumbs
             history={[
               { href: '/account-management', label: 'Account Management' },
@@ -216,15 +217,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                 />
               </Styled.filterToggleButon>
 
-              <Styled.dataCount>
-                <Text type="bodySmall" color={color.base.grey}>
-                  Total{' '}
-                  <span style={{ color: color.theme.blueMid }}>
-                    <strong data-test="items-count">{accountsList.length}</strong>
-                  </span>{' '}
-                  items
-                </Text>
-              </Styled.dataCount>
+              <DataCount total={accountsList.length} />
             </Styled.filterToggle>
 
             <Styled.filterContent open={showFilter} data-test="filter-content">
@@ -288,13 +281,13 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
           <Spacer size={5} />
 
           <DataTable
-            headings={['Name', 'Subscription', 'Live projects', 'Team', '']}
+            headings={['Name', 'Subscription', 'Live Collections', 'Team', '']}
             colWidths={[8, 4, 4, 4, 1]}
             rows={accountsList.map((account: ClientAccount) => {
               if (!account.isCompleted) {
                 return renderInCompletedRow(account);
               }
-              const { id } = account;
+              const { uuid } = account;
 
               const teamClient = account.team
                 .slice(3)
@@ -323,12 +316,12 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
 
               return [
                 account.name.substring(0, 1),
-                <Text key={`account-${id}-name`} bold>
+                <Text key={`account-${uuid}-name`} bold>
                   {account.name}
                 </Text>,
-                <Text key={`account-${id}-subscription`}>{account.subscription}</Text>,
-                <Text key={`account-${id}-projects`}>{account.projects}</Text>,
-                <Styled.teamList key={`account-${id}-team`}>
+                <Text key={`account-${uuid}-subscription`}>{account.subscription}</Text>,
+                <Text key={`account-${uuid}-projects`}>{account.projects}</Text>,
+                <Styled.teamList key={`account-${uuid}-team`}>
                   {team.map((member) => {
                     return (
                       <Avatar
@@ -347,8 +340,8 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   )}
                 </Styled.teamList>,
                 <IconButton
-                  key={`account-${id}-link`}
-                  onClick={() => goToClientAccount(id)}
+                  key={`account-${uuid}-link`}
+                  onClick={() => goToClientAccount(uuid)}
                   icon={Icons.ChevronRightBold}
                   type="text"
                 />,

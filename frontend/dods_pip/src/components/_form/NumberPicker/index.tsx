@@ -97,7 +97,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
     onChange(value);
   };
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
     /[^0-9]/g.test(e.key) && e.preventDefault();
   };
 
@@ -129,7 +129,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
           tabIndex={tabIndex}
           onFocus={onFocus}
           onKeyPress={(e) => handleInputChange(e)}
-          onChange={(e: any) => onChangeHandler(parseInt(e.target.value))}
+          onChange={(e) => onChangeHandler(parseInt(e.target.value))}
           onBlur={() => onBlur && onBlur(internalError)}
           id={id}
           type="number"

@@ -1,52 +1,26 @@
-import {
-    AsyncLambdaMiddleware,
-    HttpError,
-    HttpResponse,
-    HttpStatusCode,
-} from '@dodsgroup/dods-lambda';
+import { AsyncLambdaMiddleware, HttpError, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
-import { ClientAccountRepository } from '../../repositories';
-import { ClientAccountTeamParameters } from '../../domain/interfaces/ClientAccountTeam';
-import { ClientAccountTeamRepository } from '../../repositories/ClientAccountTeamRepository';
+import { ClientAccountRepository, ClientAccountTeamRepository, UserProfileRepository } from '../../repositories';
+import { ClientAccountTeamParameters } from '../../domain';
 
 export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTeamParameters> =
     async ({ clientAccountTeam }) => {
-        const clientAccount =
-            await ClientAccountRepository.defaultInstance.findOne({
-                id: clientAccountTeam.clientAccountId,
-            });
 
-        let clientAccountTeams = 0;
+        const clientAccount = await ClientAccountRepository.defaultInstance.findOne({ uuid: clientAccountTeam.clientAccountUuid });
 
-        if (clientAccount) {
-            clientAccountTeams =
-                await ClientAccountRepository.defaultInstance.getClientAccountUsers(
-                    clientAccount.uuid
-                );
+        const clientAccountTeams = await ClientAccountRepository.defaultInstance.getClientAccountUsers(clientAccount.uuid);
+
+        const { subscriptionSeats = 0 } = clientAccount;
+
+        if (subscriptionSeats - clientAccountTeams < 1) {
+            throw new HttpError('Client Account has not enough available seats', HttpStatusCode.FORBIDDEN);
         }
 
-        if (
-            clientAccount &&
-            clientAccount.subscriptionSeats !== undefined &&
-            clientAccount?.subscriptionSeats - clientAccountTeams < 1
-        ) {
-            throw new HttpError(
-                'Client Account has not enough available seats',
-                HttpStatusCode.FORBIDDEN
-            );
-        }
+        const userProfile = await UserProfileRepository.defaultInstance.findOne({ uuid: clientAccountTeam.userUuid });
 
-        await ClientAccountTeamRepository.defaultInstance.create(
-            clientAccountTeam
-        );
+        await ClientAccountTeamRepository.defaultInstance.create({ clientAccountId: clientAccount.id, userId: userProfile.id, teamMemberType: clientAccountTeam.teamMemberType });
 
-        await ClientAccountRepository.defaultInstance.UpdateCompletion(
-            clientAccount.uuid,
-            true,
-            3
-        );
-
-        // await ClientAccountRepository.defaultInstance.updateClientAcount({ clientAccountId, subscription_seats: clientAccount.subscription_seats! - 1 })
+        await ClientAccountRepository.defaultInstance.UpdateCompletion(clientAccount.uuid, true, 3);
 
         return new HttpResponse(HttpStatusCode.OK, {
             sucess: true,

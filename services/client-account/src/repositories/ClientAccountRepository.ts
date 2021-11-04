@@ -20,6 +20,7 @@ import {
     parseTeamMember,
 } from '../domain';
 import { Op, WhereOptions, col, fn, where } from 'sequelize';
+import { ClientAccountModelAttributes } from '../db';
 
 export class ClientAccountError extends Error {
     constructor(message: string, cause: any) {
@@ -44,7 +45,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         private subsModel: typeof SubscriptionTypeModel,
         private userModel: typeof UserProfileModel,
         private teamModel: typeof ClientAccountTeamModel
-    ) {}
+    ) { }
 
     async createClientAccount(
         clientAccountParameters: ClientAccountParameters | null
@@ -93,16 +94,14 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async findOne(where: Record<string, any>): Promise<ClientAccountResponse> {
+    async findOne(where: Partial<ClientAccountModelAttributes>): Promise<ClientAccountModel> {
         const clientAccountModel = await this.model.findOne({
             where,
-            include: ['subscriptionType'],
+            include: ['subscriptionType', 'team'],
         });
 
         if (clientAccountModel) {
-            const clientAccount = parseResponseFromModel(clientAccountModel);
-
-            return clientAccount;
+            return clientAccountModel;
         } else {
             throw new Error('Error: clientAccount not found');
         }
@@ -260,13 +259,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async getClientAccountUsers(clientAccountId: string): Promise<number> {
-        if (!clientAccountId) {
-            throw new Error('Error: clientAccountId cannot be empty');
+    async getClientAccountUsers(clientAccountUuid: string): Promise<number> {
+        if (!clientAccountUuid) {
+            throw new Error('Error: clientAccountUuid cannot be empty');
         }
 
         const clientAccountModel = await this.model.findOne({
-            where: { uuid: clientAccountId },
+            where: { uuid: clientAccountUuid },
             include: {
                 model: this.userModel,
                 as: 'team',
@@ -383,16 +382,16 @@ export class ClientAccountRepository implements ClientAccountPersister {
     }
 
     async UpdateCompletion(
-        clientAccountId: string,
+        clientAccountUuid: string,
         isCompleted: boolean,
         lastStepCompleted: number
     ): Promise<boolean> {
-        if (!clientAccountId) {
-            throw new Error('Error: clientAccountId cannot be empty');
+        if (!clientAccountUuid) {
+            throw new Error('Error: clientAccountUuid cannot be empty');
         }
 
         const clientAccountModel = await this.model.findOne({
-            where: { uuid: clientAccountId },
+            where: { uuid: clientAccountUuid },
         });
 
         if (clientAccountModel) {

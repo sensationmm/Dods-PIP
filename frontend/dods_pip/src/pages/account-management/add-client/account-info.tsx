@@ -1,3 +1,4 @@
+import trim from 'lodash/trim';
 import React from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
@@ -30,6 +31,8 @@ export interface AccountInfoProps {
   setLoading: (state: boolean) => void;
   accountId: string;
   setAccountId: (val: string) => void;
+  savedAccountName: string;
+  setSavedAccountName: (val: string) => void;
   accountName: string;
   setAccountName: (val: string) => void;
   accountNotes: string;
@@ -51,6 +54,8 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   setLoading,
   accountId,
   setAccountId,
+  savedAccountName,
+  setSavedAccountName,
   accountName,
   setAccountName,
   accountNotes,
@@ -77,11 +82,11 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     setLoading(true);
 
     const payload = {
-      name: accountName,
+      name: trim(accountName),
       notes: accountNotes,
-      contactName,
-      contactEmailAddress: contactEmail,
-      contactTelephoneNumber: contactTelephone,
+      contactName: trim(contactName),
+      contactEmailAddress: trim(contactEmail),
+      contactTelephoneNumber: trim(contactTelephone),
     };
 
     const postBody = {
@@ -107,6 +112,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
         if (method === 'POST') {
           setAccountId(uuid as string);
         }
+        setSavedAccountName(trim(accountName));
         onSubmit(); // go to next step
       }
     } catch (e) {
@@ -125,10 +131,12 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     const formErrors = { ...errors };
     if (accountName === '') {
       formErrors.accountName = 'This field is required';
+    } else if (trim(accountName) === savedAccountName) {
+      delete formErrors.accountName;
     } else {
       delete formErrors.accountName;
       const response = await fetchJson(`${BASE_URI}${Api.CheckAccountName}`, {
-        body: JSON.stringify({ name: accountName }),
+        body: JSON.stringify({ name: trim(accountName) }),
       });
 
       const { data = {} } = response;

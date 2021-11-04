@@ -35,6 +35,8 @@ describe('AccountInfo', () => {
   const defaultProps = {
     accountId: '',
     setAccountId,
+    savedAccountName: '',
+    setSavedAccountName: jest.fn(),
     accountName: '',
     setAccountName: jest.fn,
     accountNotes: '',

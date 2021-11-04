@@ -38,10 +38,6 @@ export const filterContent = styled.div<FilterContentProps>`
   align-items: center;
 `;
 
-export const dataCount = styled.div`
-  display: flex;
-`;
-
 export const filterContentCol = styled.div`
   display: flex;
 
