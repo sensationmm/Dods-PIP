@@ -347,18 +347,22 @@ components:
             properties:
                 name:
                     type: string
+                    minLength: 1
                     example: Company 1
                 notes:
                     type: string
                     example: This is the account for Company 1
                 contactName:
                     type: string
+                    minLength: 1
                     example: Joe Bloggs
                 contactEmailAddress:
                     type: string
+                    minLength: 1
                     example: user@email.com
                 contactTelephoneNumber:
                     type: string
+                    minLength: 1
                     example: '+442071838750'
             required:
               - name
