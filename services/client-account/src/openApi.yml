@@ -50,6 +50,7 @@ paths:
                 - $ref: '#/components/parameters/startsBy'
                 - $ref: '#/components/parameters/limit'
                 - $ref: '#/components/parameters/offset'
+                - $ref: '#/components/parameters/isCompleted'
             responses:
                 '200':
                     $ref: '#/components/responses/ClientAccountUpdate'
@@ -470,7 +471,7 @@ components:
             name: limit
             schema:
                 type: integer
-                default: 10
+                default: 20
                 minimum: 0
                 maximum: 100
             required: false
@@ -484,6 +485,14 @@ components:
                 minimum: 0
             required: false
             description: Offset value for pagination
+        isCompleted:
+            in: query
+            name: isCompleted
+            schema:
+                type: string
+                example: true
+            required: false
+            description: Return the completeness of a clientAccount
 
     responses:
         NotFound:

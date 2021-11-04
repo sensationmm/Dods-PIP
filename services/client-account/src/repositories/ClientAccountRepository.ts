@@ -113,8 +113,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
     async searchClientAccount(
         searchClientAccountParams: SearchClientAccountParameters
     ): Promise<SearchClientAccountTotalRecords | undefined> {
-        let { startsWith, locations, subscriptionTypes, searchTerm } =
-            searchClientAccountParams;
+        let {
+            startsWith,
+            locations,
+            subscriptionTypes,
+            searchTerm,
+            isCompleted,
+        } = searchClientAccountParams;
         const { limitNum, offsetNum } = searchClientAccountParams;
         let clientAccountWhere: WhereOptions = {};
         let clientAccountResponse: SearchClientAccountTotalRecords = {};
@@ -134,6 +139,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
             clientAccountWhere['name'] = {
                 [Op.like]: `%${searchTerm}%`,
             };
+        }
+
+        if (isCompleted) {
+            if (isCompleted === 'true')
+                clientAccountWhere['is_completed'] = true;
+            else if (isCompleted === 'false')
+                clientAccountWhere['is_completed'] = false;
         }
 
         if (locations) {
