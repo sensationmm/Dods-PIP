@@ -62,14 +62,14 @@ type DropdownProps = {
 };
 
 export const dropdown = styled.div<DropdownProps>`
-  overflow: visible;
   display: ${(p) => (p.open ? 'block' : 'none')};
   position: absolute;
   margin-top: ${(p) => (p.hasHelper || p.hasError ? '-35px' : '-8px')};
   padding-top: 8px;
   width: 100%;
+  max-height: 180px;
+  overflow: auto;
   border-radius: 0 0 8px 8px;
-  overflow: hidden;
   box-shadow: ${elevation.selectShadow};
   background: ${({ hasError, isFilter }) =>
     hasError ? color.shadow.red : isFilter ? color.base.white : color.shadow.blue};
