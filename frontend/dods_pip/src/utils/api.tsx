@@ -9,7 +9,10 @@ export enum Api {
   Logout = '/logout',
   ResetPassword = '/resetPassword',
   SubscriptionTypes = '/subscription-types',
+  TeamMember = '/teammember',
+  TeamMemberCreate = '/teammember/new',
   User = '/user',
+  Users = '/users',
 }
 
 export const toQueryString = (params: Record<string, any> = {}): string => {

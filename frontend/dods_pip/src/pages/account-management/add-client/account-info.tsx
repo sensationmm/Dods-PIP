@@ -73,8 +73,8 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 }) => {
   const isComplete =
     Object.keys(errors).length === 0 &&
-    accountName !== '' &&
-    contactName !== '' &&
+    trim(accountName) !== '' &&
+    trim(contactName) !== '' &&
     contactTelephone != '' &&
     contactEmail !== '';
 
@@ -85,8 +85,8 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       name: trim(accountName),
       notes: accountNotes,
       contactName: trim(contactName),
-      contactEmailAddress: trim(contactEmail),
-      contactTelephoneNumber: trim(contactTelephone),
+      contactEmailAddress: contactEmail,
+      contactTelephoneNumber: contactTelephone,
     };
 
     const postBody = {
@@ -129,7 +129,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
   const validateAccountName = async () => {
     const formErrors = { ...errors };
-    if (accountName === '') {
+    if (trim(accountName) === '') {
       formErrors.accountName = 'This field is required';
     } else if (trim(accountName) === savedAccountName) {
       delete formErrors.accountName;
@@ -152,7 +152,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
   const validateName = () => {
     const formErrors = { ...errors };
-    if (contactName === '') {
+    if (trim(contactName) === '') {
       formErrors.contactName = 'This field is required';
     } else {
       delete formErrors.contactName;

@@ -1,3 +1,4 @@
+import trim from 'lodash/trim';
 import React from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
@@ -11,13 +12,17 @@ import Avatar from '../../../components/Avatar';
 import Button from '../../../components/Button';
 import Chips from '../../../components/Chips';
 import { Icons } from '../../../components/Icon/assets';
-import { NotificationProps } from '../../../components/Notification';
 import SectionAccordion from '../../../components/SectionAccordion';
 import TagSelector from '../../../components/TagSelector';
 import * as TagSelectorStyles from '../../../components/TagSelector/TagSelector.styles';
 import Text from '../../../components/Text';
 import color from '../../../globals/color';
+import { PushNotificationProps } from '../../../hoc/LoadingHOC';
+import fetchJson from '../../../lib/fetchJson';
+import useTeamMembers from '../../../lib/useTeamMembers';
 import MockUserData from '../../../mocks/data/users.json';
+import { Api, BASE_URI } from '../../../utils/api';
+import { TeamMember, TeamType } from '../../../utils/type';
 import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
 
@@ -32,16 +37,22 @@ export type Errors = {
   clientAccess?: string;
 };
 
+// ideally we would have an endpoint to retrieve roles with their uuids
+enum RoleType {
+  User = '24e7ca86-1788-4b6e-b153-9c963dc928cb',
+  Admin = '0b4fc341-8992-48da-94c8-945b9b9fa7ea',
+}
+
 export interface TeamProps {
-  addNotification: (props: NotificationProps) => void;
+  addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
   accountId: string;
   teamMembers: Array<string>;
   setTeamMembers: (vals: Array<string>) => void;
   accountManagers: Array<string>;
   setAccountManagers: (vals: Array<string>) => void;
-  clientUsers: Array<string>;
-  setClientUsers: (vals: Array<string>) => void;
+  clientUsers: Array<TeamMember>;
+  setClientUsers: (vals: Array<TeamMember>) => void;
   clientFirstName: string;
   setClientFirstName: (val: string) => void;
   clientLastName: string;
@@ -65,6 +76,9 @@ export interface TeamProps {
 }
 
 const Team: React.FC<TeamProps> = ({
+  accountId,
+  addNotification,
+  setLoading,
   teamMembers,
   setTeamMembers,
   accountManagers,
@@ -96,15 +110,29 @@ const Team: React.FC<TeamProps> = ({
   const [addUser, setAddUser] = React.useState<boolean>(false);
   const isComplete = teamMembers.length > 0 || clientUsers.length > 0;
   const isUserComplete =
-    clientFirstName !== '' &&
-    clientLastName !== '' &&
-    clientEmail !== '' &&
+    trim(clientFirstName) !== '' &&
+    trim(clientLastName) !== '' &&
+    trim(clientEmail) !== '' &&
     clientAccess !== '' &&
     Object.keys(errors).length === 0;
 
+  useTeamMembers({
+    uuid: accountId,
+    setClientUsers,
+  });
+
+  // @todo - remove this when API is ready for integration
+  const notImplementedYet = () => {
+    addNotification({
+      type: 'info',
+      title: 'Remove API not available',
+      text: 'This feature is not yet implemnted',
+    });
+  };
+
   const validateClientFirstName = () => {
     const formErrors = { ...errors };
-    if (clientFirstName === '') {
+    if (trim(clientFirstName) === '') {
       formErrors.clientFirstName = 'This field is required';
     } else {
       delete formErrors.clientFirstName;
@@ -115,7 +143,7 @@ const Team: React.FC<TeamProps> = ({
 
   const validateClientLastName = () => {
     const formErrors = { ...errors };
-    if (clientLastName === '') {
+    if (trim(clientLastName) === '') {
       formErrors.clientLastName = 'This field is required';
     } else {
       delete formErrors.clientLastName;
@@ -126,7 +154,7 @@ const Team: React.FC<TeamProps> = ({
 
   const validateClientEmail = () => {
     const formErrors = { ...errors };
-    if (clientEmail === '') {
+    if (trim(clientEmail) === '') {
       formErrors.clientEmail = 'This field is required';
     } else if (!Validation.validateEmail(clientEmail)) {
       formErrors.clientEmail = 'Invalid format';
@@ -139,7 +167,7 @@ const Team: React.FC<TeamProps> = ({
 
   const validateClientEmail2 = () => {
     const formErrors = { ...errors };
-    if (clientEmail2 !== '' && !Validation.validateEmail(clientEmail2)) {
+    if (trim(clientEmail2) !== '' && !Validation.validateEmail(clientEmail2)) {
       formErrors.clientEmail2 = 'Invalid format';
     } else {
       delete formErrors.clientEmail2;
@@ -150,7 +178,7 @@ const Team: React.FC<TeamProps> = ({
 
   const validateClientTelephone = () => {
     const formErrors = { ...errors };
-    if (clientTelephone !== '' && !Validation.validatePhone(clientTelephone)) {
+    if (trim(clientTelephone) !== '' && !Validation.validatePhone(clientTelephone)) {
       formErrors.clientTelephone = 'Invalid telephone';
     } else {
       delete formErrors.clientTelephone;
@@ -160,7 +188,7 @@ const Team: React.FC<TeamProps> = ({
 
   const validateClientTelephone2 = () => {
     const formErrors = { ...errors };
-    if (clientTelephone2 !== '' && !Validation.validatePhone(clientTelephone2)) {
+    if (trim(clientTelephone2) !== '' && !Validation.validatePhone(clientTelephone2)) {
       formErrors.clientTelephone2 = 'Invalid telephone';
     } else {
       delete formErrors.clientTelephone2;
@@ -168,19 +196,55 @@ const Team: React.FC<TeamProps> = ({
     setErrors(formErrors);
   };
 
-  const addClientUser = () => {
-    const users = clientUsers.slice();
-    users.push(`${clientFirstName} ${clientLastName}`);
-    setClientUsers(users);
-    setAddUser(false);
-    setClientFirstName('');
-    setClientLastName('');
-    setClientJobTitle('');
-    setClientEmail('');
-    setClientEmail2('');
-    setClientTelephone('');
-    setClientTelephone2('');
-    setClientAccess('');
+  const addClientUser = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        userProfile: {
+          title: trim(clientJobTitle),
+          first_name: trim(clientFirstName),
+          last_name: trim(clientLastName),
+          primary_email_address: clientEmail,
+          secondary_email_address: clientEmail2,
+          telephone_number_1: clientTelephone,
+          telephone_number_2: clientTelephone2,
+          role_id: clientAccess,
+        },
+        teamMemberType: 2, // 2 = client
+      };
+      const results = await fetchJson(
+        `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMemberCreate}`,
+        {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        },
+      );
+      const { success = true, data } = results;
+      if (success && Array.isArray(data)) {
+        // filter data by type client
+        const clientsOnly = data.filter((team: TeamMember) => team.type === TeamType.Client);
+        setClientUsers(clientsOnly);
+
+        // reset form
+        setAddUser(false);
+        setClientFirstName('');
+        setClientLastName('');
+        setClientJobTitle('');
+        setClientEmail('');
+        setClientEmail2('');
+        setClientTelephone('');
+        setClientTelephone2('');
+        setClientAccess('');
+      }
+    } catch (e) {
+      // show server error
+      addNotification({
+        type: 'warn',
+        title: 'Error',
+        text: e.data.message,
+      });
+    }
+    setLoading(false);
   };
 
   const cancelAddClientUser = () => {
@@ -302,11 +366,28 @@ const Team: React.FC<TeamProps> = ({
         <SectionAccordion
           id="client"
           header={
-            <SectionHeader
-              title="Create a User for this account"
-              subtitle="Would you like to add a new Client user to add to the Account?"
-              icon={<Avatar type="client" size="medium" />}
-            />
+            <>
+              <SectionHeader
+                title="Create a User for this account"
+                subtitle="Would you like to add a new Client user to add to the Account?"
+                icon={<Avatar type="client" size="medium" />}
+              />
+              {!createUser && clientUsers.length > 0 && (
+                <>
+                  <Spacer size={6} />
+                  <TagSelectorStyles.tags>
+                    {clientUsers.map((item) => (
+                      <Chips
+                        data-test="added-client-users"
+                        key={`chip-${item.id}`}
+                        label={item.name}
+                        avatarType="client"
+                      />
+                    ))}
+                  </TagSelectorStyles.tags>
+                </>
+              )}
+            </>
           }
           isOpen={createUser}
           callback={() => setCreateUser(!createUser)}
@@ -327,12 +408,13 @@ const Team: React.FC<TeamProps> = ({
                   </TagSelectorStyles.containerHeaderEmpty>
                 )}
                 <TagSelectorStyles.tags>
-                  {clientUsers.map((item, count) => (
+                  {clientUsers.map((item) => (
                     <Chips
                       data-test="added-client-users"
-                      key={`chip-${count}`}
-                      label={item}
+                      key={`chip-${item.id}`}
+                      label={item.name}
                       avatarType="client"
+                      onCloseClick={notImplementedYet}
                     />
                   ))}
                 </TagSelectorStyles.tags>
@@ -432,8 +514,8 @@ const Team: React.FC<TeamProps> = ({
                 groupName="client-access"
                 label="Assign access"
                 items={[
-                  { label: 'Admin', value: 'admin' },
-                  { label: 'User', value: 'user' },
+                  { label: 'Admin', value: RoleType.Admin },
+                  { label: 'User', value: RoleType.User },
                 ]}
                 selectedValue={clientAccess}
                 onChange={setClientAccess}
