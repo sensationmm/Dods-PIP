@@ -82,6 +82,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
   const userSeatsDefault = '5';
   const consultantHoursDefault = '10';
   const LAST_STEP = 3;
+  const TODAY = format(new Date(), 'yyyy-MM-dd').toString();
 
   const [activeStep, setActiveStep] = React.useState<number>(1);
   const [accountId, setAccountId] = React.useState<string>(id as string); // returned by API after a POST (or get from URL for incomplete flow)
@@ -99,9 +100,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
   const [userSeats, setUserSeats] = React.useState<string>(userSeatsDefault);
   const [consultantHours, setConsultantHours] = React.useState<string>(consultantHoursDefault);
   const [renewalType, setRenewalType] = React.useState<string>(RenewalType.Annual);
-  const [startDate, setStartDate] = React.useState<string>(
-    format(new Date(), 'yyyy-MM-dd').toString(),
-  );
+  const [startDate, setStartDate] = React.useState<string>(TODAY);
   const [endDate, setEndDate] = React.useState<string>('');
   const [endDateType, setEndDateType] = React.useState<string>('');
   const [errorsStep2, setErrorsStep2] = React.useState<ErrorsStep2>({});
@@ -141,17 +140,26 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
         contactName = '',
         contactEmailAddress = '',
         contactTelephoneNumber = '',
-        contractRollover = true,
-        subscriptionSeats = userSeatsDefault,
-        consultantHours = consultantHoursDefault,
         isEU = false,
         isUK = false,
         subscription = {},
         lastStepCompleted = 1,
       } = data;
-      let { contractStartDate = '', contractEndDate = '' } = data;
+      let {
+        subscriptionSeats,
+        consultantHours,
+        contractStartDate = '',
+        contractEndDate = '',
+        contractRollover,
+      } = data;
       contractEndDate = contractEndDate === null ? '' : contractEndDate;
-      contractStartDate = contractStartDate === null ? '' : contractStartDate;
+      contractStartDate = contractStartDate === null ? TODAY : contractStartDate;
+      subscriptionSeats =
+        subscriptionSeats === 0 || subscriptionSeats === null
+          ? userSeatsDefault
+          : subscriptionSeats;
+      consultantHours = consultantHours === null ? consultantHoursDefault : consultantHours;
+      contractRollover = contractRollover === null ? true : contractRollover;
       setAccountId(uuid as string);
       setAccountName(name as string);
       setSavedAccountName(name as string);

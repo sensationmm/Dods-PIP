@@ -92,36 +92,39 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
   React.useEffect(() => {
     let date;
-    switch (endDateType) {
-      case EndDateType.One:
-        date = add(new Date(startDate), { years: 1 });
-        setEndDate(format(date, DateFormat.API));
-        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
-        break;
-      case EndDateType.Two:
-        date = add(new Date(startDate), { years: 2 });
-        setEndDate(format(date, DateFormat.API));
-        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
-        break;
-      case EndDateType.Three:
-        date = add(new Date(startDate), { years: 3 });
-        setEndDate(format(date, DateFormat.API));
-        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
-        break;
-      case EndDateType.Trial:
-        date = add(new Date(startDate), { weeks: 2 });
-        setEndDate(format(date, DateFormat.API));
-        setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
-        break;
-      case EndDateType.Custom:
-        if (endDate !== '') {
-          date = new Date(endDate);
+
+    if (startDate !== '') {
+      switch (endDateType) {
+        case EndDateType.One:
+          date = add(new Date(startDate), { years: 1 });
           setEndDate(format(date, DateFormat.API));
-        }
-        setEndDateHelper('');
-        break;
+          setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
+          break;
+        case EndDateType.Two:
+          date = add(new Date(startDate), { years: 2 });
+          setEndDate(format(date, DateFormat.API));
+          setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
+          break;
+        case EndDateType.Three:
+          date = add(new Date(startDate), { years: 3 });
+          setEndDate(format(date, DateFormat.API));
+          setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
+          break;
+        case EndDateType.Trial:
+          date = add(new Date(startDate), { weeks: 2 });
+          setEndDate(format(date, DateFormat.API));
+          setEndDateHelper(`Expires on: ${format(date, DateFormat.UI)}`);
+          break;
+        case EndDateType.Custom:
+          if (endDate !== '') {
+            date = new Date(endDate);
+            setEndDate(format(date, DateFormat.API));
+          }
+          setEndDateHelper('');
+          break;
+      }
     }
-  }, [endDateType]);
+  }, [startDate, endDateType]);
 
   const isComplete =
     (isEU || isUK) &&
