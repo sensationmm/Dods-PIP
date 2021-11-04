@@ -11,7 +11,6 @@ export class GreetingRepository implements Greeting {
     async getFullName(data: SayLocalHelloParameters): Promise<string> {
         return await requestHandler({ url: this.config.getFullNameEndpointUrl, headers: data })
     }
-
     async sayEnglishHello(data: SayLocalHelloParameters): Promise<string> {
         return await requestHandler({ url: this.config.sayEnglishHelloEndpointUrl, headers: data });
     }

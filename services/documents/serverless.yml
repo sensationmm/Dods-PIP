@@ -1,4 +1,4 @@
-service: dods-nodejs-lambda-boilerplate
+service: dods-nodejs-lambda-documents
 
 configValidationMode: warn
 
@@ -13,7 +13,7 @@ provider:
   region: eu-west-1
   runtime: nodejs14.x
   deploymentBucket:
-    name: pip-${self:provider.stage}-scrapping-lambdas
+    name: pip-${self:provider.stage}-services-lambdas
   stage: ${opt:stage, 'local'}
   lambdaHashingVersion: 20201221
 
@@ -38,8 +38,10 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "xray:PutTraceSegments"
-        - "xray:PutTelemetryRecords"
+        # - "xray:PutTraceSegments"
+        # - "xray:PutTelemetryRecords"
+        - s3:PutObject
+        - s3:GetObject
       Resource:
         - "*"
   # This section ties the functions to a particular API Gateway instead of creating a new one
@@ -55,9 +57,10 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint, self:custom.endpoints.dev.sayTurkishHelloEndpoint}
-    SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint, self:custom.endpoints.dev.sayEnglishHelloEndpoint}
-    GET_FULL_NAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getFullNameEndpoint, self:custom.endpoints.dev.getFullNameEndpoint}
+    # SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint, self:custom.endpoints.dev.sayTurkishHelloEndpoint}
+    # SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint, self:custom.endpoints.dev.sayEnglishHelloEndpoint}
+    # GET_FULL_NAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getFullNameEndpoint, self:custom.endpoints.dev.getFullNameEndpoint}
+    CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
 
 custom:
   envs:
@@ -76,7 +79,7 @@ custom:
       DB_PASSWORD: ${ssm:/infra/qa/rds/password}
       apiGatewayId: e5txxyf6ik
       apiRootResourceId: bxik56m9t1
-
+      
     local:
       DB_HOST: localhost
       DB_NAME: dods
@@ -85,13 +88,13 @@ custom:
 
   endpoints:
     dev:
-      sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
-      sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
-      getFullNameEndpoint: http://localhost:1083/getFullName
+      # sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
+      # sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
+      # getFullNameEndpoint: http://localhost:1083/getFullName
     prod:
-      sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
-      sayEnglishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
-      getFullNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/getFullName
+      # sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
+      # sayEnglishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
+      # getFullNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/getFullName
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -127,44 +130,39 @@ plugins:
 
 functions:
   health:
-    handler: src/handlers/health/index.handle
-    description: Triggered when http request comes
-    events:
-      - http:
-          method: get
-          path: health
-          cors: true
-    tags:
-      foo: bar
+      handler: src/handlers/health/index.handle
+      description: Triggered when http request comes
+      events:
+        - http:
+            method: get
+            path: health
+            cors: true
+      tags:
+        foo: bar
 
-  sayHello:
-    handler: src/handlers/sayHello/index.handle
+  getDocument:
+    handler: src/handlers/getDocument/index.handle
     description: Triggered when http request comes
     events:
       - http:
           method: get
-          path: sayHello
+          path: documents/{documentId}
 
-  sayEnglishHello:
-    handler: src/handlers/sayEnglishHello/index.handle
+  updateDocument:
+    handler: src/handlers/updateDocument/index.handle
     description: Triggered when http request comes
     events:
       - http:
-          method: get
-          path: sayEnglishHello
+          method: put
+          path: documents/{documentId}
 
-  sayTurkishHello:
-    handler: src/handlers/sayTurkishHello/index.handle
+  createDocument:
+    handler: src/handlers/createDocument/index.handle
     description: Triggered when http request comes
     events:
       - http:
-          method: get
-          path: sayTurkishHello
-
-  getFullName:
-    handler: src/handlers/getFullName/index.handle
-    description: Triggered when http request comes
-    events:
-      - http:
-          method: get
-          path: getFullName
+          method: post
+          path: documents
+          # cors: true
+    # tags:
+    #   foo: bar
