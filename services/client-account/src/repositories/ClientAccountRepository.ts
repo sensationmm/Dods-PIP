@@ -20,6 +20,7 @@ import {
     parseTeamMember,
 } from '../domain';
 import { Op, WhereOptions, col, fn, where } from 'sequelize';
+
 import { ClientAccountModelAttributes } from '../db';
 
 export class ClientAccountError extends Error {
@@ -45,7 +46,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         private subsModel: typeof SubscriptionTypeModel,
         private userModel: typeof UserProfileModel,
         private teamModel: typeof ClientAccountTeamModel
-    ) { }
+    ) {}
 
     async createClientAccount(
         clientAccountParameters: ClientAccountParameters | null
@@ -94,7 +95,9 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async findOne(where: Partial<ClientAccountModelAttributes>): Promise<ClientAccountModel> {
+    async findOne(
+        where: Partial<ClientAccountModelAttributes>
+    ): Promise<ClientAccountModel> {
         const clientAccountModel = await this.model.findOne({
             where,
             include: ['subscriptionType', 'team'],
@@ -395,10 +398,12 @@ export class ClientAccountRepository implements ClientAccountPersister {
         });
 
         if (clientAccountModel) {
-            clientAccountModel.isCompleted = isCompleted;
-            clientAccountModel.lastStepCompleted = lastStepCompleted;
+            if (!clientAccountModel.isCompleted) {
+                clientAccountModel.isCompleted = isCompleted;
+                clientAccountModel.lastStepCompleted = lastStepCompleted;
 
-            clientAccountModel.save();
+                clientAccountModel.save();
+            }
 
             return true;
         }
