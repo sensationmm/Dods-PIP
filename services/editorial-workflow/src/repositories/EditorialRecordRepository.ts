@@ -1,36 +1,27 @@
-import { EditorialRepository } from "./EditorialRepository";
-import { CreateEditorialRecordParameters, EditorialRecord} from "../domain";
-import dynamoDB from "../dynamodb"
-import { config } from '../domain';
+import {
+    CreateEditorialRecordParameters,
+    EditorialRecordOutput,
+    EditorialRecordPersister,
+} from '../domain';
 
-import { v4 as uuidv4 } from 'uuid';
-import {AWSError} from "aws-sdk";
-const AWS = require("aws-sdk");
+import { EditorialRecord } from '@dodsgroup/dods-model';
 
-export class EditorialRecordRepository implements EditorialRepository {
-    constructor(private dynamoDB: typeof AWS.DynamoDB.DocumentClient) {}
+export class EditorialRecordRepository implements EditorialRecordPersister {
+    constructor(private editorialRecordModel: typeof EditorialRecord) {}
 
-    static defaultInstance: EditorialRepository = new EditorialRecordRepository(dynamoDB);
+    static defaultInstance = new EditorialRecordRepository(EditorialRecord);
 
-    static async createEditorialRecordPutRequest(data: EditorialRecord): Promise<any> {
-        return { TableName: config.dynamodb.dynamoTable, Item: data };
-    }
+    static mapModelToOutput = (model: EditorialRecord) => {
+        const { uuid, documentName, s3Location } = model;
 
-    async sendPutRequestToDynamo(request: any): Promise<any> {
-        await this.dynamoDB.put(request, function(err: AWSError, data: any) {
-            if (err) {
-                console.log(err)
-                throw err;
-            }
-            else return data;
-        });
-    }
+        return { uuid, documentName, s3Location };
+    };
 
-    async createEditorialRecord(data: CreateEditorialRecordParameters): Promise<EditorialRecord> {
-        const record: EditorialRecord = {id: uuidv4(), ...data};
-        const putRequest = await EditorialRecordRepository.createEditorialRecordPutRequest(record);
-        await this.sendPutRequestToDynamo(putRequest);
+    async createEditorialRecord(
+        params: CreateEditorialRecordParameters
+    ): Promise<EditorialRecordOutput> {
+        const newRecord = await this.editorialRecordModel.create(params, {});
 
-        return record;
+        return EditorialRecordRepository.mapModelToOutput(newRecord);
     }
 }

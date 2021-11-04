@@ -101,7 +101,7 @@ plugins:
   - serverless-offline
 
 functions:
-  create-editorial-record:
+  createEditorialRecord:
     handler: src/handlers/createEditorialRecord/index.handle
     description: Triggered on HTTP request
     events:
