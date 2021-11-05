@@ -173,11 +173,11 @@ components:
               - $ref: '#/components/schemas/EditorialRecordBase'
             type: object
             properties:
-                assignedEditor:
+                assignedEditorId:
                     type: string
                     format: uuid
                     example: d290f1ss-6c54-4b01-98e6-d701748f7151
-                status:
+                statusId:
                     type: string
                     format: uuid
                     example: d290f1ss-6c54-4b01-98e6-d701748f7151
@@ -186,15 +186,17 @@ components:
             allOf:
               - $ref: '#/components/schemas/EditorialRecordBase'
             type: object
+            required:
+              - uuid
             properties:
-                id: 
+                uuid: 
                     type: string
                     format: uuid
                     example: d290f1ss-6c54-4b01-98e6-d701748f7151
                 assignedEditor:
                     type: object
                     properties:
-                        id:
+                        uuid:
                             type: string
                             format: uuid
                             example: d290f1ss-6c54-4b01-98e6-d701748f7151
@@ -204,7 +206,7 @@ components:
                 status:
                     type: object
                     properties:
-                        id:
+                        uuid:
                             type: string
                             format: uuid
                             example: d290f1ss-6c54-4b01-98e6-d701748f7151

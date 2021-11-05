@@ -9,3 +9,5 @@ export * from './User';
 export * from './Project';
 export * from './ProjectUser';
 export * from './ProjectDate';
+export * from './EditorialRecord';
+export * from './EditorialRecordStatus';
