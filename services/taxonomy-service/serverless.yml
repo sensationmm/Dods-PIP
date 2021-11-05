@@ -97,4 +97,4 @@ functions:
     events:
       - http:
           method: get
-          path: taxonomyTree
+          path: taxonomies/tree
