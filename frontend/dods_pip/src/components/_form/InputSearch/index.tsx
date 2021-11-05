@@ -22,6 +22,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
   onFocus,
   onBlur,
   placeholder = 'Search...',
+  children,
 }) => {
   const isFilled = value.length > 0;
   return (
@@ -54,6 +55,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
               : color.base.grey
           }
         />
+        {children}
 
         {isFilled && (
           <Styled.clear data-test="input-clear" onClick={() => onChange('')}>
