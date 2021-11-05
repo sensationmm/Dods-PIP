@@ -6,7 +6,7 @@ import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import * as Styled from './Button.styles';
 
-type ButtonType = 'primary' | 'secondary' | 'text';
+export type ButtonType = 'primary' | 'secondary' | 'text';
 type ButtonWidth = 'auto' | 'fixed';
 type IconAlignment = 'left' | 'right';
 
