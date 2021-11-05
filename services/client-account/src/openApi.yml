@@ -51,6 +51,8 @@ paths:
                 - $ref: '#/components/parameters/limit'
                 - $ref: '#/components/parameters/offset'
                 - $ref: '#/components/parameters/isCompleted'
+                - $ref: '#/components/parameters/sortBy'
+                - $ref: '#/components/parameters/sortDirection'
             responses:
                 '200':
                     $ref: '#/components/responses/ClientAccountUpdate'
@@ -493,6 +495,24 @@ components:
                 example: true
             required: false
             description: Return the completeness of a clientAccount
+
+        sortBy:
+            in: query
+            name: sortBy
+            schema:
+                type: string
+                example: name
+            required: false
+            description: sort client Account by name or subscription
+
+        sortDirection:
+            in: query
+            name: sortDirection
+            schema:
+                type: string
+                example: DESC
+            required: false
+            description: direction ASC or DESC
 
     responses:
         NotFound:

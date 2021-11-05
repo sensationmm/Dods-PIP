@@ -58,6 +58,8 @@ export interface SearchClientAccountParameters extends Pagination {
     searchTerm?: string | null;
     startsWith?: string | null;
     isCompleted?: string | null;
+    sortBy?: string | null;
+    sortDirection?: string | null;
 }
 export interface GetClientAccountParameters {
     clientAccountId: string;
