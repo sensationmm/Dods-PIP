@@ -144,7 +144,11 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
   const subscriptionPlaceholder = 'All Subscriptions';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
 
-  const goToClientAccount = (id: string): void => {
+  const goToAccount = (id: string): void => {
+    router.push(`/accounts/${id}`);
+  };
+
+  const goToAccountSetup = (id: string): void => {
     router.push(`/account-management/add-client?id=${id}`);
   };
 
@@ -158,11 +162,11 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       <Text key={`account-${uuid}-subscription`}>Account incomplete</Text>,
       <Text key={`account-${uuid}-projects`}></Text>,
       <Styled.teamList key={`account-${uuid}-team`}>
-        <Button type="text" label="Click to complete" onClick={() => goToClientAccount(uuid)} />
+        <Button type="text" label="Click to complete" onClick={() => goToAccountSetup(uuid)} />
       </Styled.teamList>,
       <IconButton
         key={`account-${uuid}-link`}
-        onClick={() => goToClientAccount(uuid)}
+        onClick={() => goToAccountSetup(uuid)}
         icon={Icons.ChevronRightBold}
         type="text"
       />,
@@ -341,7 +345,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                 </Styled.teamList>,
                 <IconButton
                   key={`account-${uuid}-link`}
-                  onClick={() => goToClientAccount(uuid)}
+                  onClick={() => goToAccount(uuid)}
                   icon={Icons.ChevronRightBold}
                   type="text"
                 />,
