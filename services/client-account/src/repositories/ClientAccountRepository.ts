@@ -126,13 +126,15 @@ export class ClientAccountRepository implements ClientAccountPersister {
         let clientAccountWhere: WhereOptions = {};
         let clientAccountResponse: SearchClientAccountTotalRecords = {};
         let sortByQuery = 'name';
-        let sortDirectionQuery = 'ASC';
-
+        let sortDirectionQuery = 'asc';
+        sortBy = sortBy?.toLowerCase();
+        sortDirection = sortDirection?.toLowerCase();
         if (sortBy === 'name' || sortBy === 'subscription') {
             sortByQuery = sortBy;
         }
 
-        if (sortDirection === 'ASC' || sortDirection === 'DESC') {
+        if (sortDirection === 'asc' || sortDirection === 'desc') {
+            sortDirection = sortDirection.toUpperCase();
             sortDirectionQuery = sortDirection;
         }
 
