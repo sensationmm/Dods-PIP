@@ -52,7 +52,13 @@ const InputBase: React.FC<InputBaseProps> = ({
   return (
     <Styled.wrapper data-test="component-input-base">
       {label && (
-        <Label label={label} required={required} optional={optional} isDisabled={isDisabled} />
+        <Label
+          label={label}
+          required={required}
+          optional={optional}
+          isDisabled={isDisabled}
+          htmlFor={id}
+        />
       )}
       <Styled.inputWrapper>
         <Styled.input
