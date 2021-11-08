@@ -98,4 +98,4 @@ functions:
     events:
       - http:
           method: get
-          path: taxonomies/tree
+          path: taxonomy/topics/tree
