@@ -7,7 +7,7 @@ import { Icons } from '../Icon/assets';
 import Text from '../Text';
 import * as Styled from './Modal.styles';
 
-export type modalSize = 'small' | 'medium' | 'large' | 'fullscreen';
+export type modalSize = 'small' | 'medium' | 'large' | 'xlarge';
 export interface ModalProps {
   onClose?: () => void;
   title?: string;

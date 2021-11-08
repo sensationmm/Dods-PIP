@@ -5,11 +5,11 @@ import elevation from '../../globals/elevation';
 import spacing from '../../globals/spacing';
 import { modalSize } from './index';
 
-const THEME = {
+const THEME: Record<modalSize, Record<string, string>> = {
   small: { width: '400px', height: '288px' },
   medium: { width: '540px', height: '368px' },
   large: { width: '780px', height: '470px' },
-  fullscreen: { width: '100vw', height: '100vh' },
+  xlarge: { width: '1280px', height: '687px' },
 };
 
 interface ModalStyleProps {
@@ -62,7 +62,7 @@ export const modal = styled.div.attrs(({ size }: ModalStyleProps) => {
   flex-direction: column;
   max-width: ${({ width }) => width};
   height: ${({ height }) => height};
-  max-height: 100vh;
+  max-height: calc(100vh - ${spacing(8)});
   width: 100%;
   background: ${color.base.white};
   border-radius: 8px;
