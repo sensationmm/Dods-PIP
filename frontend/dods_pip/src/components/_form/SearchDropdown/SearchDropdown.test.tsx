@@ -100,6 +100,19 @@ describe('SearchDropdown', () => {
     expect(setResults).toHaveBeenCalledWith([]);
   });
 
+  it('opens list on click if isFilter', () => {
+    wrapper = shallow(<SearchDropdown {...props} isFilter />);
+    wrapper.simulate('click');
+    expect(setResults).toHaveBeenCalledWith(props.values);
+  });
+
+  it('shows selected value if isFilter', () => {
+    wrapper = shallow(<SearchDropdown {...props} isFilter value="option5" />);
+    const searchValue = wrapper.find('[data-test="search-value"]');
+    expect(searchValue.length).toEqual(1);
+    expect(searchValue.props().children).toEqual('abc');
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });

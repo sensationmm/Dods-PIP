@@ -119,10 +119,24 @@ export class ClientAccountRepository implements ClientAccountPersister {
             subscriptionTypes,
             searchTerm,
             isCompleted,
+            sortBy,
+            sortDirection,
         } = searchClientAccountParams;
         const { limitNum, offsetNum } = searchClientAccountParams;
         let clientAccountWhere: WhereOptions = {};
         let clientAccountResponse: SearchClientAccountTotalRecords = {};
+        let sortByQuery = 'name';
+        let sortDirectionQuery = 'asc';
+        sortBy = sortBy?.toLowerCase();
+        sortDirection = sortDirection?.toLowerCase();
+        if (sortBy === 'name' || sortBy === 'subscription') {
+            sortByQuery = sortBy;
+        }
+
+        if (sortDirection === 'asc' || sortDirection === 'desc') {
+            sortDirection = sortDirection.toUpperCase();
+            sortDirectionQuery = sortDirection;
+        }
 
         if (startsWith && searchTerm) {
             clientAccountWhere['name'] = {
@@ -180,7 +194,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
             where: clientAccountWhere,
             subQuery: false,
             include: ['subscriptionType', 'team'],
-            order: [['name', 'ASC']],
+            order: [[sortByQuery, sortDirectionQuery]],
             offset: offsetNum,
             limit: limitNum,
         });
