@@ -58,12 +58,12 @@ const AZFilter: React.FC<AZFilterProps> = ({ selectedLetter, setSelectedLetter }
             <Icon
               src={Icons.AzFilter}
               size={IconSize.large}
-              color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
+              color={selectedLetter === '' ? color.base.greyDark : color.base.greyDark}
             />
             <Text
               type="bodySmall"
               bold
-              color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
+              color={selectedLetter === '' ? color.base.greyDark : color.base.greyDark}
             >
               VIEW ALL
             </Text>
@@ -81,7 +81,7 @@ const AZFilter: React.FC<AZFilterProps> = ({ selectedLetter, setSelectedLetter }
                       ? color.base.white
                       : hoveringAzFilter
                       ? color.theme.blue
-                      : color.base.grey
+                      : color.base.greyDark
                   }
                 >
                   {alf}
