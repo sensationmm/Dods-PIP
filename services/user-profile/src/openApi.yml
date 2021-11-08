@@ -272,7 +272,7 @@ components:
       name: name
       schema:
         type: string
-      required: true
+      required: false
       description: User Profile's FirstName or LastName
     startsWith:
         in: query
@@ -282,8 +282,11 @@ components:
         required: false
         description: User Profile's lastName starts with letter
     role:
-      type: string
-      format: uuid
+      in: query
+      name: role
+      schema:
+        type: string
+        format: uuid
       required: false
       example: d290f1ss-6c54-4b01-98e6-d701748f7151
     limit:

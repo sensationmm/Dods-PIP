@@ -1,26 +1,37 @@
-import { User, Role } from '@dodsgroup/dods-model';
-import { Op } from 'sequelize';
+import { Role, User } from '@dodsgroup/dods-model';
+import {
+    SearchUsersInput,
+    SearchUsersOutput,
+    UserProfileError,
+    UserProfilePersisterV2,
+} from '../domain';
 
-import { SearchUsersInput, SearchUsersOutput, UserProfileError, UserProfilePersisterV2 } from '../domain';
+import { Op } from 'sequelize';
 
 export const LAST_NAME_COLUMN = 'lastName';
 export const ROLE_ID_COLUMN = 'roleId';
 export const ASC = 'ASC';
 
 export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
+    static defaultInstance: UserProfilePersisterV2 =
+        new UserProfileRepositoryV2();
 
-    static defaultInstance: UserProfilePersisterV2 = new UserProfileRepositoryV2();
+    async searchUsers(
+        parameters: SearchUsersInput
+    ): Promise<SearchUsersOutput> {
+        const { name, startsWith, role, limit, offset, sortBy, sortDirection } =
+            parameters;
 
-    async searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput> {
+        let whereClause: any = {};
 
-        const { name, startsWith, role, limit, offset, sortBy, sortDirection } = parameters;
-
-        let whereClause: any = {
-            [Op.or]: [
-                { firstName: { [Op.like]: `${name}%` } },
-                { lastName: { [Op.like]: `${name}%` } }
-            ]
-        };
+        if (name) {
+            whereClause = {
+                [Op.or]: [
+                    { firstName: { [Op.like]: `${name}%` } },
+                    { lastName: { [Op.like]: `${name}%` } },
+                ],
+            };
+        }
 
         if (startsWith) {
             whereClause[LAST_NAME_COLUMN] = { [Op.like]: `${startsWith}%` };
@@ -31,7 +42,9 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             roleRecord = await Role.findOne({ where: { uuid: role } });
 
             if (!roleRecord) {
-                throw new UserProfileError(`Error: RoleUuid ${role} does not exist`);
+                throw new UserProfileError(
+                    `Error: RoleUuid ${role} does not exist`
+                );
             }
 
             whereClause[ROLE_ID_COLUMN] = roleRecord?.id;
@@ -41,16 +54,22 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             where: whereClause,
             subQuery: false,
             include: [User.associations.role],
-            order: [
-                [sortBy!, sortDirection!],
-            ],
+            order: [sortBy!, sortDirection!],
             offset: offset!,
             limit: limit!,
         });
 
         return {
-            users: rows.map(({ uuid, firstName, lastName, primaryEmail }) => ({ uuid, firstName, lastName, email: primaryEmail, role: roleRecord!.title })),
-            count
+            users: rows.map(
+                ({ uuid, firstName, lastName, primaryEmail, role }) => ({
+                    uuid,
+                    firstName,
+                    lastName,
+                    email: primaryEmail,
+                    role: role.title,
+                })
+            ),
+            count,
         };
     }
 }
