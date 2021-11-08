@@ -54,10 +54,10 @@ module "migration-stage-3-sqs-queue" {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-// - Migration stage 3. misses storage
+// - Migration stage 3. misses queue
 // --------------------------------------------------------------------------------------------------------------------
-module "migration-stage-3-s3-misses" {
-  source      = "./modules/s3"
+module "migration-stage-3-sqs-misses" {
+  source      = "./modules/sqs"
   environment = var.environment
   name        = "migration-stage-3-misses"
 }
