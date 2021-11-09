@@ -1,10 +1,10 @@
-import { EditorialRecordStatus, User } from '@dodsgroup/dods-model';
-
-export interface CreateEditorialRecordParameters {
+interface EditorialRecordBase {
     documentName: string;
     s3Location: string;
     informationType?: string;
     contentSource?: string;
+}
+export interface CreateEditorialRecordParameters extends EditorialRecordBase {
     assignedEditorId?: string;
     statusId?: string;
 }
@@ -14,10 +14,35 @@ export interface GenericListingRecord {
     name: string;
 }
 
-export interface EditorialRecordOutput extends CreateEditorialRecordParameters {
+export interface EditorialRecordOutput extends EditorialRecordBase {
     uuid: string;
-    assignedEditor?: User;
-    status?: EditorialRecordStatus;
+    assignedEditor?: {
+        uuid: string;
+        fullName: string;
+    };
+    status?: {
+        uuid: string;
+        status: string;
+    };
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface SearchEditorialRecordParameters {
+    searchTerm?: string;
+    contentSource?: string;
+    informationType?: string;
+    status?: string;
+    page: string;
+    pageSize: string;
+    startDate?: string;
+    endDate?: string;
+}
+
+export interface EditorialRecordListOutput {
+    totalRecords: number;
+    filteredRecords: number;
+    results: Array<EditorialRecordOutput>;
 }
 
 

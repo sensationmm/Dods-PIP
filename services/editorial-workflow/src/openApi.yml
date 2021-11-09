@@ -23,25 +23,25 @@ paths:
             parameters:
                 - in: query
                   name: searchTerm
-                  description: Search Criteria
+                  description: Search records with coincidences on name
                   schema:
                       type: string
                   required: false
                 - in: query
                   name: contentSource
-                  description: Search Criteria
+                  description: Filter records using content source
                   schema:
                       type: string
                   required: false
                 - in: query
                   name: informationType
-                  description: Search Criteria
+                  description: Filter records using information type
                   schema:
                       type: string
                   required: false
                 - in: query
                   name: status
-                  description: Search Criteria
+                  description: Filter records using status
                   schema:
                       type: string
                       format: uuid
@@ -58,6 +58,20 @@ paths:
                   description: Quantity of items per page in pagination
                   schema:
                       type: integer
+                  required: false
+                - in: query
+                  name: startDate
+                  description: Filter records starting from a specific date
+                  schema:
+                      type: string
+                      format: date
+                  required: false
+                - in: query
+                  name: endDate
+                  description: Filter records until a specific date
+                  schema:
+                      type: string
+                      format: date
                   required: false
             responses:
                 '200':
@@ -316,7 +330,7 @@ components:
                             type: string
                             format: uuid
                             example: d290f1ss-6c54-4b01-98e6-d701748f7151
-                        name:
+                        fullName:
                             type: string
                             example: John Doe
                 status:

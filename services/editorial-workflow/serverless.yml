@@ -128,4 +128,11 @@ functions:
             - http:
                   method: get
                   path: editorial-record-status
-    
+
+    searchEditorialRecords:
+        handler: src/handlers/searchEditorialRecords/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: get        
+                  path: editorial-record
