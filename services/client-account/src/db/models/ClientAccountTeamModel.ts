@@ -27,7 +27,7 @@ class ClientAccountTeamModel
 
     public UserProfileModels?: UserProfileModel[];
 
-    public parsedType!: 'consultant' | 'client';
+    public parsedType!: 'Team Member' | 'Account Manager' | 'Client User';
 
     //Timestamps
     public readonly createdAt!: Date;
@@ -62,9 +62,11 @@ ClientAccountTeamModel.init(
             get() {
                 switch (this.teamMemberType) {
                     case 1:
-                        return 'consultant';
+                        return 'Team Member';
                     case 2:
-                        return 'client';
+                        return 'Account Manager';
+                    case 3:
+                        return 'Client User';
                     default:
                         return 'Invalid Type';
                 }

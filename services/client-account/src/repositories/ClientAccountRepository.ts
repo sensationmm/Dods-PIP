@@ -83,7 +83,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: ['subscriptionType'],
+            include: ['subscriptionType', 'team'],
         });
 
         if (clientAccountModel) {
@@ -105,6 +105,25 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         if (clientAccountModel) {
             return clientAccountModel;
+        } else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
+
+    async deleteClientAccountTeamMembers(
+        clientAccountId: string
+    ): Promise<boolean> {
+        const clientAccount = await this.model.findOne({
+            where: { uuid: clientAccountId },
+        });
+
+        if (clientAccount) {
+            this.teamModel.destroy({
+                where: {
+                    clientAccountId: clientAccount.id,
+                },
+            });
+            return true;
         } else {
             throw new Error('Error: clientAccount not found');
         }

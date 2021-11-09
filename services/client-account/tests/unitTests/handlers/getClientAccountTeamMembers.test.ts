@@ -1,5 +1,12 @@
-import { GetClientAccountParameters, TeamMemberResponse } from '../../../src/domain';
-import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+import {
+    GetClientAccountParameters,
+    TeamMemberResponse,
+} from '../../../src/domain';
+import {
+    HttpResponse,
+    HttpStatusCode,
+    createContext,
+} from '@dodsgroup/dods-lambda';
 
 import { ClientAccountRepository } from '../../../src/repositories';
 import { getClientAccountTeamMembers } from '../../../src/handlers/getClientAccountTeamMembers/getClientAccountTeamMembers';
@@ -11,12 +18,12 @@ const SUCCESS_ACCOUNT_RESPONSE: TeamMemberResponse[] = [
     {
         id: '89139c46-711d-42cf-affd-b865dd9191eb',
         name: 'Latest Tester',
-        type: 'consultant',
+        teamMemberType: 'Team Member',
     },
     {
         id: '30360fcd-91be-46f3-8177-e2123f756838',
         name: 'Employee Example',
-        type: 'client',
+        teamMemberType: 'Account Manager',
     },
 ];
 
@@ -47,7 +54,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             expectedRepositoryResponse
         );
 
-        const response = await getClientAccountTeamMembers(parameters, defaultContext);
+        const response = await getClientAccountTeamMembers(
+            parameters,
+            defaultContext
+        );
 
         expect(response).toEqual(expectedResponse);
 

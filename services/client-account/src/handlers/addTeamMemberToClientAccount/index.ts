@@ -1,5 +1,9 @@
+import { addTeamMemberToClientAccount } from './addTeamMemberToClientAccount';
 import { buildLambdaFunction } from '@dodsgroup/dods-lambda';
 import { config } from '../../domain';
-import { addTeamMemberToClientAccount } from './addTeamMemberToClientAccount';
 
-export const handle = buildLambdaFunction(addTeamMemberToClientAccount, { openApiDocumentPath: config.openApiPath, validateRequests: true, validateResponses: false });
+export const handle = buildLambdaFunction(addTeamMemberToClientAccount, {
+    openApiDocumentPath: config.openApiPath,
+    validateRequests: false,
+    validateResponses: false,
+});

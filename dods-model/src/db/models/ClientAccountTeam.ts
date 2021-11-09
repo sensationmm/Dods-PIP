@@ -1,6 +1,17 @@
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, HasManyGetAssociationsMixin, HasManyHasAssociationMixin, Model, Optional } from 'sequelize';
+import {
+    Association,
+    DataTypes,
+    HasManyAddAssociationMixin,
+    HasManyCountAssociationsMixin,
+    HasManyCreateAssociationMixin,
+    HasManyGetAssociationsMixin,
+    HasManyHasAssociationMixin,
+    Model,
+    Optional,
+} from 'sequelize';
+import { ClientAccount, User } from '.';
+
 import sequelizeConnection from '../config/sequelizeConnection';
-import { User, ClientAccount } from '.';
 
 interface ClientAccountTeamAttributes {
     clientAccountId: number;
@@ -9,11 +20,16 @@ interface ClientAccountTeamAttributes {
     parsedType: string;
 }
 
-export interface ClientAccountTeamInput extends Optional<ClientAccountTeamAttributes, 'userId'> { }
+export interface ClientAccountTeamInput
+    extends Optional<ClientAccountTeamAttributes, 'userId'> {}
 
-export interface ClientAccountTeamOutput extends Required<ClientAccountTeamAttributes> { }
+export interface ClientAccountTeamOutput
+    extends Required<ClientAccountTeamAttributes> {}
 
-export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, ClientAccountTeamInput> implements ClientAccountTeamAttributes {
+export class ClientAccountTeam
+    extends Model<ClientAccountTeamAttributes, ClientAccountTeamInput>
+    implements ClientAccountTeamAttributes
+{
     public clientAccountId!: number;
     public userId!: number | null;
     public teamMemberType!: number;
@@ -28,7 +44,6 @@ export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, Client
     public countClientAccounts!: HasManyCountAssociationsMixin;
     public createClientAccount!: HasManyCreateAssociationMixin<ClientAccount>;
 
-
     // mixins for association (optional)
     public readonly users!: User[]; // Note this is optional since it's only populated when explicitly requested in code
     public getUsers!: HasManyGetAssociationsMixin<User>; // Note the null assertions!
@@ -38,8 +53,8 @@ export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, Client
     public createUser!: HasManyCreateAssociationMixin<User>;
 
     public static associations: {
-        clientAccounts: Association<ClientAccountTeam, ClientAccount>,
-        users: Association<ClientAccountTeam, User>
+        clientAccounts: Association<ClientAccountTeam, ClientAccount>;
+        users: Association<ClientAccountTeam, User>;
     };
 
     // Timestamps
@@ -48,52 +63,55 @@ export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, Client
     public readonly deletedAt!: Date | null;
 }
 
-ClientAccountTeam.init({
-    clientAccountId: {
-        type: DataTypes.INTEGER({ length: 11 }),
-        allowNull: false,
-        references: {
-            model: 'dods_client_accounts',
-            key: 'id'
+ClientAccountTeam.init(
+    {
+        clientAccountId: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: false,
+            references: {
+                model: 'dods_client_accounts',
+                key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
-    },
-    userId: {
-        type: DataTypes.INTEGER({ length: 11 }),
-        allowNull: true,
-        defaultValue: null,
-        references: {
-            model: 'dods_users',
-            key: 'id'
+        userId: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: true,
+            defaultValue: null,
+            references: {
+                model: 'dods_users',
+                key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
-    },
-    teamMemberType: {
-        type: DataTypes.INTEGER({ length: 11 }),
-        allowNull: false,
-    },
-    parsedType: {
-        type: DataTypes.VIRTUAL(DataTypes.STRING, ['teamMemberType']),
-        get() {
-            switch (this.teamMemberType) {
-                case 1:
-                    return 'consultant';
-                case 2:
-                    return 'client';
-                default:
-                    return 'Invalid Type';
-            }
+        teamMemberType: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: false,
         },
-        set(_value) {
-            throw new Error('Do not try to set the `parsedType` value!');
+        parsedType: {
+            type: DataTypes.VIRTUAL(DataTypes.STRING, ['teamMemberType']),
+            get() {
+                switch (this.teamMemberType) {
+                    case 1:
+                        return 'consultant';
+                    case 2:
+                        return 'client';
+                    default:
+                        return 'Invalid Type';
+                }
+            },
+            set(_value) {
+                throw new Error('Do not try to set the `parsedType` value!');
+            },
         },
     },
-}, {
-    tableName: 'dods_client_account_teams',
-    underscored: true,
-    timestamps: true,
-    sequelize: sequelizeConnection,
-    // paranoid: true
-});
+    {
+        tableName: 'dods_client_account_teams',
+        underscored: true,
+        timestamps: true,
+        sequelize: sequelizeConnection,
+        // paranoid: true
+    }
+);

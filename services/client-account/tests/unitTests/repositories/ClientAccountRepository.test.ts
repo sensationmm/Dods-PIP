@@ -3,6 +3,8 @@ import {
     ClientAccountRepository,
 } from '../../../src/repositories';
 
+import { SearchClientAccountParameters } from '../../../src/domain';
+
 const SequelizeMock = require('sequelize-mock');
 
 const SUCCESS_UPDATE_CLIENT_ACCOUNT = {
@@ -41,6 +43,9 @@ const UPDATE_CLIENT_ACCOUNT_HEADER =
     ClientAccountRepository.defaultInstance.updateClientAccountHeader.name;
 const UPDATE_COMPLETION =
     ClientAccountRepository.defaultInstance.UpdateCompletion.name;
+
+const SEARCH_FUNCTION =
+    ClientAccountRepository.defaultInstance.searchClientAccount.name;
 
 const dbMock = new SequelizeMock();
 
@@ -642,5 +647,185 @@ describe(`Check same name client `, () => {
         );
 
         expect(response).toEqual(false);
+    });
+});
+
+describe(`Delete Client Account Team Members `, () => {
+    test(`Valid delete`, async () => {
+        const clientAccountId = 'b0605d89-6200-4861-a9d5-258ccb33cbe3';
+
+        const response = await testRepository.deleteClientAccountTeamMembers(
+            clientAccountId
+        );
+
+        expect(response).toEqual(true);
+    });
+
+    test(`Delete invalid input not client account `, async () => {
+        const clientAccountId = 'f4ad407b-6a88-4438-9538-7ef15b61c7fad';
+
+        const expectedError = new Error('Error: clientAccount not found');
+
+        try {
+            await testRepository.deleteClientAccountTeamMembers(
+                clientAccountId
+            );
+        } catch (error) {
+            expect(error).toEqual(expectedError);
+        }
+    });
+});
+
+describe(`FindOne Model Client Account`, () => {
+    test(`Valid FindOne Model `, async () => {
+        const params = { uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3' };
+
+        const expectedResponse = {
+            id: 1,
+            uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
+            name: 'Company One',
+            notes: '',
+            contactName: 'Marty MacFly',
+            contactEmailAddress: 'marti@example.com',
+            contactTelephoneNumber: '+122233443',
+            subscriptionSeats: 32,
+            consultantHours: 13,
+            contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+            contractRollover: false,
+            contractEndDate: new Date('2022-02-01T01:01:01.001Z'),
+            isCompleted: true,
+            lastStepCompleted: 1,
+            subscriptionType: {
+                uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
+                name: 'subs_1',
+                location: 2,
+                contentType: 2,
+            },
+        };
+
+        const response = await testRepository.findOne(params);
+
+        expect(response).toEqual(expect.objectContaining(expectedResponse));
+    });
+
+    test(`FindOne invalid model `, async () => {
+        const params = { uuid: 'f4ad407b-6a88-4438-9538-7ef15b61c7fad' };
+
+        const expectedError = new Error('Error: clientAccount not found');
+
+        try {
+            await testRepository.findOne(params);
+        } catch (error) {
+            expect(error).toEqual(expectedError);
+        }
+    });
+});
+
+describe(`FindOne Model Client Account`, () => {
+    test(`Valid FindOne Model `, async () => {
+        const params = { uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3' };
+
+        const expectedResponse = {
+            id: 1,
+            uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
+            name: 'Company One',
+            notes: '',
+            contactName: 'Marty MacFly',
+            contactEmailAddress: 'marti@example.com',
+            contactTelephoneNumber: '+122233443',
+            subscriptionSeats: 32,
+            consultantHours: 13,
+            contractStartDate: new Date('2021-01-01T01:01:01.001Z'),
+            contractRollover: false,
+            contractEndDate: new Date('2022-02-01T01:01:01.001Z'),
+            isCompleted: true,
+            lastStepCompleted: 1,
+            subscriptionType: {
+                uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
+                name: 'subs_1',
+                location: 2,
+                contentType: 2,
+            },
+        };
+
+        const response = await testRepository.findOne(params);
+
+        expect(response).toEqual(expect.objectContaining(expectedResponse));
+    });
+
+    test(`FindOne invalid model `, async () => {
+        const params = { uuid: 'f4ad407b-6a88-4438-9538-7ef15b61c7fad' };
+
+        const expectedError = new Error('Error: clientAccount not found');
+
+        try {
+            await testRepository.findOne(params);
+        } catch (error) {
+            expect(error).toEqual(expectedError);
+        }
+    });
+});
+
+describe(`${SEARCH_FUNCTION} handler`, () => {
+    test(`${SEARCH_FUNCTION} Valid Search ClientAccounts `, async () => {
+        const params: SearchClientAccountParameters = {
+            limit: '10',
+            offset: '0',
+            isCompleted: 'false',
+            locations: 'uk',
+        };
+        const expectedResponse = {
+            clientAccountsData: [
+                {
+                    isCompleted: undefined,
+                    isEU: false,
+                    isUK: false,
+                    lastStepCompleted: undefined,
+                    location: undefined,
+                    name: 'Company One',
+                    notes: undefined,
+                    projects: 0,
+                    subscription: undefined,
+                    team: undefined,
+                    uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
+                },
+            ],
+            totalRecordsModels: 1,
+        };
+
+        const response = await testRepository.searchClientAccount(params);
+
+        expect(response).toEqual(expectedResponse);
+    });
+
+    test(`${SEARCH_FUNCTION} Valid Search different parameters `, async () => {
+        const params: SearchClientAccountParameters = {
+            limit: '10',
+            offset: '0',
+            isCompleted: 'true',
+            locations: 'eu',
+        };
+        const expectedResponse = {
+            clientAccountsData: [
+                {
+                    isCompleted: undefined,
+                    isEU: false,
+                    isUK: false,
+                    lastStepCompleted: undefined,
+                    location: undefined,
+                    name: 'Company One',
+                    notes: undefined,
+                    projects: 0,
+                    subscription: undefined,
+                    team: undefined,
+                    uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
+                },
+            ],
+            totalRecordsModels: 1,
+        };
+
+        const response = await testRepository.searchClientAccount(params);
+
+        expect(response).toEqual(expectedResponse);
     });
 });
