@@ -104,3 +104,28 @@ functions:
             - http:
                   method: post
                   path: editorial-record
+    
+    getContentSourcesList:
+        handler: src/handlers/getContentSourcesList/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: get
+                  path: content-sources
+
+    getInformationTypesList:
+        handler: src/handlers/getInformationTypesList/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: get
+                  path: information-types
+
+    getEditorialRecordStatusList:
+        handler: src/handlers/getEditorialRecordStatusList/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: get
+                  path: editorial-record-status
+    

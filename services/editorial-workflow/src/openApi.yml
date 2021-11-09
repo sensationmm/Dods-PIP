@@ -73,7 +73,7 @@ paths:
             summary: List content sources based upon data in Editorial Records table
             responses:
                 '200':
-                    $ref: '#/components/responses/ContentSourceListResponse'
+                    $ref: '#/components/responses/ContentSourcesListResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
                 '401':
@@ -85,7 +85,7 @@ paths:
             summary: List information types based upon data in Editorial Records table
             responses:
                 '200':
-                    $ref: '#/components/responses/InformationTypeListResponse'
+                    $ref: '#/components/responses/InformationTypesListResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
                 '401':
@@ -107,7 +107,7 @@ paths:
 
 components:
     responses:
-        ContentSourceListResponse:
+        ContentSourcesListResponse:
             description: Content sources in editorial records
             content: 
                 application/json:
@@ -123,8 +123,8 @@ components:
                             contentSources:
                                 type: array
                                 items:
-                                    type: string
-        InformationTypeListResponse:
+                                    $ref: '#/components/schemas/ContentSourcesListResponse'
+        InformationTypesListResponse:
             description: Information types in editorial records
             content: 
                 application/json:
@@ -137,10 +137,10 @@ components:
                             success:
                                 type: boolean
                                 example: true
-                            contentSources:
+                            informationTypes:
                                 type: array
                                 items:
-                                    type: string
+                                    $ref: '#/components/schemas/InformationTypesListResponse'
         EditorialRecordResponse:
             description: Response with single Editorial Record
             content:
@@ -266,6 +266,24 @@ components:
                     type: string
                     example: In Progress
         
+        ContentSourceBase:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                    example: House of Commons
+
+        InformationTypeBase:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                    example: Press Release
+
         EditorialRecordRequest:
             allOf:
               - $ref: '#/components/schemas/EditorialRecordBase'
@@ -334,3 +352,31 @@ components:
                 name:
                     type: string
                     example: In Progress
+
+        ContentSourcesListResponse:
+            allOf:
+              - $ref: '#/components/schemas/ContentSourceBase'
+            type: object
+            required:
+              - id
+              - name
+            properties:
+                id: 
+                    type: string
+                name:
+                    type: string
+                    example: House of Commons
+        
+        InformationTypesListResponse:
+            allOf:
+              - $ref: '#/components/schemas/InformationTypeBase'
+            type: object
+            required:
+              - id
+              - name
+            properties:
+                id: 
+                    type: string
+                name:
+                    type: string
+                    example: Press Release

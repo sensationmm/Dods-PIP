@@ -50,6 +50,7 @@
         "mockserver-client": "^5.11.2",
         "open": "^8.2.1",
         "pre-commit": "^1.2.2",
+        "sequelize-mock": "^0.10.2",
         "serverless": "^2.60.1",
         "serverless-dependson-plugin": "^1.1.2",
         "serverless-localstack": "^0.4.35",
