@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "dependencies": {
     "aws-sdk": "^2.970.0",
-    "serverless": "^2.64.0",
+    "serverless": "^2.64.0"
   },
   "devDependencies": {
     "serverless-ignore": "^0.1.6",
