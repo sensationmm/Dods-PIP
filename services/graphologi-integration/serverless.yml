@@ -2,6 +2,8 @@ service: graphologi-integration
 
 frameworkVersion: '2'
 
+projectDir: ../
+
 plugins:
   - serverless-python-requirements
 custom:
