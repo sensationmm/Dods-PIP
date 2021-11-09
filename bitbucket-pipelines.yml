@@ -32,6 +32,7 @@ pipelines:
       - step:
           name: Deploy Graphologi Webhook
           image: gioatsomoglobal/devopstools:0.2.0
+          size: 2x
           services:
             - docker
           caches:
