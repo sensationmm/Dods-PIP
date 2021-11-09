@@ -3,8 +3,11 @@
   "description": "Lambda and Endpoint for taxonomy ingestion from Graphologi",
   "version": "0.1.0",
   "dependencies": {
-    "aws-sdk": "^2.970.0",
-    "@elastic/elasticsearch": "7.14.0"
+    "@elastic/elasticsearch": "7.14.0",
+    "aws-sdk": "^2.970.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "serverless-ignore": "^0.1.6",
+    "serverless-python-requirements": "^5.1.1"
+  }
 }
