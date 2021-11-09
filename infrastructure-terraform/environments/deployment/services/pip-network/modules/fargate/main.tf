@@ -221,26 +221,6 @@ resource "aws_ecr_repository" "frontend" {
   name = "pip/frontend"
 }
 
-data "aws_ecr_authorization_token" "token" {
-  registry_id = aws_ecr_repository.frontend.registry_id
-}
-
-locals {
-  ecr_secret = {
-    username = data.aws_ecr_authorization_token.token.user_name
-    password = data.aws_ecr_authorization_token.token.password
-  }
-}
-
-resource "aws_secretsmanager_secret" "ecr" {
-  name = "all/loginECR"
-}
-
-resource "aws_secretsmanager_secret_version" "ecr" {
-  secret_id     = aws_secretsmanager_secret.ecr.id
-  secret_string = jsonencode(local.ecr_secret)
-}
-
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "${var.project}-${var.environment}-${local.main_resource_name}-cluster"
 }

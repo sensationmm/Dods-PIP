@@ -120,8 +120,7 @@ pipelines:
   branches:
     master:
       - parallel:
-
-        - step: 
+        - step:
             name: Auth-Authz Deploy
             size: 2x
             image: gioatsomoglobal/devopstools:0.4.5
@@ -209,9 +208,9 @@ pipelines:
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
 
         - step:
-            name: Terraform Deploy
+            name: Terraform Plan
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
+            image: gioatsomoglobal/devopstools:0.4.6
             condition:
               changesets:
                 includePaths:
@@ -219,8 +218,8 @@ pipelines:
             script:
               - cd infrastructure-terraform
               - terraform init
-              - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" 
-              # - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve 
+              - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
+              - echo "Review the plan. If you decide to apply it, run the custom job 'infrastructure-deployment'"
 
   custom:
     deployment-to-staging:
@@ -244,3 +243,13 @@ pipelines:
             - yarn build-storybook
             - aws s3 rm s3://test-dods-pip-storybook/
             - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
+
+    infrastructure-deployment:
+      - step:
+          name: Terraform Apply
+          image: gioatsomoglobal/devopstools:0.4.6
+          size: 2x
+          script:
+            - cd infrastructure-terraform
+            - terraform init
+            - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve
