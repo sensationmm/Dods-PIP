@@ -182,22 +182,15 @@ export class ClientAccountRepository implements ClientAccountPersister {
             };
         }
 
-        const totalRecordsModels = await this.model.findAll({
-            where: clientAccountWhere,
-            subQuery: false,
-            include: ['subscriptionType', 'team'],
-        });
+        const { rows: clientAccountModels, count: totalRecords } =
+            await this.model.findAndCountAll({
+                where: clientAccountWhere,
+                include: ['subscriptionType', 'team'],
+                order: [[sortByQuery, sortDirectionQuery]],
+                offset: offsetNum,
+                limit: limitNum,
+            });
 
-        const totalRecords = totalRecordsModels.length;
-
-        const clientAccountModels = await this.model.findAll({
-            where: clientAccountWhere,
-            subQuery: false,
-            include: ['subscriptionType', 'team'],
-            order: [[sortByQuery, sortDirectionQuery]],
-            offset: offsetNum,
-            limit: limitNum,
-        });
         if (clientAccountModels) {
             const clientAccounts: Array<SearchClientAccountResponse> =
                 clientAccountModels.map((model) =>
