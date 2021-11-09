@@ -10,16 +10,15 @@ provider:
 
 layers:
   DodsPandas:
-    path: layers/pandas
-    name: ${self:provider.stage}-Pyton3.7-Pandas1.3.4
+    path: layers
     description: Pandas 1.3.4 on Python 3.7
     compatibleRuntimes:
       - python3.7
     allowedAccounts:
       - '*'
 
-package:
-  individually: true
+# package:
+#   individually: true
 
 resources:
   Outputs:
