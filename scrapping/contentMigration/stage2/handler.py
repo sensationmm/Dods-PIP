@@ -1,4 +1,3 @@
-from lib.data_model import DataModel
 from lib.logger import logger
 import boto3
 import os, sys
@@ -32,27 +31,12 @@ def s3_list_folders(prefix: str):
             if bool(message):
                 string_message = dumps(message)
                 try:
-                    short_date = datetime.now().strftime("%Y-%m-%d")
-
-                    hash_code = Common.hash(short_date, string_message)
-                    document = object
-                    try:
-                        document = DataModel.get(hash_code)
-                    except DataModel.DoesNotExist:
-                        logger.info(DataModel.DoesNotExist.msg)
-
-                    if hasattr(document, 'document_hash'):
-                        raise Exception('this document already processed!')
-                    else:
-                        sqs_client.send_message(
-                            QueueUrl=SQS_QUEUE,
-                            MessageBody=string_message,
-                            MessageGroupId='migration-step1-group-id'
+                    sqs_client.send_message(
+                        QueueUrl=SQS_QUEUE,
+                        MessageBody=string_message,
+                        MessageGroupId='migration-step1-group-id'
                         )
-                        asset = DataModel()
-                        asset.document_hash = hash_code
-                        asset.save()
-                        logger.info('Message has sent to SQS')
+                    logger.info('Message has sent to SQS')
                 except Exception as e:
                     logger.exception(e)
                 logger.info(message)
