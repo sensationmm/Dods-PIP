@@ -8,3 +8,8 @@ export type TeamMember = {
   name: string;
   type: string;
 };
+
+export type DropdownValue = {
+  label: string;
+  value: string;
+};

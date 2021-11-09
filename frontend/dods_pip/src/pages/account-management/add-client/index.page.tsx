@@ -8,7 +8,7 @@ import ProgressTracker from '../../../components/ProgressTracker';
 import LoadingHOC, { LoadingHOCProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
-import { TeamMember } from '../../../utils/type';
+import { DropdownValue, TeamMember } from '../../../utils/type';
 import AccountInfo, { Errors as ErrorsStep1 } from './account-info';
 import Subscription, { Errors as ErrorsStep2 } from './subscription';
 import Team, { Errors as ErrorsStep3 } from './team';
@@ -105,8 +105,8 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
   const [endDateType, setEndDateType] = React.useState<string>('');
   const [errorsStep2, setErrorsStep2] = React.useState<ErrorsStep2>({});
 
-  const [teamMembers, setTeamMembers] = React.useState<Array<string>>([]);
-  const [accountManagers, setAccountManagers] = React.useState<Array<string>>([]);
+  const [teamMembers, setTeamMembers] = React.useState<Array<string | DropdownValue>>([]);
+  const [accountManagers, setAccountManagers] = React.useState<Array<string | DropdownValue>>([]);
   const [clientUsers, setClientUsers] = React.useState<Array<TeamMember>>([]);
   const [clientFirstName, setClientFirstName] = React.useState<string>('');
   const [clientLastName, setClientLastName] = React.useState<string>('');

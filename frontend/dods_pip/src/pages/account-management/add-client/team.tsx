@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce';
 import trim from 'lodash/trim';
 import React from 'react';
 
@@ -19,10 +20,8 @@ import Text from '../../../components/Text';
 import color from '../../../globals/color';
 import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
-import useTeamMembers from '../../../lib/useTeamMembers';
-import MockUserData from '../../../mocks/data/users.json';
 import { Api, BASE_URI } from '../../../utils/api';
-import { TeamMember, TeamType } from '../../../utils/type';
+import { DropdownValue, TeamMember, TeamType } from '../../../utils/type';
 import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
 
@@ -43,14 +42,20 @@ enum RoleType {
   Admin = '0b4fc341-8992-48da-94c8-945b9b9fa7ea',
 }
 
+type User = {
+  uuid: string;
+  firstName: string;
+  lastName: string;
+};
+
 export interface TeamProps {
   addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
   accountId: string;
-  teamMembers: Array<string>;
-  setTeamMembers: (vals: Array<string>) => void;
-  accountManagers: Array<string>;
-  setAccountManagers: (vals: Array<string>) => void;
+  teamMembers: Array<string | DropdownValue>;
+  setTeamMembers: (vals: Array<string | DropdownValue>) => void;
+  accountManagers: Array<string | DropdownValue>;
+  setAccountManagers: (vals: Array<string | DropdownValue>) => void;
   clientUsers: Array<TeamMember>;
   setClientUsers: (vals: Array<TeamMember>) => void;
   clientFirstName: string;
@@ -108,6 +113,7 @@ const Team: React.FC<TeamProps> = ({
 }) => {
   const [createUser, setCreateUser] = React.useState<boolean>(false);
   const [addUser, setAddUser] = React.useState<boolean>(false);
+  const [users, setUsers] = React.useState<DropdownValue[]>([]);
   const isComplete = teamMembers.length > 0 || clientUsers.length > 0;
   const isUserComplete =
     trim(clientFirstName) !== '' &&
@@ -116,10 +122,23 @@ const Team: React.FC<TeamProps> = ({
     clientAccess !== '' &&
     Object.keys(errors).length === 0;
 
-  useTeamMembers({
-    uuid: accountId,
-    setClientUsers,
-  });
+  const searchUsers = debounce(async (name) => {
+    try {
+      const response = await fetchJson(`${BASE_URI}${Api.Users}?name=${name}`, { method: 'GET' });
+      const { success = false, data = [] } = response;
+
+      if (success && Array.isArray(data)) {
+        const values = data.map((item: User) => ({
+          value: item.uuid,
+          label: `${item.firstName} ${item.lastName}`,
+        }));
+
+        setUsers(values);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, 500);
 
   // @todo - remove this when API is ready for integration
   const notImplementedYet = () => {
@@ -289,14 +308,18 @@ const Team: React.FC<TeamProps> = ({
                       </TagSelectorStyles.containerHeaderEmpty>
                     )}
                     <TagSelectorStyles.tags>
-                      {teamMembers.map((item, count) => (
-                        <Chips
-                          data-test="added-team-members"
-                          key={`chip-${count}`}
-                          label={item}
-                          avatarType="consultant"
-                        />
-                      ))}
+                      {teamMembers.map((item) => {
+                        item = item as DropdownValue;
+                        return (
+                          <Chips
+                            data-test="added-team-members"
+                            key={`chip-${item.value}`}
+                            label={item.label}
+                            value={item.value}
+                            avatarType="consultant"
+                          />
+                        );
+                      })}
                     </TagSelectorStyles.tags>
                   </TagSelectorStyles.containerHeader>
                   {accountManagers.length > 0 && (
@@ -309,14 +332,18 @@ const Team: React.FC<TeamProps> = ({
                           </Text>
                         </TagSelectorStyles.containerHeaderTitle>
                         <TagSelectorStyles.tags>
-                          {accountManagers.map((item, count) => (
-                            <Chips
-                              data-test="added-account-managers"
-                              key={`chip-${count}`}
-                              label={item}
-                              avatarType="consultant"
-                            />
-                          ))}
+                          {accountManagers.map((item) => {
+                            item = item as DropdownValue;
+                            return (
+                              <Chips
+                                data-test="added-account-managers"
+                                key={`chip-${item.value}`}
+                                label={item.label}
+                                value={item.value}
+                                avatarType="consultant"
+                              />
+                            );
+                          })}
                         </TagSelectorStyles.tags>
                       </TagSelectorStyles.containerHeader>
                     </>
@@ -335,7 +362,8 @@ const Team: React.FC<TeamProps> = ({
             helperText="Click on the people to add them as a team members"
             placeholder="Start typing to search a person..."
             size="medium"
-            values={MockUserData.users}
+            values={users}
+            onKeyPress={searchUsers}
             onChange={setTeamMembers}
             selectedValues={teamMembers}
             icon="consultant"
@@ -350,7 +378,8 @@ const Team: React.FC<TeamProps> = ({
             helperText="Click on the people to add them as an account manager"
             placeholder="Start typing to search a person..."
             size="medium"
-            values={MockUserData.users}
+            values={users}
+            onKeyPress={searchUsers}
             onChange={setAccountManagers}
             selectedValues={accountManagers}
             icon="consultant"

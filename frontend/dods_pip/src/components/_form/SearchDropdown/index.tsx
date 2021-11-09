@@ -1,6 +1,7 @@
 import React from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
+import { DropdownValue } from '../../../utils/type';
 import Text from '../../Text';
 import InputSearch, { InputSearchProps } from '../InputSearch';
 import { SelectProps } from '../Select';
@@ -10,12 +11,15 @@ import * as Styled from './SearchDropdown.styles';
 export interface SearchDropdownProps extends Omit<InputSearchProps, 'value'> {
   value?: InputSearchProps['value'];
   values: SelectProps['options'];
-  selectedValues?: Array<string>;
+  selectedValues?: Array<string | DropdownValue>;
+  onChange: (val: string, item?: DropdownValue) => void;
+  onKeyPress?: (val: string) => void;
   isFilter?: boolean;
 }
 
 const SearchDropdown: React.FC<SearchDropdownProps> = ({
   onChange,
+  onKeyPress,
   values,
   selectedValues = [],
   isFilter = false,
@@ -27,6 +31,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   const [results, setResults] = React.useState<SelectProps['options']>([]);
 
   const searchHandler = (val: string) => {
+    if (typeof onKeyPress === 'function') {
+      onKeyPress(val);
+    }
+
     setSearch(val);
     const res = values.filter(
       (item) => val !== '' && item.label.toLowerCase().indexOf(val.toLowerCase()) > -1,
@@ -34,8 +42,8 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
     setResults(res.slice(0, 5));
   };
 
-  const handleChange = (val: string) => {
-    onChange(val);
+  const handleChange = (val: string, item?: DropdownValue) => {
+    onChange(val, item);
     reset();
   };
 
