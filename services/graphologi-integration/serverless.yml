@@ -7,11 +7,6 @@ projectDir: ../
 plugins:
   - serverless-python-requirements
 
-custom:
-  pythonRequirements:
-    dockerizePip: true
-    useDownloadCache: false
-
 provider:
   name: aws
   runtime: python3.7
