@@ -82,4 +82,4 @@ functions:
           path: /taxonomy
           method: put
     layers:
-      - ${cf:pandas-layer-${self:provider.stage}.DodsPandasLayerExport}
+      - ${cf:pandas-layer-${self:provider.stage}.PandasLayerExport}
