@@ -37,9 +37,8 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             whereClause[LAST_NAME_COLUMN] = { [Op.like]: `${startsWith}%` };
         }
 
-        let roleRecord: Role | null;
         if (role) {
-            roleRecord = await Role.findOne({ where: { uuid: role } });
+            const roleRecord = await Role.findOne({ where: { uuid: role } });
 
             if (!roleRecord) {
                 throw new UserProfileError(

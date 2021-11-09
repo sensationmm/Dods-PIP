@@ -1,7 +1,7 @@
 import { UserInput } from '@dodsgroup/dods-model';
 
 export type SearchUsersInput = {
-    name: string;
+    name?: string;
     startsWith?: string;
     role?: string;
     limit?: number;
