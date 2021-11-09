@@ -31,7 +31,7 @@ pipelines:
 
       - step:
           name: Deploy Graphologi Webhook
-          image: gioatsomoglobal/devopstools:0.2.0
+          image: gioatsomoglobal/devopstools:0.4.2
           size: 2x
           services:
             - docker
@@ -45,6 +45,26 @@ pipelines:
             - cd services/graphologi-integration
             - npm install
             - serverless deploy
+
+      - step:
+          name: Deploy Pandas Layer
+          image: gioatsomoglobal/devopstools:0.4.2
+          size: 2x
+          services:
+            - docker
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/pandas-layer/**"
+          script:
+            - cd services/pandas-layer
+            - npm install
+            - cd layers/pandas
+            - ./build_layer.sh
+            - cd ../..
+            - serverless deploy --stage dev
 
       - step:
           name: User Profile Service
