@@ -46,8 +46,6 @@ provider:
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     KEY_PREFIX: ${self:custom.resource_prefix}
-    DYNAMODB_TABLE: ${self:custom.dynamodb_table}
-    DYNAMODB_HOST: ${self:custom.dynamodb_host}
     REGION: ${file(../../serverless.common.yml):custom.region}
     INPUT_BUCKET: ${self:custom.s3_input_bucket}
     OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
@@ -66,18 +64,6 @@ provider:
         - "sqs:*"
       Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-1-queue.fifo"
 
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-        - dynamodb:DescribeTable
-      Resource:
-        - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
-
 functions:
   migrate:
     name: migration-step-1-publisher-${sls:stage}
@@ -90,23 +76,4 @@ functions:
     handler: handler.consumer
     timeout: 30
     events:
-      - sqs: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-1-queue.fifo
-
-resources:
-  Resources:
-    assetDynamoDbTable:
-      Type: 'AWS::DynamoDB::Table'
-      DeletionPolicy: ${self:custom.deletion_policy}
-      Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: document_hash
-            AttributeType: S
-        KeySchema:
-          -
-            AttributeName: document_hash
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-        TableName: ${self:custom.dynamodb_table}
+      - sqs: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-2-queue.fifo
