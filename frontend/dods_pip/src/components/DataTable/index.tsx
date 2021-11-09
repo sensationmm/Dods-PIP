@@ -91,6 +91,53 @@ export const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
   );
 };
 
+export const PlainTableHeading: React.FC<DataTableHeadingProps> = ({ headings, colWidths }) => {
+  const totalWidths = colWidths ? colWidths.reduce((prev, curr) => prev + curr, 0) : 0;
+
+  return (
+    <Styled.tableHead data-test="data-table-headings">
+      <Styled.tableRow>
+        {headings.map((item, count) => (
+          <Styled.plainTableHeading
+            key={`heading-${count}`}
+            data-test={`heading-${count}`}
+            style={{
+              width: colWidths ? `${Math.floor((colWidths[count] / totalWidths) * 100)}%` : 'auto',
+            }}
+          >
+            {item}
+          </Styled.plainTableHeading>
+        ))}
+      </Styled.tableRow>
+    </Styled.tableHead>
+  );
+};
+
+export const PlainTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
+  return (
+    <Styled.tableBody data-test="data-table-rows">
+      {rows.map((item, count) => {
+        const row = [];
+        row.push(
+          <Styled.tableRow key={`row-${count}`}>
+            {item.slice(1).map((col, count2) => {
+              return (
+                <Styled.plainTableCell
+                  key={`row-${count}-col-${count2}`}
+                  isLast={count === rows.length - 1 || item[0] !== rows[count + 1][0]}
+                >
+                  {col}
+                </Styled.plainTableCell>
+              );
+            })}
+          </Styled.tableRow>,
+        );
+        return row;
+      })}
+    </Styled.tableBody>
+  );
+};
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,  @typescript-eslint/no-explicit-any
 export const DataTableSort = (data: any): any => {
   return data.sort((a: DataObject, b: DataObject) => {
@@ -119,3 +166,22 @@ const DataTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => (
 );
 
 export default DataTable;
+
+export const PlainTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => {
+  return (
+    <Styled.wrapper data-test="component-data-table" cellSpacing={0}>
+      <PlainTableHeading headings={headings} colWidths={colWidths} />
+      {rows.length > 0 ? (
+        <PlainTableRows data-test="data-table-rows" rows={rows} />
+      ) : (
+        <Styled.tableBody>
+          <Styled.tableRow>
+            <Styled.plainCellNoData data-test="empty-data-warning" colSpan={headings.length}>
+              No data to show
+            </Styled.plainCellNoData>
+          </Styled.tableRow>
+        </Styled.tableBody>
+      )}
+    </Styled.wrapper>
+  );
+};

@@ -31,7 +31,7 @@ export enum EndDateType {
   Custom = 'custom',
 }
 
-type Subscription = {
+export type Subscription = {
   uuid: string;
   name: string;
 };
@@ -305,7 +305,7 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
           setClientAccess={setClientAccess}
           errors={errorsStep3}
           setErrors={setErrorsStep3}
-          onSubmit={() => router.push('/account-management/accounts')}
+          onSubmit={() => router.push(`/accounts/${accountId}`)}
           onBack={() => setActiveStep(2)}
         />
       )}

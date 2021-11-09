@@ -7,6 +7,11 @@ export const header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 48px;
+
+  h1 {
+    font-weight: 400;
+  }
 `;
 
 export const filterContainer = styled.div``;

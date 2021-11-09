@@ -76,3 +76,28 @@ export const tableCellNoData = styled.td`
   text-align: center;
   border-radius: 8px;
 `;
+
+export const plainTableHeading = styled.th`
+  color: ${color.theme.blue};
+  border-bottom: 1px solid ${color.shadow.blue};
+  padding: ${spacing(3)} ${spacing(8)};
+  background: ${color.base.white};
+  text-align: left;
+`;
+
+export const plainTableCell = styled.td<TableCellProps>`
+  position: relative;
+  padding: ${spacing(5)} ${spacing(8)};
+  background: ${color.base.white};
+  border-bottom: 1px solid ${color.shadow.blue};
+  text-align: left;
+  vertical-align: top;
+`;
+
+export const plainCellNoData = styled.td`
+  position: relative;
+  padding: ${spacing(5)} ${spacing(8)};
+  background: ${color.base.white};
+  border-bottom: 1px solid ${color.shadow.blue};
+  text-align: center;
+`;
