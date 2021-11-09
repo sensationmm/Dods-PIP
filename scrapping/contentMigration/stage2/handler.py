@@ -8,7 +8,7 @@ from lib.validation import Validator
 from json import loads, dumps
 
 INPUT_BUCKET = os.environ['INPUT_BUCKET']
-OUTPUT_BUCKET = os.environ['OUTPUT_BUCKET']
+# OUTPUT_BUCKET = os.environ['OUTPUT_BUCKET']
 SQS_QUEUE = os.environ['SQS_QUEUE']
 PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Content migration step-1'

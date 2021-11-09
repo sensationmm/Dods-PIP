@@ -48,7 +48,7 @@ provider:
     KEY_PREFIX: ${self:custom.resource_prefix}
     REGION: ${file(../../serverless.common.yml):custom.region}
     INPUT_BUCKET: ${self:custom.s3_input_bucket}
-    OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
+    # OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
     CONTENT_BUCKET: ${file(../../serverless.common.yml):custom.content_bucket}
