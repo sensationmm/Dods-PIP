@@ -16,13 +16,10 @@ custom:
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  dynamodb_table: ${self:custom.stack_name}
-  dynamodb_arn: arn:aws:dynamodb:${self:custom.region}:*:table/${self:custom.dynamodb_table}
-  dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
-  s3_input_bucket: pip-dev-migration-input
-  s3_output_bucket: pip-dev-migration-stage-1-output
+  s3_input_bucket: pip-dev-migration-stage-1-output
+  # s3_output_bucket: pip-dev-migration-stage-1-output
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
-  queue_name: pip-dev-migration-stage-1-queue.fifo
+  queue_name: pip-dev-migration-stage-2-queue.fifo
   pythonRequirements:
     pythonBin: python3
 
