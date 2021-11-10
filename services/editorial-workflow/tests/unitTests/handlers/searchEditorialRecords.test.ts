@@ -40,8 +40,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
             endDate: '2021-11-08T23:21:58.000Z',
             startDate: '2021-11-08T23:20:38.000Z',
-            page: '2',
-            pageSize: '13',
+            offset: '2',
+            limit: '13',
         };
         const response = await searchEditorialRecords(requestParams, defaultContext);
 
@@ -57,7 +57,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         expect(response).toEqual(searchUsersResult);
     });
 
-    test('No page and pageSize on params', async () => {
+    test('No offset and limit on params', async () => {
         const requestParams = {
             searchTerm: 'Test',
             contentSource: 'Random',
@@ -65,15 +65,15 @@ describe(`${FUNCTION_NAME} handler`, () => {
             status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
             endDate: '2021-11-08T23:21:58.000Z',
             startDate: '2021-11-08T23:20:38.000Z',
-            page: '',
-            pageSize: '',
+            offset: '',
+            limit: '',
         };
         await searchEditorialRecords(requestParams, defaultContext);
 
         expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith({
             ...requestParams,
-            page: '1',
-            pageSize: '20',
+            offset: '0',
+            limit: '20',
         });
     });
 });

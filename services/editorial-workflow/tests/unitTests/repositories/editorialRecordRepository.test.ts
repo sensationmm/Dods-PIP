@@ -70,8 +70,8 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
             endDate: '2021-11-08T23:21:58.000Z',
             startDate: '2021-11-08T23:20:38.000Z',
-            page: '3',
-            pageSize: '33',
+            offset: '3',
+            limit: '33',
         };
         const response = await EditorialRecordRepository.defaultInstance.listEditorialRecords(
             requestParams
@@ -94,7 +94,7 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             }),
             include: ['status', 'assignedEditor'],
             limit: 33,
-            offset: 66,
+            offset: 3,
         });
         expect(response).toEqual({
             totalRecords: defaultAmountOfTotalRecords,
@@ -105,8 +105,8 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
 
     test('No filters applied', async () => {
         const requestParams = {
-            page: '3',
-            pageSize: '33',
+            offset: '3',
+            limit: '33',
         };
         const response = await EditorialRecordRepository.defaultInstance.listEditorialRecords(
             requestParams
@@ -115,7 +115,7 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             where: {},
             include: ['status', 'assignedEditor'],
             limit: 33,
-            offset: 66,
+            offset: 3,
         });
         expect(response).toEqual({
             totalRecords: defaultAmountOfTotalRecords,

@@ -33,8 +33,8 @@ export interface SearchEditorialRecordParameters {
     contentSource?: string;
     informationType?: string;
     status?: string;
-    page: string;
-    pageSize: string;
+    offset: string;
+    limit: string;
     startDate?: string;
     endDate?: string;
 }
