@@ -153,7 +153,7 @@ describe('AddUser', () => {
     expect(mockSetErrors).toHaveBeenCalledWith({});
   });
 
-  it('clears telephone 2 error', () => {
+  it.skip('clears telephone 2 error', () => {
     const input = wrapper.find('[id="telephoneNumber2"]');
     input.simulate('blur');
     expect(mockSetErrors).toHaveBeenCalledWith({});
