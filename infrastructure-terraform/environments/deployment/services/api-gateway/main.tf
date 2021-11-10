@@ -13,5 +13,13 @@ resource "aws_api_gateway_rest_api" "backend" {
   }
 }
 
+resource "aws_api_gateway_api_key" "frontend-client" {
+  name = "frontend"
+  description = "API key meant to be used from the frontend"
+}
 
+resource "aws_api_gateway_api_key" "testing" {
+  name = "testers"
+  description = "API key meant to be used from the CLI and testing"
+}
 

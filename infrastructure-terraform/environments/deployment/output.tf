@@ -32,3 +32,11 @@ output "api_gateway" {
 output "api_root_res_id" {
   value = module.api_gateway.api_root_resource_id
 }
+
+output "api_key_front" {
+  value = module.api_gateway.api_key_front
+}
+
+output "api_key_test" {
+  value = module.api_gateway.api_key_test
+}
