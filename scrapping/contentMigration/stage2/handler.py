@@ -1,8 +1,6 @@
 from lib.logger import logger
 import boto3
-import os, sys
-from datetime import datetime
-from lib.common import Common
+import os
 from lib.configs import Config
 from lib.validation import Validator
 from json import loads, dumps
@@ -26,7 +24,7 @@ def s3_list_folders(prefix: str):
             bucket = s3.Bucket(name=INPUT_BUCKET)
             message = {}
             for obj in bucket.objects.filter(Prefix=o.get('Prefix')):
-                if '.ml' in obj.key or 'dodsil' in obj.key or '.html' in obj.key:
+                if '.json' in obj.key:
                     message = Validator().prepare_migration_content_message(message, obj.key)
             if bool(message):
                 string_message = dumps(message)
@@ -34,7 +32,7 @@ def s3_list_folders(prefix: str):
                     sqs_client.send_message(
                         QueueUrl=SQS_QUEUE,
                         MessageBody=string_message,
-                        MessageGroupId='migration-step1-group-id'
+                        MessageGroupId='migration-step2-group-id'
                         )
                     logger.info('Message has sent to SQS')
                 except Exception as e:
