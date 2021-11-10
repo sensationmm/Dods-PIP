@@ -53,7 +53,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             where: whereClause,
             subQuery: false,
             include: [User.associations.role],
-            order: [sortBy!, sortDirection!],
+            order: [[sortBy!, sortDirection!]],
             offset: offset!,
             limit: limit!,
         });
