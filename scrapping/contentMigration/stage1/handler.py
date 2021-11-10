@@ -78,7 +78,7 @@ def consumer(event, context):
 
                 content_content = s3_client.get_object(
                     Bucket=INPUT_BUCKET,
-                    Key=message['file_path_html']
+                    Key=message['file_path_content']
                 )
                 content_content = content_content['Body'].read().decode('utf-8')
 
