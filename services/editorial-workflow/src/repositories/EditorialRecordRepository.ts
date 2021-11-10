@@ -114,8 +114,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             status,
             startDate,
             endDate,
-            page,
-            pageSize,
+            limit,
+            offset,
         } = params;
 
         const whereRecord: WhereOptions = {};
@@ -165,13 +165,12 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         }
 
         const totalRecords = await this.editorialRecordModel.count();
-        const limit = parseInt(pageSize);
 
         const { count: filteredRecords, rows } = await this.editorialRecordModel.findAndCountAll({
             where: whereRecord,
             include: ['status', 'assignedEditor'],
-            offset: (parseInt(page) - 1) * limit,
-            limit,
+            offset: parseInt(offset),
+            limit: parseInt(limit),
         });
 
         return {

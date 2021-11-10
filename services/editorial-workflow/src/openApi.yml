@@ -48,14 +48,14 @@ paths:
                       example: d290f1ss-6c54-4b01-98e6-d701748f7151
                   required: false
                 - in: query
-                  name: page
-                  description: Current page selected in pagination
+                  name: offset
+                  description: Pagination parameter
                   schema:
                       type: integer
                   required: false
                 - in: query
-                  name: pageSize
-                  description: Quantity of items per page in pagination
+                  name: limit
+                  description: Pagination parameter
                   schema:
                       type: integer
                   required: false

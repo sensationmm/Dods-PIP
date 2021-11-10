@@ -7,8 +7,8 @@ export const searchEditorialRecords: AsyncLambdaHandler<SearchEditorialRecordPar
     params
 ) => {
     // Default page and page size if not defined
-    params.page = params.page || '1';
-    params.pageSize = params.pageSize || '20';
+    params.offset = params.offset || '0';
+    params.limit = params.limit || '20';
 
     const foundRecords = await EditorialRecordRepository.defaultInstance.listEditorialRecords(
         params
