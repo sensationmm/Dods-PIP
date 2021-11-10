@@ -41,6 +41,7 @@ export function parseResponseFromModel(
         contractEndDate: model.contractEndDate,
         subscriptionSeats: model.subscriptionSeats,
         consultantHours: model.consultantHours,
+        team: model.team && model.team.map(parseTeamMember),
         subscription: model.subscriptionType
             ? parseSubscriptionResponseFromModel(model.subscriptionType!)
             : undefined,
@@ -92,6 +93,6 @@ export function parseTeamMember(item: UserProfileModel): TeamMemberResponse {
     return {
         id: item.uuid,
         name: item.fullName,
-        type: item.ClientAccountTeamModel!.parsedType,
+        teamMemberType: item.ClientAccountTeamModel!.parsedType,
     };
 }

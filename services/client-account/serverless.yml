@@ -155,7 +155,7 @@ functions:
         description: Triggered when http request comes
         events:
             - http:
-                  method: post
+                  method: put
                   path: clientaccount/{clientAccountId}/teammember
     
     createTeamMember:

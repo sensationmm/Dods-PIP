@@ -55,4 +55,6 @@ export interface ClientAccountPersister {
     ): Promise<ClientAccountResponse | never[]>;
 
     checkSameName(name: string, clientAccountId: string): Promise<boolean>;
+
+    deleteClientAccountTeamMembers(clientAccountId: string): Promise<boolean>;
 }

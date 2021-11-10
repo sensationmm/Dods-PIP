@@ -1,20 +1,18 @@
+import { ClientAccountModel, UserProfileModel } from '../../../src/db';
 import {
     ClientAccountRepository,
     ClientAccountTeamRepository,
     UserProfileRepository,
 } from '../../../src/repositories';
 import {
-    ClientAccountTeamParameters,
-} from '../../../src/domain';
-import {
     HttpResponse,
     HttpStatusCode,
     createContext,
 } from '@dodsgroup/dods-lambda';
 
+import { ClientAccountTeamParameters } from '../../../src/domain';
 import { addTeamMemberToClientAccount } from '../../../src/handlers/addTeamMemberToClientAccount/addTeamMemberToClientAccount';
 import { mocked } from 'ts-jest/utils';
-import { ClientAccountModel, UserProfileModel } from '../../../src/db';
 
 const FUNCTION_NAME = addTeamMemberToClientAccount.name;
 
@@ -23,18 +21,39 @@ jest.mock('../../../src/repositories/ClientAccountTeamRepository');
 jest.mock('../../../src/repositories/UserProfileRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
-const mockedClientAccountTeamRepository = mocked(ClientAccountTeamRepository, true);
+const mockedClientAccountTeamRepository = mocked(
+    ClientAccountTeamRepository,
+    true
+);
 const mockedUserProfileRepository = mocked(UserProfileRepository, true);
 
 const defaultContext = createContext();
+// const defaultClientAccountTeamParameters: ClientAccountTeamParameters = {
+//     clientAccountTeam: {
+//         userUuid: 'bb52a39b-814a-41df-a0b8-60083f25ec9a',
+//         teamMemberType: 1,
+//         clientAccountUuid: 'cc52a39b-814a-41df-a0b8-60083f25ec9a',
+//     },
+// };
+
 const defaultClientAccountTeamParameters: ClientAccountTeamParameters = {
-    clientAccountTeam: {
-        userUuid: 'bb52a39b-814a-41df-a0b8-60083f25ec9a',
-        teamMemberType: 1,
-        clientAccountUuid: 'cc52a39b-814a-41df-a0b8-60083f25ec9a',
-    },
+    clientAccountId: 'e004005e-d375-4be6-972e-9d1bd87c42db',
+    teamMembers: [
+        {
+            userId: 'd725a90e-2908-4e2e-9f6c-319498b80999',
+            teamMemberType: 1,
+        },
+        {
+            userId: '2affb9c7-a32f-4f5b-97c6-a2cc9a9625ca',
+            teamMemberType: 2,
+        },
+    ],
 };
-const defaultClientAccount = { uuid: 'ba52a39b-814a-41df-a0b8-60083f25eeee', subscriptionSeats: 2 } as ClientAccountModel;
+
+const defaultClientAccount = {
+    uuid: 'ba52a39b-814a-41df-a0b8-60083f25eeee',
+    subscriptionSeats: 2,
+} as ClientAccountModel;
 
 const defaultUserProfile = {
     id: 1,
@@ -54,16 +73,18 @@ afterEach(() => {
 
 describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME} Valid input`, async () => {
-
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             sucess: true,
-            message: 'Team member was added to the client account.',
-            data: defaultClientAccountTeamParameters.clientAccountTeam,
+            message: 'Team members were added to the client account.',
         });
 
-        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(defaultClientAccount);
+        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(
+            defaultClientAccount
+        );
 
-        mockedUserProfileRepository.defaultInstance.findOne.mockResolvedValue(defaultUserProfile);
+        mockedUserProfileRepository.defaultInstance.findOne.mockResolvedValue(
+            defaultUserProfile
+        );
 
         const response = await addTeamMemberToClientAccount(
             defaultClientAccountTeamParameters,
@@ -71,19 +92,23 @@ describe(`${FUNCTION_NAME} handler`, () => {
         );
 
         expect(response).toEqual(expectedResponse);
-
-        expect(
-            mockedClientAccountTeamRepository.defaultInstance.create
-        ).toHaveBeenCalledTimes(1);
     });
 
     test(`${FUNCTION_NAME} Invalid input`, async () => {
+        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(
+            {
+                uuid: 'ba52a39b-814a-41df-a0b8-60083f25eeee',
+                subscriptionSeats: 0,
+            } as ClientAccountModel
+        );
 
-        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue({ uuid: 'ba52a39b-814a-41df-a0b8-60083f25eeee', subscriptionSeats: 0 } as ClientAccountModel);
+        mockedUserProfileRepository.defaultInstance.findOne.mockResolvedValue(
+            defaultUserProfile
+        );
 
-        mockedUserProfileRepository.defaultInstance.findOne.mockResolvedValue(defaultUserProfile);
-
-        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(0);
+        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(
+            0
+        );
 
         try {
             await addTeamMemberToClientAccount(
