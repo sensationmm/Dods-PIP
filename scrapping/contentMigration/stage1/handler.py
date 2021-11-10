@@ -82,13 +82,13 @@ def consumer(event, context):
                 )
                 content_content = content_content['Body'].read().decode('utf-8')
 
-                content["documentId"] = item.code.text if item.Code is not None else str(uuid.uuid4())
+                content["documentId"] = item.code.text if item.code is not None else str(uuid.uuid4())
                 content["jurisdiction"] = "UK"
                 content["documentTitle"] = item.revision.localisation.title.text \
                     if item.revision.localisation.title is not None else ""
                 content["organisationName"] = item.organisationname.text if item.organisationname is not None else ""
                 content["sourceReferenceFormat"] = item.revision.localisation.referenceformat.text \
-                    if item.revision.localisation.referenceFormat is not None else ""
+                    if item.revision.localisation.referenceformat is not None else ""
                 content["sourceReferenceUri"] = item.revision.localisation.referenceuri.text \
                     if item.revision.localisation.referenceuri is not None else ""
                 content["createdBy"] = item.creator.text if item.creator is not None else ""
