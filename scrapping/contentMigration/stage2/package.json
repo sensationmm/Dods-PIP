@@ -1,5 +1,5 @@
 {
-  "name": "migration-step-1",
+  "name": "migration-step-2",
   "version": "1.0.0",
   "description": "Creating a function that runs as a cron job using the serverless `schedule` event",
   "author": "",

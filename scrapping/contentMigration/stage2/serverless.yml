@@ -1,4 +1,4 @@
-service: migration-step-1
+service: migration-step-2
 
 frameworkVersion: '2'
 projectDir: ../../
@@ -9,8 +9,8 @@ plugins:
   - serverless-python-requirements
   - serverless-offline
 custom:
-  resource_prefix: migration-step-1
-  app_acronym: migration-step-1-bucket
+  resource_prefix: migration-step-2
+  app_acronym: migration-step-2-bucket
   default_stage: dev
   stage: ${opt:stage, self:custom.default_stage}
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
@@ -66,12 +66,12 @@ provider:
 
 functions:
   migrate:
-    name: migration-step-1-publisher-${sls:stage}
+    name: migration-step-2-publisher-${sls:stage}
     description: Publish filepath to SQS for migration content from DODS step-1
     handler: handler.run
     timeout: 900
   receiver:
-    name: migration-step-1-receiver-${sls:stage}
+    name: migration-step-2-receiver-${sls:stage}
     description: Receive filepath to SQS for migration content from DODS step-1
     handler: handler.consumer
     timeout: 30
