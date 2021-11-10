@@ -129,6 +129,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
         let sortDirectionQuery = 'asc';
         sortBy = sortBy?.toLowerCase();
         sortDirection = sortDirection?.toLowerCase();
+
+        let subscriptionInclude = {
+            model: this.subsModel,
+            as: 'subscriptionType',
+            required: false,
+        };
+
         if (sortBy === 'name' || sortBy === 'subscription') {
             sortByQuery = sortBy;
         }
@@ -176,16 +183,27 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
         if (subscriptionTypes) {
             let searchSubscriptions = subscriptionTypes.split(',');
-
             clientAccountWhere['$subscriptionType.uuid$'] = {
                 [Op.or]: searchSubscriptions.map((uuid) => uuid),
+            };
+            subscriptionInclude = {
+                model: this.subsModel,
+                as: 'subscriptionType',
+                required: true,
             };
         }
 
         const { rows: clientAccountModels, count: totalRecords } =
             await this.model.findAndCountAll({
+                include: [
+                    subscriptionInclude,
+                    {
+                        model: this.userModel,
+                        as: 'team',
+                    },
+                ],
+                distinct: true,
                 where: clientAccountWhere,
-                include: ['subscriptionType', 'team'],
                 order: [[sortByQuery, sortDirectionQuery]],
                 offset: offsetNum,
                 limit: limitNum,
@@ -222,8 +240,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
             if (!subscriptionData) {
                 throw new Error('Error: Wrong subscription uuid');
             }
-
-            //clientAccountToUpdate.SubscriptionType = subscriptionData;
 
             await clientAccountToUpdate.setSubscriptionType(subscriptionData);
 
