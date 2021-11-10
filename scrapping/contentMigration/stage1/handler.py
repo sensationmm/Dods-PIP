@@ -120,8 +120,8 @@ def consumer(event, context):
                     Key=(
                             datetime.fromisoformat(content['ingestedDateTime']).strftime("%Y-%m-%d") + '/' +
                             content["jurisdiction"] + '/' +
-                            slugify("UK Stakeholder") + '/' +
-                            slugify("Press Releases") + '/' +
+                            slugify(content['contentSource']) + '/' +
+                            slugify(content['informationType']) + '/' +
                             content["documentId"] + '.json')
                 )
                 logger.info('Object upload respondend with: %s', s3_response)
