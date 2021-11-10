@@ -14,7 +14,7 @@ export const wrapper = styled.div<WrapperProps>`
 
   ${InputBase} {
     padding-left: ${spacing(11)};
-    padding-right: ${({ isFilled }) => (isFilled ? spacing(11) : spacing(3))};
+    padding-right: ${spacing(11)};
   }
 
   ${Icon} {

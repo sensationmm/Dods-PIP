@@ -1,10 +1,12 @@
-import { shallow } from 'enzyme';
 import React from 'react';
+import { shallow } from 'enzyme';
 
 import color from '../../../globals/color';
 import Icon from '../../Icon';
 import InputBase from '../InputBase';
 import InputSearch from '.';
+
+const SELECTOR_PREFIX_ICON = '[data-test="input-prefix-icon"]';
 
 describe('InputSearch', () => {
   it('renders without error', () => {
@@ -18,7 +20,7 @@ describe('InputSearch', () => {
   it('renders default placeholder', () => {
     const wrapper = shallow(<InputSearch id="test" value={''} onChange={jest.fn} />);
     const component = wrapper.find(InputBase);
-    expect(component.props().placeholder).toEqual('Search...');
+    expect(component.props()).toHaveProperty('placeholder', 'Search...');
   });
 
   it('renders label override', () => {
@@ -26,21 +28,21 @@ describe('InputSearch', () => {
       <InputSearch id="test" label="Example" value={'Example'} onChange={jest.fn} />,
     );
     const component = wrapper.find(InputBase);
-    expect(component.props().label).toEqual('Example');
+    expect(component.props()).toHaveProperty('label', 'Example');
   });
 
   it('renders disabled state', () => {
     const wrapper = shallow(
       <InputSearch id="test" isDisabled={true} value={''} onChange={jest.fn} />,
     );
-    const component = wrapper.find(Icon);
-    expect(component.props().color).toEqual(color.base.grey);
+    const component = wrapper.find(SELECTOR_PREFIX_ICON);
+    expect(component.props()).toHaveProperty('color', color.base.grey);
   });
 
   it('renders error state', () => {
     const wrapper = shallow(<InputSearch id="test" error={'yes'} value={''} onChange={jest.fn} />);
-    const component = wrapper.find(Icon);
-    expect(component.props().color).toEqual(color.alert.red);
+    const component = wrapper.find(SELECTOR_PREFIX_ICON);
+    expect(component.props()).toHaveProperty('color', color.alert.red);
   });
 
   it('fires onChange method', () => {

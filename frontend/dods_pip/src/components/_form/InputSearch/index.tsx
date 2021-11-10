@@ -45,6 +45,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
         placeholder={placeholder}
       >
         <Icon
+          data-test="input-prefix-icon"
           src={Icons.Search}
           size={IconSize.medium}
           color={
@@ -57,11 +58,13 @@ const InputSearch: React.FC<InputSearchProps> = ({
         />
         {children}
 
-        {isFilled && (
-          <Styled.clear data-test="input-clear" onClick={() => onChange('')}>
-            <Icon src={Icons.Cross} size={IconSize.medium} color={color.theme.blue} />
-          </Styled.clear>
-        )}
+        <Styled.clear data-test="input-clear" onClick={() => onChange('')}>
+          <Icon
+            src={Icons.Cross}
+            size={IconSize.medium}
+            color={isFilled ? color.theme.blue : 'transparent'}
+          />
+        </Styled.clear>
       </Input>
     </Styled.wrapper>
   );

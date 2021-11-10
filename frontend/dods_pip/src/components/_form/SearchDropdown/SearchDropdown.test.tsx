@@ -90,12 +90,22 @@ describe('SearchDropdown', () => {
     expect(dropdown.props().hasHelper).toEqual(false);
   });
 
-  it('handles onChange', () => {
+  it('handles onChange (1)', () => {
     wrapper = shallow(<SearchDropdown {...props} />);
     const dropdown = wrapper.find('[data-test="results-dropdown"]');
     dropdown.props().setValue('test');
 
-    expect(mockOnChange).toHaveBeenCalledWith('test');
+    expect(mockOnChange).toHaveBeenCalledWith('test', void 0);
+    expect(setSearch).toHaveBeenCalledWith('');
+    expect(setResults).toHaveBeenCalledWith([]);
+  });
+
+  it('handles onChange (2)', () => {
+    wrapper = shallow(<SearchDropdown {...props} />);
+    const dropdown = wrapper.find('[data-test="results-dropdown"]');
+    dropdown.props().setValue('test', { label: 'test', value: 'test' });
+
+    expect(mockOnChange).toHaveBeenCalledWith('test', { label: 'test', value: 'test' });
     expect(setSearch).toHaveBeenCalledWith('');
     expect(setResults).toHaveBeenCalledWith([]);
   });

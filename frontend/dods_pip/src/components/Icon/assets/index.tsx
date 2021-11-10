@@ -16,6 +16,7 @@ import Clock from './icon-clock.svg';
 import Cross from './icon-cross.svg';
 import CrossBold from './icon-crossBold.svg';
 import Disk from './icon-disk.svg';
+import Edit from './icon-edit.svg';
 import Grid from './icon-grid.svg';
 import Hide from './icon-hide.svg';
 import Info from './icon-info.svg';
@@ -30,6 +31,7 @@ import Subscription from './icon-subscription.svg';
 import Suitcase from './icon-suitcase.svg';
 import Tick from './icon-tick.svg';
 import TickBold from './icon-tickBold.svg';
+import Users from './icon-users.svg';
 
 type TypeIconLibrary = {
   [key in Icons]: string;
@@ -54,6 +56,7 @@ export enum Icons {
   Cross = 'Cross',
   CrossBold = 'CrossBold',
   Disk = 'Disk',
+  Edit = 'Edit',
   Grid = 'Grid',
   Hide = 'Hide',
   Info = 'Info',
@@ -68,6 +71,7 @@ export enum Icons {
   Suitcase = 'Suitcase',
   Tick = 'Tick',
   TickBold = 'TickBold',
+  Users = 'Users',
 }
 
 export type IconType = keyof typeof Icons;
@@ -91,6 +95,7 @@ const IconLibrary = {
   Cross,
   CrossBold,
   Disk,
+  Edit,
   Grid,
   Hide,
   Info,
@@ -105,6 +110,7 @@ const IconLibrary = {
   Suitcase,
   Tick,
   TickBold,
+  Users,
 } as TypeIconLibrary;
 
 export default IconLibrary;

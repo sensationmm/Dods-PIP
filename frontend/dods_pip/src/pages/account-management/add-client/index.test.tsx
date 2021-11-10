@@ -129,7 +129,7 @@ describe('Account Management: Clients', () => {
 
     it('proceeds from step 3', () => {
       step3.props().onSubmit();
-      expect(mockRouterPush).toHaveBeenCalledWith('/account-management/accounts');
+      expect(mockRouterPush).toHaveBeenCalledWith(expect.stringContaining('/accounts/'))
     });
 
     it('navigates back from step 2', () => {

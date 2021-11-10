@@ -17,3 +17,8 @@ export enum RoleType {
   DodsAdmin = '5e2f23c3-1b53-4eea-b260-5d2cc05be38f',
   DodsAccMgr = '31becb0d-6dc7-4aa6-801b-080692c7d6ae',
 }
+
+export type DropdownValue = {
+  label: string;
+  value: string;
+};

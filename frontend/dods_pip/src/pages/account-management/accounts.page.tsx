@@ -152,7 +152,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
     router.push(`/account-management/add-client?id=${id}`);
   };
 
-  const renderInCompletedRow = (account: ClientAccount): Array<any> => {
+  const renderInCompletedRow = (account: ClientAccount): Array<string | JSX.Element> => {
     const { uuid } = account;
     return [
       account.name.substring(0, 1),
