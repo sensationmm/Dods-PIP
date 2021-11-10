@@ -31,7 +31,7 @@ const base = styled.button<ButtonProps>`
   cursor: ${({ disabled }) => !disabled && 'pointer'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
   position: relative;
-  //box-shadow: ${({ disabled }) => (!disabled ? elevation.selectShadow : 'none')};
+  box-shadow: ${({ disabled }) => (!disabled ? elevation.selectShadow : 'none')};
   display: ${({ width }) => (width === 'auto' ? 'block' : 'flex')};
   justify-content: center;
   align-items: center;

@@ -5,7 +5,7 @@ import Text from '../../Text';
 import * as Styled from './Label.styles';
 
 export interface LabelProps {
-  label?: string;
+  label: string;
   required?: boolean;
   optional?: boolean;
   noMargin?: boolean;
@@ -30,7 +30,7 @@ const Label: React.FC<LabelProps> = ({
       {required && <Styled.requiredStar data-test="label-required-star">*</Styled.requiredStar>}
       <Text
         htmlFor={htmlFor}
-        type={bold ? 'body' : 'label'}
+        type={'label'}
         color={isDisabled ? color.base.greyDark : darkMode ? color.base.white : color.theme.blue}
         bold={bold}
         data-test="text-component"

@@ -21,7 +21,7 @@ import color from '../../../globals/color';
 import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
-import { DropdownValue, TeamMember, TeamType } from '../../../utils/type';
+import { DropdownValue, RoleType, TeamMember, TeamType } from '../../../utils/type';
 import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
 
@@ -35,12 +35,6 @@ export type Errors = {
   clientTelephone2?: string;
   clientAccess?: string;
 };
-
-// ideally we would have an endpoint to retrieve roles with their uuids
-enum RoleType {
-  User = '24e7ca86-1788-4b6e-b153-9c963dc928cb',
-  Admin = '0b4fc341-8992-48da-94c8-945b9b9fa7ea',
-}
 
 type User = {
   uuid: string;
@@ -543,8 +537,8 @@ const Team: React.FC<TeamProps> = ({
                 groupName="client-access"
                 label="Assign access"
                 items={[
-                  { label: 'Admin', value: RoleType.Admin },
-                  { label: 'User', value: RoleType.User },
+                  { label: 'Admin', value: RoleType.Admin as string },
+                  { label: 'User', value: RoleType.User as string },
                 ]}
                 selectedValue={clientAccess}
                 onChange={setClientAccess}
