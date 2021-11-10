@@ -388,10 +388,10 @@ components:
               example:
                 - id: 94a57103-3bf0-4a29-bdba-99a4650c1849
                   name: Joe Draxler
-                  teamMemberType: Account Manager
+                  teamMemberType: 1
                 - id: 7b41112c-f647-4098-85d3-d06cf3f9a8ec
                   name: Jane Martins
-                  teamMemberType: Team Member
+                  teamMemberType: 2
    
         ClientAccountUpdateHeader:
             type: object

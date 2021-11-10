@@ -18,12 +18,12 @@ const SUCCESS_ACCOUNT_RESPONSE: TeamMemberResponse[] = [
     {
         id: '89139c46-711d-42cf-affd-b865dd9191eb',
         name: 'Latest Tester',
-        teamMemberType: 'Team Member',
+        teamMemberType: 1,
     },
     {
         id: '30360fcd-91be-46f3-8177-e2123f756838',
         name: 'Employee Example',
-        teamMemberType: 'Account Manager',
+        teamMemberType: 2,
     },
 ];
 

@@ -7,7 +7,7 @@ export interface ClientAccountTeam {
 export interface TeamMemberResponse {
     id: string;
     name: string;
-    teamMemberType?: 'Team Member' | 'Account Manager' | 'Client User';
+    teamMemberType?: 'Team Member' | 'Account Manager' | 'Client User' | number;
 }
 
 export interface TeamMember {
