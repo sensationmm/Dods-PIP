@@ -1,30 +1,72 @@
-import { AsyncLambdaMiddleware, HttpError, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import {
+    AsyncLambdaMiddleware,
+    HttpError,
+    HttpResponse,
+    HttpStatusCode,
+} from '@dodsgroup/dods-lambda';
+import {
+    ClientAccountRepository,
+    ClientAccountTeamRepository,
+    UserProfileRepository,
+} from '../../repositories';
 
-import { ClientAccountRepository, ClientAccountTeamRepository, UserProfileRepository } from '../../repositories';
 import { ClientAccountTeamParameters } from '../../domain';
 
 export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTeamParameters> =
-    async ({ clientAccountTeam }) => {
+    async (clientAccountTeamMembers) => {
+        await ClientAccountRepository.defaultInstance.deleteClientAccountTeamMembers(
+            clientAccountTeamMembers.clientAccountId
+        );
+        const clientAccount =
+            await ClientAccountRepository.defaultInstance.findOne({
+                uuid: clientAccountTeamMembers.clientAccountId,
+            });
 
-        const clientAccount = await ClientAccountRepository.defaultInstance.findOne({ uuid: clientAccountTeam.clientAccountUuid });
-
-        const clientAccountTeams = await ClientAccountRepository.defaultInstance.getClientAccountUsers(clientAccount.uuid);
+        const clientAccountTeams =
+            await ClientAccountRepository.defaultInstance.getClientAccountUsers(
+                clientAccountTeamMembers.clientAccountId
+            );
 
         const { subscriptionSeats = 0 } = clientAccount;
 
-        if (subscriptionSeats - clientAccountTeams < 1) {
-            throw new HttpError('Client Account has not enough available seats', HttpStatusCode.FORBIDDEN);
+        if (
+            subscriptionSeats - clientAccountTeams <
+            clientAccountTeamMembers.teamMembers.length
+        ) {
+            throw new HttpError(
+                'Client Account has not enough available seats',
+                HttpStatusCode.FORBIDDEN
+            );
         }
 
-        const userProfile = await UserProfileRepository.defaultInstance.findOne({ uuid: clientAccountTeam.userUuid });
+        await Promise.all(
+            clientAccountTeamMembers.teamMembers.map(async (user) => {
+                const userProfile =
+                    await UserProfileRepository.defaultInstance.findOne({
+                        uuid: user.userId,
+                    });
+                await ClientAccountTeamRepository.defaultInstance.create({
+                    clientAccountId: clientAccount.id,
+                    userId: userProfile.id,
+                    teamMemberType: user.teamMemberType,
+                });
+            })
+        );
 
-        await ClientAccountTeamRepository.defaultInstance.create({ clientAccountId: clientAccount.id, userId: userProfile.id, teamMemberType: clientAccountTeam.teamMemberType });
+        await ClientAccountRepository.defaultInstance.UpdateCompletion(
+            clientAccount.uuid,
+            true,
+            3
+        );
 
-        await ClientAccountRepository.defaultInstance.UpdateCompletion(clientAccount.uuid, true, 3);
+        const teamMembers =
+            await ClientAccountRepository.defaultInstance.getClientAccountTeam(
+                clientAccountTeamMembers.clientAccountId
+            );
 
         return new HttpResponse(HttpStatusCode.OK, {
             sucess: true,
-            message: 'Team member was added to the client account.',
-            data: clientAccountTeam,
+            message: 'Team members were added to the client account.',
+            data: teamMembers,
         });
     };

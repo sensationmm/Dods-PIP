@@ -111,10 +111,10 @@ paths:
                 - $ref: '#/components/parameters/clientAccountId'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                    $ref: '#/components/responses/GetClientAccountTeamResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
-        post:
+        put:
             operationId: addTeamMemberToClientAccount
             summary: 'Add Team Member to Client Account'
             description: 'Add Team Member to Client Account'
@@ -124,20 +124,22 @@ paths:
                 $ref: '#/components/requestBodies/clientAccountTeam'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                    $ref: '#/components/responses/AddClientAccountTeamResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
 
     /clientaccount/{clientAccountId}/teammember/new:
         post:
-            operationId: addTeamMemberToClientAccount
+            operationId: Create Team Member and add
             summary: 'Add Team Member to Client Account'
             description: 'Add Team Member to Client Account'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
             requestBody:
                 $ref: '#/components/requestBodies/clientAccountTeam'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                    $ref: '#/components/responses'
                 '400':
                     $ref: '#/components/responses/BadRequest'
 
@@ -224,6 +226,7 @@ components:
                     example: Client account was updated
                 data:
                     $ref: '#/components/schemas/ClientAccount'
+                    
         GetClientSuccess:
             type: object
             properties:
@@ -232,6 +235,7 @@ components:
                     example: Client account found
                 data:
                     $ref: '#/components/schemas/ClientAccount'
+                    
         GetReaminingSeatsSuccess:
             type: object
             properties:
@@ -337,13 +341,57 @@ components:
         ClientAccountTeam:
             type: object
             properties:
-                userUuid:
+              teamMembers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    userId:
+                        type: string
+                    teamMemberType:
+                        type: number
+                        enum: [1, 2]
+                example:
+                  - userId: 94a57103-3bf0-4a29-bdba-99a4650c1849
+                    teamMemberType: 1 
+                  - userId: 7b41112c-f647-4098-85d3-d06cf3f9a8ec
+                    teamMemberType: 2
+                    
+        AddedTeamMembersSuccess:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                    example: true
+                message:
                     type: string
-                clientAccountUuid:
+                    example: Team members were added to the client account.
+                data:
+                    $ref: '#/components/schemas/TeamMembersArray'
+                    
+        GetTeamMembersSuccess:
+            type: object
+            properties:
+                message:
                     type: string
+                    example: Client account found.
+                data:
+                    $ref: '#/components/schemas/TeamMembersArray'
+                    
+        TeamMembersArray:
+              type: object
+              properties:
+                id:
+                  type: string
                 teamMemberType:
-                    type: number
-                    enum: [1, 2]
+                  type: string
+              example:
+                - id: 94a57103-3bf0-4a29-bdba-99a4650c1849
+                  name: Joe Draxler
+                  teamMemberType: 1
+                - id: 7b41112c-f647-4098-85d3-d06cf3f9a8ec
+                  name: Jane Martins
+                  teamMemberType: 2
    
         ClientAccountUpdateHeader:
             type: object
@@ -567,12 +615,20 @@ components:
                 application/json:
                     schema:
                         type: 'object'
-        ClientAccountTeamResponse:
-            description: ''
+        AddClientAccountTeamResponse:
+            description: 'Team Members successfully added to client Account'
             content:
                 application/json:
                     schema:
-                        type: 'object'
+                        $ref: '#/components/schemas/AddedTeamMembersSuccess'
+                        
+        GetClientAccountTeamResponse:
+            description: 'Team Members successfully added to client Account'
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/GetTeamMembersSuccess'
+                        
         CheckAccountNameResponse:
             description: ''
             content:
@@ -634,5 +690,3 @@ components:
                 application/json:
                     schema:
                         $ref: '#/components/schemas/ClientAccountUpdateSubscription'
-
-                  

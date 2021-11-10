@@ -25,7 +25,10 @@ export interface ClientAccountParameters {
 export interface ClientAccountResponse extends ClientAccount {
     //id: number;
     uuid: string;
-
+    team?: {
+        name: string;
+        type?: 'Team Member' | 'Account Manager' | 'Client User';
+    }[];
     subscription?: SubscriptionTypeResponse;
 }
 
@@ -38,7 +41,7 @@ export interface SearchClientAccountResponse {
     projects?: number;
     team?: {
         name: string;
-        type?: 'consultant' | 'client';
+        type?: 'Team Member' | 'Account Manager' | 'Client User';
     }[];
     isUK: boolean;
     isEU: boolean;
