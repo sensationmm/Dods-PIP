@@ -9,10 +9,33 @@ export interface CreateEditorialRecordParameters {
     statusId?: string;
 }
 
+export interface GenericListingRecord {
+    id: string;
+    name: string;
+}
+
 export interface EditorialRecordOutput extends CreateEditorialRecordParameters {
     uuid: string;
     assignedEditor?: User;
     status?: EditorialRecordStatus;
 }
 
+
+export interface ContentSourceOutput extends GenericListingRecord {
+
+}
+
+export interface InformationTypeOutput extends GenericListingRecord {
+
+}
+
+export interface EditorRecordStatusOutput {
+    uuid: string;
+    name: string;
+}
+
 export interface DownstreamEndpoints {}
+
+export interface DistinctItem {
+    item: string;
+}
