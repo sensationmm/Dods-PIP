@@ -3,7 +3,7 @@ definitions:
     fe-node: frontend/dods-pip/node_modules
   services:
     docker:
-      memory: 7128
+      memory: 5120
 options:
   max-time: 30
 pipelines:
@@ -27,7 +27,8 @@ pipelines:
             - yarn install
             - yarn test
             - yarn lint
-            - yarn build
+            - docker build -t ${IMAGE_NAME} .
+            # - yarn build
 
       - step:
           name: Deploy Graphologi Webhook
