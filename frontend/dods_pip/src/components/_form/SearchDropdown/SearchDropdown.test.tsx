@@ -90,14 +90,37 @@ describe('SearchDropdown', () => {
     expect(dropdown.props().hasHelper).toEqual(false);
   });
 
-  it('handles onChange', () => {
+  it('handles onChange (1)', () => {
     wrapper = shallow(<SearchDropdown {...props} />);
     const dropdown = wrapper.find('[data-test="results-dropdown"]');
     dropdown.props().setValue('test');
 
-    expect(mockOnChange).toHaveBeenCalledWith('test');
+    expect(mockOnChange).toHaveBeenCalledWith('test', void 0);
     expect(setSearch).toHaveBeenCalledWith('');
     expect(setResults).toHaveBeenCalledWith([]);
+  });
+
+  it('handles onChange (2)', () => {
+    wrapper = shallow(<SearchDropdown {...props} />);
+    const dropdown = wrapper.find('[data-test="results-dropdown"]');
+    dropdown.props().setValue('test', { label: 'test', value: 'test' });
+
+    expect(mockOnChange).toHaveBeenCalledWith('test', { label: 'test', value: 'test' });
+    expect(setSearch).toHaveBeenCalledWith('');
+    expect(setResults).toHaveBeenCalledWith([]);
+  });
+
+  it('opens list on click if isFilter', () => {
+    wrapper = shallow(<SearchDropdown {...props} isFilter />);
+    wrapper.simulate('click');
+    expect(setResults).toHaveBeenCalledWith(props.values);
+  });
+
+  it('shows selected value if isFilter', () => {
+    wrapper = shallow(<SearchDropdown {...props} isFilter value="option5" />);
+    const searchValue = wrapper.find('[data-test="search-value"]');
+    expect(searchValue.length).toEqual(1);
+    expect(searchValue.props().children).toEqual('abc');
   });
 
   afterEach(() => {

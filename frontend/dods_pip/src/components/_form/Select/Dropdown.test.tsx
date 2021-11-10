@@ -90,13 +90,13 @@ describe('Dropdown', () => {
   it('selects option on click', () => {
     const option = wrapper.find('[data-test="option-1"]');
     option.simulate('click');
-    expect(mockOnChange).toHaveBeenCalledWith('option2');
+    expect(mockOnChange).toHaveBeenCalledWith('option2', { label: 'Option 2', value: 'option2' });
   });
 
   it('keyboard use - selects option on keypress', () => {
     const option = wrapper.find('[data-test="option-1"]');
     option.simulate('keypress');
-    expect(mockOnChange).toHaveBeenCalledWith('option2');
+    expect(mockOnChange).toHaveBeenCalledWith('option2', { label: 'Option 2', value: 'option2' });
   });
 
   it('click disabled if active', () => {

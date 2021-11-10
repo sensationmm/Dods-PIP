@@ -38,8 +38,8 @@ describe('AZ Filter', () => {
     const component = wrapper.find('[data-test="component-AZFilter"]');
     const viewAll = wrapper.find('[data-test="button-all"]');
     expect(component.length).toEqual(1);
-    expect(viewAll.find(Icon).props().color).toEqual(color.theme.blueMid);
-    expect(viewAll.find(Text).props().color).toEqual(color.theme.blueMid);
+    expect(viewAll.find(Icon).props().color).toEqual(color.base.greyDark);
+    expect(viewAll.find(Text).props().color).toEqual(color.base.greyDark);
   });
 
   it('resets letter filter', () => {
@@ -70,8 +70,8 @@ describe('AZ Filter', () => {
     wrapper = shallow(<AZFilter selectedLetter="L" setSelectedLetter={onClick} />);
     const viewAll = wrapper.find('[data-test="button-all"]');
     const letter = wrapper.find('[data-test="button-L"]');
-    expect(viewAll.find(Icon).props().color).toEqual(color.base.grey);
-    expect(viewAll.find(Text).props().color).toEqual(color.base.grey);
+    expect(viewAll.find(Icon).props().color).toEqual(color.base.greyDark);
+    expect(viewAll.find(Text).props().color).toEqual(color.base.greyDark);
     expect(letter.find(Text).props().color).toEqual(color.base.white);
   });
 
@@ -79,8 +79,8 @@ describe('AZ Filter', () => {
     wrapper = shallow(<AZFilter selectedLetter="L" setSelectedLetter={onClick} />);
     const viewAll = wrapper.find('[data-test="button-all"]');
     const letter = wrapper.find('[data-test="button-L"]');
-    expect(viewAll.find(Icon).props().color).toEqual(color.base.grey);
-    expect(viewAll.find(Text).props().color).toEqual(color.base.grey);
+    expect(viewAll.find(Icon).props().color).toEqual(color.base.greyDark);
+    expect(viewAll.find(Text).props().color).toEqual(color.base.greyDark);
     expect(letter.find(Text).props().color).toEqual(color.base.white);
   });
 
@@ -88,8 +88,8 @@ describe('AZ Filter', () => {
     wrapper = shallow(<AZFilter selectedLetter="B" setSelectedLetter={onClick} />);
     const viewAll = wrapper.find('[data-test="button-all"]');
     const letter = wrapper.find('[data-test="button-L"]');
-    expect(viewAll.find(Icon).props().color).toEqual(color.base.grey);
-    expect(viewAll.find(Text).props().color).toEqual(color.base.grey);
+    expect(viewAll.find(Icon).props().color).toEqual(color.base.greyDark);
+    expect(viewAll.find(Text).props().color).toEqual(color.base.greyDark);
     expect(letter.find(Text).props().color).toEqual(color.theme.blue);
   });
 

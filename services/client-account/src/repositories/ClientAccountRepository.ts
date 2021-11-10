@@ -113,11 +113,37 @@ export class ClientAccountRepository implements ClientAccountPersister {
     async searchClientAccount(
         searchClientAccountParams: SearchClientAccountParameters
     ): Promise<SearchClientAccountTotalRecords | undefined> {
-        let { startsWith, locations, subscriptionTypes, searchTerm } =
-            searchClientAccountParams;
+        let {
+            startsWith,
+            locations,
+            subscriptionTypes,
+            searchTerm,
+            isCompleted,
+            sortBy,
+            sortDirection,
+        } = searchClientAccountParams;
         const { limitNum, offsetNum } = searchClientAccountParams;
         let clientAccountWhere: WhereOptions = {};
         let clientAccountResponse: SearchClientAccountTotalRecords = {};
+        let sortByQuery = 'name';
+        let sortDirectionQuery = 'asc';
+        sortBy = sortBy?.toLowerCase();
+        sortDirection = sortDirection?.toLowerCase();
+
+        let subscriptionInclude = {
+            model: this.subsModel,
+            as: 'subscriptionType',
+            required: false,
+        };
+
+        if (sortBy === 'name' || sortBy === 'subscription') {
+            sortByQuery = sortBy;
+        }
+
+        if (sortDirection === 'asc' || sortDirection === 'desc') {
+            sortDirection = sortDirection.toUpperCase();
+            sortDirectionQuery = sortDirection;
+        }
 
         if (startsWith && searchTerm) {
             clientAccountWhere['name'] = {
@@ -136,6 +162,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
             };
         }
 
+        if (isCompleted) {
+            if (isCompleted === 'true')
+                clientAccountWhere['is_completed'] = true;
+            else if (isCompleted === 'false')
+                clientAccountWhere['is_completed'] = false;
+        }
+
         if (locations) {
             locations = locations.toLowerCase();
 
@@ -150,28 +183,32 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
         if (subscriptionTypes) {
             let searchSubscriptions = subscriptionTypes.split(',');
-
             clientAccountWhere['$subscriptionType.uuid$'] = {
                 [Op.or]: searchSubscriptions.map((uuid) => uuid),
             };
+            subscriptionInclude = {
+                model: this.subsModel,
+                as: 'subscriptionType',
+                required: true,
+            };
         }
 
-        const totalRecordsModels = await this.model.findAll({
-            where: clientAccountWhere,
-            subQuery: false,
-            include: ['subscriptionType', 'team'],
-        });
+        const { rows: clientAccountModels, count: totalRecords } =
+            await this.model.findAndCountAll({
+                include: [
+                    subscriptionInclude,
+                    {
+                        model: this.userModel,
+                        as: 'team',
+                    },
+                ],
+                distinct: true,
+                where: clientAccountWhere,
+                order: [[sortByQuery, sortDirectionQuery]],
+                offset: offsetNum,
+                limit: limitNum,
+            });
 
-        const totalRecords = totalRecordsModels.length;
-
-        const clientAccountModels = await this.model.findAll({
-            where: clientAccountWhere,
-            subQuery: false,
-            include: ['subscriptionType', 'team'],
-            order: [['name', 'ASC']],
-            offset: offsetNum,
-            limit: limitNum,
-        });
         if (clientAccountModels) {
             const clientAccounts: Array<SearchClientAccountResponse> =
                 clientAccountModels.map((model) =>
@@ -203,8 +240,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
             if (!subscriptionData) {
                 throw new Error('Error: Wrong subscription uuid');
             }
-
-            //clientAccountToUpdate.SubscriptionType = subscriptionData;
 
             await clientAccountToUpdate.setSubscriptionType(subscriptionData);
 

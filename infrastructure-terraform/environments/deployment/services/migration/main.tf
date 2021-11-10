@@ -61,3 +61,12 @@ module "migration-stage-3-sqs-misses" {
   environment = var.environment
   queue_name  = "migration-stage-3-misses"
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+// - Migration stage 3. output storage
+// --------------------------------------------------------------------------------------------------------------------
+module "migration-stage-3-s3-output" {
+  source      = "./modules/s3"
+  environment = var.environment
+  name        = "migration-stage-3-output"
+}

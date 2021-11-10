@@ -131,7 +131,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     const formErrors = { ...errors };
     if (trim(accountName) === '') {
       formErrors.accountName = 'This field is required';
-    } else if (trim(accountName) === savedAccountName) {
+    } else if (trim(accountName).toLowerCase() === savedAccountName.toLowerCase()) {
       delete formErrors.accountName;
     } else {
       delete formErrors.accountName;
