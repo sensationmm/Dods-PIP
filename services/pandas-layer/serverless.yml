@@ -1,0 +1,29 @@
+service: pandas-layer
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: pip-${self:provider.stage}-services-lambdas
+
+layers:
+  DodsPandas:
+    path: layers
+    description: Pandas 1.3.4 on Python 3.7
+    compatibleRuntimes:
+      - python3.7
+    allowedAccounts:
+      - '*'
+
+# package:
+#   individually: true
+
+resources:
+  Outputs:
+    PandasLayerExport:
+        Value:
+          Ref: DodsPandasLambdaLayer
+        Export:
+          Name: DodsPandasLambdaLayer

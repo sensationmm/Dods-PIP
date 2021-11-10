@@ -1,0 +1,13 @@
+{
+  "name": "pandas-layer",
+  "description": "Lambda layer with Pandas 1.3.4 for Python3.7",
+  "version": "0.1.0",
+  "dependencies": {
+    "aws-sdk": "^2.970.0",
+    "serverless": "^2.64.0"
+  },
+  "devDependencies": {
+    "serverless-ignore": "^0.1.6",
+    "serverless-python-requirements": "^5.1.1"
+  }
+}
