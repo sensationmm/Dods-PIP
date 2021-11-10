@@ -78,6 +78,11 @@ if (process.env.NODE_ENV !== 'test') {
         targetKey: 'id',
         as: 'status',
     });
+    EditorialRecord.belongsTo(User, {
+        foreignKey: 'assignedEditorId',
+        targetKey: 'id',
+        as: 'assignedEditor',
+    });
 }
 
 export * from './models';
