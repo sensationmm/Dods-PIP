@@ -20,7 +20,7 @@ export class TaxonomyRepository implements Taxonomy {
             body: {
                 query: {
                     "term": {
-                        "literalForm.en": data.tags
+                        "label": data.tags
                     }
                 }
             },
@@ -41,7 +41,7 @@ export class TaxonomyRepository implements Taxonomy {
         }
         const es_response = await this.elasticsearch.search(await TaxonomyRepository.createSearchQuery(data))
         es_response.body.hits.hits.forEach((es_doc: any) => {
-            const es_tag: TaxonomyItem = { id: es_doc._source.id, tag: es_doc._source.literalForm.en, score: es_doc._score, inScheme: es_doc._source.inScheme};
+            const es_tag: TaxonomyItem = { id: es_doc._source.id, tag: es_doc._source.label, score: es_doc._score, inScheme: es_doc._source.inScheme};
             tag_results.push(es_tag)
         });
 
