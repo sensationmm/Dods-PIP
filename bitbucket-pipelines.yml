@@ -271,9 +271,6 @@ pipelines:
                   - "infrastructure-terraform/**"
             script:
               - cd infrastructure-terraform
-              - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile $AWS_PROFILE
-              - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile $AWS_PROFILE
-              - aws configure set default.region us-west-2 --profile $AWS_PROFILE
               - terraform init
               - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
               - echo "Review the plan. If you decide to apply it, run the custom job 'infrastructure-deployment'"
