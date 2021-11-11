@@ -117,12 +117,7 @@ def consumer(event, context):
                 s3_response = s3_client.put_object(
                     Body=dumps(content),
                     Bucket=OUTPUT_BUCKET,
-                    Key=(
-                            datetime.fromisoformat(content['ingestedDateTime']).strftime("%Y-%m-%d") + '/' +
-                            content["jurisdiction"] + '/' +
-                            slugify(content['contentSource']) + '/' +
-                            slugify(content['informationType']) + '/' +
-                            content["documentId"] + '.json')
+                    Key=(message['file_path_metadata'].replace(".ml", ".json"))
                 )
                 logger.info('Object upload respondend with: %s', s3_response)
             else:
