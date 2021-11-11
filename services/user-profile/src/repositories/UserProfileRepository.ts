@@ -1,16 +1,11 @@
-import { Op, WhereOptions } from 'sequelize';
 import { RoleTypeModel, UserProfileModel } from '../db/models';
 import {
-    SearchUsersInput,
-    SearchUsersOutput,
     UserProfileCreate,
     UserProfilePersister,
     UserProfileResponse,
     parseUserForCreation,
     parseUserForResponse,
 } from '../domain/interfaces';
-
-import { User } from '@dodsgroup/dods-model';
 
 export class UserProfileError extends Error {
     constructor(message: string, cause: any) {
@@ -61,28 +56,4 @@ export class UserProfileRepository implements UserProfilePersister {
         }
     }
 
-    async searchUsers(parameters: SearchUsersInput): Promise<Array<SearchUsersOutput>> {
-
-        const { name, limit, offset } = parameters;
-
-        let whereClause: WhereOptions = {
-            [Op.or]: [
-                { firstName: { [Op.like]: `${name}%` } },
-                { lastName: { [Op.like]: `${name}%` } }
-            ]
-        };
-
-        const users = await User.findAll({
-            where: whereClause,
-            subQuery: false,
-            include: [User.associations.role],
-            order: [
-                ['firstName', 'ASC'],
-            ],
-            offset: offset,
-            limit: limit,
-        });
-
-        return users.map(({ id, firstName, lastName }) => ({ id, firstName, lastName }));
-    }
 }

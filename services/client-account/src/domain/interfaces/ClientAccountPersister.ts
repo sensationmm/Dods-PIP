@@ -1,8 +1,9 @@
+import { ClientAccountModel, ClientAccountModelAttributes } from '../../db';
 import {
     ClientAccountParameters,
     ClientAccountResponse,
     SearchClientAccountParameters,
-    SearchClientAccountResponse,
+    SearchClientAccountTotalRecords,
     TeamMemberResponse,
     UpdateClientAccountHeaderParameters,
     UpdateClientAccountParameters,
@@ -13,11 +14,13 @@ export interface ClientAccountPersister {
         clientAccount: ClientAccountParameters
     ): Promise<ClientAccountResponse | undefined>;
     getClientAccount(clientAccountId: string): Promise<ClientAccountResponse>;
-    findOne(where: Record<string, any>): Promise<ClientAccountResponse>;
+    findOne(
+        where: Partial<ClientAccountModelAttributes>
+    ): Promise<ClientAccountModel>;
 
     searchClientAccount(
         clientAccount: SearchClientAccountParameters
-    ): Promise<Array<SearchClientAccountResponse> | undefined>;
+    ): Promise<SearchClientAccountTotalRecords | undefined>;
 
     updateClientAccount(
         updateParameters: UpdateClientAccountParameters
@@ -31,16 +34,18 @@ export interface ClientAccountPersister {
 
     getClientAccountSeats(clientAccountId: string): Promise<number>;
 
-    getClientAccountUsers(clientAccountId: string): Promise<number>;
+    getClientAccountUsers(clientAccountUuid: string): Promise<number>;
 
     getClientAccountAvailableSeats(clientAccountId: string): Promise<number>;
 
-    getClientAccountTeam(clientAccountId: string): Promise<TeamMemberResponse[]>;
+    getClientAccountTeam(
+        clientAccountId: string
+    ): Promise<TeamMemberResponse[]>;
 
     checkNameAvailability(name: string): Promise<boolean>;
 
     UpdateCompletion(
-        clientAccountId: string,
+        clientAccountUuid: string,
         isCompleted: boolean,
         lastStepCompleted: number
     ): Promise<boolean>;
@@ -50,4 +55,6 @@ export interface ClientAccountPersister {
     ): Promise<ClientAccountResponse | never[]>;
 
     checkSameName(name: string, clientAccountId: string): Promise<boolean>;
+
+    deleteClientAccountTeamMembers(clientAccountId: string): Promise<boolean>;
 }

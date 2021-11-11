@@ -55,16 +55,8 @@ const AZFilter: React.FC<AZFilterProps> = ({ selectedLetter, setSelectedLetter }
       <Styled.wrapper>
         <div data-test="button-all" onClick={() => selectLetter('')}>
           <Styled.viewAll>
-            <Icon
-              src={Icons.AzFilter}
-              size={IconSize.large}
-              color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
-            />
-            <Text
-              type="bodySmall"
-              bold
-              color={selectedLetter === '' ? color.theme.blueMid : color.base.grey}
-            >
+            <Icon src={Icons.AzFilter} size={IconSize.large} color={color.base.greyDark} />
+            <Text type="bodySmall" bold color={color.base.greyDark}>
               VIEW ALL
             </Text>
           </Styled.viewAll>
@@ -81,7 +73,7 @@ const AZFilter: React.FC<AZFilterProps> = ({ selectedLetter, setSelectedLetter }
                       ? color.base.white
                       : hoveringAzFilter
                       ? color.theme.blue
-                      : color.base.grey
+                      : color.base.greyDark
                   }
                 >
                   {alf}

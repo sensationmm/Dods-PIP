@@ -17,3 +17,12 @@ export interface TaxonomyItem {
 export interface DownstreamEndpoints {
     taxonomiesEndpointUrl: string;
 }
+
+export interface TaxonomyTree {
+    [key: string]: TaxonomyTree
+}
+
+export interface NarrowedBranch {
+    narrowerLabel: string;
+    narrowerTaxonomy: TaxonomyTree
+}

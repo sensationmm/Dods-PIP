@@ -1,3 +1,4 @@
+import trim from 'lodash/trim';
 import React from 'react';
 
 import * as Styled from './DataTable.styles';
@@ -44,22 +45,32 @@ export const DataTableHeading: React.FC<DataTableHeadingProps> = ({ headings, co
 };
 
 export const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
-  let block = '';
+  const headers: string[] = [];
+  rows.forEach((item) => {
+    const col1 = trim(item[0] as string).toUpperCase();
+    if (!headers.includes(col1) && col1 !== '') {
+      headers.push(col1);
+    }
+  });
+  const renderedHeaders: string[] = [];
 
   return (
     <Styled.tableBody data-test="data-table-rows">
       {rows.map((item, count) => {
         const row = [];
-        if (item[0] !== block) {
+        const col1 = trim(item[0] as string).toUpperCase();
+        if (!renderedHeaders.includes(col1) && col1 !== '') {
+          renderedHeaders.push(col1);
           row.push(
             <Styled.tableRow key="row-header-empty">
-              <Styled.tableCellEmpty isFirst={block === ''} colSpan={item.length} />
+              <Styled.tableCellEmpty isFirst={true} colSpan={item.length} />
             </Styled.tableRow>,
             <Styled.tableRow data-test="block-header" key={`row-header-${count}`}>
-              <Styled.tableBlockHeader colSpan={item.length}>{item[0]}</Styled.tableBlockHeader>
+              <Styled.tableBlockHeader colSpan={item.length}>{col1}</Styled.tableBlockHeader>
             </Styled.tableRow>,
           );
         }
+
         row.push(
           <Styled.tableRow key={`row-${count}`}>
             {item.slice(1).map((col, count2) => {
@@ -74,7 +85,53 @@ export const DataTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
             })}
           </Styled.tableRow>,
         );
-        block = item[0] as string;
+        return row;
+      })}
+    </Styled.tableBody>
+  );
+};
+
+export const PlainTableHeading: React.FC<DataTableHeadingProps> = ({ headings, colWidths }) => {
+  const totalWidths = colWidths ? colWidths.reduce((prev, curr) => prev + curr, 0) : 0;
+
+  return (
+    <Styled.tableHead data-test="data-table-headings">
+      <Styled.tableRow>
+        {headings.map((item, count) => (
+          <Styled.plainTableHeading
+            key={`heading-${count}`}
+            data-test={`heading-${count}`}
+            style={{
+              width: colWidths ? `${Math.floor((colWidths[count] / totalWidths) * 100)}%` : 'auto',
+            }}
+          >
+            {item}
+          </Styled.plainTableHeading>
+        ))}
+      </Styled.tableRow>
+    </Styled.tableHead>
+  );
+};
+
+export const PlainTableRows: React.FC<DataTableRowProps> = ({ rows }) => {
+  return (
+    <Styled.tableBody data-test="data-table-rows">
+      {rows.map((item, count) => {
+        const row = [];
+        row.push(
+          <Styled.tableRow key={`row-${count}`}>
+            {item.slice(1).map((col, count2) => {
+              return (
+                <Styled.plainTableCell
+                  key={`row-${count}-col-${count2}`}
+                  isLast={count === rows.length - 1 || item[0] !== rows[count + 1][0]}
+                >
+                  {col}
+                </Styled.plainTableCell>
+              );
+            })}
+          </Styled.tableRow>,
+        );
         return row;
       })}
     </Styled.tableBody>
@@ -109,3 +166,22 @@ const DataTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => (
 );
 
 export default DataTable;
+
+export const PlainTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => {
+  return (
+    <Styled.wrapper data-test="component-data-table" cellSpacing={0}>
+      <PlainTableHeading headings={headings} colWidths={colWidths} />
+      {rows.length > 0 ? (
+        <PlainTableRows data-test="data-table-rows" rows={rows} />
+      ) : (
+        <Styled.tableBody>
+          <Styled.tableRow>
+            <Styled.plainCellNoData data-test="empty-data-warning" colSpan={headings.length}>
+              No data to show
+            </Styled.plainCellNoData>
+          </Styled.tableRow>
+        </Styled.tableBody>
+      )}
+    </Styled.wrapper>
+  );
+};

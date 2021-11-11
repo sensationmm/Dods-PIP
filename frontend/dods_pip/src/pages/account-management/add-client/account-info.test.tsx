@@ -16,7 +16,11 @@ jest.mock('../../../lib/fetchJson', () => {
     .mockImplementationOnce(() =>
       Promise.resolve({ data: { uuid } }),
     ).mockImplementationOnce(() =>
-      Promise.resolve({ data: { message: 'server error' } }),
+      Promise.reject({ data: { message: 'server error' } }),
+    ).mockImplementationOnce(() =>
+      Promise.resolve({ data: { uuid } }),
+    ).mockImplementationOnce(() =>
+      Promise.reject({ data: { message: 'server error' } }),
     )
 });
 
@@ -31,6 +35,8 @@ describe('AccountInfo', () => {
   const defaultProps = {
     accountId: '',
     setAccountId,
+    savedAccountName: '',
+    setSavedAccountName: jest.fn(),
     accountName: '',
     setAccountName: jest.fn,
     accountNotes: '',
@@ -196,39 +202,75 @@ describe('AccountInfo', () => {
     expect(button.props().disabled).toEqual(false);
   });
 
-  // @todo - stop skipping test when API is ready
-  xdescribe('when clicking on "Save and Continue"', () => {
-    let button;
+  describe('when clicking on "Save and Continue"', () => {
+    describe('create client (POST)', () => {
+      let button;
 
-    beforeEach(() => {
-      wrapper = shallow(
-        <AccountInfo
-          {...defaultProps}
-          accountName="example"
-          contactName="example"
-          contactEmail="example@example.com"
-          contactTelephone="123456789"
-        />,
-      );
-      button = wrapper.find('[data-test="continue-button"]');
+      beforeEach(() => {
+        wrapper = shallow(
+          <AccountInfo
+            {...defaultProps}
+            accountName="example"
+            contactName="example"
+            contactEmail="example@example.com"
+            contactTelephone="123456789"
+          />,
+        );
+        button = wrapper.find('[data-test="continue-button"]');
+      });
+
+      it('and creating a client account is successful', async() => {
+        await button.simulate('click');
+        
+        expect(setAccountId).toHaveBeenCalledWith(uuid);
+        expect(onSubmit).toHaveBeenCalledTimes(1);
+        expect(setLoading).toHaveBeenCalledTimes(2);
+      });
+
+      it('and creating client account is not successful', async() => {
+        await button.simulate('click');
+        
+        expect(setAccountId).toHaveBeenCalledTimes(0)
+        expect(onSubmit).toHaveBeenCalledTimes(0);
+        expect(setLoading).toHaveBeenCalledTimes(2);
+        expect(addNotification).toHaveBeenCalledWith({ text: expect.any(String), type: 'warn', title: 'Error' });
+      });
     });
 
-    it('and creating a client account is successful', async() => {
-      await button.simulate('click');
-      
-      expect(setAccountId).toHaveBeenCalledWith(uuid);
-      expect(onSubmit).toHaveBeenCalledTimes(1);
-      expect(setLoading).toHaveBeenCalledTimes(2);
-    });
+    describe('update client (PUT)', () => {
+      let button;
 
-    it('and a creating client account is not successful', async() => {
-      await button.simulate('click');
-      
-      expect(setAccountId).toHaveBeenCalledTimes(0)
-      expect(onSubmit).toHaveBeenCalledTimes(0);
-      expect(setLoading).toHaveBeenCalledTimes(2);
-      expect(addNotification).toHaveBeenCalledWith({ text: expect.any(String), type: 'warn', title: 'Error' });
-    });
+      beforeEach(() => {
+        wrapper = shallow(
+          <AccountInfo
+            {...defaultProps}
+            accountId="1230-2222"
+            accountName="example"
+            contactName="example"
+            contactEmail="example@example.com"
+            contactTelephone="123456789"
+          />,
+        );
+        button = wrapper.find('[data-test="continue-button"]');
+      });
+
+      it('and updating a client account is successful', async() => {
+        await button.simulate('click');
+        
+        expect(setAccountId).toHaveBeenCalledTimes(0);
+        expect(onSubmit).toHaveBeenCalledTimes(1);
+        expect(setLoading).toHaveBeenCalledTimes(2);
+      });
+
+      it('and updating client account is not successful', async() => {
+        await button.simulate('click');
+        
+        expect(setAccountId).toHaveBeenCalledTimes(0)
+        expect(onSubmit).toHaveBeenCalledTimes(0);
+        expect(setLoading).toHaveBeenCalledTimes(2);
+        expect(addNotification).toHaveBeenCalledWith({ text: expect.any(String), type: 'warn', title: 'Error' });
+      });
+    })
   });
 
   afterEach(() => {

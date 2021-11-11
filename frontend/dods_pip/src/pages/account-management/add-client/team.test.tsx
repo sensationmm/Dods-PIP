@@ -3,6 +3,18 @@ import React from 'react';
 
 import Team from './team';
 
+jest.mock('../../../lib/fetchJson', () => {
+  return jest
+    .fn()
+    .mockReturnValue(Promise.resolve({ success: true, data: [ { id: '12', name: 'Jane Doe', type: 'client' }, { id: '13', name: 'Test Test', type: 'client' }, { id: '20', name: 'John Doe', type: 'consultant'}]}))
+});
+
+jest.mock('../../../lib/useTeamMembers', () => {
+  return jest
+    .fn()
+    .mockReturnValue({ clients: [{ id: '12', name: 'Jane Doe', type: 'client' }] })
+});
+
 describe('Team', () => {
   let wrapper, setActiveStep;
   let count = 0;
@@ -11,9 +23,12 @@ describe('Team', () => {
   const mockSetErrors = jest.fn();
   const mockSetClientUsers = jest.fn();
   const mockSetClient = jest.fn();
+  const mockSetLoading = jest.fn();
   const useStateSpy = jest.spyOn(React, 'useState');
 
   const defaultProps = {
+    setLoading: mockSetLoading,
+    addNotification: jest.fn(),
     teamMembers: [],
     setTeamMembers: jest.fn,
     accountManagers: [],
@@ -200,10 +215,10 @@ describe('Team', () => {
     expect(mockSetErrors).toHaveBeenCalledWith({});
   });
 
-  it('adds client', () => {
+  it('adds client', async () => {
     const submitButton = wrapper.find('[data-test="create-user-button"]');
-    submitButton.simulate('click');
-    expect(mockSetClientUsers).toHaveBeenCalledWith(['Test Test']);
+    await submitButton.simulate('click');
+    expect(mockSetClientUsers).toHaveBeenCalledWith([{ id: '12', name: 'Jane Doe', type: 'client' }, { id: '13', name: 'Test Test', type: 'client' }]);
     expect(mockSetClient).toHaveBeenCalledTimes(8);
     expect(mockSetAddUser).toHaveBeenCalledWith(false);
   });

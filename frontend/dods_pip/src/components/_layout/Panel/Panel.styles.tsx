@@ -58,7 +58,7 @@ export const panel = styled.div`
   position: relative;
   z-index: 2;
   padding: ${spacing(3)} ${spacing(3)};
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
 
   &.padded {

@@ -6,7 +6,8 @@ import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import * as Styled from './Button.styles';
 
-type ButtonType = 'primary' | 'secondary' | 'text';
+export type ButtonType = 'primary' | 'secondary' | 'text';
+type ButtonWidth = 'auto' | 'fixed';
 type IconAlignment = 'left' | 'right';
 
 export interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
@@ -15,10 +16,12 @@ export interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
   icon?: Icons;
   iconAlignment?: IconAlignment;
   inline?: boolean;
+  width?: ButtonWidth;
 }
 
 const Button: React.FC<ButtonProps> = ({
   type = 'primary',
+  width = 'auto',
   label,
   onClick,
   disabled = false,
@@ -44,7 +47,9 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <Styled.wrapper data-test="component-button">
       <Component
+        isIconButton={false}
         disabled={disabled}
+        width={width}
         className={classNames({
           small: isSmall,
           icon: icon,
@@ -59,7 +64,15 @@ const Button: React.FC<ButtonProps> = ({
           <Icon
             src={icon}
             size={isSmall ? IconSize.medium : IconSize.large}
-            color={type === 'primary' ? color.base.white : color.theme.blueMid}
+            color={
+              type === 'primary'
+                ? !disabled
+                  ? color.base.white
+                  : color.base.greyDark
+                : !disabled
+                ? color.theme.blueMid
+                : color.base.greyDark
+            }
           />
         )}
       </Component>

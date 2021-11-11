@@ -37,23 +37,26 @@ export default function useSubscriptionTypes({ placeholder }: params): UseSubscr
       uuid: '',
     };
     let selectValues = [];
-    const data = await fetchJson(`${BASE_URI}${Api.SubscriptionTypes}`, {
-      method: 'GET',
-    });
 
-    if (Array.isArray(data)) {
-      selectValues = data.map((item: SubscriptionType) => {
-        const { uuid, name } = item;
-        return {
-          uuid,
-          name,
-          label: name,
-          value: uuid,
-        };
+    try {
+      const data = await fetchJson(`${BASE_URI}${Api.SubscriptionTypes}`, {
+        method: 'GET',
       });
-      setSubscriptionList([option, ...selectValues]);
-    } else {
-      setError(data);
+
+      if (Array.isArray(data)) {
+        selectValues = data.map((item: SubscriptionType) => {
+          const { uuid, name } = item;
+          return {
+            uuid,
+            name,
+            label: name,
+            value: uuid,
+          };
+        });
+        setSubscriptionList([option, ...selectValues]);
+      }
+    } catch ({ data = {} }) {
+      setError(data as Error);
     }
   };
 

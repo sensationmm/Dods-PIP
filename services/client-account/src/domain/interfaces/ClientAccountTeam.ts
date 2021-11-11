@@ -7,11 +7,16 @@ export interface ClientAccountTeam {
 export interface TeamMemberResponse {
     id: string;
     name: string;
-    type?: 'consultant' | 'client';
+    teamMemberType?: 'Team Member' | 'Account Manager' | 'Client User' | number;
 }
 
+export interface TeamMember {
+    userId?: string;
+    teamMemberType: number;
+}
 export interface ClientAccountTeamParameters {
-    clientAccountTeam: ClientAccountTeam;
+    clientAccountId: string;
+    teamMembers: Array<TeamMember>;
 }
 
 export interface NewTeamMemberParameters {

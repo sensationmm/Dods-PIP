@@ -1,6 +1,7 @@
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 
+import { Icons } from '../Icon/assets';
 import IconButton, { IconButtonProps } from '.';
 
 export default {
@@ -22,6 +23,9 @@ const Template: Story<IconButtonProps> = (args) => <IconButton {...args} />;
 export const Default = Template.bind({});
 
 Default.args = {
+  type: 'primary',
   label: '',
+  icon: Icons.TickBold,
   disabled: false,
+  isSmall: false,
 };

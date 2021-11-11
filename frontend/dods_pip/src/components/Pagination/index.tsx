@@ -15,6 +15,8 @@ export type PaginationProps = {
 };
 
 type PaginationType = {
+  activePage: number;
+  numPerPage: number;
   PaginationStats: React.FC;
   PaginationContent: <Type>(data: Type) => Type;
   PaginationButtons: React.FC;
@@ -85,6 +87,7 @@ const Pagination = (dataLength: number): PaginationType => {
             Items per page&nbsp;
           </Text>
           <Select
+            testId="select-items-per-page"
             id="pagination-pp"
             data-test="set-page-count"
             size="small"
@@ -148,7 +151,13 @@ const Pagination = (dataLength: number): PaginationType => {
     );
   };
 
-  return { PaginationStats, PaginationContent, PaginationButtons };
+  return {
+    activePage,
+    numPerPage: parseInt(numPerPage, 10),
+    PaginationStats,
+    PaginationContent,
+    PaginationButtons,
+  };
 };
 
 export default Pagination;

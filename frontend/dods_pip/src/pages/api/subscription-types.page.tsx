@@ -4,7 +4,7 @@ import { Api } from '../../utils/api';
 
 export default withSession(async (req, res) => {
   try {
-    const result = await fetchJson(`${process.env.APP_API_URL}/${Api.SubscriptionTypes}`, {
+    const result = await fetchJson(`${process.env.APP_API_URL}${Api.SubscriptionTypes}`, {
       method: 'GET',
     });
     res.json(result);

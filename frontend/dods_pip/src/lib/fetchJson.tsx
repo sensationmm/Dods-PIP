@@ -3,14 +3,15 @@ interface CustomError extends Error {
   data?: Record<string, unknown>;
 }
 
-interface customResponse extends Response {
+interface CustomResponse extends Response {
   accessToken?: string;
   data?: Record<string, unknown>;
+  totalRecords?: number;
   message?: string;
   success?: boolean;
 }
 
-export default async function fetchJson(url: string, args?: RequestInit): Promise<customResponse> {
+export default async function fetchJson(url: string, args?: RequestInit): Promise<CustomResponse> {
   try {
     const response = await fetch(url, {
       method: 'POST',

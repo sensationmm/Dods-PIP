@@ -1,3 +1,4 @@
+import trim from 'lodash/trim';
 import React from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
@@ -30,6 +31,8 @@ export interface AccountInfoProps {
   setLoading: (state: boolean) => void;
   accountId: string;
   setAccountId: (val: string) => void;
+  savedAccountName: string;
+  setSavedAccountName: (val: string) => void;
   accountName: string;
   setAccountName: (val: string) => void;
   accountNotes: string;
@@ -51,6 +54,8 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   setLoading,
   accountId,
   setAccountId,
+  savedAccountName,
+  setSavedAccountName,
   accountName,
   setAccountName,
   accountNotes,
@@ -68,23 +73,18 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 }) => {
   const isComplete =
     Object.keys(errors).length === 0 &&
-    accountName !== '' &&
-    contactName !== '' &&
+    trim(accountName) !== '' &&
+    trim(contactName) !== '' &&
     contactTelephone != '' &&
     contactEmail !== '';
 
   const handleSave = async () => {
-    if (!isComplete) {
-      // incomple form inputs
-      return false;
-    }
-
     setLoading(true);
 
     const payload = {
-      name: accountName,
+      name: trim(accountName),
       notes: accountNotes,
-      contactName,
+      contactName: trim(contactName),
       contactEmailAddress: contactEmail,
       contactTelephoneNumber: contactTelephone,
     };
@@ -100,39 +100,43 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       uri += `/${accountId}/header`;
     }
 
-    const response = await fetchJson(uri, {
-      method,
-      body: JSON.stringify(body),
-    });
-    const { data = {}, message = '' } = response;
-    const { uuid = '' } = data;
-
-    setLoading(false);
-
-    if (uuid !== '') {
-      // all good
-      if (method === 'POST') {
-        setAccountId(uuid as string);
+    try {
+      const response = await fetchJson(uri, {
+        method,
+        body: JSON.stringify(body),
+      });
+      const { data = {} } = response;
+      const { uuid = '' } = data;
+      if (uuid !== '') {
+        // all good
+        if (method === 'POST') {
+          setAccountId(uuid as string);
+        }
+        setSavedAccountName(trim(accountName));
+        onSubmit(); // go to next step
       }
-      onSubmit(); // go to next step
-    } else {
+    } catch (e) {
       // show server error
       addNotification({
         type: 'warn',
         title: 'Error',
-        text: message,
+        text: e.data.message,
       });
     }
+
+    setLoading(false);
   };
 
   const validateAccountName = async () => {
     const formErrors = { ...errors };
-    if (accountName === '') {
+    if (trim(accountName) === '') {
       formErrors.accountName = 'This field is required';
+    } else if (trim(accountName).toLowerCase() === savedAccountName.toLowerCase()) {
+      delete formErrors.accountName;
     } else {
       delete formErrors.accountName;
       const response = await fetchJson(`${BASE_URI}${Api.CheckAccountName}`, {
-        body: JSON.stringify({ name: accountName }),
+        body: JSON.stringify({ name: trim(accountName) }),
       });
 
       const { data = {} } = response;
@@ -148,7 +152,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
   const validateName = () => {
     const formErrors = { ...errors };
-    if (contactName === '') {
+    if (trim(contactName) === '') {
       formErrors.contactName = 'This field is required';
     } else {
       delete formErrors.contactName;
@@ -290,7 +294,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
           <Button
             data-test="continue-button"
             label="Save and continue"
-            onClick={onSubmit} // @todo use handleSave when API is ready
+            onClick={handleSave}
             icon={Icons.ChevronRightBold}
             iconAlignment="right"
             disabled={!isComplete}

@@ -58,3 +58,11 @@ module "migration" {
   source      = "./services/migration"
   environment = var.environment
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+// - API Gateway
+// --------------------------------------------------------------------------------------------------------------------
+module "api_gateway" {
+  source      = "./services/api-gateway"
+  environment = var.environment
+}

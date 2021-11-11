@@ -10,6 +10,7 @@ import {
     ClientAccountResponse,
     SearchClientAccountParameters,
     SearchClientAccountResponse,
+    SearchClientAccountTotalRecords,
     TeamMemberResponse,
     UpdateClientAccountHeaderParameters,
     UpdateClientAccountParameters,
@@ -19,6 +20,8 @@ import {
     parseTeamMember,
 } from '../domain';
 import { Op, WhereOptions, col, fn, where } from 'sequelize';
+
+import { ClientAccountModelAttributes } from '../db';
 
 export class ClientAccountError extends Error {
     constructor(message: string, cause: any) {
@@ -80,7 +83,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: ['subscriptionType'],
+            include: ['subscriptionType', 'team'],
         });
 
         if (clientAccountModel) {
@@ -92,16 +95,35 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async findOne(where: Record<string, any>): Promise<ClientAccountResponse> {
+    async findOne(
+        where: Partial<ClientAccountModelAttributes>
+    ): Promise<ClientAccountModel> {
         const clientAccountModel = await this.model.findOne({
             where,
-            include: ['subscriptionType'],
+            include: ['subscriptionType', 'team'],
         });
 
         if (clientAccountModel) {
-            const clientAccount = parseResponseFromModel(clientAccountModel);
+            return clientAccountModel;
+        } else {
+            throw new Error('Error: clientAccount not found');
+        }
+    }
 
-            return clientAccount;
+    async deleteClientAccountTeamMembers(
+        clientAccountId: string
+    ): Promise<boolean> {
+        const clientAccount = await this.model.findOne({
+            where: { uuid: clientAccountId },
+        });
+
+        if (clientAccount) {
+            this.teamModel.destroy({
+                where: {
+                    clientAccountId: clientAccount.id,
+                },
+            });
+            return true;
         } else {
             throw new Error('Error: clientAccount not found');
         }
@@ -109,18 +131,63 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
     async searchClientAccount(
         searchClientAccountParams: SearchClientAccountParameters
-    ): Promise<Array<SearchClientAccountResponse> | undefined> {
-        let { startsWith, locations, subscriptionTypes, searchTerm } =
-            searchClientAccountParams;
+    ): Promise<SearchClientAccountTotalRecords | undefined> {
+        let {
+            startsWith,
+            locations,
+            subscriptionTypes,
+            searchTerm,
+            isCompleted,
+            sortBy,
+            sortDirection,
+        } = searchClientAccountParams;
         const { limitNum, offsetNum } = searchClientAccountParams;
-        console.log(searchClientAccountParams);
         let clientAccountWhere: WhereOptions = {};
+        let clientAccountResponse: SearchClientAccountTotalRecords = {};
+        let sortByQuery = 'name';
+        let sortDirectionQuery = 'asc';
+        sortBy = sortBy?.toLowerCase();
+        sortDirection = sortDirection?.toLowerCase();
 
-        if (startsWith) {
+        let subscriptionInclude = {
+            model: this.subsModel,
+            as: 'subscriptionType',
+            required: false,
+        };
+
+        if (sortBy === 'name' || sortBy === 'subscription') {
+            sortByQuery = sortBy;
+        }
+
+        if (sortDirection === 'asc' || sortDirection === 'desc') {
+            sortDirection = sortDirection.toUpperCase();
+            sortDirectionQuery = sortDirection;
+        }
+
+        if (startsWith && searchTerm) {
+            clientAccountWhere['name'] = {
+                [Op.or]: [
+                    { [Op.like]: `${startsWith}%` },
+                    { [Op.like]: `%${searchTerm}%` },
+                ],
+            };
+        } else if (startsWith) {
             clientAccountWhere['name'] = {
                 [Op.like]: `${startsWith}%`,
             };
+        } else if (searchTerm) {
+            clientAccountWhere['name'] = {
+                [Op.like]: `%${searchTerm}%`,
+            };
         }
+
+        if (isCompleted) {
+            if (isCompleted === 'true')
+                clientAccountWhere['is_completed'] = true;
+            else if (isCompleted === 'false')
+                clientAccountWhere['is_completed'] = false;
+        }
+
         if (locations) {
             locations = locations.toLowerCase();
 
@@ -135,32 +202,40 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
         if (subscriptionTypes) {
             let searchSubscriptions = subscriptionTypes.split(',');
-
             clientAccountWhere['$subscriptionType.uuid$'] = {
                 [Op.or]: searchSubscriptions.map((uuid) => uuid),
             };
-        }
-        if (searchTerm) {
-            clientAccountWhere['name'] = {
-                [Op.like]: `%${searchTerm}%`,
+            subscriptionInclude = {
+                model: this.subsModel,
+                as: 'subscriptionType',
+                required: true,
             };
         }
-        const clientAccountModels = await this.model.findAll({
-            where: clientAccountWhere,
-            subQuery: false,
-            include: ['subscriptionType', 'team'],
-            offset: offsetNum,
-            limit: limitNum,
-        });
+
+        const { rows: clientAccountModels, count: totalRecords } =
+            await this.model.findAndCountAll({
+                include: [
+                    subscriptionInclude,
+                    {
+                        model: this.userModel,
+                        as: 'team',
+                    },
+                ],
+                distinct: true,
+                where: clientAccountWhere,
+                order: [[sortByQuery, sortDirectionQuery]],
+                offset: offsetNum,
+                limit: limitNum,
+            });
+
         if (clientAccountModels) {
             const clientAccounts: Array<SearchClientAccountResponse> =
                 clientAccountModels.map((model) =>
                     parseSearchClientAccountResponse(model)
                 );
-
-            return clientAccounts;
-        } else {
-            return [];
+            clientAccountResponse.clientAccountsData = clientAccounts;
+            clientAccountResponse.totalRecordsModels = totalRecords;
+            return clientAccountResponse;
         }
     }
 
@@ -184,8 +259,6 @@ export class ClientAccountRepository implements ClientAccountPersister {
             if (!subscriptionData) {
                 throw new Error('Error: Wrong subscription uuid');
             }
-
-            //clientAccountToUpdate.SubscriptionType = subscriptionData;
 
             await clientAccountToUpdate.setSubscriptionType(subscriptionData);
 
@@ -243,13 +316,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
         }
     }
 
-    async getClientAccountUsers(clientAccountId: string): Promise<number> {
-        if (!clientAccountId) {
-            throw new Error('Error: clientAccountId cannot be empty');
+    async getClientAccountUsers(clientAccountUuid: string): Promise<number> {
+        if (!clientAccountUuid) {
+            throw new Error('Error: clientAccountUuid cannot be empty');
         }
 
         const clientAccountModel = await this.model.findOne({
-            where: { uuid: clientAccountId },
+            where: { uuid: clientAccountUuid },
             include: {
                 model: this.userModel,
                 as: 'team',
@@ -366,23 +439,25 @@ export class ClientAccountRepository implements ClientAccountPersister {
     }
 
     async UpdateCompletion(
-        clientAccountId: string,
+        clientAccountUuid: string,
         isCompleted: boolean,
         lastStepCompleted: number
     ): Promise<boolean> {
-        if (!clientAccountId) {
-            throw new Error('Error: clientAccountId cannot be empty');
+        if (!clientAccountUuid) {
+            throw new Error('Error: clientAccountUuid cannot be empty');
         }
 
         const clientAccountModel = await this.model.findOne({
-            where: { uuid: clientAccountId },
+            where: { uuid: clientAccountUuid },
         });
 
         if (clientAccountModel) {
-            clientAccountModel.isCompleted = isCompleted;
-            clientAccountModel.lastStepCompleted = lastStepCompleted;
+            if (!clientAccountModel.isCompleted) {
+                clientAccountModel.isCompleted = isCompleted;
+                clientAccountModel.lastStepCompleted = lastStepCompleted;
 
-            clientAccountModel.save();
+                clientAccountModel.save();
+            }
 
             return true;
         }

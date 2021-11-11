@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import React from 'react';
 
 import TagSelector from '.';
@@ -87,8 +87,9 @@ describe('TagSelector', () => {
   });
 
   it('deletes tag', () => {
-    const search = wrapper.find('[id="search-team-member"]');
-    search.props().onChange('test2');
+    wrapper = mount(<TagSelector {...defaultProps} />);
+    const search = wrapper.find('[data-test="chips"]').at(1);
+    search.props().onCloseClick('test2');
 
     expect(mockOnChange).toHaveBeenCalledWith(['test1']);
   });

@@ -6,3 +6,4 @@ export * from './Pagination';
 export * from './TypeParsers';
 export * from './ClientAccountTeam';
 export * from './ClientAccountTeamPersister';
+export * from './UserProfilePersister';

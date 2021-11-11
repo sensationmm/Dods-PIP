@@ -19,7 +19,7 @@ export const searchClientAccount: AsyncLambdaMiddleware<SearchClientAccountParam
                 params
             );
 
-        if (response?.length == 0) {
+        if (response?.clientAccountsData?.length == 0) {
             return new HttpResponse(HttpStatusCode.NOT_FOUND, {
                 success: false,
                 message: `No matches found for search parameters: ${params}`,
@@ -31,7 +31,7 @@ export const searchClientAccount: AsyncLambdaMiddleware<SearchClientAccountParam
             message: 'Showing Results.',
             limit: params?.limitNum,
             offset: params?.offsetNum,
-            totalRecords: response?.length,
-            data: response,
+            totalRecords: response?.totalRecordsModels,
+            data: response?.clientAccountsData,
         });
     };

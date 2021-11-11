@@ -25,12 +25,15 @@ export interface ClientAccountParameters {
 export interface ClientAccountResponse extends ClientAccount {
     //id: number;
     uuid: string;
-
+    team?: {
+        name: string;
+        type?: 'Team Member' | 'Account Manager' | 'Client User';
+    }[];
     subscription?: SubscriptionTypeResponse;
 }
 
 export interface SearchClientAccountResponse {
-    id: string;
+    uuid: string;
     name: string;
     notes?: string;
     subscription?: string;
@@ -38,12 +41,17 @@ export interface SearchClientAccountResponse {
     projects?: number;
     team?: {
         name: string;
-        type?: 'consultant' | 'client';
+        type?: 'Team Member' | 'Account Manager' | 'Client User';
     }[];
     isUK: boolean;
     isEU: boolean;
     isCompleted: boolean;
     lastStepCompleted: number;
+}
+
+export interface SearchClientAccountTotalRecords {
+    totalRecordsModels?: number;
+    clientAccountsData?: Array<SearchClientAccountResponse>;
 }
 
 export interface SearchClientAccountParameters extends Pagination {
@@ -52,6 +60,9 @@ export interface SearchClientAccountParameters extends Pagination {
     subscriptionTypes?: string | null;
     searchTerm?: string | null;
     startsWith?: string | null;
+    isCompleted?: string | null;
+    sortBy?: string | null;
+    sortDirection?: string | null;
 }
 export interface GetClientAccountParameters {
     clientAccountId: string;
