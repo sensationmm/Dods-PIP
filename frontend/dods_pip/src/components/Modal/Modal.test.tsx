@@ -10,13 +10,13 @@ const SELECTOR_FOOTER = '[data-test="modal-footer"]';
 const getWrapper = (props: ModalProps) => shallow(<Modal {...props} />);
 
 const root = global.document.createElement('div');
-root.setAttribute('id', 'root');
+root.setAttribute('id', '__next');
 const body = global.document.querySelector('body');
 body.appendChild(root);
 
 describe('Modal', () => {
   let MOCK_CLOSE_FN;
-  let DEFAULT_PROPS;
+  let DEFAULT_PROPS: ModalProps;
 
   afterEach(jest.clearAllMocks);
 
@@ -24,6 +24,7 @@ describe('Modal', () => {
     MOCK_CLOSE_FN = jest.fn();
     DEFAULT_PROPS = {
       onClose: MOCK_CLOSE_FN,
+      portalContainerId: '__next',
     };
   });
 
@@ -65,7 +66,8 @@ describe('Modal', () => {
 
     describe('and veil is clicked', () => {
       beforeEach(() => {
-        wrapper.find(SELECTOR_VEIL).simulate('click');
+        // very poor test case... will migrate to react testing library soon
+        wrapper.find(SELECTOR_VEIL).simulate('click', { target: { classList: ['veil'] } });
       });
 
       it('should close modal', () => {

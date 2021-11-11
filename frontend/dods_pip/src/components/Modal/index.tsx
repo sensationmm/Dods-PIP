@@ -14,6 +14,7 @@ export interface ModalProps {
   size?: modalSize;
   buttons?: ButtonProps[];
   isDismissible?: boolean;
+  portalContainerId?: string;
 }
 
 const Modal: FC<ModalProps> = ({
@@ -23,9 +24,14 @@ const Modal: FC<ModalProps> = ({
   buttons = [],
   children,
   isDismissible = true,
+  portalContainerId = '__next',
 }) => {
   const closeOnEscapeKeyDown = (e: KeyboardEvent) => {
     /^Escape$/i.test(e.key) && onClose && onClose();
+  };
+
+  const onVeilClose = (e: any) => {
+    /veil/i.test(e?.target?.classList.toString()) && onClose && onClose();
   };
 
   useEffect(() => {
@@ -40,7 +46,7 @@ const Modal: FC<ModalProps> = ({
   }, []);
 
   return createPortal(
-    <Styled.veil {...{ ...(isDismissible && { onClick: onClose }) }} data-test="modal-veil">
+    <Styled.veil {...{ ...(isDismissible && { onClick: onVeilClose }) }} data-test="modal-veil">
       <Styled.modal {...{ size }} data-test="modal">
         <Styled.modalHeader>
           <Text type="h2" headingStyle="title">
@@ -60,7 +66,7 @@ const Modal: FC<ModalProps> = ({
         </Styled.modalFooter>
       </Styled.modal>
     </Styled.veil>,
-    document.getElementById('root') as Element,
+    document.getElementById(portalContainerId) as Element,
   );
 };
 

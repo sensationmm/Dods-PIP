@@ -60,4 +60,5 @@ Default.args = {
     { label: 'Another button', type: 'secondary' },
   ],
   isDismissible: true,
+  portalContainerId: 'root',
 };
