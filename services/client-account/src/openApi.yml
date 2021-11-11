@@ -350,7 +350,7 @@ components:
                         type: string
                     teamMemberType:
                         type: number
-                        enum: [1, 2]
+                        enum: [1,2,3]
                 example:
                   - userId: 94a57103-3bf0-4a29-bdba-99a4650c1849
                     teamMemberType: 1 
