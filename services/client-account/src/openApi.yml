@@ -130,7 +130,7 @@ paths:
 
     /clientaccount/{clientAccountId}/teammember/new:
         post:
-            operationId: Create Team Member and add
+            operationId: createTeamMember
             summary: 'Add Team Member to Client Account'
             description: 'Add Team Member to Client Account'
             parameters:
