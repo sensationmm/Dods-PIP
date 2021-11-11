@@ -1,6 +1,12 @@
 const { Client } = require('@elastic/elasticsearch')
 
-import {HttpBadRequestError, NarrowedBranch, TaxonomiesParameters, TaxonomyItem, TaxonomyTree} from "../domain";
+import {
+    HttpBadRequestError,
+    TaxonomyNode,
+    TaxonomiesParameters,
+    TaxonomyItem,
+    TaxonomyTree,
+} from "../domain";
 import { Taxonomy } from "./Taxonomy"
 import elasticsearch from "../elasticsearch"
 
@@ -61,41 +67,40 @@ export class TaxonomyRepository implements Taxonomy {
         }
     }
 
-    async get_narrower_topics(narrower_topic: string): Promise<NarrowedBranch> {
+    async getNarrowerTopics(narrower_topic: string): Promise<TaxonomyNode> {
         let narrowerTaxQuery = this.narrowerQuery
         narrowerTaxQuery.body.query.term._id = narrower_topic
 
         const { body } = await this.elasticsearch.search(narrowerTaxQuery)
         const currentTaxonomy = body.hits.hits[0]
         const currentLabel = currentTaxonomy._source.label
-        let returnObject: NarrowedBranch = {narrowerLabel: '', narrowerTaxonomy: {}}
+        const currentId = currentTaxonomy._id;
+        let returnObject: TaxonomyNode = { termName: currentLabel, id: currentId, childTerms: []}
 
         if (currentTaxonomy._source.narrower) {
-            let narrowerContent: TaxonomyTree = {}
             for (const narrowerTaxonomyTopic of currentTaxonomy._source.narrower) {
-                const { narrowerLabel, narrowerTaxonomy } = await this.get_narrower_topics(narrowerTaxonomyTopic)
-                narrowerContent[narrowerLabel] = narrowerTaxonomy
+                const narrowerTaxonomy = await this.getNarrowerTopics(narrowerTaxonomyTopic)
+                returnObject.childTerms.push(narrowerTaxonomy)
             }
-            returnObject['narrowerLabel'] = currentLabel
-            returnObject['narrowerTaxonomy'] = narrowerContent
-        } else {
-            returnObject['narrowerLabel'] = currentLabel
-            returnObject['narrowerTaxonomy'] = {}
+
         }
         return returnObject
     }
 
     async buildTree(): Promise<TaxonomyTree>{
-        let tree: TaxonomyTree = {};
+        let tree: TaxonomyTree = [];
         const { body } = await this.elasticsearch.search(this.topConceptsQuery).then()
         await Promise.all(body.hits.hits.map(async (topConcept: any) => {
-            tree[topConcept['_source']['label']] = {}
+            const termName = topConcept._source.label;
+            const termId = topConcept._id;
+            let branchObject: TaxonomyNode = { termName: termName, id: termId, childTerms: []}
             if (topConcept._source.narrower) {
                 for (const narrowerTopic of topConcept._source.narrower) {
-                    const { narrowerLabel, narrowerTaxonomy } = await this.get_narrower_topics(narrowerTopic)
-                    tree[topConcept['_source']['label']][narrowerLabel] = narrowerTaxonomy
+                    const narrowerBranch: TaxonomyNode = await this.getNarrowerTopics(narrowerTopic)
+                    branchObject.childTerms.push(narrowerBranch)
                 }
             }
+            tree.push(branchObject)
 
 
         }));

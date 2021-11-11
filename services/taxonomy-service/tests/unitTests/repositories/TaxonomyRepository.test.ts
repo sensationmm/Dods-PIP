@@ -152,7 +152,7 @@ describe(`get taxonomyTree from repository`, () => {
 
     test('test gets narrower topics', async () =>{
         // @ts-ignore
-        const spy = jest.spyOn(TaxonomyRepository.prototype as any, 'get_narrower_topics');
+        const spy = jest.spyOn(TaxonomyRepository.prototype as any, 'getNarrowerTopics');
         elasticsearch.search.mockResolvedValueOnce({body: MOCK_ES_RESPONSE})
         await TaxonomyRepository.defaultInstance.buildTree()
 

@@ -18,11 +18,12 @@ export interface DownstreamEndpoints {
     taxonomiesEndpointUrl: string;
 }
 
-export interface TaxonomyTree {
-    [key: string]: TaxonomyTree
+export interface TaxonomyTree  extends Array<TaxonomyNode>{
+
 }
 
-export interface NarrowedBranch {
-    narrowerLabel: string;
-    narrowerTaxonomy: TaxonomyTree
+export interface TaxonomyNode {
+    termName: string;
+    id: string;
+    childTerms: TaxonomyNode[];
 }
