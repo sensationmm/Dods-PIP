@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import InputTelephone from '../../components/_form/InputTelephone';
 import InputText from '../../components/_form/InputText';
 import Label from '../../components/_form/Label';
 import SearchDropdown from '../../components/_form/SearchDropdown';
@@ -26,6 +27,7 @@ type Errors = {
   telephoneNumber?: string;
   telephoneNumber2?: string;
   account?: string;
+  jobTitle?: string;
 };
 
 interface AddUserProps extends LoadingHOCProps {}
@@ -92,6 +94,17 @@ export const AddUser: React.FC<AddUserProps> = () => {
     setErrors(formErrors);
   };
 
+  const validateJobTitle = () => {
+    const formErrors = { ...errors };
+    if (trim(jobTitle) === '') {
+      formErrors.jobTitle = 'This field is required';
+    } else {
+      delete formErrors.jobTitle;
+    }
+
+    setErrors(formErrors);
+  };
+
   const validateEmailAddress = () => {
     const formErrors = { ...errors };
     if (trim(emailAddress) === '') {
@@ -118,7 +131,9 @@ export const AddUser: React.FC<AddUserProps> = () => {
 
   const validateTelephone = () => {
     const formErrors = { ...errors };
-    if (trim(telephoneNumber) !== '' && !Validation.validatePhone(telephoneNumber)) {
+    if (trim(telephoneNumber) === '') {
+      formErrors.telephoneNumber = 'This field is required';
+    } else if (trim(telephoneNumber) !== '' && !Validation.validatePhone(telephoneNumber)) {
       formErrors.telephoneNumber = 'Invalid telephone';
     } else {
       delete formErrors.telephoneNumber;
@@ -203,15 +218,17 @@ export const AddUser: React.FC<AddUserProps> = () => {
                   required
                   label="Account"
                   error={errors.account}
-                  onBlur={() => validateAccount()}
+                  onBlur={validateAccount}
                 />
                 <InputText
                   id="jobTitle"
                   value={jobTitle}
                   onChange={setJobTitle}
-                  optional
+                  required
                   label="Job Title"
                   placeholder="Type the job title"
+                  error={errors.jobTitle}
+                  onBlur={validateJobTitle}
                 />
               </>
             )}
@@ -236,18 +253,18 @@ export const AddUser: React.FC<AddUserProps> = () => {
               onBlur={validateEmailAddress2}
               error={errors.emailAddress2}
             />
-            <InputText
+            <InputTelephone
               id="telephoneNumber"
               value={telephoneNumber}
               onChange={setTelephoneNumber}
-              optional
+              required
               label="Telephone Number"
               placeholder="Type the telephone number"
               helperText="Will be used as a main number"
               onBlur={validateTelephone}
               error={errors.telephoneNumber}
             />
-            <InputText
+            <InputTelephone
               id="telephoneNumber2"
               value={telephoneNumber2}
               onChange={setTelephoneNumber2}
