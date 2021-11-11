@@ -33,6 +33,7 @@ const Select: React.FC<SelectProps> = ({
   onBlur,
   isFullWidth = false,
   isFilter = false,
+  testId,
 }) => {
   const firstRun = React.useRef(true);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -60,6 +61,7 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <Styled.wrapper
+      data-testid={testId}
       data-test="component-select"
       hasError={error !== undefined}
       isDisabled={isDisabled}
@@ -85,7 +87,7 @@ const Select: React.FC<SelectProps> = ({
             onFocus={() => setIsOpen(true)}
             tabIndex={1}
             placeholder={placeholder}
-            length={Math.max(...options.map((item) => item.label.length))}
+            length={Math.max(...options.map((item) => item.label?.length))}
           />
           {!isDisabled && (
             <Styled.selectTrigger data-test="select-trigger" onClick={() => setIsOpen(!isOpen)} />

@@ -27,6 +27,7 @@ export interface InputBaseProps {
   placeholder?: string;
   tabIndex?: number;
   titleField?: boolean;
+  testId?: string;
 }
 
 const InputBase: React.FC<InputBaseProps> = ({

@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
 import Select from '../../components/_form/Select';
@@ -20,9 +20,18 @@ import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
+import useDebounce from '../../lib/useDebounce';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
 import * as Styled from './accounts.styles';
+
+type Filters = {
+  search?: string;
+  aToZ?: string;
+  account?: string;
+  subscription?: string;
+  location?: string;
+};
 
 type ClientAccountTeamMember = {
   id: string;
@@ -56,12 +65,12 @@ type FilterParams = {
   searchTerm?: string;
 };
 
-enum AccountValue {
+export enum AccountValue {
   Completed = 'completed',
   Incomplete = 'incomplete',
 }
 
-enum LocationValue {
+export enum LocationValue {
   EU = 'EU',
   UK = 'UK',
 }
@@ -70,13 +79,11 @@ interface AccountsProps extends LoadingHOCProps {}
 
 export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
   const [showFilter, setShowFilter] = React.useState<boolean>(true);
-  const [filterSearchText, setFilterSearchText] = React.useState<string>('');
-  const [filterAZ, setFilterAZ] = React.useState<string>('');
-  const [filterAccount, setFilterAccount] = React.useState<string>('');
-  const [filterSubscription, setFilterSubscription] = React.useState<string>('');
-  const [filterLocation, setFilterLocation] = React.useState<string>('');
+  const [filters, setFilters] = React.useState<Filters>({});
   const [accountsList, setAccountsList] = React.useState<ClientAccounts>([]);
   const [total, setTotal] = React.useState<number>(0);
+  const debouncedValue = useDebounce<string>(filters?.search as string, 850);
+
   const router = useRouter();
 
   const { activePage, numPerPage, PaginationStats, PaginationButtons } = Pagination(total);
@@ -85,27 +92,14 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
     const params: FilterParams = {
       limit: numPerPage,
       offset: activePage * numPerPage,
+      ...(filters.subscription && { subscriptionTypes: filters.subscription }),
+      ...(filters.account && { isCompleted: filters.account === AccountValue.Completed }),
+      ...(filters.location && {
+        locations: filters.location === LocationValue.UK ? LocationValue.UK : LocationValue.EU,
+      }),
+      ...(filters.aToZ && { startsWith: filters.aToZ }),
+      ...(filters.search && { searchTerm: encodeURI(filters.search) }),
     };
-
-    if (filterSubscription !== '') {
-      params.subscriptionTypes = filterSubscription;
-    }
-
-    if (filterAccount !== '') {
-      params.isCompleted = filterAccount === AccountValue.Completed;
-    }
-
-    if (filterLocation !== '') {
-      params.locations = filterLocation === LocationValue.UK ? LocationValue.UK : LocationValue.EU;
-    }
-
-    if (filterAZ !== '') {
-      params.startsWith = filterAZ;
-    }
-
-    if (filterSearchText !== '') {
-      params.searchTerm = filterSearchText;
-    }
 
     return toQueryString(params);
   };
@@ -117,7 +111,6 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       const results = await fetchJson(`${BASE_URI}${Api.ClientAccount}${queryString}`, {
         method: 'GET',
       });
-
       const { data = [], totalRecords } = results;
       setAccountsList(data as ClientAccounts);
       setTotal(totalRecords as number);
@@ -129,14 +122,16 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
     setLoading(false);
   };
 
-  React.useEffect(() => {
-    loadFilteredAccounts();
+  useEffect(() => {
+    (async () => {
+      await loadFilteredAccounts();
+    })();
   }, [
-    filterSubscription,
-    filterAccount,
-    filterLocation,
-    filterAZ,
-    filterSearchText,
+    debouncedValue,
+    filters.subscription,
+    filters.account,
+    filters.aToZ,
+    filters.location,
     numPerPage,
     activePage,
   ]);
@@ -160,7 +155,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
         {account.name}
       </Text>,
       <Text key={`account-${uuid}-subscription`}>Account incomplete</Text>,
-      <Text key={`account-${uuid}-projects`}></Text>,
+      <Text key={`account-${uuid}-projects`} />,
       <Styled.teamList key={`account-${uuid}-team`}>
         <Button type="text" label="Click to complete" onClick={() => goToAccountSetup(uuid)} />
       </Styled.teamList>,
@@ -174,7 +169,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
   };
 
   return (
-    <div data-test="page-account-management-clients">
+    <div data-testid="page-account-management-clients">
       <Head>
         <title>Dods PIP | Account Management | Clients</title>
         <link rel="icon" href="/favicon.ico" />
@@ -196,7 +191,6 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
               Accounts
             </Text>
             <Button
-              data-test="btn-create-client-account"
               onClick={() => router.push('/account-management/add-client')}
               isSmall
               icon={Icons.Add}
@@ -208,8 +202,8 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
 
           <Styled.filterContainer>
             <Styled.filterToggle>
-              <Styled.filterToggleButon
-                data-test="filter-toggle"
+              <Styled.filterToggleButton
+                data-testid="account-page-filter-toggle"
                 onClick={() => setShowFilter(!showFilter)}
               >
                 <Text type="bodySmall" bold uppercase color={color.base.black}>
@@ -219,64 +213,74 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   src={showFilter ? Icons.ChevronUpBold : Icons.ChevronDownBold}
                   color={color.theme.blueMid}
                 />
-              </Styled.filterToggleButon>
+              </Styled.filterToggleButton>
 
               <DataCount total={accountsList.length} />
             </Styled.filterToggle>
 
-            <Styled.filterContent open={showFilter} data-test="filter-content">
-              <Styled.filterContentCol>
-                <Select
-                  id="filter-subscription"
-                  size="small"
-                  options={subscriptionList}
-                  onChange={setFilterSubscription}
-                  value={filterSubscription}
-                  placeholder={subscriptionPlaceholder}
-                  isFilter
-                />
-                <Select
-                  id="filter-account"
-                  size="small"
-                  options={[
-                    { value: '', label: 'All Accounts' },
-                    { value: AccountValue.Completed, label: 'Only Completed' },
-                    { value: AccountValue.Incomplete, label: 'Only Incomplete' },
-                  ]}
-                  onChange={setFilterAccount}
-                  value={filterAccount}
-                  placeholder="All Accounts"
-                  isFilter
-                />
-                <Select
-                  id="filter-location"
-                  size="small"
-                  options={[
-                    { value: '', label: 'All Locations' },
-                    { value: LocationValue.EU, label: 'Europe' },
-                    { value: LocationValue.UK, label: 'UK' },
-                  ]}
-                  onChange={setFilterLocation}
-                  value={filterLocation}
-                  placeholder="All Locations"
-                  isFilter
-                />
-              </Styled.filterContentCol>
+            {showFilter && (
+              <Styled.filterContent data-testid="account-page-filter-content">
+                <Styled.filterContentCol>
+                  <Select
+                    testId="account-page-subscription-filter"
+                    id="filter-subscription"
+                    size="small"
+                    options={subscriptionList}
+                    onChange={(value) => setFilters({ ...filters, ...{ subscription: value } })}
+                    value={filters.subscription || ''}
+                    placeholder={subscriptionPlaceholder}
+                    isFilter
+                  />
+                  <Select
+                    testId="account-page-account-filter"
+                    id="filter-account"
+                    size="small"
+                    options={[
+                      { value: '', label: 'All Accounts' },
+                      { value: AccountValue.Completed, label: 'Only Completed' },
+                      { value: AccountValue.Incomplete, label: 'Only Incomplete' },
+                    ]}
+                    onChange={(value) => setFilters({ ...filters, ...{ account: value } })}
+                    value={filters.account || ''}
+                    placeholder="All Accounts"
+                    isFilter
+                  />
+                  <Select
+                    testId="account-page-location-filter"
+                    id="filter-location"
+                    size="small"
+                    options={[
+                      { value: '', label: 'All Locations' },
+                      { value: LocationValue.EU, label: 'Europe' },
+                      { value: LocationValue.UK, label: 'UK' },
+                    ]}
+                    onChange={(value) => setFilters({ ...filters, ...{ location: value } })}
+                    value={filters.location || ''}
+                    placeholder="All Locations"
+                    isFilter
+                  />
+                </Styled.filterContentCol>
 
-              <Styled.filterContentCol>
-                <InputSearch
-                  id="filter-search"
-                  onChange={setFilterSearchText}
-                  value={filterSearchText}
-                  size="small"
-                />
-              </Styled.filterContentCol>
-            </Styled.filterContent>
+                <Styled.filterContentCol>
+                  <InputSearch
+                    testId="account-page-search"
+                    id="filter-search"
+                    onChange={(value) => setFilters({ ...filters, ...{ search: value } })}
+                    value={filters.search || ''}
+                    size="small"
+                  />
+                </Styled.filterContentCol>
+              </Styled.filterContent>
+            )}
           </Styled.filterContainer>
 
           <Spacer size={4} />
 
-          <AZFilter selectedLetter={filterAZ} setSelectedLetter={setFilterAZ} />
+          <AZFilter
+            data-testid="account-page-az-filter"
+            selectedLetter={filters.aToZ || ''}
+            setSelectedLetter={(value) => setFilters({ ...filters, ...{ aToZ: value } })}
+          />
 
           <Spacer size={5} />
 
@@ -285,6 +289,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
           <Spacer size={5} />
 
           <DataTable
+            data-testid="account-page-data-table"
             headings={['Name', 'Subscription', 'Live Collections', 'Team', '']}
             colWidths={[8, 4, 4, 4, 1]}
             rows={accountsList.map((account: ClientAccount) => {
@@ -344,6 +349,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   )}
                 </Styled.teamList>,
                 <IconButton
+                  data-testid="account-page-btn-to-account"
                   key={`account-${uuid}-link`}
                   onClick={() => goToAccount(uuid)}
                   icon={Icons.ChevronRightBold}
@@ -355,7 +361,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
 
           <Spacer size={4} />
 
-          <PaginationButtons />
+          <PaginationButtons data-testid="account-page-pagination" />
         </Panel>
       </main>
     </div>

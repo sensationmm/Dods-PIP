@@ -23,10 +23,11 @@ const InputSearch: React.FC<InputSearchProps> = ({
   onBlur,
   placeholder = 'Search...',
   children,
+  testId,
 }) => {
   const isFilled = value.length > 0;
   return (
-    <Styled.wrapper isFilled={isFilled}>
+    <Styled.wrapper isFilled={isFilled} data-testid={testId}>
       <Input
         id={id}
         data-test="component-input-search"
