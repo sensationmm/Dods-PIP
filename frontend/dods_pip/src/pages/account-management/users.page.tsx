@@ -121,7 +121,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
           </Text>
           <Button
             data-test="btn-create-client-account"
-            onClick={() => router.push('/account-management/add-client')}
+            onClick={() => console.log('goes to add user page')}
             isSmall={false}
             icon={Icons.Add}
             label="Add User"

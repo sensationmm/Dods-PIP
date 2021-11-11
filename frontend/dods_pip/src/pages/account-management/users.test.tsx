@@ -3,7 +3,7 @@ import React from 'react';
 
 import {Users} from './users.page';
 
-describe('Component', () => {
+describe('Renders user page', () => {
   it('renders without error', () => {
     const wrapper = shallow(<Users isLoading={false} setLoading={function (state: boolean): void {
       throw new Error('Function not implemented.');
