@@ -48,6 +48,7 @@ export const veil = styled.div`
   justify-content: center;
   animation: ${animateFadeIn} ${ANIMATION_DURATION}ms 0ms both;
   transition: all 0.3s ease-in-out;
+  z-index: 1000;
 `;
 
 export const modal = styled.div.attrs(({ size }: ModalStyleProps) => {
