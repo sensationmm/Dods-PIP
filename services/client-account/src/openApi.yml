@@ -65,7 +65,16 @@ paths:
             summary: 'Create Client Account'
             description: 'Create Client Account'
             requestBody:
-                $ref: '#/components/requestBodies/clientAccount'
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    required:
+                    - clientAccount
+                    properties:
+                      clientAccount:
+                        $ref: '#/components/schemas/CreateClientAccountParameters'
             responses:
                 '200':
                     $ref: '#/components/responses/ClientAccountCreate'
@@ -315,28 +324,40 @@ components:
               - isUK
         ClientAccountCreateHeader:
             type: object
+            required:
+            - clientAccount
+            properties:
+                clientAccount:
+                  $ref: '#/components/schemas/CreateClientAccountParameters'
+                    
+        CreateClientAccountParameters:
+            type: object
             properties:
                 name:
                     type: string
                     example: Dods information
+                    minLength: 1
                 notes:
-                    type: string
+                     type: string
                 contactName:
-                    type: string
-                    example: Joe Bloggs
+                      type: string
+                      example: Joe Bloggs
+                      minLength: 1
                 contactEmailAddress:
-                    type: string
-                    example: user@email.com
+                      type: string
+                      example: user@email.com
+                      minLength: 1
                 contactTelephoneNumber:
-                    type: string
-                    example: '+442071838750'
-                
+                      type: string
+                      example: '+442071838750'
+                      minLength: 1
             required:
-              - name
-              - notes
-              - contactName
-              - contactEmailAddress
-              - contactTelephoneNumber
+            - name
+            - contactName
+            - contactEmailAddress
+            - contactTelephoneNumber
+        
+
 
         ClientAccountTeam:
             type: object
