@@ -27,15 +27,25 @@ const Modal: FC<ModalProps> = ({
   portalContainerId = '__next',
 }) => {
   const closeOnEscapeKeyDown = (e: KeyboardEvent) => {
-    /^Escape$/i.test(e.key) && onClose && onClose();
+    /^Escape$/i.test(e.key) && closeModal();
   };
 
   const onVeilClose = (e: any) => {
-    /veil/i.test(e?.target?.classList.toString()) && onClose && onClose();
+    /veil/i.test(e?.target?.classList.toString()) && closeModal();
+  };
+
+  const closeModal = () => {
+    document.body.style.height = '';
+    document.body.style.overflow = '';
+    onClose && onClose();
   };
 
   useEffect(() => {
     if (!isDismissible) return;
+
+    // lock window scroll
+    document.body.style.height = '100vh';
+    document.body.style.overflow = 'hidden';
 
     window.addEventListener('keydown', closeOnEscapeKeyDown);
     return function cleanup() {
@@ -53,7 +63,7 @@ const Modal: FC<ModalProps> = ({
             {title}
           </Text>
           {isDismissible && (
-            <Styled.closeButton {...{ onClick: onClose }} data-test="modal-close">
+            <Styled.closeButton {...{ onClick: closeModal }} data-test="modal-close">
               <Icon src={Icons.Cross} size={IconSize.large} />
             </Styled.closeButton>
           )}
