@@ -98,6 +98,20 @@ pipelines:
             - SERVERLESS_STAGE=dev npm run test:coverage
 
       - step:
+          name: Documents Service
+          image: gioatsomoglobal/nodejs-builder:0.2
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/documents/**"
+          script:
+            - cd services/documents
+            - npm install
+            - SERVERLESS_STAGE=dev npm run test:coverage
+
+      - step:
           name: Editorial Workflow Service
           image: gioatsomoglobal/nodejs-builder:0.2
           caches:
@@ -190,6 +204,21 @@ pipelines:
               - npx serverless deploy --stage dev
 
         - step: 
+            name: Documents Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/documents/**"
+            script:
+              - cd services/documents
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - npm run test:coverage 
+              - npx serverless deploy --stage dev
+
+        - step: 
             name: Editorial Workflow Deploy
             size: 2x
             image: gioatsomoglobal/devopstools:0.4.5
@@ -242,6 +271,9 @@ pipelines:
                   - "infrastructure-terraform/**"
             script:
               - cd infrastructure-terraform
+              - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile $AWS_PROFILE
+              - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile $AWS_PROFILE
+              - aws configure set default.region us-west-2 --profile $AWS_PROFILE
               - terraform init
               - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
               - echo "Review the plan. If you decide to apply it, run the custom job 'infrastructure-deployment'"
@@ -273,8 +305,12 @@ pipelines:
       - step:
           name: Terraform Apply
           image: gioatsomoglobal/devopstools:0.4.6
+          deployment: dev
           size: 2x
           script:
             - cd infrastructure-terraform
+            - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile $AWS_PROFILE
+            - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile $AWS_PROFILE
+            - aws configure set default.region us-west-2 --profile $AWS_PROFILE
             - terraform init
             - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve
