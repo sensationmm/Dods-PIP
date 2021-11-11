@@ -30,7 +30,9 @@ describe('AddUser', () => {
     defaultState, // fails empty first name
     defaultState, // fails empty last name
     defaultState, // fails empty account
+    defaultState, // fails empty job title
     defaultState, // fails empty email
+    defaultState, // fails empty telephone
     { ...defaultState, emailAddress: 'sad' }, // fails invalid email
     { ...defaultState, emailAddress2: 'sad' }, // fails invalid email 2
     { ...defaultState, telephoneNumber: 'asd' }, // fails invalid telephone number
@@ -38,6 +40,7 @@ describe('AddUser', () => {
     { ...defaultState, firstName: 'asd', errors: { firstName: 'error' } }, // clears first name error
     { ...defaultState, lastName: 'asd', errors: { lastName: 'error' } }, // clears last name error
     { ...defaultState, account: 'asd', errors: { account: 'error' } }, // clears account error
+    { ...defaultState, jobTitle: 'asd', errors: { jobTitle: 'error' } }, // clears job title error
     { ...defaultState, emailAddress: 'asd@asd.asd', errors: { emailAddress: 'error' } }, // clears email error
     { ...defaultState, emailAddress2: 'asd@asd.asd', errors: { emailAddress2: 'error' } }, // clears email 2 error
     { ...defaultState, telephoneNumber: '123456789', errors: { telephoneNumber: 'error' } }, // clears telephone error
@@ -86,10 +89,23 @@ describe('AddUser', () => {
     expect(mockSetErrors).toHaveBeenCalledWith({ account: 'This field is required' });
   });
 
-  it('fails empty client email', () => {
+  it('fails empty job title', () => {
+    const input = wrapper.find('[id="jobTitle"]');
+    input.simulate('focus');
+    input.simulate('blur');
+    expect(mockSetErrors).toHaveBeenCalledWith({ jobTitle: 'This field is required' });
+  });
+
+  it('fails empty email', () => {
     const input = wrapper.find('[id="emailAddress"]');
     input.simulate('blur');
     expect(mockSetErrors).toHaveBeenCalledWith({ emailAddress: 'This field is required' });
+  });
+
+  it('fails empty telephone', () => {
+    const input = wrapper.find('[id="telephoneNumber"]');
+    input.simulate('blur');
+    expect(mockSetErrors).toHaveBeenCalledWith({ telephoneNumber: 'This field is required' });
   });
 
   it('fails invalid email', () => {
@@ -130,6 +146,13 @@ describe('AddUser', () => {
 
   it('clears account error', () => {
     const input = wrapper.find('[id="account"]');
+    input.simulate('focus');
+    input.simulate('blur');
+    expect(mockSetErrors).toHaveBeenCalledWith({});
+  });
+
+  it('clears job title error', () => {
+    const input = wrapper.find('[id="jobTitle"]');
     input.simulate('focus');
     input.simulate('blur');
     expect(mockSetErrors).toHaveBeenCalledWith({});
