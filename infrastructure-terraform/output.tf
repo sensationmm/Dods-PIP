@@ -29,3 +29,7 @@ output "frontend_url_dev" {
 output "frontend_url_qa" {
   value = module.qa.frontend_url
 }
+
+output "api_key_front_dev" {
+  value = module.dev.api_key_front
+}
