@@ -114,6 +114,45 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
     setContactTelephone(contactTelephoneNumber);
   };
 
+  const onAfterEditSubscription = (data: {
+    contractRollover: boolean;
+    contractStartDate: string;
+    contractEndDate: string;
+    subscriptionSeats: string;
+    consultantHours: string;
+    isEU: boolean;
+    isUK: boolean;
+    subscription: string;
+  }) => {
+    const {
+      contractRollover,
+      contractStartDate,
+      contractEndDate,
+      subscriptionSeats,
+      consultantHours,
+      isEU,
+      isUK,
+      subscription,
+    } = data;
+    setStartDate(contractStartDate);
+    setEndDate(contractEndDate);
+    const dateType = getEndDateType({
+      contractStartDate,
+      contractEndDate,
+    });
+    setEndDateType(dateType);
+    if (contractRollover) {
+      setRenewalType(RenewalType.Annual);
+    } else {
+      setRenewalType(RenewalType.EndDate);
+    }
+    setUserSeats(subscriptionSeats);
+    setConsultantHours(consultantHours);
+    setIsEU(isEU);
+    setIsUK(isUK);
+    setSubscriptionType(subscription);
+  };
+
   React.useEffect(() => {
     loadAccount();
   }, [accountId]);
@@ -173,6 +212,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
               renewalType={renewalType}
               endDateType={endDateType}
               onAfterEditAccountSettings={onAfterEditAccountSettings}
+              onAfterEditSubscription={onAfterEditSubscription}
             />
           )}
         </Panel>

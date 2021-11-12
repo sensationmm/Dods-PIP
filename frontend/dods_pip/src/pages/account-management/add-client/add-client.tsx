@@ -55,9 +55,28 @@ export const getEndDateType = ({ contractStartDate = '', contractEndDate = '' })
   return endDateType;
 };
 
+type InitialState = {
+  accountName: string;
+  accountNotes: string;
+  contactName: string;
+  contactTelephone: string;
+  contactEmail: string;
+  isEU: boolean;
+  isUK: boolean;
+  subscriptionType: string;
+  userSeats: string;
+  consultantHours: string;
+  renewalType: string;
+  team: Array<TeamMember>;
+  startDate: string;
+  endDate: string;
+  endDateType: string;
+};
+
 export interface AddClientProps {
   addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
+  initialState?: InitialState;
   activeStep: number;
   setActiveStep?: (val: number) => void;
   editMode: boolean;
@@ -73,6 +92,16 @@ export interface AddClientProps {
           contactEmailAddress: string;
           contactTelephoneNumber: string;
         }
+      | {
+          contractRollover: boolean;
+          contractStartDate: string;
+          contractEndDate: string;
+          subscriptionSeats: string;
+          consultantHours: string;
+          isEU: boolean;
+          isUK: boolean;
+          subscription: string;
+        }
       | any,
   ) => void;
 }
@@ -83,6 +112,7 @@ const noop = function () {};
 const AddClient: React.FC<AddClientProps> = ({
   setLoading,
   addNotification,
+  initialState = {},
   activeStep,
   setActiveStep = noop,
   accountId,
@@ -97,23 +127,35 @@ const AddClient: React.FC<AddClientProps> = ({
   const LAST_STEP = 3;
   const TODAY = format(new Date(), 'yyyy-MM-dd').toString();
 
-  const [savedAccountName, setSavedAccountName] = React.useState<string>('');
-  const [accountName, setAccountName] = React.useState<string>('');
-  const [accountNotes, setAccountNotes] = React.useState<string>('');
-  const [contactName, setContactName] = React.useState<string>('');
-  const [contactEmail, setContactEmail] = React.useState<string>('');
-  const [contactTelephone, setContactTelephone] = React.useState<string>('');
+  const [savedAccountName, setSavedAccountName] = React.useState<string>(
+    initialState.accountName || '',
+  );
+  const [accountName, setAccountName] = React.useState<string>(initialState.accountName || '');
+  const [accountNotes, setAccountNotes] = React.useState<string>(initialState.accountNotes || '');
+  const [contactName, setContactName] = React.useState<string>(initialState.contactName || '');
+  const [contactEmail, setContactEmail] = React.useState<string>(initialState.contactEmail || '');
+  const [contactTelephone, setContactTelephone] = React.useState<string>(
+    initialState.contactTelephone || '',
+  );
   const [errorsStep1, setErrorsStep1] = React.useState<ErrorsStep1>({});
 
-  const [isEU, setIsEU] = React.useState<boolean>(false);
-  const [isUK, setIsUK] = React.useState<boolean>(false);
-  const [subscriptionType, setSubscriptionType] = React.useState<string>('');
-  const [userSeats, setUserSeats] = React.useState<string>(userSeatsDefault);
-  const [consultantHours, setConsultantHours] = React.useState<string>(consultantHoursDefault);
-  const [renewalType, setRenewalType] = React.useState<string>(RenewalType.Annual);
-  const [startDate, setStartDate] = React.useState<string>(TODAY);
-  const [endDate, setEndDate] = React.useState<string>('');
-  const [endDateType, setEndDateType] = React.useState<string>('');
+  const [isEU, setIsEU] = React.useState<boolean>(initialState.isEU || false);
+  const [isUK, setIsUK] = React.useState<boolean>(initialState.isUK || false);
+  const [subscriptionType, setSubscriptionType] = React.useState<string>(
+    initialState.subscriptionType || '',
+  );
+  const [userSeats, setUserSeats] = React.useState<string>(
+    initialState.userSeats || userSeatsDefault,
+  );
+  const [consultantHours, setConsultantHours] = React.useState<string>(
+    initialState.consultantHours || consultantHoursDefault,
+  );
+  const [renewalType, setRenewalType] = React.useState<string>(
+    initialState.renewalType || RenewalType.Annual,
+  );
+  const [startDate, setStartDate] = React.useState<string>(initialState.startDate || TODAY);
+  const [endDate, setEndDate] = React.useState<string>(initialState.endDate || '');
+  const [endDateType, setEndDateType] = React.useState<string>(initialState.endDateType || '');
   const [errorsStep2, setErrorsStep2] = React.useState<ErrorsStep2>({});
 
   const [teamMembers, setTeamMembers] = React.useState<Array<string | DropdownValue>>([]);
@@ -219,7 +261,9 @@ const AddClient: React.FC<AddClientProps> = ({
   };
 
   React.useEffect(() => {
-    loadAccount();
+    if (!editMode) {
+      loadAccount();
+    }
   }, [accountId]);
 
   return (
@@ -258,6 +302,7 @@ const AddClient: React.FC<AddClientProps> = ({
           data-test="step-2"
           addNotification={addNotification}
           setLoading={setLoading}
+          editMode={editMode}
           accountId={accountId}
           isEU={isEU}
           setIsEU={setIsEU}
@@ -279,6 +324,8 @@ const AddClient: React.FC<AddClientProps> = ({
           setEndDateType={setEndDateType}
           errors={errorsStep2}
           setErrors={setErrorsStep2}
+          onCloseEditModal={onCloseEditModal}
+          onEditSuccess={onEditSuccess}
           onSubmit={() => setActiveStep(3)}
           onBack={() => setActiveStep(1)}
         />

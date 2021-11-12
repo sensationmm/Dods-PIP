@@ -14,7 +14,7 @@ import Text from '../../components/Text';
 import { PushNotificationProps } from '../../hoc/LoadingHOC';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import AddClient from '../account-management/add-client/add-client';
-import { TeamMember, TeamMemberType } from '../account-management/add-client/type';
+import { DateFormat, TeamMember, TeamMemberType } from '../account-management/add-client/type';
 import * as Styled from './index.styles';
 
 export interface SummaryProps {
@@ -43,6 +43,16 @@ export interface SummaryProps {
     contactEmailAddress: string;
     contactTelephoneNumber: string;
   }) => void;
+  onAfterEditSubscription: (val: {
+    contractRollover: boolean;
+    contractStartDate: string;
+    contractEndDate: string;
+    subscriptionSeats: string;
+    consultantHours: string;
+    isEU: boolean;
+    isUK: boolean;
+    subscription: string;
+  }) => void;
 }
 
 const Summary: React.FC<SummaryProps> = ({
@@ -65,6 +75,7 @@ const Summary: React.FC<SummaryProps> = ({
   endDate,
   endDateType,
   onAfterEditAccountSettings,
+  onAfterEditSubscription,
 }) => {
   const accountManagers = team.filter(
     (team: TeamMember) => team.teamMemberType === TeamMemberType.AccountManager,
@@ -83,9 +94,9 @@ const Summary: React.FC<SummaryProps> = ({
       case 'editAccountSettings':
         setEditAccountSettings(false);
         break;
-      // case 'editSubscription':
-      //   setEditEditSubscription(false);
-      //   break;
+      case 'editSubscription':
+        setEditSubscription(false);
+        break;
       // case 'editTeams':
       //   setEditTeams(false);
       //   break;
@@ -96,7 +107,7 @@ const Summary: React.FC<SummaryProps> = ({
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
 
   const [editAccountSettings, setEditAccountSettings] = React.useState<boolean>(false);
-  // const [editSubscription, setEditEditSubscription] = React.useState<boolean>(false);
+  const [editSubscription, setEditSubscription] = React.useState<boolean>(false);
   // const [editTeams, setEditTeams] = React.useState<boolean>(false);
 
   let locationValue = '';
@@ -108,11 +119,30 @@ const Summary: React.FC<SummaryProps> = ({
     locationValue += isEU ? ', UK Coverage' : 'UK Coverage';
   }
 
+  const initialState = {
+    accountId,
+    accountName,
+    accountNotes,
+    contactName,
+    contactTelephone,
+    contactEmail,
+    isEU,
+    isUK,
+    subscriptionType,
+    userSeats,
+    consultantHours,
+    renewalType,
+    team,
+    startDate,
+    endDate,
+    endDateType,
+  };
+
   return (
     <>
       {editAccountSettings && (
         <Modal
-          title="Edit Account Settings"
+          title="Edit account settings"
           size="xlarge"
           onClose={() => setEditAccountSettings(false)}
         >
@@ -120,10 +150,30 @@ const Summary: React.FC<SummaryProps> = ({
             addNotification={addNotification}
             setLoading={setLoading}
             editMode={true}
+            initialState={initialState}
             activeStep={1}
             accountId={accountId}
             onCloseEditModal={() => onCloseEditModal('editAccountSettings')}
             onEditSuccess={onAfterEditAccountSettings}
+          />
+        </Modal>
+      )}
+
+      {editSubscription && (
+        <Modal
+          title="Edit subscription settings"
+          size="xlarge"
+          onClose={() => setEditSubscription(false)}
+        >
+          <AddClient
+            addNotification={addNotification}
+            setLoading={setLoading}
+            editMode={true}
+            initialState={initialState}
+            activeStep={2}
+            accountId={accountId}
+            onCloseEditModal={() => onCloseEditModal('editSubscription')}
+            onEditSuccess={onAfterEditSubscription}
           />
         </Modal>
       )}
@@ -241,10 +291,10 @@ const Summary: React.FC<SummaryProps> = ({
                   Period:
                 </Text>
                 <Text>
-                  {format(new Date(startDate), 'MM/dd/yyyy').toString()}
-                  {renewalType === 'endDate' && (
+                  {format(new Date(startDate), DateFormat.UI)}
+                  {renewalType === 'endDate' && endDate !== '' && (
                     <span>
-                      - {format(new Date(endDate), 'MM/dd/yyyy').toString()} - {endDateType}
+                      - {format(new Date(endDate), DateFormat.UI)} - {endDateType}
                     </span>
                   )}
                 </Text>
@@ -254,9 +304,7 @@ const Summary: React.FC<SummaryProps> = ({
               icon={Icons.Edit}
               type="text"
               label=""
-              onClick={() => {
-                console.log('click works');
-              }}
+              onClick={() => setEditSubscription(true)}
             />
           </Styled.sumAccountWrapper>
           <Spacer size={4} />

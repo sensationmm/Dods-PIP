@@ -85,18 +85,9 @@ describe('AddClient component', () => {
     expect($step3).not.toBeNull();
   });
   
-  it('when editMode = true, ignore account lastStepCompleted, renders step 1 ', async() => {
-    const render = await renderComponentWithData({ accountId: mockClientData.data[0].uuid, activeStep: 1, editMode: true });
+  it('when editMode = true, use initialState (no server request to load account), renders step 1 ', async() => {
+    const render = await renderComponentWithData({ accountId: mockClientData.data[0].uuid, activeStep: 1, initialState: mockClientData.data[0],  editMode: true });
     const $step1 = render.container.querySelector(SELECTOR.step1);
-
-    await waitFor(() =>
-      expect(fetchJsonMock).toHaveBeenLastCalledWith(
-        `/api/clientaccount/${mockClientData.data[0].uuid}`,
-        {
-          method: 'GET',
-        },
-      ),
-    );
 
     expect($step1).not.toBeNull();
   });
