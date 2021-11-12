@@ -143,8 +143,8 @@ const TagTree: React.FC<TagTreeProps> = ({ tag, addedTags, addedTagsToSave, onCh
         )}
       </Styled.tagTree>
 
-      {numChildren > 0 && (
-        <Styled.tagTreeChildren open={isOpen}>
+      {isOpen && numChildren > 0 && (
+        <Styled.tagTreeChildren>
           {tag.childTerms?.map((child) => (
             <TagTree
               key={`tag-tree-${child.id}`}

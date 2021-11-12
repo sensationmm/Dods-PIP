@@ -220,12 +220,8 @@ export const tagTreeToggle = styled.div`
   margin-left: ${spacing(2)};
 `;
 
-type TagTreeChildrenProps = {
-  open: boolean;
-};
-
-export const tagTreeChildren = styled.div<TagTreeChildrenProps>`
-  display: ${({ open }) => (open ? 'block' : 'none')};
+export const tagTreeChildren = styled.div`
+  display: block;
   padding-left: 35px;
 `;
 
