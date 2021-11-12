@@ -2,21 +2,19 @@ import styled from 'styled-components';
 
 import color from '../../../globals/color';
 import opacity from '../../../globals/opacity';
+import spacing from '../../../globals/spacing';
 import { hexAToRGBA } from '../../../utils/color';
 
 export const wrapper = styled.div`
   position: relative;
   outline: 0;
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  column-gap: ${spacing(3)};
+  align-items: center;
 
-  &:focus::before {
-    content: '';
-    position: absolute;
-    width: 56px;
-    height: 32px;
-    top: -4px;
-    left: -4px;
-    background: ${hexAToRGBA(color.theme.blueMid, opacity.high)};
-    border-radius: 16px;
+  p:first-of-type {
+    text-align: right !important;
   }
 `;
 
@@ -44,18 +42,32 @@ export const toggle = styled.div`
   position: relative;
   width: 48px;
   height: 24px;
-  background: ${color.base.grey};
+  background: ${color.base.greyMid};
   border-radius: 12px;
 
   &:hover {
-    background: ${color.shadow.grey};
+    background: ${color.theme.blueMid};
   }
 
   &.disabled {
-    background: ${color.base.grey};
-    opacity: ${opacity.mid};
+    background: ${color.base.greyMid};
     pointer-events: none;
     cursor: not-allowed;
+
+    ${control} {
+      background: ${color.base.greyDark};
+    }
+  }
+
+  &:focus::before {
+    content: '';
+    position: absolute;
+    width: 56px;
+    height: 32px;
+    top: -4px;
+    left: -4px;
+    background: ${hexAToRGBA(color.theme.blueMid, opacity.high)};
+    border-radius: 16px;
   }
 `;
 

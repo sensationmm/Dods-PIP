@@ -12,6 +12,7 @@ export const heading = styled.span`
     font-family: 'Libre Baskerville';
     padding: 0;
     margin: 0;
+    font-weight: 300;
   }
 
   .heroExtraLarge {
@@ -127,6 +128,30 @@ export const p = styled.p`
   }
 `;
 
+export const li = styled.li`
+  font-family: 'Open Sans';
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+
+  &.bold,
+  bold,
+  strong {
+    font-family: 'Open Sans Bold';
+  }
+
+  &.liSmall {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  &.liLarge {
+    font-size: 18px;
+    line-height: 24px;
+  }
+`;
+
 export const h1 = styled.h1``;
 export const h2 = styled.h2``;
 export const h3 = styled.h3``;
@@ -136,6 +161,8 @@ export const h6 = styled.h6``;
 export const body = styled.p``;
 export const bodySmall = styled.p``;
 export const bodyLarge = styled.p``;
+export const liSmall = styled.li``;
+export const liLarge = styled.li``;
 
 export const label = styled.label`
   font-family: 'Open Sans';

@@ -6,9 +6,9 @@ import ContentTagger, { ContentTaggerProps } from '../components/ContentTagger';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
 import MockTagging from '../mocks/data/tagging.json';
 
-interface NotificationsProps extends LoadingHOCProps {}
+interface TaggerProps extends LoadingHOCProps {}
 
-export const Notifications: React.FC<NotificationsProps> = () => {
+export const Tagger: React.FC<TaggerProps> = () => {
   return (
     <Panel isNarrow>
       <Columns>
@@ -19,4 +19,4 @@ export const Notifications: React.FC<NotificationsProps> = () => {
   );
 };
 
-export default LoadingHOC(Notifications);
+export default LoadingHOC(Tagger);

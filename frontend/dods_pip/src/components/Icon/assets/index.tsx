@@ -4,6 +4,8 @@ import Avatar from './icon-avatar.svg';
 import AzFilter from './icon-azFilter.svg';
 import Bin from './icon-bin.svg';
 import Calendar from './icon-calendar.svg';
+import Checklist from './icon-checklist.svg';
+import ChecklistBold from './icon-checklistBold.svg';
 import ChevronDown from './icon-chevronDown.svg';
 import ChevronDownBold from './icon-chevronDownBold.svg';
 import ChevronLeft from './icon-chevronLeft.svg';
@@ -27,6 +29,7 @@ import Minus from './icon-minus.svg';
 import Pencil from './icon-pencil.svg';
 import Person from './icon-person.svg';
 import Search from './icon-search.svg';
+import SearchBold from './icon-searchBold.svg';
 import Show from './icon-show.svg';
 import Subscription from './icon-subscription.svg';
 import Suitcase from './icon-suitcase.svg';
@@ -46,6 +49,8 @@ export enum Icons {
   AzFilter = 'AzFilter',
   Bin = 'Bin',
   Calendar = 'Calendar',
+  Checklist = 'Checklist',
+  ChecklistBold = 'ChecklistBold',
   ChevronDown = 'ChevronDown',
   ChevronDownBold = 'ChevronDownBold',
   ChevronLeft = 'ChevronLeft',
@@ -69,6 +74,7 @@ export enum Icons {
   Pencil = 'Pencil',
   Person = 'Person',
   Search = 'Search',
+  SearchBold = 'SearchBold',
   Show = 'Show',
   Subscription = 'Subscription',
   Suitcase = 'Suitcase',
@@ -87,6 +93,8 @@ const IconLibrary = {
   AzFilter,
   Bin,
   Calendar,
+  Checklist,
+  ChecklistBold,
   ChevronDown,
   ChevronDownBold,
   ChevronLeft,
@@ -110,6 +118,7 @@ const IconLibrary = {
   Pencil,
   Person,
   Search,
+  SearchBold,
   Show,
   Subscription,
   Suitcase,

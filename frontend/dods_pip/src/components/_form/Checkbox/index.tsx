@@ -36,7 +36,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   };
 
   return (
-    <Styled.checkbox data-test="component-checkbox" id={id}>
+    <Styled.checkbox data-test="component-checkbox" id={id} disabled={isDisabled}>
       <Styled.checkboxLayout
         data-test="component-checkbox-layout"
         onClick={() => (isDisabled ? null : onChange(!isChecked))}
