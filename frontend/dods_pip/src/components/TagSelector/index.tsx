@@ -3,8 +3,8 @@ import find from 'lodash/find';
 import React from 'react';
 
 import color from '../../globals/color';
+import { DropdownValue } from '../../pages/account-management/add-client/type';
 import { inArray } from '../../utils/array';
-import { DropdownValue } from '../../utils/type';
 import SearchDropdown, { SearchDropdownProps } from '../_form/SearchDropdown';
 import Spacer from '../_layout/Spacer';
 import { UserType } from '../Avatar';

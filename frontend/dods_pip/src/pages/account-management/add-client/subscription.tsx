@@ -19,8 +19,8 @@ import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import useSubscriptionTypes from '../../../lib/useSubscriptionTypes';
 import { Api, BASE_URI } from '../../../utils/api';
-import { DateFormat, EndDateType, RenewalType } from './index.page';
 import * as Styled from './index.styles';
+import { DateFormat, EndDateType, RenewalType } from './type';
 
 export type Errors = {
   location?: string;

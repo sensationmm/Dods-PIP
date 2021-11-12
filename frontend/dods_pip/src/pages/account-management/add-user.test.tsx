@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 
-import { RoleType } from '../../utils/type';
+import { RoleType } from '../account-management/add-client/type';
 import { AddUser } from './add-user.page';
 
 describe('AddUser', () => {

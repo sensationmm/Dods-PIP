@@ -9,7 +9,7 @@ const THEME: Record<modalSize, Record<string, string>> = {
   small: { width: '400px', height: '288px' },
   medium: { width: '540px', height: '368px' },
   large: { width: '780px', height: '470px' },
-  xlarge: { width: '1280px', height: '687px' },
+  xlarge: { width: '1280px', height: '1027px' },
 };
 
 interface ModalStyleProps {
@@ -74,7 +74,6 @@ export const modalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   padding: ${spacing(4)};
-  border-bottom: 1px solid ${color.base.greyLighter};
 `;
 
 export const modalBody = styled.div`
@@ -87,7 +86,6 @@ export const modalFooter = styled.div`
   display: flex;
   justify-content: center;
   padding: ${spacing(4)};
-  border-top: 1px solid ${color.base.greyLighter};
 
   > *:not(last-child) {
     margin-right: ${spacing(2)};

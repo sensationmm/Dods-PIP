@@ -1,7 +1,7 @@
 import React from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
-import { DropdownValue } from '../../../utils/type';
+import { DropdownValue } from '../../../pages/account-management/add-client/type';
 import Text from '../../Text';
 import InputSearch, { InputSearchProps } from '../InputSearch';
 import { SelectProps } from '../Select';

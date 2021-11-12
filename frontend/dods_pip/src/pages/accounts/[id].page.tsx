@@ -11,18 +11,15 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as AccountsStyled from '../account-management/accounts.styles';
-import {
-  getEndDateType,
-  RenewalType,
-  Subscription,
-} from '../account-management/add-client/index.page';
+import { getEndDateType } from '../account-management/add-client/add-client';
+import { RenewalType, SubscriptionType } from '../account-management/add-client/type';
 import Collections from './collections';
 import Summary from './summary';
 import Users from './users';
 
 interface ClientAccountProps extends LoadingHOCProps {}
 
-export const ClientAccount: React.FC<ClientAccountProps> = () => {
+export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, setLoading }) => {
   const router = useRouter();
   let { id: accountId = '' } = router.query;
   accountId = accountId as string;
@@ -96,8 +93,23 @@ export const ClientAccount: React.FC<ClientAccountProps> = () => {
       setIsEU(isEU as boolean);
       setIsUK(isUK as boolean);
 
-      setSubscriptionType((subscription as Subscription).uuid);
+      setSubscriptionType((subscription as SubscriptionType).uuid);
     }
+  };
+
+  const onAfterEditAccountSettings = (data: {
+    name: string;
+    notes: string;
+    contactName: string;
+    contactEmailAddress: string;
+    contactTelephoneNumber: string;
+  }) => {
+    const { name, notes, contactName, contactEmailAddress, contactTelephoneNumber } = data;
+    setAccountName(name);
+    setAccountNotes(notes);
+    setContactName(contactName);
+    setContactEmail(contactEmailAddress);
+    setContactTelephone(contactTelephoneNumber);
   };
 
   React.useEffect(() => {
@@ -140,6 +152,8 @@ export const ClientAccount: React.FC<ClientAccountProps> = () => {
 
           {startDate !== '' && (
             <Summary
+              addNotification={addNotification}
+              setLoading={setLoading}
               accountId={accountId}
               accountName={accountName}
               accountNotes={accountNotes}
@@ -155,6 +169,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = () => {
               subscriptionType={subscriptionType}
               renewalType={renewalType}
               endDateType={endDateType}
+              onAfterEditAccountSettings={onAfterEditAccountSettings}
             />
           )}
         </Panel>

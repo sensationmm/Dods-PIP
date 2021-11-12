@@ -21,9 +21,9 @@ import color from '../../../globals/color';
 import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
-import { DropdownValue, RoleType, TeamMember, TeamType } from '../../../utils/type';
 import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
+import { DropdownValue, RoleType, TeamMember, TeamType } from './type';
 
 export type Errors = {
   clientFirstName?: string;

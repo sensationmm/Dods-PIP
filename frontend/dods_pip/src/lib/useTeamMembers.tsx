@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 
 import fetchJson from '../lib/fetchJson';
+import { TeamMember, TeamType } from '../pages/account-management/add-client/type';
 import { Api, BASE_URI } from '../utils/api';
-import { TeamMember, TeamType } from '../utils/type';
 
 type Error = {
   code?: string;

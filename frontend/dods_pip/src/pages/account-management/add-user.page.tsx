@@ -15,8 +15,8 @@ import { Icons } from '../../components/Icon/assets';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import MockAccounts from '../../mocks/data/accounts.json';
-import { RoleType } from '../../utils/type';
 import * as Validation from '../../utils/validation';
+import { RoleType } from '../account-management/add-client/type';
 import * as Styled from './add-user.styles';
 
 type Errors = {
