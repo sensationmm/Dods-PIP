@@ -52,10 +52,14 @@ const SEARCH_RECORDS_FUNCTION_NAME =
 
 describe(`${CLASS_NAME}.${CREATE_RECORD_FUNCTION_NAME}`, () => {
     test('Valid input Happy case', async () => {
-        const requestParams = { documentName: 'NewDocument', s3Location: 'SomeLocation' };
-        const response = await EditorialRecordRepository.defaultInstance.createEditorialRecord(
-            requestParams
-        );
+        const requestParams = {
+            documentName: 'NewDocument',
+            s3Location: 'SomeLocation',
+        };
+        const response =
+            await EditorialRecordRepository.defaultInstance.createEditorialRecord(
+                requestParams
+            );
         expect(EditorialRecord.create).toBeCalled;
         expect(response).toEqual(defaultCreatedRecord);
     });
@@ -72,10 +76,13 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             startDate: '2021-11-08T23:20:38.000Z',
             offset: '3',
             limit: '33',
+            sortBy: 'createdDate',
+            sortDirection: 'asc',
         };
-        const response = await EditorialRecordRepository.defaultInstance.listEditorialRecords(
-            requestParams
-        );
+        const response =
+            await EditorialRecordRepository.defaultInstance.listEditorialRecords(
+                requestParams
+            );
         expect(EditorialRecord.findAndCountAll).toHaveBeenCalledWith({
             where: expect.objectContaining({
                 '$status.uuid$': '89cf96f7-d380-4c30-abcf-74c57843f50c',
@@ -95,6 +102,97 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             include: ['status', 'assignedEditor'],
             limit: 33,
             offset: 3,
+            order: [['createdAt', 'asc']],
+        });
+        expect(response).toEqual({
+            totalRecords: defaultAmountOfTotalRecords,
+            filteredRecords: defaultListRecords.count,
+            results: defaultListRecords.rows,
+        });
+    });
+
+    test('Sort bystatus Filter', async () => {
+        const requestParams = {
+            searchTerm: 'Test',
+            contentSource: 'Random',
+            informationType: 'Random Doc',
+            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+            endDate: '2021-11-08T23:21:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+            offset: '3',
+            limit: '33',
+            sortBy: 'status',
+            sortDirection: 'asc',
+        };
+        const response =
+            await EditorialRecordRepository.defaultInstance.listEditorialRecords(
+                requestParams
+            );
+        expect(EditorialRecord.findAndCountAll).toHaveBeenCalledWith({
+            where: expect.objectContaining({
+                '$status.uuid$': '89cf96f7-d380-4c30-abcf-74c57843f50c',
+                contentSource: 'Random',
+                createdAt: {
+                    [Op.and]: [
+                        {
+                            [Op.gte]: new Date('2021-11-08T23:20:38.000Z'),
+                        },
+                        {
+                            [Op.lte]: new Date('2021-11-08T23:21:58.000Z'),
+                        },
+                    ],
+                },
+                informationType: 'Random Doc',
+            }),
+            include: ['status', 'assignedEditor'],
+            limit: 33,
+            offset: 3,
+            order: [['statusId', 'asc']],
+        });
+        expect(response).toEqual({
+            totalRecords: defaultAmountOfTotalRecords,
+            filteredRecords: defaultListRecords.count,
+            results: defaultListRecords.rows,
+        });
+    });
+
+    test('Sort by Document Name Filter', async () => {
+        const requestParams = {
+            searchTerm: 'Test',
+            contentSource: 'Random',
+            informationType: 'Random Doc',
+            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+            endDate: '2021-11-08T23:21:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+            offset: '3',
+            limit: '33',
+            sortBy: 'documentName',
+            sortDirection: 'asc',
+        };
+        const response =
+            await EditorialRecordRepository.defaultInstance.listEditorialRecords(
+                requestParams
+            );
+        expect(EditorialRecord.findAndCountAll).toHaveBeenCalledWith({
+            where: expect.objectContaining({
+                '$status.uuid$': '89cf96f7-d380-4c30-abcf-74c57843f50c',
+                contentSource: 'Random',
+                createdAt: {
+                    [Op.and]: [
+                        {
+                            [Op.gte]: new Date('2021-11-08T23:20:38.000Z'),
+                        },
+                        {
+                            [Op.lte]: new Date('2021-11-08T23:21:58.000Z'),
+                        },
+                    ],
+                },
+                informationType: 'Random Doc',
+            }),
+            include: ['status', 'assignedEditor'],
+            limit: 33,
+            offset: 3,
+            order: [['documentName', 'asc']],
         });
         expect(response).toEqual({
             totalRecords: defaultAmountOfTotalRecords,
@@ -108,14 +206,16 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             offset: '3',
             limit: '33',
         };
-        const response = await EditorialRecordRepository.defaultInstance.listEditorialRecords(
-            requestParams
-        );
+        const response =
+            await EditorialRecordRepository.defaultInstance.listEditorialRecords(
+                requestParams
+            );
         expect(EditorialRecord.findAndCountAll).toHaveBeenCalledWith({
             where: {},
             include: ['status', 'assignedEditor'],
             limit: 33,
             offset: 3,
+            order: [['createdAt', 'asc']],
         });
         expect(response).toEqual({
             totalRecords: defaultAmountOfTotalRecords,

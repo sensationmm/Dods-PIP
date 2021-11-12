@@ -27,7 +27,9 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         User
     );
 
-    private static mapModelToOutput = (model: EditorialRecord): EditorialRecordOutput => {
+    private static mapModelToOutput = (
+        model: EditorialRecord
+    ): EditorialRecordOutput => {
         const {
             uuid,
             documentName,
@@ -66,7 +68,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
     async createEditorialRecord(
         params: CreateEditorialRecordParameters
     ): Promise<EditorialRecordOutput> {
-        const { documentName, s3Location, informationType, contentSource } = params;
+        const { documentName, s3Location, informationType, contentSource } =
+            params;
 
         const newRecord = await this.editorialRecordModel.create({
             documentName,
@@ -118,6 +121,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             offset,
         } = params;
 
+        let { sortBy, sortDirection } = params;
+
         const whereRecord: WhereOptions = {};
 
         // Search by document name case insensitive coincidences
@@ -164,14 +169,39 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             };
         }
 
+        let sortByQuery = 'createdAt';
+        let sortDirectionQuery = 'asc';
+        sortBy = sortBy?.toLowerCase();
+        sortDirection = sortDirection?.toLowerCase();
+
+        if (
+            sortBy === 'documentname' ||
+            sortBy === 'status' ||
+            sortBy === 'createddate'
+        ) {
+            if (sortBy === 'status') {
+                sortByQuery = 'statusId';
+            } else if (sortBy === 'createddate') {
+                sortByQuery = 'createdAt';
+            } else {
+                sortByQuery = 'documentName';
+            }
+        }
+
+        if (sortDirection === 'asc' || sortDirection === 'desc') {
+            sortDirectionQuery = sortDirection;
+        }
+
         const totalRecords = await this.editorialRecordModel.count();
 
-        const { count: filteredRecords, rows } = await this.editorialRecordModel.findAndCountAll({
-            where: whereRecord,
-            include: ['status', 'assignedEditor'],
-            offset: parseInt(offset),
-            limit: parseInt(limit),
-        });
+        const { count: filteredRecords, rows } =
+            await this.editorialRecordModel.findAndCountAll({
+                where: whereRecord,
+                include: ['status', 'assignedEditor'],
+                order: [[sortByQuery, sortDirectionQuery]],
+                offset: parseInt(offset),
+                limit: parseInt(limit),
+            });
 
         return {
             totalRecords,
