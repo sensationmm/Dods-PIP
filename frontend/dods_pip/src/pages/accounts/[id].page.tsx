@@ -12,7 +12,7 @@ import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as AccountsStyled from '../account-management/accounts.styles';
 import { getEndDateType } from '../account-management/add-client/add-client';
-import { RenewalType, SubscriptionType } from '../account-management/add-client/type';
+import { RenewalType, SubscriptionType, TeamMember } from '../account-management/add-client/type';
 import Collections from './collections';
 import Summary from './summary';
 import Users from './users';
@@ -29,6 +29,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
   const [contactName, setContactName] = React.useState<string>('');
   const [contactEmail, setContactEmail] = React.useState<string>('');
   const [contactTelephone, setContactTelephone] = React.useState<string>('');
+  const [team, setTeam] = React.useState<Array<TeamMember>>([]);
 
   const [isEU, setIsEU] = React.useState<boolean>(false);
   const [isUK, setIsUK] = React.useState<boolean>(false);
@@ -81,6 +82,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
         contractEndDate: contractEndDate as string,
       });
       setEndDateType(dateType);
+      setTeam(data.team as TeamMember[]);
 
       if (contractRollover) {
         setRenewalType(RenewalType.Annual);
@@ -162,6 +164,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
               contactTelephone={contactTelephone}
               userSeats={userSeats}
               consultantHours={consultantHours}
+              team={team}
               startDate={startDate}
               endDate={endDate}
               isUK={isUK}

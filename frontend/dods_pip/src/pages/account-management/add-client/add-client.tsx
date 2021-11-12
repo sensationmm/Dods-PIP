@@ -118,7 +118,7 @@ const AddClient: React.FC<AddClientProps> = ({
 
   const [teamMembers, setTeamMembers] = React.useState<Array<string | DropdownValue>>([]);
   const [accountManagers, setAccountManagers] = React.useState<Array<string | DropdownValue>>([]);
-  const [clientUsers, setClientUsers] = React.useState<Array<TeamMember>>([]);
+  const [clientUsers, setClientUsers] = React.useState<Array<DropdownValue>>([]);
   const [clientFirstName, setClientFirstName] = React.useState<string>('');
   const [clientLastName, setClientLastName] = React.useState<string>('');
   const [clientJobTitle, setClientJobTitle] = React.useState<string>('');
@@ -126,7 +126,7 @@ const AddClient: React.FC<AddClientProps> = ({
   const [clientEmail2, setClientEmail2] = React.useState<string>('');
   const [clientTelephone, setClientTelephone] = React.useState<string>('');
   const [clientTelephone2, setClientTelephone2] = React.useState<string>('');
-  const [clientAccess, setClientAccess] = React.useState<string>('');
+  // const [clientAccess, setClientAccess] = React.useState<string>('');
   const [errorsStep3, setErrorsStep3] = React.useState<ErrorsStep3>({});
 
   React.useEffect(() => {
@@ -310,8 +310,9 @@ const AddClient: React.FC<AddClientProps> = ({
           setClientTelephone={setClientTelephone}
           clientTelephone2={clientTelephone2}
           setClientTelephone2={setClientTelephone2}
-          clientAccess={clientAccess}
-          setClientAccess={setClientAccess}
+          /*clientAccess={clientAccess}*/
+          /*setClientAccess={setClientAccess}*/
+          userSeats={userSeats}
           errors={errorsStep3}
           setErrors={setErrorsStep3}
           onSubmit={() => router.push(`/accounts/${accountId}`)}

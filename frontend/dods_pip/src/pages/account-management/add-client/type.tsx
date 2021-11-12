@@ -6,13 +6,20 @@ export enum TeamType {
 export type TeamMember = {
   id: string;
   name: string;
-  type: string;
+  type?: string;
+  teamMemberType: TeamMemberType;
+  access?: string;
+  email?: string;
+  email2?: string;
+  telephone?: string;
+  telephone2?: string;
 };
 
-export type DropdownValue = {
-  label: string;
-  value: string;
-};
+export enum TeamMemberType {
+  AccountManager = 2,
+  TeamMember = 1,
+  ClientUser = 3,
+}
 
 export enum RenewalType {
   Annual = 'annual',
@@ -45,3 +52,9 @@ export enum RoleType {
   DodsAdmin = '5e2f23c3-1b53-4eea-b260-5d2cc05be38f',
   DodsAccMgr = '31becb0d-6dc7-4aa6-801b-080692c7d6ae',
 }
+
+export type DropdownValue = {
+  label: string;
+  value: string;
+  userData?: TeamMember | Record<string, unknown>;
+};

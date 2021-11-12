@@ -14,6 +14,7 @@ import Text from '../../components/Text';
 import { PushNotificationProps } from '../../hoc/LoadingHOC';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import AddClient from '../account-management/add-client/add-client';
+import { TeamMember, TeamMemberType } from '../account-management/add-client/type';
 import * as Styled from './index.styles';
 
 export interface SummaryProps {
@@ -31,6 +32,7 @@ export interface SummaryProps {
   userSeats: string;
   consultantHours: string;
   renewalType: string;
+  team: Array<TeamMember>;
   startDate: string;
   endDate: string;
   endDateType: string;
@@ -58,21 +60,20 @@ const Summary: React.FC<SummaryProps> = ({
   userSeats,
   consultantHours,
   renewalType,
+  team = [],
   startDate,
   endDate,
   endDateType,
   onAfterEditAccountSettings,
 }) => {
-  const consultantsComplete: {
-    name: string;
-    type: string;
-    role?: string;
-    access?: string;
-    email?: string;
-    email2?: string;
-    telephone?: string;
-    telephone2?: string;
-  }[] = [];
+  const accountManagers = team.filter(
+    (team: TeamMember) => team.teamMemberType === TeamMemberType.AccountManager,
+  );
+  const teamMembers = team.filter(
+    (team: TeamMember) => team.teamMemberType === TeamMemberType.TeamMember,
+  );
+
+  const consultantsComplete = [...accountManagers, ...teamMembers];
 
   const onCloseEditModal = (type: 'editAccountSettings' | 'editSubscription' | 'editTeams') => {
     document.body.style.height = '';
@@ -288,7 +289,11 @@ const Summary: React.FC<SummaryProps> = ({
                 <div>
                   <Text bold={true}>{consultant.name}</Text>
                   <Spacer size={2} />
-                  <Text>{consultant.role}</Text>
+                  <Text>
+                    {consultant.teamMemberType === TeamMemberType.AccountManager
+                      ? 'Account Manager'
+                      : 'Team Member'}
+                  </Text>
                 </div>
               </Styled.sumConsultantAvatar>,
               <Text key={consultant.name}>{consultant.access}</Text>,
@@ -300,7 +305,7 @@ const Summary: React.FC<SummaryProps> = ({
                 <Spacer size={2} />
                 <Text>
                   <span>Email</span>
-                  <a href={'mailto:' + consultant.email}>{consultant.email}</a>
+                  <a href={'mailto:' + consultant.email}>{consultant.email2}</a>
                 </Text>
                 <Spacer size={2} />
                 <Text>

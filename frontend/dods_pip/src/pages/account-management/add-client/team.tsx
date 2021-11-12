@@ -1,4 +1,5 @@
 import debounce from 'lodash/debounce';
+import filter from 'lodash/filter';
 import trim from 'lodash/trim';
 import React from 'react';
 
@@ -20,10 +21,11 @@ import Text from '../../../components/Text';
 import color from '../../../globals/color';
 import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
+import useTeamMembers from '../../../lib/useTeamMembers';
 import { Api, BASE_URI } from '../../../utils/api';
 import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
-import { DropdownValue, RoleType, TeamMember, TeamType } from './type';
+import { DropdownValue, RoleType, TeamMember, TeamMemberType } from './type';
 
 export type Errors = {
   clientFirstName?: string;
@@ -34,6 +36,11 @@ export type Errors = {
   clientTelephone?: string;
   clientTelephone2?: string;
   clientAccess?: string;
+};
+
+type PutPayload = {
+  userId: string;
+  teamMemberType: number;
 };
 
 type User = {
@@ -50,8 +57,8 @@ export interface TeamProps {
   setTeamMembers: (vals: Array<string | DropdownValue>) => void;
   accountManagers: Array<string | DropdownValue>;
   setAccountManagers: (vals: Array<string | DropdownValue>) => void;
-  clientUsers: Array<TeamMember>;
-  setClientUsers: (vals: Array<TeamMember>) => void;
+  clientUsers: Array<DropdownValue>;
+  setClientUsers: (vals: Array<DropdownValue>) => void;
   clientFirstName: string;
   setClientFirstName: (val: string) => void;
   clientLastName: string;
@@ -66,8 +73,9 @@ export interface TeamProps {
   setClientTelephone: (val: string) => void;
   clientTelephone2: string;
   setClientTelephone2: (val: string) => void;
-  clientAccess: string;
-  setClientAccess: (val: string) => void;
+  // clientAccess: string;
+  // setClientAccess: (val: string) => void;
+  userSeats: string;
   errors: Errors;
   setErrors: (errors: Errors) => void;
   onSubmit: () => void;
@@ -98,8 +106,9 @@ const Team: React.FC<TeamProps> = ({
   setClientTelephone,
   clientTelephone2,
   setClientTelephone2,
-  clientAccess,
-  setClientAccess,
+  // clientAccess,
+  // setClientAccess,
+  userSeats,
   errors,
   setErrors,
   onSubmit,
@@ -108,13 +117,66 @@ const Team: React.FC<TeamProps> = ({
   const [createUser, setCreateUser] = React.useState<boolean>(false);
   const [addUser, setAddUser] = React.useState<boolean>(false);
   const [users, setUsers] = React.useState<DropdownValue[]>([]);
-  const isComplete = teamMembers.length > 0 || clientUsers.length > 0;
+  const isComplete = accountManagers.length > 0 || teamMembers.length > 0 || clientUsers.length > 0;
   const isUserComplete =
     trim(clientFirstName) !== '' &&
     trim(clientLastName) !== '' &&
     trim(clientEmail) !== '' &&
-    clientAccess !== '' &&
+    // clientAccess !== '' &&  // always RoleType.User (Radio is commented out)
     Object.keys(errors).length === 0;
+
+  useTeamMembers({ accountId, setAccountManagers, setClientUsers, setTeamMembers });
+
+  // userSeats determine how many client users can be created
+  const userLimitReached = parseInt(userSeats, 10) === clientUsers.length;
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const payload: PutPayload[] = [];
+
+      clientUsers.forEach((user) => {
+        payload.push({
+          userId: user.value,
+          teamMemberType: TeamMemberType.ClientUser,
+        });
+      });
+
+      accountManagers.forEach((user) => {
+        user = user as DropdownValue;
+        payload.push({
+          userId: user.value,
+          teamMemberType: TeamMemberType.AccountManager,
+        });
+      });
+
+      teamMembers.forEach((user) => {
+        user = user as DropdownValue;
+        payload.push({
+          userId: user.value,
+          teamMemberType: TeamMemberType.TeamMember,
+        });
+      });
+
+      const response = await fetchJson(
+        `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMember}`,
+        { method: 'PUT', body: JSON.stringify({ teamMembers: payload }) },
+      );
+      const { success = false, data = [] } = response;
+
+      if (success || (Array.isArray(data) && data.length > 0)) {
+        onSubmit();
+      }
+    } catch (e) {
+      // show server error
+      addNotification({
+        type: 'warn',
+        title: 'Error',
+        text: e.data.message,
+      });
+    }
+    setLoading(false);
+  };
 
   const searchUsers = debounce(async (name) => {
     try {
@@ -134,13 +196,12 @@ const Team: React.FC<TeamProps> = ({
     }
   }, 500);
 
-  // @todo - remove this when API is ready for integration
-  const notImplementedYet = () => {
-    addNotification({
-      type: 'info',
-      title: 'Remove API not available',
-      text: 'This feature is not yet implemnted',
+  const removeClientUser = (userId: string) => {
+    // remove `userId` from clientUsers array
+    const array = filter(clientUsers, (item) => {
+      return item.value !== userId;
     });
+    setClientUsers(array);
   };
 
   const validateClientFirstName = () => {
@@ -221,9 +282,9 @@ const Team: React.FC<TeamProps> = ({
           secondary_email_address: clientEmail2,
           telephone_number_1: clientTelephone,
           telephone_number_2: clientTelephone2,
-          role_id: clientAccess,
+          role_id: RoleType.User,
         },
-        teamMemberType: 2, // 2 = client
+        teamMemberType: TeamMemberType.ClientUser,
       };
       const results = await fetchJson(
         `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMemberCreate}`,
@@ -234,9 +295,14 @@ const Team: React.FC<TeamProps> = ({
       );
       const { success = true, data } = results;
       if (success && Array.isArray(data)) {
-        // filter data by type client
-        const clientsOnly = data.filter((team: TeamMember) => team.type === TeamType.Client);
-        setClientUsers(clientsOnly);
+        // filter data by client user
+        const clientsOnly = data.filter(
+          (team: TeamMember) => team.teamMemberType === TeamMemberType.ClientUser,
+        );
+        setClientUsers(
+          // convert TeamMember to DropDownValue
+          clientsOnly.map((item: TeamMember) => ({ label: item.name, value: item.id })),
+        );
 
         // reset form
         setAddUser(false);
@@ -247,7 +313,7 @@ const Team: React.FC<TeamProps> = ({
         setClientEmail2('');
         setClientTelephone('');
         setClientTelephone2('');
-        setClientAccess('');
+        // setClientAccess('');
       }
     } catch (e) {
       // show server error
@@ -269,7 +335,7 @@ const Team: React.FC<TeamProps> = ({
     setClientEmail2('');
     setClientTelephone('');
     setClientTelephone2('');
-    setClientAccess('');
+    // setClientAccess('');
   };
 
   return (
@@ -402,8 +468,8 @@ const Team: React.FC<TeamProps> = ({
                     {clientUsers.map((item) => (
                       <Chips
                         data-test="added-client-users"
-                        key={`chip-${item.id}`}
-                        label={item.name}
+                        key={`chip-${item.value}`}
+                        label={item.label}
                         avatarType="client"
                       />
                     ))}
@@ -434,10 +500,10 @@ const Team: React.FC<TeamProps> = ({
                   {clientUsers.map((item) => (
                     <Chips
                       data-test="added-client-users"
-                      key={`chip-${item.id}`}
-                      label={item.name}
+                      key={`chip-${item.value}`}
+                      label={item.label}
                       avatarType="client"
-                      onCloseClick={notImplementedYet}
+                      onCloseClick={() => removeClientUser(item.value)}
                     />
                   ))}
                 </TagSelectorStyles.tags>
@@ -533,6 +599,9 @@ const Team: React.FC<TeamProps> = ({
 
               <Spacer size={10} />
 
+              {/* 
+                Not needed, but in case we want it back
+                Always use RoleType.User
               <RadioGroup
                 groupName="client-access"
                 label="Assign access"
@@ -543,6 +612,7 @@ const Team: React.FC<TeamProps> = ({
                 selectedValue={clientAccess}
                 onChange={setClientAccess}
               />
+              */}
 
               <Spacer size={10} />
 
@@ -559,7 +629,7 @@ const Team: React.FC<TeamProps> = ({
                   onClick={addClientUser}
                   icon={Icons.ChevronRightBold}
                   iconAlignment="right"
-                  disabled={!isUserComplete}
+                  disabled={!isUserComplete || userLimitReached}
                 />
               </PageActions>
 
@@ -584,10 +654,10 @@ const Team: React.FC<TeamProps> = ({
           <Button
             data-test="continue-button"
             label="Save and continue"
-            onClick={onSubmit}
+            onClick={handleSave}
             icon={Icons.ChevronRightBold}
             iconAlignment="right"
-            disabled={!isComplete || addUser}
+            disabled={!isComplete}
           />
         </PageActions>
       </Panel>

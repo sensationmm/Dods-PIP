@@ -17,6 +17,7 @@ describe('Summary page', () => {
     userSeats: '',
     consultantHours: '',
     renewalType: '',
+    team: [],
     startDate: 'Nov 05 2021 11:30:32',
     endDate: 'Nov 05 2022 11:30:32',
     endDateType: '',

@@ -24,6 +24,7 @@ import useDebounce from '../../lib/useDebounce';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
 import * as Styled from './accounts.styles';
+import { TeamMemberType } from './add-client/type';
 
 type Filters = {
   search?: string;
@@ -36,7 +37,7 @@ type Filters = {
 type ClientAccountTeamMember = {
   id: string;
   name: string;
-  type: 'consultant' | 'client';
+  teamMemberType: TeamMemberType;
 };
 
 type ClientAccount = {
@@ -297,13 +298,16 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                 return renderInCompletedRow(account);
               }
               const { uuid } = account;
+              const filterByClient = (team: ClientAccountTeamMember) =>
+                team.teamMemberType === TeamMemberType.ClientUser;
 
-              const teamClient = account.team
-                .slice(3)
-                .filter((team) => team.type === 'client').length;
-              const teamConsultant = account.team
-                .slice(3)
-                .filter((team) => team.type === 'consultant').length;
+              const filterByConsultant = (team: ClientAccountTeamMember) =>
+                [TeamMemberType.AccountManager, TeamMemberType.TeamMember].includes(
+                  team.teamMemberType,
+                );
+
+              const teamClient = account.team.slice(3).filter(filterByClient).length;
+              const teamConsultant = account.team.slice(3).filter(filterByConsultant).length;
 
               let team = account.team;
 
@@ -318,10 +322,10 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
 
               const overflowTeamClient = account.team
                 .slice(team.length)
-                .filter((team) => team.type === 'client').length;
+                .filter(filterByClient).length;
               const overflowTeamConsultant = account.team
                 .slice(team.length)
-                .filter((team) => team.type === 'consultant').length;
+                .filter(filterByConsultant).length;
 
               return [
                 account.name.substring(0, 1),
@@ -332,10 +336,12 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                 <Text key={`account-${uuid}-projects`}>{account.projects}</Text>,
                 <Styled.teamList key={`account-${uuid}-team`}>
                   {team.map((member) => {
+                    const type =
+                      member.teamMemberType === TeamMemberType.ClientUser ? 'client' : 'consultant';
                     return (
                       <Avatar
                         key={`team-${member.id}`}
-                        type={member.type}
+                        type={type}
                         size="small"
                         alt={member.name}
                       />
