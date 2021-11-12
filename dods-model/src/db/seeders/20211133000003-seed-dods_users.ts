@@ -1,4 +1,4 @@
-import { QueryInterface } from 'sequelize';
+import { Op, QueryInterface } from 'sequelize';
 
 export = {
     up: (queryInterface: QueryInterface) => {
@@ -32,6 +32,13 @@ export = {
         ]);
     },
     down: (queryInterface: QueryInterface) => {
-        return queryInterface.bulkDelete('dods_users', {});
+        return queryInterface.bulkDelete('dods_users', {
+            uuid: {
+                [Op.or]: [
+                    '6c16a036-2439-4b78-bf29-8069f4cd6c0b',
+                    '6340c08f-0a01-41c1-8434-421f1fff3d1e',
+                ],
+            },
+        });
     },
 };

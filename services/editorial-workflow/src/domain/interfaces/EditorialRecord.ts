@@ -37,8 +37,8 @@ export interface SearchEditorialRecordParameters {
     limit: string;
     startDate?: string;
     endDate?: string;
-    sortBy?: string;
-    sortDirection?: string;
+    sortBy: string;
+    sortDirection: string;
 }
 
 export interface EditorialRecordListOutput {

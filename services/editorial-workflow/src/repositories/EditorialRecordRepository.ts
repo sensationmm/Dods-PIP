@@ -119,9 +119,9 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             endDate,
             limit,
             offset,
+            sortBy,
+            sortDirection,
         } = params;
-
-        let { sortBy, sortDirection } = params;
 
         const whereRecord: WhereOptions = {};
 
@@ -169,36 +169,13 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             };
         }
 
-        let sortByQuery = 'createdAt';
-        let sortDirectionQuery = 'asc';
-        sortBy = sortBy?.toLowerCase();
-        sortDirection = sortDirection?.toLowerCase();
-
-        if (
-            sortBy === 'documentname' ||
-            sortBy === 'status' ||
-            sortBy === 'createddate'
-        ) {
-            if (sortBy === 'status') {
-                sortByQuery = 'statusId';
-            } else if (sortBy === 'createddate') {
-                sortByQuery = 'createdAt';
-            } else {
-                sortByQuery = 'documentName';
-            }
-        }
-
-        if (sortDirection === 'asc' || sortDirection === 'desc') {
-            sortDirectionQuery = sortDirection;
-        }
-
         const totalRecords = await this.editorialRecordModel.count();
 
         const { count: filteredRecords, rows } =
             await this.editorialRecordModel.findAndCountAll({
                 where: whereRecord,
                 include: ['status', 'assignedEditor'],
-                order: [[sortByQuery, sortDirectionQuery]],
+                order: [[sortBy, sortDirection]],
                 offset: parseInt(offset),
                 limit: parseInt(limit),
             });

@@ -76,7 +76,7 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             startDate: '2021-11-08T23:20:38.000Z',
             offset: '3',
             limit: '33',
-            sortBy: 'createdDate',
+            sortBy: 'creationDate',
             sortDirection: 'asc',
         };
         const response =
@@ -102,97 +102,7 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             include: ['status', 'assignedEditor'],
             limit: 33,
             offset: 3,
-            order: [['createdAt', 'asc']],
-        });
-        expect(response).toEqual({
-            totalRecords: defaultAmountOfTotalRecords,
-            filteredRecords: defaultListRecords.count,
-            results: defaultListRecords.rows,
-        });
-    });
-
-    test('Sort bystatus Filter', async () => {
-        const requestParams = {
-            searchTerm: 'Test',
-            contentSource: 'Random',
-            informationType: 'Random Doc',
-            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
-            endDate: '2021-11-08T23:21:58.000Z',
-            startDate: '2021-11-08T23:20:38.000Z',
-            offset: '3',
-            limit: '33',
-            sortBy: 'status',
-            sortDirection: 'asc',
-        };
-        const response =
-            await EditorialRecordRepository.defaultInstance.listEditorialRecords(
-                requestParams
-            );
-        expect(EditorialRecord.findAndCountAll).toHaveBeenCalledWith({
-            where: expect.objectContaining({
-                '$status.uuid$': '89cf96f7-d380-4c30-abcf-74c57843f50c',
-                contentSource: 'Random',
-                createdAt: {
-                    [Op.and]: [
-                        {
-                            [Op.gte]: new Date('2021-11-08T23:20:38.000Z'),
-                        },
-                        {
-                            [Op.lte]: new Date('2021-11-08T23:21:58.000Z'),
-                        },
-                    ],
-                },
-                informationType: 'Random Doc',
-            }),
-            include: ['status', 'assignedEditor'],
-            limit: 33,
-            offset: 3,
-            order: [['statusId', 'asc']],
-        });
-        expect(response).toEqual({
-            totalRecords: defaultAmountOfTotalRecords,
-            filteredRecords: defaultListRecords.count,
-            results: defaultListRecords.rows,
-        });
-    });
-
-    test('Sort by Document Name Filter', async () => {
-        const requestParams = {
-            searchTerm: 'Test',
-            contentSource: 'Random',
-            informationType: 'Random Doc',
-            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
-            endDate: '2021-11-08T23:21:58.000Z',
-            startDate: '2021-11-08T23:20:38.000Z',
-            offset: '3',
-            limit: '33',
-            sortBy: 'documentName',
-            sortDirection: 'asc',
-        };
-        const response =
-            await EditorialRecordRepository.defaultInstance.listEditorialRecords(
-                requestParams
-            );
-        expect(EditorialRecord.findAndCountAll).toHaveBeenCalledWith({
-            where: expect.objectContaining({
-                '$status.uuid$': '89cf96f7-d380-4c30-abcf-74c57843f50c',
-                contentSource: 'Random',
-                createdAt: {
-                    [Op.and]: [
-                        {
-                            [Op.gte]: new Date('2021-11-08T23:20:38.000Z'),
-                        },
-                        {
-                            [Op.lte]: new Date('2021-11-08T23:21:58.000Z'),
-                        },
-                    ],
-                },
-                informationType: 'Random Doc',
-            }),
-            include: ['status', 'assignedEditor'],
-            limit: 33,
-            offset: 3,
-            order: [['documentName', 'asc']],
+            order: [['creationDate', 'asc']],
         });
         expect(response).toEqual({
             totalRecords: defaultAmountOfTotalRecords,
@@ -205,6 +115,8 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
         const requestParams = {
             offset: '3',
             limit: '33',
+            sortBy: 'creationDate',
+            sortDirection: 'asc',
         };
         const response =
             await EditorialRecordRepository.defaultInstance.listEditorialRecords(
@@ -215,7 +127,7 @@ describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
             include: ['status', 'assignedEditor'],
             limit: 33,
             offset: 3,
-            order: [['createdAt', 'asc']],
+            order: [['creationDate', 'asc']],
         });
         expect(response).toEqual({
             totalRecords: defaultAmountOfTotalRecords,
