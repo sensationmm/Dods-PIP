@@ -87,11 +87,9 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
 
   const loadFilteredUsers = async () => {
     setLoading(true);
-    const queryString = getFilterQueryString();
     setTotal(usersList.length);
     setUsersList(usersList.slice(0, 30));
     setLoading(false);
-    console.log(queryString);
   };
 
   React.useEffect(() => {
