@@ -322,7 +322,6 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
               label="Cancel"
               type="secondary"
               onClick={onCloseEditModal}
-              disabled={!isComplete}
             />
             <Button
               data-test="continue-button"
