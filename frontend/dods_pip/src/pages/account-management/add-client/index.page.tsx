@@ -13,6 +13,7 @@ export const AddClientPage: React.FC<AddClientProps> = ({ addNotification, setLo
   const router = useRouter();
   const { id = '' } = router.query;
   const [activeStep, setActiveStep] = React.useState<number>(1);
+  const [accountId, setAccountId] = React.useState<string>(id as string);
 
   const steps = [{ label: 'Account Info' }, { label: 'Subscription' }, { label: 'Team' }];
 
@@ -29,12 +30,13 @@ export const AddClientPage: React.FC<AddClientProps> = ({ addNotification, setLo
       />
 
       <AddClient
-        accountId={id as string}
+        accountId={accountId}
         editMode={false}
         activeStep={activeStep}
         addNotification={addNotification}
         setLoading={setLoading}
         setActiveStep={setActiveStep}
+        setAccountId={setAccountId}
       />
     </div>
   );
