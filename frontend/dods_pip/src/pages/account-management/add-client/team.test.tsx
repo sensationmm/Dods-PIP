@@ -3,6 +3,18 @@ import React from 'react';
 
 import Team from './team';
 
+jest.mock('../../../lib/fetchJson', () => {
+  return jest
+    .fn()
+    .mockReturnValue(Promise.resolve({ success: true, data: [ { id: '12', name: 'Jane Doe', teamMemberType: 3 }, { id: '13', name: 'Test Test', teamMemberType: 3 }, { id: '20', name: 'John Doe', teamMemberType: 2 }]}))
+});
+
+jest.mock('../../../lib/useTeamMembers', () => {
+  return jest
+    .fn()
+    .mockReturnValue({ clients: [{ id: '12', name: 'Jane Doe', teamMemberType: 3 }] })
+});
+
 describe('Team', () => {
   let wrapper, setActiveStep;
   let count = 0;
@@ -11,9 +23,12 @@ describe('Team', () => {
   const mockSetErrors = jest.fn();
   const mockSetClientUsers = jest.fn();
   const mockSetClient = jest.fn();
+  const mockSetLoading = jest.fn();
   const useStateSpy = jest.spyOn(React, 'useState');
 
   const defaultProps = {
+    setLoading: mockSetLoading,
+    addNotification: jest.fn(),
     teamMembers: [],
     setTeamMembers: jest.fn,
     accountManagers: [],
@@ -34,10 +49,11 @@ describe('Team', () => {
     setClientTelephone: mockSetClient,
     clientTelephone2: '',
     setClientTelephone2: mockSetClient,
-    clientAccess: '',
-    setClientAccess: mockSetClient,
+    // clientAccess: '',
+    // setClientAccess: mockSetClient,
     errors: {},
     setErrors: mockSetErrors,
+    userSeats: 4,
     onSubmit: jest.fn,
     onBack: jest.fn,
   };
@@ -68,11 +84,11 @@ describe('Team', () => {
       clientAccess: 'user',
     }, // adds client
     defaultProps, // cancels add client
-    { ...defaultProps, clientUsers: ['team member 1', 'team member 1'] }, // shows added users
-    { ...defaultProps, teamMembers: ['team member 1', 'team member 2', 'team member 3'] }, // shows added team members in closed state
+    { ...defaultProps, clientUsers: [{ label: 'team member 1', value: 'uuid-11'}, {label: 'team member 2', value: 'uuid-12'}] }, // shows added users
+    { ...defaultProps, teamMembers: [{ label: 'team member 1', value: 'uuid-11'}, {label: 'team member 2', value: 'uuid-12'}, {label: 'team member 3', value: 'uuid-13'}] }, // shows added team members in closed state
     {
       ...defaultProps,
-      accountManagers: ['team member 1', 'team member 2', 'team member 3', 'team member 4'],
+      accountManagers: [{ label: 'team member 1', value: 'uuid-11'}, {label: 'team member 2', value: 'uuid-12'}, {label: 'team member 3', value: 'uuid-13'}, {label: 'team member 4', value: 'uuid-14'}],
     }, // shows added account managers in closed state
     defaultProps, // closing team toggles users
     defaultProps, // closing users toggles team
@@ -200,18 +216,18 @@ describe('Team', () => {
     expect(mockSetErrors).toHaveBeenCalledWith({});
   });
 
-  it('adds client', () => {
+  it('adds client', async () => {
     const submitButton = wrapper.find('[data-test="create-user-button"]');
-    submitButton.simulate('click');
-    expect(mockSetClientUsers).toHaveBeenCalledWith(['Test Test']);
-    expect(mockSetClient).toHaveBeenCalledTimes(8);
+    await submitButton.simulate('click');
+    expect(mockSetClientUsers).toHaveBeenCalledWith([{ value: '12', label: 'Jane Doe' }, { value: '13', label: 'Test Test' }]);
+    expect(mockSetClient).toHaveBeenCalledTimes(7);
     expect(mockSetAddUser).toHaveBeenCalledWith(false);
   });
 
   it('cancels add client', () => {
     const cancelAddUser = wrapper.find('[data-test="add-user-actions"]');
     cancelAddUser.props().backHandler();
-    expect(mockSetClient).toHaveBeenCalledTimes(8);
+    expect(mockSetClient).toHaveBeenCalledTimes(7);
     expect(mockSetAddUser).toHaveBeenCalledWith(false);
   });
 

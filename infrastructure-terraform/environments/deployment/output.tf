@@ -24,3 +24,19 @@ output "lambda_sg_id" {
 output "frontend_url" {
   value = module.pip-network.frontend_url
 }
+
+output "api_gateway" {
+  value = module.api_gateway.api_gateway_id
+}
+
+output "api_root_res_id" {
+  value = module.api_gateway.api_root_resource_id
+}
+
+output "api_key_front" {
+  value = module.api_gateway.api_key_front
+}
+
+output "api_key_test" {
+  value = module.api_gateway.api_key_test
+}

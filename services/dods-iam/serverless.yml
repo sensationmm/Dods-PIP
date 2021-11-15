@@ -6,6 +6,8 @@ frameworkVersion: ^2.57.0
 
 variablesResolutionMode: 20210326
 
+projectDir: ../
+
 provider:
   name: aws
   region: eu-west-1
@@ -13,6 +15,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
     name: pip-${self:provider.stage}-services-lambdas
+
   lambdaHashingVersion: 20201221
 
   stackTags:
@@ -28,6 +31,12 @@ provider:
     apiGateway: true
     lambda: true
 
+  apiGateway:
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, ""}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, ""}
+    description: Default Gateway for ${self:provider.stage} deployed with Terraform
+
+
   environment:
     NODE_ENV: development
     SERVERLESS_STAGE: ${self:provider.stage}
@@ -39,7 +48,7 @@ provider:
     LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: ${self:custom.resourceNames.DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE}
     FAILED_LOGIN_ATTEMPT_COUNT: 3
     LOGIN_LAST_PASSWORDS_NOT_REUSE_MINUTES: 262800 # 6 months
-    RESET_PASSWORD_URL: http://dods-publi-bb29eyratgfk-1522307155.eu-west-1.elb.amazonaws.com/password-reset
+    RESET_PASSWORD_URL: ${file(../env-config.${self:provider.stage}.js):frontendURL}/password-reset
 
   eventBridge:
     useCloudFormation: true
@@ -97,7 +106,6 @@ custom:
     stages:
       # list of stages for which the plugin should be enabled
       - local
-      - test
     host: http://localhost # optional - LocalStack host to connect to
     edgePort: 4566 # optional - LocalStack edge port to connect to
     autostart: false # optional - Start LocalStack in Docker on Serverless deploy

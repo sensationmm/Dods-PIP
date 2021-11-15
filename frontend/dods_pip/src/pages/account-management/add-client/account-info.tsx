@@ -29,8 +29,12 @@ export type Errors = {
 export interface AccountInfoProps {
   addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
+  editMode: boolean;
+  onCloseEditModal: () => void;
   accountId: string;
-  setAccountId: (val: string) => void;
+  setAccountId?: (val: string) => void;
+  savedAccountName: string;
+  setSavedAccountName: (val: string) => void;
   accountName: string;
   setAccountName: (val: string) => void;
   accountNotes: string;
@@ -45,13 +49,18 @@ export interface AccountInfoProps {
   setErrors: (errors: Errors) => void;
   onSubmit: () => void;
   onBack: () => void;
+  onEditSuccess: (val: Record<any, unknown>) => void;
 }
 
 const AccountInfo: React.FC<AccountInfoProps> = ({
   addNotification,
   setLoading,
+  editMode,
+  onCloseEditModal,
   accountId,
   setAccountId,
+  savedAccountName,
+  setSavedAccountName,
   accountName,
   setAccountName,
   accountNotes,
@@ -66,13 +75,16 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   setErrors,
   onSubmit,
   onBack,
+  onEditSuccess,
 }) => {
   const isComplete =
     Object.keys(errors).length === 0 &&
-    accountName !== '' &&
-    contactName !== '' &&
+    trim(accountName) !== '' &&
+    trim(contactName) !== '' &&
     contactTelephone != '' &&
     contactEmail !== '';
+
+  const [pristine, setPristine] = React.useState<boolean>(true);
 
   const handleSave = async () => {
     setLoading(true);
@@ -81,8 +93,8 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       name: trim(accountName),
       notes: accountNotes,
       contactName: trim(contactName),
-      contactEmailAddress: trim(contactEmail),
-      contactTelephoneNumber: trim(contactTelephone),
+      contactEmailAddress: contactEmail,
+      contactTelephoneNumber: contactTelephone,
     };
 
     const postBody = {
@@ -105,10 +117,17 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       const { uuid = '' } = data;
       if (uuid !== '') {
         // all good
-        if (method === 'POST') {
+        if (method === 'POST' && setAccountId) {
           setAccountId(uuid as string);
         }
-        onSubmit(); // go to next step
+        setSavedAccountName(trim(accountName));
+
+        if (editMode) {
+          onEditSuccess(payload);
+          onCloseEditModal(); // close modal windows
+        } else {
+          onSubmit(); // go to next step
+        }
       }
     } catch (e) {
       // show server error
@@ -124,8 +143,10 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
   const validateAccountName = async () => {
     const formErrors = { ...errors };
-    if (accountName === '') {
+    if (trim(accountName) === '') {
       formErrors.accountName = 'This field is required';
+    } else if (trim(accountName).toLowerCase() === savedAccountName.toLowerCase()) {
+      delete formErrors.accountName;
     } else {
       delete formErrors.accountName;
       const response = await fetchJson(`${BASE_URI}${Api.CheckAccountName}`, {
@@ -140,17 +161,19 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       }
     }
 
+    setPristine(false);
     setErrors(formErrors);
   };
 
   const validateName = () => {
     const formErrors = { ...errors };
-    if (contactName === '') {
+    if (trim(contactName) === '') {
       formErrors.contactName = 'This field is required';
     } else {
       delete formErrors.contactName;
     }
 
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -164,6 +187,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       delete formErrors.contactEmail;
     }
 
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -176,12 +200,18 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     } else {
       delete formErrors.contactTelephone;
     }
+
+    setPristine(false);
     setErrors(formErrors);
   };
 
   return (
     <main data-test="account-info">
-      <Panel isNarrow bgColor={color.base.ivory}>
+      <Panel
+        isPadded={!editMode}
+        isNarrow={!editMode}
+        bgColor={editMode ? color.base.white : color.base.ivory}
+      >
         <SectionHeader
           title="About the Account"
           subtitle="Please add the client details below."
@@ -212,7 +242,10 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
           <TextArea
             label="Account notes"
-            onChange={setAccountNotes}
+            onChange={(value) => {
+              setPristine(false);
+              setAccountNotes(value);
+            }}
             value={accountNotes}
             placeholder="Type the account notes"
             characterLimit={500}
@@ -282,17 +315,35 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
         </Styled.wrapper>
 
         <Spacer size={20} />
-
-        <PageActions data-test="page-actions" hasBack backHandler={onBack}>
-          <Button
-            data-test="continue-button"
-            label="Save and continue"
-            onClick={handleSave}
-            icon={Icons.ChevronRightBold}
-            iconAlignment="right"
-            disabled={!isComplete}
-          />
-        </PageActions>
+        {editMode ? (
+          <PageActions isRightAligned={true} data-test="page-actions">
+            <Button
+              data-test="cancel-button"
+              label="Cancel"
+              type="secondary"
+              onClick={onCloseEditModal}
+            />
+            <Button
+              data-test="continue-button"
+              label="Save"
+              onClick={handleSave}
+              icon={Icons.TickBold}
+              iconAlignment="left"
+              disabled={!isComplete || pristine}
+            />
+          </PageActions>
+        ) : (
+          <PageActions data-test="page-actions" hasBack backHandler={onBack}>
+            <Button
+              data-test="continue-button"
+              label="Save and continue"
+              onClick={handleSave}
+              icon={Icons.ChevronRightBold}
+              iconAlignment="right"
+              disabled={!isComplete}
+            />
+          </PageActions>
+        )}
       </Panel>
     </main>
   );

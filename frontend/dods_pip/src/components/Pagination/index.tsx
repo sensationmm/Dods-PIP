@@ -87,6 +87,7 @@ const Pagination = (dataLength: number): PaginationType => {
             Items per page&nbsp;
           </Text>
           <Select
+            testId="select-items-per-page"
             id="pagination-pp"
             data-test="set-page-count"
             size="small"

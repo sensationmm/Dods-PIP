@@ -12,6 +12,7 @@ export interface ChipsProps {
   chipsSize?: ChipsSize;
   icon?: Icons;
   label: string;
+  value?: string;
   disabled?: boolean;
   avatarType?: UserType;
   onCloseClick?: (val: string) => void;
@@ -20,6 +21,7 @@ export interface ChipsProps {
 const Chips: React.FC<ChipsProps> = ({
   chipsSize = 'dense',
   label,
+  value = '',
   disabled,
   icon,
   avatarType,
@@ -78,7 +80,7 @@ const Chips: React.FC<ChipsProps> = ({
         selected={active}
         disabled={disabled}
         hovering={hovering}
-        onClick={() => onCloseClick?.(label)}
+        onClick={() => onCloseClick?.(value === '' ? label : value)}
       >
         <Icon
           src={Icons.CrossBold}

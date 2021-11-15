@@ -50,6 +50,9 @@ paths:
                 - $ref: '#/components/parameters/startsBy'
                 - $ref: '#/components/parameters/limit'
                 - $ref: '#/components/parameters/offset'
+                - $ref: '#/components/parameters/isCompleted'
+                - $ref: '#/components/parameters/sortBy'
+                - $ref: '#/components/parameters/sortDirection'
             responses:
                 '200':
                     $ref: '#/components/responses/ClientAccountUpdate'
@@ -62,7 +65,16 @@ paths:
             summary: 'Create Client Account'
             description: 'Create Client Account'
             requestBody:
-                $ref: '#/components/requestBodies/clientAccount'
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    required:
+                    - clientAccount
+                    properties:
+                      clientAccount:
+                        $ref: '#/components/schemas/CreateClientAccountParameters'
             responses:
                 '200':
                     $ref: '#/components/responses/ClientAccountCreate'
@@ -108,10 +120,10 @@ paths:
                 - $ref: '#/components/parameters/clientAccountId'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                    $ref: '#/components/responses/GetClientAccountTeamResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
-        post:
+        put:
             operationId: addTeamMemberToClientAccount
             summary: 'Add Team Member to Client Account'
             description: 'Add Team Member to Client Account'
@@ -121,20 +133,22 @@ paths:
                 $ref: '#/components/requestBodies/clientAccountTeam'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                    $ref: '#/components/responses/AddClientAccountTeamResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
 
     /clientaccount/{clientAccountId}/teammember/new:
         post:
-            operationId: addTeamMemberToClientAccount
+            operationId: createTeamMember
             summary: 'Add Team Member to Client Account'
             description: 'Add Team Member to Client Account'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
             requestBody:
                 $ref: '#/components/requestBodies/clientAccountTeam'
             responses:
                 '200':
-                    $ref: '#/components/responses/ClientAccountTeamResponse'
+                    $ref: '#/components/responses'
                 '400':
                     $ref: '#/components/responses/BadRequest'
 
@@ -221,6 +235,7 @@ components:
                     example: Client account was updated
                 data:
                     $ref: '#/components/schemas/ClientAccount'
+                    
         GetClientSuccess:
             type: object
             properties:
@@ -229,6 +244,7 @@ components:
                     example: Client account found
                 data:
                     $ref: '#/components/schemas/ClientAccount'
+                    
         GetReaminingSeatsSuccess:
             type: object
             properties:
@@ -308,60 +324,117 @@ components:
               - isUK
         ClientAccountCreateHeader:
             type: object
+            required:
+            - clientAccount
+            properties:
+                clientAccount:
+                  $ref: '#/components/schemas/CreateClientAccountParameters'
+                    
+        CreateClientAccountParameters:
+            type: object
             properties:
                 name:
                     type: string
                     example: Dods information
+                    minLength: 1
                 notes:
-                    type: string
+                     type: string
                 contactName:
-                    type: string
-                    example: Joe Bloggs
+                      type: string
+                      example: Joe Bloggs
+                      minLength: 1
                 contactEmailAddress:
-                    type: string
-                    example: user@email.com
+                      type: string
+                      example: user@email.com
+                      minLength: 1
                 contactTelephoneNumber:
-                    type: string
-                    example: '+442071838750'
-                
+                      type: string
+                      example: '+442071838750'
+                      minLength: 1
             required:
-              - name
-              - notes
-              - contactName
-              - contactEmailAddress
-              - contactTelephoneNumber
+            - name
+            - contactName
+            - contactEmailAddress
+            - contactTelephoneNumber
+        
+
 
         ClientAccountTeam:
             type: object
             properties:
-                userId:
-                    type: number
-                clientAccountId:
-                    type: number
+              teamMembers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    userId:
+                        type: string
+                    teamMemberType:
+                        type: number
+                        enum: [1,2,3]
+                example:
+                  - userId: 94a57103-3bf0-4a29-bdba-99a4650c1849
+                    teamMemberType: 1 
+                  - userId: 7b41112c-f647-4098-85d3-d06cf3f9a8ec
+                    teamMemberType: 2
+                    
+        AddedTeamMembersSuccess:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                    example: true
+                message:
+                    type: string
+                    example: Team members were added to the client account.
+                data:
+                    $ref: '#/components/schemas/TeamMembersArray'
+                    
+        GetTeamMembersSuccess:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: Client account found.
+                data:
+                    $ref: '#/components/schemas/TeamMembersArray'
+                    
+        TeamMembersArray:
+              type: object
+              properties:
+                id:
+                  type: string
                 teamMemberType:
-                    type: number
-                    enum: [1, 2]
-            required:
-              - userId
-              - clientAccountId
-              - teamMemberType
+                  type: string
+              example:
+                - id: 94a57103-3bf0-4a29-bdba-99a4650c1849
+                  name: Joe Draxler
+                  teamMemberType: 1
+                - id: 7b41112c-f647-4098-85d3-d06cf3f9a8ec
+                  name: Jane Martins
+                  teamMemberType: 2
+   
         ClientAccountUpdateHeader:
             type: object
             properties:
                 name:
                     type: string
+                    minLength: 1
                     example: Company 1
                 notes:
                     type: string
                     example: This is the account for Company 1
                 contactName:
                     type: string
+                    minLength: 1
                     example: Joe Bloggs
                 contactEmailAddress:
                     type: string
+                    minLength: 1
                     example: user@email.com
                 contactTelephoneNumber:
                     type: string
+                    minLength: 1
                     example: '+442071838750'
             required:
               - name
@@ -469,7 +542,7 @@ components:
             name: limit
             schema:
                 type: integer
-                default: 10
+                default: 20
                 minimum: 0
                 maximum: 100
             required: false
@@ -483,6 +556,32 @@ components:
                 minimum: 0
             required: false
             description: Offset value for pagination
+        isCompleted:
+            in: query
+            name: isCompleted
+            schema:
+                type: string
+                example: true
+            required: false
+            description: Return the completeness of a clientAccount
+
+        sortBy:
+            in: query
+            name: sortBy
+            schema:
+                type: string
+                example: name
+            required: false
+            description: sort client Account by name or subscription
+
+        sortDirection:
+            in: query
+            name: sortDirection
+            schema:
+                type: string
+                example: DESC
+            required: false
+            description: direction ASC or DESC
 
     responses:
         NotFound:
@@ -537,12 +636,20 @@ components:
                 application/json:
                     schema:
                         type: 'object'
-        ClientAccountTeamResponse:
-            description: ''
+        AddClientAccountTeamResponse:
+            description: 'Team Members successfully added to client Account'
             content:
                 application/json:
                     schema:
-                        type: 'object'
+                        $ref: '#/components/schemas/AddedTeamMembersSuccess'
+                        
+        GetClientAccountTeamResponse:
+            description: 'Team Members successfully added to client Account'
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/GetTeamMembersSuccess'
+                        
         CheckAccountNameResponse:
             description: ''
             content:
@@ -604,5 +711,3 @@ components:
                 application/json:
                     schema:
                         $ref: '#/components/schemas/ClientAccountUpdateSubscription'
-
-                  

@@ -1,66 +1,126 @@
-import {CreateEditorialRecordParameters, EditorialRecord} from '../../../src/domain';
+import { EditorialRecord, Op } from '@dodsgroup/dods-model';
+
 import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
-import dynamoDB from "../../../src/dynamodb"
+import { mocked } from 'ts-jest/utils';
 
-jest.mock('../../../src/dynamodb');
-jest.mock('uuid', () => ({ v4: () => '00000000-0000-0000-0000-000000000000' }));
+const defaultCreatedRecord: any = {
+    uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
+    documentName: 'NewDocument',
+    s3Location: 'SomeLocation',
+};
 
-afterEach(() => {
-    jest.clearAllMocks();
+const defaultListRecords: any = {
+    count: 1,
+    rows: [
+        {
+            uuid: 'f3bfb804-b786-44e8-ab9b-36db9f226216',
+            documentName: "The effects on Fridays on Jhonny's brain",
+            s3Location:
+                'arn:aws:s3:::editorial-workflow-prod/editorial-workflow/01012020/fried-brain.json',
+            informationType: 'Random Doc',
+            contentSource: 'Manual Injection',
+            status: {
+                uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+                status: 'Draft',
+            },
+            assignedEditor: {
+                uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
+                fullName: 'Employee Example',
+            },
+            createdAt: '2021-11-08T16:20:58.000Z',
+            updatedAt: '2021-11-08T16:20:58.000Z',
+        },
+    ],
+};
+
+const defaultAmountOfTotalRecords = 10;
+
+jest.mock('@dodsgroup/dods-model');
+
+const mockedEditorialRecord = mocked(EditorialRecord);
+
+mockedEditorialRecord.create.mockResolvedValue(defaultCreatedRecord);
+mockedEditorialRecord.findAndCountAll.mockResolvedValue(defaultListRecords);
+mockedEditorialRecord.count.mockResolvedValue(defaultAmountOfTotalRecords);
+
+const CLASS_NAME = EditorialRecordRepository.name;
+const CREATE_RECORD_FUNCTION_NAME =
+    EditorialRecordRepository.defaultInstance.createEditorialRecord.name;
+
+const SEARCH_RECORDS_FUNCTION_NAME =
+    EditorialRecordRepository.defaultInstance.listEditorialRecords.name;
+
+describe(`${CLASS_NAME}.${CREATE_RECORD_FUNCTION_NAME}`, () => {
+    test('Valid input Happy case', async () => {
+        const requestParams = { documentName: 'NewDocument', s3Location: 'SomeLocation' };
+        const response = await EditorialRecordRepository.defaultInstance.createEditorialRecord(
+            requestParams
+        );
+        expect(EditorialRecord.create).toBeCalled;
+        expect(response).toEqual(defaultCreatedRecord);
+    });
 });
 
-
-describe(`Editorial Repository Test`, () => {
-
-    test('create Editorial Record Valid input', async () => {
-        const data: CreateEditorialRecordParameters = {document_name: 'Some Questions', s3_location: 'Some location'};
-        const response = await EditorialRecordRepository.defaultInstance.createEditorialRecord(data);
-
-        expect(response.document_name).toEqual('Some Questions');
-        expect(response.s3_location).toEqual('Some location');
-    });
-
-    test('creating a record creates an ID', async () => {
-        const data: CreateEditorialRecordParameters = {document_name: 'Some Questions', s3_location: 'Some location'};
-        const response = await EditorialRecordRepository.defaultInstance.createEditorialRecord(data);
-
-        expect(response.id).toEqual('00000000-0000-0000-0000-000000000000');
-    });
-
-    test('we create the correct dynamo put request', async () =>{
-        const data: EditorialRecord = { id: '00000000-0000-0000-0000-000000000000', document_name: 'Some Questions', s3_location: 'Some location' };
-        const response = await EditorialRecordRepository.createEditorialRecordPutRequest(data);
-
-        expect(response.TableName).toBeDefined();
-        expect(response.Item.document_name).toEqual(data.document_name);
-        expect(response.Item.s3_location).toEqual(data.s3_location);
-        expect(response.Item.id).toEqual('00000000-0000-0000-0000-000000000000');
-    });
-
-    test('creating a record creates the correct request', async () =>{
-        const spy = jest.spyOn(EditorialRecordRepository, 'createEditorialRecordPutRequest');
-
-        const data: CreateEditorialRecordParameters = {document_name: 'Some Questions', s3_location: 'Some location'};
-        await EditorialRecordRepository.defaultInstance.createEditorialRecord(data);
-
-        expect(spy).toHaveBeenCalled();
-
-        spy.mockRestore();
-    });
-
-    test('creating a record stores to dynamo', async () =>{
-        const data: CreateEditorialRecordParameters = {document_name: 'Some Questions', s3_location: 'Some location'};
-        await EditorialRecordRepository.defaultInstance.createEditorialRecord(data);
-
-        expect(dynamoDB.put.mock.calls.length).toBe(1);
-    });
-
-    test('DynamoDB errors are re thrown', async () =>{
-        dynamoDB.put.mockImplementation(() => {
-            throw new Error();
+describe(`${CLASS_NAME}.${SEARCH_RECORDS_FUNCTION_NAME}`, () => {
+    test('All filters applied', async () => {
+        const requestParams = {
+            searchTerm: 'Test',
+            contentSource: 'Random',
+            informationType: 'Random Doc',
+            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+            endDate: '2021-11-08T23:21:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+            offset: '3',
+            limit: '33',
+        };
+        const response = await EditorialRecordRepository.defaultInstance.listEditorialRecords(
+            requestParams
+        );
+        expect(EditorialRecord.findAndCountAll).toHaveBeenCalledWith({
+            where: expect.objectContaining({
+                '$status.uuid$': '89cf96f7-d380-4c30-abcf-74c57843f50c',
+                contentSource: 'Random',
+                createdAt: {
+                    [Op.and]: [
+                        {
+                            [Op.gte]: new Date('2021-11-08T23:20:38.000Z'),
+                        },
+                        {
+                            [Op.lte]: new Date('2021-11-08T23:21:58.000Z'),
+                        },
+                    ],
+                },
+                informationType: 'Random Doc',
+            }),
+            include: ['status', 'assignedEditor'],
+            limit: 33,
+            offset: 3,
         });
-        const data: CreateEditorialRecordParameters = {document_name: 'Some Questions', s3_location: 'Some location'};
+        expect(response).toEqual({
+            totalRecords: defaultAmountOfTotalRecords,
+            filteredRecords: defaultListRecords.count,
+            results: defaultListRecords.rows,
+        });
+    });
 
-        await expect(EditorialRecordRepository.defaultInstance.createEditorialRecord(data)).rejects.toThrow(Error);
+    test('No filters applied', async () => {
+        const requestParams = {
+            offset: '3',
+            limit: '33',
+        };
+        const response = await EditorialRecordRepository.defaultInstance.listEditorialRecords(
+            requestParams
+        );
+        expect(EditorialRecord.findAndCountAll).toHaveBeenCalledWith({
+            where: {},
+            include: ['status', 'assignedEditor'],
+            limit: 33,
+            offset: 3,
+        });
+        expect(response).toEqual({
+            totalRecords: defaultAmountOfTotalRecords,
+            filteredRecords: defaultListRecords.count,
+            results: defaultListRecords.rows,
+        });
     });
 });

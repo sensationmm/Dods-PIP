@@ -2,9 +2,14 @@ service: graphologi-integration
 
 frameworkVersion: '2'
 
+projectDir: ../
+
+plugins:
+  - serverless-python-requirements
+
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: python3.7
   region: eu-west-1
   lambdaHashingVersion: '20201221'
   stage: ${opt:stage, 'dev'}
@@ -17,6 +22,8 @@ provider:
     ES_CLOUD_ID: ${env:ES_CLOUD_ID}
     ES_KEY_ID: ${env:ES_KEY_ID}
     ES_API_KEY: ${env:ES_API_KEY}
+    GRAPHIFY_USERNAME: ${env:GRAPHIFY_USERNAME}
+    GRAPHIFY_PASSWORD: ${env:GRAPHIFY_PASSWORD}
   
   iamRoleStatements:
     - Effect: Allow
@@ -62,19 +69,12 @@ package:
 
 functions:
   taxonomy:
-    handler: handler.dumper
+    handler: taxonomyImport.handle
+    runtime: python3.7
+    timeout: 30
     events:
       - http:
           path: /taxonomy
           method: put
-  
-  elasticindex:
-    handler: index.elastic
-    events:
-      - s3:
-          bucket: ${self:provider.environment.S3_TAXONOMY_BUCKET}
-          event: s3:ObjectCreated:*
-          existing: true
-          rules:
-            - suffix: .json
-
+    layers:
+      - ${cf:pandas-layer-${self:provider.stage}.PandasLayerExport}

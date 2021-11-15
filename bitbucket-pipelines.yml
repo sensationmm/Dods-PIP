@@ -3,7 +3,7 @@ definitions:
     fe-node: frontend/dods-pip/node_modules
   services:
     docker:
-      memory: 7128
+      memory: 5120
 options:
   max-time: 30
 pipelines:
@@ -27,11 +27,15 @@ pipelines:
             - yarn install
             - yarn test
             - yarn lint
-            - yarn build
+            - docker build -t ${IMAGE_NAME} .
+            # - yarn build
 
       - step:
           name: Deploy Graphologi Webhook
-          image: gioatsomoglobal/devopstools:0.2.0
+          image: gioatsomoglobal/devopstools:0.4.2
+          size: 2x
+          services:
+            - docker
           caches:
             - node
           condition:
@@ -42,6 +46,26 @@ pipelines:
             - cd services/graphologi-integration
             - npm install
             - serverless deploy
+
+      - step:
+          name: Deploy Pandas Layer
+          image: gioatsomoglobal/devopstools:0.4.2
+          size: 2x
+          services:
+            - docker
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/pandas-layer/**"
+          script:
+            - cd services/pandas-layer
+            - npm install
+            - cd layers/pandas
+            - ./build_layer.sh
+            - cd ../..
+            - serverless deploy --stage dev
 
       - step:
           name: User Profile Service
@@ -70,6 +94,20 @@ pipelines:
                 - "services/client-account/**"
           script:
             - cd services/client-account
+            - npm install
+            - SERVERLESS_STAGE=dev npm run test:coverage
+
+      - step:
+          name: Documents Service
+          image: gioatsomoglobal/nodejs-builder:0.2
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/documents/**"
+          script:
+            - cd services/documents
             - npm install
             - SERVERLESS_STAGE=dev npm run test:coverage
 
@@ -120,8 +158,7 @@ pipelines:
   branches:
     master:
       - parallel:
-
-        - step: 
+        - step:
             name: Auth-Authz Deploy
             size: 2x
             image: gioatsomoglobal/devopstools:0.4.5
@@ -161,6 +198,21 @@ pipelines:
                   - "services/client-account/**"
             script:
               - cd services/client-account
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - npm run test:coverage 
+              - npx serverless deploy --stage dev
+
+        - step: 
+            name: Documents Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/documents/**"
+            script:
+              - cd services/documents
               - npm install
               - export SERVERLESS_STAGE=dev
               - npm run test:coverage 
@@ -209,9 +261,10 @@ pipelines:
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
 
         - step:
-            name: Terraform Deploy
+            name: Terraform Plan
+            deployment: dev
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
+            image: gioatsomoglobal/devopstools:0.4.6
             condition:
               changesets:
                 includePaths:
@@ -219,8 +272,8 @@ pipelines:
             script:
               - cd infrastructure-terraform
               - terraform init
-              - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" 
-              # - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve 
+              - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
+              - echo "Review the plan. If you decide to apply it, run the custom job 'infrastructure-deployment'"
 
   custom:
     deployment-to-staging:
@@ -244,3 +297,17 @@ pipelines:
             - yarn build-storybook
             - aws s3 rm s3://test-dods-pip-storybook/
             - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
+
+    infrastructure-deployment:
+      - step:
+          name: Terraform Apply
+          image: gioatsomoglobal/devopstools:0.4.6
+          deployment: dev
+          size: 2x
+          script:
+            - cd infrastructure-terraform
+            - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile $AWS_PROFILE
+            - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile $AWS_PROFILE
+            - aws configure set default.region us-west-2 --profile $AWS_PROFILE
+            - terraform init
+            - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve

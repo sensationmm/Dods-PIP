@@ -2,10 +2,17 @@ import React from 'react';
 
 import * as Styled from './Box.styles';
 
-export interface BoxProps {}
+export type boxSizing = 'small' | 'medium' | 'large';
+export interface BoxProps {
+  size?: boxSizing;
+}
 
-const Box: React.FC<BoxProps> = ({ children }) => {
-  return <Styled.wrapper data-test="component-box">{children}</Styled.wrapper>;
+const Box: React.FC<BoxProps> = ({ size = 'large', children }) => {
+  return (
+    <Styled.wrapper {...{ size }} data-test="component-box">
+      {children}
+    </Styled.wrapper>
+  );
 };
 
 export default Box;

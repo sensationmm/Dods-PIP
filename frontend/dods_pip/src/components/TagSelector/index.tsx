@@ -1,6 +1,9 @@
+import filter from 'lodash/filter';
+import find from 'lodash/find';
 import React from 'react';
 
 import color from '../../globals/color';
+import { DropdownValue } from '../../pages/account-management/add-client/type';
 import { inArray } from '../../utils/array';
 import SearchDropdown, { SearchDropdownProps } from '../_form/SearchDropdown';
 import Spacer from '../_layout/Spacer';
@@ -13,7 +16,8 @@ import * as Styled from './TagSelector.styles';
 export interface TagSelectorProps extends Omit<SearchDropdownProps, 'onChange'> {
   title: string;
   emptyMessage: string;
-  onChange: (vals: Array<string>) => void;
+  onChange: (vals: Array<string | DropdownValue>) => void;
+  onKeyPress: (val: string) => void;
   icon: UserType | Icons;
 }
 
@@ -25,19 +29,50 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   values,
   size,
   onChange,
+  onKeyPress,
   selectedValues = [],
   icon,
 }) => {
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
-  const handleAdd = (val: string) => {
-    const newValues = selectedValues.slice();
-    if (!inArray(val, newValues)) {
-      newValues.push(val);
+  const handleRemove = (val: string) => {
+    // remove val from selectedValues
+    let newValues;
+    const firstItem = selectedValues[0];
+
+    if (typeof firstItem === 'string') {
+      newValues = filter(selectedValues as string[], function (data) {
+        return data !== val;
+      });
     } else {
-      newValues.splice(newValues.indexOf(val), 1);
+      newValues = filter(selectedValues as DropdownValue[], function (data) {
+        return data.value !== val;
+      });
     }
+
     onChange(newValues);
+  };
+
+  const handleAdd = (val: string, item?: DropdownValue) => {
+    // add val or item to selectedValues if not found
+    let newValues;
+
+    if (item && item.value) {
+      newValues = selectedValues.slice() as DropdownValue[];
+      const found = Boolean(find(selectedValues, ['value', item.value]));
+      if (!found) {
+        // add
+        newValues.push(item);
+      }
+      onChange(newValues as DropdownValue[]);
+    } else {
+      newValues = selectedValues.slice() as string[];
+      if (!inArray(val, newValues)) {
+        // add
+        newValues.push(val);
+      }
+      onChange(newValues as string[]);
+    }
   };
 
   return (
@@ -56,15 +91,21 @@ const TagSelector: React.FC<TagSelectorProps> = ({
           </Styled.containerHeaderEmpty>
         )}
         <Styled.tags>
-          {selectedValues.map((item, count) => (
-            <Chips
-              data-test="chips"
-              key={`chip-${count}`}
-              label={item}
-              onCloseClick={handleAdd}
-              avatarType={icon as UserType}
-            />
-          ))}
+          {selectedValues.map((item, count) => {
+            const key = typeof item === 'string' ? `chip-${count}` : `chip-${item.value}`;
+            const label = typeof item === 'string' ? item : item.label;
+            const value = typeof item === 'string' ? '' : item.value;
+            return (
+              <Chips
+                data-test="chips"
+                key={key}
+                label={label}
+                value={value}
+                onCloseClick={handleRemove}
+                avatarType={icon as UserType}
+              />
+            );
+          })}
         </Styled.tags>
       </Styled.containerHeader>
 
@@ -74,6 +115,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
         <SearchDropdown
           id="search-team-member"
           onChange={handleAdd}
+          onKeyPress={onKeyPress}
           helperText={helperText}
           size={size}
           placeholder={placeholder}

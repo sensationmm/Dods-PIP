@@ -1,6 +1,8 @@
+import find from 'lodash/find';
 import React from 'react';
 
 import color from '../../../globals/color';
+import { DropdownValue } from '../../../pages/account-management/add-client/type';
 import { inArray } from '../../../utils/array';
 import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
@@ -13,8 +15,8 @@ export interface DropdownProps {
   hasError: boolean;
   options: SelectProps['options'];
   size?: SelectProps['size'];
-  selectedValue?: SelectProps['value'] | Array<SelectProps['value']>;
-  setValue: (val: string) => void;
+  selectedValue?: SelectProps['value'] | Array<SelectProps['value'] | DropdownValue>;
+  setValue: (val: string, item?: DropdownValue) => void;
   isFilter?: boolean;
 }
 
@@ -39,7 +41,8 @@ const Dropdown: React.FC<DropdownProps> = ({
       {options.map((item, count) => {
         const isActive =
           item.value === selectedValue ||
-          (Array.isArray(selectedValue) && inArray(item.value, selectedValue));
+          (Array.isArray(selectedValue) && inArray(item.value, selectedValue as string[])) ||
+          (Array.isArray(selectedValue) && Boolean(find(selectedValue, ['value', item.value])));
 
         return (
           <Styled.dropdownItem
@@ -47,12 +50,12 @@ const Dropdown: React.FC<DropdownProps> = ({
             data-test={`option-${count}`}
             size={size}
             onClick={() => {
-              !isActive && setValue(item.value);
+              !isActive && setValue(item.value, item);
             }}
             hasError={hasError}
             tabIndex={2}
             onKeyPress={() => {
-              !isActive && setValue(item.value);
+              !isActive && setValue(item.value, item);
             }}
             active={isActive}
             isFilter={isFilter}

@@ -18,3 +18,17 @@ resource "aws_ssm_parameter" "db_endpoint" {
   type  = "String"
   value = module.client-profile-database.db_address
 }
+
+resource "aws_ssm_parameter" "api_key_front" {
+  overwrite = true
+  name  = "/infra/${var.environment}/apikey/front"
+  type  = "String"
+  value = module.api_gateway.api_key_front
+}
+
+resource "aws_ssm_parameter" "api_key_test" {
+  overwrite = true
+  name  = "/infra/${var.environment}/apikey/test"
+  type  = "String"
+  value = module.api_gateway.api_key_test
+}
