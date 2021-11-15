@@ -67,7 +67,7 @@ def consumer(event, context):
                 )
                 metadata_content = metadata_content['Body'].read()
                 metadata_content = metadata_content.decode('utf-8')
-                soup = BeautifulSoup(metadata_content, 'html5lib')
+                soup = BeautifulSoup(metadata_content, 'html.parser')
                 item = soup.findChild('item')
 
                 html_content = s3_client.get_object(
@@ -110,10 +110,19 @@ def consumer(event, context):
                 content["feedFormat"] = item.revision.feedformator.text if item.revision.feedformator is not None else ""
                 content["language"] = item.revision.localisation.language.text \
                     if item.revision.localisation.language is not None else "en"
-                content["taxonomyTerms"] = []
                 content["originalContent"] = str(content_content)
                 content["documentContent"] = str(html_content)
 
+                annotations = soup.findChildren('granularannotation')
+                taxonomy_terms  = []
+                for annotation in annotations:
+                    taxonomy_term = {
+                        "tagId": annotation.tag.text if annotation.tag is not None else "",
+                        "facetType": annotation.suggestedfacet.text if annotation.suggestedfacet is not None else "",
+                        "taxonomyType": annotation.suggestedtype.text if annotation.suggestedtype is not None else "",
+                    }
+                    taxonomy_terms.append(taxonomy_term)
+                content["taxonomyTerms"] = taxonomy_terms
                 s3_response = s3_client.put_object(
                     Body=dumps(content),
                     Bucket=OUTPUT_BUCKET,
