@@ -5,7 +5,7 @@ export interface Taxonomy {
 
     searchTaxonomies(data: TaxonomiesParameters): Promise<any[ ]>;
 
-    buildTree(): Promise<TaxonomyTree>;
+    buildTree(subset: string): Promise<TaxonomyTree>;
 
     getNarrowerTopics(narrower_topic: string): Promise<TaxonomyNode>
 }

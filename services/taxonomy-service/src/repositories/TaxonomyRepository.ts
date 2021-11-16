@@ -54,13 +54,13 @@ export class TaxonomyRepository implements Taxonomy {
         return tag_results
     }
 
-    topConceptsQuery = {
+    TOP_CONCEPTS_QUERY = {
         index: "taxonomy",
         size: 50,
-        body: {query: {match: {topConceptOf: "Topics"}}}
+        body: {query: {match: {topConceptOf: ""}}}
     }
 
-    narrowerQuery = {
+    NARROWER_QUERY = {
         index: "taxonomy",
         size: 50,
         body: {query: {term: {_id: ""}}
@@ -68,7 +68,7 @@ export class TaxonomyRepository implements Taxonomy {
     }
 
     async getNarrowerTopics(narrower_topic: string): Promise<TaxonomyNode> {
-        let narrowerTaxQuery = this.narrowerQuery
+        let narrowerTaxQuery = this.NARROWER_QUERY
         narrowerTaxQuery.body.query.term._id = narrower_topic
 
         const { body } = await this.elasticsearch.search(narrowerTaxQuery)
@@ -87,9 +87,11 @@ export class TaxonomyRepository implements Taxonomy {
         return returnObject
     }
 
-    async buildTree(): Promise<TaxonomyTree>{
+    async buildTree(subset: string): Promise<TaxonomyTree>{
         let tree: TaxonomyTree = [];
-        const { body } = await this.elasticsearch.search(this.topConceptsQuery).then()
+        let topConceptsQuery = this.TOP_CONCEPTS_QUERY
+        topConceptsQuery.body.query.match.topConceptOf = subset
+        const { body } = await this.elasticsearch.search(topConceptsQuery).then()
         await Promise.all(body.hits.hits.map(async (topConcept: any) => {
             const termName = topConcept._source.label;
             const termId = topConcept._id;
