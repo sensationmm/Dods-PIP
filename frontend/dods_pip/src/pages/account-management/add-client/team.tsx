@@ -362,7 +362,7 @@ const Team: React.FC<TeamProps> = ({
       >
         <SectionAccordion
           id="consultant"
-          showToggle={false}
+          showToggle={!editMode}
           header={
             <>
               <SectionHeader
