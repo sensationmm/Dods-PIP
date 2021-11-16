@@ -34,6 +34,7 @@ describe('AccountInfo', () => {
   const onSubmit = jest.fn();
   const defaultProps = {
     accountId: '',
+    editMode: false,
     setAccountId,
     savedAccountName: '',
     setSavedAccountName: jest.fn(),

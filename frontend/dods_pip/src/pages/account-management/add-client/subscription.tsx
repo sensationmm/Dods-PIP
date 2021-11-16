@@ -96,6 +96,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
 }) => {
   const [endDateHelper, setEndDateHelper] = React.useState<string>('');
   const [pristine, setPristine] = React.useState<boolean>(true);
+  const [saving, setSaving] = React.useState<boolean>(false); // editMode - disabled save button when saving request in progress
 
   React.useEffect(() => {
     let date;
@@ -153,12 +154,8 @@ const Subscription: React.FC<SubscriptionProps> = ({
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
 
   const handleSave = async () => {
-    if (!isComplete) {
-      // incomplete form inputs
-      return false;
-    }
-
     setLoading(true);
+    setSaving(true);
 
     const rollover = renewalType === RenewalType.Annual;
     const payload = {
@@ -180,6 +177,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
     const { message = '', success = false } = response;
 
     setLoading(false);
+    setSaving(false);
 
     if (success) {
       if (editMode) {
@@ -455,6 +453,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
               label="Cancel"
               type="secondary"
               onClick={onCloseEditModal}
+              disabled={saving}
             />
             <Button
               data-test="continue-button"
@@ -462,7 +461,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
               onClick={handleSave}
               icon={Icons.TickBold}
               iconAlignment="left"
-              disabled={!isComplete || pristine}
+              disabled={!isComplete || pristine || saving}
             />
           </PageActions>
         ) : (

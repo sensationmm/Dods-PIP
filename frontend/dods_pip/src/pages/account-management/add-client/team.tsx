@@ -5,7 +5,6 @@ import React from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
 import InputText from '../../../components/_form/InputText';
-import RadioGroup from '../../../components/_form/RadioGroup';
 import PageActions from '../../../components/_layout/PageActions';
 import Panel from '../../../components/_layout/Panel';
 import SectionHeader from '../../../components/_layout/SectionHeader';
@@ -52,6 +51,8 @@ type User = {
 export interface TeamProps {
   addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
+  editMode: boolean;
+  onCloseEditModal: () => void;
   accountId: string;
   teamMembers: Array<string | DropdownValue>;
   setTeamMembers: (vals: Array<string | DropdownValue>) => void;
@@ -80,12 +81,15 @@ export interface TeamProps {
   setErrors: (errors: Errors) => void;
   onSubmit: () => void;
   onBack: () => void;
+  onEditSuccess: (val: Record<any, unknown>) => void;
 }
 
 const Team: React.FC<TeamProps> = ({
   accountId,
   addNotification,
   setLoading,
+  editMode,
+  onCloseEditModal,
   teamMembers,
   setTeamMembers,
   accountManagers,
@@ -113,10 +117,14 @@ const Team: React.FC<TeamProps> = ({
   setErrors,
   onSubmit,
   onBack,
+  onEditSuccess,
 }) => {
   const [createUser, setCreateUser] = React.useState<boolean>(false);
   const [addUser, setAddUser] = React.useState<boolean>(false);
   const [users, setUsers] = React.useState<DropdownValue[]>([]);
+  const [pristine, setPristine] = React.useState<boolean>(true);
+  const [saving, setSaving] = React.useState<boolean>(false); // editMode - disabled save button when saving request in progress
+
   const isComplete = accountManagers.length > 0 || teamMembers.length > 0 || clientUsers.length > 0;
   const isUserComplete =
     trim(clientFirstName) !== '' &&
@@ -132,6 +140,7 @@ const Team: React.FC<TeamProps> = ({
 
   const handleSave = async () => {
     setLoading(true);
+    setSaving(true);
     try {
       const payload: PutPayload[] = [];
 
@@ -165,7 +174,12 @@ const Team: React.FC<TeamProps> = ({
       const { success = false, data = [] } = response;
 
       if (success || (Array.isArray(data) && data.length > 0)) {
-        onSubmit();
+        if (editMode) {
+          onEditSuccess({ team: data });
+          onCloseEditModal(); // close modal windows
+        } else {
+          onSubmit();
+        }
       }
     } catch (e) {
       // show server error
@@ -176,6 +190,7 @@ const Team: React.FC<TeamProps> = ({
       });
     }
     setLoading(false);
+    setSaving(false);
   };
 
   const searchUsers = debounce(async (name) => {
@@ -340,9 +355,14 @@ const Team: React.FC<TeamProps> = ({
 
   return (
     <main data-test="team">
-      <Panel isNarrow bgColor={color.base.ivory}>
+      <Panel
+        isPadded={!editMode}
+        isNarrow={!editMode}
+        bgColor={editMode ? color.base.white : color.base.ivory}
+      >
         <SectionAccordion
           id="consultant"
+          showToggle={false}
           header={
             <>
               <SectionHeader
@@ -424,7 +444,10 @@ const Team: React.FC<TeamProps> = ({
             size="medium"
             values={users}
             onKeyPress={searchUsers}
-            onChange={setTeamMembers}
+            onChange={(val) => {
+              setPristine(false);
+              setTeamMembers(val);
+            }}
             selectedValues={teamMembers}
             icon="consultant"
           />
@@ -440,7 +463,10 @@ const Team: React.FC<TeamProps> = ({
             size="medium"
             values={users}
             onKeyPress={searchUsers}
-            onChange={setAccountManagers}
+            onChange={(val) => {
+              setPristine(false);
+              setAccountManagers(val);
+            }}
             selectedValues={accountManagers}
             icon="consultant"
           />
@@ -448,158 +474,160 @@ const Team: React.FC<TeamProps> = ({
 
         <Spacer size={createUser ? 6 : 12} />
 
-        <hr />
+        {!editMode && (
+          <>
+            <hr />
 
-        <Spacer size={12} />
+            <Spacer size={12} />
 
-        <SectionAccordion
-          id="client"
-          header={
-            <>
-              <SectionHeader
-                title="Create a User for this account"
-                subtitle="Would you like to add a new Client user to add to the Account?"
-                icon={<Avatar type="client" size="medium" />}
-              />
-              {!createUser && clientUsers.length > 0 && (
+            <SectionAccordion
+              id="client"
+              header={
                 <>
-                  <Spacer size={6} />
-                  <TagSelectorStyles.tags>
-                    {clientUsers.map((item) => (
-                      <Chips
-                        data-test="added-client-users"
-                        key={`chip-${item.value}`}
-                        label={item.label}
-                        avatarType="client"
-                      />
-                    ))}
-                  </TagSelectorStyles.tags>
+                  <SectionHeader
+                    title="Create a User for this account"
+                    subtitle="Would you like to add a new Client user to add to the Account?"
+                    icon={<Avatar type="client" size="medium" />}
+                  />
+                  {!createUser && clientUsers.length > 0 && (
+                    <>
+                      <Spacer size={6} />
+                      <TagSelectorStyles.tags>
+                        {clientUsers.map((item) => (
+                          <Chips
+                            data-test="added-client-users"
+                            key={`chip-${item.value}`}
+                            label={item.label}
+                            avatarType="client"
+                          />
+                        ))}
+                      </TagSelectorStyles.tags>
+                    </>
+                  )}
                 </>
-              )}
-            </>
-          }
-          isOpen={createUser}
-          callback={() => setCreateUser(!createUser)}
-        >
-          {!addUser ? (
-            <>
-              <TagSelectorStyles.containerHeader>
-                <TagSelectorStyles.containerHeaderTitle>
-                  <Text type="h3" headingStyle="titleSmall">
-                    Client team:
-                  </Text>
-                </TagSelectorStyles.containerHeaderTitle>
-                {clientUsers.length === 0 && (
-                  <TagSelectorStyles.containerHeaderEmpty>
-                    <Text type="body" color={color.base.grey}>
-                      No one selected
-                    </Text>
-                  </TagSelectorStyles.containerHeaderEmpty>
-                )}
-                <TagSelectorStyles.tags>
-                  {clientUsers.map((item) => (
-                    <Chips
-                      data-test="added-client-users"
-                      key={`chip-${item.value}`}
-                      label={item.label}
-                      avatarType="client"
-                      onCloseClick={() => removeClientUser(item.value)}
+              }
+              isOpen={createUser}
+              callback={() => setCreateUser(!createUser)}
+            >
+              {!addUser ? (
+                <>
+                  <TagSelectorStyles.containerHeader>
+                    <TagSelectorStyles.containerHeaderTitle>
+                      <Text type="h3" headingStyle="titleSmall">
+                        Client team:
+                      </Text>
+                    </TagSelectorStyles.containerHeaderTitle>
+                    {clientUsers.length === 0 && (
+                      <TagSelectorStyles.containerHeaderEmpty>
+                        <Text type="body" color={color.base.grey}>
+                          No one selected
+                        </Text>
+                      </TagSelectorStyles.containerHeaderEmpty>
+                    )}
+                    <TagSelectorStyles.tags>
+                      {clientUsers.map((item) => (
+                        <Chips
+                          data-test="added-client-users"
+                          key={`chip-${item.value}`}
+                          label={item.label}
+                          avatarType="client"
+                          onCloseClick={() => removeClientUser(item.value)}
+                        />
+                      ))}
+                    </TagSelectorStyles.tags>
+                  </TagSelectorStyles.containerHeader>
+
+                  <hr />
+                  <Spacer size={5} />
+
+                  <Button
+                    data-test="create-new-user"
+                    type="secondary"
+                    label="Create a New User"
+                    icon={Icons.Add}
+                    inline
+                    onClick={() => setAddUser(true)}
+                  />
+                </>
+              ) : (
+                <>
+                  <Styled.form>
+                    <InputText
+                      id="first-name"
+                      label="First name"
+                      placeholder="Type the first name"
+                      required
+                      value={clientFirstName}
+                      onChange={setClientFirstName}
+                      error={errors.clientFirstName}
+                      onBlur={validateClientFirstName}
                     />
-                  ))}
-                </TagSelectorStyles.tags>
-              </TagSelectorStyles.containerHeader>
+                    <InputText
+                      id="last-name"
+                      label="Last name"
+                      placeholder="Type the last name"
+                      required
+                      value={clientLastName}
+                      onChange={setClientLastName}
+                      error={errors.clientLastName}
+                      onBlur={validateClientLastName}
+                    />
+                    <InputText
+                      id="job-title"
+                      label="Job Title"
+                      placeholder="Type the job title"
+                      optional
+                      value={clientJobTitle}
+                      onChange={setClientJobTitle}
+                    />
+                    <InputText
+                      id="email-address"
+                      label="Email Address"
+                      placeholder="Type the email address"
+                      helperText="It will be used as a username"
+                      required
+                      value={clientEmail}
+                      onChange={setClientEmail}
+                      error={errors.clientEmail}
+                      onBlur={validateClientEmail}
+                    />
+                    <InputText
+                      id="email-address2"
+                      label="Email Address 2"
+                      placeholder="Type the email address"
+                      optional
+                      value={clientEmail2}
+                      onChange={setClientEmail2}
+                      error={errors.clientEmail2}
+                      onBlur={validateClientEmail2}
+                    />
+                    <div />
+                    <InputTelephone
+                      id="telephone"
+                      label="Telephone Number"
+                      placeholder="Type the telephone number"
+                      helperText="Will be used as a main number"
+                      optional
+                      value={clientTelephone}
+                      onChange={setClientTelephone}
+                      error={errors.clientTelephone}
+                      onBlur={validateClientTelephone}
+                    />
+                    <InputTelephone
+                      id="telephone2"
+                      label="Telephone Number 2"
+                      placeholder="Type the telephone number"
+                      optional
+                      value={clientTelephone2}
+                      onChange={setClientTelephone2}
+                      error={errors.clientTelephone2}
+                      onBlur={validateClientTelephone2}
+                    />
+                  </Styled.form>
 
-              <hr />
-              <Spacer size={5} />
+                  <Spacer size={10} />
 
-              <Button
-                data-test="create-new-user"
-                type="secondary"
-                label="Create a New User"
-                icon={Icons.Add}
-                inline
-                onClick={() => setAddUser(true)}
-              />
-            </>
-          ) : (
-            <>
-              <Styled.form>
-                <InputText
-                  id="first-name"
-                  label="First name"
-                  placeholder="Type the first name"
-                  required
-                  value={clientFirstName}
-                  onChange={setClientFirstName}
-                  error={errors.clientFirstName}
-                  onBlur={validateClientFirstName}
-                />
-                <InputText
-                  id="last-name"
-                  label="Last name"
-                  placeholder="Type the last name"
-                  required
-                  value={clientLastName}
-                  onChange={setClientLastName}
-                  error={errors.clientLastName}
-                  onBlur={validateClientLastName}
-                />
-                <InputText
-                  id="job-title"
-                  label="Job Title"
-                  placeholder="Type the job title"
-                  optional
-                  value={clientJobTitle}
-                  onChange={setClientJobTitle}
-                />
-                <InputText
-                  id="email-address"
-                  label="Email Address"
-                  placeholder="Type the email address"
-                  helperText="It will be used as a username"
-                  required
-                  value={clientEmail}
-                  onChange={setClientEmail}
-                  error={errors.clientEmail}
-                  onBlur={validateClientEmail}
-                />
-                <InputText
-                  id="email-address2"
-                  label="Email Address 2"
-                  placeholder="Type the email address"
-                  optional
-                  value={clientEmail2}
-                  onChange={setClientEmail2}
-                  error={errors.clientEmail2}
-                  onBlur={validateClientEmail2}
-                />
-                <div />
-                <InputTelephone
-                  id="telephone"
-                  label="Telephone Number"
-                  placeholder="Type the telephone number"
-                  helperText="Will be used as a main number"
-                  optional
-                  value={clientTelephone}
-                  onChange={setClientTelephone}
-                  error={errors.clientTelephone}
-                  onBlur={validateClientTelephone}
-                />
-                <InputTelephone
-                  id="telephone2"
-                  label="Telephone Number 2"
-                  placeholder="Type the telephone number"
-                  optional
-                  value={clientTelephone2}
-                  onChange={setClientTelephone2}
-                  error={errors.clientTelephone2}
-                  onBlur={validateClientTelephone2}
-                />
-              </Styled.form>
-
-              <Spacer size={10} />
-
-              {/* 
+                  {/* 
                 Not needed, but in case we want it back
                 Always use RoleType.User
               <RadioGroup
@@ -614,52 +642,74 @@ const Team: React.FC<TeamProps> = ({
               />
               */}
 
-              <Spacer size={10} />
+                  <Spacer size={10} />
 
-              <PageActions
-                isLeftAligned
-                data-test="add-user-actions"
-                hasBack
-                backLabel="Cancel"
-                backHandler={cancelAddClientUser}
-              >
-                <Button
-                  data-test="create-user-button"
-                  label="Create User"
-                  onClick={addClientUser}
-                  icon={Icons.ChevronRightBold}
-                  iconAlignment="right"
-                  disabled={!isUserComplete || userLimitReached}
-                />
-              </PageActions>
+                  <PageActions
+                    isLeftAligned
+                    data-test="add-user-actions"
+                    hasBack
+                    backLabel="Cancel"
+                    backHandler={cancelAddClientUser}
+                  >
+                    <Button
+                      data-test="create-user-button"
+                      label="Create User"
+                      onClick={addClientUser}
+                      icon={Icons.ChevronRightBold}
+                      iconAlignment="right"
+                      disabled={!isUserComplete || userLimitReached}
+                    />
+                  </PageActions>
 
-              <Spacer size={7} />
-              <hr />
-            </>
-          )}
-        </SectionAccordion>
+                  <Spacer size={7} />
+                  <hr />
+                </>
+              )}
+            </SectionAccordion>
 
-        <Spacer size={20} />
+            <Spacer size={20} />
 
-        {!isComplete && (
-          <>
-            <Text type="bodyLarge" color={color.base.greyDark} center>
-              Select at least one Consultant or User to continue
-            </Text>
-            <Spacer size={6} />
+            {!isComplete && (
+              <>
+                <Text type="bodyLarge" color={color.base.greyDark} center>
+                  Select at least one Consultant or User to continue
+                </Text>
+                <Spacer size={6} />
+              </>
+            )}
           </>
         )}
 
-        <PageActions data-test="page-actions" hasBack backHandler={onBack}>
-          <Button
-            data-test="continue-button"
-            label="Save and continue"
-            onClick={handleSave}
-            icon={Icons.ChevronRightBold}
-            iconAlignment="right"
-            disabled={!isComplete}
-          />
-        </PageActions>
+        {editMode ? (
+          <PageActions isRightAligned={true} data-test="page-actions">
+            <Button
+              data-test="cancel-button"
+              label="Cancel"
+              type="secondary"
+              onClick={onCloseEditModal}
+              disabled={saving}
+            />
+            <Button
+              data-test="continue-button"
+              label="Save"
+              onClick={handleSave}
+              icon={Icons.TickBold}
+              iconAlignment="left"
+              disabled={!isComplete || pristine || saving}
+            />
+          </PageActions>
+        ) : (
+          <PageActions data-test="page-actions" hasBack backHandler={onBack}>
+            <Button
+              data-test="continue-button"
+              label="Save and continue"
+              onClick={handleSave}
+              icon={Icons.ChevronRightBold}
+              iconAlignment="right"
+              disabled={!isComplete}
+            />
+          </PageActions>
+        )}
       </Panel>
     </main>
   );

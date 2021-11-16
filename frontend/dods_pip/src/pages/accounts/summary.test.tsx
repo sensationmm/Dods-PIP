@@ -3,6 +3,16 @@ import React from 'react';
 
 import Summary from './summary';
 
+jest.mock('../../lib/fetchJson', () => {
+  return jest
+    .fn()
+    .mockImplementationOnce(() =>
+      Promise.resolve(mockSubscriptionList)
+    ).mockImplementationOnce(() =>
+      Promise.resolve({ success: true })
+    )
+});
+
 describe('Summary page', () => {
   const defaultProps = {
     accountId: 'exampleid1',

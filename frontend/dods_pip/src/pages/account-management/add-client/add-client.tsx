@@ -8,14 +8,7 @@ import { Api, BASE_URI } from '../../../utils/api';
 import AccountInfo, { Errors as ErrorsStep1 } from './account-info';
 import Subscription, { Errors as ErrorsStep2 } from './subscription';
 import Team, { Errors as ErrorsStep3 } from './team';
-import {
-  DateFormat,
-  DropdownValue,
-  EndDateType,
-  RenewalType,
-  SubscriptionType,
-  TeamMember,
-} from './type';
+import { DateFormat, DropdownValue, EndDateType, RenewalType, SubscriptionType } from './type';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getEndDateType = ({ contractStartDate = '', contractEndDate = '' }): string => {
@@ -67,7 +60,8 @@ type InitialState = {
   userSeats: string;
   consultantHours: string;
   renewalType: string;
-  team: Array<TeamMember>;
+  teamMembers: Array<string | DropdownValue>;
+  accountManagers: Array<string | DropdownValue>;
   startDate: string;
   endDate: string;
   endDateType: string;
@@ -158,8 +152,12 @@ const AddClient: React.FC<AddClientProps> = ({
   const [endDateType, setEndDateType] = React.useState<string>(initialState.endDateType || '');
   const [errorsStep2, setErrorsStep2] = React.useState<ErrorsStep2>({});
 
-  const [teamMembers, setTeamMembers] = React.useState<Array<string | DropdownValue>>([]);
-  const [accountManagers, setAccountManagers] = React.useState<Array<string | DropdownValue>>([]);
+  const [teamMembers, setTeamMembers] = React.useState<Array<string | DropdownValue>>(
+    initialState.teamMembers || [],
+  );
+  const [accountManagers, setAccountManagers] = React.useState<Array<string | DropdownValue>>(
+    initialState.accountManagers || [],
+  );
   const [clientUsers, setClientUsers] = React.useState<Array<DropdownValue>>([]);
   const [clientFirstName, setClientFirstName] = React.useState<string>('');
   const [clientLastName, setClientLastName] = React.useState<string>('');
@@ -336,6 +334,7 @@ const AddClient: React.FC<AddClientProps> = ({
           data-test="step-3"
           addNotification={addNotification}
           setLoading={setLoading}
+          editMode={editMode}
           accountId={accountId}
           teamMembers={teamMembers}
           setTeamMembers={setTeamMembers}
@@ -362,6 +361,8 @@ const AddClient: React.FC<AddClientProps> = ({
           userSeats={userSeats}
           errors={errorsStep3}
           setErrors={setErrorsStep3}
+          onCloseEditModal={onCloseEditModal}
+          onEditSuccess={onEditSuccess}
           onSubmit={() => router.push(`/accounts/${accountId}`)}
           onBack={() => setActiveStep(2)}
         />

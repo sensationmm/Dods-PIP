@@ -85,9 +85,11 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     contactEmail !== '';
 
   const [pristine, setPristine] = React.useState<boolean>(true);
+  const [saving, setSaving] = React.useState<boolean>(false); // editMode - disabled save button when saving request in progress
 
   const handleSave = async () => {
     setLoading(true);
+    setSaving(true);
 
     const payload = {
       name: trim(accountName),
@@ -139,6 +141,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     }
 
     setLoading(false);
+    setSaving(false);
   };
 
   const validateAccountName = async () => {
@@ -322,6 +325,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
               label="Cancel"
               type="secondary"
               onClick={onCloseEditModal}
+              disabled={saving}
             />
             <Button
               data-test="continue-button"
@@ -329,7 +333,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
               onClick={handleSave}
               icon={Icons.TickBold}
               iconAlignment="left"
-              disabled={!isComplete || pristine}
+              disabled={!isComplete || pristine || saving}
             />
           </PageActions>
         ) : (

@@ -6,10 +6,10 @@ import spacing from '../../globals/spacing';
 import { modalSize } from './index';
 
 const THEME: Record<modalSize, Record<string, string>> = {
-  small: { width: '400px', height: '288px' },
-  medium: { width: '540px', height: '368px' },
-  large: { width: '780px', height: '470px' },
-  xlarge: { width: '1280px', height: '1027px' },
+  small: { width: '400px' },
+  medium: { width: '540px' },
+  large: { width: '780px' },
+  xlarge: { width: '1280px' },
 };
 
 interface ModalStyleProps {
@@ -62,7 +62,6 @@ export const modal = styled.div.attrs(({ size }: ModalStyleProps) => {
   display: flex;
   flex-direction: column;
   max-width: ${({ width }) => width};
-  height: ${({ height }) => height};
   max-height: calc(100vh - ${spacing(8)});
   width: 100%;
   background: ${color.base.white};
