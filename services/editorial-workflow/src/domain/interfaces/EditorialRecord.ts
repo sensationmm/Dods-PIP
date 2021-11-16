@@ -37,6 +37,8 @@ export interface SearchEditorialRecordParameters {
     limit: string;
     startDate?: string;
     endDate?: string;
+    sortBy: string;
+    sortDirection: string;
 }
 
 export interface EditorialRecordListOutput {
@@ -45,14 +47,9 @@ export interface EditorialRecordListOutput {
     results: Array<EditorialRecordOutput>;
 }
 
+export interface ContentSourceOutput extends GenericListingRecord {}
 
-export interface ContentSourceOutput extends GenericListingRecord {
-
-}
-
-export interface InformationTypeOutput extends GenericListingRecord {
-
-}
+export interface InformationTypeOutput extends GenericListingRecord {}
 
 export interface EditorRecordStatusOutput {
     uuid: string;

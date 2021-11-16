@@ -1,6 +1,7 @@
 import { generateMedia } from 'styled-media-query';
 
-export const dimensions = {
+export type mqViewport = 'xsm' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+export const viewport: Record<mqViewport, number> = {
   xsm: 360,
   sm: 540,
   md: 768,
@@ -10,16 +11,16 @@ export const dimensions = {
 };
 
 export const breakpoints = {
-  mobileOrTablet: `(max-width: ${dimensions.md}px)`,
+  mobileOrTablet: `(max-width: ${viewport.md}px)`,
 };
 
 const media = generateMedia({
-  xsm: `${dimensions.xsm}px`,
-  sm: `${dimensions.sm}px`,
-  md: `${dimensions.md}px`,
-  lg: `${dimensions.lg}px`,
-  xl: `${dimensions.xl}px`,
-  xxl: `${dimensions.xxl}px`,
+  xsm: `${viewport.xsm}px`,
+  sm: `${viewport.sm}px`,
+  md: `${viewport.md}px`,
+  lg: `${viewport.lg}px`,
+  xl: `${viewport.xl}px`,
+  xxl: `${viewport.xxl}px`,
 });
 
 export default media;

@@ -1,37 +1,46 @@
 import styled from 'styled-components';
 
 import { Icon } from '../components/Icon/Icon.styles';
+import media from '../globals/media';
 import spacing from '../globals/spacing';
 
 export const row = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
+
+  ${media.greaterThan('sm')`
+    flex-direction: row;
+  `}
 `;
 
 export const column = styled.div`
-  display: flex;
-
   *:not(:last-child) {
-    margin-right: ${spacing(3)};
+    margin-bottom: ${spacing(3)};
   }
+
+  ${media.greaterThan('sm')`
+    display: flex;
+  
+    *:not(:last-child) {
+      margin-right: ${spacing(3)};
+      margin-bottom: 0
+    }
+  `}
 `;
 
 export const tableHeader = styled.div`
   flex-shrink: 0;
+
+  ${media.lessThan('sm')`
+    margin-bottom: ${spacing(3)}
+  `}
 `;
 
 export const dateFilter = styled.div`
   > div > div > div {
     display: flex;
     align-items: center;
-  }
-
-  label {
-    margin-bottom: 0;
-  }
-
-  *:not(:last-child) {
-    margin-right: ${spacing(3)};
   }
 `;
 
