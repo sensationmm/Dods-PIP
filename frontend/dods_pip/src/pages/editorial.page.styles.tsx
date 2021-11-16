@@ -29,6 +29,13 @@ export const column = styled.div`
   `}
 `;
 
+export const searchWrapper = styled(column)`
+  ${media.greaterThan('sm')`
+     margin-left: ${spacing(3)};
+     width: 25%;
+  `}
+`;
+
 export const tableHeader = styled.div`
   flex-shrink: 0;
 

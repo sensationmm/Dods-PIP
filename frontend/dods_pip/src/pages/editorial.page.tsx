@@ -183,14 +183,14 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
               />
             </Styled.column>
 
-            <div>
+            <Styled.searchWrapper>
               <InputSearch
                 id="search-filter"
                 onChange={(value) => onFilterChange('searchQuery', value)}
                 value={filters.searchQuery || ''}
                 size="medium"
               />
-            </div>
+            </Styled.searchWrapper>
           </Styled.row>
         )}
 

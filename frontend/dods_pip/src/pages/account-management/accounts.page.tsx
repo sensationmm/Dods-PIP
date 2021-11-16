@@ -262,7 +262,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   />
                 </Styled.filterContentCol>
 
-                <Styled.filterContentCol>
+                <Styled.searchWrapper>
                   <InputSearch
                     testId="account-page-search"
                     id="filter-search"
@@ -270,7 +270,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                     value={filters.search || ''}
                     size="small"
                   />
-                </Styled.filterContentCol>
+                </Styled.searchWrapper>
               </Styled.filterContent>
             )}
           </Styled.filterContainer>

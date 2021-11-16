@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 
 import { Icon } from '../../components/Icon/Icon.styles';
+import media from '../../globals/media';
 import spacing from '../../globals/spacing';
 
 const animateSlideIn = keyframes`
@@ -51,6 +52,13 @@ export const filterContentCol = styled.div`
   *:not(:last-child) {
     margin-right: ${spacing(3)};
   }
+`;
+
+export const searchWrapper = styled(filterContentCol)`
+  ${media.greaterThan('sm')`
+     margin-left: ${spacing(3)};
+     width: 25%;
+  `}
 `;
 
 export const teamList = styled.div`
