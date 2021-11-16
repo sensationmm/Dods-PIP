@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { secondary, wrapper as btnWrapper } from '../../components/Button/Button.styles';
 import {
+  content as sectionContent,
   header as sectionHeader,
   headerContent as sectionHeaderContent,
 } from '../../components/SectionAccordion/SectionAccordion.styles';
@@ -16,11 +17,15 @@ export const sumWrapper = styled.div`
   background-color: ${color.base.white};
 
   ${sectionHeader} {
-    padding: ${spacing(8)} ${spacing(8)} 0 ${spacing(8)};
+    padding: ${spacing(8)};
   }
 
   ${sectionHeaderContent} {
     width: 100%;
+  }
+
+  ${sectionContent} {
+    padding-top: ${spacing(4)};
   }
 
   a {
