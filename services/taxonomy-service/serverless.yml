@@ -94,7 +94,8 @@ functions:
   taxonomyTree:
     handler: src/handlers/taxonomyTree/index.handle
     description: Triggered when http request comes
+    timeout: 20
     events:
       - http:
           method: get
-          path: taxonomies/tree
+          path: taxonomy/topics/tree
