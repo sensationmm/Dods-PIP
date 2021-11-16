@@ -91,11 +91,19 @@ functions:
       - http:
           method: get
           path: taxonomies
-  taxonomyTree:
-    handler: src/handlers/taxonomyTree/index.handle
+  taxonomyTopicsTree:
+    handler: src/handlers/taxonomyTopicsTree/index.handle
     description: Triggered when http request comes
     timeout: 20
     events:
       - http:
           method: get
           path: taxonomy/topics/tree
+  taxonomyOrganisationsTree:
+    handler: src/handlers/taxonomyOrganisationsTree/index.handle
+    description: Triggered when http request comes
+    timeout: 20
+    events:
+      - http:
+          method: get
+          path: taxonomy/organisations/tree
