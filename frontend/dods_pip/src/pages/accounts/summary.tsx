@@ -12,38 +12,128 @@ import Popover from '../../components/Popover';
 import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
 import { PushNotificationProps } from '../../hoc/LoadingHOC';
+import fetchJson from '../../lib/fetchJson';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
-import AddClient from '../account-management/add-client/add-client';
-import { DateFormat, TeamMember, TeamMemberType } from '../account-management/add-client/type';
+import { Api, BASE_URI } from '../../utils/api';
+import AddClient, { getEndDateType } from '../account-management/add-client/add-client';
+import {
+  DateFormat,
+  RenewalType,
+  SubscriptionType,
+  TeamMember,
+  TeamMemberType,
+} from '../account-management/add-client/type';
 import * as Styled from './index.styles';
 
 export interface SummaryProps {
   addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
   accountId: string;
-  accountName: string;
-  accountNotes: string;
-  contactName: string;
-  contactTelephone: string;
-  contactEmail: string;
-  isEU: boolean;
-  isUK: boolean;
-  subscriptionType: string;
-  userSeats: string;
-  consultantHours: string;
-  renewalType: string;
-  team: Array<TeamMember>;
-  startDate: string;
-  endDate: string;
-  endDateType: string;
-  onAfterEditAccountSettings: (val: {
+  setPageAccountName: (state: string) => void;
+}
+
+const Summary: React.FC<SummaryProps> = ({
+  addNotification,
+  setLoading,
+  accountId,
+  setPageAccountName,
+}) => {
+  const [accountName, setAccountName] = React.useState<string>('');
+  const [accountNotes, setAccountNotes] = React.useState<string>('');
+  const [contactName, setContactName] = React.useState<string>('');
+  const [contactEmail, setContactEmail] = React.useState<string>('');
+  const [contactTelephone, setContactTelephone] = React.useState<string>('');
+  const [team, setTeam] = React.useState<Array<TeamMember>>([]);
+
+  const [isEU, setIsEU] = React.useState<boolean>(false);
+  const [isUK, setIsUK] = React.useState<boolean>(false);
+  const [subscriptionType, setSubscriptionType] = React.useState<string>('');
+  const [userSeats, setUserSeats] = React.useState<string>('');
+  const [consultantHours, setConsultantHours] = React.useState<string>('');
+  const [renewalType, setRenewalType] = React.useState<string>('');
+  const [startDate, setStartDate] = React.useState<string>('');
+  const [endDate, setEndDate] = React.useState<string>('');
+  const [endDateType, setEndDateType] = React.useState<string>('');
+
+  const [editAccountSettings, setEditAccountSettings] = React.useState<boolean>(false);
+  const [editSubscription, setEditSubscription] = React.useState<boolean>(false);
+  const [editTeam, setEditTeam] = React.useState<boolean>(false);
+
+  const loadAccount = async () => {
+    if (accountId === '') {
+      return false;
+    }
+
+    // get account info
+    const response = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}`, {
+      method: 'GET',
+    });
+    const { data = {} } = response;
+    const { uuid = '' } = data;
+    if (uuid === accountId) {
+      // client exist and not completed
+      const {
+        name,
+        notes,
+        contactName,
+        contactEmailAddress,
+        contactTelephoneNumber,
+        isEU,
+        isUK,
+        subscription = {},
+        subscriptionSeats,
+        consultantHours,
+        contractStartDate = '',
+        contractEndDate = '',
+        contractRollover,
+      } = data;
+
+      setAccountName(name as string);
+      setPageAccountName(name as string);
+      setAccountNotes(notes as string);
+      setContactName(contactName as string);
+      setContactEmail(contactEmailAddress as string);
+      setContactTelephone(contactTelephoneNumber as string);
+      setStartDate(contractStartDate as string);
+      setEndDate(contractEndDate as string);
+      const dateType = getEndDateType({
+        contractStartDate: contractStartDate as string,
+        contractEndDate: contractEndDate as string,
+      });
+      setEndDateType(dateType);
+      setTeam(data.team as TeamMember[]);
+
+      if (contractRollover) {
+        setRenewalType(RenewalType.Annual);
+      } else {
+        setRenewalType(RenewalType.EndDate);
+      }
+
+      setUserSeats(subscriptionSeats as string);
+      setConsultantHours(consultantHours as string);
+      setIsEU(isEU as boolean);
+      setIsUK(isUK as boolean);
+
+      setSubscriptionType((subscription as SubscriptionType).uuid);
+    }
+  };
+
+  const onAfterEditAccountSettings = (data: {
     name: string;
     notes: string;
     contactName: string;
     contactEmailAddress: string;
     contactTelephoneNumber: string;
-  }) => void;
-  onAfterEditSubscription: (val: {
+  }) => {
+    const { name, notes, contactName, contactEmailAddress, contactTelephoneNumber } = data;
+    setAccountName(name);
+    setAccountNotes(notes);
+    setContactName(contactName);
+    setContactEmail(contactEmailAddress);
+    setContactTelephone(contactTelephoneNumber);
+  };
+
+  const onAfterEditSubscription = (data: {
     contractRollover: boolean;
     contractStartDate: string;
     contractEndDate: string;
@@ -52,41 +142,58 @@ export interface SummaryProps {
     isEU: boolean;
     isUK: boolean;
     subscription: string;
-  }) => void;
-}
+  }) => {
+    const {
+      contractRollover,
+      contractStartDate,
+      contractEndDate,
+      subscriptionSeats,
+      consultantHours,
+      isEU,
+      isUK,
+      subscription,
+    } = data;
+    setStartDate(contractStartDate);
+    setEndDate(contractEndDate);
+    const dateType = getEndDateType({
+      contractStartDate,
+      contractEndDate,
+    });
+    setEndDateType(dateType);
+    if (contractRollover) {
+      setRenewalType(RenewalType.Annual);
+    } else {
+      setRenewalType(RenewalType.EndDate);
+    }
+    setUserSeats(subscriptionSeats);
+    setConsultantHours(consultantHours);
+    setIsEU(isEU);
+    setIsUK(isUK);
+    setSubscriptionType(subscription);
+  };
 
-const Summary: React.FC<SummaryProps> = ({
-  addNotification,
-  setLoading,
-  accountId,
-  accountName,
-  accountNotes,
-  contactName,
-  contactTelephone,
-  contactEmail,
-  isEU,
-  isUK,
-  subscriptionType,
-  userSeats,
-  consultantHours,
-  renewalType,
-  team = [],
-  startDate,
-  endDate,
-  endDateType,
-  onAfterEditAccountSettings,
-  onAfterEditSubscription,
-}) => {
+  const onAfterEditTeam = (data: { team: TeamMember[] }) => {
+    const { team } = data;
+    setTeam(team);
+  };
+
+  React.useEffect(() => {
+    loadAccount();
+  }, [accountId]);
+
+  const subscriptionPlaceholder = 'Subscription type';
+  const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
+
   const accountManagers = team.filter(
     (team: TeamMember) => team.teamMemberType === TeamMemberType.AccountManager,
   );
+
   const teamMembers = team.filter(
     (team: TeamMember) => team.teamMemberType === TeamMemberType.TeamMember,
   );
-
   const consultantsComplete = [...accountManagers, ...teamMembers];
 
-  const onCloseEditModal = (type: 'editAccountSettings' | 'editSubscription' | 'editTeams') => {
+  const onCloseEditModal = (type: 'editAccountSettings' | 'editSubscription' | 'editTeam') => {
     document.body.style.height = '';
     document.body.style.overflow = '';
 
@@ -97,18 +204,11 @@ const Summary: React.FC<SummaryProps> = ({
       case 'editSubscription':
         setEditSubscription(false);
         break;
-      // case 'editTeams':
-      //   setEditTeams(false);
-      //   break;
+      case 'editTeam':
+        setEditTeam(false);
+        break;
     }
   };
-
-  const subscriptionPlaceholder = 'Subscription type';
-  const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
-
-  const [editAccountSettings, setEditAccountSettings] = React.useState<boolean>(false);
-  const [editSubscription, setEditSubscription] = React.useState<boolean>(false);
-  // const [editTeams, setEditTeams] = React.useState<boolean>(false);
 
   let locationValue = '';
   if (isEU) {
@@ -132,7 +232,12 @@ const Summary: React.FC<SummaryProps> = ({
     userSeats,
     consultantHours,
     renewalType,
-    team,
+    teamMembers: teamMembers.map((user) => ({ label: user.name, value: user.id, userData: user })),
+    accountManagers: accountManagers.map((user) => ({
+      label: user.name,
+      value: user.id,
+      userData: user,
+    })),
     startDate,
     endDate,
     endDateType,
@@ -174,6 +279,21 @@ const Summary: React.FC<SummaryProps> = ({
             accountId={accountId}
             onCloseEditModal={() => onCloseEditModal('editSubscription')}
             onEditSuccess={onAfterEditSubscription}
+          />
+        </Modal>
+      )}
+
+      {editTeam && (
+        <Modal title="Edit Dods team settings" size="xlarge" onClose={() => setEditTeam(false)}>
+          <AddClient
+            addNotification={addNotification}
+            setLoading={setLoading}
+            editMode={true}
+            initialState={initialState}
+            activeStep={3}
+            accountId={accountId}
+            onCloseEditModal={() => onCloseEditModal('editTeam')}
+            onEditSuccess={onAfterEditTeam}
           />
         </Modal>
       )}
@@ -291,7 +411,7 @@ const Summary: React.FC<SummaryProps> = ({
                   Period:
                 </Text>
                 <Text>
-                  {format(new Date(startDate), DateFormat.UI)}
+                  {startDate !== '' && format(new Date(startDate), DateFormat.UI)}
                   {renewalType === 'endDate' && endDate !== '' && (
                     <span>
                       - {format(new Date(endDate), DateFormat.UI)} - {endDateType}
@@ -317,14 +437,7 @@ const Summary: React.FC<SummaryProps> = ({
                 Dods Client Support
               </Text>
             </Styled.sumIconTitle>
-            <IconButton
-              icon={Icons.Edit}
-              type="text"
-              label=""
-              onClick={() => {
-                console.log('click works');
-              }}
-            />
+            <IconButton icon={Icons.Edit} type="text" label="" onClick={() => setEditTeam(true)} />
           </Styled.sumAccountWrapper>
           <Spacer size={1} />
           <PlainTable

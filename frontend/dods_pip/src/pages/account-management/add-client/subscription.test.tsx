@@ -31,6 +31,7 @@ describe('Subscription', () => {
   const defaultProps = {
     addNotification,
     setLoading,
+    editMode: false,
     isEU: false,
     setIsEU: setValue,
     isUK: false,

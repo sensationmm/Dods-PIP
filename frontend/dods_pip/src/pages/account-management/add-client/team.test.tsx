@@ -29,6 +29,7 @@ describe('Team', () => {
   const defaultProps = {
     setLoading: mockSetLoading,
     addNotification: jest.fn(),
+    editMode: false,
     teamMembers: [],
     setTeamMembers: jest.fn,
     accountManagers: [],
