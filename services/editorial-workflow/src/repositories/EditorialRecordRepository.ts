@@ -27,7 +27,9 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         User
     );
 
-    private static mapModelToOutput = (model: EditorialRecord): EditorialRecordOutput => {
+    private static mapModelToOutput = (
+        model: EditorialRecord
+    ): EditorialRecordOutput => {
         const {
             uuid,
             documentName,
@@ -66,7 +68,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
     async createEditorialRecord(
         params: CreateEditorialRecordParameters
     ): Promise<EditorialRecordOutput> {
-        const { documentName, s3Location, informationType, contentSource } = params;
+        const { documentName, s3Location, informationType, contentSource } =
+            params;
 
         const newRecord = await this.editorialRecordModel.create({
             documentName,
@@ -116,6 +119,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             endDate,
             limit,
             offset,
+            sortBy,
+            sortDirection,
         } = params;
 
         const whereRecord: WhereOptions = {};
@@ -166,12 +171,14 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
 
         const totalRecords = await this.editorialRecordModel.count();
 
-        const { count: filteredRecords, rows } = await this.editorialRecordModel.findAndCountAll({
-            where: whereRecord,
-            include: ['status', 'assignedEditor'],
-            offset: parseInt(offset),
-            limit: parseInt(limit),
-        });
+        const { count: filteredRecords, rows } =
+            await this.editorialRecordModel.findAndCountAll({
+                where: whereRecord,
+                include: ['status', 'assignedEditor'],
+                order: [[sortBy, sortDirection]],
+                offset: parseInt(offset),
+                limit: parseInt(limit),
+            });
 
         return {
             totalRecords,

@@ -1,4 +1,8 @@
-import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+import {
+    HttpResponse,
+    HttpStatusCode,
+    createContext,
+} from '@dodsgroup/dods-lambda';
 
 import { EditorialRecordListOutput } from '../../../src/domain';
 import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
@@ -42,8 +46,13 @@ describe(`${FUNCTION_NAME} handler`, () => {
             startDate: '2021-11-08T23:20:38.000Z',
             offset: '2',
             limit: '13',
+            sortBy: 'creationDate',
+            sortDirection: 'asc',
         };
-        const response = await searchEditorialRecords(requestParams, defaultContext);
+        const response = await searchEditorialRecords(
+            requestParams,
+            defaultContext
+        );
 
         const searchUsersResult = new HttpResponse(HttpStatusCode.OK, {
             success: true,
@@ -51,9 +60,69 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: defaultFoundRecords,
         });
 
-        expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith(
-            requestParams
+        expect(
+            EditorialRecordRepository.defaultInstance.listEditorialRecords
+        ).toBeCalledWith(requestParams);
+        expect(response).toEqual(searchUsersResult);
+    });
+
+    test('Document Name valid input', async () => {
+        const requestParams = {
+            searchTerm: 'Test',
+            contentSource: 'Random',
+            informationType: 'Random Doc',
+            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+            endDate: '2021-11-08T23:21:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+            offset: '2',
+            limit: '13',
+            sortBy: 'documentName',
+            sortDirection: 'asc',
+        };
+        const response = await searchEditorialRecords(
+            requestParams,
+            defaultContext
         );
+
+        const searchUsersResult = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'Editorial Records Found',
+            data: defaultFoundRecords,
+        });
+
+        expect(
+            EditorialRecordRepository.defaultInstance.listEditorialRecords
+        ).toBeCalledWith(requestParams);
+        expect(response).toEqual(searchUsersResult);
+    });
+
+    test('Status valid input', async () => {
+        const requestParams = {
+            searchTerm: 'Test',
+            contentSource: 'Random',
+            informationType: 'Random Doc',
+            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+            endDate: '2021-11-08T23:21:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+            offset: '2',
+            limit: '13',
+            sortBy: 'status',
+            sortDirection: 'asc',
+        };
+        const response = await searchEditorialRecords(
+            requestParams,
+            defaultContext
+        );
+
+        const searchUsersResult = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'Editorial Records Found',
+            data: defaultFoundRecords,
+        });
+
+        expect(
+            EditorialRecordRepository.defaultInstance.listEditorialRecords
+        ).toBeCalledWith(requestParams);
         expect(response).toEqual(searchUsersResult);
     });
 
@@ -67,10 +136,14 @@ describe(`${FUNCTION_NAME} handler`, () => {
             startDate: '2021-11-08T23:20:38.000Z',
             offset: '',
             limit: '',
+            sortBy: '',
+            sortDirection: '',
         };
         await searchEditorialRecords(requestParams, defaultContext);
 
-        expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith({
+        expect(
+            EditorialRecordRepository.defaultInstance.listEditorialRecords
+        ).toBeCalledWith({
             ...requestParams,
             offset: '0',
             limit: '20',
