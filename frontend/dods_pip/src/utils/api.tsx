@@ -13,6 +13,10 @@ export enum Api {
   TeamMemberCreate = '/teammember/new',
   User = '/user',
   Users = '/users',
+  EditorialContentSources = '/content-sources',
+  EditorialInfoTypes = '/information-types',
+  EditorialStatus = '/editorial-record-status',
+  EditorialRecords = '/editorial-record',
 }
 
 export const toQueryString = (params: Record<string, any> = {}): string => {

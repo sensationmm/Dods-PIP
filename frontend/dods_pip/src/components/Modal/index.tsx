@@ -30,7 +30,9 @@ const Modal: FC<ModalProps> = ({
     /^Escape$/i.test(e.key) && closeModal();
   };
 
-  const onVeilClose = (e: any) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const onVeilClose = (e) => {
     /veil/i.test(e?.target?.classList.toString()) && closeModal();
   };
 

@@ -92,6 +92,7 @@ describe('Account Management: Clients', () => {
     jest.clearAllMocks();
   });
 
+  // TODO: Move following 3 cases to template component once created
   it('should render breadcrumbs', async () => {
     const render = await renderComponentWithData();
     const $breadCrumbs = render.container.querySelector(SELECTOR_BREADCRUMBS);
@@ -271,6 +272,7 @@ describe('Account Management: Clients', () => {
     });
   });
 
+  // TODO: Move test case to template component once created
   describe('when items per page selection is made', () => {
     let $filter, render, $filterOptions;
     beforeEach(async () => {
