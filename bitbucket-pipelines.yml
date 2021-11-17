@@ -260,6 +260,21 @@ pipelines:
               - cd ../../tools
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
 
+        - step: 
+            name: Taxonomy Service Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/taxonomy-service/**"
+            script:
+              - cd services/taxonomy-service
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              # - npm run test:coverage 
+              - npx serverless deploy --stage dev
+
         - step:
             name: Terraform Plan
             deployment: dev
