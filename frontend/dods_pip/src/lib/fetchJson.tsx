@@ -33,7 +33,7 @@ export default async function fetchJson(url: string, args?: RequestInit): Promis
     error.data = {
       name: data?.name || 'UnknownException',
       code: response.status,
-      message: 'An error happened. Please try again.',
+      message: data?.message || 'An error happened. Please try again.',
     };
 
     throw error;
