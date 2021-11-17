@@ -65,8 +65,11 @@ export const expand = styled(headerText)`
   cursor: pointer;
 `;
 
-export const content = styled.div`
+export const contentPadded = styled.div`
   padding: ${spacing(4)} ${spacing(6)};
+`;
+
+export const content = styled(contentPadded)`
   height: calc(80vh - 120px);
   overflow: auto;
 `;
@@ -200,13 +203,22 @@ export const tabs = styled.div`
 
 type TabProps = {
   active: boolean;
+  disabled: boolean;
 };
 
 export const tab = styled.div<TabProps>`
   flex-grow: 1;
   padding-bottom: ${spacing(2)};
-  border-bottom: 4px solid ${({ active }) => (active ? color.theme.blueLight : 'transparent')};
+  border-bottom: 4px solid
+    ${({ active, disabled }) => (active && !disabled ? color.theme.blueLight : 'transparent')};
   cursor: pointer;
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+`;
+
+export const tagTreeWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const tagTree = styled.div`
@@ -225,8 +237,12 @@ export const tagTreeChildren = styled.div`
   padding-left: 35px;
 `;
 
-export const tabContent = styled.div`
-  height: calc(80vh - 188px);
+type TabContentProps = {
+  isSearch?: boolean;
+};
+
+export const tabContent = styled.div<TabContentProps>`
+  height: ${({ isSearch = false }) => (isSearch ? `calc(80vh - 321px)` : `calc(80vh - 188px)`)};
   overflow: auto;
   padding: ${spacing(5)} ${spacing(8)} 50px ${spacing(8)};
   background: ${color.base.greyLighter};
@@ -290,6 +306,16 @@ export const controls = styled.div`
       margin-right: 0;
     }
   }
+`;
+
+export const counter = styled.div`
+  border-radius: 4px;
+  background: ${color.theme.blueLight};
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const closeWarning = styled.div`

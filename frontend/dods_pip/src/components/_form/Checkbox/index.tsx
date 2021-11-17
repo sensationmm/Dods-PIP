@@ -20,7 +20,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   label,
   isChecked,
   onChange,
-  isDisabled,
+  isDisabled = false,
   required,
   optional,
   bold,

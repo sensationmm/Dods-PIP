@@ -1,10 +1,11 @@
 import React from 'react';
 
-import fetchJson from '../../lib/fetchJson';
 import color from '../../globals/color';
+import fetchJson from '../../lib/fetchJson';
 import MockTags from '../../mocks/data/tagging.json';
 import { ucFirst } from '../../utils/string';
 import Checkbox from '../_form/Checkbox';
+import InputSearch from '../_form/InputSearch';
 import Toggle from '../_form/Toggle';
 import Spacer from '../_layout/Spacer';
 import Button from '../Button';
@@ -38,10 +39,10 @@ type TagPanelProps = {
 };
 
 const tagTypes = [
-  { id: 0, label: 'geographies' },
-  { id: 1, label: 'organisations' },
-  { id: 2, label: 'people' },
-  { id: 3, label: 'topics' },
+  { id: 0, label: 'topics' },
+  { id: 1, label: 'geographies' },
+  { id: 2, label: 'organisations' },
+  { id: 3, label: 'people' },
 ];
 
 const TagPanel: React.FC<TagPanelProps> = ({
@@ -85,63 +86,74 @@ const TagPanel: React.FC<TagPanelProps> = ({
 
 type TagTreeProps = {
   tag: TagsData;
+  existingTags: TagsData[];
   addedTags: TagsData[];
   addedTagsToSave: TagsData[];
   onChange: (tag: TagsData) => void;
 };
 
-const TagTree: React.FC<TagTreeProps> = ({ tag, addedTags, addedTagsToSave, onChange }) => {
+const TagTree: React.FC<TagTreeProps> = ({
+  tag,
+  existingTags,
+  addedTags,
+  addedTagsToSave,
+  onChange,
+}) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const numChildren = tag.childTerms ? tag.childTerms.length : 0;
   const label = numChildren > 0 ? `${tag.termName} (${numChildren})` : tag.termName;
 
-  const allTags = addedTags.concat(addedTagsToSave);
+  const allTags = existingTags.concat(addedTags.concat(addedTagsToSave));
 
-  // let childrenSelected = 0;
-  // let current = tag;
-  // let hasChildren = current?.childTerms?.length > 0;
+  let childrenSelected = 0;
 
-  // const countSelectedChildren = (tag: TagsData) => {
-  //   tag.childTerms?.forEach((term) => {
-  //     if (allTags.find((t) => t.id === term.id) !== undefined) {
-  //       childrenSelected++;
-  //     }
-  //   });
+  const countSelectedChildren = (tag: TagsData) => {
+    tag.childTerms?.forEach((child) => {
+      if (allTags.find((t) => t.id === child.id) !== undefined) {
+        childrenSelected++;
+      }
+      countSelectedChildren(child);
+    });
+  };
 
-  //   if()
-  // };
+  countSelectedChildren(tag);
 
-  // while (hasChildren) {
-  //   current.childTerms?.forEach((term) => {
-  //     if (allTags.find((t) => t.id === term.id) !== undefined) {
-  //       childrenSelected++;
-  //     }
-  //   });
-  //   current;
-  // }
+  const isChecked = allTags.find((t) => t.id === tag.id) !== undefined;
 
   return (
     <>
-      <Styled.tagTree>
-        <Checkbox
-          id={`browse-${tag.id}`}
-          key={`browse-${tag.id}`}
-          label={label}
-          isChecked={allTags.find((t) => t.id === tag.id) !== undefined}
-          onChange={() => onChange(tag)}
-          isDisabled={addedTagsToSave.find((t) => t.id === tag.id) !== undefined}
-        />
-        {numChildren > 0 && (
-          <Styled.tagTreeToggle onClick={() => setIsOpen(!isOpen)}>
-            <Icon
-              src={isOpen ? Icons.ChevronDownBold : Icons.ChevronRightBold}
-              size={IconSize.medium}
-              color={color.base.greyDark}
-            />
-          </Styled.tagTreeToggle>
+      <Styled.tagTreeWrapper>
+        <Styled.tagTree>
+          <Checkbox
+            id={`browse-${tag.id}`}
+            key={`browse-${tag.id}`}
+            label={label}
+            isChecked={isChecked}
+            bold={isChecked}
+            onChange={() => onChange(tag)}
+            isDisabled={
+              existingTags.concat(addedTagsToSave).find((t) => t.id === tag.id) !== undefined
+            }
+          />
+          {numChildren > 0 && (
+            <Styled.tagTreeToggle onClick={() => setIsOpen(!isOpen)}>
+              <Icon
+                src={isOpen ? Icons.ChevronDownBold : Icons.ChevronRightBold}
+                size={IconSize.medium}
+                color={color.base.greyDark}
+              />
+            </Styled.tagTreeToggle>
+          )}
+        </Styled.tagTree>
+        {!isOpen && childrenSelected > 0 && (
+          <Styled.counter>
+            <Text type="bodySmall" bold color={color.base.white}>
+              {childrenSelected}
+            </Text>
+          </Styled.counter>
         )}
-      </Styled.tagTree>
+      </Styled.tagTreeWrapper>
 
       {isOpen && numChildren > 0 && (
         <Styled.tagTreeChildren>
@@ -149,6 +161,7 @@ const TagTree: React.FC<TagTreeProps> = ({ tag, addedTags, addedTagsToSave, onCh
             <TagTree
               key={`tag-tree-${child.id}`}
               tag={child}
+              existingTags={existingTags}
               addedTags={addedTags}
               addedTagsToSave={addedTagsToSave}
               onChange={onChange}
@@ -160,17 +173,17 @@ const TagTree: React.FC<TagTreeProps> = ({ tag, addedTags, addedTagsToSave, onCh
   );
 };
 
-const ContentTagger: React.FC<ContentTaggerProps> = ({ tags }) => {
-  const [tagsData, setTagsData] = React.useState<TagsData[]>(MockTags as unknown as TagsData[]);
+const ContentTagger: React.FC<ContentTaggerProps> = ({ tags, setTags }) => {
+  const [tagsData] = React.useState<TagsData[]>(MockTags as unknown as TagsData[]);
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [editing, setEditing] = React.useState<string>();
   const [addedTags, setAddedTags] = React.useState<TagsData[]>([]);
   const [addedTagsToSave, setAddedTagsToSave] = React.useState<TagsData[]>([]);
-  const [selectedTags, setSelectedTags] = React.useState<TagsData[]>([]);
-  const [showTagBrowser, setShowTagBrowser] = React.useState<boolean>(true);
+  const [showTagBrowser, setShowTagBrowser] = React.useState<boolean>(false);
   const [isBrowsing, setIsBrowsing] = React.useState<boolean>(false);
   const [activeTab, setActiveTab] = React.useState<number>(0);
   const [closeWarning, setCloseWarning] = React.useState<boolean>(false);
+  const [taxonomySearch, setTaxonomySearch] = React.useState<string>('');
 
   const manageAddedTags = (tag: TagsData) => {
     const currentTags = addedTags.slice();
@@ -201,6 +214,21 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({ tags }) => {
 
   const handleOnClear = () => {
     setAddedTags([]);
+  };
+
+  const handleSave = () => {
+    setCloseWarning(false);
+    setShowTagBrowser(false);
+    setTags(tags.concat(addedTagsToSave));
+    setAddedTagsToSave([]);
+  };
+
+  const deleteTag = (tag: TagsData) => {
+    const current = tags.slice();
+
+    current.splice(current.indexOf(tag), 1);
+
+    setTags(current);
   };
 
   const flatten = (tags: TagsData[]): Array<string> => {
@@ -300,17 +328,17 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({ tags }) => {
 
               <Styled.content>
                 {tagTypes.map((type) => (
-                  <>
+                  <div key={`panel-${type.label}`}>
                     <TagPanel
-                      key={`panel-${type.label}`}
                       title={ucFirst(type.label)}
                       selectedTags={currentTags.filter((tag) => tag.type == type.label)}
                       disabled={
                         (addedTags.length > 0 && editing && editing !== type.label) || false
                       }
+                      deleteSelected={deleteTag}
                     />
                     <Spacer size={6} />
-                  </>
+                  </div>
                 ))}
               </Styled.content>
             </Styled.box>
@@ -338,59 +366,99 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({ tags }) => {
                   />
                 </Styled.toggle>
               </Styled.header>
+
+              {!isBrowsing && (
+                <Styled.contentPadded>
+                  <InputSearch
+                    id="search-taxonomies"
+                    label="Search tags"
+                    helperText="Highlighted word: No word highlighted"
+                    value={taxonomySearch}
+                    onChange={setTaxonomySearch}
+                  />
+                </Styled.contentPadded>
+              )}
               <Spacer size={9} />
-              <Styled.tabs>
-                {tagTypes.map((type) => (
-                  <Styled.tab
-                    key={`tab-${type.id}`}
-                    active={activeTab === type.id}
-                    onClick={() => setActiveTab(type.id)}
-                  >
-                    <Text
-                      type="body"
-                      color={activeTab === type.id ? color.theme.blueDark : color.base.greyDark}
-                      bold={activeTab === type.id}
-                      center
-                    >
-                      {ucFirst(type.label)} (
-                      {flatten(tagsData[type.label as string] as TagsData[]).length})
-                    </Text>
-                  </Styled.tab>
-                ))}
-              </Styled.tabs>
-              <Styled.tabContentMask>
-                <Styled.tabContent>
-                  {tagsData[tagTypes[activeTab as number].label as string]
-                    .sort((a: TagsData, b: TagsData) => (a.termName > b.termName ? 1 : -1))
-                    .map((tag: TagsData, count: number) => (
-                      <TagTree
-                        key={`tag-tree-${count}`}
-                        tag={tag}
-                        addedTags={addedTags}
-                        addedTagsToSave={addedTagsToSave}
-                        onChange={manageAddedTags}
-                      />
-                    ))}
-                </Styled.tabContent>
-              </Styled.tabContentMask>
+
+              <>
+                <Styled.tabs>
+                  {tagTypes.map((type) => {
+                    const disableTab = !isBrowsing && taxonomySearch === '';
+                    return (
+                      <Styled.tab
+                        key={`tab-${type.id}`}
+                        active={activeTab === type.id}
+                        disabled={disableTab}
+                        onClick={() => setActiveTab(type.id)}
+                      >
+                        <Text
+                          type="body"
+                          color={
+                            disableTab
+                              ? color.base.greyMid
+                              : activeTab === type.id
+                              ? color.theme.blueDark
+                              : color.base.greyDark
+                          }
+                          bold={activeTab === type.id && !disableTab}
+                          center
+                        >
+                          {ucFirst(type.label)}
+                          {isBrowsing &&
+                            ` (${flatten(tagsData[type.label as string] as TagsData[]).length})`}
+                        </Text>
+                      </Styled.tab>
+                    );
+                  })}
+                </Styled.tabs>
+                <Styled.tabContentMask>
+                  {isBrowsing ? (
+                    <Styled.tabContent>
+                      {tagsData[tagTypes[activeTab as number].label as string]
+                        .sort((a: TagsData, b: TagsData) => (a.termName > b.termName ? 1 : -1))
+                        .map((tag: TagsData, count: number) => (
+                          <TagTree
+                            key={`tag-tree-${activeTab}-${count}`}
+                            tag={tag}
+                            existingTags={tags}
+                            addedTags={addedTags}
+                            addedTagsToSave={addedTagsToSave}
+                            onChange={manageAddedTags}
+                          />
+                        ))}
+                    </Styled.tabContent>
+                  ) : (
+                    <Styled.tabContent isSearch>
+                      <Text center color={color.base.greyDark}>
+                        Start searching to see results
+                      </Text>
+                    </Styled.tabContent>
+                  )}
+                </Styled.tabContentMask>
+              </>
 
               <Styled.actions>
-                <Text type="span" color={color.base.greyDark}>
-                  Total{' '}
-                  <strong style={{ color: color.theme.blueMid }}>
-                    {
-                      flatten(tagsData[tagTypes[activeTab as number].label as string] as TagsData[])
-                        .length
-                    }
-                  </strong>{' '}
-                  items
-                </Text>
+                {isBrowsing ? (
+                  <Text type="span" color={color.base.greyDark}>
+                    Total{' '}
+                    <strong style={{ color: color.theme.blueMid }}>
+                      {
+                        flatten(
+                          tagsData[tagTypes[activeTab as number].label as string] as TagsData[],
+                        ).length
+                      }
+                    </strong>{' '}
+                    items
+                  </Text>
+                ) : (
+                  <div />
+                )}
 
                 <Styled.actionsButton>
                   {addedTags.length > 0 && (
                     <Text type="span" color={color.base.greyDark}>
                       <strong style={{ color: color.theme.blueMid }}>{addedTags.length}</strong>{' '}
-                      Taxonomies selected
+                      Tags selected
                     </Text>
                   )}
                   <Button
@@ -422,15 +490,14 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({ tags }) => {
                       (type) => addedTagsToSave.filter((tag) => tag.type == type.label).length > 0,
                     )
                     .map((type) => (
-                      <>
+                      <div key={`panel-${type.label}`}>
                         <TagPanel
-                          key={`panel-${type.label}`}
                           title={ucFirst(type.label)}
                           selectedTags={addedTagsToSave.filter((tag) => tag.type == type.label)}
                           deleteSelected={onDeleteSelected}
                         />
                         <Spacer size={6} />
-                      </>
+                      </div>
                     ))
                 ) : (
                   <Styled.instructions>
@@ -439,10 +506,10 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({ tags }) => {
                     </Text>
                     <ol>
                       <Text type="li" color={color.base.greyDark}>
-                        {isBrowsing ? 'Browse' : 'Search'} for a taxonomy
+                        {isBrowsing ? 'Browse' : 'Search'} for a tag
                       </Text>
                       <Text type="li" color={color.base.greyDark}>
-                        Select the taxonomies needed
+                        Select the tags needed
                       </Text>
                       <Text type="li" color={color.base.greyDark}>
                         Click on <strong>‘Add to selection’</strong> to add them to them here
@@ -456,7 +523,12 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({ tags }) => {
               </Styled.content>
               {addedTagsToSave.length > 0 && (
                 <Styled.browserActions>
-                  <Button isSmall icon={Icons.TickBold} label="Apply selection" />
+                  <Button
+                    isSmall
+                    icon={Icons.TickBold}
+                    label={`Apply selection (${addedTagsToSave.length})`}
+                    onClick={handleSave}
+                  />
                 </Styled.browserActions>
               )}
 
@@ -520,7 +592,7 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({ tags }) => {
                     {addedTags.length > 0 && (
                       <Text type="span" color={color.base.greyDark}>
                         <strong style={{ color: color.theme.blueMid }}>{addedTags.length}</strong>{' '}
-                        Taxonomies selected
+                        Tags selected
                       </Text>
                     )}
                     <Button

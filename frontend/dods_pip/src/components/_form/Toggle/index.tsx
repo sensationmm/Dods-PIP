@@ -30,7 +30,12 @@ const Toggle: React.FC<ToggleProps> = ({
   };
 
   return (
-    <Styled.wrapper data-test="component-toggle" onKeyDown={trigger} tabIndex={0}>
+    <Styled.wrapper
+      data-test="component-toggle"
+      onKeyDown={trigger}
+      tabIndex={0}
+      disabled={isDisabled}
+    >
       {labelOff && (
         <Text
           type="body"

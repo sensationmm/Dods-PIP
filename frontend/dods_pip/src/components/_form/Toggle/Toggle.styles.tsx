@@ -5,13 +5,18 @@ import opacity from '../../../globals/opacity';
 import spacing from '../../../globals/spacing';
 import { hexAToRGBA } from '../../../utils/color';
 
-export const wrapper = styled.div`
+type WrapperProps = {
+  disabled: boolean;
+};
+
+export const wrapper = styled.div<WrapperProps>`
   position: relative;
   outline: 0;
   display: grid;
   grid-template-columns: 1fr 48px 1fr;
   column-gap: ${spacing(3)};
   align-items: center;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
   p:first-of-type {
     text-align: right !important;
@@ -38,7 +43,6 @@ export const control = styled.div`
 `;
 
 export const toggle = styled.div`
-  cursor: pointer;
   position: relative;
   width: 48px;
   height: 24px;
@@ -52,7 +56,6 @@ export const toggle = styled.div`
   &.disabled {
     background: ${color.base.greyMid};
     pointer-events: none;
-    cursor: not-allowed;
 
     ${control} {
       background: ${color.base.greyDark};

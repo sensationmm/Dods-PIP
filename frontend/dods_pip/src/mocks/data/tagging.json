@@ -15128,13 +15128,10 @@
     }
   ],
   "activeTags": [
-    { "id": "united_kingdom", "label": "United Kingdom", "type": "geographies", "instances": 1},
-    { "id": "london", "label": "London", "type": "geographies", "instances": 2},
-    { "id": "ron_fisherman", "label": "Ron Fisherman", "type":"people", "instances": 2},
-    { "id": "cop26", "label": "COP26", "type":"organisations", "instances": 10},
-    { "id": "glasgow", "label": "Glasgow", "type": "geographies", "instances": 9},
-    { "id": "santiago_network_systems", "label": "Santiago Network Systems", "type":"organisations", "instances": 2},
-    { "id": "paris", "label": "Paris", "type": "geographies", "instances": 2},
-    { "id": "unfccc", "label": "UNFCCC", "type":"organisations", "instances": 1}
+    { "id": "123445e6i", "termName": "A top level term", "type": "organisations", "instances": 1},
+    { "id": "http://www.dods.co.uk/taxonomy/instance/concept/529", "termName": "copyright", "type": "topics", "instances": 2},
+    { "id": "http://www.dods.co.uk/taxonomy/instance/Topics/766ae897-849a-4018-ade1-3df2981e28aa", "termName": "accession", "type":"topics", "instances": 2},
+    { "id": "http://www.dods.co.uk/taxonomy/instance/concept/09304fe8-824b-4563-80ff-a71cc30f079d", "termName": "Soft drinks industry levy", "type":"topics", "instances": 10},
+    { "id": "86sfgdgdfhjk786", "termName": "A third level term", "type": "geographies", "instances": 9}
   ]
 }
