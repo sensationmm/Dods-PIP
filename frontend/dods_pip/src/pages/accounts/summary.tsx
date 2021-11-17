@@ -88,33 +88,28 @@ const Summary: React.FC<SummaryProps> = ({
         contractRollover,
       } = data;
 
-      setAccountName(name as string);
       setPageAccountName(name as string);
-      setAccountNotes(notes as string);
-      setContactName(contactName as string);
-      setContactEmail(contactEmailAddress as string);
-      setContactTelephone(contactTelephoneNumber as string);
-      setStartDate(contractStartDate as string);
-      setEndDate(contractEndDate as string);
-      const dateType = getEndDateType({
+
+      onAfterEditAccountSettings({
+        name: name as string,
+        notes: notes as string,
+        contactName: contactName as string,
+        contactEmailAddress: contactEmailAddress as string,
+        contactTelephoneNumber: contactTelephoneNumber as string,
+      });
+
+      onAfterEditSubscription({
+        contractRollover: contractRollover as boolean,
         contractStartDate: contractStartDate as string,
         contractEndDate: contractEndDate as string,
+        subscriptionSeats: subscriptionSeats as string,
+        consultantHours: consultantHours as string,
+        isEU: isEU as boolean,
+        isUK: isUK as boolean,
+        subscription: (subscription as SubscriptionType).uuid,
       });
-      setEndDateType(dateType);
-      setTeam(data.team as TeamMember[]);
 
-      if (contractRollover) {
-        setRenewalType(RenewalType.Annual);
-      } else {
-        setRenewalType(RenewalType.EndDate);
-      }
-
-      setUserSeats(subscriptionSeats as string);
-      setConsultantHours(consultantHours as string);
-      setIsEU(isEU as boolean);
-      setIsUK(isUK as boolean);
-
-      setSubscriptionType((subscription as SubscriptionType).uuid);
+      onAfterEditTeam({ team: data.team as TeamMember[] });
     }
   };
 
@@ -166,7 +161,7 @@ const Summary: React.FC<SummaryProps> = ({
       setRenewalType(RenewalType.EndDate);
     }
     setUserSeats(subscriptionSeats);
-    setConsultantHours(consultantHours);
+    setConsultantHours(([null, '', NaN].includes(consultantHours) ? 0 : consultantHours) as string);
     setIsEU(isEU);
     setIsUK(isUK);
     setSubscriptionType(subscription);
