@@ -168,6 +168,11 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
                 [Op.and]: dateArray,
             };
         }
+        let orderBy: any = [sortBy, sortDirection];
+
+        if (sortBy === 'statusId') {
+            orderBy = ['status', 'status', sortDirection];
+        }
 
         const totalRecords = await this.editorialRecordModel.count();
 
@@ -175,7 +180,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             await this.editorialRecordModel.findAndCountAll({
                 where: whereRecord,
                 include: ['status', 'assignedEditor'],
-                order: [[sortBy, sortDirection]],
+                order: [orderBy],
                 offset: parseInt(offset),
                 limit: parseInt(limit),
             });
