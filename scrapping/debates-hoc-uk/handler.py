@@ -39,6 +39,7 @@ def run(event, context):
             "//tr[@class='calendar-week']/descendant::a[contains(@aria-label,'This day has business')]/@href"
         )
 
+
         # Looping the calendar if aria-label value contains ('This day has business')
         for i, active_links in enumerate(links[::-1]):
             # concat main url with element href content
@@ -50,6 +51,7 @@ def run(event, context):
 
             # get new page content
             pageSource = requests.get(qa_link)
+
 
             if not re.findall(
                     r'<div[^>]*?class=\"highlight[^>]*?highlight-info\">'
@@ -98,9 +100,11 @@ def run(event, context):
                     final_content['contentSourceURL'] = link
                     final_content['extractDate'] = datetime.now().isoformat()
                     final_content['content'] = content_field
+                    final_content['title'] = title
                     final_content['metadata'].append({
                         'jurisdiction': 'UK'
                     })
+
 
                     try:
                         Validator().content_schema_validator(final_content)
@@ -117,11 +121,12 @@ def run(event, context):
                     except DataModel.DoesNotExist:
                         logger.info(DataModel.DoesNotExist.msg)
 
+
                     if hasattr(document, 'document_hash'):
                         continue
                     else:
                         s3_response = s3.put_object(
-                            Body=dumps(content_field).encode('UTF-8'),
+                            Body=dumps(final_content).encode('UTF-8'),
                             Bucket=BUCKET,
                             Key=(PREFIX + '/' + short_date + '/' + hash_code)
                         )
