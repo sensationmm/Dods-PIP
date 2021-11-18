@@ -63,7 +63,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                             id: '1',
                             exactMatch: false,
                             identifier: '864d1fe5-23f7-44cd-b015-8c24fac28ca1',
-                            literalForm: { en: 'winter health problems' },
+                            label: 'winter health problems',
                             inScheme: [ 'http://www.dods.co.uk/taxonomy/instance/Topics' ],
                             isXlPrefLabelOf: 'http://www.dods.co.uk/taxonomy/instance/concept/45765206-082c-430a-8e00-b8aeef09808e',
                             type: 'Label'
@@ -89,7 +89,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     test('searchTaxonomies valid query sent to ES', async () => {
         const data: TaxonomiesParameters = { tags: 'winter' };
-        const correct_es_query = {index: 'taxonomy', body: {query: {"term": {"literalForm.en": data.tags}}},size: 500}
+        const correct_es_query = {index: 'taxonomy', body: {query: {"term": {"label": data.tags}}},size: 500}
 
         const mock_es_response = {
             body: {hits: {hits: [{
@@ -103,7 +103,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                             typeOfClue: { id: 'http://taxo.dods.co.uk/onto#ClueTypeStandard' },
                             exactMatch: false,
                             identifier: '864d1fe5-23f7-44cd-b015-8c24fac28ca1',
-                            literalForm: { en: 'winter health problems' },
+                            label: 'winter health problems',
                             inScheme: [ 'http://www.dods.co.uk/taxonomy/instance/Topics' ],
                             isXlPrefLabelOf: 'http://www.dods.co.uk/taxonomy/instance/concept/45765206-082c-430a-8e00-b8aeef09808e',
                             type: 'Label'
@@ -123,7 +123,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     test('searchTaxonomiesRepository creates the correct query object', async () => {
         const data: TaxonomiesParameters = { tags: 'winter' };
-        const correct_es_query = {index: 'taxonomy', body: {query: {"term": {"literalForm.en": data.tags}}},size: 500}
+        const correct_es_query = {index: 'taxonomy', body: {query: {"term": {"label": data.tags}}},size: 500}
 
 
         const taxonomy_query = await TaxonomyRepository.createSearchQuery(data)
@@ -133,7 +133,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     test('searchTaxonomiesRepository with a limit creates the correct query object', async () => {
         const data: TaxonomiesParameters = { tags: 'winter', limit: 1 };
-        const correct_es_query = {index: 'taxonomy', body: {query: {"term": {"literalForm.en": data.tags}}},size: data.limit}
+        const correct_es_query = {index: 'taxonomy', body: {query: {"term": {"label": data.tags}}},size: data.limit}
 
 
         const taxonomy_query = await TaxonomyRepository.createSearchQuery(data)
@@ -146,7 +146,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 describe(`get taxonomyTree from repository`, () => {
     test('test elastic search is called', async () =>{
 
-        await TaxonomyRepository.defaultInstance.buildTree()
+        await TaxonomyRepository.defaultInstance.buildTree('Topics')
         expect(elasticsearch.search).toHaveBeenCalled();
     });
 
@@ -154,7 +154,7 @@ describe(`get taxonomyTree from repository`, () => {
         // @ts-ignore
         const spy = jest.spyOn(TaxonomyRepository.prototype as any, 'getNarrowerTopics');
         elasticsearch.search.mockResolvedValueOnce({body: MOCK_ES_RESPONSE})
-        await TaxonomyRepository.defaultInstance.buildTree()
+        await TaxonomyRepository.defaultInstance.buildTree('Topics')
 
         expect(spy).toHaveBeenCalled();
 
