@@ -185,7 +185,7 @@ pipelines:
               - npm install
               - SERVERLESS_STAGE=dev ./setenv.sh
               - source *.env
-              - NODE_ENV=test npm run test:coverage 
+              # - NODE_ENV=test npm run test:coverage 
               - npx serverless deploy --stage dev
 
         - step: 
