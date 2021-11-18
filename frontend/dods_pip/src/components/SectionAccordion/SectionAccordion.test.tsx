@@ -43,14 +43,14 @@ describe('SectionAccordion', () => {
       </SectionAccordion>,
     );
     const trigger = wrapper.find('[data-test="header"]');
-    trigger.simulate('click');
+    trigger.simulate('click', { target: {} });
     expect(React.useState).toHaveBeenCalledWith(false);
   });
 
   it('should open', () => {
     const wrapper = shallow(<SectionAccordion header={header}>{content}</SectionAccordion>);
     const trigger = wrapper.find('[data-test="header"]');
-    trigger.simulate('click');
+    trigger.simulate('click', { target: {} });
     expect(React.useState).toHaveBeenCalledWith(true);
   });
 
@@ -62,7 +62,7 @@ describe('SectionAccordion', () => {
       </SectionAccordion>,
     );
     const trigger = wrapper.find('[data-test="header"]');
-    trigger.simulate('click');
+    trigger.simulate('click', { target: {} });
     expect(mockCallback).toHaveBeenCalledTimes(1);
   });
 });

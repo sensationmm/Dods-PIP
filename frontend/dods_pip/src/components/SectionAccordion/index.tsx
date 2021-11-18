@@ -28,9 +28,13 @@ const SectionAccordion: React.FC<SectionAccordionProps> = ({
     setOpen(isOpen);
   }, [isOpen]);
 
-  let handleOnClick = () => {
-    callback && callback();
-    setOpen(!open);
+  let handleOnClick = (e: React.MouseEvent) => {
+    if (e.target instanceof HTMLButtonElement) {
+      e.stopPropagation();
+    } else {
+      callback && callback();
+      setOpen(!open);
+    }
   };
 
   if (!showToggle) {
