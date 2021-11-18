@@ -49,11 +49,22 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             whereClause[ROLE_ID_COLUMN] = roleRecord?.id;
         }
 
+        let orderBy: any = [sortBy, sortDirection];
+
+        if (sortBy === 'role') {
+            orderBy = [User.associations.role, 'title', sortDirection];
+        } else if (sortBy === 'account') {
+            orderBy = [User.associations.accounts, 'name', sortDirection];
+        }
+
         const { rows, count } = await User.findAndCountAll({
             where: whereClause,
             subQuery: false,
-            include: [User.associations.role],
-            order: [[sortBy!, sortDirection!]],
+            include: [
+                User.associations.role,
+                User.associations.accounts,
+            ],
+            order: [orderBy],
             offset: offset!,
             limit: limit!,
         });

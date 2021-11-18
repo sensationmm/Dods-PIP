@@ -1,6 +1,6 @@
-import { BelongsTo, BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, DataTypes, Model, Optional } from 'sequelize';
+import { BelongsTo, BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToMany, BelongsToManyAddAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToSetAssociationMixin, DataTypes, Model, Optional } from 'sequelize';
 import sequelizeConnection from '../config/sequelizeConnection';
-import { Role } from '.';
+import { ClientAccount, Role } from '.';
 
 export interface UserAttributes {
     id: number;
@@ -40,8 +40,14 @@ export class User extends Model<UserAttributes, UserInput> implements UserAttrib
     public setRole!: BelongsToSetAssociationMixin<Role, number>;
     public createRole!: BelongsToCreateAssociationMixin<Role>;
 
+    // mixins for association (optional)
+    public readonly accounts?: ClientAccount[];
+    public getAccounts!: BelongsToManyGetAssociationsMixin<ClientAccount>;
+    public addAccount!: BelongsToManyAddAssociationMixin<ClientAccount, number>;
+
     public static associations: {
-        role: BelongsTo<User, Role>
+        role: BelongsTo<User, Role>,
+        accounts: BelongsToMany<User, ClientAccount>
     };
 
     //Timestamps

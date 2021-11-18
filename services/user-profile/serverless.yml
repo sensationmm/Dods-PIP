@@ -18,8 +18,8 @@ provider:
 
   lambdaHashingVersion: 20201221
   vpc:
-    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds}
-    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds}
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, ''}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, ''}
   stackTags:
     service: ${self:service}
     env: ${self:provider.stage}
