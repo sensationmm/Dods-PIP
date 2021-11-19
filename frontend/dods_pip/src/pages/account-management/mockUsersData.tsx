@@ -1,9 +1,9 @@
 export const mockUsersData = {
   success: true,
-  message: 'Showing Results.',
+  message: 'User Profile List',
   limit: 30,
   offset: 0,
-  totalRecords: 69,
+  totalRecords: 150,
   data: [
     {
       uuid: '3f679c91-cd9f-4943-81c5-d9142b5ba118',

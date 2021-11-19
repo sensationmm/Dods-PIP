@@ -91,7 +91,6 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
       const { data = [], totalRecords } = results;
       setUsersList(data as userAccounts);
       setTotal(totalRecords as number);
-      console.log(data);
     } catch (error) {
       setUsersList([] as userAccounts);
       setTotal(0);
@@ -112,7 +111,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
   ]);
 
   return (
-    <div data-test="page-account-management-users">
+    <div data-testid="page-account-management-users">
       <Head>
         <title>Dods PIP | Account Management | Users</title>
         <link rel="icon" href="/favicon.ico" />
