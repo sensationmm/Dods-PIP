@@ -9,8 +9,9 @@ export default withSession(async (req, res) => {
     const result = await fetchJson(
       `${process.env.APP_API_URL}${Api.Users}${name ? '?name=' + name : ''}`,
       {
-      method: 'GET',
-    });
+        method: 'GET',
+      },
+    );
     res.json(result);
   } catch (error) {
     const { response: fetchResponse } = error;

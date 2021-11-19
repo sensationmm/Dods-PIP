@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
@@ -18,14 +17,22 @@ import Pagination from '../../components/Pagination';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import MockDataUsersAccounts from '../../mocks/data/users-accounts.json';
-import { toQueryString } from '../../utils/api';
+import fetchJson from '../../lib/fetchJson';
+import useDebounce from '../../lib/useDebounce';
+import { Api, BASE_URI, toQueryString } from '../../utils/api';
 import * as Styled from './users.styles';
+
+type Filters = {
+  search?: string;
+  aToZ?: string;
+  status?: string;
+  role?: string;
+};
 
 type UserAccount = {
   uuid: number;
   firstName: string;
-  surName: string;
+  lastName: string;
   account: string;
   email: string;
   role: string;
@@ -39,6 +46,7 @@ type FilterParams = {
   startsWith?: string;
   searchTerm?: string;
   status?: string;
+  role?: string;
 };
 
 enum UserStatusValue {
@@ -51,15 +59,12 @@ type userAccounts = UserAccount[];
 interface UsersProps extends LoadingHOCProps {}
 
 export const Users: React.FC<UsersProps> = ({ setLoading }) => {
-  const mockUsers = MockDataUsersAccounts.users as userAccounts;
+  // const mockUsers = MockDataUsersAccounts.users as userAccounts;
   const [showFilter, setShowFilter] = React.useState<boolean>(true);
-  const [filterUsers, setFilterUsers] = React.useState<string>('');
-  const [filterRole, setFilterRole] = React.useState<string>('');
-  const [filterSearchText, setFilterSearchText] = React.useState<string>('');
-  const [filterAZ, setFilterAZ] = React.useState<string>('');
-  const [usersList, setUsersList] = React.useState<userAccounts>(mockUsers);
+  const [filters, setFilters] = React.useState<Filters>({});
+  const [usersList, setUsersList] = React.useState<userAccounts>([]);
   const [total, setTotal] = React.useState<number>(0);
-  const router = useRouter();
+  const debouncedValue = useDebounce<string>(filters?.search as string, 850);
 
   const { activePage, numPerPage, PaginationStats, PaginationButtons } = Pagination(total);
 
@@ -67,34 +72,44 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
     const params: FilterParams = {
       limit: numPerPage,
       offset: activePage * numPerPage,
+      ...(filters.status && { active: filters.status === UserStatusValue.Active }),
+      ...(filters.role && { role: filters.role }),
+      ...(filters.aToZ && { startsWith: filters.aToZ }),
+      ...(filters.search && { searchTerm: encodeURI(filters.search) }),
     };
-
-    if (filterUsers !== '') {
-      params.status =
-        filterUsers === UserStatusValue.Active ? UserStatusValue.Active : UserStatusValue.Inactive;
-    }
-
-    if (filterAZ !== '') {
-      params.startsWith = filterAZ;
-    }
-
-    if (filterSearchText !== '') {
-      params.searchTerm = filterSearchText;
-    }
 
     return toQueryString(params);
   };
 
   const loadFilteredUsers = async () => {
     setLoading(true);
-    setTotal(usersList.length);
-    setUsersList(usersList.slice(0, 30));
+    const queryString = getFilterQueryString();
+    try {
+      const results = await fetchJson(`${BASE_URI}${Api.Users}${queryString}`, {
+        method: 'GET',
+      });
+      const { data = [], totalRecords } = results;
+      setUsersList(data as userAccounts);
+      setTotal(totalRecords as number);
+      console.log(data);
+    } catch (error) {
+      setUsersList([] as userAccounts);
+      setTotal(0);
+    }
     setLoading(false);
   };
 
   React.useEffect(() => {
     loadFilteredUsers();
-  }, [filterAZ, filterUsers, filterSearchText, numPerPage, activePage]);
+  }, [
+    debouncedValue,
+    filters.aToZ,
+    filters.status,
+    filters.role,
+    filters.search,
+    numPerPage,
+    activePage,
+  ]);
 
   return (
     <div data-test="page-account-management-users">
@@ -119,7 +134,6 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
           </Text>
           <Button
             data-test="btn-create-client-account"
-            onClick={() => console.log('goes to add user page')}
             isSmall={false}
             icon={Icons.Add}
             label="Add User"
@@ -156,8 +170,8 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
                   { value: UserStatusValue.Active, label: 'Active Users' },
                   { value: UserStatusValue.Inactive, label: 'Inactive Users' },
                 ]}
-                onChange={setFilterUsers}
-                value={filterUsers}
+                onChange={(value) => setFilters({ ...filters, ...{ status: value } })}
+                value={filters.status || ''}
                 placeholder="All Users"
                 isFilter
               />
@@ -166,10 +180,10 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
                 size="medium"
                 options={[
                   { value: '', label: 'Role' },
-                  { value: 'Account Manager', label: 'Account Manager' },
+                  { value: 'User', label: 'User' },
                 ]}
-                onChange={setFilterRole}
-                value={filterRole}
+                onChange={(value) => setFilters({ ...filters, ...{ role: value } })}
+                value={filters.role || ''}
                 placeholder="Role"
                 isFilter
               />
@@ -178,8 +192,8 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
             <Styled.filterContentCol>
               <InputSearch
                 id="filter-search"
-                onChange={setFilterSearchText}
-                value={filterSearchText}
+                onChange={(value) => setFilters({ ...filters, ...{ search: value } })}
+                value={filters.search || ''}
                 size="medium"
               />
             </Styled.filterContentCol>
@@ -187,7 +201,10 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
         </Styled.filterContainer>
 
         <Spacer size={4} />
-        <AZFilter selectedLetter={filterAZ} setSelectedLetter={setFilterAZ} />
+        <AZFilter
+          selectedLetter={filters.aToZ || ''}
+          setSelectedLetter={(value) => setFilters({ ...filters, ...{ aToZ: value } })}
+        />
 
         <Spacer size={5} />
 
@@ -200,17 +217,19 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
           colWidths={[8, 4, 4, 4, 1]}
           rows={usersList.map((user: UserAccount) => {
             const { uuid } = user;
+            user.type = 'client';
+            user.active = true;
             return [
-              user.surName.substring(0, 1),
+              user.lastName.substring(0, 1),
               <Styled.avatarName key={`user-${uuid}`}>
                 <Avatar
                   type={user.type}
                   size="small"
                   disabled={!user.active}
-                  alt={user.firstName + ' ' + user.surName}
+                  alt={user.firstName + ' ' + user.lastName}
                 />
                 <Text bold={true} color={!user.active ? color.base.grey : color.theme.blue}>
-                  {user.firstName} {user.surName}
+                  {user.firstName} {user.lastName}
                 </Text>
               </Styled.avatarName>,
               <Text key={`user-${uuid}-account`}>{user.account}</Text>,
