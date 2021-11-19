@@ -313,6 +313,10 @@ components:
           example: "+442071838750"
         roleName:
           type: string
+        clientAccountId:
+          type: string
+        clientAccountName:
+          type: string
       required:
         - title
         - firstName

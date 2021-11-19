@@ -10,7 +10,6 @@ export const createUser: AsyncLambdaMiddleware<CreateUserInput> = async (paramet
     let userId;
 
     try {
-
         const createUserResult = await IamRepository.defaultInstance.createUser(primaryEmail, clientAccountId, clientAccountName);
 
         if (createUserResult.success) {

@@ -199,7 +199,7 @@ export class AwsCognito {
         });
     }
 
-    createUser(userName: string, clientAccountId: string, clientAccountName: string): Promise<CognitoIdentityServiceProvider.Types.AdminCreateUserResponse> {
+    createUser(userName: string, clientAccountId?: string, clientAccountName?: string): Promise<CognitoIdentityServiceProvider.Types.AdminCreateUserResponse> {
         var params: CognitoIdentityServiceProvider.Types.AdminCreateUserRequest = {
             UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
             Username: userName, /* required */
@@ -215,11 +215,11 @@ export class AwsCognito {
                 },
                 {
                     Name: 'custom:clientAccountId', /* required */
-                    Value: clientAccountId
+                    Value: clientAccountId || ''
                 },
                 {
                     Name: 'custom:clientAccountName', /* required */
-                    Value: clientAccountName
+                    Value: clientAccountName || ''
                 },
             ],
         };

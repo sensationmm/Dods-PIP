@@ -1,5 +1,5 @@
 export interface CreateUserParameters {
     email: string;
-    clientAccountId: string;
-    clientAccountName: string;
+    clientAccountId?: string;
+    clientAccountName?: string;
 }

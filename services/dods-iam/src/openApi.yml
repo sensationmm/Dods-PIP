@@ -114,8 +114,6 @@ paths:
               type: object
               required:
                 - email
-                - clientAccountId
-                - clientAccountName
               properties:
                 email:
                   type: string
