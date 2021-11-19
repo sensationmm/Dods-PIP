@@ -13,6 +13,10 @@ output "db_connection" {
   value = module.client-profile-database.db_connection_string
 }
 
+output "db_bastion_cx" {
+  value = module.client-profile-database.db_bastion_cx
+}
+
 output "db_address" {
   value = module.client-profile-database.db_address
 }
@@ -39,4 +43,8 @@ output "api_key_front" {
 
 output "api_key_test" {
   value = module.api_gateway.api_key_test
+}
+
+output "api_url" {
+  value = module.api-gateway.api_gateway_url
 }
