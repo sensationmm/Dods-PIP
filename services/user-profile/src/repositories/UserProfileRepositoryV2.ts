@@ -1,5 +1,7 @@
 import { Role, User } from '@dodsgroup/dods-model';
 import {
+    CreateUserPersisterInput,
+    CreateUserPersisterOutput,
     SearchUsersInput,
     SearchUsersOutput,
     UserProfileError,
@@ -13,14 +15,10 @@ export const ROLE_ID_COLUMN = 'roleId';
 export const ASC = 'ASC';
 
 export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
-    static defaultInstance: UserProfilePersisterV2 =
-        new UserProfileRepositoryV2();
+    static defaultInstance: UserProfilePersisterV2 = new UserProfileRepositoryV2();
 
-    async searchUsers(
-        parameters: SearchUsersInput
-    ): Promise<SearchUsersOutput> {
-        const { name, startsWith, role, limit, offset, sortBy, sortDirection } =
-            parameters;
+    async searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput> {
+        const { name, startsWith, role, limit, offset, sortBy, sortDirection } = parameters;
 
         let whereClause: any = {};
 
@@ -41,9 +39,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             const roleRecord = await Role.findOne({ where: { uuid: role } });
 
             if (!roleRecord) {
-                throw new UserProfileError(
-                    `Error: RoleUuid ${role} does not exist`
-                );
+                throw new UserProfileError(`Error: RoleUuid ${role} does not exist`);
             }
 
             whereClause[ROLE_ID_COLUMN] = roleRecord?.id;
@@ -81,5 +77,24 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             ),
             count,
         };
+    }
+
+    async createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput> {
+
+        const { roleName } = parameters;
+
+        const roleRecord = await Role.findOne({ where: { title: roleName } });
+
+        if (!roleRecord) {
+            throw new UserProfileError(`Error: Role title: ${roleName} does not exist`);
+        }
+
+        const newUser = await User.create({
+            ...parameters,
+            telephoneNumber1: parameters.telephoneNumber,
+            roleId: roleRecord?.id
+        });
+
+        return newUser;
     }
 }

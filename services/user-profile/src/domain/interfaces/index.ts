@@ -8,7 +8,5 @@ export * from './UserProfilePersister';
 export * from './UserProfilePersisterV2';
 
 export interface DownstreamEndpoints {
-    getUserEndpoint: string;
-    getUserByNameEndpoint: string;
-    getRoleEndpoint: string;
+    apiGatewayBaseURL: string;
 }

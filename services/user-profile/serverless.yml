@@ -18,8 +18,8 @@ provider:
 
   lambdaHashingVersion: 20201221
   vpc:
-    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, ''}
-    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, ''}
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../env-config.dev.js):securityGroupIds}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../env-config.dev.js):subnetIds}
   stackTags:
     service: ${self:service}
     env: ${self:provider.stage}
@@ -47,42 +47,22 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, ""}
-    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, ""}
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, file(../env-config.dev.js):apiGatewayId}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, file(../env-config.dev.js):apiRootResourceId}
     description: Default Gateway for ${self:provider.stage} deployed with Terraform
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    GET_USER_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getUserEndpoint, "http://localhost:1081/user"}
-    GET_USERBYNAME_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getUserByNameEndpoint, "http://localhost:1081/userByName"}
-    GET_ROLE_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getRoleEndpoint, "http://localhost:1081/role"}
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     DB_CONNECTION_LIMIT: 5
     DB_DRIVER: mariadb
     DB_NAME: dods
-    DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
-    DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
-    DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
+    DB_HOST: localhost # ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
+    DB_USER: dods # ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
+    DB_PASSWORD: dods # ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
 
 custom:
-  envs:
-    dev:
-      getUserEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
-      getUserByNameEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
-      getRoleEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
-
-    qa:
-      getUserEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
-      getUserByNameEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
-      getRoleEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
-
-    local:
-      getUserEndpoint: http://localhost:1081/user
-      getUserByNameEndpoint: http://localhost:1081/userByName
-      getRoleEndpoint: http://localhost:1081/role
-      MARIA_DB_HOST: "localhost"
-      MARIA_DB_USERNAME: "root"
-      MARIA_DB_PASSWORD: "rootPass"
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules:
@@ -133,3 +113,13 @@ functions:
       - http:
           method: get
           path: users
+  createUser:
+    handler: src/handlers/createUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: users
+
+
+          

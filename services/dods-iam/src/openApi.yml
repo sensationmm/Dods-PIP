@@ -101,6 +101,33 @@ paths:
           $ref: "#/components/responses/Events"
         "404":
           $ref: "#/components/responses/NotFound"
+  /createUser:
+    post:
+      operationId: createUser
+      summary: "AWS Cognito CreateUser"
+      description: "AWS Cognito CreateUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - clientAccountId
+                - clientAccountName
+              properties:
+                email:
+                  type: string
+                clientAccountId:
+                  type: string
+                clientAccountName:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Events"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /deleteUser:
     get:
       operationId: deleteUser

@@ -74,6 +74,7 @@ provider:
       Action:
         - cognito-idp:AdminDisableUser
         - cognito-idp:AdminEnableUser
+        - cognito-idp:AdminCreateUser
       Resource: !GetAtt DodsUserPool.Arn
     - Effect: Allow
       Action:
@@ -180,6 +181,13 @@ functions:
       - http:
           method: post
           path: forgotPassword
+  createUser:
+    description: Triggered when http request comes
+    handler: src/handlers/http/createUser/index.handle
+    events:
+      - http:
+          method: post
+          path: createUser
   deleteUser:
     description: Triggered when http request comes
     handler: src/handlers/http/deleteUser/index.handle
@@ -330,6 +338,15 @@ resources:
             StringAttributeConstraints:
               MinLength: 3
               MaxLength: 256
+          - Name: "clientAccountId"
+            AttributeDataType: Number
+            Mutable: true
+          - Name: "clientAccountName"
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 0
+              MaxLength: 100
 
     DodsUserPoolClient:
       Type: AWS::Cognito::UserPoolClient

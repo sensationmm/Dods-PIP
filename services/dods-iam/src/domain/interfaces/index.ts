@@ -14,3 +14,4 @@ export * from './ResetPasswordParameters';
 export * from './SignOutParameters';
 export * from './SignUpParameters';
 export * from './LoginEventTypes';
+export * from './CreateUserParameters';

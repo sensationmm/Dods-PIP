@@ -199,6 +199,44 @@ export class AwsCognito {
         });
     }
 
+    createUser(userName: string, clientAccountId: string, clientAccountName: string): Promise<CognitoIdentityServiceProvider.Types.AdminCreateUserResponse> {
+        var params: CognitoIdentityServiceProvider.Types.AdminCreateUserRequest = {
+            UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
+            Username: userName, /* required */
+            MessageAction: 'SUPPRESS',
+            UserAttributes: [
+                {
+                    Name: "email",
+                    Value: userName
+                },
+                {
+                    Name: 'email_verified', /* required */
+                    Value: 'true'
+                },
+                {
+                    Name: 'custom:clientAccountId', /* required */
+                    Value: clientAccountId
+                },
+                {
+                    Name: 'custom:clientAccountName', /* required */
+                    Value: clientAccountName
+                },
+            ],
+        };
+
+        const cognitoidentityserviceprovider = new CognitoIdentityServiceProvider();
+
+        return new Promise((resolve, reject) => {
+            cognitoidentityserviceprovider.adminCreateUser(params, function (err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
     disableUser(userName: string) {
         var params = {
             UserPoolId: config.aws.resources.cognito.userPoolId, /* required */

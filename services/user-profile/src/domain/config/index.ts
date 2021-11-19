@@ -22,9 +22,7 @@ const envVarsSchema = Joi.object()
         NODE_ENV: Joi.string().valid(...stages).default('test'),
         SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
-        GET_USER_ENDPOINT: Joi.string().required(),
-        GET_USERBYNAME_ENDPOINT: Joi.string().required(),
-        GET_ROLE_ENDPOINT: Joi.string().required(),
+        API_GATEWAY_BASE_URL: Joi.string().required(),
         DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
         DB_HOST: Joi.string().required(),
         DB_NAME: Joi.string().required(),
@@ -47,9 +45,7 @@ export const config = {
     },
     dods: {
         downstreamEndpoints: {
-            getUserEndpoint: envVars.GET_USER_ENDPOINT as string,
-            getUserByNameEndpoint: envVars.GET_USERBYNAME_ENDPOINT as string,
-            getRoleEndpoint: envVars.GET_ROLE_ENDPOINT as string,
+            apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
         } as DownstreamEndpoints,
     },
     aws: {
