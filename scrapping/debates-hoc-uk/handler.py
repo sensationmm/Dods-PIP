@@ -13,8 +13,9 @@ from lib.configs import Config
 from lib.data_model import DataModel
 from lib.logger import logger
 from lib.validation import Validator
+import uuid
 
-from inner_utils import clean, payload_creation
+from inner_utils import clean, payload_creation, created_document_date
 
 BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
@@ -90,20 +91,50 @@ def run(event, context):
                         print("link Debates::", link)
                         print("title Debates::", title)
 
+                    try:
+                        selectPageContent = Selector(text=QAResponse.text)
+                        extractedDate = selectPageContent.css('h2.heading-level-3::text').get()
+                        createdDateTime = created_document_date(extractedDate)
+                        createdDateTimeObject = datetime.strptime(createdDateTime, '%A %d %B %Y')
+                        createdDateTime= createdDateTimeObject.isoformat()
+                    except Exception as e:
+                        print(e)
+                        continue
+
                     content_field = {
                         'html_content': payload_creation(pageContent)
                     }
 
                     final_content = Common().get_file_content(content_template_file_path)
+                    final_content['documentId'] = uuid.uuid4().hex
                     final_content['contentType'] = content_type
                     final_content['contentSource'] = config.get('parser', 'contentSource')
                     final_content['contentSourceURL'] = link
                     final_content['extractDate'] = datetime.now().isoformat()
                     final_content['content'] = content_field
-                    final_content['title'] = title
-                    final_content['metadata'].append({
-                        'jurisdiction': 'UK'
-                    })
+                    # final_content['metadata'].append({
+                    #     'jurisdiction': 'UK'
+                    # })
+                    final_content['jurisdiction'] = 'UK'
+                    final_content['documentTitle'] = title
+                    final_content['organisationName'] = ''
+                    final_content['sourceReferenceFormat'] = 'text/html'
+                    final_content['sourceReferenceUri'] = link
+                    final_content['createdBy'] = ''
+                    final_content['internallyCreated'] = False
+                    final_content['schemaType'] = ''
+                    final_content['contentSource'] = 'House of Commons'
+                    final_content['informationType'] = 'Debates'
+                    final_content['contentDateTime'] = createdDateTime
+                    final_content['createdDateTime'] = datetime.now().isoformat()
+                    final_content['ingestedDateTime'] = ''
+                    final_content['version'] = '1.0'
+                    final_content['countryOfOrigin'] = 'GBR'
+                    final_content['feedFormat'] = 'text/plain'
+                    final_content['language'] = 'en'
+                    final_content['taxonomyTerms'] = []
+                    final_content['originalContent'] = content_field
+                    final_content['documentContent'] = ''
 
 
                     try:
@@ -116,6 +147,8 @@ def run(event, context):
                     short_date = datetime.now().strftime("%Y-%m-%d")
                     hash_code = Common.hash(title, link, short_date)
                     document = object
+
+
                     try:
                         document = DataModel.get(hash_code)
                     except DataModel.DoesNotExist:
