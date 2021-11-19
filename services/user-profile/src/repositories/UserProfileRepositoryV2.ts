@@ -27,8 +27,8 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         if (name) {
             whereClause = {
                 [Op.or]: [
-                    { firstName: { [Op.like]: `${name}%` } },
-                    { lastName: { [Op.like]: `${name}%` } },
+                    { firstName: { [Op.like]: `%${name}%` } },
+                    { lastName: { [Op.like]: `%${name}%` } },
                 ],
             };
         }
