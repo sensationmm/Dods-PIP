@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+
+import click
+from elasticsearch import Elasticsearch
+from json import loads
+import os
+from dotenv import load_dotenv
+from logger import logger
+from click import Context
+
+load_dotenv()
+
+es_host = os.getenv("ES_HOST")
+es_user = os.getenv("ES_USER")
+es_pass = os.getenv("ES_PASSWORD")
+
+client = Elasticsearch(hosts=[es_host], http_auth=(es_user, es_pass))
+
+
+@click.command(
+    context_settings={"ignore_unknown_options": True, "allow_extra_args": True}
+)
+@click.option(
+    "--index",
+    type=click.Choice(["content", "taxonomy"], case_sensitive=True),
+    required=True,
+)
+@click.option(
+    "--action",
+    type=click.Choice(["index", "create", "delete", "delete-data"], case_sensitive=True),
+    required=True,
+)
+@click.pass_context
+def run(ctx: Context, index: str, action: str):
+    if action == "index":
+        print('TODO: Action is index')
+    elif action == "create":
+        create_index(index)
+    elif action == "delete":
+        delete_index(index)
+    elif action == "delete-data":
+        delete_data(index)
+
+
+def create_index(index_name: str):
+    settings = get_file_content(os.path.abspath(os.curdir) + '/models/' + index_name + '/settings.json')
+    mappings = get_file_content(os.path.abspath(os.curdir) + '/models/' + index_name + '/mappings.json')
+    try:
+        client.indices.create(
+            index=index_name,
+            body={
+                "settings": settings,
+                "mappings": mappings
+            },
+            ignore=400,
+        )
+    except Exception as e:
+        logger.exception(e)
+
+
+def delete_index(index_name: str):
+    try:
+        client.indices.delete(
+            index=[index_name]
+        )
+    except Exception as e:
+        logger.exception(e)
+
+
+def delete_data(index_name: str):
+    try:
+        client.delete_by_query(
+            index=[index_name],
+            body={
+                "query": {
+                    "match_all": {}
+                }
+            }
+        )
+    except Exception as e:
+        logger.exception(e)
+
+
+def get_file_content(path):
+    with open(path, 'r') as file:
+        content = loads(file.read())
+    return content
+
+
+if __name__ == "__main__":
+    run()
