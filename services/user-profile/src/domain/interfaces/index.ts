@@ -6,7 +6,4 @@ export * from './typeParsers';
 export * from './UserProfile';
 export * from './UserProfilePersister';
 export * from './UserProfilePersisterV2';
-
-export interface DownstreamEndpoints {
-    apiGatewayBaseURL: string;
-}
+export * from './DownstreamEndpoints';

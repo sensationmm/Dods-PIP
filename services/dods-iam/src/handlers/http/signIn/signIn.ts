@@ -1,10 +1,9 @@
 import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
-import { SigningParameters } from "aws-sdk/clients/signer";
-import { config } from "../../../domain";
-import { LoginRepository } from "../../../repositories";
+import { config, SignInParameters } from "../../../domain";
+import { UserProfileRepository, LoginRepository } from "../../../repositories";
 import { AwsCognito } from "../../../services";
 
-export const signIn: AsyncLambdaMiddleware<SigningParameters> = async ({ email, password }) => {
+export const signIn: AsyncLambdaMiddleware<SignInParameters> = async ({ email, password }) => {
 
     if (!email) {
         throw new HttpError("Request Body should contain Email field.", HttpStatusCode.BAD_REQUEST);
@@ -18,6 +17,18 @@ export const signIn: AsyncLambdaMiddleware<SigningParameters> = async ({ email, 
         const tokens = await AwsCognito.defaultInstance.signIn(email, password);
 
         await LoginRepository.defaultInstance.resetLoginAttempt(email);
+
+        const { UserAttributes, Username } = await AwsCognito.defaultInstance.getUserData(tokens?.accessToken);
+
+        if (UserAttributes) {
+            const clientAccountId = UserAttributes.find((a) => a.Name === 'custom:clientAccountId')?.Value;
+            const clientAccountName = UserAttributes.find((a) => a.Name === 'custom:clientAccountName')?.Value;
+            const userProfileUuid = UserAttributes.find((a) => a.Name === 'custom:UserProfileUuid')?.Value;
+
+            const { role = '', firstName = '', lastName = '', isDodsUser = false } = (userProfileUuid && await UserProfileRepository.defaultInstance.getUser({ userProfileUuid })) || {};
+
+            Object.assign(tokens, { clientAccountId, clientAccountName, userId: Username, userName: email, role, displayName: `${firstName} ${lastName}`, isDodsUser });
+        }
 
         response = new HttpResponse(HttpStatusCode.OK, tokens);
     } catch (error: any) {

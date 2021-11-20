@@ -2,21 +2,21 @@ import { User, Role } from '@dodsgroup/dods-model';
 import { mocked } from 'ts-jest/utils';
 import { CreateUserPersisterInput, SearchUsersInput } from '../../../src/domain';
 
-import { UserProfileRepositoryV2 } from '../../../src/repositories/UserProfileRepositoryV2';
+import { DODS_USER, UserProfileRepositoryV2 } from '../../../src/repositories/UserProfileRepositoryV2';
 
 
-const defaultRoleSequelizeResult = { id: 1 } as Role;
+const defaultRoleSequelizeResult = { id: 1, uuid: DODS_USER } as Role;
 
 const defaultSearchUsersSequelizeResult = {
     rows: [
-        { uuid: '24e7ca86-1788-4b6e-b153-9c963dc921we', firstName: 'Test First Name1', lastName: 'Test Last Name1', primaryEmail: '', role: { title: '' } } as any,
-        { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name2', lastName: 'Test Last Name2', primaryEmail: '', role: { title: '' } } as any,
+        { uuid: '24e7ca86-1788-4b6e-b153-9c963dc921we', firstName: 'Test First Name1', lastName: 'Test Last Name1', primaryEmail: '', role: { uuid: DODS_USER, title: '' }, isDodsUser: true } as any,
+        { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name2', lastName: 'Test Last Name2', primaryEmail: '', role: { uuid: '', title: '' }, isDodsUser: false } as any,
     ],
     count: 2
 };
 
 const defaultSearchUsersRepositoryResult = {
-    users: defaultSearchUsersSequelizeResult.rows.map(({ uuid, firstName, lastName, primaryEmail, role }) => ({ uuid, firstName, lastName, email: primaryEmail, role: role.title })),
+    users: defaultSearchUsersSequelizeResult.rows.map(({ uuid, firstName, lastName, primaryEmail, role, isDodsUser }) => ({ uuid, firstName, lastName, email: primaryEmail, role: role.title, isDodsUser })),
     count: defaultSearchUsersSequelizeResult.count
 };
 
