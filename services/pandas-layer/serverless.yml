@@ -10,7 +10,7 @@ provider:
 
 layers:
   DodsPandas:
-    path: layers
+    path: layers/pandas
     description: Pandas 1.3.4 on Python 3.7
     compatibleRuntimes:
       - python3.7

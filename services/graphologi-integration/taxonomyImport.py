@@ -65,6 +65,29 @@ def handle(event, context):
     # Top concept is a list with only one item so we can pull it out and make it a string
     taxo_df_labeled['topConceptOf'] = taxo_df_labeled.apply(extractTopConcept, axis=1)
 
+    # Create hierarchy
+    def updateHierarchy(df):
+        if (df['narrower'].empty or df['narrower'].astype(str).iloc[0] == 'nan'):
+            return False
+        for narrower in df['narrower'].iloc()[0]:
+            hierarchy = df['hierarchy'].iloc()[0] + '->' + df['label'].iloc()[0]
+            taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+            updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
+
+    taxonomies = taxo_df_labeled['topConceptOf'].dropna().unique()
+    taxo_df_labeled['hierarchy'] = ''
+    for taxonomy in taxonomies:
+        topConcepts = taxo_df_labeled[taxo_df_labeled['topConceptOf'] == taxonomy]
+        for i, row in topConcepts.iterrows():
+            for narrower in row['narrower']:
+                narrow = taxo_df_labeled[taxo_df_labeled['id'] == narrower].iloc()[0]
+                if narrow['hierarchy']:
+                    hierarchy = narrow['hierarchy'] + '->' + row['label']
+                else:
+                    hierarchy = row['label']
+                taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+                updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
+
 
     es = Elasticsearch(cloud_id=esCloudId, api_key=(esKeyId, esApiKey))
 
