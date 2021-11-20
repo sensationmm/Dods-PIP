@@ -15,7 +15,8 @@
     "deploy:prod": "AWS_PROFILE=dods-prod AWS_REGION=eu-west-1 serverless deploy --stage prod",
     "remove:deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage dev",
     "remove:deploy:prod": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage prod",
-    "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}"
+    "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}",
+    "serverlessConfig:print": "AWS_PROFILE=dods-dev serverless print --stage dev"
   },
   "pre-commit": [
     "test:coverage",

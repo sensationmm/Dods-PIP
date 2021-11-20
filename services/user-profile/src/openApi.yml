@@ -164,6 +164,31 @@ paths:
           description: Not authenticated
         "403":
           description: Does not have correct permissions
+    post:
+      operationId: createUser
+      summary: Add new User
+      requestBody:
+        description: Add new User
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "200":
+          description: Succesfully created User Profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid User Profile supplied
+        "401":
+          description: Not authenticated
+        "403":
+          description: Does not have correct permissions
+        "409":
+          description: an existing item already exists
   /role:
     get:
       summary: List all Roles
@@ -265,6 +290,39 @@ components:
               example: d290f1ss-6c54-4b01-98e6-d701748f7151
           required:
             - role_id
+    UserCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Mr
+        firstName:
+          type: string
+          example: Jane
+        lastName:
+          type: string
+          example: Blogs
+        primaryEmail:
+          type: string
+          example: Jane.Blogs@email.com
+        secondaryEmail:
+          type: string
+          example: Jane.Blogs@email.com
+        telephoneNumber:
+          type: string
+          example: "+442071838750"
+        roleName:
+          type: string
+        clientAccountId:
+          type: string
+        clientAccountName:
+          type: string
+      required:
+        - title
+        - firstName
+        - lastName
+        - primaryEmail
+        - roleName
 
   parameters:
     name:
