@@ -324,4 +324,4 @@ pipelines:
             - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve
             - terraform output --json > tf_out_values.json
             - terraform-docs markdown table --output-values --output-values-from tf_out_values.json . > INFRA.md
-            - git add -A && git commit -m "Updated terraform configuration [skip-ci]" && git push
+            - git add -A && git commit -m "Updated terraform configuration [skip ci]" && git push
