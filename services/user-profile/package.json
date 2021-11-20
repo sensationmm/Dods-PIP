@@ -6,6 +6,7 @@
     "scripts": {
         "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
         "test:coverage": "NODE_ENV=test jest --detectOpenHandles --coverage",
+        "test:coverage:watch": "NODE_ENV=test jest --detectOpenHandles --coverage --watch-all",
         "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
         "test:report": "open coverage/integration-tests-report.html && open coverage/lcov-report/index.html",
         "dev": "scripts/setUpDev.sh && AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=development serverless offline --stage dev && scripts/tearDown.sh",

@@ -70,8 +70,6 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         expect(response).toEqual(expectedResponse);
 
-        expect(mockedUserProfileRepository.defaultInstance.createUserProfile).toHaveBeenCalledTimes(
-            1
-        );
+        expect(mockedUserProfileRepository.defaultInstance.createUserProfile).toHaveBeenCalledTimes(1);
     });
 });

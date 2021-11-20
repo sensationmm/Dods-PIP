@@ -1,5 +1,5 @@
 import { searchUsers } from '../../../src/handlers/searchUsers/searchUsers';
-import { UserProfileRepositoryV2 } from '../../../src/repositories/UserProfileRepositoryV2';
+import { UserProfileRepositoryV2 } from '../../../src/repositories';
 import { mocked } from 'ts-jest/utils';
 import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 import { SearchUsersInput, SearchUsersOutput } from '../../../src/domain';

@@ -1,6 +1,6 @@
 import { User, Role } from '@dodsgroup/dods-model';
 import { mocked } from 'ts-jest/utils';
-import { SearchUsersInput } from '../../../src/domain';
+import { CreateUserPersisterInput, SearchUsersInput } from '../../../src/domain';
 
 import { UserProfileRepositoryV2 } from '../../../src/repositories/UserProfileRepositoryV2';
 
@@ -29,6 +29,7 @@ mockedUser.findAndCountAll.mockResolvedValue(defaultSearchUsersSequelizeResult);
 
 const CLASS_NAME = UserProfileRepositoryV2.name;
 const SEARCH_USERS_FUNCTION_NAME = UserProfileRepositoryV2.defaultInstance.searchUsers.name;
+const CREATE_USER_FUNCTION_NAME = UserProfileRepositoryV2.defaultInstance.createUser.name;
 
 afterAll(() => {
     mockedRole.mockClear();
@@ -54,13 +55,20 @@ describe(`${CLASS_NAME}`, () => {
             role: 'testRole',
             limit: 10,
             offset: 0,
-            sortBy: 'lastName',
+            sortBy: 'role',
             sortDirection: 'ASC'
         };
 
-        const response = await UserProfileRepositoryV2.defaultInstance.searchUsers(searchUsersParameters);
+        const response1 = await UserProfileRepositoryV2.defaultInstance.searchUsers(searchUsersParameters);
 
-        expect(response).toEqual(defaultSearchUsersRepositoryResult);
+        expect(response1).toEqual(defaultSearchUsersRepositoryResult);
+
+        searchUsersParameters.sortBy = 'account';
+
+        const response2 = await UserProfileRepositoryV2.defaultInstance.searchUsers(searchUsersParameters);
+
+        expect(response2).toEqual(defaultSearchUsersRepositoryResult);
+
     });
 
     test(`${SEARCH_USERS_FUNCTION_NAME} Invalid input for role field`, async () => {
@@ -83,6 +91,50 @@ describe(`${CLASS_NAME}`, () => {
             throw new Error('Code never should come in this point');
         } catch (error: any) {
             expect(error.message).toEqual(`Error: RoleUuid ${searchUsersParameters.role} does not exist`);
+        }
+    });
+
+    test(`${CREATE_USER_FUNCTION_NAME} Valid input Happy case`, async () => {
+
+        const roleName = 'User';
+
+        const roleSequelizeResult = { id: 1, title: roleName } as Role;
+
+        const userSequelizeResult = { id: 1, title: 'Mr', firstName: 'kenan', lastName: 'hancer', primaryEmail: 'kenan.hancer@somoglobal.com' } as User;
+
+        mockedRole.findOne.mockResolvedValue(roleSequelizeResult);
+
+        mockedUser.create.mockResolvedValue(userSequelizeResult);
+
+        const parameters: CreateUserPersisterInput = { ...userSequelizeResult, telephoneNumber: userSequelizeResult.primaryEmail, roleName };
+
+        const response = await UserProfileRepositoryV2.defaultInstance.createUser(parameters);
+
+        expect(response).toEqual(userSequelizeResult);
+    });
+
+    test(`${CREATE_USER_FUNCTION_NAME} Invalid input for role field`, async () => {
+
+        const roleName = 'User';
+
+        mockedRole.findOne.mockResolvedValue(undefined as any);
+
+        mockedUser.create.mockResolvedValue(defaultRoleSequelizeResult);
+
+        const parameters: CreateUserPersisterInput = {
+            title: 'Mr',
+            firstName: 'kenan',
+            lastName: 'hancer',
+            primaryEmail: 'kenan.hancer@somoglobal.com',
+            roleName
+        };
+
+        try {
+            await UserProfileRepositoryV2.defaultInstance.createUser(parameters);
+
+            throw new Error('Code never should come in this point');
+        } catch (error: any) {
+            expect(error.message).toEqual(`Error: Role title: ${roleName} does not exist`);
         }
     });
 });

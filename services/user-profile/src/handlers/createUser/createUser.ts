@@ -14,9 +14,15 @@ export const createUser: AsyncLambdaMiddleware<CreateUserInput> = async (paramet
 
         if (createUserResult.success) {
             userId = createUserResult.data.userName;
+        } else {
+            throw new UserProfileError('Cognito Error: User is not created');
         }
     } catch (error: any) {
-        throw new UserProfileError(`Cognito Error: ${JSON.stringify(error.response.data.error)}`);
+
+        if (error.response) {
+            throw new UserProfileError(`Cognito Error: ${JSON.stringify(error.response.data.error)}`);
+        }
+        throw error;
     }
 
     const response = await UserProfileRepositoryV2.defaultInstance.createUser(parameters);
