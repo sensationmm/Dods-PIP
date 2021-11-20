@@ -13,3 +13,7 @@ output "api_key_front" {
 output "api_key_test" {
   value = aws_api_gateway_api_key.testing.value
 }
+
+output "api_gateway_url" {
+  value = "https://${aws_api_gateway_rest_api.backend.id}.execute-api.${var.aws_region}.amazonaws.com/${var.environment}"
+}

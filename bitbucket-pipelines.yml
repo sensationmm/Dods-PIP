@@ -318,11 +318,10 @@ pipelines:
           name: Terraform Apply
           image: gioatsomoglobal/devopstools:0.4.6
           deployment: dev
-          size: 2x
           script:
             - cd infrastructure-terraform
-            - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile $AWS_PROFILE
-            - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile $AWS_PROFILE
-            - aws configure set default.region us-west-2 --profile $AWS_PROFILE
             - terraform init
             - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve
+            - terraform output --json > tf_out_values.json
+            - terraform-docs markdown table --output-values --output-values-from tf_out_values.json . > INFRA.md
+            - git add -A && git commit -m "Updated terraform configuration [skip-ci]" && git push

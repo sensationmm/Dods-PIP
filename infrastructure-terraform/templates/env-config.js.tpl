@@ -1,4 +1,4 @@
-${environment} = {
+module.exports = {
     securityGroupIds: ${securityGroupIds},
     subnetIds: ${subnetIds},
     apiGatewayId: ${apiGatewayId},
