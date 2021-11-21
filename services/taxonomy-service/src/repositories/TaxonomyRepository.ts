@@ -5,7 +5,7 @@ import {
     TaxonomyNode,
     TaxonomiesParameters,
     TaxonomyItem,
-    TaxonomyTree,
+    TaxonomyTree, TaxonomySearchResponse,
 } from "../domain";
 import { Taxonomy } from "./Taxonomy"
 import elasticsearch from "../elasticsearch"
@@ -24,9 +24,12 @@ export class TaxonomyRepository implements Taxonomy {
          let query = {
             index: 'taxonomy',
             body: {
-                query: {
-                    "term": {
-                        "label": data.tags
+                "query": {
+                    "bool" : {
+                        "must" : [
+                            {"match": {"label": data.tags}},
+                            {"match": {"inScheme": data.taxonomy}}
+                        ]
                     }
                 }
             },
@@ -39,19 +42,26 @@ export class TaxonomyRepository implements Taxonomy {
         return query;
     }
 
-    async searchTaxonomies(data: TaxonomiesParameters): Promise<any[ ]> {
-        let tag_results: any[] = []
+    async searchTaxonomies(data: TaxonomiesParameters): Promise<TaxonomySearchResponse> {
+        let tag_results: Array<TaxonomyItem> = []
+        let taxonomySet = data.taxonomy
 
         if(!('tags' in data)){
             throw new HttpBadRequestError("No tags found to search")
         }
         const es_response = await this.elasticsearch.search(await TaxonomyRepository.createSearchQuery(data))
+        console.log(es_response)
         es_response.body.hits.hits.forEach((es_doc: any) => {
             const es_tag: TaxonomyItem = { id: es_doc._source.id, tag: es_doc._source.label, score: es_doc._score, inScheme: es_doc._source.inScheme};
             tag_results.push(es_tag)
         });
 
-        return tag_results
+        return {
+            //@ts-ignore
+            taxonomy: taxonomySet,
+            hitCount: es_response.body.hits.total.value,
+            results: tag_results
+        }
     }
 
     TOP_CONCEPTS_QUERY = {
