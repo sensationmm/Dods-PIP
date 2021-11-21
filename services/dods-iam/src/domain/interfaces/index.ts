@@ -18,3 +18,4 @@ export * from './CreateUserParameters';
 export * from './UserProfile';
 export * from './SignInParameters';
 export * from './UpdateUserAttributesParameters';
+export * from './DeleteUserAttributesParameters';

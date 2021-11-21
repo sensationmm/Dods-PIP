@@ -1,4 +1,4 @@
-import { User, UserInput } from '@dodsgroup/dods-model';
+import { UserInput, UserOutput } from '@dodsgroup/dods-model';
 
 export type SearchUsersInput = {
     name?: string;
@@ -18,9 +18,6 @@ export type SearchUsersOutput = {
 }
 
 
-export type GetUserInput = {
-    UserProfileUuid: string;
-}
 
 
 export type RequestOutput<T = any> = {
@@ -43,17 +40,19 @@ export interface IamPersister {
     updateUserAttributes(email: string, userAttributes: Array<UserAttributes>): Promise<void>;
 }
 
+
 export type CreateUserPersisterInput = Pick<UserInput, 'title' | 'firstName' | 'lastName' | 'primaryEmail' | 'secondaryEmail'> & { telephoneNumber?: string; roleName: string; }
 
-export type CreateUserPersisterOutput = User;
+export type CreateUserPersisterOutput = UserOutput;
 
 export type CreateUserInput = CreateUserPersisterInput & { clientAccountId: string; clientAccountName: string; };
 
-export type GetUserOutput = User;
+export type GetUserInput = { userId: string; }
 
+export type GetUserOutput = Pick<UserInput, 'firstName' | 'lastName'> | { email: string; role: string; isDodsUser: boolean; };
 
 export interface UserProfilePersisterV2 {
-    getUser(parameters: GetUserInput): Promise<GetUserOutput | null>;
+    getUser(parameters: GetUserInput): Promise<GetUserOutput>;
     searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput>;
     createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput>;
 }

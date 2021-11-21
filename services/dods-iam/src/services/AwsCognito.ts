@@ -220,6 +220,10 @@ export class AwsCognito {
                     Name: 'custom:clientAccountName', /* required */
                     Value: clientAccountName || ''
                 },
+                {
+                    Name: 'custom:UserProfileUuid', /* required */
+                    Value: '_'
+                },
             ],
         };
 
@@ -248,6 +252,27 @@ export class AwsCognito {
 
         return new Promise((resolve, reject) => {
             cognitoidentityserviceprovider.adminUpdateUserAttributes(params, function (err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    deleteUserAttributes(userName: string, attributeNames: Array<string>): Promise<CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse> {
+
+        var params: CognitoIdentityServiceProvider.Types.AdminDeleteUserAttributesRequest = {
+            UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
+            Username: userName, /* required */
+            UserAttributeNames: attributeNames,
+        };
+
+        const cognitoidentityserviceprovider = new CognitoIdentityServiceProvider();
+
+        return new Promise((resolve, reject) => {
+            cognitoidentityserviceprovider.adminDeleteUserAttributes(params, function (err, result) {
                 if (err) {
                     reject(err);
                 } else {

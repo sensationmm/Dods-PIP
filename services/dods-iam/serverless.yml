@@ -75,6 +75,8 @@ provider:
         - cognito-idp:AdminDisableUser
         - cognito-idp:AdminEnableUser
         - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:AdminDeleteUserAttributes
       Resource: !GetAtt DodsUserPool.Arn
     - Effect: Allow
       Action:
@@ -188,6 +190,13 @@ functions:
       - http:
           method: post
           path: updateUserAttributes
+  deleteUserAttributes:
+    description: Triggered when http request comes
+    handler: src/handlers/http/deleteUserAttributes/index.handle
+    events:
+      - http:
+          method: post
+          path: deleteUserAttributes
   createUser:
     description: Triggered when http request comes
     handler: src/handlers/http/createUser/index.handle

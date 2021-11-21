@@ -25,7 +25,7 @@ export const signIn: AsyncLambdaMiddleware<SignInParameters> = async ({ email, p
             const clientAccountName = UserAttributes.find((a) => a.Name === 'custom:clientAccountName')?.Value;
             const userProfileUuid = UserAttributes.find((a) => a.Name === 'custom:UserProfileUuid')?.Value;
 
-            const { role = '', firstName = '', lastName = '', isDodsUser = false } = (userProfileUuid && await UserProfileRepository.defaultInstance.getUser({ userProfileUuid })) || {};
+            const { role = '', firstName = '', lastName = '', isDodsUser = false } = (userProfileUuid && userProfileUuid !== '_' && await UserProfileRepository.defaultInstance.getUser({ userId: userProfileUuid })) || {};
 
             Object.assign(tokens, { clientAccountId, clientAccountName, userId: Username, userName: email, role, displayName: `${firstName} ${lastName}`, isDodsUser });
         }

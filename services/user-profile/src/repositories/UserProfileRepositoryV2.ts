@@ -3,6 +3,7 @@ import {
     CreateUserPersisterInput,
     CreateUserPersisterOutput,
     GetUserInput,
+    GetUserOutput,
     SearchUsersInput,
     SearchUsersOutput,
     UserProfileError,
@@ -20,11 +21,21 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
 
     static defaultInstance: UserProfilePersisterV2 = new UserProfileRepositoryV2();
 
-    async getUser(parameters: GetUserInput): Promise<User | null> {
+    async getUser(parameters: GetUserInput): Promise<GetUserOutput> {
 
-        const user = await User.findOne({ where: { uuid: parameters.UserProfileUuid } });
+        const user = await User.findOne({ where: { uuid: parameters.userId } });
 
-        return user;
+        if (!user) {
+            throw new UserProfileError(`Error: UserUUID ${parameters.userId} does not exist`);
+        }
+
+        return {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.primaryEmail,
+            role: user.role.title,
+            isDodsUser: user.role.uuid === DODS_USER
+        };
     }
 
     async searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput> {

@@ -1,9 +1,8 @@
 export type GetUserInput = {
-    userProfileUuid: string;
+    userId: string;
 }
 
 export type GetUserOutput = {
-    title: string;
     firstName: string;
     lastName: string;
     email: string;
