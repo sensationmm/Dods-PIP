@@ -11,6 +11,13 @@ describe(`${FUNCTION_NAME} handler`, () => {
         expect(response).toBeInstanceOf(HttpSuccessResponse);
 
     });
+    test(`${FUNCTION_NAME} with explicit taxonomy`, async () => {
+        const data: TaxonomiesParameters = { tags: 'str-uuid', taxonomy: 'Topics' };
+
+        const response = await getTaxonomies(data);
+        expect(response).toBeInstanceOf(HttpSuccessResponse);
+
+    });
 
     test('getTaxonomies with no tags throws HTTP error', async () => {
         const data: TaxonomiesParameters = { id: 'winter' };
