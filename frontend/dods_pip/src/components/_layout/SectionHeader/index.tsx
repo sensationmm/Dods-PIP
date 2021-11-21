@@ -10,7 +10,7 @@ import * as Styled from './SectionHeader.styles';
 export interface SectionHeaderProps {
   icon: Icons | JSX.Element;
   title: string;
-  subtitle: string | Array<string>;
+  subtitle?: string | Array<string>;
 }
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, subtitle }) => {
@@ -25,22 +25,27 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, subtitle }) 
         <Text type="h2" headingStyle="title" data-test="sectionheader-title">
           {title}
         </Text>
-        <Spacer size={2} />
-        {!Array.isArray(subtitle) ? (
-          <Text type="p" data-test="sectionheader-subtitle" color={color.base.black}>
-            {subtitle}
-          </Text>
-        ) : (
-          subtitle.map((para, count) => (
-            <Text
-              key={`sectionheader-subtitle-${count}`}
-              type="p"
-              data-test={`sectionheader-subtitle-${count}`}
-              color={color.base.black}
-            >
-              {para}
-            </Text>
-          ))
+
+        {subtitle && (
+          <div>
+            <Spacer size={2} />
+            {!Array.isArray(subtitle) ? (
+              <Text type="p" data-test="sectionheader-subtitle" color={color.base.black}>
+                {subtitle}
+              </Text>
+            ) : (
+              subtitle.map((para, count) => (
+                <Text
+                  key={`sectionheader-subtitle-${count}`}
+                  type="p"
+                  data-test={`sectionheader-subtitle-${count}`}
+                  color={color.base.black}
+                >
+                  {para}
+                </Text>
+              ))
+            )}
+          </div>
         )}
       </Styled.titles>
     </Styled.wrapper>

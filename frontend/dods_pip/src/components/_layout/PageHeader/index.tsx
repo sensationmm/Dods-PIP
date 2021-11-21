@@ -8,12 +8,19 @@ export interface PageHeaderProps {
   title: string;
   content?: JSX.Element;
   flexDirection?: 'row' | 'column';
+  breadcrumbs?: JSX.Element;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title, content, flexDirection = 'row' }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({
+  title,
+  content,
+  flexDirection = 'row',
+  breadcrumbs,
+}) => {
   return (
     <Styled.wrapper data-test="component-page-header">
       <Panel data-test="component-header" isPadded={false}>
+          {breadcrumbs && <Styled.breadcrumbsWrapper>{breadcrumbs}</Styled.breadcrumbsWrapper>}
         <Styled.container flexDirection={flexDirection}>
           <div>
             <Text type="h1" headingStyle="hero" data-test="pageheader-title">
