@@ -1,4 +1,4 @@
-import { User, UserInput } from '@dodsgroup/dods-model';
+import { UserInput, UserOutput } from '@dodsgroup/dods-model';
 
 export type SearchUsersInput = {
     name?: string;
@@ -10,12 +10,13 @@ export type SearchUsersInput = {
     sortDirection?: string;
 }
 
-export type SearchUsersResultType = Pick<UserInput, 'uuid' | 'firstName' | 'lastName'> & { email: string; role: string; }
+export type SearchUsersResultType = Pick<UserInput, 'uuid' | 'firstName' | 'lastName'> & { email: string; role: string; isDodsUser: boolean; }
 
 export type SearchUsersOutput = {
     users: Array<SearchUsersResultType>;
     count: number;
 }
+
 
 
 
@@ -29,17 +30,29 @@ export type CreateUserOutput = {
     userName: string;
 }
 
+export type UserAttributes = {
+    Name: string;
+    Value: string;
+}
+
 export interface IamPersister {
     createUser(email: string, clientAccountId: string, clientAccountName: string): Promise<RequestOutput<CreateUserOutput>>;
+    updateUserAttributes(email: string, userAttributes: Array<UserAttributes>): Promise<void>;
 }
+
 
 export type CreateUserPersisterInput = Pick<UserInput, 'title' | 'firstName' | 'lastName' | 'primaryEmail' | 'secondaryEmail'> & { telephoneNumber?: string; roleName: string; }
 
-export type CreateUserPersisterOutput = User;
+export type CreateUserPersisterOutput = UserOutput;
 
 export type CreateUserInput = CreateUserPersisterInput & { clientAccountId: string; clientAccountName: string; };
 
+export type GetUserInput = { userId: string; }
+
+export type GetUserOutput = Pick<UserInput, 'firstName' | 'lastName'> | { email: string; role: string; isDodsUser: boolean; };
+
 export interface UserProfilePersisterV2 {
+    getUser(parameters: GetUserInput): Promise<GetUserOutput>;
     searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput>;
     createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput>;
 }

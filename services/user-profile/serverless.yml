@@ -113,6 +113,13 @@ functions:
       - http:
           method: get
           path: users
+  getUser:
+    handler: src/handlers/getUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: user
   createUser:
     handler: src/handlers/createUser/index.handle
     description: Triggered when http request comes

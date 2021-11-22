@@ -15,3 +15,7 @@ export * from './SignOutParameters';
 export * from './SignUpParameters';
 export * from './LoginEventTypes';
 export * from './CreateUserParameters';
+export * from './UserProfile';
+export * from './SignInParameters';
+export * from './UpdateUserAttributesParameters';
+export * from './DeleteUserAttributesParameters';

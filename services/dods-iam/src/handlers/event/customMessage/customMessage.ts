@@ -11,7 +11,7 @@ export const customMessage: AsyncLambdaMiddleware<CustomMessageTriggerEvent, Cus
         if (event.triggerSource === "CustomMessage_ForgotPassword" || event.triggerSource === 'CustomMessage_AdminCreateUser') {
             const codeEncoded = event.request.codeParameter;
             const emailEncoded = encodeURIComponent(Buffer.from(event.request.userAttributes['email']).toString('base64'));
-            const resetPasswordPageUrl = `${config.dods.resetPasswordUrl}?code=${codeEncoded}&uid=${emailEncoded}`;
+            const resetPasswordPageUrl = `${config.dods.downstreamEndpoints.resetPasswordUrl}?code=${codeEncoded}&uid=${emailEncoded}`;
 
             event.response.emailMessage = `Please click link to reset your password. ${resetPasswordPageUrl}`;
         } else if (event.triggerSource === 'CustomMessage_SignUp') {

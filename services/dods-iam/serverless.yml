@@ -32,10 +32,9 @@ provider:
     lambda: true
 
   apiGateway:
-    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, ""}
-    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, ""}
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, file(../env-config.dev.js):apiGatewayId}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, file(../env-config.dev.js):apiRootResourceId}
     description: Default Gateway for ${self:provider.stage} deployed with Terraform
-
 
   environment:
     NODE_ENV: development
@@ -48,6 +47,7 @@ provider:
     LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: ${self:custom.resourceNames.DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE}
     FAILED_LOGIN_ATTEMPT_COUNT: 3
     LOGIN_LAST_PASSWORDS_NOT_REUSE_MINUTES: 262800 # 6 months
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     RESET_PASSWORD_URL: ${file(../env-config.${self:provider.stage}.js):frontendURL}/password-reset
 
   eventBridge:
@@ -75,6 +75,8 @@ provider:
         - cognito-idp:AdminDisableUser
         - cognito-idp:AdminEnableUser
         - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:AdminDeleteUserAttributes
       Resource: !GetAtt DodsUserPool.Arn
     - Effect: Allow
       Action:
@@ -181,6 +183,20 @@ functions:
       - http:
           method: post
           path: forgotPassword
+  updateUserAttributes:
+    description: Triggered when http request comes
+    handler: src/handlers/http/updateUserAttributes/index.handle
+    events:
+      - http:
+          method: post
+          path: updateUserAttributes
+  deleteUserAttributes:
+    description: Triggered when http request comes
+    handler: src/handlers/http/deleteUserAttributes/index.handle
+    events:
+      - http:
+          method: post
+          path: deleteUserAttributes
   createUser:
     description: Triggered when http request comes
     handler: src/handlers/http/createUser/index.handle
@@ -342,6 +358,12 @@ resources:
             AttributeDataType: Number
             Mutable: true
           - Name: "clientAccountName"
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 0
+              MaxLength: 100
+          - Name: "UserProfileUuid"
             AttributeDataType: String
             Mutable: true
             StringAttributeConstraints:

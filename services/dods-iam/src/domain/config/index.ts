@@ -1,6 +1,7 @@
 import Joi, { Schema } from 'joi';
 import { resolve } from 'path';
 import { execSync } from 'child_process'
+import { DownstreamEndpoints } from '../interfaces/DownstreamEndpoints';
 
 const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage ${process.env.SERVERLESS_STAGE || 'test'} --format json${process.env.SERVERLESS_STAGE === 'local' ? ' | tail -n +2' : ''}`;
 
@@ -62,12 +63,13 @@ const envVarsSchema = Joi.object()
         COGNITO_USER_POOL_ID: Joi.string().required().description('AWS Cognito User Pool ID'),
         COGNITO_CLIENT_ID: Joi.string().required().description('AWS Cognito Client ID'),
         FAILED_LOGIN_ATTEMPT_COUNT: Joi.number().required().default(3).description('AWS Cognito Failed Login Attempt Count'),
-        RESET_PASSWORD_URL: Joi.string().required().description('Dods Reset User Password page url'),
         LOGIN_EVENT_BUS_NAME: Joi.string().required().description('Dods Login Event Bus Name'),
         LOGIN_EVENT_BUS_ARN: Joi.string().required().description('Dods Login Event Bus ARN'),
         LOGIN_ATTEMPTS_DYNAMODB_TABLE: Joi.string().required().description('Dods Login Attempts Dynamodb Table Name'),
         LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: Joi.string().required().description('Dods Login Last Passwords Dynamodb Table Name'),
         LOGIN_LAST_PASSWORDS_NOT_REUSE_MINUTES: Joi.number().required().description('Dods Login Last Passwords not Reuse Minutes'),
+        API_GATEWAY_BASE_URL: Joi.string().required().description('Dods Api Gateway Base URL'),
+        RESET_PASSWORD_URL: Joi.string().required().description('Dods Reset User Password page url'),
     })
     .unknown();
 
@@ -78,7 +80,10 @@ export const config = {
     serverlessStage: envVars.SERVERLESS_STAGE as string,
     openApiPath: resolve(process.cwd(), 'src/openApi.yml') as string,
     dods: {
-        resetPasswordUrl: envVars.RESET_PASSWORD_URL as string
+        downstreamEndpoints: {
+            resetPasswordUrl: envVars.RESET_PASSWORD_URL as string,
+            apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
+        } as DownstreamEndpoints,
     },
     aws: {
         resources: {
