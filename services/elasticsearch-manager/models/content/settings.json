@@ -1,1 +1,81 @@
-{}
+{
+  "index": {
+    "number_of_shards": 5,
+    "number_of_replicas": 3,
+    "max_result_window": 10000000,
+    "analysis": {
+      "filter": {
+        "email_filter": {
+          "type": "pattern_capture",
+          "preserve_original": true,
+          "patterns": [
+            "([^@]+)",
+            "(\\p{L}+)",
+            "(\\d+)",
+            "@(.+)",
+            "([^-@]+)"
+          ]
+        },
+        "english_stop": {
+          "type": "stop",
+          "stopwords": "_english_"
+        },
+        "english_keywords": {
+          "type": "keyword_marker",
+          "keywords": "example"
+        },
+        "english_stemmer": {
+          "type": "stemmer",
+          "language": "english"
+        },
+        "english_possessive_stemmer": {
+          "type": "stemmer",
+          "language": "possessive_english"
+        }
+      },
+      "char_filter": {
+        "replace_dot": {
+          "type": "pattern_replace",
+          "pattern": "\\.",
+          "replacement": ""
+        },
+        "replace_apostrophe": {
+          "type": "pattern_replace",
+          "pattern": "\\’",
+          "replacement": ""
+        }
+      },
+      "analyzer": {
+        "analyzer_case_insensitive": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "email_filter"
+          ],
+          "char_filter": [
+            "replace_dot",
+            "replace_apostrophe"
+          ]
+        },
+        "analyzer_sort": {
+          "tokenizer": "keyword",
+          "filter": [
+            "english_possessive_stemmer",
+            "lowercase",
+            "english_stop",
+            "english_keywords",
+            "english_stemmer"
+          ]
+        },
+        "email_analyzer": {
+          "tokenizer": "uax_url_email",
+          "filter": [
+            "email_filter",
+            "lowercase",
+            "unique"
+          ]
+        }
+      }
+    }
+  }
+}

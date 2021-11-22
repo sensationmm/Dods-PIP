@@ -1,18 +1,22 @@
-#### Elastic commands help
+#### Elastic commands helper
 
 - ###### Change folder path
 ```
-cd ./services/content
+cd ./services/elasticsearch-manager
 ```
 - ###### Create the index
 ```
-./bin/elastic-run --env=dev --index=content --action=create
+./bin/elastic-run --index=content --action=create
 ```
 - ###### Delete the index
 ```
-./bin/elastic-run --env=dev --index=content --action=delete
+./bin/elastic-run --index=content --action=delete
 ```
 - ###### Index the content
 ```
-./bin/elastic-run --env=dev --index=content --action=index
+./bin/elastic-run --index=content --action=index
+```
+- ###### Delete the data from index
+```
+./bin/elastic-run --index=content --action=delete-data
 ```
