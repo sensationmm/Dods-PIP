@@ -376,7 +376,7 @@ components:
         enum:
           - lastName
           - account
-          - email
+          - primaryEmail
           - role
       required: false
       description: sort User Profile by name or subscription
