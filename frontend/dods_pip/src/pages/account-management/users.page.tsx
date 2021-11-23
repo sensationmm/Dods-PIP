@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
@@ -65,6 +66,8 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
   const [usersList, setUsersList] = React.useState<userAccounts>([]);
   const [total, setTotal] = React.useState<number>(0);
   const debouncedValue = useDebounce<string>(filters?.search as string, 850);
+
+  const router = useRouter();
 
   const { activePage, numPerPage, PaginationStats, PaginationButtons } = Pagination(total);
 
@@ -136,6 +139,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
             isSmall={false}
             icon={Icons.Add}
             label="Add User"
+            onClick={() => router.push('/account-management/add-user')}
           />
         </Styled.header>
 
@@ -179,6 +183,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
                 size="medium"
                 options={[
                   { value: '', label: 'Role' },
+                  { value: 'Admin', label: 'Admin' },
                   { value: 'User', label: 'User' },
                 ]}
                 onChange={(value) => setFilters({ ...filters, ...{ role: value } })}
