@@ -101,20 +101,9 @@ def run(event, context):
                         print(e)
                         continue
 
-                    content_field = {
-                        'html_content': payload_creation(pageContent)
-                    }
-
                     final_content = Common().get_file_content(content_template_file_path)
                     final_content['documentId'] = uuid.uuid4().hex
-                    final_content['contentType'] = content_type
                     final_content['contentSource'] = config.get('parser', 'contentSource')
-                    final_content['contentSourceURL'] = link
-                    final_content['extractDate'] = datetime.now().isoformat()
-                    final_content['content'] = content_field
-                    # final_content['metadata'].append({
-                    #     'jurisdiction': 'UK'
-                    # })
                     final_content['jurisdiction'] = 'UK'
                     final_content['documentTitle'] = title
                     final_content['organisationName'] = ''
@@ -133,7 +122,7 @@ def run(event, context):
                     final_content['feedFormat'] = 'text/plain'
                     final_content['language'] = 'en'
                     final_content['taxonomyTerms'] = []
-                    final_content['originalContent'] = content_field
+                    final_content['originalContent'] = payload_creation(pageContent)
                     final_content['documentContent'] = ''
 
 
