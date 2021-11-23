@@ -1,5 +1,5 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
-import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails, ISignUpResult, ISignInResult } from 'amazon-cognito-identity-js';
+import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails, ISignUpResult } from 'amazon-cognito-identity-js';
 import { config, UserAttributes } from "../domain";
 
 export class AwsCognito {
@@ -26,7 +26,7 @@ export class AwsCognito {
         });
     }
 
-    signIn(userName: string, password: string): Promise<ISignInResult> {
+    signIn(userName: string, password: string): Promise<Record<string, any>> {
 
         const authenticationDetails = new AuthenticationDetails({ Username: userName, Password: password });
 
