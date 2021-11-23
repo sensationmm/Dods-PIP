@@ -112,6 +112,14 @@ functions:
                   method: put
                   path: editorial-record/{recordId}
     
+    getEditorialRecord:
+        handler: src/handlers/getEditorialRecord/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: get
+                  path: editorial-record/{recordId}
+    
     getContentSourcesList:
         handler: src/handlers/getContentSourcesList/index.handle
         description: Triggered on HTTP request
