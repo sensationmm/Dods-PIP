@@ -8,7 +8,7 @@ const loadConfig = (schema: Schema) => {
         .validate(process.env);
 
     if (error) {
-        console.error(`Config validation error: ${error.message}`);
+        console.log(`Config validation error: ${error.message}`);
         process.exit(1);
     }
 
@@ -24,9 +24,7 @@ const envVarsSchema = Joi.object()
             .default('development'),
         SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
-        DB_DRIVER: Joi.string()
-            .required()
-            .valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
+        DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
         DB_HOST: Joi.string().required(),
         DB_NAME: Joi.string().required(),
         DB_USER: Joi.string().required(),
@@ -51,6 +49,13 @@ export const config = {
     dods: {
         downstreamEndpoints: {
             userProfile: envVars.BASE_URL as string,
+        },
+        recordStatuses: {
+            draft: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+            ingested: 'b54bea83-fa06-4bd4-852d-08e5908c55b5',
+            created: 'a1c5e035-28d3-4ac3-b5b9-240e0b11dbce',
+            inProgress: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
+            scheduled: 'c6dadaed-de7f-45c1-bcdf-f3bbef389a60',
         },
     },
     aws: {

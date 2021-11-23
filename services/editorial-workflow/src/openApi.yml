@@ -82,6 +82,20 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+    /editorial-record/{recordId}:
+        put:
+            summary: Update Editorial Record
+            requestBody:
+                $ref: '#/components/requestBodies/UpdateEditorialRecord'
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
     /content-sources:
         get:
             summary: List content sources based upon data in Editorial Records table
@@ -233,7 +247,14 @@ components:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/EditorialRecordRequest'
+                        $ref: '#/components/schemas/CreateEditorialRecordRequest'
+        UpdateEditorialRecord:
+            description: A JSON object containing Editorial Record information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/UpdateEditorialRecordRequest'
 
     schemas:
         Error:
@@ -265,9 +286,6 @@ components:
                     type: string
                     format: date
                     example: '2020-09-01 09:30:26'     
-            required:
-                - documentName
-                - s3Location
         
         EditorialRecordStatusBase:
             type: object
@@ -298,7 +316,7 @@ components:
                     type: string
                     example: Press Release
 
-        EditorialRecordRequest:
+        UpdateEditorialRecordRequest:
             allOf:
               - $ref: '#/components/schemas/EditorialRecordBase'
             type: object
@@ -311,6 +329,23 @@ components:
                     type: string
                     format: uuid
                     example: d290f1ss-6c54-4b01-98e6-d701748f7151
+
+        CreateEditorialRecordRequest:
+            allOf:
+              - $ref: '#/components/schemas/EditorialRecordBase'
+            type: object
+            properties:
+                assignedEditorId:
+                    type: string
+                    format: uuid
+                    example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                statusId:
+                    type: string
+                    format: uuid
+                    example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            required:
+                - documentName
+                - s3Location
 
         EditorialRecordResponse:
             allOf:
