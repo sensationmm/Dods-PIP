@@ -46,7 +46,9 @@ provider:
 
 functions:
   elastic-run:
-    name: elasticsearch-manager-${sls:stage}
+    name: elasticsearch-manager-${self:provider.stage}
     description: Elasticsearch index manager
     handler: handler.run
     timeout: 90
+    layers:
+      - ${cf:click-layer-${self:provider.stage}.ClickLayerExport}
