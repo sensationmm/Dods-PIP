@@ -115,6 +115,8 @@ const CREATE_RECORD_FUNCTION_NAME =
 const UPDATE_RECORD_FUNCTION_NAME =
     EditorialRecordRepository.defaultInstance.updateEditorialRecord.name;
 
+const GET_RECORD_FUNCTION_NAME = EditorialRecordRepository.defaultInstance.getEditorialRecord.name;
+
 const SEARCH_RECORDS_FUNCTION_NAME =
     EditorialRecordRepository.defaultInstance.listEditorialRecords.name;
 
@@ -253,6 +255,53 @@ describe(`${CLASS_NAME}.${UPDATE_RECORD_FUNCTION_NAME}`, () => {
             expect(e).toHaveProperty(
                 'message',
                 `Unable to retrieve User with uuid: ${requestParams.assignedEditorId}`
+            );
+        }
+    });
+});
+
+describe(`${CLASS_NAME}.${GET_RECORD_FUNCTION_NAME}`, () => {
+    test('Happy case', async () => {
+        const requestParams = {
+            recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
+        };
+        const response = await EditorialRecordRepository.defaultInstance.getEditorialRecord(
+            requestParams.recordId
+        );
+        expect(EditorialRecord.update).toBeCalled;
+        expect(response).toEqual({
+            uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
+            documentName: 'NewDocument',
+            s3Location: 'SomeLocation',
+            informationType: 'Random Doc',
+            contentSource: 'Manual Injection',
+            status: {
+                uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+                status: 'Draft',
+            },
+            assignedEditor: {
+                uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
+                fullName: 'Employee Example',
+            },
+            createdAt: '2021-11-08T16:20:58.000Z',
+            updatedAt: '2021-11-08T16:20:58.000Z',
+        });
+    });
+
+    test('Invalid recordId', async () => {
+        const requestParams = {
+            recordId: 'invalid',
+        };
+        try {
+            await EditorialRecordRepository.defaultInstance.getEditorialRecord(
+                requestParams.recordId
+            );
+            expect(true).toBe(false);
+        } catch (e) {
+            expect(e instanceof BadParameterError).toBe(true);
+            expect(e).toHaveProperty(
+                'message',
+                `Unable to retrieve Editorial Record with uuid: ${requestParams.recordId}`
             );
         }
     });

@@ -197,6 +197,23 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         return this.mapRecordOutput(record);
     }
 
+    async getEditorialRecord(recordId: string): Promise<EditorialRecordOutput> {
+        const record = await this.editorialRecordModel.findOne({
+            where: {
+                uuid: recordId,
+            },
+            include: ['status', 'assignedEditor'],
+        });
+
+        if (!record) {
+            throw new BadParameterError(
+                `Unable to retrieve Editorial Record with uuid: ${recordId}`
+            );
+        }
+
+        return this.mapRecordOutput(record);
+    }
+
     async listEditorialRecords(
         params: SearchEditorialRecordParameters
     ): Promise<EditorialRecordListOutput> {
