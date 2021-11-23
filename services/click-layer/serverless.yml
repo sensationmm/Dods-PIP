@@ -10,7 +10,7 @@ provider:
 
 layers:
   DodsClick:
-    path: layers
+    path: layers/click
     description: click 8.0.3 on Python 3.7
     compatibleRuntimes:
       - python3.7
