@@ -31,7 +31,6 @@ type Filters = {
   aToZ?: string;
   account?: string;
   subscription?: string;
-  location?: string;
 };
 
 type ClientAccountTeamMember = {
@@ -57,7 +56,7 @@ type ClientAccount = {
 type ClientAccounts = ClientAccount[];
 
 type FilterParams = {
-  locations?: string;
+  // locations?: string;
   isCompleted?: boolean;
   subscriptionTypes?: string;
   limit?: number;
@@ -95,9 +94,6 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       offset: activePage * numPerPage,
       ...(filters.subscription && { subscriptionTypes: filters.subscription }),
       ...(filters.account && { isCompleted: filters.account === AccountValue.Completed }),
-      ...(filters.location && {
-        locations: filters.location === LocationValue.UK ? LocationValue.UK : LocationValue.EU,
-      }),
       ...(filters.aToZ && { startsWith: filters.aToZ }),
       ...(filters.search && { searchTerm: encodeURI(filters.search) }),
     };
@@ -127,15 +123,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
     (async () => {
       await loadFilteredAccounts();
     })();
-  }, [
-    debouncedValue,
-    filters.subscription,
-    filters.account,
-    filters.aToZ,
-    filters.location,
-    numPerPage,
-    activePage,
-  ]);
+  }, [debouncedValue, filters.subscription, filters.account, filters.aToZ, numPerPage, activePage]);
 
   const subscriptionPlaceholder = 'All Subscriptions';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
@@ -193,9 +181,9 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
             </Text>
             <Button
               onClick={() => router.push('/account-management/add-client')}
-              isSmall
+              isSmall={false}
               icon={Icons.Add}
-              label="Add Client Account"
+              label="Add Account"
             />
           </Styled.header>
 
@@ -225,7 +213,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   <Select
                     testId="account-page-subscription-filter"
                     id="filter-subscription"
-                    size="small"
+                    size="medium"
                     options={subscriptionList}
                     onChange={(value) => setFilters({ ...filters, ...{ subscription: value } })}
                     value={filters.subscription || ''}
@@ -235,7 +223,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   <Select
                     testId="account-page-account-filter"
                     id="filter-account"
-                    size="small"
+                    size="medium"
                     options={[
                       { value: '', label: 'All Accounts' },
                       { value: AccountValue.Completed, label: 'Only Completed' },
@@ -246,20 +234,6 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                     placeholder="All Accounts"
                     isFilter
                   />
-                  <Select
-                    testId="account-page-location-filter"
-                    id="filter-location"
-                    size="small"
-                    options={[
-                      { value: '', label: 'All Locations' },
-                      { value: LocationValue.EU, label: 'Europe' },
-                      { value: LocationValue.UK, label: 'UK' },
-                    ]}
-                    onChange={(value) => setFilters({ ...filters, ...{ location: value } })}
-                    value={filters.location || ''}
-                    placeholder="All Locations"
-                    isFilter
-                  />
                 </Styled.filterContentCol>
 
                 <Styled.searchWrapper>
@@ -268,7 +242,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                     id="filter-search"
                     onChange={(value) => setFilters({ ...filters, ...{ search: value } })}
                     value={filters.search || ''}
-                    size="small"
+                    size="medium"
                   />
                 </Styled.searchWrapper>
               </Styled.filterContent>
