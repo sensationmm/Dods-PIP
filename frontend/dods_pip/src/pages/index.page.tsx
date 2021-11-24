@@ -79,6 +79,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
       return false;
     }
   };
+
   const onLogin = async () => {
     setLoading(true);
 
@@ -291,22 +292,6 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
                     You must click the complete to complete the unblocking.
                   </Text>
                 </Box>
-              )}
-
-              {failureCount === 0 && !unblockingRequested && (
-                <>
-                  <Spacer size={4} />
-
-                  <Box>
-                    <Text type={'h5'}>Don’t have an account?</Text>
-                    <Spacer size={4} />
-                    <Text type={'span'} center color={color.theme.blueMid}>
-                      If you don’t have an account with Dods, why not sign up for the free trial?
-                    </Text>
-                    <Spacer size={8} />
-                    <Button label={'Start Free Trial'} />
-                  </Box>
-                </>
               )}
             </div>
           </Columns>

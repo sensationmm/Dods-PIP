@@ -7,7 +7,7 @@ import { Icons } from '../Icon/assets';
 import * as Styled from './Button.styles';
 
 export type ButtonType = 'primary' | 'secondary' | 'text';
-type ButtonWidth = 'auto' | 'fixed';
+type ButtonWidth = 'auto' | 'fixed' | 'full';
 type IconAlignment = 'left' | 'right';
 
 export interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {

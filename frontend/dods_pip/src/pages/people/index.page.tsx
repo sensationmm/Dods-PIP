@@ -23,7 +23,16 @@ export const People: React.FC<PeopleProps> = () => {
           <Spacer size={12} />
           <Text>People coming to new platform soon</Text>
           <Spacer size={8} />
-          <Text>Click here to go to existing People platform</Text>
+          <Text>
+            <a
+              href="http://www.dodspeople.com/"
+              title="Dods People Platform"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Click here to go to existing People platform
+            </a>
+          </Text>
         </Panel>
       </main>
     </div>
