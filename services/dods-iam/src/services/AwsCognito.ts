@@ -43,6 +43,22 @@ export class AwsCognito {
                 },
                 onFailure: async (err) => {
                     reject(err);
+                },
+                newPasswordRequired: (_, __) => {
+                    cognitoUser.completeNewPasswordChallenge(password, null, {
+                        onSuccess: session => {
+                            // User confirmed
+                            const accessToken: string = session.getAccessToken().getJwtToken();
+                            const idToken: string = session.getIdToken().getJwtToken();
+                            const refreshToken: string = session.getRefreshToken().getToken();
+
+                            resolve({ accessToken, idToken, refreshToken, userName });
+                        },
+                        onFailure: err => {
+                            // Error confirming user
+                            reject(err);
+                        },
+                    });
                 }
             });
         });
