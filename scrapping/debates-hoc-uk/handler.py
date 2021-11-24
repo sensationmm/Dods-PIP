@@ -49,10 +49,8 @@ def run(event, context):
             # would leave it like this by the time, but code can be improved
             if i == 1:
                 break
-
             # get new page content
             pageSource = requests.get(qa_link)
-
 
             if not re.findall(
                     r'<div[^>]*?class=\"highlight[^>]*?highlight-info\">'
@@ -104,26 +102,13 @@ def run(event, context):
                     final_content = Common().get_file_content(content_template_file_path)
                     final_content['documentId'] = uuid.uuid4().hex
                     final_content['contentSource'] = config.get('parser', 'contentSource')
-                    final_content['jurisdiction'] = 'UK'
                     final_content['documentTitle'] = title
-                    final_content['organisationName'] = ''
-                    final_content['sourceReferenceFormat'] = 'text/html'
                     final_content['sourceReferenceUri'] = link
-                    final_content['createdBy'] = ''
                     final_content['internallyCreated'] = False
-                    final_content['schemaType'] = ''
-                    final_content['contentSource'] = 'House of Commons'
-                    final_content['informationType'] = 'Debates'
                     final_content['contentDateTime'] = createdDateTime
                     final_content['createdDateTime'] = datetime.now().isoformat()
-                    final_content['ingestedDateTime'] = ''
-                    final_content['version'] = '1.0'
-                    final_content['countryOfOrigin'] = 'GBR'
-                    final_content['feedFormat'] = 'text/plain'
-                    final_content['language'] = 'en'
                     final_content['taxonomyTerms'] = []
                     final_content['originalContent'] = payload_creation(pageContent)
-                    final_content['documentContent'] = ''
 
 
                     try:

@@ -1,8 +1,15 @@
 {
-  "contentType": "",
-  "contentSource": "",
-  "contentSourceURL": "",
-  "extractDate": "YYYY:MM::DDThh:mm:ss.sTZD",
-  "metadata": [],
-  "content": {}
+  "jurisdiction": "UK",
+  "organisationName": "",
+  "sourceReferenceFormat": "text/html",
+  "createdBy": "",
+  "schemaType": "",
+  "contentSource": "House of Commons",
+  "informationType": "Debates",
+  "ingestedDateTime": "",
+  "version": "1.0",
+  "countryOfOrigin": "GBR",
+  "feedFormat": "text/plain",
+  "language": "en",
+  "documentContent": ""
 }
