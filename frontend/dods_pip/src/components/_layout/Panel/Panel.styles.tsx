@@ -57,15 +57,16 @@ export const wrapper = styled.div`
 export const panel = styled.div`
   position: relative;
   z-index: 2;
-  padding: ${spacing(3)} ${spacing(3)};
+  padding: ${spacing(3)} ${spacing(6)};
   max-width: 1280px;
   margin: 0 auto;
 
   &.padded {
-    padding: ${spacing(16)} ${spacing(3)};
+    padding: ${spacing(16)} ${spacing(6)};
   }
 
   ${media.greaterThan('md')`
+    
     &.narrow {
       padding-left: ${spacing(22)};
       padding-right: ${spacing(22)};
