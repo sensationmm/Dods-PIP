@@ -4,8 +4,10 @@ import React from 'react';
 import LogoWhite from '../../assets/images/logo-dods.svg';
 import Panel from '../../components/_layout/Panel';
 import color from '../../globals/color';
-import Text from '../Text';
 import Spacer from '../_layout/Spacer';
+import Icon, { IconSize } from '../Icon';
+import { Icons } from '../Icon/assets';
+import Text from '../Text';
 import * as Styled from './Footer.styles';
 
 export interface FooterProps {}
@@ -24,9 +26,15 @@ const Footer: React.FC<FooterProps> = () => {
               Get in touch
             </Text>
             <Spacer size={4} />
-            <Text color={color.base.white}>+44 207 593 5500</Text>
-            <Spacer />
-            <Text color={color.base.white}>customer.service@dodsgroup.com</Text>
+            <Styled.contact>
+              <Icon src={Icons.PhoneBold} color={color.base.white} size={IconSize.mediumLarge} />
+              <Text color={color.base.white}>+44 207 593 5500</Text>
+            </Styled.contact>
+            <Spacer size={3} />
+            <Styled.contact>
+              <Icon src={Icons.MailBold} color={color.base.white} size={IconSize.mediumLarge} />
+              <Text color={color.base.white}>customer.service@dodsgroup.com</Text>
+            </Styled.contact>
           </div>
 
           <Styled.branding>
@@ -43,7 +51,7 @@ const Footer: React.FC<FooterProps> = () => {
       </Panel>
 
       <Styled.footerSub>
-        <Panel isPadded={false} data-test="component-footer" bgColor={color.theme.blueDark}>
+        <Panel isPadded={false} bgColor={color.theme.blueDark}>
           <Styled.wrapper>
             <ul>
               <li>

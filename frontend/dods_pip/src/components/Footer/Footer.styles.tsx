@@ -4,6 +4,7 @@ import color from '../../globals/color';
 import media from '../../globals/media';
 import spacing from '../../globals/spacing';
 import { panel as Panel } from '../_layout/Panel/Panel.styles';
+import { Icon } from '../Icon/Icon.styles';
 
 export const container = styled.div`
   position: relative;
@@ -54,6 +55,19 @@ export const wrapper = styled.div`
     &:hover {
       text-decoration: none;
     }
+  }
+`;
+
+export const contact = styled.div`
+  display: flex;
+  align-items: center;
+
+  ${Icon} {
+    margin-right: ${spacing(4)};
+
+    ${media.lessThan('md')`
+      display: none;
+    `}
   }
 `;
 
