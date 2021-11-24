@@ -76,11 +76,3 @@ module "extracted-content" {
   source      = "./services/extracted-content"
   environment = var.environment
 }
-
-// --------------------------------------------------------------------------------------------------------------------
-// - API Gateway
-// --------------------------------------------------------------------------------------------------------------------
-module "api_gateway" {
-  source      = "./services/api-gateway"
-  environment = var.environment
-}
