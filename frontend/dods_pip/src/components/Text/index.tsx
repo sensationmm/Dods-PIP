@@ -5,13 +5,25 @@ import { StyledComponent } from 'styled-components';
 import colorPalette from '../../globals/color';
 import * as Styled from './Text.styles';
 
-export type CoreTextStyles = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'span';
+export type CoreTextStyles =
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'h6'
+  | 'p'
+  | 'label'
+  | 'span'
+  | 'li';
 export type TextStyles =
   | CoreTextStyles
   | 'body'
   | 'bodySmall'
   | 'bodyLarge'
   | 'labelSmall'
+  | 'liSmall'
+  | 'liLarge'
   | 'headerTitle';
 export type HeadingStyle =
   | 'heroExtraLarge'
@@ -53,6 +65,11 @@ const Text: React.FC<TextProps> = ({
       break;
     case 'labelSmall':
       element = Styled.label;
+      className = type;
+      break;
+    case 'liSmall':
+    case 'liLarge':
+      element = Styled.li;
       className = type;
       break;
     case 'headerTitle':

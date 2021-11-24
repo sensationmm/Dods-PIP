@@ -24,7 +24,7 @@ const base = styled.button<ButtonProps>`
   border-width: 1px;
   border-style: solid;
   width: ${({ width, isIconButton }) =>
-    !isIconButton ? (width === 'auto' ? '100%' : '140px') : '40px'};
+    !isIconButton ? (width === 'auto' ? '100%' : width === 'full' ? '100%' : '140px') : '40px'};
   padding: ${({ isIconButton }) => (!isIconButton ? `0 ${spacing(4)}` : '0')};
   height: 40px;
   border-radius: 8px;
