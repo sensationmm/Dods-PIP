@@ -119,7 +119,7 @@ functions:
     events:
       - http:
           method: get
-          path: user
+          path: user/{userId}
   createUser:
     handler: src/handlers/createUser/index.handle
     description: Triggered when http request comes

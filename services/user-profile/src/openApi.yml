@@ -65,13 +65,6 @@ paths:
     get:
       summary: Get an User by UUID
       operationId: getUser
-      parameters:
-        - in: path
-          name: userId
-          description: User Profile UUID
-          schema:
-            type: string
-          required: true
       responses:
         "200":
           description: Specified client account

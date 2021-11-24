@@ -23,7 +23,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
 
     async getUser(parameters: GetUserInput): Promise<GetUserOutput> {
 
-        const user = await User.findOne({ where: { uuid: parameters.userId } });
+        const user = await User.findOne({ where: { uuid: parameters.userId }, include: [User.associations.role] });
 
         if (!user) {
             throw new UserProfileError(`Error: UserUUID ${parameters.userId} does not exist`);

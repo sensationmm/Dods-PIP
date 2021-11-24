@@ -11,7 +11,7 @@ export class UserProfileRepository implements UserProfile {
     constructor(private baseURL: string = apiGatewayBaseURL) { }
 
     async getUser(parameters: GetUserInput): Promise<GetUserOutput> {
-        const user = await axios.get(`${this.baseURL}/users`, { params: parameters });
+        const user = await axios.get(`${this.baseURL}/user/${parameters.userId}`);
 
         const { data: { data } } = user;
 
