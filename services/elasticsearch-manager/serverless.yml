@@ -1,0 +1,54 @@
+service: elasticsearch-manager
+
+frameworkVersion: '2'
+projectDir: ../
+variablesResolutionMode: 20210326
+configValidationMode: error
+useDotenv: true
+
+plugins:
+  - serverless-python-requirements
+  - serverless-offline
+custom:
+  resource_prefix: elasticsearch-manager
+  app_acronym: dods-elasticsearch-manager
+  default_stage: dev
+  stage: ${opt:stage, self:custom.default_stage}
+  stack_name: ${self:custom.app_acronym}-${self:custom.stage}
+  region: ${opt:region, self:provider.region}
+  pythonRequirements:
+    pythonBin: python3
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!.idea/**'
+    - '!env/**'
+    - '!README.md'
+    - '!package.json'
+    - '!package-lock.json'
+    - '!.requirements/**'
+    - '!requirements.txt'
+
+provider:
+  name: aws
+  runtime: python3.7
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: pip-${self:provider.stage}-scrapping-lambdas
+
+  environment:
+    SERVERLESS_STAGE: ${self:provider.stage}
+    KEY_PREFIX: ${self:custom.resource_prefix}
+    REGION: eu-west-1
+
+functions:
+  elastic-run:
+    name: elasticsearch-manager-${self:provider.stage}
+    description: Elasticsearch index manager
+    handler: handler.run
+    timeout: 90
+    layers:
+      - ${cf:click-layer-${self:provider.stage}.ClickLayerExport}

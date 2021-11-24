@@ -1,0 +1,29 @@
+service: click-layer
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: pip-${self:provider.stage}-services-lambdas
+
+layers:
+  DodsClick:
+    path: layers/click
+    description: click 8.0.3 on Python 3.7
+    compatibleRuntimes:
+      - python3.7
+    allowedAccounts:
+      - '*'
+
+# package:
+#   individually: true
+
+resources:
+  Outputs:
+    ClickLayerExport:
+        Value:
+          Ref: DodsClickLambdaLayer
+        Export:
+          Name: DodsClickLambdaLayer
