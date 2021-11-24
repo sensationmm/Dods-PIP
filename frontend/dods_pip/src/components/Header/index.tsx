@@ -35,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     mutateUser(await fetchJson(`${BASE_URI}${Api.Logout}`), false);
     router.push('/');
     setNavHovered(false);
+    setMobileMenuOpen(false);
   };
 
   return (
