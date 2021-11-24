@@ -213,7 +213,7 @@ export class AwsCognito {
                     Value: 'true'
                 },
                 {
-                    Name: 'custom:clientAccountId', /* required */
+                    Name: 'custom:ClientAccountId', /* required */
                     Value: clientAccountId || ''
                 },
                 {

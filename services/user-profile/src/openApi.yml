@@ -311,18 +311,17 @@ components:
         telephoneNumber:
           type: string
           example: "+442071838750"
-        roleName:
+        roleId:
           type: string
         clientAccountId:
           type: string
         clientAccountName:
           type: string
       required:
-        - title
         - firstName
         - lastName
         - primaryEmail
-        - roleName
+        - roleId
 
   parameters:
     name:
