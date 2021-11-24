@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-
-import click
 from elasticsearch import Elasticsearch
 from json import loads
 import os
@@ -24,7 +21,7 @@ def run(event, context):
     if Validator().data_validator(mappings, data):
         try:
             res = client.index(index="content", document=data)
-            logger(res['result'])
+            logger.info(res['result'])
             return True
         except Exception as e:
             logger.exception(e)
