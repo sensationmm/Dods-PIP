@@ -78,8 +78,8 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             where: whereClause,
             subQuery: false,
             include: [
-                { model: User.associations.role, duplicating: false },
-                { model: User.associations.accounts, duplicating: false },
+                User.associations.role,
+                User.associations.accounts,
             ],
             order: [orderBy],
             offset: offset!,
