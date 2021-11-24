@@ -6,6 +6,7 @@ import {
     EditorialRecordPersister,
     SearchEditorialRecordParameters,
     UpdateEditorialRecordParameters,
+    config,
 } from '../domain';
 import {
     EditorialRecord,
@@ -182,7 +183,11 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         }
 
         if (statusId) {
-            if (!record.assignedEditor && !assignedEditorId) {
+            if (
+                !record.assignedEditor &&
+                !assignedEditorId &&
+                statusId === config.dods.recordStatuses.inProgress
+            ) {
                 throw new BadParameterError(
                     'Can not set state In-progress to a record without Assigned Editor.'
                 );
