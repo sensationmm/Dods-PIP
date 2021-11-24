@@ -202,7 +202,7 @@ export class AwsCognito {
         var params: CognitoIdentityServiceProvider.Types.AdminCreateUserRequest = {
             UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
             Username: userName, /* required */
-            MessageAction: 'SUPPRESS',
+            // MessageAction: 'SUPPRESS',
             UserAttributes: [
                 {
                     Name: "email",
@@ -213,7 +213,7 @@ export class AwsCognito {
                     Value: 'true'
                 },
                 {
-                    Name: 'custom:clientAccountId', /* required */
+                    Name: 'custom:ClientAccountId', /* required */
                     Value: clientAccountId || ''
                 },
                 {

@@ -40,7 +40,13 @@ const Users: React.FC<UsersProps> = ({ accountId }) => {
               <Badge size="small" label="Active users" number={3} />
               <Badge size="small" label="Inactive users" number={0} />
             </Styled.badgeContainer>
-            <Button type="secondary" label="Add User" icon={Icons.Add} iconAlignment="right" />
+            <Button
+              type="secondary"
+              label="Add User"
+              icon={Icons.Add}
+              iconAlignment="right"
+              onClick={(e) => e.stopPropagation()}
+            />
           </Styled.sectionCustomHeader>
         }
         isOpen={true}

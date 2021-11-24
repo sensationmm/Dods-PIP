@@ -103,12 +103,12 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
 
     async createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput> {
 
-        const { roleName } = parameters;
+        const { roleId } = parameters;
 
-        const roleRecord = await Role.findOne({ where: { title: roleName } });
+        const roleRecord = await Role.findOne({ where: { uuid: roleId } });
 
         if (!roleRecord) {
-            throw new UserProfileError(`Error: Role title: ${roleName} does not exist`);
+            throw new UserProfileError(`Error: Role uuid: ${roleId} does not exist`);
         }
 
         const newUser = await User.create({

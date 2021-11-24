@@ -1,6 +1,6 @@
 {
   "extends": [
-    "next", 
+    "next",
     "next/core-web-vitals",
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -9,6 +9,7 @@
   ],
   "plugins": ["simple-import-sort"],
   "rules": {
+    "no-prototype-builtins": 0,
     "@typescript-eslint/no-empty-interface": 0,
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",

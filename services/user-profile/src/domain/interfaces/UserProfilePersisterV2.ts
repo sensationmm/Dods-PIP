@@ -41,7 +41,7 @@ export interface IamPersister {
 }
 
 
-export type CreateUserPersisterInput = Pick<UserInput, 'title' | 'firstName' | 'lastName' | 'primaryEmail' | 'secondaryEmail'> & { telephoneNumber?: string; roleName: string; }
+export type CreateUserPersisterInput = Pick<UserInput, 'title' | 'firstName' | 'lastName' | 'primaryEmail' | 'secondaryEmail'> & { telephoneNumber?: string; roleId: string; }
 
 export type CreateUserPersisterOutput = UserOutput;
 
