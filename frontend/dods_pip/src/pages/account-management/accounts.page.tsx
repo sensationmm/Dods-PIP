@@ -56,7 +56,6 @@ type ClientAccount = {
 type ClientAccounts = ClientAccount[];
 
 type FilterParams = {
-  // locations?: string;
   isCompleted?: boolean;
   subscriptionTypes?: string;
   limit?: number;
