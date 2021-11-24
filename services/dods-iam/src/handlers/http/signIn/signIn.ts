@@ -21,7 +21,7 @@ export const signIn: AsyncLambdaMiddleware<SignInParameters> = async ({ email, p
         const { UserAttributes, Username } = await AwsCognito.defaultInstance.getUserData(tokens?.accessToken);
 
         if (UserAttributes) {
-            const clientAccountId = UserAttributes.find((a) => a.Name === 'custom:clientAccountId')?.Value;
+            const clientAccountId = UserAttributes.find((a) => a.Name === 'custom:ClientAccountId')?.Value;
             const clientAccountName = UserAttributes.find((a) => a.Name === 'custom:clientAccountName')?.Value;
             const userProfileUuid = UserAttributes.find((a) => a.Name === 'custom:UserProfileUuid')?.Value;
 

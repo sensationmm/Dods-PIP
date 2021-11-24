@@ -357,6 +357,12 @@ resources:
           - Name: "clientAccountId"
             AttributeDataType: Number
             Mutable: true
+          - Name: "ClientAccountId"
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 0
+              MaxLength: 50
           - Name: "clientAccountName"
             AttributeDataType: String
             Mutable: true

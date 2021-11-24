@@ -37,7 +37,7 @@ export const createUser: AsyncLambdaMiddleware<CreateUserInput> = async (paramet
             userName: response.primaryEmail,
             emailAddress: response.primaryEmail,
             userId,
-            role: parameters.roleName,
+            roleId: parameters.roleId,
             clientAccount: {
                 id: clientAccountId,
                 name: clientAccountName
