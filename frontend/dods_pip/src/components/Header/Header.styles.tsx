@@ -11,7 +11,7 @@ import { Icon } from '../Icon/Icon.styles';
 export const wrapper = styled.div`
   width: 100%;
   position: fixed;
-  z-index: 3;
+  z-index: 4;
   box-shadow: ${elevation.dropShadow1};
 
   ${Panel} {
