@@ -46,16 +46,13 @@ def create_index(index_name: str):
     settings = get_file_content(os.path.abspath(os.curdir) + '/models/' + index_name + '/settings.json')
     mappings = get_file_content(os.path.abspath(os.curdir) + '/models/' + index_name + '/mappings.json')
     try:
-        client.indices.create(
+        res = client.indices.create(
             index=index_name,
-            body={
-                "settings": settings,
-                "mappings": mappings
-            },
-            ignore=400,
+            settings=settings,
+            mappings=mappings
         )
     except Exception as e:
-        logger.exception(e)
+        logger.exception(str(e))
 
 
 def delete_index(index_name: str):
