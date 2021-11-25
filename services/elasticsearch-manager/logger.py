@@ -13,5 +13,5 @@ h = logging.StreamHandler(sys.stdout)
 FORMAT = '%(name)s [%(filename)s:%(lineno)d] :%(levelname)8s: %(message)s'
 h.setFormatter(logging.Formatter(FORMAT))
 logger.addHandler(h)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 # Suppress the more verbose modules

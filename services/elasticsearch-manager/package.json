@@ -1,9 +1,10 @@
 {
-   "name":"elasticsearch-manager",
-   "description":"","version":"0.1.0",
-   "devDependencies":{
-      "serverless":"^2.66.2",
-      "serverless-offline":"^8.3.0",
-      "serverless-python-requirements":"^5.2.0"
+   "name": "elasticsearch-manager",
+   "description": "",
+   "version": "0.1.0",
+   "devDependencies": {
+      "serverless": "^2.66.2",
+      "serverless-offline": "^8.3.0",
+      "serverless-python-requirements": "^5.2.0"
    }
 }

@@ -43,6 +43,9 @@ provider:
     SERVERLESS_STAGE: ${self:provider.stage}
     KEY_PREFIX: ${self:custom.resource_prefix}
     REGION: eu-west-1
+    ES_HOST: ${env:ES_HOST}
+    ES_USER: ${env:ES_USER}
+    ES_PASSWORD: ${env:ES_PASSWORD}
 
 functions:
   elastic-run:
@@ -50,5 +53,8 @@ functions:
     description: Elasticsearch index manager
     handler: handler.run
     timeout: 90
-    layers:
-      - ${cf:click-layer-${self:provider.stage}.ClickLayerExport}
+  contentIndexer:
+    name: content-indexer-${self:provider.stage}
+    description: Elasticsearch content indexer
+    handler: content_indexer.run
+    timeout: 900

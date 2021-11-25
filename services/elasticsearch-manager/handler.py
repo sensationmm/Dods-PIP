@@ -7,4 +7,4 @@ def run(event, context):
     if ('body' not in event):
         raise ValueError(f'Message body is empty!')
     params = event['body']
-    subprocess.call(['./bin/elastic-run', '--index=' + params['index-name'], '--action=' + params['action']])
+    subprocess.call(['./elastic-run', '--index=' + params['index-name'], '--action=' + params['action']])
