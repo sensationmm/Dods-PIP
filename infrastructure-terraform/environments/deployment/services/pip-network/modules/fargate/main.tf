@@ -155,6 +155,20 @@ resource "aws_alb_listener" "front_end" {
   }
 }
 
+resource "aws_alb_listener" "front_end" {
+  count             = var.environment == "production" ? 1 : 0
+  load_balancer_arn = aws_alb.builder.id
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "arn:aws:acm:eu-west-1:186202231680:certificate/797ac35b-8a83-4a55-b889-844f8bb44704"
+
+  default_action {
+    target_group_arn = aws_alb_target_group.app_target_group.id
+    type             = "forward"
+  }
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 // - ECS Definition: Scaling
 // --------------------------------------------------------------------------------------------------------------------
