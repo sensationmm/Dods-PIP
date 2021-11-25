@@ -155,7 +155,7 @@ resource "aws_alb_listener" "front_end" {
   }
 }
 
-resource "aws_alb_listener" "front_end" {
+resource "aws_alb_listener" "front_end_https" {
   count             = var.environment == "production" ? 1 : 0
   load_balancer_arn = aws_alb.builder.id
   port              = 443
