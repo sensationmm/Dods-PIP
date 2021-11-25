@@ -120,6 +120,14 @@ functions:
                   method: get
                   path: editorial-record/{recordId}
     
+    lockEditorialRecord:
+        handler: src/handlers/lockEditorialRecord/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: put
+                  path: editorial-record/{recordId}/lock
+    
     getContentSourcesList:
         handler: src/handlers/getContentSourcesList/index.handle
         description: Triggered on HTTP request
