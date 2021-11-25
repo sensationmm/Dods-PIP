@@ -27,6 +27,8 @@ export const createUser: AsyncLambdaMiddleware<CreateUserInput> = async (paramet
 
     const response = await UserProfileRepositoryV2.defaultInstance.createUser(parameters);
 
+    await IamRepository.defaultInstance.updateUserAttributes(primaryEmail, [{ Name: 'custom:UserProfileUuid', Value: response.uuid }]);
+
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
         message: 'User was created succesfully',
@@ -35,7 +37,7 @@ export const createUser: AsyncLambdaMiddleware<CreateUserInput> = async (paramet
             userName: response.primaryEmail,
             emailAddress: response.primaryEmail,
             userId,
-            role: parameters.roleName,
+            roleId: parameters.roleId,
             clientAccount: {
                 id: clientAccountId,
                 name: clientAccountName

@@ -288,7 +288,10 @@ pipelines:
               - cd infrastructure-terraform
               - terraform init
               - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
-              - echo "Review the plan. If you decide to apply it, run the custom job 'infrastructure-deployment'"
+              - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve
+              - terraform output --json > tf_out_values.json
+              - terraform-docs markdown table --output-values --output-values-from tf_out_values.json . > INFRA.md
+              - ./push_back.sh
 
   custom:
     deployment-to-staging:
@@ -312,16 +315,3 @@ pipelines:
             - yarn build-storybook
             - aws s3 rm s3://test-dods-pip-storybook/
             - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
-
-    infrastructure-deployment:
-      - step:
-          name: Terraform Apply
-          image: gioatsomoglobal/devopstools:0.4.6
-          deployment: dev
-          script:
-            - cd infrastructure-terraform
-            - terraform init
-            - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve
-            - terraform output --json > tf_out_values.json
-            - terraform-docs markdown table --output-values --output-values-from tf_out_values.json . > INFRA.md
-            - git add -A && git commit -m "Updated terraform configuration [skip ci]" && git push

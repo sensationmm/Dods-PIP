@@ -70,9 +70,9 @@ module "migration" {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-// - API Gateway
+// - Extracted content
 // --------------------------------------------------------------------------------------------------------------------
-module "api_gateway" {
-  source      = "./services/api-gateway"
+module "extracted-content" {
+  source      = "./services/extracted-content"
   environment = var.environment
 }

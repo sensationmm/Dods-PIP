@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { config, CreateUserOutput, IamPersister, RequestOutput } from '../domain';
+import { config, CreateUserOutput, IamPersister, RequestOutput, UserAttributes } from '../domain';
 
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL } } } = config;
 
@@ -16,5 +16,9 @@ export class IamRepository implements IamPersister {
         const { data: { success, data, error } } = user;
 
         return { success, data, error };
+    }
+
+    async updateUserAttributes(email: string, userAttributes: Array<UserAttributes>): Promise<void> {
+        await axios.post(`${this.baseURL}/updateUserAttributes`, { email, userAttributes });
     }
 }

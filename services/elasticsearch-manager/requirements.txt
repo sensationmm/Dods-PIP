@@ -1,0 +1,8 @@
+certifi==2021.10.8
+click==8.0.3
+elasticsearch==7.15.2
+importlib-metadata==4.8.2
+python-dotenv==0.19.2
+typing_extensions==4.0.0
+urllib3==1.26.7
+zipp==3.6.0

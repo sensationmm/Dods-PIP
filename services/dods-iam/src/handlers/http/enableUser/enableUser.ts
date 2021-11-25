@@ -11,7 +11,7 @@ export const enableUser: AsyncLambdaMiddleware<EnableUserParameters> = async ({ 
     let response: HttpResponse;
 
     try {
-        const result = await AwsCognito.defaultInstance.enableUUser(email);
+        const result = await AwsCognito.defaultInstance.enableUser(email);
 
         response = new HttpResponse(HttpStatusCode.OK, result);
     } catch (error: any) {

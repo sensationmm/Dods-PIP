@@ -1,6 +1,6 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails, ISignUpResult } from 'amazon-cognito-identity-js';
-import { config } from "../domain";
+import { config, UserAttributes } from "../domain";
 
 export class AwsCognito {
     userPool: CognitoUserPool;
@@ -42,8 +42,23 @@ export class AwsCognito {
                     resolve({ accessToken, idToken, refreshToken, userName });
                 },
                 onFailure: async (err) => {
-
                     reject(err);
+                },
+                newPasswordRequired: (_, __) => {
+                    cognitoUser.completeNewPasswordChallenge(password, null, {
+                        onSuccess: session => {
+                            // User confirmed
+                            const accessToken: string = session.getAccessToken().getJwtToken();
+                            const idToken: string = session.getIdToken().getJwtToken();
+                            const refreshToken: string = session.getRefreshToken().getToken();
+
+                            resolve({ accessToken, idToken, refreshToken, userName });
+                        },
+                        onFailure: err => {
+                            // Error confirming user
+                            reject(err);
+                        },
+                    });
                 }
             });
         });
@@ -160,7 +175,7 @@ export class AwsCognito {
         });
     }
 
-    getUserData(accessToken: string) {
+    getUserData(accessToken: string): Promise<CognitoIdentityServiceProvider.Types.GetUserResponse> {
         const params = { AccessToken: accessToken };
 
         const cognitoidentityserviceprovider = new CognitoIdentityServiceProvider();
@@ -203,7 +218,7 @@ export class AwsCognito {
         var params: CognitoIdentityServiceProvider.Types.AdminCreateUserRequest = {
             UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
             Username: userName, /* required */
-            MessageAction: 'SUPPRESS',
+            // MessageAction: 'SUPPRESS',
             UserAttributes: [
                 {
                     Name: "email",
@@ -214,12 +229,16 @@ export class AwsCognito {
                     Value: 'true'
                 },
                 {
-                    Name: 'custom:clientAccountId', /* required */
+                    Name: 'custom:ClientAccountId', /* required */
                     Value: clientAccountId || ''
                 },
                 {
                     Name: 'custom:clientAccountName', /* required */
                     Value: clientAccountName || ''
+                },
+                {
+                    Name: 'custom:UserProfileUuid', /* required */
+                    Value: '_'
                 },
             ],
         };
@@ -228,6 +247,48 @@ export class AwsCognito {
 
         return new Promise((resolve, reject) => {
             cognitoidentityserviceprovider.adminCreateUser(params, function (err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    updateUserAttributes(userName: string, attributes: Array<UserAttributes>): Promise<CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse> {
+
+        var params: CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesRequest = {
+            UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
+            Username: userName, /* required */
+            UserAttributes: attributes,
+        };
+
+        const cognitoidentityserviceprovider = new CognitoIdentityServiceProvider();
+
+        return new Promise((resolve, reject) => {
+            cognitoidentityserviceprovider.adminUpdateUserAttributes(params, function (err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    deleteUserAttributes(userName: string, attributeNames: Array<string>): Promise<CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse> {
+
+        var params: CognitoIdentityServiceProvider.Types.AdminDeleteUserAttributesRequest = {
+            UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
+            Username: userName, /* required */
+            UserAttributeNames: attributeNames,
+        };
+
+        const cognitoidentityserviceprovider = new CognitoIdentityServiceProvider();
+
+        return new Promise((resolve, reject) => {
+            cognitoidentityserviceprovider.adminDeleteUserAttributes(params, function (err, result) {
                 if (err) {
                     reject(err);
                 } else {
@@ -256,7 +317,7 @@ export class AwsCognito {
         });
     }
 
-    enableUUser(userName: string) {
+    enableUser(userName: string) {
         var params = {
             UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
             Username: userName /* required */

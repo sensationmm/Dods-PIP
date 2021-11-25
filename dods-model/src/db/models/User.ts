@@ -8,7 +8,7 @@ export interface UserAttributes {
     roleId: number | null;
     firstName: string;
     lastName: string;
-    title: string;
+    title: string | null;
     primaryEmail: string;
     secondaryEmail: string | null;
     telephoneNumber1: string | null;
@@ -25,7 +25,7 @@ export class User extends Model<UserAttributes, UserInput> implements UserAttrib
     public uuid!: string;
     public firstName!: string;
     public lastName!: string;
-    public title!: string;
+    public title!: string | null;
     public primaryEmail!: string;
     public secondaryEmail!: string | null;
     public telephoneNumber1!: string | null;
@@ -98,7 +98,7 @@ User.init({
     },
     title: {
         type: DataTypes.STRING({ length: 150 }),
-        allowNull: false,
+        allowNull: true,
     },
     primaryEmail: {
         type: DataTypes.STRING({ length: 100 }),

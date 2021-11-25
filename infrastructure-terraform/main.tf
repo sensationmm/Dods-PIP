@@ -18,7 +18,7 @@ terraform {
 module "dev" {
   source      = "./environments/deployment"
   environment = "dev"
-  app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:16b08e28e248eb993a5701b44788dc26bfecd399"
+  app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:91cdd6481dcb04178447d792aa8d2fa924ef22e3"
   account_id  = "390773179818"
   db_password = var.db_password
   providers = {
@@ -32,7 +32,7 @@ module "dev" {
 module "production" {
   source      = "./environments/deployment"
   environment = "production"
-  app_image   = "186202231680.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:" //non existent
+  app_image   = "186202231680.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:91cdd6481dcb04178447d792aa8d2fa924ef22e3"
   account_id  = "186202231680"
   db_password = var.db_password
   providers = {
@@ -46,8 +46,7 @@ module "production" {
 module "qa" {
   source      = "./environments/deployment"
   environment = "qa"
-  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:917fcd42dc52dfe2679963de280fe87ea7907ed9"
-  # app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:3cd393ea57c29d570f13272ee00b1c7822b3e7c8"
+  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:91cdd6481dcb04178447d792aa8d2fa924ef22e3"
   account_id  = "817206606893"
   db_password = var.db_password
   providers = {
@@ -61,7 +60,7 @@ module "qa" {
 module "test" {
   source      = "./environments/deployment"
   environment = "test"
-  app_image   = "072266309162.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:" //non existent
+  app_image   = "072266309162.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:91cdd6481dcb04178447d792aa8d2fa924ef22e3"
   account_id  = "072266309162"
   db_password = var.db_password
   providers = {

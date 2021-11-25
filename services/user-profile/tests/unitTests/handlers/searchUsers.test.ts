@@ -8,8 +8,8 @@ const defaultContext = createContext();
 
 const defaultSearchUsersRepositoryResult: SearchUsersOutput = {
     users: [
-        { uuid: '24e7ca86-1788-4b6e-b153-9c963dc921we', firstName: 'Test First Name1', lastName: 'Test Last Name1', email: '', role: '' },
-        { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name2', lastName: 'Test Last Name2', email: '', role: '' },
+        { uuid: '24e7ca86-1788-4b6e-b153-9c963dc921we', firstName: 'Test First Name1', lastName: 'Test Last Name1', email: '', role: '', isDodsUser: false },
+        { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name2', lastName: 'Test Last Name2', email: '', role: '', isDodsUser: true },
     ],
     count: 2
 };
@@ -67,10 +67,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const searchUsersRepositoryResult: SearchUsersOutput = {
             users: [
-                { uuid: '24e7ca86-1788-4b6e-b153-9c963dc921we', firstName: 'Test First Name1', lastName: 'Test Last Name1', email: 'email1@email1.com', role: '' },
-                { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name2', lastName: 'Test Last Name2', email: 'email2@email2.com', role: '' },
-                { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name3', lastName: 'Test Last Name3', email: 'email3@email3.com', role: '' },
-                { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name4', lastName: 'Test Last Name4', email: 'email4@email4.com', role: '' },
+                { uuid: '24e7ca86-1788-4b6e-b153-9c963dc921we', firstName: 'Test First Name1', lastName: 'Test Last Name1', email: 'email1@email1.com', role: '', isDodsUser: false },
+                { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name2', lastName: 'Test Last Name2', email: 'email2@email2.com', role: '', isDodsUser: false },
+                { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name3', lastName: 'Test Last Name3', email: 'email3@email3.com', role: '', isDodsUser: true },
+                { uuid: '24e7ca86-1788-4b6e-b153-9c963dc922ew', firstName: 'Test First Name4', lastName: 'Test Last Name4', email: 'email4@email4.com', role: '', isDodsUser: true },
             ],
             count: 5
         };

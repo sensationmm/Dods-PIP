@@ -1,8 +1,4 @@
-import {
-    HttpResponse,
-    HttpStatusCode,
-    createContext,
-} from '@dodsgroup/dods-lambda';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { EditorialRecordListOutput } from '../../../src/domain';
 import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
@@ -49,10 +45,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             sortBy: 'creationDate',
             sortDirection: 'asc',
         };
-        const response = await searchEditorialRecords(
-            requestParams,
-            defaultContext
-        );
+        const response = await searchEditorialRecords(requestParams, defaultContext);
 
         const searchUsersResult = new HttpResponse(HttpStatusCode.OK, {
             success: true,
@@ -60,9 +53,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: defaultFoundRecords,
         });
 
-        expect(
-            EditorialRecordRepository.defaultInstance.listEditorialRecords
-        ).toBeCalledWith(requestParams);
+        expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith(
+            requestParams
+        );
         expect(response).toEqual(searchUsersResult);
     });
 
@@ -79,10 +72,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             sortBy: 'documentName',
             sortDirection: 'asc',
         };
-        const response = await searchEditorialRecords(
-            requestParams,
-            defaultContext
-        );
+        const response = await searchEditorialRecords(requestParams, defaultContext);
 
         const searchUsersResult = new HttpResponse(HttpStatusCode.OK, {
             success: true,
@@ -90,9 +80,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: defaultFoundRecords,
         });
 
-        expect(
-            EditorialRecordRepository.defaultInstance.listEditorialRecords
-        ).toBeCalledWith(requestParams);
+        expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith(
+            requestParams
+        );
         expect(response).toEqual(searchUsersResult);
     });
 
@@ -109,10 +99,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             sortBy: 'status',
             sortDirection: 'asc',
         };
-        const response = await searchEditorialRecords(
-            requestParams,
-            defaultContext
-        );
+        const response = await searchEditorialRecords(requestParams, defaultContext);
 
         const searchUsersResult = new HttpResponse(HttpStatusCode.OK, {
             success: true,
@@ -120,9 +107,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: defaultFoundRecords,
         });
 
-        expect(
-            EditorialRecordRepository.defaultInstance.listEditorialRecords
-        ).toBeCalledWith(requestParams);
+        expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith(
+            requestParams
+        );
         expect(response).toEqual(searchUsersResult);
     });
 
@@ -134,19 +121,27 @@ describe(`${FUNCTION_NAME} handler`, () => {
             status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
             endDate: '2021-11-08T23:21:58.000Z',
             startDate: '2021-11-08T23:20:38.000Z',
-            offset: '',
-            limit: '',
-            sortBy: '',
-            sortDirection: '',
         };
         await searchEditorialRecords(requestParams, defaultContext);
 
-        expect(
-            EditorialRecordRepository.defaultInstance.listEditorialRecords
-        ).toBeCalledWith({
+        expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith({
             ...requestParams,
             offset: '0',
             limit: '20',
         });
+    });
+
+    test('endDate before startDate - should return "Bad Request"', async () => {
+        const requestParams = {
+            endDate: '2021-11-08T23:19:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+        };
+        const response = await searchEditorialRecords(requestParams, defaultContext);
+        const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+            success: false,
+            message: `End date must be greater than start date`,
+        });
+
+        expect(response).toEqual(expectedResponse);
     });
 });

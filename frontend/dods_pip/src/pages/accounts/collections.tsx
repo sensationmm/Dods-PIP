@@ -28,6 +28,7 @@ const Collections: React.FC<CollectionsProps> = () => {
               label="Add Collection"
               icon={Icons.Add}
               iconAlignment="right"
+              onClick={(e) => e.stopPropagation()}
             />
           </Styled.sectionCustomHeader>
         }

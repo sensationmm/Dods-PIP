@@ -7,6 +7,7 @@ import { Size } from './';
 type WrapperProps = {
   width: string;
   size: string;
+  bgColor?: string;
 };
 
 export const wrapper = styled.div<WrapperProps>`
@@ -21,6 +22,7 @@ export const wrapper = styled.div<WrapperProps>`
   align-items: center;
   width: ${({ width, size }) =>
     width === 'fixed' ? (size === 'medium' ? '180px' : '140px') : 'auto'};
+  background-color: ${({ bgColor }) => bgColor === 'white' && color.base.white};
 `;
 
 export const textWrapper = styled.div`

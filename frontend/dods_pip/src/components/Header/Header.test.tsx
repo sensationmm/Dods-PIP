@@ -3,6 +3,14 @@ import React from 'react';
 
 import Header from '.';
 
+jest.mock('next/router', () => ({
+  useRouter: jest.fn().mockReturnValue({ pathname: '' }),
+}));
+
+jest.mock('react-responsive', () => ({
+  useMediaQuery: jest.fn().mockReturnValue(true),
+}));
+
 describe('Header', () => {
   it('renders without error', () => {
     const wrapper = shallow(<Header />);

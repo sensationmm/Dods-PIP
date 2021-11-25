@@ -3,8 +3,14 @@ interface CustomError extends Error {
   data?: Record<string, unknown>;
 }
 
-interface CustomResponse extends Response {
+export type UserResponse = {
   accessToken?: string;
+  isDodsUser?: boolean;
+  clientAccountId?: string;
+  clientAccountName?: string;
+};
+
+interface CustomResponse extends Response, UserResponse {
   data?: Record<string, unknown>;
   totalRecords?: number;
   message?: string;
