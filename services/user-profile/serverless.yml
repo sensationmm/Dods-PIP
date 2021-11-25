@@ -1,11 +1,7 @@
 service: user-profile
-
 configValidationMode: warn
-
-frameworkVersion: ^2.57.0
-
+frameworkVersion: ^2.64.0
 variablesResolutionMode: 20210326
-
 projectDir: ../
 
 provider:
@@ -127,6 +123,3 @@ functions:
       - http:
           method: post
           path: users
-
-
-          
