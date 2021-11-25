@@ -12,6 +12,7 @@ export interface TaxonomyItem {
     tag: string,
     score: string,
     inScheme: string[]
+    alternative_labels: string[]
 }
 
 export interface DownstreamEndpoints {
