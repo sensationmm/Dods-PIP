@@ -15,6 +15,7 @@ export interface TagProps {
   iconBorderColor?: string;
   label: string;
   width?: 'fixed' | 'auto';
+  bgColor?: string;
 }
 
 const Tag: React.FC<TagProps> = ({
@@ -25,9 +26,10 @@ const Tag: React.FC<TagProps> = ({
   iconBgColor = color.theme.blue,
   iconBorderColor = 'transparent',
   iconColor = color.base.white,
+  bgColor,
 }) => {
   return (
-    <Styled.wrapper data-test="component-tag" width={width} size={size}>
+    <Styled.wrapper bgColor={bgColor} data-test="component-tag" width={width} size={size}>
       {icon && (
         <Styled.iconWrapper
           size={size}
