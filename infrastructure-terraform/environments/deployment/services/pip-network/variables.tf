@@ -34,12 +34,12 @@ variable "app_image" {
 
 variable "api_gateway" {
   description = "API Gateway serving backend services"
-  default = ""
+  default     = ""
 }
 
 variable "fe_api_key" {
   description = "API Key authorized to reach backend services"
-  default = ""
+  default     = ""
 }
 
 variable "vpc_id" {

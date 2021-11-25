@@ -103,7 +103,7 @@ resource "aws_security_group" "rds_security_group" {
 }
 
 resource "aws_db_subnet_group" "default" {
-  name       = "main-${var.environment}"
+  name = "main-${var.environment}"
   // subnet_ids = var.public_subnet_ids
   subnet_ids = var.private_subnet_ids
 

@@ -34,6 +34,7 @@ import Pencil from './icon-pencil.svg';
 import Person from './icon-person.svg';
 import Phone from './icon-phone.svg';
 import PhoneBold from './icon-phoneBold.svg';
+import Refresh from './icon-refresh.svg';
 import Search from './icon-search.svg';
 import Show from './icon-show.svg';
 import Subscription from './icon-subscription.svg';
@@ -83,6 +84,7 @@ export enum Icons {
   Person = 'Person',
   Phone = 'Phone',
   PhoneBold = 'PhoneBold',
+  Refresh = 'Refresh',
   Search = 'Search',
   Show = 'Show',
   Subscription = 'Subscription',
@@ -131,6 +133,7 @@ const IconLibrary = {
   Person,
   Phone,
   PhoneBold,
+  Refresh,
   Search,
   Show,
   Subscription,
