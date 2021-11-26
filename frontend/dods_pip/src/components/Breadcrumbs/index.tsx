@@ -38,7 +38,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ history }) => {
               <Styled.anchor>
                 <Text
                   type="body"
-                  color={color.theme.blueMid}
+                  color={color.theme.blue}
                   bold={idx !== allHistory.length - 1}
                   data-test={'link-text-' + idx}
                 >
@@ -50,7 +50,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ history }) => {
             <Styled.anchor>
               <Text
                 type="body"
-                color={color.theme.blueMid}
+                color={color.theme.blue}
                 bold={idx !== allHistory.length - 1}
                 data-test={'link-text-' + idx}
               >
@@ -60,7 +60,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ history }) => {
           )}
           {idx !== allHistory.length - 1 && (
             <Styled.slash>
-              <Text type="body" color={color.theme.blueMid}>
+              <Text type="body" color={color.theme.blue}>
                 /
               </Text>
             </Styled.slash>
