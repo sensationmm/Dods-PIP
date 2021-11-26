@@ -16,7 +16,7 @@ provider:
     name: pip-${self:provider.stage}-scrapping-lambdas
 
   environment:
-    DEBATES_HOC_UK_Q: ${ssm:/infra/${self:provider.stage}/content-processing/debates-hoc-uk, 'localhost'}
+    DEBATES_HOC_UK_Q: ${ssm:/infra/${self:provider.stage}/content-processing/debates-hoc-uk}
 
   iamRoleStatements:
     - Effect: Allow
