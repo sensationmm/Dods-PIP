@@ -24,8 +24,12 @@ function deployAll() {
 }
 
 function deploymentSteps() {
-   npm install
-   pip3 install -r requirements.txt
+   if [[ -e 'package.json' ]]; then
+      npm install
+   fi
+   if [[ -e 'requirements.txt' ]]; then
+      pip3 install -r requirements.txt
+   fi
    sls deploy
 }
 
