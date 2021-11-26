@@ -17,5 +17,6 @@ resource "aws_sqs_queue" "queue" {
   fifo_queue                  = true
   content_based_deduplication = true
 
+
   tags = local.common_tags
 }
