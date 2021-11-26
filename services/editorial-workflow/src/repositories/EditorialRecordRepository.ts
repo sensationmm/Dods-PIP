@@ -228,6 +228,13 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             );
         }
 
+        if (record.status && record.status.uuid === config.dods.recordStatuses.inProgress) {
+            throw new BadParameterError(
+                'Error: Editorial Record is already In Progress',
+                this.mapRecordOutput(record)
+            );
+        }
+
         await this.setAssignedEditorToRecord(record, assignedEditorId);
 
         await this.setStatusToRecord(record, config.dods.recordStatuses.inProgress);
