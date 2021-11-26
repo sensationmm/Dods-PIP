@@ -125,6 +125,29 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+    /editorial-record/{recordId}/lock:
+        put:
+            summary: Update Editorial Record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            requestBody:
+                $ref: '#/components/requestBodies/LockEditorialRecord'
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
     /content-sources:
         get:
             summary: List content sources based upon data in Editorial Records table
@@ -284,6 +307,20 @@ components:
                 application/json:
                     schema:
                         $ref: '#/components/schemas/UpdateEditorialRecordRequest'
+        LockEditorialRecord:
+            description: A JSON object containing Editorial Record information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        required:
+                          - assignedEditorId
+                        properties:
+                            assignedEditorId:
+                                type: string
+                                format: uuid
+                                example: d290f1ss-6c54-4b01-98e6-d701748f7151
 
     schemas:
         Error:

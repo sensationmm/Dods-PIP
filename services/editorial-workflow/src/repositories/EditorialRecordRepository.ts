@@ -4,6 +4,7 @@ import {
     EditorialRecordListOutput,
     EditorialRecordOutput,
     EditorialRecordPersister,
+    LockEditorialRecordParameters,
     SearchEditorialRecordParameters,
     UpdateEditorialRecordParameters,
     config,
@@ -194,6 +195,42 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             }
             await this.setStatusToRecord(record, statusId);
         }
+
+        await record.reload({
+            include: ['status', 'assignedEditor'],
+        });
+
+        return this.mapRecordOutput(record);
+    }
+
+    async lockEditorialRecord(
+        parameters: LockEditorialRecordParameters
+    ): Promise<EditorialRecordOutput> {
+        const { recordId, assignedEditorId } = parameters;
+
+        const record = await this.editorialRecordModel.findOne({
+            where: {
+                uuid: recordId,
+            },
+            include: ['status', 'assignedEditor'],
+        });
+
+        if (!record) {
+            throw new BadParameterError(
+                `Error: could not retrieve Editorial Record with uuid: ${recordId}`
+            );
+        }
+
+        if (record.assignedEditor) {
+            throw new BadParameterError(
+                `Error: Editorial Record is already locked by ${record.assignedEditor.fullName} with uuid: ${record.assignedEditor.uuid}`,
+                this.mapRecordOutput(record)
+            );
+        }
+
+        await this.setAssignedEditorToRecord(record, assignedEditorId);
+
+        await this.setStatusToRecord(record, config.dods.recordStatuses.inProgress);
 
         await record.reload({
             include: ['status', 'assignedEditor'],
