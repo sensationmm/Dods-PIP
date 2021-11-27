@@ -27,7 +27,7 @@ export class TaxonomyRepository implements Taxonomy {
                 "query": {
                     "bool" : {
                         "must" : [
-                            {"match": {"inScheme": data.taxonomy}}
+                            {"match": {"inScheme": data.taxonomy}},
                             {
                                 "bool": {
                                     "should": [
