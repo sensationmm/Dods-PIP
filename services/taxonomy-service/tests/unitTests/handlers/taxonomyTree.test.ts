@@ -3,8 +3,6 @@ import { taxonomyTree as taxonomyOrganisationsTree } from '../../../src/handlers
 import { taxonomyTree as multiTaxonomyTree } from '../../../src/handlers/taxonomyTree/taxonomyTree';
 import { HttpSuccessResponse} from "../../../src/domain";
 
-const FUNCTION_NAME = "taxonomyTree";
-
 jest.mock('../../../src/elasticsearch');
 jest.mock('../../../src/repositories/TaxonomyRepository');
 
