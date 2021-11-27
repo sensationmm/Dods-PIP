@@ -102,6 +102,8 @@ def handle(event, context):
 
     print("Imported " + str(taxo_df_labeled.shape[0]))
 
+    return {}
+
 
 def gendata(taxonomy):
     for row in taxonomy:
