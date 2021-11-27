@@ -32,3 +32,10 @@ resource "aws_ssm_parameter" "api_key_test" {
   type      = "String"
   value     = module.api-gateway.api_key_test
 }
+
+resource "aws_ssm_parameter" "hoc_debates_queue_url" {
+  overwrite = true
+  name  = "/infra/${var.environment}/content-processing/debates-hoc-uk"
+  type  = "String"
+  value = module.extracted-content.hoc-debates-sqs_url
+}

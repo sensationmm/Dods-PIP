@@ -142,7 +142,7 @@ const AddClient: React.FC<AddClientProps> = ({
     initialState.userSeats || userSeatsDefault,
   );
   const [consultantHours, setConsultantHours] = React.useState<string>(
-    initialState.consultantHours || editMode ? '0' : consultantHoursDefault,
+    initialState.consultantHours || consultantHoursDefault,
   );
   const [renewalType, setRenewalType] = React.useState<string>(
     initialState.renewalType || RenewalType.Annual,

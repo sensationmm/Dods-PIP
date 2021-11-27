@@ -7,7 +7,9 @@ export default withSession(async (req, res) => {
     const { query } = req;
     const { name } = query;
     const result = await fetchJson(
-      `${process.env.APP_API_URL}${Api.Users}${name ? '?name=' + name : ''}`,
+      `${process.env.APP_API_URL}${Api.Users}${
+        name ? '?name=' + name + '&role=83618280-9c84-441c-94d1-59e4b24cbe3d' : ''
+      }`,
       {
         method: 'GET',
       },
