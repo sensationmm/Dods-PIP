@@ -11,8 +11,8 @@ const defaultRecordModel: any = {
     informationType: 'Random Doc',
     contentSource: 'Manual Injection',
     status: {
-        uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
-        status: 'Draft',
+        uuid: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
+        status: 'In progress',
     },
     assignedEditor: {
         uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
@@ -26,14 +26,60 @@ const defaultRecordModel: any = {
     setStatus: () => {},
 };
 
+const defaultRecordOutput: any = {
+    uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
+    documentName: 'NewDocument',
+    s3Location: 'SomeLocation',
+    informationType: 'Random Doc',
+    contentSource: 'Manual Injection',
+    status: {
+        uuid: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
+        status: 'In progress',
+    },
+    assignedEditor: {
+        uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
+        fullName: 'Employee Example',
+    },
+    createdAt: '2021-11-08T16:20:58.000Z',
+    updatedAt: '2021-11-08T16:20:58.000Z',
+};
+
+const defaultUnlockedRecordModel: any = {
+    uuid: 'unlocked',
+    documentName: 'NewDocument',
+    s3Location: 'SomeLocation',
+    informationType: 'Random Doc',
+    contentSource: 'Manual Injection',
+    status: {
+        uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+        status: 'Draft',
+    },
+    createdAt: '2021-11-08T16:20:58.000Z',
+    updatedAt: '2021-11-08T16:20:58.000Z',
+    update: () => {},
+    reload: () => {},
+    setAssignedEditor: function () {
+        this.assignedEditor = {
+            uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
+            fullName: 'Employee Example',
+        };
+    },
+    setStatus: function () {
+        this.status = {
+            uuid: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
+            status: 'In progress',
+        };
+    },
+};
+
 const defaultUser: any = {
     uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
     fullName: 'Employee Example',
 };
 
 const defaultStatus: any = {
-    uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
-    status: 'Draft',
+    uuid: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
+    status: 'In progress',
 };
 
 const defaultListRecords: any = {
@@ -47,8 +93,8 @@ const defaultListRecords: any = {
             informationType: 'Random Doc',
             contentSource: 'Manual Injection',
             status: {
-                uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
-                status: 'Draft',
+                uuid: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
+                status: 'In progress',
             },
             assignedEditor: {
                 uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
@@ -66,7 +112,13 @@ const mockFindOne = async (options: any) => {
     if (options.where.uuid === '0698280d-8b0f-4a2c-8892-e1599e407fb4') {
         return defaultUser;
     }
+    if (options.where.uuid === 'unlocked') {
+        return defaultUnlockedRecordModel;
+    }
     if (options.where.uuid === '89cf96f7-d380-4c30-abcf-74c57843f50c') {
+        return defaultStatus;
+    }
+    if (options.where.uuid === 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138') {
         return defaultStatus;
     }
     if (options.where.uuid === 'f9d1482a-77e8-440e-a370-7e06fa0da176') {
@@ -115,6 +167,9 @@ const CREATE_RECORD_FUNCTION_NAME =
 const UPDATE_RECORD_FUNCTION_NAME =
     EditorialRecordRepository.defaultInstance.updateEditorialRecord.name;
 
+const LOCK_RECORD_FUNCTION_NAME =
+    EditorialRecordRepository.defaultInstance.lockEditorialRecord.name;
+
 const GET_RECORD_FUNCTION_NAME = EditorialRecordRepository.defaultInstance.getEditorialRecord.name;
 
 const SEARCH_RECORDS_FUNCTION_NAME =
@@ -145,23 +200,7 @@ describe(`${CLASS_NAME}.${CREATE_RECORD_FUNCTION_NAME}`, () => {
             requestParams
         );
         expect(EditorialRecord.create).toBeCalled;
-        expect(response).toEqual({
-            uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            documentName: 'NewDocument',
-            s3Location: 'SomeLocation',
-            informationType: 'Random Doc',
-            contentSource: 'Manual Injection',
-            status: {
-                uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
-                status: 'Draft',
-            },
-            assignedEditor: {
-                uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
-                fullName: 'Employee Example',
-            },
-            createdAt: '2021-11-08T16:20:58.000Z',
-            updatedAt: '2021-11-08T16:20:58.000Z',
-        });
+        expect(response).toEqual(defaultRecordOutput);
     });
 });
 
@@ -178,23 +217,7 @@ describe(`${CLASS_NAME}.${UPDATE_RECORD_FUNCTION_NAME}`, () => {
             requestParams
         );
         expect(EditorialRecord.update).toBeCalled;
-        expect(response).toEqual({
-            uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            documentName: 'NewDocument',
-            s3Location: 'SomeLocation',
-            informationType: 'Random Doc',
-            contentSource: 'Manual Injection',
-            status: {
-                uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
-                status: 'Draft',
-            },
-            assignedEditor: {
-                uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
-                fullName: 'Employee Example',
-            },
-            createdAt: '2021-11-08T16:20:58.000Z',
-            updatedAt: '2021-11-08T16:20:58.000Z',
-        });
+        expect(response).toEqual(defaultRecordOutput);
     });
 
     test('Invalid statusId', async () => {
@@ -260,6 +283,75 @@ describe(`${CLASS_NAME}.${UPDATE_RECORD_FUNCTION_NAME}`, () => {
     });
 });
 
+describe(`${CLASS_NAME}.${LOCK_RECORD_FUNCTION_NAME}`, () => {
+    beforeEach(() => {
+        defaultUnlockedRecordModel.status = null;
+        defaultUnlockedRecordModel.assignedEditor = null;
+    });
+    test('Happy case, all parameters', async () => {
+        const requestParams = {
+            recordId: 'unlocked',
+            assignedEditorId: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
+        };
+        const response = await EditorialRecordRepository.defaultInstance.lockEditorialRecord(
+            requestParams
+        );
+        expect(response).toEqual({ ...defaultRecordOutput, uuid: 'unlocked' });
+    });
+
+    test('Invalid RecordId', async () => {
+        const requestParams = {
+            recordId: 'invalid',
+            assignedEditorId: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
+        };
+
+        try {
+            await EditorialRecordRepository.defaultInstance.updateEditorialRecord(requestParams);
+            expect(true).toBe(false);
+        } catch (e) {
+            expect(e instanceof BadParameterError).toBe(true);
+            expect(e).toHaveProperty(
+                'message',
+                `Error: could not retrieve Editorial Record with uuid: ${requestParams.recordId}`
+            );
+        }
+    });
+
+    test('Invalid UserId', async () => {
+        const requestParams = {
+            recordId: 'unlocked',
+            assignedEditorId: 'invalid',
+        };
+        try {
+            await EditorialRecordRepository.defaultInstance.lockEditorialRecord(requestParams);
+            expect(true).toBe(false);
+        } catch (e) {
+            expect(e instanceof BadParameterError).toBe(true);
+            expect(e).toHaveProperty(
+                'message',
+                `Unable to retrieve User with uuid: ${requestParams.assignedEditorId}`
+            );
+        }
+    });
+
+    test('Record already locked', async () => {
+        const requestParams = {
+            recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
+            assignedEditorId: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
+        };
+        try {
+            await EditorialRecordRepository.defaultInstance.lockEditorialRecord(requestParams);
+            expect(true).toBe(false);
+        } catch (e) {
+            expect(e instanceof BadParameterError).toBe(true);
+            expect(e).toHaveProperty(
+                'message',
+                `Error: Editorial Record is already locked by ${defaultUser.fullName} with uuid: ${defaultUser.uuid}`
+            );
+        }
+    });
+});
+
 describe(`${CLASS_NAME}.${GET_RECORD_FUNCTION_NAME}`, () => {
     test('Happy case', async () => {
         const requestParams = {
@@ -269,23 +361,7 @@ describe(`${CLASS_NAME}.${GET_RECORD_FUNCTION_NAME}`, () => {
             requestParams.recordId
         );
         expect(EditorialRecord.update).toBeCalled;
-        expect(response).toEqual({
-            uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            documentName: 'NewDocument',
-            s3Location: 'SomeLocation',
-            informationType: 'Random Doc',
-            contentSource: 'Manual Injection',
-            status: {
-                uuid: '89cf96f7-d380-4c30-abcf-74c57843f50c',
-                status: 'Draft',
-            },
-            assignedEditor: {
-                uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
-                fullName: 'Employee Example',
-            },
-            createdAt: '2021-11-08T16:20:58.000Z',
-            updatedAt: '2021-11-08T16:20:58.000Z',
-        });
+        expect(response).toEqual(defaultRecordOutput);
     });
 
     test('Invalid recordId', async () => {

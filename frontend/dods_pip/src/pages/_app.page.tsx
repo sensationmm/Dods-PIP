@@ -11,7 +11,8 @@ import * as Styled from './_app.styles';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
-  const rootPage = ucFirst(router.pathname.split('/').at(-1)?.replace('-', ' ') || '');
+  const pagePath = router.pathname?.match(/[\w\d-]*$/);
+  const rootPage = ucFirst((pagePath && pagePath[0].replace(/-/g, ' ')) || '');
 
   return (
     <div data-test={'page-app'}>

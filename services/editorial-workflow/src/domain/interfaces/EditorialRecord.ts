@@ -13,6 +13,11 @@ export interface UpdateEditorialRecordParameters extends Partial<CreateEditorial
     recordId: string;
 }
 
+export interface LockEditorialRecordParameters {
+    recordId: string;
+    assignedEditorId: string;
+}
+
 export interface GenericListingRecord {
     id: string;
     name: string;

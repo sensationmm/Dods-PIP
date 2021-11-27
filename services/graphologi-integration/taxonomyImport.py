@@ -88,6 +88,25 @@ def handle(event, context):
                 taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
                 updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
 
+    # Add alternate labels/synonyms to the data
+    def get_alt_labels(row):
+        alt_labels = []
+        if str(row['xlAltLabel']) == 'nan':
+            return alt_labels
+        for label_id in row['xlAltLabel']:
+            label_row = taxo_df_labeled[taxo_df_labeled['id'] == label_id].iloc()[0]
+            if str(label_row['label']) != 'nan':
+                alt_labels.append(label_row['label'])
+                continue
+            if str(label_row['literalForm.fr']) != 'nan':
+                alt_labels.append(label_row['literalForm.fr'])
+                continue
+            if str(label_row['literalForm.de']) != 'nan':
+                alt_labels.append(label_row['literalForm.de'])
+                continue
+        return alt_labels
+
+    taxo_df_labeled['altLabels'] = taxo_df_labeled.apply(get_alt_labels, axis=1)
 
     es = Elasticsearch(cloud_id=esCloudId, api_key=(esKeyId, esApiKey))
 

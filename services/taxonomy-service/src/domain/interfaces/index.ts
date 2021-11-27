@@ -13,6 +13,7 @@ export interface TaxonomyItem {
     tag: string,
     score: number,
     inScheme: string[]
+    alternative_labels: string[]
 }
 
 export interface TaxonomySearchResponse {

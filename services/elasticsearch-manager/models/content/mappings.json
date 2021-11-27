@@ -95,7 +95,7 @@
     "createdDateTime": {
       "type": "date"
     },
-    "ingetedDateTime": {
+    "ingestedDateTime": {
       "type": "date"
     },
     "version": {
@@ -115,6 +115,20 @@
       "properties": {
         "tagId": {
           "type": "keyword"
+        },
+        "termLabel": {
+          "type": "text",
+          "fielddata": true,
+          "analyzer": "analyzer_case_insensitive",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            },
+            "nocase": {
+              "type": "text",
+              "analyzer": "analyzer_case_insensitive"
+            }
+          }
         },
         "facetType": {
           "type": "keyword"

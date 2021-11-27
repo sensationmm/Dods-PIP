@@ -27,14 +27,21 @@ export class TaxonomyRepository implements Taxonomy {
                 "query": {
                     "bool" : {
                         "must" : [
-                            {"match": {"label": data.tags}},
                             {"match": {"inScheme": data.taxonomy}}
+                            {
+                                "bool": {
+                                    "should": [
+                                        {"match": {"label": data.tags}},
+                                        {"match": {"altLabels": data.tags}}
+                                    ]
+                                }
+                            }
                         ]
                     }
                 }
             },
-             size: 500
-         }
+            size: 500
+        }
         if("limit" in data){
             query.size = data.limit!;
         }
@@ -52,7 +59,7 @@ export class TaxonomyRepository implements Taxonomy {
         const es_response = await this.elasticsearch.search(await TaxonomyRepository.createSearchQuery(data))
         console.log(es_response)
         es_response.body.hits.hits.forEach((es_doc: any) => {
-            const es_tag: TaxonomyItem = { id: es_doc._source.id, tag: es_doc._source.label, score: es_doc._score, inScheme: es_doc._source.inScheme};
+            const es_tag: TaxonomyItem = { id: es_doc._source.id, tag: es_doc._source.label, score: es_doc._score, inScheme: es_doc._source.inScheme, alternative_labels: es_doc._source.altLabels};
             tag_results.push(es_tag)
         });
 

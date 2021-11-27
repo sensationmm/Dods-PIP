@@ -7,3 +7,12 @@ module "hoc-debates-ingestion-content-transform-queue" {
   queue_name  = "hoc-debates-ingestion-content-transform-queue"
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+// - Bucket for scraped content
+// --------------------------------------------------------------------------------------------------------------------
+module "scraped-content" {
+  source      = "./modules/s3"
+  environment = var.environment
+  name        = "content-extraction"
+}
+

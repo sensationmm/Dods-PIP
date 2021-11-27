@@ -23,6 +23,7 @@ export interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
   const router = useRouter();
+  // TODO: Migrate auth check to routing level before page loads
   const { user, mutateUser } = useUser({ redirectTo: '/' });
   const [navHovered, setNavHovered] = React.useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState<boolean>(false);
@@ -32,8 +33,8 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
   const rootPage = router.pathname.split('/')[1];
 
   const onLogout = async () => {
-    mutateUser(await fetchJson(`${BASE_URI}${Api.Logout}`), false);
-    router.push('/');
+    await mutateUser(await fetchJson(`${BASE_URI}${Api.Logout}`), false);
+    await router.push('/');
     setNavHovered(false);
     setMobileMenuOpen(false);
   };
