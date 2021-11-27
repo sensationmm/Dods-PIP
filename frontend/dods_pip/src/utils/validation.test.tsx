@@ -25,6 +25,30 @@ describe('validation functions', () => {
       const isValid = validation.validateEmail(email);
       expect(isValid).toBe(false);
     });
+
+    it('allows printable characters', () => {
+      const email = "hello!#$%&'*+-/=?^_`{|}~@dods.com";
+      const isValid = validation.validateEmail(email);
+      expect(isValid).toBe(true);
+    });
+
+    it('does not allow successive `.`', () => {
+      const email = 'hello..you@dods.com';
+      const isValid = validation.validateEmail(email);
+      expect(isValid).toBe(false);
+    });
+
+    it('does not allow leading `.`', () => {
+      const email = '.hello.you@dods.com';
+      const isValid = validation.validateEmail(email);
+      expect(isValid).toBe(false);
+    });
+
+    it('does not allow trailing `.`', () => {
+      const email = 'hello.@dods.com';
+      const isValid = validation.validateEmail(email);
+      expect(isValid).toBe(false);
+    });
   });
 
   describe('validMatching()', () => {

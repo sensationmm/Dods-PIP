@@ -12,8 +12,8 @@ data "template_file" "env_config" {
     environment       = var.environment
     securityGroupIds  = jsonencode([module.client-profile-database.lambda_sg_id])
     subnetIds         = jsonencode(module.vpc.private_subnet_ids)
-    apiGatewayId      = jsonencode(module.api_gateway.api_gateway_id)
-    apiRootResourceId = jsonencode(module.api_gateway.api_root_resource_id)
+    apiGatewayId      = jsonencode(module.api-gateway.api_gateway_id)
+    apiRootResourceId = jsonencode(module.api-gateway.api_root_resource_id)
     frontendURL       = jsonencode(module.pip-network.frontend_url)
   }
 }

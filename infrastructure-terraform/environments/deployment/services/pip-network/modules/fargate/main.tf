@@ -231,15 +231,17 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 data "template_file" "app" {
   template = file("${path.module}/templates/app.json.tpl")
   vars = {
-    host_port      = var.app_port
-    name           = local.main_resource_name
     app_image      = var.app_image
     app_port       = var.app_port
-    fargate_cpu    = var.fargate_cpu
-    fargate_memory = var.fargate_memory
+    api_gateway    = var.api_gateway
     aws_region     = var.aws_region
     environment    = var.environment
+    fargate_cpu    = var.fargate_cpu
+    fargate_memory = var.fargate_memory
+    fe_api_key     = var.fe_api_key
+    host_port      = var.app_port
     log_group_name = var.log_group_name
+    name           = local.main_resource_name
   }
 }
 

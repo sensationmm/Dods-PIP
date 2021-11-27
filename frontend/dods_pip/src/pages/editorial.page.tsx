@@ -168,7 +168,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
                 size={'medium'}
                 id={'info-type'}
                 selectedValues={[filters.informationType || '']}
-                placeholder="Browse information type"
+                placeholder="Information type"
                 values={selectFilterValues.informationTypes}
                 onChange={(value) => onFilterChange('informationType', value)}
               />

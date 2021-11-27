@@ -21,3 +21,7 @@ output "db_address" {
 output "lambda_sg_id" {
   value = module.rds.lambda_sg_id
 }
+
+output "db_bastion_cx" {
+  value = module.rds.ssh_cmd
+}

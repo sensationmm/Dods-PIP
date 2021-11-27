@@ -6,11 +6,13 @@ frameworkVersion: ^2.54.0
 
 variablesResolutionMode: 20210326
 
+projectDir: ../
+
 provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
-  stage: ${opt:stage, 'test'}
+  stage: ${opt:stage, 'dev'}
   deploymentBucket:
     name: pip-${self:provider.stage}-services-lambdas
 
@@ -33,6 +35,14 @@ provider:
         - "xray:PutTelemetryRecords"
       Resource:
         - "*"
+  vpc:
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
+
+  apiGateway:
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, "local"} 
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, "local"} 
+    description: Default Gateway for ${self:provider.stage} deployed by Terraform
 
   environment:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
@@ -91,6 +101,14 @@ functions:
       - http:
           method: get
           path: taxonomies
+  taxonomyTree:
+    handler: src/handlers/taxonomyTree/index.handle
+    description: Return the tree of all taxonomy topics
+    timeout: 20
+    events:
+      - http:
+          method: get
+          path: taxonomy/tree
   taxonomyTopicsTree:
     handler: src/handlers/taxonomyTopicsTree/index.handle
     description: Triggered when http request comes

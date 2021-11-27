@@ -238,6 +238,14 @@ const Summary: React.FC<SummaryProps> = ({
     endDateType,
   };
 
+  const endDateTypeLabels: any = {
+    '1year': '1 year',
+    '2year': '2 years',
+    '3year': '3 years',
+    '2weektrial': '2 week trial',
+    custom: 'Custom',
+  };
+
   return (
     <>
       {editAccountSettings && (
@@ -409,7 +417,8 @@ const Summary: React.FC<SummaryProps> = ({
                   {startDate !== '' && format(new Date(startDate), DateFormat.UI)}
                   {renewalType === 'endDate' && endDate !== '' && (
                     <span>
-                      - {format(new Date(endDate), DateFormat.UI)} - {endDateType}
+                      - {format(new Date(endDate), DateFormat.UI)} -
+                      {` ${endDateTypeLabels[endDateType]}`}
                     </span>
                   )}
                 </Text>

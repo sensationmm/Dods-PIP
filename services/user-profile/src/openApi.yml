@@ -10,10 +10,9 @@ paths:
   /user:
     get:
       summary: List all User Profiles
-      operationId: getUser
       parameters:
         - $ref: "#/components/parameters/limit"
-        - $ref: '#/components/parameters/with_roles'
+        - $ref: "#/components/parameters/with_roles"
       responses:
         "200":
           description: List of User Profiles in the system
@@ -64,14 +63,8 @@ paths:
         required: true
         description: UUID of the User to get
     get:
-      summary: Get an User by ID
-      parameters:
-        - in: query
-          name: with_roles
-          description: Return User Profiles with role data
-          schema:
-            type: boolean
-          allowEmptyValue: true
+      summary: Get an User by UUID
+      operationId: getUser
       responses:
         "200":
           description: Specified client account
@@ -140,15 +133,15 @@ paths:
   /users:
     get:
       summary: Returns a list of users for a given first name and last name
-      operationId: searchUser
+      operationId: searchUsers
       parameters:
         - $ref: "#/components/parameters/name"
         - $ref: "#/components/parameters/startsWith"
         - $ref: "#/components/parameters/role"
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/offset"
-        - $ref: '#/components/parameters/sortBy'
-        - $ref: '#/components/parameters/sortDirection'
+        - $ref: "#/components/parameters/sortBy"
+        - $ref: "#/components/parameters/sortDirection"
       responses:
         "200":
           description: List of User Profiles in the system
@@ -164,12 +157,37 @@ paths:
           description: Not authenticated
         "403":
           description: Does not have correct permissions
+    post:
+      operationId: createUser
+      summary: Add new User
+      requestBody:
+        description: Add new User
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "200":
+          description: Succesfully created User Profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid User Profile supplied
+        "401":
+          description: Not authenticated
+        "403":
+          description: Does not have correct permissions
+        "409":
+          description: an existing item already exists
   /role:
     get:
       summary: List all Roles
       operationId: getRole
       parameters:
-        - $ref: '#/components/parameters/limit'
+        - $ref: "#/components/parameters/limit"
       responses:
         "200":
           description: List of User Profiles in the system
@@ -265,6 +283,38 @@ components:
               example: d290f1ss-6c54-4b01-98e6-d701748f7151
           required:
             - role_id
+    UserCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Mr
+        firstName:
+          type: string
+          example: Jane
+        lastName:
+          type: string
+          example: Blogs
+        primaryEmail:
+          type: string
+          example: Jane.Blogs@email.com
+        secondaryEmail:
+          type: string
+          example: Jane.Blogs@email.com
+        telephoneNumber:
+          type: string
+          example: "+442071838750"
+        roleId:
+          type: string
+        clientAccountId:
+          type: string
+        clientAccountName:
+          type: string
+      required:
+        - firstName
+        - lastName
+        - primaryEmail
+        - roleId
 
   parameters:
     name:
@@ -275,12 +325,12 @@ components:
       required: false
       description: User Profile's FirstName or LastName
     startsWith:
-        in: query
-        name: startsWith
-        schema:
-            type: string
-        required: false
-        description: User Profile's lastName starts with letter
+      in: query
+      name: startsWith
+      schema:
+        type: string
+      required: false
+      description: User Profile's lastName starts with letter
     role:
       in: query
       name: role
@@ -310,30 +360,30 @@ components:
       required: false
       description: Offset value for pagination
     sortBy:
-        in: query
-        name: sortBy
-        schema:
-            type: string
-            default: lastName
-            enum:
-              - lastName
-              - account
-              - email
-              - role
-        required: false
-        description: sort User Profile by name or subscription
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: lastName
+        enum:
+          - lastName
+          - account
+          - primaryEmail
+          - role
+      required: false
+      description: sort User Profile by name or subscription
     sortDirection:
-        in: query
-        name: sortDirection
-        schema:
-            type: string
-            default: ASC
-            enum:
-              - ASC
-              - DESC
-        required: false
-        description: direction ASC or DESC
-    
+      in: query
+      name: sortDirection
+      schema:
+        type: string
+        default: ASC
+        enum:
+          - ASC
+          - DESC
+      required: false
+      description: direction ASC or DESC
+
     with_roles:
       in: query
       name: with_roles

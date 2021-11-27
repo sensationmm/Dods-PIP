@@ -1,8 +1,10 @@
 import Add from './icon-add.svg';
 import Alert from './icon-alert.svg';
+import ArrowDown from './icon-arrowDown.svg';
 import Avatar from './icon-avatar.svg';
 import AzFilter from './icon-azFilter.svg';
 import Bin from './icon-bin.svg';
+import Building from './icon-building.svg';
 import Calendar from './icon-calendar.svg';
 import ChevronDown from './icon-chevronDown.svg';
 import ChevronDownBold from './icon-chevronDownBold.svg';
@@ -17,14 +19,22 @@ import Cross from './icon-cross.svg';
 import CrossBold from './icon-crossBold.svg';
 import Disk from './icon-disk.svg';
 import Edit from './icon-edit.svg';
+import Exit from './icon-exit.svg';
 import Grid from './icon-grid.svg';
 import Hide from './icon-hide.svg';
 import Info from './icon-info.svg';
 import Issue from './icon-issue.svg';
+import List from './icon-list.svg';
 import Lock from './icon-lock.svg';
+import Mail from './icon-mail.svg';
+import MailBold from './icon-mailBold.svg';
+import Menu from './icon-menu.svg';
 import Minus from './icon-minus.svg';
 import Pencil from './icon-pencil.svg';
 import Person from './icon-person.svg';
+import Phone from './icon-phone.svg';
+import PhoneBold from './icon-phoneBold.svg';
+import Refresh from './icon-refresh.svg';
 import Search from './icon-search.svg';
 import Show from './icon-show.svg';
 import Subscription from './icon-subscription.svg';
@@ -40,9 +50,11 @@ type TypeIconLibrary = {
 export enum Icons {
   Add = 'Add',
   Alert = 'Alert',
+  ArrowDown = 'ArrowDown',
   Avatar = 'Avatar',
   AzFilter = 'AzFilter',
   Bin = 'Bin',
+  Building = 'Building',
   Calendar = 'Calendar',
   ChevronDown = 'ChevronDown',
   ChevronDownBold = 'ChevronDownBold',
@@ -57,14 +69,22 @@ export enum Icons {
   CrossBold = 'CrossBold',
   Disk = 'Disk',
   Edit = 'Edit',
+  Exit = 'Exit',
   Grid = 'Grid',
   Hide = 'Hide',
   Info = 'Info',
   Issue = 'Issue',
+  List = 'List',
   Lock = 'Lock',
+  Mail = 'Mail',
+  MailBold = 'MailBold',
+  Menu = 'Menu',
   Minus = 'Minus',
   Pencil = 'Pencil',
   Person = 'Person',
+  Phone = 'Phone',
+  PhoneBold = 'PhoneBold',
+  Refresh = 'Refresh',
   Search = 'Search',
   Show = 'Show',
   Subscription = 'Subscription',
@@ -79,9 +99,11 @@ export type IconType = keyof typeof Icons;
 const IconLibrary = {
   Add,
   Alert,
+  ArrowDown,
   Avatar,
   AzFilter,
   Bin,
+  Building,
   Calendar,
   ChevronDown,
   ChevronDownBold,
@@ -96,14 +118,22 @@ const IconLibrary = {
   CrossBold,
   Disk,
   Edit,
+  Exit,
   Grid,
   Hide,
   Info,
   Issue,
+  List,
   Lock,
+  Mail,
+  MailBold,
+  Menu,
   Minus,
   Pencil,
   Person,
+  Phone,
+  PhoneBold,
+  Refresh,
   Search,
   Show,
   Subscription,
