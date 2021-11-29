@@ -1,13 +1,17 @@
 import { AsyncLambdaMiddleware, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
 import { CreateUserInput, UserProfileError } from '../../domain';
-import { UserProfileRepositoryV2 } from '../../repositories';
+import { ClientAccountRepository, UserProfileRepositoryV2 } from '../../repositories';
 import { IamRepository } from '../../repositories/IamRepository';
 
 export const createUser: AsyncLambdaMiddleware<CreateUserInput> = async (parameters) => {
 
-    const { primaryEmail, clientAccountId, clientAccountName } = parameters;
+    const { primaryEmail, clientAccountId } = parameters;
     let userId;
+
+    const clientAccountRecord = await ClientAccountRepository.defaultInstance.findOne({ uuid: clientAccountId });
+
+    const { name: clientAccountName } = clientAccountRecord;
 
     try {
         const createUserResult = await IamRepository.defaultInstance.createUser(primaryEmail, clientAccountId, clientAccountName);

@@ -6,3 +6,10 @@ export class UserProfileError extends HttpError {
         this.name = UserProfileError.name;
     }
 }
+
+export class ClientAccountError extends HttpError {
+    constructor(message: string | unknown) {
+        super(message, HttpStatusCode.NOT_FOUND);
+        this.name = ClientAccountError.name;
+    }
+}

@@ -308,8 +308,6 @@ components:
           type: string
         clientAccountId:
           type: string
-        clientAccountName:
-          type: string
       required:
         - firstName
         - lastName

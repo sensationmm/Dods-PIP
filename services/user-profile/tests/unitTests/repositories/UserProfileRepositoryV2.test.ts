@@ -1,6 +1,6 @@
 import { User, Role } from '@dodsgroup/dods-model';
 import { mocked } from 'ts-jest/utils';
-import { CreateUserPersisterInput, SearchUsersInput } from '../../../src/domain';
+import { CreateUserPersisterInput, GetUserInput, GetUserOutput, SearchUsersInput } from '../../../src/domain';
 
 import { DODS_USER, UserProfileRepositoryV2 } from '../../../src/repositories/UserProfileRepositoryV2';
 
@@ -30,6 +30,8 @@ mockedUser.findAndCountAll.mockResolvedValue(defaultSearchUsersSequelizeResult);
 const CLASS_NAME = UserProfileRepositoryV2.name;
 const SEARCH_USERS_FUNCTION_NAME = UserProfileRepositoryV2.defaultInstance.searchUsers.name;
 const CREATE_USER_FUNCTION_NAME = UserProfileRepositoryV2.defaultInstance.createUser.name;
+const GET_USER_FUNCTION_NAME = UserProfileRepositoryV2.defaultInstance.getUser.name;
+
 
 afterAll(() => {
     mockedRole.mockClear();
@@ -96,9 +98,7 @@ describe(`${CLASS_NAME}`, () => {
 
     test(`${CREATE_USER_FUNCTION_NAME} Valid input Happy case`, async () => {
 
-        const roleName = 'User';
-
-        const roleSequelizeResult = { id: 1, title: roleName } as Role;
+        const roleSequelizeResult = { id: 1, title: 'test role' } as Role;
 
         const userSequelizeResult = { id: 1, title: 'Mr', firstName: 'kenan', lastName: 'hancer', primaryEmail: 'kenan.hancer@somoglobal.com' } as User;
 
@@ -106,7 +106,7 @@ describe(`${CLASS_NAME}`, () => {
 
         mockedUser.create.mockResolvedValue(userSequelizeResult);
 
-        const parameters: CreateUserPersisterInput = { ...userSequelizeResult, telephoneNumber: userSequelizeResult.primaryEmail, roleName };
+        const parameters: CreateUserPersisterInput = { ...userSequelizeResult, telephoneNumber: userSequelizeResult.primaryEmail, roleId: roleSequelizeResult.id.toString() };
 
         const response = await UserProfileRepositoryV2.defaultInstance.createUser(parameters);
 
@@ -114,8 +114,6 @@ describe(`${CLASS_NAME}`, () => {
     });
 
     test(`${CREATE_USER_FUNCTION_NAME} Invalid input for role field`, async () => {
-
-        const roleName = 'User';
 
         mockedRole.findOne.mockResolvedValue(undefined as any);
 
@@ -126,7 +124,7 @@ describe(`${CLASS_NAME}`, () => {
             firstName: 'kenan',
             lastName: 'hancer',
             primaryEmail: 'kenan.hancer@somoglobal.com',
-            roleName
+            roleId: 'test'
         };
 
         try {
@@ -134,7 +132,51 @@ describe(`${CLASS_NAME}`, () => {
 
             throw new Error('Code never should come in this point');
         } catch (error: any) {
-            expect(error.message).toEqual(`Error: Role title: ${roleName} does not exist`);
+            expect(error.message).toEqual(`Error: Role uuid: ${parameters.roleId} does not exist`);
+        }
+    });
+
+    test(`${GET_USER_FUNCTION_NAME} Valid input Happy case`, async () => {
+
+        const findOneInUserResponse = {
+            firstName: 'kenan',
+            lastName: 'hancer',
+            primaryEmail: 'kh@kh.com',
+            role: {
+                uuid: DODS_USER,
+                title: 'test role'
+            }
+        } as any;
+
+        mockedUser.findOne.mockResolvedValue(findOneInUserResponse);
+
+        const parameters: GetUserInput = { userId: '24e7ca86-1788-4b6e-b153-9c963dc922ew' };
+
+        const expectedResponse: GetUserOutput = {
+            firstName: findOneInUserResponse.firstName,
+            lastName: findOneInUserResponse.lastName,
+            email: findOneInUserResponse.primaryEmail,
+            role: findOneInUserResponse.role.title,
+            isDodsUser: findOneInUserResponse.role.uuid === DODS_USER,
+        };
+
+        const response = await UserProfileRepositoryV2.defaultInstance.getUser(parameters);
+
+        expect(response).toEqual(expectedResponse);
+    });
+
+    test(`${GET_USER_FUNCTION_NAME} Invalid input for uuid field`, async () => {
+
+        mockedUser.findOne.mockResolvedValue(undefined as any);
+
+        const parameters: GetUserInput = { userId: '24e7ca86-1788-4b6e-b153-9c963dc922ew' };
+
+        try {
+            await UserProfileRepositoryV2.defaultInstance.getUser(parameters);
+
+            throw new Error('Code never should come in this point');
+        } catch (error: any) {
+            expect(error.message).toEqual(`Error: UserUUID ${parameters.userId} does not exist`);
         }
     });
 });

@@ -45,7 +45,7 @@ export type CreateUserPersisterInput = Pick<UserInput, 'title' | 'firstName' | '
 
 export type CreateUserPersisterOutput = UserOutput;
 
-export type CreateUserInput = CreateUserPersisterInput & { clientAccountId: string; clientAccountName: string; };
+export type CreateUserInput = CreateUserPersisterInput & { clientAccountId: string; };
 
 export type GetUserInput = { userId: string; }
 
