@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { config } from '../domain';
 
 const userProfileConfig: AxiosRequestConfig = {
-    baseURL: config.dods.downstreamEndpoints.userProfile,
+    baseURL: config.dods.downstreamEndpoints.apiGatewayBaseURL + '/',
     timeout: 10 * 1000,
 };
 

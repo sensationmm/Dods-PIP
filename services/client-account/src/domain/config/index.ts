@@ -19,9 +19,7 @@ const stages = ['production', 'development', 'test'];
 
 const envVarsSchema = Joi.object()
     .keys({
-        NODE_ENV: Joi.string()
-            .valid(...stages)
-            .default('development'),
+        NODE_ENV: Joi.string().valid(...stages).default('development'),
         SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
         DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
@@ -30,7 +28,7 @@ const envVarsSchema = Joi.object()
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_CONNECTION_LIMIT: Joi.number().default(5),
-        BASE_URL: Joi.string().required(),
+        API_GATEWAY_BASE_URL: Joi.string().required(),
     })
     .unknown();
 
@@ -43,12 +41,11 @@ export const config = {
     test: {
         stage: envVars.SERVERLESS_STAGE as string,
         port: envVars.SERVERLESS_PORT as number,
-        endpoint:
-            `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string,
+        endpoint: `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string,
     },
     dods: {
         downstreamEndpoints: {
-            userProfile: envVars.BASE_URL as string,
+            apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
         },
     },
     aws: {
