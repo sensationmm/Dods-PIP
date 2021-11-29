@@ -1,4 +1,3 @@
-import { Role, User } from '@dodsgroup/dods-model';
 import {
     CreateUserPersisterInput,
     CreateUserPersisterOutput,
@@ -9,6 +8,7 @@ import {
     UserProfileError,
     UserProfilePersisterV2,
 } from '../domain';
+import { Role, User } from '@dodsgroup/dods-model';
 
 import { Op } from 'sequelize';
 
@@ -18,12 +18,13 @@ export const ASC = 'ASC';
 export const DODS_USER = '83618280-9c84-441c-94d1-59e4b24cbe3d';
 
 export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
-
     static defaultInstance: UserProfilePersisterV2 = new UserProfileRepositoryV2();
 
     async getUser(parameters: GetUserInput): Promise<GetUserOutput> {
-
-        const user = await User.findOne({ where: { uuid: parameters.userId }, include: [User.associations.role] });
+        const user = await User.findOne({
+            where: { uuid: parameters.userId },
+            include: [User.associations.role],
+        });
 
         if (!user) {
             throw new UserProfileError(`Error: UserUUID ${parameters.userId} does not exist`);
@@ -34,12 +35,13 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             lastName: user.lastName,
             email: user.primaryEmail,
             role: user.role.title,
-            isDodsUser: user.role.uuid === DODS_USER
+            isDodsUser: user.role.uuid === DODS_USER,
         };
     }
 
     async searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput> {
-        const { name, startsWith, role, limit, offset, sortBy, sortDirection } = parameters;
+        const { name, startsWith, role, clientAccountId, limit, offset, sortBy, sortDirection } =
+            parameters;
 
         let whereClause: any = {};
 
@@ -66,6 +68,10 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             whereClause[ROLE_ID_COLUMN] = roleRecord?.id;
         }
 
+        if (clientAccountId) {
+            whereClause['$accounts.uuid$'] = clientAccountId;
+        }
+
         let orderBy: any = [sortBy, sortDirection];
 
         if (sortBy === 'role') {
@@ -77,32 +83,26 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         const { rows, count } = await User.findAndCountAll({
             where: whereClause,
             subQuery: false,
-            include: [
-                User.associations.role,
-                User.associations.accounts,
-            ],
+            include: [User.associations.role, User.associations.accounts],
             order: [orderBy],
             offset: offset!,
             limit: limit!,
         });
 
         return {
-            users: rows.map(
-                ({ uuid, firstName, lastName, primaryEmail, role }) => ({
-                    uuid,
-                    firstName,
-                    lastName,
-                    email: primaryEmail,
-                    role: role.title,
-                    isDodsUser: role.uuid === DODS_USER
-                })
-            ),
+            users: rows.map(({ uuid, firstName, lastName, primaryEmail, role }) => ({
+                uuid,
+                firstName,
+                lastName,
+                email: primaryEmail,
+                role: role.title,
+                isDodsUser: role.uuid === DODS_USER,
+            })),
             count,
         };
     }
 
     async createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput> {
-
         const { roleId } = parameters;
 
         const roleRecord = await Role.findOne({ where: { uuid: roleId } });
@@ -114,7 +114,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         const newUser = await User.create({
             ...parameters,
             telephoneNumber1: parameters.telephoneNumber,
-            roleId: roleRecord?.id
+            roleId: roleRecord?.id,
         });
 
         return newUser;

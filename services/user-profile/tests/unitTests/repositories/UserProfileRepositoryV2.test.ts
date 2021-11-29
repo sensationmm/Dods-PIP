@@ -1,9 +1,8 @@
-import { User, Role } from '@dodsgroup/dods-model';
-import { mocked } from 'ts-jest/utils';
 import { CreateUserPersisterInput, GetUserInput, GetUserOutput, SearchUsersInput } from '../../../src/domain';
-
 import { DODS_USER, UserProfileRepositoryV2 } from '../../../src/repositories/UserProfileRepositoryV2';
+import { Role, User } from '@dodsgroup/dods-model';
 
+import { mocked } from 'ts-jest/utils';
 
 const defaultRoleSequelizeResult = { id: 1, uuid: DODS_USER } as Role;
 
@@ -58,7 +57,8 @@ describe(`${CLASS_NAME}`, () => {
             limit: 10,
             offset: 0,
             sortBy: 'role',
-            sortDirection: 'ASC'
+            sortDirection: 'ASC',
+            clientAccountId: 'client-account-id',
         };
 
         const response1 = await UserProfileRepositoryV2.defaultInstance.searchUsers(searchUsersParameters);
