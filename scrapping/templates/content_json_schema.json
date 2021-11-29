@@ -20,12 +20,29 @@
     "originalContent": {
       "type": "string",
       "$comment": "This object is a key value store of the extracted content and will differ for each source."
+    },
+     "contentType": {
+      "type": "string",
+      "$comment": "Examples - Early Day Motion/HOC UK - Oral Answers/Wales - Written Answers"
+    },
+    "contentSourceURL": {
+      "type": "string",
+      "$comment": "Example"
+    },
+    "extractDate": {
+      "type": "string",
+      "format": "date-time",
+      "$comment": "YYYY:MM::DDThh:mm:ss.sTZD"
+    },
+    "metadata": {
+      "type": "array",
+      "items": {},
+      "%comment": "This list of objects is to allow for metadata related to the content or extraction that doesn't fit anywhere else. "
+    },
+    "content": {
+      "type": "object",
+      "$comment": "This object is a key value store of the extracted content and will differ for each source."
     }
   },
-  "required": [
-
-    "sourceReferenceUri",
-    "createdDateTime",
-    "originalContent"
-  ]
+  "required": []
 }
