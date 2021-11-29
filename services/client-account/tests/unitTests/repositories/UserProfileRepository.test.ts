@@ -1,8 +1,12 @@
+import {
+    CreateUserOutput,
+    CreateUserPersisterInput,
+} from '../../../src/domain';
+
 import { UserProfileModel } from '../../../src/db/models';
 import { UserProfileRepository } from '../../../src/repositories';
-import { mocked } from 'ts-jest/utils';
 import axios from 'axios';
-import { CreateUserOutput, CreateUserPersisterInput } from '../../../src/domain';
+import { mocked } from 'ts-jest/utils';
 
 const defaultUsersProfile = [
     {
@@ -25,13 +29,11 @@ const defaultUsersProfile = [
     } as UserProfileModel,
 ];
 
-jest.mock("axios");
+jest.mock('axios');
 jest.mock('../../../src/db/models/UserProfile');
 
 const mockedAxios = mocked(axios, true);
 const mockedUserProfileModel = mocked(UserProfileModel, true);
-
-
 
 mockedUserProfileModel.findOne.mockImplementation(async (findOptions) => {
     if (
@@ -44,11 +46,13 @@ mockedUserProfileModel.findOne.mockImplementation(async (findOptions) => {
     return null;
 });
 
-
 const CLASS_NAME = UserProfileRepository.name;
-const FIND_ONE_FUNCTION_NAME = UserProfileRepository.defaultInstance.findOne.name;
-const CHECK_USER_AVAILABILITY_FUNCTION_NAME = UserProfileRepository.defaultInstance.checkUserEmailAvailability.name;
-const CREATE_USER_FUNCTION_NAME = UserProfileRepository.defaultInstance.createUser.name;
+const FIND_ONE_FUNCTION_NAME =
+    UserProfileRepository.defaultInstance.findOne.name;
+const CHECK_USER_AVAILABILITY_FUNCTION_NAME =
+    UserProfileRepository.defaultInstance.checkUserEmailAvailability.name;
+const CREATE_USER_FUNCTION_NAME =
+    UserProfileRepository.defaultInstance.createUser.name;
 
 afterEach(() => {
     mockedAxios.post.mockClear();
@@ -56,7 +60,9 @@ afterEach(() => {
 
 describe(`${CLASS_NAME} handler`, () => {
     test(`${FIND_ONE_FUNCTION_NAME} Valid case `, async () => {
-        const response = await UserProfileRepository.defaultInstance.findOne({ uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3' });
+        const response = await UserProfileRepository.defaultInstance.findOne({
+            uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
+        });
 
         expect(response).toEqual(defaultUsersProfile[0]);
     });
@@ -75,7 +81,10 @@ describe(`${CLASS_NAME} handler`, () => {
 
         mockedUserProfileModel.findAll.mockResolvedValue([]);
 
-        const response = await UserProfileRepository.defaultInstance.checkUserEmailAvailability(primaryEmail);
+        const response =
+            await UserProfileRepository.defaultInstance.checkUserEmailAvailability(
+                primaryEmail
+            );
 
         expect(response).toEqual(true);
     });
@@ -85,13 +94,15 @@ describe(`${CLASS_NAME} handler`, () => {
 
         mockedUserProfileModel.findAll.mockResolvedValue(defaultUsersProfile);
 
-        const response = await UserProfileRepository.defaultInstance.checkUserEmailAvailability(primaryEmail);
+        const response =
+            await UserProfileRepository.defaultInstance.checkUserEmailAvailability(
+                primaryEmail
+            );
 
         expect(response).toEqual(false);
     });
 
     test(`${CREATE_USER_FUNCTION_NAME} Valid case `, async () => {
-
         const title = 'Mr';
         const firstName = 'Kenan';
         const lastName = 'Hancer';
@@ -109,20 +120,32 @@ describe(`${CLASS_NAME} handler`, () => {
             userName: primaryEmail,
             clientAccount: {
                 id: clientAccountId,
-                name: clientAccountName
-            }
+                name: clientAccountName,
+            },
         };
 
-        const data = { success: true, data: createdUserData };
+        const data = { success: true, user: createdUserData };
 
         mockedAxios.post.mockResolvedValue({ data } as any);
 
-        const createUserParameter: CreateUserPersisterInput = { title, firstName, lastName, roleId, primaryEmail };
+        const createUserParameter: CreateUserPersisterInput = {
+            title,
+            firstName,
+            lastName,
+            roleId,
+            primaryEmail,
+        };
 
-        const response = await UserProfileRepository.defaultInstance.createUser(createUserParameter);
+        const response = await UserProfileRepository.defaultInstance.createUser(
+            createUserParameter
+        );
 
         expect(mockedAxios.post).toHaveBeenCalledTimes(1);
 
-        expect(response).toEqual({ ...data, error: undefined });
+        expect(response).toEqual({
+            success: true,
+            data: createdUserData,
+            error: undefined,
+        });
     });
 });

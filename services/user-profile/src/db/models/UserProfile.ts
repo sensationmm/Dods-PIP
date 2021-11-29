@@ -1,4 +1,9 @@
-import { BelongsToSetAssociationMixin, DataTypes, Model, Optional } from 'sequelize';
+import {
+    BelongsToSetAssociationMixin,
+    DataTypes,
+    Model,
+    Optional,
+} from '@dodsgroup/dods-model';
 
 import RoleTypeModel from './RoleType';
 import sequelize from '../sequelize';
@@ -20,11 +25,19 @@ export interface UserProfileModelAttributes {
 export interface UserProfileModelCreationAttributes
     extends Optional<
         UserProfileModelAttributes,
-        'id' | 'uuid' | 'secondaryEmail' | 'telephoneNumber1' | 'telephoneNumber2' | 'fullName'
+        | 'id'
+        | 'uuid'
+        | 'secondaryEmail'
+        | 'telephoneNumber1'
+        | 'telephoneNumber2'
+        | 'fullName'
     > {}
 
 class UserProfileModel
-    extends Model<UserProfileModelAttributes, UserProfileModelCreationAttributes>
+    extends Model<
+        UserProfileModelAttributes,
+        UserProfileModelCreationAttributes
+    >
     implements UserProfileModelAttributes
 {
     public id!: number;
@@ -72,7 +85,10 @@ UserProfileModel.init(
             comment: 'null',
         },
         fullName: {
-            type: DataTypes.VIRTUAL(DataTypes.STRING, ['firstName', 'lastName']),
+            type: DataTypes.VIRTUAL(DataTypes.STRING, [
+                'firstName',
+                'lastName',
+            ]),
             get() {
                 return `${this.firstName} ${this.lastName}`;
             },
