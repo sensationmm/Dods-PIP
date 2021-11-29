@@ -2,13 +2,28 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "contentType": {
-      "type": "string",
-      "$comment": "Examples - Early Day Motion/HOC UK - Oral Answers/Wales - Written Answers"
-    },
+
     "contentSource": {
       "type": "string",
       "$comment": "Example - UK Parliament"
+    },
+    "sourceReferenceUri": {
+      "type": "string",
+      "$comment": "Example"
+    },
+    "createdDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "$comment": "YYYY:MM::DDThh:mm:ss.sTZD"
+    },
+
+    "originalContent": {
+      "type": "string",
+      "$comment": "This object is a key value store of the extracted content and will differ for each source."
+    },
+     "contentType": {
+      "type": "string",
+      "$comment": "Examples - Early Day Motion/HOC UK - Oral Answers/Wales - Written Answers"
     },
     "contentSourceURL": {
       "type": "string",
@@ -29,10 +44,5 @@
       "$comment": "This object is a key value store of the extracted content and will differ for each source."
     }
   },
-  "required": [
-    "contentType",
-    "contentSource",
-    "extractDate",
-    "content"
-  ]
+  "required": []
 }
