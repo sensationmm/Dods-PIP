@@ -22,6 +22,7 @@ export default withSession(async (req, res) => {
         {
           method,
         },
+        req,
       );
 
       res.json(response);
