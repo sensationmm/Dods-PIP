@@ -21,7 +21,7 @@ BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
 content_type = 'Debates HOC (UK)'
 
-content_template_file_path = os.path.abspath(os.curdir) + '/templates/content_template.json'
+content_template_file_path = os.path.abspath(os.curdir) + '/templates/content_template_new.json'
 config = Config().config_read("config.ini")
 
 
