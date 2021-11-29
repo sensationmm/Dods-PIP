@@ -138,6 +138,7 @@ paths:
         - $ref: "#/components/parameters/name"
         - $ref: "#/components/parameters/startsWith"
         - $ref: "#/components/parameters/role"
+        - $ref: "#/components/parameters/clientAccountId"
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/sortBy"
@@ -332,6 +333,14 @@ components:
     role:
       in: query
       name: role
+      schema:
+        type: string
+        format: uuid
+      required: false
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    clientAccountId:
+      in: query
+      name: clientAccountId
       schema:
         type: string
         format: uuid

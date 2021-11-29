@@ -4,11 +4,12 @@ export type SearchUsersInput = {
     name?: string;
     startsWith?: string;
     role?: string;
+    clientAccountId?: string;
     limit?: number;
     offset?: number;
     sortBy?: string;
     sortDirection?: string;
-}
+};
 
 export type SearchUsersResultType = Pick<UserInput, 'uuid' | 'firstName' | 'lastName'> & { email: string; role: string; isDodsUser: boolean; }
 
