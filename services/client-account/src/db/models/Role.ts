@@ -1,21 +1,19 @@
-import { DataTypes, Model, Optional } from '@dodsgroup/dods-model';
+import { DataTypes, Model, Optional } from 'sequelize';
 
 import sequelize from '../sequelize';
 
-export interface RoleTypeAttributes {
+export interface RoleAttributes {
     id: number;
     uuid: string;
     title: string;
     dodsRole: boolean;
 }
 
-interface RoleTypeCreationAttributes
-    extends Optional<RoleTypeAttributes, 'id' | 'uuid'> {}
+export interface RoleInput extends Optional<RoleAttributes, 'id' | 'uuid'> {}
 
-class RoleTypeModel
-    extends Model<RoleTypeAttributes, RoleTypeCreationAttributes>
-    implements RoleTypeAttributes
-{
+export interface RoleOutput extends Required<RoleAttributes> {}
+
+class Role extends Model<RoleAttributes, RoleInput> implements RoleAttributes {
     public id!: number;
     public uuid!: string;
     public title!: string;
@@ -27,35 +25,35 @@ class RoleTypeModel
     public readonly deletedAt!: Date | null;
 }
 
-RoleTypeModel.init(
+Role.init(
     {
         id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.INTEGER({ length: 11 }),
             allowNull: false,
-            primaryKey: true,
             autoIncrement: true,
+            primaryKey: true,
         },
         uuid: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
-            comment: 'null',
+            allowNull: false,
         },
         title: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING({ length: 45 }),
             allowNull: false,
-            comment: 'null',
         },
         dodsRole: {
-            type: DataTypes.BOOLEAN,
+            type: DataTypes.TINYINT({ length: 1 }),
             allowNull: false,
-            comment: 'null',
+            defaultValue: 0,
         },
     },
     {
-        underscored: true,
         tableName: 'dods_roles',
+        underscored: true,
+        timestamps: true,
         sequelize,
+        // paranoid: true
     }
 );
-
-export default RoleTypeModel;
+export default Role;

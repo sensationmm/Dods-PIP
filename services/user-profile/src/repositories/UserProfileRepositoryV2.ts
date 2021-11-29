@@ -18,7 +18,8 @@ export const ASC = 'ASC';
 export const DODS_USER = '83618280-9c84-441c-94d1-59e4b24cbe3d';
 
 export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
-    static defaultInstance: UserProfilePersisterV2 = new UserProfileRepositoryV2();
+    static defaultInstance: UserProfilePersisterV2 =
+        new UserProfileRepositoryV2();
 
     async getUser(parameters: GetUserInput): Promise<GetUserOutput> {
         const user = await User.findOne({
@@ -27,7 +28,9 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         });
 
         if (!user) {
-            throw new UserProfileError(`Error: UserUUID ${parameters.userId} does not exist`);
+            throw new UserProfileError(
+                `Error: UserUUID ${parameters.userId} does not exist`
+            );
         }
 
         return {
@@ -39,9 +42,19 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         };
     }
 
-    async searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput> {
-        const { name, startsWith, role, clientAccountId, limit, offset, sortBy, sortDirection } =
-            parameters;
+    async searchUsers(
+        parameters: SearchUsersInput
+    ): Promise<SearchUsersOutput> {
+        const {
+            name,
+            startsWith,
+            role,
+            clientAccountId,
+            limit,
+            offset,
+            sortBy,
+            sortDirection,
+        } = parameters;
 
         let whereClause: any = {};
 
@@ -62,7 +75,9 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             const roleRecord = await Role.findOne({ where: { uuid: role } });
 
             if (!roleRecord) {
-                throw new UserProfileError(`Error: RoleUuid ${role} does not exist`);
+                throw new UserProfileError(
+                    `Error: RoleUuid ${role} does not exist`
+                );
             }
 
             whereClause[ROLE_ID_COLUMN] = roleRecord?.id;
@@ -89,26 +104,75 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             limit: limit!,
         });
 
-        return {
-            users: rows.map(({ uuid, firstName, lastName, primaryEmail, role }) => ({
+        let users: any = [];
+
+        rows.map(
+            ({
                 uuid,
                 firstName,
                 lastName,
-                email: primaryEmail,
-                role: role.title,
-                isDodsUser: role.uuid === DODS_USER,
-            })),
+                primaryEmail,
+                secondaryEmail,
+                telephoneNumber1,
+                telephoneNumber2,
+                title,
+                role,
+                accounts,
+            }) => {
+                let clientAccount = {};
+
+                if (accounts?.length) {
+                    clientAccount = {
+                        uuid: accounts[0].uuid,
+                        name: accounts[0].name,
+                    };
+                    for (let i = 0; i < accounts.length; i++) {
+                        if (accounts[i].isDodsAccount) {
+                            clientAccount = {
+                                uuid: accounts[i].uuid,
+                                name: accounts[i].name,
+                            };
+                        }
+                    }
+                }
+
+                users.push({
+                    uuid,
+                    firstName,
+                    lastName,
+                    title,
+                    primaryEmail: primaryEmail,
+                    secondaryEmail: secondaryEmail,
+                    telephoneNumber1,
+                    telephoneNumber2,
+                    role: {
+                        uuid: role.uuid,
+                        title: role.title,
+                        dodsRole: role.dodsRole,
+                    },
+                    clientAccount: clientAccount,
+                    isDodsUser: role.uuid === DODS_USER,
+                });
+            }
+        );
+
+        return {
+            users,
             count,
         };
     }
 
-    async createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput> {
+    async createUser(
+        parameters: CreateUserPersisterInput
+    ): Promise<CreateUserPersisterOutput> {
         const { roleId } = parameters;
 
         const roleRecord = await Role.findOne({ where: { uuid: roleId } });
 
         if (!roleRecord) {
-            throw new UserProfileError(`Error: Role uuid: ${roleId} does not exist`);
+            throw new UserProfileError(
+                `Error: Role uuid: ${roleId} does not exist`
+            );
         }
 
         const newUser = await User.create({

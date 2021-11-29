@@ -19,11 +19,31 @@ const SUCCESS_ACCOUNT_RESPONSE: TeamMemberResponse[] = [
         id: '89139c46-711d-42cf-affd-b865dd9191eb',
         name: 'Latest Tester',
         teamMemberType: 1,
+        title: 'Mr',
+        primaryEmailAddress: 'diego@example.com',
+        secondaryEmailAddress: 'diego2@example.com',
+        telephoneNumber1: '+3138869522',
+        telephoneNumber2: '+573139922211',
+        role: {
+            uuid: 'ae91d45d-ea24-42ed-90fc-c64e4ba4e87f',
+            title: 'Admin',
+            dodsRole: 1,
+        },
     },
     {
         id: '30360fcd-91be-46f3-8177-e2123f756838',
         name: 'Employee Example',
         teamMemberType: 2,
+        title: 'Mr',
+        primaryEmailAddress: 'diego@example.com',
+        secondaryEmailAddress: 'diego2@example.com',
+        telephoneNumber1: '+3138869522',
+        telephoneNumber2: '+573139922211',
+        role: {
+            uuid: 'ae91d45d-ea24-42ed-90fc-c64e4ba4e87f',
+            title: 'Admin',
+            dodsRole: 1,
+        },
     },
 ];
 

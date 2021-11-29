@@ -1,11 +1,13 @@
 import {
     ClientAccountModel,
+    Role,
     SubscriptionTypeModel,
     UserProfileModel,
 } from '../../db';
 import {
     ClientAccountParameters,
     ClientAccountResponse,
+    RoleInfo,
     SearchClientAccountResponse,
     SubscriptionTypeResponse,
     TeamMemberResponse,
@@ -90,9 +92,27 @@ export function parseSearchClientAccountResponse(
 }
 
 export function parseTeamMember(item: UserProfileModel): TeamMemberResponse {
+    console.log('------ITEMMM-----');
+    console.log(item.userRole);
+
     return {
         id: item.uuid,
         name: item.fullName,
         teamMemberType: item.ClientAccountTeamModel!.parsedType,
+        title: item.title,
+        primaryEmailAddress: item.primaryEmail,
+        secondaryEmailAddress: item.secondaryEmail,
+        telephoneNumber1: item.telephoneNumber1,
+        telephoneNumber2: item.telephoneNumber2,
+        role: item.userRole ? parseRoleId(item.userRole) : undefined,
     };
+}
+
+export function parseRoleId(item: Role): RoleInfo {
+    const role: RoleInfo = {
+        uuid: item.uuid,
+        title: item.title,
+        dodsRole: item.dodsRole,
+    };
+    return role;
 }

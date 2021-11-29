@@ -4,10 +4,22 @@ export interface ClientAccountTeam {
     teamMemberType: number;
 }
 
+export interface RoleInfo {
+    uuid: string;
+    title?: string;
+    dodsRole?: boolean;
+}
+
 export interface TeamMemberResponse {
     id: string;
     name: string;
     teamMemberType?: 'Team Member' | 'Account Manager' | 'Client User' | number;
+    title: string;
+    primaryEmailAddress: string;
+    secondaryEmailAddress?: string;
+    telephoneNumber1: string;
+    telephoneNumber2?: string;
+    role?: Object | undefined;
 }
 
 export interface TeamMember {

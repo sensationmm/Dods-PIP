@@ -30,6 +30,7 @@ interface ClientAccountAttributes {
     isUk: boolean | null;
     isEu: boolean | null;
     lastStepCompleted: number;
+    isDodsAccount: boolean;
 }
 
 export interface ClientAccountInput
@@ -67,7 +68,7 @@ export class ClientAccount
     public isUk!: boolean | null;
     public isEu!: boolean | null;
     public lastStepCompleted!: number;
-
+    public isDodsAccount!: boolean;
     // mixins for association (optional)
     public subscription!: number | null;
     public readonly subscriptionType!: SubscriptionType;
@@ -195,6 +196,11 @@ ClientAccount.init(
             type: DataTypes.INTEGER({ length: 11 }),
             allowNull: false,
             defaultValue: 1,
+        },
+        isDodsAccount: {
+            type: DataTypes.TINYINT({ length: 1 }),
+            allowNull: false,
+            defaultValue: 0,
         },
     },
     {
