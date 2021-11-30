@@ -124,7 +124,7 @@ describe(`${CLASS_NAME} handler`, () => {
             },
         };
 
-        const data = { success: true, user: createdUserData };
+        const data = { success: true, User: createdUserData };
 
         mockedAxios.post.mockResolvedValue({ data } as any);
 

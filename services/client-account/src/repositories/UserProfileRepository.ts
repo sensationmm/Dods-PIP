@@ -39,8 +39,8 @@ export class UserProfileRepository implements UserProfilePersister {
     async createUser(parameters: CreateUserPersisterInput): Promise<RequestOutput<CreateUserOutput>> {
         const response = await axios.post(`${this.baseURL}/users`, parameters);
 
-        const { data: { success, user, error } } = response;
+        const { data: { success, User, error } } = response;
 
-        return { success, data: user, error };
+        return { success, data: User, error };
     }
 }
