@@ -21,10 +21,14 @@ export default withSession(async (req, res) => {
     }
   } else if (method === 'POST') {
     try {
-      const result = await fetchJson(`${process.env.APP_API_URL}${Api.ClientAccount}`, {
-        method,
-        body: JSON.stringify(req.body),
-      });
+      const result = await fetchJson(
+        `${process.env.APP_API_URL}${Api.ClientAccount}`,
+        {
+          method,
+          body: JSON.stringify(req.body),
+        },
+        req,
+      );
       res.json(result);
     } catch (error) {
       const { response: fetchResponse } = error;

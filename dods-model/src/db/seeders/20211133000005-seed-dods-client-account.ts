@@ -36,6 +36,17 @@ export = {
                 created_at: new Date(),
                 updated_at: new Date(),
             },
+
+            {
+                uuid: 'a170742a-f84d-40e9-9176-8fd6568149f7',
+                name: 'DODS GROUP',
+                contact_name: 'person dods',
+                contact_email_address: 'people@dods.com',
+                contact_telephone_number: '+1',
+                subscription_seats: 100,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
         ]);
     },
     down: (queryInterface: QueryInterface) => {
@@ -45,6 +56,7 @@ export = {
                     'cd44bad6-8eeb-4870-abb8-72d297ea7a3e',
                     '6c0e0f58-aff8-4d0d-9a20-53215aee61cc',
                     'a3ab02d6-3fd3-4a20-a284-455af84510d2',
+                    'a170742a-f84d-40e9-9176-8fd6568149f7',
                 ],
             },
         });

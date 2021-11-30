@@ -13,6 +13,7 @@ export default withSession(async (req, res) => {
         },
         body: JSON.stringify(req.body),
       },
+      req,
     );
     const user = {
       isLoggedIn: true,

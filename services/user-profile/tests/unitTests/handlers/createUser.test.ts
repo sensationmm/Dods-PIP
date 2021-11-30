@@ -1,8 +1,8 @@
 import { createUser } from '../../../src/handlers/createUser/createUser';
-import { UserProfileRepositoryV2, IamRepository } from '../../../src/repositories';
+import { UserProfileRepositoryV2, IamRepository, ClientAccountRepository } from '../../../src/repositories';
 import { mocked } from 'ts-jest/utils';
 import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { CreateUserInput } from '../../../src/domain';
+import { ClientAccountOutput, CreateUserInput } from '../../../src/domain';
 import { User } from '@dodsgroup/dods-model';
 
 const defaultContext = createContext();
@@ -12,22 +12,30 @@ const defaultCreateUserRepositoryResult = { id: 1, title: 'Mr', firstName: 'kena
 
 jest.mock('../../../src/repositories/UserProfileRepositoryV2');
 jest.mock('../../../src/repositories/IamRepository');
+jest.mock('../../../src/repositories/ClientAccountRepository');
 
 const mockedUserProfileRepostiroyV2 = mocked(UserProfileRepositoryV2, true);
 const mockedIamRepository = mocked(IamRepository, true);
+const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
+
+
 
 const FUNCTION_NAME = createUser.name;
 
 afterEach(() => {
+    mockedClientAccountRepository.mockClear();
     mockedIamRepository.mockClear();
     mockedUserProfileRepostiroyV2.mockReset();
 });
 
 describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input', async () => {
-        const createUserIamRepositoryResult = { success: true, data: { userName: 'test' } };
 
-        mockedIamRepository.defaultInstance.createUser.mockResolvedValue(createUserIamRepositoryResult);
+        const findOneInClientAccountRepostiroyResult = { name: 'test client account' } as ClientAccountOutput;
+        const createUserInIamRepositoryResult = { success: true, data: { userName: 'test' } };
+
+        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(findOneInClientAccountRepostiroyResult);
+        mockedIamRepository.defaultInstance.createUser.mockResolvedValue(createUserInIamRepositoryResult);
         mockedUserProfileRepostiroyV2.defaultInstance.createUser.mockResolvedValue(defaultCreateUserRepositoryResult);
 
         const createUserInput: CreateUserInput = {
@@ -35,9 +43,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             firstName: 'kenan',
             lastName: 'hancer',
             primaryEmail: 'kenan.hancer@somoglobal.com',
-            roleName: 'User',
+            roleId: '0e6c0561-8ff1-4f74-93bc-77444b156c6f',
             clientAccountId: '1',
-            clientAccountName: 'User',
         };
 
         const createUserResult = new HttpResponse(HttpStatusCode.OK, {
@@ -47,11 +54,11 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 displayName: defaultCreateUserRepositoryResult.fullName,
                 userName: defaultCreateUserRepositoryResult.primaryEmail,
                 emailAddress: defaultCreateUserRepositoryResult.primaryEmail,
-                userId: createUserIamRepositoryResult.data.userName,
-                role: createUserInput.roleName,
+                userId: createUserInIamRepositoryResult.data.userName,
+                roleId: '0e6c0561-8ff1-4f74-93bc-77444b156c6f',
                 clientAccount: {
                     id: createUserInput.clientAccountId,
-                    name: createUserInput.clientAccountName
+                    name: findOneInClientAccountRepostiroyResult.name
                 }
             }
         });
@@ -62,8 +69,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test('Invalid input', async () => {
-        // const createUserIamRepositoryResult = { success: false, data: { userName: '' }, error: 'TEST' };
+        const findOneInClientAccountRepostiroyResult = { name: 'test client account' } as ClientAccountOutput;
 
+        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(findOneInClientAccountRepostiroyResult);
         mockedIamRepository.defaultInstance.createUser.mockImplementation(() => { throw { response: { data: { error: 'TEST' } } } });
         mockedUserProfileRepostiroyV2.defaultInstance.createUser.mockResolvedValue(defaultCreateUserRepositoryResult);
 
@@ -72,9 +80,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             firstName: 'kenan',
             lastName: 'hancer',
             primaryEmail: 'kenan.hancer@somoglobal.com',
-            roleName: 'User',
+            roleId: '0e6c0561-8ff1-4f74-93bc-77444b156c6f',
             clientAccountId: '1',
-            clientAccountName: 'User',
         };
 
         try {
@@ -87,9 +94,11 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test('IamPersister Successful false', async () => {
-        // const createUserIamRepositoryResult = { success: false, data: { userName: '' }, error: 'TEST' };
+        const findOneInClientAccountRepostiroyResult = { name: 'test client account' } as ClientAccountOutput;
+        const createUserInIamRepositoryResult = { success: false, data: { userName: '' } };
 
-        mockedIamRepository.defaultInstance.createUser.mockResolvedValue({ success: false, data: { userName: '' } });
+        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(findOneInClientAccountRepostiroyResult);
+        mockedIamRepository.defaultInstance.createUser.mockResolvedValue(createUserInIamRepositoryResult);
         mockedUserProfileRepostiroyV2.defaultInstance.createUser.mockResolvedValue(defaultCreateUserRepositoryResult);
 
         const createUserInput: CreateUserInput = {
@@ -97,9 +106,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             firstName: 'kenan',
             lastName: 'hancer',
             primaryEmail: 'kenan.hancer@somoglobal.com',
-            roleName: 'User',
+            roleId: '0e6c0561-8ff1-4f74-93bc-77444b156c6f',
             clientAccountId: '1',
-            clientAccountName: 'User',
         };
 
         try {

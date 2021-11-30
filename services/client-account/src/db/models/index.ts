@@ -1,8 +1,9 @@
-import { config } from '../../domain';
 import ClientAccountModel from './ClientAccount';
 import ClientAccountTeamModel from './ClientAccountTeamModel';
+import Role from './Role';
 import SubscriptionTypeModel from './SubscriptionType';
 import UserProfileModel from './UserProfile';
+import { config } from '../../domain';
 
 if (!config.isTestEnv) {
     // SubscriptionTypeModel.hasMany(ClientAccountModel, {
@@ -11,6 +12,11 @@ if (!config.isTestEnv) {
     ClientAccountModel.belongsTo(SubscriptionTypeModel, {
         foreignKey: 'subscription',
         as: 'subscriptionType',
+    });
+
+    UserProfileModel.belongsTo(Role, {
+        foreignKey: 'role_id',
+        as: 'userRole',
     });
 
     // ClientAccountTeamModel.hasMany(ClientAccountModel, {
@@ -39,4 +45,10 @@ if (!config.isTestEnv) {
     });
 }
 
-export { ClientAccountModel, SubscriptionTypeModel, UserProfileModel, ClientAccountTeamModel };
+export {
+    ClientAccountModel,
+    SubscriptionTypeModel,
+    UserProfileModel,
+    ClientAccountTeamModel,
+    Role,
+};

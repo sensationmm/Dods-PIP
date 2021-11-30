@@ -13,6 +13,7 @@ export default withSession(async (req, res) => {
       {
         method: 'GET',
       },
+      req,
     );
     res.json(result);
   } catch (error) {

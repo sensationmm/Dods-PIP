@@ -83,7 +83,14 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: ['subscriptionType', 'team'],
+            include: [
+                { model: this.subsModel, as: 'subscriptionType' },
+                {
+                    model: this.userModel,
+                    as: 'team',
+                    include: ['userRole'],
+                },
+            ],
         });
 
         if (clientAccountModel) {
@@ -219,6 +226,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
                     {
                         model: this.userModel,
                         as: 'team',
+                        include: ['userRole'],
                     },
                 ],
                 distinct: true,
@@ -367,7 +375,14 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: ['team'],
+
+            include: [
+                {
+                    model: this.userModel,
+                    as: 'team',
+                    include: ['userRole'],
+                },
+            ],
         });
 
         if (clientAccountModel) {

@@ -4,9 +4,13 @@ import { Api } from '../../utils/api';
 
 export default withSession(async (req, res) => {
   try {
-    const result = await fetchJson(`${process.env.APP_API_URL}${Api.EditorialInfoTypes}`, {
-      method: 'GET',
-    });
+    const result = await fetchJson(
+      `${process.env.APP_API_URL}${Api.EditorialInfoTypes}`,
+      {
+        method: 'GET',
+      },
+      req,
+    );
     res.json(result);
   } catch (error) {
     const { response: fetchResponse } = error;

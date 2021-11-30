@@ -1,8 +1,8 @@
 {
-  "jurisdiction": "UK",
-  "version": "1.0",
-  "countryOfOrigin": "GBR",
-  "language": "en",
-  "internallyCreated": false,
-  "feedFormat": "text/plain"
+    "contentType": "",
+    "contentSource": "",
+    "contentSourceURL": "",
+    "extractDate": "YYYY:MM::DDThh:mm:ss.sTZD",
+    "metadata": [],
+    "content": {}
 }

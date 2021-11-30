@@ -1,6 +1,6 @@
+import { ClientAccountTeamModel, Role } from '.';
 import { DataTypes, Model } from 'sequelize';
 
-import { ClientAccountTeamModel } from '.';
 import { UserProfileModelAttributes } from '../types';
 import sequelize from '../sequelize';
 
@@ -26,6 +26,8 @@ class UserProfileModel
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
     public readonly deletedAt!: Date | null;
+
+    public userRole?: Role;
 }
 
 UserProfileModel.init(
@@ -57,7 +59,10 @@ UserProfileModel.init(
             comment: 'null',
         },
         fullName: {
-            type: DataTypes.VIRTUAL(DataTypes.STRING, ['firstName', 'lastName']),
+            type: DataTypes.VIRTUAL(DataTypes.STRING, [
+                'firstName',
+                'lastName',
+            ]),
             get() {
                 return `${this.firstName} ${this.lastName}`;
             },
