@@ -134,6 +134,7 @@ describe(`${CLASS_NAME} handler`, () => {
             lastName,
             roleId,
             primaryEmail,
+            clientAccountId
         };
 
         const response = await UserProfileRepository.defaultInstance.createUser(
