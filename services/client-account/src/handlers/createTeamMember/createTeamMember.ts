@@ -77,7 +77,7 @@ export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> =
         });
 
         if (createUserResponse.success) {
-            console.log(createUserResponse.data.displayName); 
+            console.log(createUserResponse.data);
         }
 
         return new HttpResponse(HttpStatusCode.OK, {
