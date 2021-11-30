@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Breadcrumbs, { BreadcrumbsProps } from '../../Breadcrumbs';
 import Text from '../../Text';
 import Panel from '../Panel';
 import * as Styled from './PageHeader.styles';
@@ -8,7 +9,7 @@ export interface PageHeaderProps {
   title: string;
   content?: JSX.Element;
   flexDirection?: 'row' | 'column';
-  breadcrumbs?: JSX.Element;
+  breadcrumbs?: React.ReactElement<BreadcrumbsProps, typeof Breadcrumbs>;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
