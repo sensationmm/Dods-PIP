@@ -59,7 +59,14 @@ export class TaxonomyRepository implements Taxonomy {
         const es_response = await this.elasticsearch.search(await TaxonomyRepository.createSearchQuery(data))
         console.log(es_response)
         es_response.body.hits.hits.forEach((es_doc: any) => {
-            const es_tag: TaxonomyItem = { id: es_doc._source.id, tag: es_doc._source.label, score: es_doc._score, inScheme: es_doc._source.inScheme, alternative_labels: es_doc._source.altLabels};
+            const es_tag: TaxonomyItem = {
+                id: es_doc._source.id,
+                tag: es_doc._source.label,
+                score: es_doc._score,
+                inScheme: es_doc._source.inScheme,
+                alternative_labels: es_doc._source.altLabels,
+                hierarchy: es_doc._source.hierarchy,
+            };
             tag_results.push(es_tag)
         });
 

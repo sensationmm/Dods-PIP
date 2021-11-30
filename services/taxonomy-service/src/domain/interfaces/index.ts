@@ -9,11 +9,12 @@ export interface TaxonomiesParameters {
 }
 
 export interface TaxonomyItem {
-    id: string,
-    tag: string,
-    score: number,
-    inScheme: string[]
-    alternative_labels: string[]
+    id: string;
+    tag: string;
+    score: number;
+    inScheme: string[];
+    alternative_labels?: string[];
+    hierarchy?: string;
 }
 
 export interface TaxonomySearchResponse {

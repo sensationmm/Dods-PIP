@@ -86,7 +86,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test('searchTaxonomies valid output on query', async () => {
-        const expectedTags: TaxonomySearchResponse = {"hitCount": 1, "results": [{"id": "http://eurovoc.europa.eu/5974", "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"], "score": 1, "tag": "unemployment"}], "taxonomy": "Topics"};
+        const expectedTags: TaxonomySearchResponse = {"hitCount": 1, "results": [{"id": "http://eurovoc.europa.eu/5974", "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"], "score": 1, "tag": "unemployment", "alternative_labels": undefined, "hierarchy": undefined}], "taxonomy": "Topics"};
 
         elasticsearch.search.mockResolvedValue(MOCK_ES_RESPONSE)
 
@@ -113,7 +113,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test('searchTaxonomiesRepository creates the correct query object', async () => {
-        const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"label": TAXONOMY_PARAMETERS.tags}}, {"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}]}}}, "size": 500}
+        const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}, {"bool": {"should": [ {"match": {"label": TAXONOMY_PARAMETERS.tags}}, {"match": {"altLabels": TAXONOMY_PARAMETERS.tags}}]}}]}}}, "size": 500}
 
         const taxonomy_query = await TaxonomyRepository.createSearchQuery(TAXONOMY_PARAMETERS)
 
@@ -122,7 +122,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     test('searchTaxonomiesRepository with a limit creates the correct query object', async () => {
         const data: TaxonomiesParameters = { tags: 'unemployment', taxonomy: 'Topics', limit: 1 };
-        const correct_es_query = {index: 'taxonomy', body: {"query": {"bool": {"must": [{"match": {"label": data.tags}}, {"match": {"inScheme": data.taxonomy}}]}}},"size": data.limit}
+        const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}, {"bool": {"should": [ {"match": {"label": TAXONOMY_PARAMETERS.tags}}, {"match": {"altLabels": TAXONOMY_PARAMETERS.tags}}]}}]}}}, "size": data.limit}
 
             const taxonomy_query = await TaxonomyRepository.createSearchQuery(data)
 
