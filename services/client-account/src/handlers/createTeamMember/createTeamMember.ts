@@ -72,7 +72,8 @@ export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> =
             primaryEmail: userProfile.primary_email_address,
             roleId: userProfile.role_id,
             secondaryEmail: userProfile.secondary_email_address,
-            telephoneNumber: userProfile.telephone_number_1
+            telephoneNumber: userProfile.telephone_number_1,
+            clientAccountId
         });
 
         if (createUserResponse.success) {
