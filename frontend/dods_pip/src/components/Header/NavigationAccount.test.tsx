@@ -1,7 +1,22 @@
 import { shallow } from 'enzyme';
 import React from 'react';
+import { Icons } from '../Icon/assets';
 
 import NavigationAccount from './NavigationAccount';
+
+export const dodsMenu = [
+  {
+    label: 'Dods',
+    url: `/accounts/12345`,
+    icon: Icons.Building,
+  },
+  {
+    label: 'Accounts',
+    url: '/account-management/accounts',
+    icon: Icons.List,
+  },
+  { label: 'Users', url: '/account-management/users', icon: Icons.List },
+];
 
 const mockNavHovered = jest.fn();
 const mockAccountMenuOpen = jest.fn();
@@ -9,6 +24,7 @@ const mockDodsMenuOpen = jest.fn();
 
 const props = {
   user: { isDodsUser: true },
+  dodsMenu: dodsMenu,
   rootPage: 'Test',
   navHovered: false,
   setNavHovered: mockNavHovered,

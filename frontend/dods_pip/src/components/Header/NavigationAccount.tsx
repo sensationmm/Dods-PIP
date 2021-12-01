@@ -8,9 +8,11 @@ import Avatar from '../Avatar';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import * as Styled from './Header.styles';
+import { Menu } from './index';
 
 export interface NavigationAccountProps {
   user: UserResponse;
+  dodsMenu: Menu[];
   rootPage: string;
   navHovered: boolean;
   setNavHovered: (active: NavigationAccountProps['navHovered']) => void;
@@ -23,6 +25,7 @@ export interface NavigationAccountProps {
 
 const NavigationAccount: React.FC<NavigationAccountProps> = ({
   user,
+  dodsMenu,
   rootPage,
   navHovered,
   setNavHovered,
@@ -55,42 +58,22 @@ const NavigationAccount: React.FC<NavigationAccountProps> = ({
                   <Icon src={Icons.ArrowDown} />
                   {dodsMenuOpen && (
                     <Styled.accountMenu>
-                      <Styled.accountMenuItem>
-                        <Link href={`/accounts/${user.clientAccountId}`}>
-                          <a>
-                            <Icon
-                              src={Icons.Building}
-                              size={IconSize.mediumLarge}
-                              color={color.base.greyDark}
-                            />
-                            Dods
-                          </a>
-                        </Link>
-                      </Styled.accountMenuItem>
-                      <Styled.accountMenuItem>
-                        <Link href="/account-management/accounts">
-                          <a>
-                            <Icon
-                              src={Icons.List}
-                              size={IconSize.mediumLarge}
-                              color={color.base.greyDark}
-                            />
-                            Accounts
-                          </a>
-                        </Link>
-                      </Styled.accountMenuItem>
-                      <Styled.accountMenuItem>
-                        <Link href="/account-management/users">
-                          <a>
-                            <Icon
-                              src={Icons.List}
-                              size={IconSize.mediumLarge}
-                              color={color.base.greyDark}
-                            />
-                            Users
-                          </a>
-                        </Link>
-                      </Styled.accountMenuItem>
+                      {dodsMenu?.map(({ label, url, icon }: Menu, count: number) => (
+                        <Styled.accountMenuItem key={`dods-menu-item-${count}`}>
+                          <Link href={url}>
+                            <a>
+                              {icon && (
+                                <Icon
+                                  src={icon}
+                                  size={IconSize.mediumLarge}
+                                  color={color.base.greyDark}
+                                />
+                              )}
+                              {label}
+                            </a>
+                          </Link>
+                        </Styled.accountMenuItem>
+                      ))}
                     </Styled.accountMenu>
                   )}
                 </Styled.navLink>

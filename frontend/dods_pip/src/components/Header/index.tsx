@@ -21,6 +21,12 @@ export interface HeaderProps {
   title?: string;
 }
 
+export type Menu = {
+  label: string;
+  url: string;
+  icon?: Icons;
+};
+
 const Header: React.FC<HeaderProps> = ({ title }) => {
   const router = useRouter();
   // TODO: Migrate auth check to routing level before page loads
@@ -38,6 +44,27 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     setNavHovered(false);
     setMobileMenuOpen(false);
   };
+
+  const dodsMenu: Menu[] = [
+    {
+      label: 'Dods',
+      url: `/accounts/${user?.clientAccountId}`,
+      icon: Icons.Building,
+    },
+    {
+      label: 'Accounts',
+      url: '/account-management/accounts',
+      icon: Icons.List,
+    },
+    { label: 'Users', url: '/account-management/users', icon: Icons.List },
+  ];
+
+  const contentMenu: Menu[] = [
+    { label: 'Repository', url: 'editorial' },
+    { label: 'Library', url: 'library' },
+    { label: 'People', url: 'people' },
+    { label: 'Collections', url: 'collections' },
+  ].filter((item) => user?.isDodsUser || (!user?.isDodsUser && item.url !== 'editorial'));
 
   return (
     <Styled.wrapper>
@@ -58,7 +85,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             )}
             {user?.isLoggedIn && !isMobileOrTablet && (
               <NavigationContent
-                user={user}
+                contentMenu={contentMenu}
                 rootPage={rootPage}
                 navHovered={navHovered}
                 setNavHovered={setNavHovered}
@@ -70,6 +97,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             (!isMobileOrTablet ? (
               <NavigationAccount
                 user={user}
+                dodsMenu={dodsMenu}
                 rootPage={rootPage}
                 navHovered={navHovered}
                 setNavHovered={setNavHovered}
@@ -94,6 +122,8 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       {user?.isLoggedIn && isMobileOrTablet && (
         <NavigationMobile
           active={mobileMenuOpen}
+          dodsMenu={dodsMenu}
+          contentMenu={contentMenu}
           setActive={setMobileMenuOpen}
           user={user}
           rootPage={rootPage}
