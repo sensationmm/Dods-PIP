@@ -26,7 +26,7 @@ export const mask = styled.div`
 
 export const notifications = styled.div`
   position: fixed;
-  top: ${spacing(3)};
+  top: ${`calc(66px + ${spacing(3)})`};
   right: ${spacing(3)};
   z-index: 100;
 
