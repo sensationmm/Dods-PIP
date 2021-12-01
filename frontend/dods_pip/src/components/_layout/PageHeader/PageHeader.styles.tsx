@@ -28,3 +28,7 @@ export const container = styled.div<ContainerProps>`
     display: inline-block;
   }
 `;
+
+export const breadcrumbsWrapper = styled.header`
+  padding-top: ${spacing(12)};
+`;
