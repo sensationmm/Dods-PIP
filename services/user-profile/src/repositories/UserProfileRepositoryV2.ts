@@ -36,8 +36,16 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         return {
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.primaryEmail,
-            role: user.role.title,
+            primaryEmail: user.primaryEmail,
+            secondaryEmail: user.secondaryEmail,
+            telephoneNumber1: user.telephoneNumber1,
+            telephoneNumber2: user.telephoneNumber2,
+            title: user.title,
+            role: {
+                uuid: user.role.uuid,
+                title: user.role.title,
+                dodsRole: user.role.dodsRole,
+            },
             isDodsUser: user.role.uuid === DODS_USER,
         };
     }
