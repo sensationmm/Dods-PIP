@@ -2,9 +2,9 @@ import { shallow } from 'enzyme';
 import React from 'react';
 
 import { RoleType } from '../account-management/add-client/type';
-import { AddUser } from './add-user.page';
+import AddUserForm from './add-user-form';
 
-describe('AddUser', () => {
+describe('AddUserForm', () => {
   let wrapper;
 
   const mockSetErrors = jest.fn();
@@ -62,11 +62,11 @@ describe('AddUser', () => {
       .mockImplementationOnce(() => [states[count].telephoneNumber2, mockChange])
       .mockImplementationOnce(() => [states[count].errors, mockSetErrors]);
 
-    wrapper = shallow(<AddUser isLoading={false} setLoading={jest.fn} addNotification={jest.fn} />);
+    wrapper = shallow(<AddUserForm {...states[count]} isClientUser />);
   });
 
   it('renders without error', () => {
-    const component = wrapper.find('[data-test="page-add-user"]');
+    const component = wrapper.find('[data-test="add-user-form"]');
     expect(component.length).toEqual(1);
   });
 

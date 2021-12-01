@@ -2,6 +2,7 @@ import styled, { keyframes } from 'styled-components';
 
 import color from '../../globals/color';
 import elevation from '../../globals/elevation';
+import media from '../../globals/media';
 import spacing from '../../globals/spacing';
 import { modalSize } from './index';
 
@@ -73,20 +74,35 @@ export const modalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   padding: ${spacing(4)};
+
+  ${media.greaterThan('md')`
+    padding: ${spacing(10)} ${spacing(8)};
+  `};
 `;
 
 export const modalBody = styled.div`
   overflow-y: scroll;
   padding: 0 ${spacing(4)};
   height: 100%;
+
+  ${media.greaterThan('md')`
+    padding: 0 ${spacing(8)};
+  `};
 `;
 
-export const modalFooter = styled.div`
+type ModalFooterProps = {
+  alignment: string;
+};
+export const modalFooter = styled.div<ModalFooterProps>`
   display: flex;
-  justify-content: center;
+  justify-content: ${({ alignment }) => (alignment === 'right' ? 'flex-end' : 'center')};
   padding: ${spacing(4)};
 
-  > *:not(last-child) {
+  ${media.greaterThan('md')`
+    padding: ${spacing(10)} ${spacing(8)};
+  `};
+
+  > *:not(:last-child) {
     margin-right: ${spacing(2)};
   }
 `;

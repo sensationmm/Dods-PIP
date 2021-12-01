@@ -17,7 +17,7 @@ const backgroundSize = (size: Size) => {
     case 'large':
       return '80px';
     case 'medium':
-      return '40px';
+      return '48px';
     case 'small':
       return '24px';
   }
@@ -28,7 +28,7 @@ export const Background = styled.div<AvatarProps>`
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  height: ${(props) => backgroundSize(props.size)};
-  width: ${(props) => backgroundSize(props.size)};
+  height: ${(props) => backgroundSize(props.size as Size)};
+  width: ${(props) => backgroundSize(props.size as Size)};
   background: ${(props) => (props.disabled ? color.shadow.grey : backgroundColor(props.type))};
 `;
