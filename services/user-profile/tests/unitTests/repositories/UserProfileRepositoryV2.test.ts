@@ -234,8 +234,17 @@ describe(`${CLASS_NAME}`, () => {
         const expectedResponse: GetUserOutput = {
             firstName: findOneInUserResponse.firstName,
             lastName: findOneInUserResponse.lastName,
-            email: findOneInUserResponse.primaryEmail,
-            role: findOneInUserResponse.role.title,
+            primaryEmail: findOneInUserResponse.primaryEmail,
+            secondaryEmail: undefined,
+            telephoneNumber1: undefined,
+            telephoneNumber2: undefined,
+            title: undefined,
+
+            role: {
+                uuid: '83618280-9c84-441c-94d1-59e4b24cbe3d',
+                dodsRole: undefined,
+                title: findOneInUserResponse.role.title,
+            },
             isDodsUser: findOneInUserResponse.role.uuid === DODS_USER,
         };
 
