@@ -5,6 +5,7 @@ export enum Api {
   ClientAccount = '/clientaccount',
   EnableUser = '/enableUser',
   ForgotPassword = '/forgotPassword',
+  GetUser = '/get-user',
   Login = '/login',
   Logout = '/logout',
   ResetPassword = '/resetPassword',

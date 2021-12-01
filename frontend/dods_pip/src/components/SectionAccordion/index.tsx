@@ -46,7 +46,7 @@ const SectionAccordion: React.FC<SectionAccordionProps> = ({
           <Icon
             data-test="icon"
             src={open ? Icons.ChevronDown : Icons.ChevronUp}
-            size={IconSize.large}
+            size={IconSize.xlarge}
             color={color.theme.blue}
           />
         )}

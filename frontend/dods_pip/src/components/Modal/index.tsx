@@ -8,11 +8,13 @@ import Text from '../Text';
 import * as Styled from './Modal.styles';
 
 export type modalSize = 'small' | 'medium' | 'large' | 'xlarge';
+type modalButtonAlignment = 'center' | 'right';
 export interface ModalProps {
   onClose?: () => void;
   title?: string;
   size?: modalSize;
   buttons?: ButtonProps[];
+  buttonAlignment?: modalButtonAlignment;
   isDismissible?: boolean;
   portalContainerId?: string;
 }
@@ -22,6 +24,7 @@ const Modal: FC<ModalProps> = ({
   onClose,
   title = '',
   buttons = [],
+  buttonAlignment = 'center',
   children,
   isDismissible = true,
   portalContainerId = '__next',
@@ -71,7 +74,7 @@ const Modal: FC<ModalProps> = ({
           )}
         </Styled.modalHeader>
         <Styled.modalBody>{children}</Styled.modalBody>
-        <Styled.modalFooter data-test="modal-footer">
+        <Styled.modalFooter data-test="modal-footer" alignment={buttonAlignment}>
           {buttons.map((buttonProps, index) => (
             <Button key={index} {...{ ...buttonProps }} />
           ))}

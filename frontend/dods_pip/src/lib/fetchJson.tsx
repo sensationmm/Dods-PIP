@@ -10,6 +10,7 @@ export type UserResponse = {
   isDodsUser?: boolean;
   clientAccountId?: string;
   clientAccountName?: string;
+  displayName?: string;
 };
 
 interface CustomResponse extends Response, UserResponse {

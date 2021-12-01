@@ -14,6 +14,7 @@ import DataCount from '../../components/DataCount';
 import DataTable from '../../components/DataTable';
 import Icon from '../../components/Icon';
 import { Icons } from '../../components/Icon/assets';
+import IconButton from '../../components/IconButton';
 import Pagination from '../../components/Pagination';
 import Text from '../../components/Text';
 import color from '../../globals/color';
@@ -30,13 +31,19 @@ type Filters = {
   role?: string;
 };
 
+type Role = {
+  uuid: string;
+  title: string;
+  dodsRole: number;
+};
+
 type UserAccount = {
   uuid: number;
   firstName: string;
   lastName: string;
   account: string;
   email: string;
-  role: string;
+  role: Role;
   type: UserType;
   active: boolean;
 };
@@ -240,8 +247,14 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
               <Styled.email key={`user-${uuid}-email`}>
                 <a href={'mailto:' + user.email}>{user.email}</a>
               </Styled.email>,
-              <Text key={`user-${uuid}-role`}>{user.role}</Text>,
-              <Icon key={`user-${uuid}-link`} src={Icons.ChevronRightBold} />,
+              <Text key={`user-${uuid}-role`}>{user.role.title}</Text>,
+              <IconButton
+                data-testid="account-page-btn-to-account"
+                key={`user-${uuid}-link`}
+                onClick={() => router.push(`/users/${uuid}`)}
+                icon={Icons.ChevronRightBold}
+                type="text"
+              />,
             ];
           })}
         />

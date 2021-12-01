@@ -8,7 +8,6 @@ import { Icon } from '../Icon/Icon.styles';
 
 export const container = styled.div`
   position: relative;
-  z-index: 3;
 
   ${Panel} {
     ${media.lessThan('md')`

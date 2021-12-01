@@ -7,6 +7,7 @@ import { PlainTable } from '../../components/DataTable';
 import Icon, { IconSize } from '../../components/Icon';
 import { Icons } from '../../components/Icon/assets';
 import IconButton from '../../components/IconButton';
+import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
 import Popover from '../../components/Popover';
 import SectionAccordion from '../../components/SectionAccordion';
@@ -29,7 +30,8 @@ export interface SummaryProps {
   addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
   accountId: string;
-  setPageAccountName: (state: string) => void;
+  setPageAccountName?: (state: string) => void;
+  editable?: boolean;
 }
 
 const Summary: React.FC<SummaryProps> = ({
@@ -37,7 +39,9 @@ const Summary: React.FC<SummaryProps> = ({
   setLoading,
   accountId,
   setPageAccountName,
+  editable = true,
 }) => {
+  const [ready, setReady] = React.useState<boolean>(false);
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
   const [contactName, setContactName] = React.useState<string>('');
@@ -88,7 +92,7 @@ const Summary: React.FC<SummaryProps> = ({
         contractRollover,
       } = data;
 
-      setPageAccountName(name as string);
+      setPageAccountName && setPageAccountName(name as string);
 
       onAfterEditAccountSettings({
         name: name as string,
@@ -110,6 +114,8 @@ const Summary: React.FC<SummaryProps> = ({
       });
 
       onAfterEditTeam({ team: data.team as TeamMember[] });
+
+      setReady(true);
     }
   };
 
@@ -310,183 +316,209 @@ const Summary: React.FC<SummaryProps> = ({
           }
           isOpen={true}
         >
-          <Styled.sumAccountWrapper>
-            <Styled.sumIconTitle>
-              <Icon src={Icons.Suitcase} size={IconSize.large} />
-              <Text type="h3" headingStyle="title">
-                Client details
-              </Text>
-            </Styled.sumIconTitle>
-            <Styled.sumAccountContentDetails>
-              <Styled.sumAccountContentGrid>
-                <div>
-                  <Text type="body" bold={true}>
-                    Client Name
+          {!ready ? (
+            <Styled.loader>
+              <Loader inline />
+            </Styled.loader>
+          ) : (
+            <>
+              <Styled.sumAccountWrapper>
+                <Styled.sumIconTitle>
+                  <Icon src={Icons.Suitcase} size={IconSize.xlarge} />
+                  <Text type="h3" headingStyle="title">
+                    Client details
                   </Text>
-                  <Text>{accountName}</Text>
-                </div>
-                <div>
-                  <Text type="body" bold={true}>
-                    Primay Contact - Full Name
+                </Styled.sumIconTitle>
+                <Styled.sumAccountContentDetails>
+                  <Styled.sumAccountContentGrid>
+                    <div>
+                      <Text type="body" bold={true}>
+                        Client Name
+                      </Text>
+                      <Text>{accountName}</Text>
+                    </div>
+                    <div>
+                      <Text type="body" bold={true}>
+                        Primary Contact - Full Name
+                      </Text>
+                      <Text>{contactName}</Text>
+                    </div>
+                    <div>
+                      <Text type="body" bold={true}>
+                        Primary Contact - Tel. Number
+                      </Text>
+                      <Text>{contactTelephone}</Text>
+                    </div>
+                    <div>
+                      <Text type="body" bold={true}>
+                        Primary Contact - Email
+                      </Text>
+                      <Text>
+                        <a href={'mailto:' + contactEmail}>{contactEmail}</a>
+                      </Text>
+                    </div>
+                  </Styled.sumAccountContentGrid>
+                  <Spacer size={8} />
+                  <Styled.sumAccountContentNotes>
+                    <Text type="body" bold={true}>
+                      Account Notes
+                    </Text>
+                    <Text>{accountNotes}</Text>
+                  </Styled.sumAccountContentNotes>
+                  <Styled.sumUUIDContainer>
+                    <Text type="body" bold={true}>
+                      UUID
+                    </Text>
+                    <Text>{accountId}</Text>
+                  </Styled.sumUUIDContainer>
+                </Styled.sumAccountContentDetails>
+                {editable ? (
+                  <IconButton
+                    icon={Icons.Edit}
+                    type="text"
+                    label=""
+                    onClick={() => setEditAccountSettings(true)}
+                  />
+                ) : (
+                  <div />
+                )}
+              </Styled.sumAccountWrapper>
+              <Spacer size={4} />
+              <hr />
+              <Spacer size={4} />
+              <Styled.sumAccountWrapper>
+                <Styled.sumIconTitle>
+                  <Icon src={Icons.Subscription} size={IconSize.xlarge} />
+                  <Text type="h3" headingStyle="title">
+                    Subscription
                   </Text>
-                  <Text>{contactName}</Text>
-                </div>
-                <div>
-                  <Text type="body" bold={true}>
-                    Primay Contact - Tel. Number
+                </Styled.sumIconTitle>
+                <Styled.sumAccountContent>
+                  <div>
+                    <Text type="body" bold={true}>
+                      Location
+                    </Text>
+                    <Text>{locationValue}</Text>
+                  </div>
+                  <div>
+                    <Text type="body" bold={true}>
+                      Type
+                    </Text>
+                    <Text>
+                      {subscriptionList.map((subItem) => {
+                        if (subscriptionType === subItem.uuid) {
+                          return subItem.name;
+                        }
+                      })}
+                    </Text>
+                  </div>
+                  <div>
+                    <Text type="body" bold={true}>
+                      User Seats
+                    </Text>
+                    <Text>{userSeats} Seats</Text>
+                    <Popover title="User Seats Title" body="Lorem ipsum info text." />
+                  </div>
+                  <div>
+                    <Text type="body" bold={true}>
+                      Consutant Hours
+                    </Text>
+                    <Text>{consultantHours} Hours</Text>
+                    <Popover title="Consultant Hours Title" body="Lorem ipsum info text" />
+                  </div>
+                  <div>
+                    <Text type="body" bold={true}>
+                      Period:
+                    </Text>
+                    <Text>
+                      {startDate !== '' && format(new Date(startDate), DateFormat.UI)}
+                      {renewalType === 'endDate' && endDate !== '' && (
+                        <span>
+                          - {format(new Date(endDate), DateFormat.UI)} -
+                          {` ${endDateTypeLabels[endDateType]}`}
+                        </span>
+                      )}
+                    </Text>
+                  </div>
+                </Styled.sumAccountContent>
+                {editable ? (
+                  <IconButton
+                    icon={Icons.Edit}
+                    type="text"
+                    label=""
+                    onClick={() => setEditSubscription(true)}
+                  />
+                ) : (
+                  <div />
+                )}
+              </Styled.sumAccountWrapper>
+              <Spacer size={4} />
+              <hr />
+              <Spacer size={4} />
+              <Styled.sumAccountWrapper>
+                <Styled.sumIconTitle>
+                  <Icon src={Icons.Users} size={IconSize.xlarge} />
+                  <Text type="h3" headingStyle="title">
+                    Dods Client Support
                   </Text>
-                  <Text>{contactTelephone}</Text>
-                </div>
-                <div>
-                  <Text type="body" bold={true}>
-                    Primay Contact - Email
-                  </Text>
-                  <Text>
-                    <a href={'mailto:' + contactEmail}>{contactEmail}</a>
-                  </Text>
-                </div>
-              </Styled.sumAccountContentGrid>
-              <Styled.sumAccountContentNotes>
-                <Text type="body" bold={true}>
-                  Account Notes
-                </Text>
-                <Text>{accountNotes}</Text>
-              </Styled.sumAccountContentNotes>
-              <Styled.sumUUIDContainer>
-                <Text type="body" bold={true}>
-                  UUID
-                </Text>
-                <Text>{accountId}</Text>
-              </Styled.sumUUIDContainer>
-            </Styled.sumAccountContentDetails>
-            <IconButton
-              icon={Icons.Edit}
-              type="text"
-              label=""
-              onClick={() => setEditAccountSettings(true)}
-            />
-          </Styled.sumAccountWrapper>
-          <Spacer size={4} />
-          <hr />
-          <Spacer size={4} />
-          <Styled.sumAccountWrapper>
-            <Styled.sumIconTitle>
-              <Icon src={Icons.Subscription} size={IconSize.large} />
-              <Text type="h3" headingStyle="title">
-                Subscription
-              </Text>
-            </Styled.sumIconTitle>
-            <Styled.sumAccountContent>
-              <div>
-                <Text type="body" bold={true}>
-                  Location
-                </Text>
-                <Text>{locationValue}</Text>
-              </div>
-              <div>
-                <Text type="body" bold={true}>
-                  Type
-                </Text>
-                <Text>
-                  {subscriptionList.map((subItem) => {
-                    if (subscriptionType === subItem.uuid) {
-                      return subItem.name;
-                    }
-                  })}
-                </Text>
-              </div>
-              <div>
-                <Text type="body" bold={true}>
-                  User Seats
-                </Text>
-                <Text>{userSeats} Seats</Text>
-                <Popover title="User Seats Title" body="Lorem ipsum info text." />
-              </div>
-              <div>
-                <Text type="body" bold={true}>
-                  Consutant Hours
-                </Text>
-                <Text>{consultantHours} Hours</Text>
-                <Popover title="Consultant Hours Title" body="Lorem ipsum info text" />
-              </div>
-              <div>
-                <Text type="body" bold={true}>
-                  Period:
-                </Text>
-                <Text>
-                  {startDate !== '' && format(new Date(startDate), DateFormat.UI)}
-                  {renewalType === 'endDate' && endDate !== '' && (
-                    <span>
-                      - {format(new Date(endDate), DateFormat.UI)} -
-                      {` ${endDateTypeLabels[endDateType]}`}
-                    </span>
-                  )}
-                </Text>
-              </div>
-            </Styled.sumAccountContent>
-            <IconButton
-              icon={Icons.Edit}
-              type="text"
-              label=""
-              onClick={() => setEditSubscription(true)}
-            />
-          </Styled.sumAccountWrapper>
-          <Spacer size={4} />
-          <hr />
-          <Spacer size={4} />
-          <Styled.sumAccountWrapper>
-            <Styled.sumIconTitle>
-              <Icon src={Icons.Users} size={IconSize.large} />
-              <Text type="h3" headingStyle="title">
-                Dods Client Support
-              </Text>
-            </Styled.sumIconTitle>
-            <IconButton icon={Icons.Edit} type="text" label="" onClick={() => setEditTeam(true)} />
-          </Styled.sumAccountWrapper>
-          <Spacer size={1} />
-          <PlainTable
-            headings={['Consultant', 'Access', 'Contact']}
-            colWidths={[2, 2, 3]}
-            rows={consultantsComplete.map((consultant) => [
-              accountId,
-              <Styled.sumConsultantAvatar key={consultant.name}>
-                <Avatar type="consultant" size="small" alt="consultant" />
-                <div>
-                  <Text bold={true}>{consultant.name}</Text>
-                  <Spacer size={2} />
-                  <Text>
-                    {consultant.teamMemberType === TeamMemberType.AccountManager
-                      ? 'Account Manager'
-                      : 'Team Member'}
-                  </Text>
-                </div>
-              </Styled.sumConsultantAvatar>,
-              <Text key={consultant.name}>{consultant.access}</Text>,
-              <Styled.sumConsultantContact key={consultant.name}>
-                <Text>
-                  <span>Email</span>
-                  <a href={'mailto:' + consultant.email}>{consultant.email}</a>
-                </Text>
-                <Spacer size={2} />
-                <Text>
-                  <span>Email</span>
-                  <a href={'mailto:' + consultant.email}>{consultant.email2}</a>
-                </Text>
-                <Spacer size={2} />
-                <Text>
-                  <span>Tel (W)</span>
-                  <a href={'tel:' + consultant.telephone}>{consultant.telephone}</a>
-                </Text>
-                <Spacer size={2} />
-                <Text>
-                  <span>Tel (M)</span>
-                  <a href={'tel:' + consultant.telephone2}>{consultant.telephone2}</a>
-                </Text>
-              </Styled.sumConsultantContact>,
-              <Icon key={`${consultant.name}-link`} src={Icons.ChevronRightBold} />,
-            ])}
-          />
-          <Spacer size={4} />
+                </Styled.sumIconTitle>
+                {editable ? (
+                  <IconButton
+                    icon={Icons.Edit}
+                    type="text"
+                    label=""
+                    onClick={() => setEditTeam(true)}
+                  />
+                ) : (
+                  <div />
+                )}
+              </Styled.sumAccountWrapper>
+              <Spacer size={1} />
+              <PlainTable
+                headings={['Consultant', 'Access', 'Contact']}
+                colWidths={[2, 2, 3]}
+                rows={consultantsComplete.map((consultant) => [
+                  accountId,
+                  <Styled.sumConsultantAvatar key={consultant.name}>
+                    <Avatar type="consultant" size="small" alt="consultant" />
+                    <div>
+                      <Text bold={true}>{consultant.name}</Text>
+                      <Spacer size={2} />
+                      <Text>
+                        {consultant.teamMemberType === TeamMemberType.AccountManager
+                          ? 'Account Manager'
+                          : 'Team Member'}
+                      </Text>
+                    </div>
+                  </Styled.sumConsultantAvatar>,
+                  <Text key={consultant.name}>{consultant.access}</Text>,
+                  <Styled.sumConsultantContact key={consultant.name}>
+                    <Text>
+                      <span>Email</span>
+                      <a href={'mailto:' + consultant.email}>{consultant.email}</a>
+                    </Text>
+                    <Spacer size={2} />
+                    <Text>
+                      <span>Email</span>
+                      <a href={'mailto:' + consultant.email}>{consultant.email2}</a>
+                    </Text>
+                    <Spacer size={2} />
+                    <Text>
+                      <span>Tel (W)</span>
+                      <a href={'tel:' + consultant.telephone}>{consultant.telephone}</a>
+                    </Text>
+                    <Spacer size={2} />
+                    <Text>
+                      <span>Tel (M)</span>
+                      <a href={'tel:' + consultant.telephone2}>{consultant.telephone2}</a>
+                    </Text>
+                  </Styled.sumConsultantContact>,
+                  <Icon key={`${consultant.name}-link`} src={Icons.ChevronRightBold} />,
+                ])}
+              />
+              <Spacer size={4} />
+            </>
+          )}
         </SectionAccordion>
       </Styled.sumWrapper>
     </>

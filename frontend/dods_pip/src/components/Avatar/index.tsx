@@ -11,24 +11,24 @@ export type Size = 'large' | 'medium' | 'small';
 export type IconSizes = keyof typeof IconSize;
 export interface AvatarProps {
   type: UserType;
-  size: Size;
+  size?: Size;
   number?: number;
   disabled?: boolean;
   alt?: string;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ type, size, number, disabled, alt }) => {
-  const [iconSize, setIconSize] = useState<IconSizes>('xxlarge');
+const Avatar: React.FC<AvatarProps> = ({ type, size = 'medium', number, disabled, alt }) => {
+  const [iconSize, setIconSize] = useState<IconSizes>('xxxlarge');
   const [fontSize, setFontSize] = useState<TextStyles>('bodyLarge');
   useEffect(() => {
     ((size: Size) => {
       switch (size) {
         case 'large':
-          setIconSize('xxlarge');
+          setIconSize('xxxlarge');
           setFontSize('bodyLarge');
           break;
         case 'medium':
-          setIconSize('xlarge');
+          setIconSize('xxlarge');
           setFontSize('body');
           break;
         case 'small':
