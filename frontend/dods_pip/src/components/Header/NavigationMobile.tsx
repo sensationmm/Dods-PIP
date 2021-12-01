@@ -8,9 +8,12 @@ import Button from '../Button';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import * as Styled from './Header.styles';
+import { Menu } from './index';
 
 export interface NavigationMobileProps {
   active: boolean;
+  dodsMenu: Menu[];
+  contentMenu: Menu[];
   setActive: (active: NavigationMobileProps['active']) => void;
   user: UserResponse;
   rootPage: string;
@@ -21,6 +24,8 @@ export interface NavigationMobileProps {
 
 const NavigationMobile: React.FC<NavigationMobileProps> = ({
   active,
+  dodsMenu,
+  contentMenu,
   setActive,
   user,
   rootPage,
@@ -33,22 +38,15 @@ const NavigationMobile: React.FC<NavigationMobileProps> = ({
     <Styled.navigationMobile active={active} data-test="navigation-mobile">
       <Styled.navigationMobileMask>
         <Styled.navigationList>
-          {[
-            { label: 'Repository', path: 'editorial' },
-            { label: 'Library', path: 'library' },
-            { label: 'People', path: 'people' },
-            { label: 'Collections', path: 'collections' },
-          ]
-            .filter((item) => user?.isDodsUser || (!user.isDodsUser && item.path !== 'editorial'))
-            .map(({ label, path }) => (
-              <li key={`nav-item-${path}`} onClick={() => setActive(false)}>
-                <Link href={`/${path}`} passHref>
-                  <Styled.navLink active={rootPage === path} disabled={navHovered}>
-                    {label}
-                  </Styled.navLink>
-                </Link>
-              </li>
-            ))}
+          {contentMenu?.map(({ label, url }, count) => (
+            <li key={`nav-item-${count}`} onClick={() => setActive(false)}>
+              <Link href={`/${url}`} passHref>
+                <Styled.navLink active={rootPage === url} disabled={navHovered}>
+                  {label}
+                </Styled.navLink>
+              </Link>
+            </li>
+          ))}
         </Styled.navigationList>
         {user.isDodsUser ? (
           <>
@@ -64,27 +62,17 @@ const NavigationMobile: React.FC<NavigationMobileProps> = ({
             </Styled.accountMenuItem>
             {dodsMenuOpen && (
               <Styled.accountMenuSub>
-                <Styled.accountMenuItem data-test="menu-item-dods" onClick={() => setActive(false)}>
-                  <Link href={`/accounts/${user.clientAccountId}`}>
-                    <a>Dods</a>
-                  </Link>
-                </Styled.accountMenuItem>
-                <Styled.accountMenuItem
-                  data-test="menu-item-accounts"
-                  onClick={() => setActive(false)}
-                >
-                  <Link href="/account-management/accounts">
-                    <a>Accounts</a>
-                  </Link>
-                </Styled.accountMenuItem>
-                <Styled.accountMenuItem
-                  data-test="menu-item-users"
-                  onClick={() => setActive(false)}
-                >
-                  <Link href="/account-management/users">
-                    <a>Users</a>
-                  </Link>
-                </Styled.accountMenuItem>
+                {dodsMenu?.map(({ label, url }, count) => (
+                  <Styled.accountMenuItem
+                    data-test={`menu-item-${count}`}
+                    key={`menu-item-${count}`}
+                    onClick={() => setActive(false)}
+                  >
+                    <Link href={url}>
+                      <a>{label}</a>
+                    </Link>
+                  </Styled.accountMenuItem>
+                ))}
               </Styled.accountMenuSub>
             )}
           </>

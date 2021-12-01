@@ -3,10 +3,18 @@ import React from 'react';
 
 import NavigationContent from './NavigationContent';
 
+export const contentMenu = [
+  { label: 'Repository', url: 'editorial' },
+  { label: 'Library', url: 'library' },
+  { label: 'People', url: 'people' },
+  { label: 'Collections', url: 'collections' },
+];
+
 const mockNavHovered = jest.fn();
 
 const props = {
   user: {},
+  contentMenu: contentMenu,
   rootPage: 'Test',
   navHovered: false,
   setNavHovered: mockNavHovered,
