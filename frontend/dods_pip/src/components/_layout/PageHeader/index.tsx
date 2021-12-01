@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Spacer from '../../_layout/Spacer';
 import Breadcrumbs, { BreadcrumbsProps } from '../../Breadcrumbs';
 import Text from '../../Text';
 import Panel from '../Panel';
@@ -21,7 +22,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <Styled.wrapper data-test="component-page-header">
       <Panel data-test="component-header" isPadded={false}>
-          {breadcrumbs && <Styled.breadcrumbsWrapper>{breadcrumbs}</Styled.breadcrumbsWrapper>}
+        {breadcrumbs && (
+          <>
+            <Spacer size={12} />
+            {breadcrumbs}
+          </>
+        )}
         <Styled.container flexDirection={flexDirection}>
           <div>
             <Text type="h1" headingStyle="hero" data-test="pageheader-title">
