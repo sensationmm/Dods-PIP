@@ -5,21 +5,29 @@ export interface TaxonomiesParameters {
     limit?: number,
     page?: number,
     parent?: string,
+    taxonomy?: string,
 }
 
 export interface TaxonomyItem {
-    id: string,
-    tag: string,
-    score: string,
-    inScheme: string[]
-    alternative_labels: string[]
+    id: string;
+    tag: string;
+    score: number;
+    inScheme: string[];
+    alternative_labels?: string[];
+    hierarchy?: string;
+}
+
+export interface TaxonomySearchResponse {
+    hitCount: number;
+    results: Array<TaxonomyItem>;
+    taxonomy: string;
 }
 
 export interface DownstreamEndpoints {
     taxonomiesEndpointUrl: string;
 }
 
-export interface TaxonomyTree  extends Array<TaxonomyNode>{
+export interface TaxonomyTree extends Array<TaxonomyNode>{
 
 }
 
