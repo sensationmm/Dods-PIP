@@ -202,6 +202,51 @@ paths:
           description: Not authenticated
         "403":
           description: Does not have correct permissions
+          
+  /users/{userId}/client-accounts:
+    get:
+      summary: Get Clients accounts related to a User
+      operationId: getClientAccountsByUser
+      parameters:
+          - in: path
+            name: userId
+            schema:
+              type: string
+            required: true
+            description: Name or partial name to search by
+          - $ref: "#/components/parameters/limit"
+          - $ref: "#/components/parameters/offset"
+          - $ref: "#/components/parameters/sortByClient"
+          - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          description: List of Clients accounts related to a User
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Showing Results
+                  limit:
+                    type: number
+                    example: 30
+                  offset:
+                    type: number
+                    example: 0
+                  
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ClientAccount"
+        "401":
+          description: Not authenticated
+        "403":
+          description: Does not have correct permissions
 
 components:
   schemas:
@@ -235,6 +280,36 @@ components:
         - last_name
         - primary_email_address
         - telephone_number_1
+        
+    ClientAccount:
+      type: object
+      properties:
+        uuid:
+          type: string
+          example: cd44bad6-8eeb-4870-abb8-72d297ea7a3e
+        name:
+          type: string
+          example: Company
+        notes:
+          type: string
+          example: testing notes
+        collection:
+          type: number
+          example: 0
+        teamMemberType:
+          type: number
+          example: 1
+        subscription:
+          type: object
+          properties:
+            uuid:
+              type: string
+              example: 13c351ed-d92a-41a9-b412-55dc0f0d28d3
+            name: 
+              type: string
+              example: Gold
+              
+
     UserProfile:
       allOf: # Combines the BasicErrorModel and the inline model
         - $ref: "#/components/schemas/UserProfileBase"
@@ -379,6 +454,19 @@ components:
           - role
       required: false
       description: sort User Profile by name or subscription
+    sortByClient:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: name
+        enum:
+          - name
+          - subscription
+
+      required: false
+      description: sort ClientAccounts by name or subscription
+      
     sortDirection:
       in: query
       name: sortDirection

@@ -92,9 +92,6 @@ export function parseSearchClientAccountResponse(
 }
 
 export function parseTeamMember(item: UserProfileModel): TeamMemberResponse {
-    console.log('------ITEMMM-----');
-    console.log(item.userRole);
-
     return {
         id: item.uuid,
         name: item.fullName,
