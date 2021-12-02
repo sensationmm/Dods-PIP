@@ -1,23 +1,59 @@
-import { ClientAccountTeamRepository } from '../../../src/repositories';
-import { ClientAccountTeam } from '../../../src/domain';
-import ClientAccountTeamModel from '../../../src/db/models/ClientAccountTeamModel';
 import { mocked } from 'ts-jest/utils';
+import { ClientAccountTeam, ClientAccountTeamOutput } from '@dodsgroup/dods-model';
+import { ClientAccountTeamRepository } from '../../../src/repositories/ClientAccountTeamRepository';
 
-const defaultClientAccountTeam: ClientAccountTeam = { clientAccountId: 1, teamMemberType: 1, userId: 1 };
+const defaultClientAccountTeam: ClientAccountTeamOutput = { clientAccountId: 1, teamMemberType: 1, userId: 1 };
 
-jest.mock('../../../src/db/models/ClientAccountTeamModel');
+jest.mock('@dodsgroup/dods-model');
 
-const mockedClientAccountTeamModel = mocked(ClientAccountTeamModel, true);
+const mockedClientAccountTeam = mocked(ClientAccountTeam, true);
 
-mockedClientAccountTeamModel.create.mockReturnValue(defaultClientAccountTeam);
+const CLASS_NAME = ClientAccountTeamRepository.name;
+const CREATE_FUNCTION_NAME = ClientAccountTeamRepository.defaultInstance.create.name;
+const FIND_ONE_FUNCTION_NAME = ClientAccountTeamRepository.defaultInstance.findOne.name;
+const DELETE_FUNCTION_NAME = ClientAccountTeamRepository.defaultInstance.delete.name;
 
-const FUNCTION_NAME = ClientAccountTeamRepository.name;
+afterEach(() => {
+    mockedClientAccountTeam.mockClear();
+    mockedClientAccountTeam.create.mockClear();
+    mockedClientAccountTeam.findOne.mockClear();
+});
 
-describe(`${FUNCTION_NAME} handler`, () => {
-    test(`${FUNCTION_NAME} Valid input Happy case `, async () => {
+describe(`${CLASS_NAME} handler`, () => {
+    test(`${CREATE_FUNCTION_NAME} Valid case `, async () => {
+
+        mockedClientAccountTeam.create.mockReturnValue(defaultClientAccountTeam);
 
         const response = await ClientAccountTeamRepository.defaultInstance.create(defaultClientAccountTeam);
 
         expect(response).toEqual(defaultClientAccountTeam);
+    });
+
+    test(`${DELETE_FUNCTION_NAME} Valid case `, async () => {
+
+        await ClientAccountTeamRepository.defaultInstance.delete({ userId: 1, clientAccountId: 1 });
+
+        expect(mockedClientAccountTeam.destroy).toHaveBeenCalledTimes(1);
+    });
+
+    test(`${FIND_ONE_FUNCTION_NAME} Valid case `, async () => {
+        mockedClientAccountTeam.findOne.mockResolvedValue(defaultClientAccountTeam as ClientAccountTeam);
+
+        const response = await ClientAccountTeamRepository.defaultInstance.findOne({ userId: 1, clientAccountId: 1, teamMemberType: 1 });
+
+        expect(response).toEqual(defaultClientAccountTeam);
+    });
+
+    test(`${FIND_ONE_FUNCTION_NAME} Invalid case `, async () => {
+        mockedClientAccountTeam.findOne.mockResolvedValue(undefined as any);
+
+        try {
+            await ClientAccountTeamRepository.defaultInstance.findOne({ userId: 1, clientAccountId: 1, teamMemberType: 1 });
+
+            throw new Error('Code never should come in this point');
+        } catch (error: any) {
+            expect(error.message).toEqual('Error: clientAccountTeam not found');
+            expect(mockedClientAccountTeam.findOne).toHaveBeenCalledTimes(1);
+        }
     });
 });

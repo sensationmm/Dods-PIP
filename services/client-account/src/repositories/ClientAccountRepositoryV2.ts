@@ -5,14 +5,6 @@ import { ClientAccountPersisterV2 } from '../domain';
 export class ClientAccountRepositoryV2 implements ClientAccountPersisterV2 {
     static defaultInstance: ClientAccountPersisterV2 = new ClientAccountRepositoryV2();
 
-    async updateClientAccount(values: Partial<ClientAccountInput>, where: Partial<ClientAccountInput>): Promise<void> {
-        await ClientAccount.update(values, { where });
-    }
-
-    async incrementSubscriptionSeat(where: Partial<ClientAccountInput>): Promise<ClientAccountOutput> {
-        return await ClientAccount.increment('subscriptionSeats', { where });
-    }
-
     async findOne(where: Partial<ClientAccountInput>): Promise<ClientAccountOutput> {
         const clientAccountModel = await ClientAccount.findOne({
             where,
