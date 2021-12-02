@@ -12,7 +12,6 @@ import {
 } from 'sequelize';
 import { ClientAccount, ClientAccountTeam, Role } from '.';
 
-import { Sequelize } from 'sequelize';
 import sequelizeConnection from '../config/sequelizeConnection';
 
 export interface UserAttributes {
@@ -28,7 +27,6 @@ export interface UserAttributes {
     telephoneNumber2: string | null;
     fullName: string;
     isActive: boolean;
-    memberSince: Date;
 }
 
 export interface UserInput
@@ -40,6 +38,7 @@ export interface UserInput
         | 'telephoneNumber1'
         | 'telephoneNumber2'
         | 'fullName'
+        | 'isActive'
     > {}
 
 export interface UserOutput extends Required<UserAttributes> {}
@@ -58,7 +57,6 @@ export class User
     public telephoneNumber1!: string | null;
     public telephoneNumber2!: string | null;
     public isActive!: boolean;
-    public memberSince!: Date;
 
     public fullName!: string;
 
@@ -161,11 +159,6 @@ User.init(
             type: DataTypes.TINYINT({ length: 1 }),
             allowNull: false,
             defaultValue: 1,
-        },
-        memberSince: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         },
     },
     {
