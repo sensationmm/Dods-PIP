@@ -1,14 +1,8 @@
 import { UserInput, UserOutput } from '@dodsgroup/dods-model';
-import { UserProfileModel, UserProfileModelAttributes } from '../../db';
+import { RequestOutput } from '.';
 
 export type CreateUserPersisterInput = Pick<UserInput, 'title' | 'firstName' | 'lastName' | 'primaryEmail' | 'secondaryEmail'> & { telephoneNumber?: string; roleId: string; clientAccountId: string; }
 export type CreateUserPersisterOutput = UserOutput;
-
-export type RequestOutput<T = any> = {
-    success: boolean;
-    data: T;
-    error?: any;
-}
 
 export type CreateUserOutput = {
     displayName: string;
@@ -22,7 +16,8 @@ export type CreateUserOutput = {
     }
 }
 export interface UserProfilePersister {
-    findOne(where: Partial<UserProfileModelAttributes>): Promise<UserProfileModel>;
+    findOne(where: Partial<UserInput>): Promise<UserOutput>;
     checkUserEmailAvailability(primaryEmailAddress: string): Promise<boolean>;
     createUser(parameters: CreateUserPersisterInput): Promise<RequestOutput<CreateUserOutput>>;
+    updateUser(values: Partial<UserInput>, where: Partial<UserInput>): Promise<void>;
 }

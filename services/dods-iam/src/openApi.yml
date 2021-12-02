@@ -37,7 +37,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /signOut:
-    get:
+    post:
       operationId: signOut
       summary: "AWS Cognito SignOut"
       description: "AWS Cognito SignOut"
@@ -49,7 +49,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /forgotPassword:
-    get:
+    post:
       operationId: forgotPassword
       summary: "AWS Cognito ForgotPassword"
       description: "AWS Cognito ForgotPassword"
@@ -61,7 +61,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /changePassword:
-    get:
+    post:
       operationId: changePassword
       summary: "AWS Cognito ChangePassword"
       description: "AWS Cognito ChangePassword"
@@ -75,7 +75,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /resetPassword:
-    get:
+    post:
       operationId: resetPassword
       summary: "AWS Cognito ResetPassword"
       description: "AWS Cognito ResetPassword"
@@ -89,7 +89,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /confirmRegistration:
-    get:
+    post:
       operationId: confirmRegistration
       summary: "AWS Cognito ConfirmRegistration"
       description: "AWS Cognito ConfirmRegistration"
@@ -127,7 +127,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /deleteUser:
-    get:
+    post:
       operationId: deleteUser
       summary: "AWS Cognito DeleteUser"
       description: "AWS Cognito DeleteUser"
@@ -140,7 +140,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /disableUser:
-    get:
+    post:
       operationId: disableUser
       summary: "AWS Cognito DisableUser"
       description: "AWS Cognito DisableUser"
@@ -152,7 +152,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /enableUser:
-    get:
+    post:
       operationId: enableUser
       summary: "AWS Cognito EnableUser"
       description: "AWS Cognito EnableUser"
@@ -164,7 +164,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /resendConfirmationCode:
-    get:
+    post:
       operationId: resendConfirmationCode
       summary: "AWS Cognito ResendConfirmationCode"
       description: "AWS Cognito ResendConfirmationCode"
