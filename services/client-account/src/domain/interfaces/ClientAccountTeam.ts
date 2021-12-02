@@ -45,3 +45,8 @@ export interface NewTeamMemberParameters {
     teamMemberType: number;
     clientAccountId: string;
 }
+
+export interface RemoveTeamMemberParameters {
+    userId: string;
+    clientAccountId: string;
+}

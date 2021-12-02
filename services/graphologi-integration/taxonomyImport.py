@@ -65,6 +65,29 @@ def handle(event, context):
     # Top concept is a list with only one item so we can pull it out and make it a string
     taxo_df_labeled['topConceptOf'] = taxo_df_labeled.apply(extractTopConcept, axis=1)
 
+    # Create hierarchy
+    def updateHierarchy(df):
+        if (df['narrower'].empty or df['narrower'].astype(str).iloc[0] == 'nan'):
+            return False
+        for narrower in df['narrower'].iloc()[0]:
+            hierarchy = df['hierarchy'].iloc()[0] + '->' + df['label'].iloc()[0]
+            taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+            updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
+
+    taxonomies = taxo_df_labeled['topConceptOf'].dropna().unique()
+    taxo_df_labeled['hierarchy'] = ''
+    for taxonomy in taxonomies:
+        topConcepts = taxo_df_labeled[taxo_df_labeled['topConceptOf'] == taxonomy]
+        for i, row in topConcepts.iterrows():
+            for narrower in row['narrower']:
+                narrow = taxo_df_labeled[taxo_df_labeled['id'] == narrower].iloc()[0]
+                if narrow['hierarchy']:
+                    hierarchy = narrow['hierarchy'] + '->' + row['label']
+                else:
+                    hierarchy = row['label']
+                taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+                updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
+
     # Add alternate labels/synonyms to the data
     def get_alt_labels(row):
         alt_labels = []
@@ -82,7 +105,7 @@ def handle(event, context):
                 alt_labels.append(label_row['literalForm.de'])
                 continue
         return alt_labels
-    
+
     taxo_df_labeled['altLabels'] = taxo_df_labeled.apply(get_alt_labels, axis=1)
 
     es = Elasticsearch(cloud_id=esCloudId, api_key=(esKeyId, esApiKey))
@@ -97,6 +120,8 @@ def handle(event, context):
     bulk(es, gendata(taxonomy_dict))
 
     print("Imported " + str(taxo_df_labeled.shape[0]))
+
+    return {}
 
 
 def gendata(taxonomy):

@@ -67,7 +67,9 @@ const Footer: React.FC<FooterProps> = () => {
             </ul>
 
             <div>
-              <Text color={color.base.white}>&copy; Merit Group PLC 2022</Text>
+              <Text color={color.base.white}>
+                &copy; Merit Group PLC {new Date().getFullYear()}
+              </Text>
             </div>
           </Styled.wrapper>
         </Panel>

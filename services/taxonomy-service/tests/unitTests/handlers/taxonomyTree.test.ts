@@ -21,5 +21,6 @@ describe(`taxonomy tree handlers`, () => {
     test('Multi Taxonomy Tree', async () => {
         const response = await multiTaxonomyTree();
         expect(response).toBeInstanceOf(HttpSuccessResponse);
+
     });
 });

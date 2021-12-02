@@ -1,13 +1,16 @@
 import { shallow } from 'enzyme';
-import { useReducer } from 'hoist-non-react-statics/node_modules/@types/react';
 import React from 'react';
 
 import NavigationMobile from './NavigationMobile';
+import { dodsMenu } from './NavigationAccount.test';
+import { contentMenu } from './NavigationContent.test';
 
 const mockActive = jest.fn();
 
 const props = {
   user: { isDodsUser: true },
+  dodsMenu: dodsMenu,
+  contentMenu: contentMenu,
   rootPage: 'Test',
   navHovered: false,
   setNavHovered: jest.fn,
@@ -34,14 +37,14 @@ describe('NavigationMobile', () => {
   });
 
   it.each([
-    ['dods', true],
-    ['accounts', true],
-    ['users', true],
-    ['account', false],
-    ['profile', false],
-  ])('clicks %p menu item', (label, isDodsUser) => {
+    ['dods', true, 0],
+    ['accounts', true, 1],
+    ['users', true, 2],
+    ['account', false, 'account'],
+    ['profile', false, 'profile'],
+  ])('clicks %p menu item', (label, isDodsUser, count) => {
     const wrapper = shallow(<NavigationMobile {...props} user={{ ...props.user, isDodsUser }} />);
-    const menuItem = wrapper.find(`[data-test="menu-item-${label}"]`);
+    const menuItem = wrapper.find(`[data-test="menu-item-${count}"]`);
     menuItem.simulate('click');
     expect(mockActive).toHaveBeenCalledWith(false);
   });

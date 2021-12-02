@@ -24,44 +24,25 @@ provider:
     ES_API_KEY: ${env:ES_API_KEY}
     GRAPHIFY_USERNAME: ${env:GRAPHIFY_USERNAME}
     GRAPHIFY_PASSWORD: ${env:GRAPHIFY_PASSWORD}
+    TAXONOMY_IMPORT_SQS: { Ref: graphologiImportQueue }
   
   iamRoleStatements:
     - Effect: Allow
       Action:
         - s3:PutObject
         - s3:GetObject
+        - sqs:SendMessage
       Resource:
         - 'arn:aws:s3:::${self:provider.environment.S3_TAXONOMY_BUCKET}/*'
+        - "*"
 
 resources:
   Resources:
-    LoggingBucket:
-      Type: 'AWS::S3::Bucket'
+    graphologiImportQueue:
+      Type: "AWS::SQS::Queue"
       Properties:
-        BucketName: ${self:service}-${opt:stage, self:provider.stage}-logging
-        AccessControl: LogDeliveryWrite
-
-    S3TaxonomyBucket:
-      Type: 'AWS::S3::Bucket'
-      Properties:
-        BucketName: ${self:provider.environment.S3_TAXONOMY_BUCKET}
-        LoggingConfiguration:
-          DestinationBucketName: ${self:service}-${opt:stage, self:provider.stage}-logging
-          LogFilePrefix: graphologi-bucket-logs
-        CorsConfiguration:
-          CorsRules:
-            - AllowedHeaders:
-                - "Authorization"
-              AllowedMethods:
-                - GET
-              AllowedOrigins:
-                - "*"
-            - AllowedHeaders:
-                - "*"
-              AllowedMethods:
-                - PUT
-              AllowedOrigins:
-                - "*"
+        QueueName: "graphologiImportQueue"
+        VisibilityTimeout: 200
 
 package:
   include:
@@ -71,10 +52,20 @@ functions:
   taxonomy:
     handler: taxonomyImport.handle
     runtime: python3.7
-    timeout: 30
+    timeout: 180
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - graphologiImportQueue
+              - Arn
+    layers:
+      - ${cf:pandas-layer-${self:provider.stage}.PandasLayerExport}
+
+  taxonomyTrigger:
+    handler: taxonomyImportTrigger.handle
+    runtime: python3.7
     events:
       - http:
           path: /taxonomy
           method: put
-    layers:
-      - ${cf:pandas-layer-${self:provider.stage}.PandasLayerExport}

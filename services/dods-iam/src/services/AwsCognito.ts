@@ -298,6 +298,25 @@ export class AwsCognito {
         });
     }
 
+    destroyUser(userName: string): Promise<{}> {
+        var params: CognitoIdentityServiceProvider.Types.AdminDeleteUserRequest = {
+            UserPoolId: config.aws.resources.cognito.userPoolId, /* required */
+            Username: userName, /* required */
+        };
+
+        const cognitoidentityserviceprovider = new CognitoIdentityServiceProvider();
+
+        return new Promise((resolve, reject) => {
+            cognitoidentityserviceprovider.adminDeleteUser(params, function (err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    }
+
     disableUser(userName: string) {
         var params = {
             UserPoolId: config.aws.resources.cognito.userPoolId, /* required */

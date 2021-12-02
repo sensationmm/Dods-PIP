@@ -72,7 +72,15 @@ export type GetUserInput = { userId: string };
 
 export type GetUserOutput =
     | Pick<UserInput, 'firstName' | 'lastName'>
-    | { email: string; role: string; isDodsUser: boolean };
+    | {
+          primaryEmail: string;
+          role: Object;
+          isDodsUser: boolean;
+          secondaryEmail?: string | null;
+          telephoneNumber1: string | null;
+          telephoneNumber2?: string | null;
+          title: string | null;
+      };
 
 export interface UserProfilePersisterV2 {
     getUser(parameters: GetUserInput): Promise<GetUserOutput>;
