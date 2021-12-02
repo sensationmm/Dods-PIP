@@ -110,25 +110,26 @@ export const AddUser: React.FC<AddUserProps> = () => {
               errors={errors}
               setErrors={setErrors}
             />
+            <div>
+              <div />
 
-            <div />
-
-            <Styled.pageActions>
-              <Button
-                isSmall
-                type="secondary"
-                label="Back"
-                icon={Icons.ChevronLeft}
-                onClick={() => router.push('/account-management/users')}
-              />
-              <Button
-                isSmall
-                label="Create User"
-                icon={Icons.Tick}
-                iconAlignment="right"
-                disabled={!isComplete}
-              />
-            </Styled.pageActions>
+              <Styled.pageActions>
+                <Button
+                  isSmall
+                  type="secondary"
+                  label="Back"
+                  icon={Icons.ChevronLeft}
+                  onClick={() => router.push('/account-management/users')}
+                />
+                <Button
+                  isSmall
+                  label="Create User"
+                  icon={Icons.Tick}
+                  iconAlignment="right"
+                  disabled={!isComplete}
+                />
+              </Styled.pageActions>
+            </div>
           </Styled.content>
         </Panel>
       </main>
