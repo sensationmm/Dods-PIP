@@ -8,11 +8,17 @@ import useSWR from 'swr';
 import { Api, BASE_URI } from '../utils/api';
 
 export type User = {
-  isDodsUser: boolean;
-  clientAccountName: string;
-  clientAccountId: string;
-  displayName: string;
-  emailAddress: string;
+  id?: string;
+  isDodsUser?: boolean;
+  clientAccountName?: string;
+  clientAccountId?: string;
+  displayName?: string;
+  emailAddress?: string;
+  title?: string;
+  primaryEmail?: string;
+  secondaryEmail?: string;
+  telephoneNumber1?: string;
+  telephoneNumber2?: string;
 };
 
 export interface UserAuth extends User {

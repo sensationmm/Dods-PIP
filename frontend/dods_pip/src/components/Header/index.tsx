@@ -4,6 +4,7 @@ import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import Logo from '../../assets/images/logo-dods.svg';
+import color from '../../globals/color';
 import { breakpoints } from '../../globals/media';
 import fetchJson from '../../lib/fetchJson';
 import useUser from '../../lib/useUser';
@@ -47,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             <Styled.logo>
               <Link href="/">
                 <a>
-                  <Logo layout={'fill'} alt={'Dods Logo'} />
+                  <Logo layout={'fill'} alt={'Dods Logo'} color={color.theme.blue} />
                 </a>
               </Link>
             </Styled.logo>

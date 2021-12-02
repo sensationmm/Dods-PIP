@@ -1,4 +1,3 @@
-import styled from '@emotion/styled-base';
 import trim from 'lodash/trim';
 import React from 'react';
 

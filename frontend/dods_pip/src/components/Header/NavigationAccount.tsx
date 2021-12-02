@@ -99,7 +99,7 @@ const NavigationAccount: React.FC<NavigationAccountProps> = ({
           ) : (
             <li>
               <Link href={`/accounts/${user.clientAccountId}`} passHref>
-                <Styled.navLink active={rootPage === 'my-profile'} disabled={navHovered}>
+                <Styled.navLink active={rootPage === 'accounts'} disabled={navHovered}>
                   {user.clientAccountName}
                 </Styled.navLink>
               </Link>
@@ -125,8 +125,8 @@ const NavigationAccount: React.FC<NavigationAccountProps> = ({
             <Icon src={Icons.ArrowDown} />
             {accountMenuOpen && (
               <Styled.accountMenu>
-                <Styled.accountMenuItem>
-                  <Link href="/my-profile">
+                <Styled.accountMenuItem onClick={() => setNavHovered(false)}>
+                  <Link href={`/users/${user.id}`}>
                     <a>
                       <Icon
                         src={Icons.Person}

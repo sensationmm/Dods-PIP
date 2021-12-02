@@ -4,7 +4,7 @@ import withSession from '../../lib/session';
 export default withSession(async (req, res) => {
   try {
     // we check that the user exists on GitHub and store some data in session
-    const { accessToken, isDodsUser, clientAccountName, clientAccountId, displayName } =
+    const { accessToken, userId, isDodsUser, clientAccountName, clientAccountId, displayName } =
       await fetchJson(
         `${process.env.APP_API_URL}/signIn`,
         {
@@ -17,6 +17,7 @@ export default withSession(async (req, res) => {
         req,
       );
     const user = {
+      id: userId,
       isLoggedIn: true,
       accessToken,
       isDodsUser,
