@@ -123,3 +123,10 @@ functions:
       - http:
           method: post
           path: users
+  getClientAccountsByUser:
+    handler: src/handlers/getClientAccountsByUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: users/{userId}/client-accounts
