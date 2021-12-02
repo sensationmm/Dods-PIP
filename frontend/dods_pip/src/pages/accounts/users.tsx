@@ -13,6 +13,7 @@ import Text from '../../components/Text';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import { TeamMemberType } from '../account-management/add-client/type';
+import { Role } from '../account-management/users.page';
 import * as Styled from './index.styles';
 
 export interface UsersProps {
@@ -23,7 +24,7 @@ export type TeamUser = {
   id: string;
   name: string;
   type: string;
-  role?: string;
+  role?: Role;
   access?: string;
   primaryEmailAddress?: string;
   secondaryEmailAddress?: string;
@@ -104,7 +105,7 @@ const Users: React.FC<UsersProps> = ({ accountId }) => {
                         {user.primaryEmailAddress}
                       </a>
                     </Text>,
-                    <Text key={`${user.name}-role`}>{user.role}</Text>,
+                    <Text key={`${user.name}-role`}>{user?.role?.title}</Text>,
                     <IconButton
                       key={`${user.name}-link`}
                       onClick={() => router.push(`/users/${user.id}`)}
