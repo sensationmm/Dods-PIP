@@ -9,7 +9,7 @@ interface ClientAccountTeamAttributes {
     parsedType: string;
 }
 
-export interface ClientAccountTeamInput extends Optional<ClientAccountTeamAttributes, 'userId'> { }
+export interface ClientAccountTeamInput extends Optional<ClientAccountTeamAttributes, 'userId' | 'parsedType'> { }
 
 export interface ClientAccountTeamOutput extends Required<ClientAccountTeamAttributes> { }
 

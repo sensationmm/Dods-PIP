@@ -153,6 +153,14 @@ functions:
                   method: post
                   path: clientaccount/{clientAccountId}/teammember/new
 
+    removeTeamMember:
+        handler: src/handlers/removeTeamMember/index.handle
+        description: Triggered when http request comes
+        events:
+            - http:
+                  method: delete
+                  path: clientaccount/{clientAccountId}/teammember
+
     getClientAccountTeamMembers:
         handler: src/handlers/getClientAccountTeamMembers/index.handle
         description: Triggered when http request comes

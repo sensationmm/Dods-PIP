@@ -1,6 +1,7 @@
 import { BelongsTo, BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToMany, BelongsToManyAddAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToSetAssociationMixin, DataTypes, Model, Optional } from 'sequelize';
 import sequelizeConnection from '../config/sequelizeConnection';
 import { ClientAccount, Role } from '.';
+import { Sequelize } from 'sequelize';
 
 export interface UserAttributes {
     id: number;
@@ -14,6 +15,8 @@ export interface UserAttributes {
     telephoneNumber1: string | null;
     telephoneNumber2: string | null;
     fullName: string;
+    isActive: boolean;
+    memberSince: Date;
 }
 
 export interface UserInput extends Optional<UserAttributes, 'id' | 'uuid' | 'secondaryEmail' | 'telephoneNumber1' | 'telephoneNumber2' | 'fullName'> { }
@@ -30,6 +33,8 @@ export class User extends Model<UserAttributes, UserInput> implements UserAttrib
     public secondaryEmail!: string | null;
     public telephoneNumber1!: string | null;
     public telephoneNumber2!: string | null;
+    public isActive!: boolean;
+    public memberSince!: Date;
 
     public fullName!: string;
 
@@ -119,7 +124,17 @@ User.init({
         type: DataTypes.STRING({ length: 20 }),
         allowNull: true,
         defaultValue: null,
-        field: 'telephone_number_2'
+        field: 'telephone_number_2',
+    },
+    isActive: {
+        type: DataTypes.TINYINT({ length: 1 }),
+        allowNull: false,
+        defaultValue: 1,
+    },
+    memberSince: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     }
 }, {
     tableName: 'dods_users',
