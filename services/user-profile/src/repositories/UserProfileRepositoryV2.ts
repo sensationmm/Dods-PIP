@@ -5,6 +5,7 @@ import {
     User,
 } from '@dodsgroup/dods-model';
 import {
+    ClientAccountObj,
     CreateUserPersisterInput,
     CreateUserPersisterOutput,
     GetUserClientAccounts,
@@ -39,7 +40,10 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
                 `Error: UserUUID ${parameters.userId} does not exist`
             );
         }
-        let clientAccount = {};
+        let clientAccount: ClientAccountObj = {
+            uuid: undefined,
+            name: undefined,
+        };
         if (user.accounts?.length) {
             clientAccount = {
                 uuid: user.accounts[0].uuid,
@@ -71,6 +75,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
                 title: user.role.title,
                 dodsRole: user.role.dodsRole,
             },
+            clientAccountId: clientAccount ? clientAccount.uuid : null,
             clientAccount: clientAccount,
             isDodsUser: user.role.uuid === DODS_USER,
         };

@@ -95,6 +95,11 @@ export type UserAccountsReponse = {
     clients: Array<SearchClientsByResultType>;
 };
 
+export type ClientAccountObj = {
+    uuid: string | undefined;
+    name: string | undefined;
+};
+
 export type GetUserOutput =
     | Pick<UserInput, 'firstName' | 'lastName'>
     | {
@@ -105,7 +110,8 @@ export type GetUserOutput =
           telephoneNumber1: string | null;
           telephoneNumber2?: string | null;
           title: string | null;
-          clientAccount: Object;
+          clientAccount: ClientAccountObj;
+          clientAccountId: string | null;
           isActive: boolean;
           memberSince: Date;
       };
