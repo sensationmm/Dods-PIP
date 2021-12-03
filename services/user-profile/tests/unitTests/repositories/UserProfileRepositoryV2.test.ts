@@ -253,7 +253,7 @@ describe(`${CLASS_NAME}`, () => {
             firstName: findOneInUserResponse.firstName,
             lastName: findOneInUserResponse.lastName,
             primaryEmail: findOneInUserResponse.primaryEmail,
-            clientAccount: {},
+            clientAccount: { name: undefined, uuid: undefined },
 
             role: {
                 uuid: '83618280-9c84-441c-94d1-59e4b24cbe3d',
