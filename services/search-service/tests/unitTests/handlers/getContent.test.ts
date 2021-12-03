@@ -1,21 +1,15 @@
-// import { getContent } from '../../../src/handlers/getContent/getContent';
-// import {HttpSuccessResponse, GetContentParameters} from "../../../src/domain";
+import { getContent } from '../../../src/handlers/getContent/getContent';
+import {GetContentParameters} from "../../../src/domain";
 
-const FUNCTION_NAME = "getContent";
+jest.mock('../../../src/repositories/SearchRepository');
+
+const FUNCTION_NAME = getContent.name;
 
 describe(`${FUNCTION_NAME} handler`, () => {
-    test(`${FUNCTION_NAME}`, async () => {
-        // const data: GetContentParameters = { contentId: 'str-uuid' };
+    test('getContent valid output on query', async () => {
+        const data: GetContentParameters = { contentId: 'str-uuid' };
 
-        // const response = await getContent(data);
-        // expect(response).toBeInstanceOf(HttpSuccessResponse);
-
+        const response = getContent(data)
+        expect(response).not.toEqual(null);
     });
-
-    // test('getContent with not found message', async () => {
-    //     const data: GetContentParameters = { contentId: 'str-uuid' };
-
-    //     await expect(getContent(data)).rejects.toThrow(HttpBadRequestError);
-
-    // });
 });

@@ -6,7 +6,6 @@ import { SearchRepository } from "../../repositories/SearchRepository";
 export const getContent = async (requestPayload: GetContentParameters): Promise<APIGatewayProxyResultV2> => {
     let es_response = await SearchRepository.defaultInstance.getContent(requestPayload);
 
-    console.log(es_response);
     if (parseInt(es_response.body.hits.total.value) > 0) {
 
         return new HttpResponse(HttpStatusCode.OK, {

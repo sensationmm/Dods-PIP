@@ -15,7 +15,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test('getContent valid output on query', async () => {
         const data: GetContentParameters = { contentId: 'str-uuid' };
         const mock_es_response = {
-            body: {hits: {hits: [{
+            hits: {hits: [{
                         _id: "1",
                         _score: "1",
                         _source: {
@@ -68,7 +68,6 @@ describe(`${FUNCTION_NAME} handler`, () => {
                     documentContent: ""
                     }
                     }]}}
-        }
 
         elasticsearch.search.mockResolvedValue(mock_es_response)
 
