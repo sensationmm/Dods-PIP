@@ -81,8 +81,8 @@ custom:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
     # Enable or disable caching globally
-    apiGatewayCaching:
-      enabled: true
+  apiGatewayCaching:
+    enabled: true
 
 plugins:
   - serverless-webpack
