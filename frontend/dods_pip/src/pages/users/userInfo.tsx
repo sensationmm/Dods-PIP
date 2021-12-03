@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import Panel from '../../components/_layout/Panel';
@@ -10,13 +12,13 @@ import Loader from '../../components/Loader';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import { User } from '../../lib/useUser';
+import useUser, { User } from '../../lib/useUser';
 import * as AccountStyled from '../accounts/index.styles';
 import Summary from '../accounts/summary';
-import * as Styled from './index.styles';
+import * as Styled from './userInfo.styles';
 
 export interface UserInfoProps {
-  user: User | undefined;
+  userData: User | undefined;
   addNotification: LoadingHOCProps['addNotification'];
   setLoading: LoadingHOCProps['setLoading'];
   actions: JSX.Element[];
@@ -24,25 +26,49 @@ export interface UserInfoProps {
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({
-  user,
+  userData,
   addNotification,
   setLoading,
   actions,
   isDodsUser = false,
 }) => {
+  const { user } = useUser({ redirectTo: '/' });
+  const router = useRouter();
+
+  const { id } = router.query;
+
+  const userActive = userData?.isActive === 1 ? true : false;
+
+  const breadcrumb = [
+    {
+      href: `/accounts/${userData?.clientAccount?.uuid}`,
+      label: userData?.clientAccountName || userData?.clientAccount?.name || '',
+    },
+    { href: router.pathname, label: userData?.displayName || '' },
+  ];
+
+  if (user?.isDodsUser) {
+    breadcrumb.unshift({ href: '/account-management/accounts', label: 'Accounts' });
+  }
+
   return (
     <>
       <Panel bgColor={color.base.ivory}>
-        {user !== undefined ? (
+        {userData !== undefined ? (
           <>
-            <Breadcrumbs history={[{ href: '/accounts', label: 'Accounts' }]} />
+            {!userData.isDodsUser && (
+              <>
+                <Breadcrumbs history={breadcrumb} />
 
-            <Spacer size={8} />
+                <Spacer size={8} />
+              </>
+            )}
+
             <Styled.headerOuter>
               <Styled.header>
-                <Avatar type={user?.isDodsUser ? 'consultant' : 'client'} />
+                <Avatar type={userData?.isDodsUser ? 'consultant' : 'client'} />
                 <Text type={'h1'} headingStyle="hero">
-                  {user?.displayName}
+                  {userData?.displayName}
                 </Text>
               </Styled.header>
               <Styled.actions>{actions}</Styled.actions>
@@ -63,26 +89,26 @@ const UserInfo: React.FC<UserInfoProps> = ({
                     <Text type="body" bold={true}>
                       Client Name
                     </Text>
-                    <Text>{user?.displayName}</Text>
+                    <Text>{userData?.displayName}</Text>
                   </div>
                   <div>
                     <Text type="body" bold={true}>
                       Job Title
                     </Text>
-                    <Text>{user.title}</Text>
+                    <Text>{userData.title}</Text>
                   </div>
                   <div>
                     <Text type="body" bold={true}>
                       Member since
                     </Text>
-                    <Text></Text>
+                    <Text>{format(new Date(userData?.memberSince), 'dd/LL/yyyy')}</Text>
                   </div>
                   <div>
                     <Text type="body" bold={true}>
                       Status
                     </Text>
-                    <Text bold color={color.alert.green}>
-                      Active
+                    <Text bold color={userActive ? color.alert.green : color.alert.red}>
+                      {userActive ? 'Active' : 'Inactive'}
                     </Text>
                   </div>
                 </AccountStyled.sumAccountContentGrid>
@@ -93,7 +119,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
                       <Text type="body" bold={true}>
                         User ID
                       </Text>
-                      <Text></Text>
+                      <Text>{id}</Text>
                     </AccountStyled.sumAccountContentNotes>
                   </>
                 )}
@@ -114,43 +140,43 @@ const UserInfo: React.FC<UserInfoProps> = ({
               </AccountStyled.sumIconTitle>
               <AccountStyled.sumAccountContentDetails>
                 <AccountStyled.sumAccountContentGrid>
-                  {user.primaryEmail && (
+                  {userData.primaryEmail && (
                     <div>
                       <Text type="body" bold={true}>
                         Email #1
                       </Text>
                       <Text>
-                        <a href={`mailto:${user.primaryEmail}`}>{user.primaryEmail}</a>
+                        <a href={`mailto:${userData.primaryEmail}`}>{userData.primaryEmail}</a>
                       </Text>
                     </div>
                   )}
-                  {user.secondaryEmail && (
+                  {userData.secondaryEmail && (
                     <div>
                       <Text type="body" bold={true}>
                         Email #2
                       </Text>
                       <Text>
-                        <a href={`mailto:${user.secondaryEmail}`}>{user.secondaryEmail}</a>
+                        <a href={`mailto:${userData.secondaryEmail}`}>{userData.secondaryEmail}</a>
                       </Text>
                     </div>
                   )}
-                  {user.telephoneNumber1 && (
+                  {userData.telephoneNumber1 && (
                     <div>
                       <Text type="body" bold={true}>
                         Telephone #1
                       </Text>
                       <Text>
-                        <a href={`tel:${user.telephoneNumber1}`}>{user.telephoneNumber1}</a>
+                        <a href={`tel:${userData.telephoneNumber1}`}>{userData.telephoneNumber1}</a>
                       </Text>
                     </div>
                   )}
-                  {user.telephoneNumber2 && (
+                  {userData.telephoneNumber2 && (
                     <div>
                       <Text type="body" bold={true}>
                         Telephone #2
                       </Text>
                       <Text>
-                        <a href={`tel:${user.telephoneNumber2}`}>{user.telephoneNumber2}</a>
+                        <a href={`tel:${userData.telephoneNumber2}`}>{userData.telephoneNumber2}</a>
                       </Text>
                     </div>
                   )}
@@ -168,10 +194,10 @@ const UserInfo: React.FC<UserInfoProps> = ({
 
       <hr />
 
-      {user?.clientAccountId && !user?.isDodsUser && (
+      {userData?.clientAccount?.uuid && !userData?.isDodsUser && (
         <Panel>
           <Summary
-            accountId={user?.clientAccountId}
+            accountId={userData?.clientAccount?.uuid}
             addNotification={addNotification}
             setLoading={setLoading}
             editable={false}

@@ -21,7 +21,7 @@ describe('Toggle', () => {
 
   it('renders without error in disabled state and is unclickable', () => {
     const wrapper = shallow(<Toggle isActive={true} onChange={clickWatcher} isDisabled={true} />);
-    const component = wrapper.find('[data-test="component-toggle"]');
+    const component = wrapper.find('[data-test="toggle-control"]');
     expect(component.length).toEqual(1);
 
     component.simulate('click');
@@ -30,7 +30,7 @@ describe('Toggle', () => {
 
   it('registers click', () => {
     const wrapper = shallow(<Toggle onChange={clickWatcher} />);
-    const component = wrapper.find('[data-test="component-toggle"]');
+    const component = wrapper.find('[data-test="toggle-control"]');
     component.simulate('click');
     expect(clickWatcher).toHaveBeenCalledTimes(1);
   });

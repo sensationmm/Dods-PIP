@@ -28,6 +28,7 @@ export interface AddUserFormProps {
   setTelephoneNumber2: (val: string) => void;
   errors: Errors;
   setErrors: (errors: Errors) => void;
+  isEdit?: boolean;
 }
 
 const AddUserForm: React.FC<AddUserFormProps> = ({
@@ -50,6 +51,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   setTelephoneNumber2,
   errors,
   setErrors,
+  isEdit = false,
 }) => {
   const validateFirstName = () => {
     const formErrors = { ...errors };
@@ -179,6 +181,8 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             label="Account"
             error={errors.account}
             onBlur={validateAccount}
+            isDisabled={isEdit}
+            helperText={isEdit ? 'Account cannot be edited' : ''}
           />
           <InputText
             id="jobTitle"
@@ -199,9 +203,10 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
         required
         label="Email Address"
         placeholder="Type the email address"
-        helperText="Will be used as a username"
+        helperText={isEdit ? 'Username cannot be edited' : 'Will be used as a username'}
         onBlur={validateEmailAddress}
         error={errors.emailAddress}
+        isDisabled={isEdit}
       />
       <InputText
         id="emailAddress2"
