@@ -91,7 +91,6 @@ plugins:
   - serverless-dependson-plugin
   - serverless-offline
   - serverless-api-gateway-caching
-
 package:
   include:
     - node_modules/**
