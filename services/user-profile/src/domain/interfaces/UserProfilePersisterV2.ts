@@ -23,6 +23,8 @@ export type SearchUsersResultType = Pick<
     telephoneNumber2: string | null;
     title: string | null;
     clientAccount: Object;
+    isActive: boolean;
+    memberSince: Date;
 };
 
 export type SearchUsersOutput = {
@@ -104,6 +106,8 @@ export type GetUserOutput =
           telephoneNumber2?: string | null;
           title: string | null;
           clientAccount: Object;
+          isActive: boolean;
+          memberSince: Date;
       };
 
 export interface UserProfilePersisterV2 {

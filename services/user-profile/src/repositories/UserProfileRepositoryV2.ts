@@ -63,6 +63,9 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             telephoneNumber1: user.telephoneNumber1,
             telephoneNumber2: user.telephoneNumber2,
             title: user.title,
+            isActive: user.isActive,
+            memberSince: user.createdAt,
+
             role: {
                 uuid: user.role.uuid,
                 title: user.role.title,
@@ -149,6 +152,8 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
                 title,
                 role,
                 accounts,
+                isActive,
+                createdAt,
             }) => {
                 let clientAccount = {};
 
@@ -176,6 +181,8 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
                     secondaryEmail: secondaryEmail,
                     telephoneNumber1,
                     telephoneNumber2,
+                    isActive: isActive,
+                    memberSince: createdAt,
                     role: {
                         uuid: role.uuid,
                         title: role.title,
