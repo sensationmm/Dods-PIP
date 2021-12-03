@@ -70,6 +70,29 @@ export type CreateUserInput = CreateUserPersisterInput & {
 
 export type GetUserInput = { userId: string };
 
+export type GetUserClientAccounts = {
+    userId: string;
+    name?: string;
+    subscriptionId?: string;
+    limit?: string;
+    offset?: string;
+    sortBy?: string;
+    sortDirection?: string;
+};
+
+export type SearchClientsByResultType = {
+    uuid: string;
+    name: string;
+    notes: string;
+    subscription: Object;
+};
+
+export type UserAccountsReponse = {
+    totalRecords: number;
+    filteredRecords: number;
+    clients: Array<SearchClientsByResultType>;
+};
+
 export type GetUserOutput =
     | Pick<UserInput, 'firstName' | 'lastName'>
     | {
@@ -88,4 +111,7 @@ export interface UserProfilePersisterV2 {
     createUser(
         parameters: CreateUserPersisterInput
     ): Promise<CreateUserPersisterOutput>;
+    getUserClientAccounts(
+        parameters: GetUserClientAccounts
+    ): Promise<UserAccountsReponse>;
 }

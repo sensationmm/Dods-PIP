@@ -9,9 +9,9 @@ interface ClientAccountTeamAttributes {
     parsedType: string;
 }
 
-export interface ClientAccountTeamInput extends Optional<ClientAccountTeamAttributes, 'userId'> { }
+export interface ClientAccountTeamInput extends Optional<ClientAccountTeamAttributes, 'userId' | 'parsedType'> { }
 
-export interface ClientAccountTeamOutput extends Required<ClientAccountTeamAttributes> { }
+export interface ClientAccountTeamOutput extends Required<Omit<ClientAccountTeamAttributes, 'parsedType'>> { }
 
 export class ClientAccountTeam extends Model<ClientAccountTeamAttributes, ClientAccountTeamInput> implements ClientAccountTeamAttributes {
     public clientAccountId!: number;

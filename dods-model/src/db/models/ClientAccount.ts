@@ -2,12 +2,14 @@ import {
     Association,
     BelongsToCreateAssociationMixin,
     BelongsToGetAssociationMixin,
+    BelongsToMany,
+    BelongsToManyGetAssociationsMixin,
     BelongsToSetAssociationMixin,
     DataTypes,
     Model,
     Optional,
 } from 'sequelize';
-import { SubscriptionType, User } from './';
+import { ClientAccountTeam, SubscriptionType, User } from './';
 
 import sequelizeConnection from '../config/sequelizeConnection';
 
@@ -86,9 +88,14 @@ export class ClientAccount
     public setSalesContactUser!: BelongsToSetAssociationMixin<User, number>;
     public createSalesContactUser!: BelongsToCreateAssociationMixin<User>;
 
+    public readonly team?: User[];
+    public getTeam!: BelongsToManyGetAssociationsMixin<User>;
+    public ClientAccountTeam?: ClientAccountTeam;
+
     public static associations: {
         subscriptionType: Association<ClientAccount, SubscriptionType>;
         salesContactUser: Association<ClientAccount, User>;
+        team: BelongsToMany<ClientAccount, User>;
     };
 
     // Timestamps

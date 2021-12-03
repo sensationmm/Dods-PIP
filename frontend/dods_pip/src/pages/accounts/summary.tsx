@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import router from 'next/router';
 import React from 'react';
 
 import Spacer from '../../components/_layout/Spacer';
@@ -347,14 +348,16 @@ const Summary: React.FC<SummaryProps> = ({
                       <Text type="body" bold={true}>
                         Primary Contact - Tel. Number
                       </Text>
-                      <Text>{contactTelephone}</Text>
+                      <Text>
+                        <a href={`mailto:${contactTelephone}`}>{contactTelephone}</a>
+                      </Text>
                     </div>
                     <div>
                       <Text type="body" bold={true}>
                         Primary Contact - Email
                       </Text>
                       <Text>
-                        <a href={'mailto:' + contactEmail}>{contactEmail}</a>
+                        <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
                       </Text>
                     </div>
                   </Styled.sumAccountContentGrid>
@@ -383,9 +386,9 @@ const Summary: React.FC<SummaryProps> = ({
                   <div />
                 )}
               </Styled.sumAccountWrapper>
-              <Spacer size={4} />
+              <Spacer size={10} />
               <hr />
-              <Spacer size={4} />
+              <Spacer size={10} />
               <Styled.sumAccountWrapper>
                 <Styled.sumIconTitle>
                   <Icon src={Icons.Subscription} size={IconSize.xlarge} />
@@ -452,9 +455,9 @@ const Summary: React.FC<SummaryProps> = ({
                   <div />
                 )}
               </Styled.sumAccountWrapper>
-              <Spacer size={4} />
+              <Spacer size={10} />
               <hr />
-              <Spacer size={4} />
+              <Spacer size={10} />
               <Styled.sumAccountWrapper>
                 <Styled.sumIconTitle>
                   <Icon src={Icons.Users} size={IconSize.xlarge} />
@@ -475,7 +478,7 @@ const Summary: React.FC<SummaryProps> = ({
               </Styled.sumAccountWrapper>
               <Spacer size={1} />
               <PlainTable
-                headings={['Consultant', 'Access', 'Contact']}
+                headings={['Consultant', 'Access', 'Contact', '']}
                 colWidths={[2, 2, 3]}
                 rows={consultantsComplete.map((consultant) => [
                   accountId,
@@ -495,25 +498,39 @@ const Summary: React.FC<SummaryProps> = ({
                   <Styled.sumConsultantContact key={consultant.name}>
                     <Text>
                       <span>Email</span>
-                      <a href={'mailto:' + consultant.email}>{consultant.email}</a>
+                      <a href={'mailto:' + consultant.primaryEmailAddress}>
+                        {consultant.primaryEmailAddress}
+                      </a>
                     </Text>
                     <Spacer size={2} />
                     <Text>
                       <span>Email</span>
-                      <a href={'mailto:' + consultant.email}>{consultant.email2}</a>
+                      <a href={'mailto:' + consultant.secondaryEmailAddress}>
+                        {consultant.secondaryEmailAddress}
+                      </a>
                     </Text>
                     <Spacer size={2} />
                     <Text>
                       <span>Tel (W)</span>
-                      <a href={'tel:' + consultant.telephone}>{consultant.telephone}</a>
+                      <a href={'tel:' + consultant.telephoneNumber1}>
+                        {consultant.telephoneNumber1}
+                      </a>
                     </Text>
                     <Spacer size={2} />
                     <Text>
                       <span>Tel (M)</span>
-                      <a href={'tel:' + consultant.telephone2}>{consultant.telephone2}</a>
+                      <a href={'tel:' + consultant.telephoneNumber2}>
+                        {consultant.telephoneNumber2}
+                      </a>
                     </Text>
                   </Styled.sumConsultantContact>,
-                  <Icon key={`${consultant.name}-link`} src={Icons.ChevronRightBold} />,
+                  <IconButton
+                    key={`dods-user-${consultant.id}`}
+                    onClick={() => router.push(`/users/${consultant.id}`)}
+                    icon={Icons.ChevronRightBold}
+                    type="text"
+                    isSmall
+                  />,
                 ])}
               />
               <Spacer size={4} />

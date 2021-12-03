@@ -1,14 +1,16 @@
+import { ClientAccount, Role, User } from '@dodsgroup/dods-model';
 import {
     CreateUserPersisterInput,
+    GetUserClientAccounts,
     GetUserInput,
     GetUserOutput,
     SearchUsersInput,
+    UserAccountsReponse,
 } from '../../../src/domain';
 import {
     DODS_USER,
     UserProfileRepositoryV2,
 } from '../../../src/repositories/UserProfileRepositoryV2';
-import { Role, User } from '@dodsgroup/dods-model';
 
 import { mocked } from 'ts-jest/utils';
 
@@ -71,10 +73,22 @@ const defaultSearchUsersRepositoryResult = {
     count: defaultSearchUsersSequelizeResult.count,
 };
 
+const defaultClientAccountsSequelizeResult = {
+    rows: [
+        {
+            uuid: '3ba1e07c-7ad6-425f-a79d-7b3b08eccdb1',
+            name: 'Company1',
+            notes: 'test note',
+        } as ClientAccount,
+    ],
+    count: 1,
+};
+
 jest.mock('@dodsgroup/dods-model');
 
 const mockedUser = mocked(User);
 const mockedRole = mocked(Role);
+const mockedClient = mocked(ClientAccount);
 
 mockedUser.findAndCountAll.mockResolvedValue(defaultSearchUsersSequelizeResult);
 
@@ -86,8 +100,12 @@ const CREATE_USER_FUNCTION_NAME =
 const GET_USER_FUNCTION_NAME =
     UserProfileRepositoryV2.defaultInstance.getUser.name;
 
+const GET_ACCOUNT_BY_USER =
+    UserProfileRepositoryV2.defaultInstance.getUserClientAccounts.name;
+
 afterAll(() => {
     mockedRole.mockClear();
+    mockedClient.mockClear();
 });
 
 describe(`${CLASS_NAME}`, () => {
@@ -271,5 +289,89 @@ describe(`${CLASS_NAME}`, () => {
                 `Error: UserUUID ${parameters.userId} does not exist`
             );
         }
+    });
+
+    test(`${GET_ACCOUNT_BY_USER} invalid input Happy case`, async () => {
+        const findAllClientsResponse = {
+            uuid: '3ba1e07c-7ad6-425f-a79d-7b3b08eccdb1',
+        } as any;
+
+        mockedClient.findAll.mockResolvedValue(findAllClientsResponse);
+
+        mockedClient.findAndCountAll.mockResolvedValue(
+            defaultClientAccountsSequelizeResult
+        );
+
+        const parameters: GetUserClientAccounts = {
+            userId: '24e7ca86-1788-4b6e-b153-9c963dc922ew',
+        };
+
+        try {
+            await UserProfileRepositoryV2.defaultInstance.getUserClientAccounts(
+                parameters
+            );
+
+            throw new Error('Code never should come in this point');
+        } catch (error: any) {
+            expect(error.message).toEqual(
+                `Error: UserUUID ${parameters.userId} does not exist`
+            );
+        }
+    });
+
+    test(`${GET_ACCOUNT_BY_USER} valid input Happy case`, async () => {
+        const findAllClientsResponse: Array<any> = [
+            {
+                uuid: '3ba1e07c-7ad6-425f-a79d-7b3b08eccdb1',
+                name: 'Company1',
+                notes: 'test note',
+                subscription: {},
+            },
+        ];
+        const findOneInUserResponse = {
+            firstName: 'kenan',
+            lastName: 'hancer',
+            primaryEmail: 'kh@kh.com',
+            role: {
+                uuid: DODS_USER,
+                title: 'test role',
+            },
+        } as any;
+
+        mockedUser.findOne.mockResolvedValue(findOneInUserResponse);
+        mockedClient.findAll.mockResolvedValue(findAllClientsResponse);
+
+        mockedClient.findAndCountAll.mockResolvedValue(
+            defaultClientAccountsSequelizeResult
+        );
+
+        const parameters: GetUserClientAccounts = {
+            userId: '24e7ca86-1788-4b6e-b153-9c963dc922ew',
+        };
+
+        const clients = [
+            {
+                uuid: '3ba1e07c-7ad6-425f-a79d-7b3b08eccdb1',
+                name: 'Company1',
+                notes: 'test note',
+                subscription: { name: undefined, uuid: undefined },
+                teamMemberType: 0,
+                collections: 0,
+                team: [],
+            },
+        ];
+
+        const expectedResponse: UserAccountsReponse = {
+            totalRecords: 1,
+            filteredRecords: 1,
+            clients: clients,
+        };
+
+        const response =
+            await UserProfileRepositoryV2.defaultInstance.getUserClientAccounts(
+                parameters
+            );
+
+        expect(response).toEqual(expectedResponse);
     });
 });

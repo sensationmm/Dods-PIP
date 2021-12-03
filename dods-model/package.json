@@ -1,6 +1,6 @@
 {
     "name": "@dodsgroup/dods-model",
-    "version": "1.0.16",
+    "version": "1.0.21",
     "description": "",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",

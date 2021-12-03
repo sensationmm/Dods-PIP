@@ -7,3 +7,7 @@ export * from './TypeParsers';
 export * from './ClientAccountTeam';
 export * from './ClientAccountTeamPersister';
 export * from './UserProfilePersister';
+export * from './IamPersister';
+export * from './RequestOutput';
+export * from './ClientAccountPersisterV2';
+export * from './TeamMemberTypes';

@@ -6,6 +6,8 @@ interface CustomError extends Error {
 }
 
 export type UserResponse = {
+  id?: string;
+  userId?: string;
   accessToken?: string;
   isDodsUser?: boolean;
   clientAccountId?: string;
