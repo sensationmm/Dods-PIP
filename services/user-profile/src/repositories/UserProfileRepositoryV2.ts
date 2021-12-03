@@ -31,13 +31,28 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
     async getUser(parameters: GetUserInput): Promise<GetUserOutput> {
         const user = await User.findOne({
             where: { uuid: parameters.userId },
-            include: [User.associations.role],
+            include: [User.associations.role, User.associations.accounts],
         });
 
         if (!user) {
             throw new UserProfileError(
                 `Error: UserUUID ${parameters.userId} does not exist`
             );
+        }
+        let clientAccount = {};
+        if (user.accounts?.length) {
+            clientAccount = {
+                uuid: user.accounts[0].uuid,
+                name: user.accounts[0].name,
+            };
+            for (let i = 0; i < user.accounts.length; i++) {
+                if (user.accounts[i].isDodsAccount) {
+                    clientAccount = {
+                        uuid: user.accounts[i].uuid,
+                        name: user.accounts[i].name,
+                    };
+                }
+            }
         }
 
         return {
@@ -53,6 +68,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
                 title: user.role.title,
                 dodsRole: user.role.dodsRole,
             },
+            clientAccount: clientAccount,
             isDodsUser: user.role.uuid === DODS_USER,
         };
     }
