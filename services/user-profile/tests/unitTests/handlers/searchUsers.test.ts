@@ -22,6 +22,8 @@ const defaultSearchUsersRepositoryResult: SearchUsersOutput = {
             telephoneNumber1: '+1872111727',
             telephoneNumber2: '+1872111728',
             title: 'Mr',
+            isActive: true,
+            memberSince: new Date('2021-11-17T00:03:06.000Z'),
             role: {
                 uuid: '10c4c886-97a5-4dd1-93e7-7a51df1e9861',
                 title: 'User',
@@ -42,6 +44,8 @@ const defaultSearchUsersRepositoryResult: SearchUsersOutput = {
             telephoneNumber1: '+1872111727',
             telephoneNumber2: '+1872111728',
             title: 'Mr',
+            isActive: true,
+            memberSince: new Date('2021-11-17T00:03:06.000Z'),
             role: {
                 uuid: '10c4c886-97a5-4dd1-93e7-7a51df1e9861',
                 title: 'User',
@@ -123,6 +127,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
                     telephoneNumber1: '+1872111727',
                     telephoneNumber2: '+1872111728',
                     title: 'Mr',
+                    isActive: true,
+                    memberSince: new Date('2021-11-17T00:03:06.000Z'),
                     role: {
                         uuid: '10c4c886-97a5-4dd1-93e7-7a51df1e9861',
                         title: 'User',
@@ -144,6 +150,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
                     telephoneNumber1: '+1872111727',
                     telephoneNumber2: '+1872111728',
                     title: 'Mr',
+                    isActive: true,
+                    memberSince: new Date('2021-11-17T00:03:06.000Z'),
                     role: {
                         uuid: '10c4c886-97a5-4dd1-93e7-7a51df1e9861',
                         title: 'User',
@@ -165,6 +173,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
                     telephoneNumber1: '+1872111727',
                     telephoneNumber2: '+1872111728',
                     title: 'Mr',
+                    isActive: true,
+                    memberSince: new Date('2021-11-17T00:03:06.000Z'),
                     role: {
                         uuid: '10c4c886-97a5-4dd1-93e7-7a51df1e9861',
                         title: 'User',
@@ -186,6 +196,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
                     telephoneNumber1: '+1872111727',
                     telephoneNumber2: '+1872111728',
                     title: 'Mr',
+                    isActive: true,
+                    memberSince: new Date('2021-11-17T00:03:06.000Z'),
                     role: {
                         uuid: '10c4c886-97a5-4dd1-93e7-7a51df1e9861',
                         title: 'User',

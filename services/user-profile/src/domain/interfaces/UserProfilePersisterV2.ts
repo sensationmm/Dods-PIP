@@ -23,6 +23,8 @@ export type SearchUsersResultType = Pick<
     telephoneNumber2: string | null;
     title: string | null;
     clientAccount: Object;
+    isActive: boolean;
+    memberSince: Date;
 };
 
 export type SearchUsersOutput = {
@@ -70,6 +72,34 @@ export type CreateUserInput = CreateUserPersisterInput & {
 
 export type GetUserInput = { userId: string };
 
+export type GetUserClientAccounts = {
+    userId: string;
+    name?: string;
+    subscriptionId?: string;
+    limit?: string;
+    offset?: string;
+    sortBy?: string;
+    sortDirection?: string;
+};
+
+export type SearchClientsByResultType = {
+    uuid: string;
+    name: string;
+    notes: string;
+    subscription: Object;
+};
+
+export type UserAccountsReponse = {
+    totalRecords: number;
+    filteredRecords: number;
+    clients: Array<SearchClientsByResultType>;
+};
+
+export type ClientAccountObj = {
+    uuid: string | undefined;
+    name: string | undefined;
+};
+
 export type GetUserOutput =
     | Pick<UserInput, 'firstName' | 'lastName'>
     | {
@@ -80,6 +110,10 @@ export type GetUserOutput =
           telephoneNumber1: string | null;
           telephoneNumber2?: string | null;
           title: string | null;
+          clientAccount: ClientAccountObj;
+          clientAccountId: string | null;
+          isActive: boolean;
+          memberSince: Date;
       };
 
 export interface UserProfilePersisterV2 {
@@ -88,4 +122,7 @@ export interface UserProfilePersisterV2 {
     createUser(
         parameters: CreateUserPersisterInput
     ): Promise<CreateUserPersisterOutput>;
+    getUserClientAccounts(
+        parameters: GetUserClientAccounts
+    ): Promise<UserAccountsReponse>;
 }

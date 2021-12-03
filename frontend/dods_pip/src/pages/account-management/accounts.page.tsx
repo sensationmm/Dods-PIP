@@ -210,7 +210,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       </Head>
 
       <main>
-        <Panel bgColor={color.base.greyLighter}>
+        <Panel bgColor={color.base.ivory}>
           <Breadcrumbs
             history={[
               { href: '/account-management', label: 'Account Management' },

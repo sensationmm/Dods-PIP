@@ -22,8 +22,7 @@ import { Api, BASE_URI } from '../../utils/api';
 import { showTeamList } from '../account-management/accounts.page';
 import { teamList as TeamList } from '../account-management/accounts.styles';
 import { TeamMember } from '../account-management/add-client/type';
-import { Errors } from '../account-management/add-user.page';
-import AddUserForm from '../account-management/add-user-form';
+import AddUserForm, { FormFields } from '../account-management/add-user-form';
 import * as AccountStyled from '../accounts/index.styles';
 import UserInfo from './userInfo';
 import * as Styled from './users.styles';
@@ -62,7 +61,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   const [telephoneNumber2, setTelephoneNumber2] = React.useState<string>('');
   const [isActive, setIsActive] = React.useState<boolean>(true);
   const [password, setPassword] = React.useState<string>('');
-  const [errors, setErrors] = React.useState<Errors>({});
+  const [errors, setErrors] = React.useState<Partial<FormFields>>({});
 
   const loadUser = async () => {
     if (userId === '') {
@@ -275,6 +274,12 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               setLastName={setLastName}
               isClientUser={!userData?.isDodsUser}
               account={account}
+              accountItems={[
+                { value: 'd4bbbd4b-e02f-4343-a7e9-397eea2b1bcd', label: 'B&B Repair' },
+                { value: '68e9b1b2-3e06-4354-a83e-195199a0d082', label: 'cookie jar2' },
+                { value: 'd666a38e-9fdb-400d-a7a6-57e4661adf9f', label: 'DEMBER' },
+                { value: '8cc32f01-37bb-4dd2-9dc8-4df26078af8d', label: 'FEGIME' },
+              ]}
               setAccount={setAccount}
               jobTitle={jobTitle}
               setJobTitle={setJobTitle}

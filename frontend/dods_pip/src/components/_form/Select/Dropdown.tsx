@@ -18,6 +18,7 @@ export interface DropdownProps {
   selectedValue?: SelectProps['value'] | Array<SelectProps['value'] | DropdownValue>;
   setValue: (val: string, item?: DropdownValue) => void;
   isFilter?: boolean;
+  testId?: string;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -29,10 +30,12 @@ const Dropdown: React.FC<DropdownProps> = ({
   selectedValue = '',
   setValue,
   isFilter = false,
+  testId,
 }) => {
   return (
     <Styled.dropdown
       data-test="component-dropdown"
+      data-testid={testId}
       open={isOpen}
       hasHelper={hasHelper}
       hasError={hasError}

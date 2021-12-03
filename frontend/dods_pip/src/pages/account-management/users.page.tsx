@@ -127,7 +127,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Panel bgColor={color.base.greyLighter}>
+      <Panel bgColor={color.base.ivory}>
         <Breadcrumbs
           history={[
             { href: '/account-management', label: 'Account Management' },

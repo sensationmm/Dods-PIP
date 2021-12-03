@@ -1,6 +1,7 @@
 export * from './ClientAccountRepository';
 export * from './SubscriptionTypeRepository';
 export * from './ClientAccountTeamRepository';
+export * from './ClientAccountTeamRepositoryV2';
 export * from './UserProfileServiceRepository';
 export * from './SubscriptionTypeRepository';
 export * from './UserProfileRepository';

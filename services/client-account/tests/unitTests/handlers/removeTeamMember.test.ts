@@ -3,16 +3,16 @@ import { ClientAccountOutput, ClientAccountTeamOutput, UserOutput } from '@dodsg
 import { mocked } from 'ts-jest/utils';
 import { RemoveTeamMemberParameters } from '../../../src/domain';
 import { removeTeamMember } from '../../../src/handlers/removeTeamMember/removeTeamMember';
-import { ClientAccountRepositoryV2, ClientAccountTeamRepository, UserProfileRepository, IamRepository } from '../../../src/repositories';
+import { ClientAccountRepositoryV2, ClientAccountTeamRepositoryV2, UserProfileRepository, IamRepository } from '../../../src/repositories';
 
 jest.mock('../../../src/repositories/ClientAccountRepositoryV2');
-jest.mock('../../../src/repositories/ClientAccountTeamRepository');
+jest.mock('../../../src/repositories/ClientAccountTeamRepositoryV2');
 jest.mock('../../../src/repositories/UserProfileRepository');
 jest.mock('../../../src/repositories/IamRepository');
 
 const mockedClientAccountRepositoryV2 = mocked(ClientAccountRepositoryV2, true);
 const mockedUserProfileRepository = mocked(UserProfileRepository, true);
-const mockedClientAccountTeamRepository = mocked(ClientAccountTeamRepository, true);
+const mockedClientAccountTeamRepository = mocked(ClientAccountTeamRepositoryV2, true);
 const mockedIamRepository = mocked(IamRepository, true);
 
 const defaultContext = createContext();

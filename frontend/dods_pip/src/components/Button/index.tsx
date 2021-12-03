@@ -17,6 +17,7 @@ export interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
   iconAlignment?: IconAlignment;
   inline?: boolean;
   width?: ButtonWidth;
+  testId?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -29,6 +30,7 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   iconAlignment = 'left',
   inline = false,
+  testId,
 }) => {
   let Component = Styled.primary;
 
@@ -50,6 +52,7 @@ const Button: React.FC<ButtonProps> = ({
         isIconButton={false}
         disabled={disabled}
         width={width}
+        data-testid={testId}
         className={classNames({
           small: isSmall,
           icon: icon,

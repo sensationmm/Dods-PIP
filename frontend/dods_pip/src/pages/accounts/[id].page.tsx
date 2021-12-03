@@ -39,7 +39,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
       </Head>
 
       <main>
-        <Panel bgColor={color.base.greyLighter}>
+        <Panel bgColor={color.base.ivory}>
           {pageAccountName && (
             <>
               <Breadcrumbs

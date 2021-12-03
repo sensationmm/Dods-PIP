@@ -294,15 +294,22 @@ pipelines:
               - ./push_back.sh
 
   custom:
-    deployment-to-staging:
+    deploy-frontend-production:
       - step:
-          name: Deploy to staging environment
+          name: Deploy frontend to production environment
           image: gioatsomoglobal/devopstools:0.4.5
-          deployment: Staging
+          deployment: production
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
-            - cd tools
-            - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+            - cd ${FRONTEND_SRC}
+            - yarn install
+            - yarn lint
+            - yarn test
+            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
+            - docker build -t ${IMAGE_NAME} .
+            - docker push ${IMAGE_NAME}
+            - cd ../../tools
+            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME
 
     storybook-deployment:
       - step:

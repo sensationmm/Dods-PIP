@@ -25,10 +25,13 @@ export const userType = styled.div`
 export const content = styled.div`
   max-width: 720px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: ${spacing(5)};
-  grid-row-gap: ${spacing(6)};
+
+  > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: ${spacing(5)};
+    grid-row-gap: ${spacing(6)};
+  }
 `;
 
 export const pageActions = styled.div`

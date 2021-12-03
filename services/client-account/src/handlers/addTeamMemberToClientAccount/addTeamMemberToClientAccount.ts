@@ -45,6 +45,7 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
                     await UserProfileRepository.defaultInstance.findOne({
                         uuid: user.userId,
                     });
+
                 await ClientAccountTeamRepository.defaultInstance.create({
                     clientAccountId: clientAccount.id,
                     userId: userProfile.id,
