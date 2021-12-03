@@ -211,6 +211,13 @@ functions:
       - http:
           method: post
           path: deleteUser
+  destroyUser:
+    description: Triggered when http request comes
+    handler: src/handlers/http/destroyUser/index.handle
+    events:
+      - http:
+          method: post
+          path: destroyUser
   getUserData:
     description: Triggered when http request comes
     handler: src/handlers/http/getUserData/index.handle

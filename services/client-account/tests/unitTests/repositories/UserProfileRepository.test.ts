@@ -1,12 +1,9 @@
-import {
-    CreateUserOutput,
-    CreateUserPersisterInput,
-} from '../../../src/domain';
-
-import { UserProfileModel } from '../../../src/db/models';
-import { UserProfileRepository } from '../../../src/repositories';
+import { CreateUserOutput, CreateUserPersisterInput, } from '../../../src/domain';
+import { UserProfileRepository } from '../../../src/repositories/UserProfileRepository';
 import axios from 'axios';
 import { mocked } from 'ts-jest/utils';
+import { User } from '@dodsgroup/dods-model';
+
 
 const defaultUsersProfile = [
     {
@@ -17,7 +14,7 @@ const defaultUsersProfile = [
         title: 'Mr',
         roleId: 1,
         primaryEmail: 'k@h.com',
-    } as UserProfileModel,
+    } as User,
     {
         id: 2,
         uuid: '0a11a762-e3d7-4edd-83cc-6a8eb7bee65b',
@@ -26,20 +23,18 @@ const defaultUsersProfile = [
         title: 'Mr',
         roleId: 1,
         primaryEmail: 'd@a.com',
-    } as UserProfileModel,
+    } as User,
 ];
 
 jest.mock('axios');
-jest.mock('../../../src/db/models/UserProfile');
+jest.mock('@dodsgroup/dods-model');
+
 
 const mockedAxios = mocked(axios, true);
-const mockedUserProfileModel = mocked(UserProfileModel, true);
+const mockedUser = mocked(User, true);
 
-mockedUserProfileModel.findOne.mockImplementation(async (findOptions) => {
-    if (
-        (findOptions?.where as any).uuid ===
-        'b0605d89-6200-4861-a9d5-258ccb33cbe3'
-    ) {
+mockedUser.findOne.mockImplementation(async (findOptions) => {
+    if ((findOptions?.where as any).uuid === 'b0605d89-6200-4861-a9d5-258ccb33cbe3') {
         return defaultUsersProfile[0];
     }
 
@@ -47,19 +42,19 @@ mockedUserProfileModel.findOne.mockImplementation(async (findOptions) => {
 });
 
 const CLASS_NAME = UserProfileRepository.name;
-const FIND_ONE_FUNCTION_NAME =
-    UserProfileRepository.defaultInstance.findOne.name;
-const CHECK_USER_AVAILABILITY_FUNCTION_NAME =
-    UserProfileRepository.defaultInstance.checkUserEmailAvailability.name;
-const CREATE_USER_FUNCTION_NAME =
-    UserProfileRepository.defaultInstance.createUser.name;
+const FIND_ONE_FUNCTION_NAME = UserProfileRepository.defaultInstance.findOne.name;
+const CHECK_USER_AVAILABILITY_FUNCTION_NAME = UserProfileRepository.defaultInstance.checkUserEmailAvailability.name;
+const CREATE_USER_FUNCTION_NAME = UserProfileRepository.defaultInstance.createUser.name;
+const UPDATE_USER_FUNCTION_NAME = UserProfileRepository.defaultInstance.updateUser.name;
 
 afterEach(() => {
     mockedAxios.post.mockClear();
+    mockedUser.findAll.mockClear();
+    mockedUser.update.mockClear();
 });
 
 describe(`${CLASS_NAME} handler`, () => {
-    test(`${FIND_ONE_FUNCTION_NAME} Valid case `, async () => {
+    test(`${FIND_ONE_FUNCTION_NAME} Valid case`, async () => {
         const response = await UserProfileRepository.defaultInstance.findOne({
             uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
         });
@@ -67,7 +62,7 @@ describe(`${CLASS_NAME} handler`, () => {
         expect(response).toEqual(defaultUsersProfile[0]);
     });
 
-    test(`${FIND_ONE_FUNCTION_NAME} Invalid case `, async () => {
+    test(`${FIND_ONE_FUNCTION_NAME} Invalid case`, async () => {
         try {
             await UserProfileRepository.defaultInstance.findOne({ uuid: '' });
             expect(true).toEqual(false);
@@ -76,33 +71,31 @@ describe(`${CLASS_NAME} handler`, () => {
         }
     });
 
-    test(`${CHECK_USER_AVAILABILITY_FUNCTION_NAME} Valid case `, async () => {
+    test(`${CHECK_USER_AVAILABILITY_FUNCTION_NAME} Valid case`, async () => {
         const primaryEmail = 'd@a.com';
 
-        mockedUserProfileModel.findAll.mockResolvedValue([]);
+        mockedUser.findAll.mockResolvedValue([]);
 
-        const response =
-            await UserProfileRepository.defaultInstance.checkUserEmailAvailability(
-                primaryEmail
-            );
+        const response = await UserProfileRepository.defaultInstance.checkUserEmailAvailability(primaryEmail);
+
+        expect(mockedUser.findAll).toHaveBeenCalledTimes(1);
 
         expect(response).toEqual(true);
     });
 
-    test(`${CHECK_USER_AVAILABILITY_FUNCTION_NAME} Invalid case `, async () => {
+    test(`${CHECK_USER_AVAILABILITY_FUNCTION_NAME} Invalid case`, async () => {
         const primaryEmail = '';
 
-        mockedUserProfileModel.findAll.mockResolvedValue(defaultUsersProfile);
+        mockedUser.findAll.mockResolvedValue(defaultUsersProfile);
 
-        const response =
-            await UserProfileRepository.defaultInstance.checkUserEmailAvailability(
-                primaryEmail
-            );
+        const response = await UserProfileRepository.defaultInstance.checkUserEmailAvailability(primaryEmail);
+
+        expect(mockedUser.findAll).toHaveBeenCalledTimes(1);
 
         expect(response).toEqual(false);
     });
 
-    test(`${CREATE_USER_FUNCTION_NAME} Valid case `, async () => {
+    test(`${CREATE_USER_FUNCTION_NAME} Valid case`, async () => {
         const title = 'Mr';
         const firstName = 'Kenan';
         const lastName = 'Hancer';
@@ -137,9 +130,7 @@ describe(`${CLASS_NAME} handler`, () => {
             clientAccountId
         };
 
-        const response = await UserProfileRepository.defaultInstance.createUser(
-            createUserParameter
-        );
+        const response = await UserProfileRepository.defaultInstance.createUser(createUserParameter);
 
         expect(mockedAxios.post).toHaveBeenCalledTimes(1);
 
@@ -148,5 +139,12 @@ describe(`${CLASS_NAME} handler`, () => {
             data: createdUserData,
             error: undefined,
         });
+    });
+
+    test(`${UPDATE_USER_FUNCTION_NAME} Valid case`, async () => {
+
+        await UserProfileRepository.defaultInstance.updateUser({ isActive: false }, { id: 1 });
+
+        expect(mockedUser.update).toHaveBeenCalledTimes(1);
     });
 });

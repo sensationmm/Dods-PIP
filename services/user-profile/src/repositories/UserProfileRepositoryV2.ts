@@ -1,21 +1,28 @@
 import {
+    ClientAccount,
+    Role,
+    SubscriptionType,
+    User,
+} from '@dodsgroup/dods-model';
+import {
     CreateUserPersisterInput,
     CreateUserPersisterOutput,
+    GetUserClientAccounts,
     GetUserInput,
     GetUserOutput,
     SearchUsersInput,
     SearchUsersOutput,
+    UserAccountsReponse,
     UserProfileError,
     UserProfilePersisterV2,
 } from '../domain';
-import { Role, User } from '@dodsgroup/dods-model';
-
-import { Op } from 'sequelize';
+import { Op, WhereOptions } from 'sequelize';
 
 export const LAST_NAME_COLUMN = 'lastName';
 export const ROLE_ID_COLUMN = 'roleId';
 export const ASC = 'ASC';
 export const DODS_USER = '83618280-9c84-441c-94d1-59e4b24cbe3d';
+export const CLIENT_ACCOUNT_NAME = 'name';
 
 export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
     static defaultInstance: UserProfilePersisterV2 =
@@ -190,5 +197,118 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         });
 
         return newUser;
+    }
+
+    async getUserClientAccounts(
+        parameters: GetUserClientAccounts
+    ): Promise<UserAccountsReponse> {
+        const {
+            limit,
+            offset,
+            userId,
+            name,
+            subscriptionId,
+            sortBy,
+            sortDirection,
+        } = parameters;
+
+        let userIdClause: any = {};
+
+        let clientAccountsWhere: WhereOptions = {};
+
+        userIdClause['$team.uuid$'] = userId;
+
+        if (name) {
+            clientAccountsWhere['name'] = {
+                [Op.like]: `%${name}%`,
+            };
+        }
+        if (subscriptionId) {
+            clientAccountsWhere['$subscriptionType.uuid$'] = subscriptionId;
+        }
+        let orderBy: any = [sortBy, sortDirection];
+
+        const user = await User.findOne({
+            where: { uuid: userId },
+        });
+
+        if (!user) {
+            throw new UserProfileError(
+                `Error: UserUUID ${userId} does not exist`
+            );
+        }
+
+        const clientsUuid = await ClientAccount.findAll({
+            where: userIdClause,
+            include: [
+                {
+                    model: User,
+                    as: 'team',
+                },
+            ],
+        });
+        let clients: any = [];
+        let total = 0;
+
+        if (clientsUuid.length) {
+            clientAccountsWhere['uuid'] = {
+                [Op.or]: clientsUuid.map((client) => client.uuid),
+            };
+
+            const { rows, count } = await ClientAccount.findAndCountAll({
+                where: clientAccountsWhere,
+                distinct: true,
+                include: [
+                    { model: User, as: 'team' },
+                    {
+                        model: SubscriptionType,
+                        as: 'subscriptionType',
+                        required: true,
+                    },
+                ],
+
+                order: [orderBy],
+                limit: parseInt(limit!),
+                offset: parseInt(offset!),
+            });
+
+            total = count;
+            let currentTeamMemberType: any = 0;
+
+            rows.map((account) => {
+                let team: any = [];
+
+                account.team?.map((item) => {
+                    if (item.uuid === userId) {
+                        currentTeamMemberType =
+                            item.ClientAccountTeam?.teamMemberType;
+                    }
+                    team.push({
+                        firstName: item.firstName,
+                        lastName: item.lastName,
+                        primaryEmail: item.primaryEmail,
+                        teamMemberType: item.ClientAccountTeam?.teamMemberType,
+                    });
+                });
+
+                clients.push({
+                    uuid: account.uuid,
+                    name: account.name,
+                    notes: account.notes,
+                    subscription: {
+                        uuid: account.subscriptionType?.uuid,
+                        name: account.subscriptionType?.name,
+                    },
+                    teamMemberType: currentTeamMemberType,
+                    collections: 0,
+                    team: team,
+                });
+            });
+        }
+        return {
+            totalRecords: clientsUuid.length,
+            filteredRecords: total,
+            clients: clients,
+        };
     }
 }

@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import config, {env} from '.'
+import config, { env } from '.'
 
 const dbConfig = config[env];
 

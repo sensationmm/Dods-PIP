@@ -9,10 +9,10 @@ export type TeamMember = {
   type?: string;
   teamMemberType: TeamMemberType;
   access?: string;
-  email?: string;
-  email2?: string;
-  telephone?: string;
-  telephone2?: string;
+  primaryEmailAddress?: string;
+  secondaryEmailAddress?: string;
+  telephoneNumber1?: string;
+  telephoneNumber2?: string;
 };
 
 export enum TeamMemberType {

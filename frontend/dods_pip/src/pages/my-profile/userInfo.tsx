@@ -69,7 +69,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
                     <Text type="body" bold={true}>
                       Job Title
                     </Text>
-                    <Text></Text>
+                    <Text>{user.title}</Text>
                   </div>
                   <div>
                     <Text type="body" bold={true}>
@@ -114,30 +114,46 @@ const UserInfo: React.FC<UserInfoProps> = ({
               </AccountStyled.sumIconTitle>
               <AccountStyled.sumAccountContentDetails>
                 <AccountStyled.sumAccountContentGrid>
-                  <div>
-                    <Text type="body" bold={true}>
-                      Email #1
-                    </Text>
-                    <Text></Text>
-                  </div>
-                  <div>
-                    <Text type="body" bold={true}>
-                      Email #2
-                    </Text>
-                    <Text></Text>
-                  </div>
-                  <div>
-                    <Text type="body" bold={true}>
-                      Telephone #1
-                    </Text>
-                    <Text></Text>
-                  </div>
-                  <div>
-                    <Text type="body" bold={true}>
-                      Telephone #2
-                    </Text>
-                    <Text></Text>
-                  </div>
+                  {user.primaryEmail && (
+                    <div>
+                      <Text type="body" bold={true}>
+                        Email #1
+                      </Text>
+                      <Text>
+                        <a href={`mailto:${user.primaryEmail}`}>{user.primaryEmail}</a>
+                      </Text>
+                    </div>
+                  )}
+                  {user.secondaryEmail && (
+                    <div>
+                      <Text type="body" bold={true}>
+                        Email #2
+                      </Text>
+                      <Text>
+                        <a href={`mailto:${user.secondaryEmail}`}>{user.secondaryEmail}</a>
+                      </Text>
+                    </div>
+                  )}
+                  {user.telephoneNumber1 && (
+                    <div>
+                      <Text type="body" bold={true}>
+                        Telephone #1
+                      </Text>
+                      <Text>
+                        <a href={`tel:${user.telephoneNumber1}`}>{user.telephoneNumber1}</a>
+                      </Text>
+                    </div>
+                  )}
+                  {user.telephoneNumber2 && (
+                    <div>
+                      <Text type="body" bold={true}>
+                        Telephone #2
+                      </Text>
+                      <Text>
+                        <a href={`tel:${user.telephoneNumber2}`}>{user.telephoneNumber2}</a>
+                      </Text>
+                    </div>
+                  )}
                 </AccountStyled.sumAccountContentGrid>
               </AccountStyled.sumAccountContentDetails>
               <div />

@@ -31,7 +31,7 @@ type Filters = {
   role?: string;
 };
 
-type Role = {
+export type Role = {
   uuid: string;
   title: string;
   dodsRole: number;

@@ -1,21 +1,20 @@
 import axios from 'axios';
-import { UserProfileModel, UserProfileModelAttributes } from '../db';
 import { col, fn, where } from 'sequelize';
-
+import { User, UserInput, UserOutput } from '@dodsgroup/dods-model';
 import { config, CreateUserOutput, CreateUserPersisterInput, RequestOutput, UserProfilePersister } from '../domain';
 
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL } } } = config;
 
 export class UserProfileRepository implements UserProfilePersister {
-    static defaultInstance: UserProfilePersister = new UserProfileRepository(UserProfileModel);
+    static defaultInstance: UserProfilePersister = new UserProfileRepository();
 
-    constructor(private userModel: typeof UserProfileModel, private baseURL: string = apiGatewayBaseURL) { }
+    constructor(private baseURL: string = apiGatewayBaseURL) { }
 
-    async findOne(where: Partial<UserProfileModelAttributes>): Promise<UserProfileModel> {
-        const clientAccountModel = await this.userModel.findOne({ where });
+    async findOne(where: Partial<UserInput>): Promise<UserOutput> {
+        const result = await User.findOne({ where });
 
-        if (clientAccountModel) {
-            return clientAccountModel;
+        if (result) {
+            return result;
         } else {
             throw new Error('Error: userProfile not found');
         }
@@ -23,7 +22,7 @@ export class UserProfileRepository implements UserProfilePersister {
 
     async checkUserEmailAvailability(primaryEmailAddress: string): Promise<boolean> {
         const lowerCaseEmail = primaryEmailAddress.trim().toLocaleLowerCase();
-        const coincidences = await this.userModel.findAll({
+        const coincidences = await User.findAll({
             where: {
                 primaryEmail: where(
                     fn('LOWER', col('primary_email')),
@@ -42,5 +41,9 @@ export class UserProfileRepository implements UserProfilePersister {
         const { data: { success, User, error } } = response;
 
         return { success, data: User, error };
+    }
+
+    async updateUser(values: Partial<UserInput>, where: Partial<UserInput>): Promise<void> {
+        await User.update(values, { where });
     }
 }
