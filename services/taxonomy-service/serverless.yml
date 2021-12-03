@@ -80,6 +80,9 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
+    # Enable or disable caching globally
+    apiGatewayCaching:
+      enabled: true
 
 plugins:
   - serverless-webpack
@@ -87,6 +90,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  - serverless-api-gateway-caching
 
 package:
   include:
@@ -101,6 +105,8 @@ functions:
       - http:
           method: get
           path: taxonomies
+          caching:
+            enabled: false
   taxonomyTree:
     handler: src/handlers/taxonomyTree/index.handle
     description: Return the tree of all taxonomy topics
@@ -109,6 +115,8 @@ functions:
       - http:
           method: get
           path: taxonomy/tree
+          caching:
+            enabled: true
   taxonomyTopicsTree:
     handler: src/handlers/taxonomyTopicsTree/index.handle
     description: Triggered when http request comes
@@ -117,6 +125,8 @@ functions:
       - http:
           method: get
           path: taxonomy/topics/tree
+          caching:
+            enabled: true
   taxonomyOrganisationsTree:
     handler: src/handlers/taxonomyOrganisationsTree/index.handle
     description: Triggered when http request comes
@@ -125,3 +135,5 @@ functions:
       - http:
           method: get
           path: taxonomy/organisations/tree
+          caching:
+            enabled: true
