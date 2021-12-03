@@ -12,6 +12,7 @@ export interface UserProfileModelAttributes {
     telephoneNumber1?: string;
     telephoneNumber2?: string;
     fullName: string;
+    isActive?: boolean;
 }
 
 export interface UserProfileModelCreationAttributes

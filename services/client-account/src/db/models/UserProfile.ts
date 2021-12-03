@@ -18,7 +18,7 @@ class UserProfileModel
     public secondaryEmail!: string;
     public telephoneNumber1!: string;
     public telephoneNumber2!: string;
-
+    public isActive!: boolean;
     public fullName!: string;
     public ClientAccountTeamModel?: ClientAccountTeamModel;
 
@@ -96,6 +96,11 @@ UserProfileModel.init(
             allowNull: false,
             comment: 'null',
             field: 'telephone_number_2',
+        },
+        isActive: {
+            type: DataTypes.TINYINT({ length: 1 }),
+            allowNull: false,
+            defaultValue: 1,
         },
     },
     {

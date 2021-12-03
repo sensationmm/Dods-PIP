@@ -52,12 +52,11 @@ export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> =
 
         const userId = newUser.id;
 
-        const response =
-            await ClientAccountRepository.defaultInstance.addTeamMember({
-                clientAccountId,
-                userId,
-                teamMemberType,
-            });
+        await ClientAccountRepository.defaultInstance.addTeamMember({
+            clientAccountId,
+            userId,
+            teamMemberType,
+        });
 
         await ClientAccountRepository.defaultInstance.UpdateCompletion(
             clientAccountId,
@@ -65,24 +64,30 @@ export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> =
             3
         );
 
-        const createUserResponse = await UserProfileRepository.defaultInstance.createUser({
-            title: userProfile.title,
-            firstName: userProfile.first_name,
-            lastName: userProfile.last_name,
-            primaryEmail: userProfile.primary_email_address,
-            roleId: userProfile.role_id,
-            secondaryEmail: userProfile.secondary_email_address,
-            telephoneNumber: userProfile.telephone_number_1,
-            clientAccountId
-        });
+        const createUserResponse =
+            await UserProfileRepository.defaultInstance.createUser({
+                title: userProfile.title,
+                firstName: userProfile.first_name,
+                lastName: userProfile.last_name,
+                primaryEmail: userProfile.primary_email_address,
+                roleId: userProfile.role_id,
+                secondaryEmail: userProfile.secondary_email_address,
+                telephoneNumber: userProfile.telephone_number_1,
+                clientAccountId,
+            });
 
         if (createUserResponse.success) {
             console.log(createUserResponse.data);
         }
 
+        const teamMembers =
+            await ClientAccountRepository.defaultInstance.getClientAccountTeam(
+                clientAccountId
+            );
+
         return new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Team member was created and added to the client account.',
-            data: response,
+            data: teamMembers,
         });
     };

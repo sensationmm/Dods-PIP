@@ -101,6 +101,8 @@ export function parseTeamMember(item: UserProfileModel): TeamMemberResponse {
         secondaryEmailAddress: item.secondaryEmail,
         telephoneNumber1: item.telephoneNumber1,
         telephoneNumber2: item.telephoneNumber2,
+        isActive: item.isActive,
+        memberSince: item.createdAt,
         role: item.userRole ? parseRoleId(item.userRole) : undefined,
     };
 }
