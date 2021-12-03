@@ -1,189 +1,186 @@
-import { shallow } from 'enzyme';
 import React from 'react';
+import { AddUser } from './add-user.page';
+import { act, cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
+import fetchJson from '../../lib/fetchJson';
+import useUser from '../../lib/useUser';
+import { useRouter } from 'next/router';
 
-import { RoleType } from '../account-management/add-client/type';
-import AddUserForm from './add-user-form';
+jest.mock('../../lib/fetchJson', () => jest.fn());
 
-describe('AddUserForm', () => {
-  let wrapper;
-
-  const mockSetErrors = jest.fn();
-  const mockChange = jest.fn();
-  const useStateSpy = jest.spyOn(React, 'useState');
-
-  const defaultState = {
-    userType: RoleType.Admin,
-    firstName: '',
-    lastName: '',
-    account: '',
-    jobTitle: '',
-    emailAddress: '',
-    emailAddress2: '',
-    telephoneNumber: '',
-    telephoneNumber2: '',
-    errors: {},
-    setErrors: mockSetErrors,
-  };
-
-  const states = [
-    defaultState, // renders without error
-    defaultState, // fails empty first name
-    defaultState, // fails empty last name
-    defaultState, // fails empty account
-    defaultState, // fails empty job title
-    defaultState, // fails empty email
-    defaultState, // fails empty telephone
-    { ...defaultState, emailAddress: 'sad' }, // fails invalid email
-    { ...defaultState, emailAddress2: 'sad' }, // fails invalid email 2
-    { ...defaultState, telephoneNumber: 'asd' }, // fails invalid telephone number
-    { ...defaultState, telephoneNumber2: 'asd' }, // fails invalid telephone number 2
-    { ...defaultState, firstName: 'asd', errors: { firstName: 'error' } }, // clears first name error
-    { ...defaultState, lastName: 'asd', errors: { lastName: 'error' } }, // clears last name error
-    { ...defaultState, account: 'asd', errors: { account: 'error' } }, // clears account error
-    { ...defaultState, jobTitle: 'asd', errors: { jobTitle: 'error' } }, // clears job title error
-    { ...defaultState, emailAddress: 'asd@asd.asd', errors: { emailAddress: 'error' } }, // clears email error
-    { ...defaultState, emailAddress2: 'asd@asd.asd', errors: { emailAddress2: 'error' } }, // clears email 2 error
-    { ...defaultState, telephoneNumber: '123456789', errors: { telephoneNumber: 'error' } }, // clears telephone error
-    { ...defaultState, telephoneNumber2: '123456789', errors: { telephoneNumber2: 'error' } }, // clears telephone 2 error
-  ];
-
-  let count = 0;
-
-  beforeEach(() => {
-    useStateSpy
-      .mockImplementationOnce(() => [states[count].userType, mockChange])
-      .mockImplementationOnce(() => [states[count].firstName, mockChange])
-      .mockImplementationOnce(() => [states[count].lastName, mockChange])
-      .mockImplementationOnce(() => [states[count].account, mockChange])
-      .mockImplementationOnce(() => [states[count].jobTitle, mockChange])
-      .mockImplementationOnce(() => [states[count].emailAddress, mockChange])
-      .mockImplementationOnce(() => [states[count].emailAddress2, mockChange])
-      .mockImplementationOnce(() => [states[count].telephoneNumber, mockChange])
-      .mockImplementationOnce(() => [states[count].telephoneNumber2, mockChange])
-      .mockImplementationOnce(() => [states[count].errors, mockSetErrors]);
-
-    wrapper = shallow(<AddUserForm {...states[count]} isClientUser />);
+jest.mock('../../lib/useUser', () => {
+  return jest.fn().mockImplementation(() => {
+    return { user: { isLoggedIn: true, clientAccountId: '1234567890', isDodsUser: true } };
   });
+});
 
-  it('renders without error', () => {
-    const component = wrapper.find('[data-test="add-user-form"]');
-    expect(component.length).toEqual(1);
-  });
+const mockRouterPushFn = jest.fn();
+jest.mock('next/router', () => ({
+  useRouter: jest.fn().mockImplementation(() => ({
+    push: mockRouterPushFn,
+  })),
+}));
 
-  it('fails empty first name', () => {
-    const input = wrapper.find('[id="firstName"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ firstName: 'This field is required' });
-  });
+const getRenderedComponent = async (): Promise<RenderResult> => {
+  const renderer = render(
+    <AddUser isLoading={false} setLoading={jest.fn()} addNotification={false} />,
+  );
 
-  it('fails empty last name', () => {
-    const input = wrapper.find('[id="lastName"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ lastName: 'This field is required' });
-  });
+  await renderer.findByTestId('page-add-user');
+  return renderer;
+};
 
-  it('fails empty account', () => {
-    const input = wrapper.find('[id="account"]');
-    input.simulate('focus');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ account: 'This field is required' });
-  });
+const clickSelectOption = (context: RenderResult, testId: string, optionText: string) => {
+  const $userTypeSelect = context.queryByTestId(testId) as HTMLDivElement;
+  ($userTypeSelect.querySelector(SELECTOR_SELECT_TRIGGER) as HTMLDivElement).click();
+  const $options = Array.from(
+    $userTypeSelect.querySelector(SELECTOR_SELECT_DROPDOWN).children,
+  ) as Element[];
+  (
+    $options.find((item) => RegExp(optionText, 'i').test(item.textContent)) as HTMLDivElement
+  )?.click();
+};
 
-  it('fails empty job title', () => {
-    const input = wrapper.find('[id="jobTitle"]');
-    input.simulate('focus');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ jobTitle: 'This field is required' });
-  });
+const useUserMock = useUser as jest.Mock;
+const useRouterMock = useRouter as jest.Mock;
+const fetchJsonMock = fetchJson as jest.Mock;
 
-  it('fails empty email', () => {
-    const input = wrapper.find('[id="emailAddress"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ emailAddress: 'This field is required' });
-  });
+const SELECTOR_SELECT_TRIGGER = '[data-test="select-trigger"';
+const SELECTOR_SELECT_DROPDOWN = '[data-test="component-dropdown"]';
 
-  it('fails empty telephone', () => {
-    const input = wrapper.find('[id="telephoneNumber"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ telephoneNumber: 'This field is required' });
-  });
+const TEST_ID_USER_TYPE = 'user-type';
+const TEST_ID_JOB_TITLE = 'job-title';
+const TEST_ID_ACCOUNT = 'account';
+const TEST_ID_ACCOUNT_DROPDOWN = 'account-dropdown';
+const TEST_ID_FIRST_NAME = 'first-name';
+const TEST_ID_LAST_NAME = 'last-name';
+const TEST_ID_EMAIL = 'email-address';
+const TEST_ID_EMAIL_2 = 'email-address-2';
+const TEST_ID_PHONE = 'telephone-number';
+const TEST_ID_PHONE_2 = 'telephone-number-2';
+const TEST_ID_BACK = 'button-back';
+const TEST_ID_CREATE_USER = 'button-create-user';
 
-  it('fails invalid email', () => {
-    const input = wrapper.find('[id="emailAddress"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ emailAddress: 'Invalid format' });
-  });
-
-  it('fails invalid email2', () => {
-    const input = wrapper.find('[id="emailAddress2"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ emailAddress2: 'Invalid format' });
-  });
-
-  it('fails invalid telephone', () => {
-    const input = wrapper.find('[id="telephoneNumber"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ telephoneNumber: 'Invalid telephone' });
-  });
-
-  it('fails invalid telephone 2', () => {
-    const input = wrapper.find('[id="telephoneNumber2"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({ telephoneNumber2: 'Invalid telephone' });
-  });
-
-  it('clears first name error', () => {
-    const input = wrapper.find('[id="firstName"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({});
-  });
-
-  it('clears last name error', () => {
-    const input = wrapper.find('[id="lastName"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({});
-  });
-
-  it('clears account error', () => {
-    const input = wrapper.find('[id="account"]');
-    input.simulate('focus');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({});
-  });
-
-  it('clears job title error', () => {
-    const input = wrapper.find('[id="jobTitle"]');
-    input.simulate('focus');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({});
-  });
-
-  it('clears email error', () => {
-    const input = wrapper.find('[id="emailAddress"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({});
-  });
-
-  it('clears email 2 error', () => {
-    const input = wrapper.find('[id="emailAddress2"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({});
-  });
-
-  it('clears telephone error', () => {
-    const input = wrapper.find('[id="telephoneNumber"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({});
-  });
-
-  it('clears telephone 2 error', () => {
-    const input = wrapper.find('[id="telephoneNumber2"]');
-    input.simulate('blur');
-    expect(mockSetErrors).toHaveBeenCalledWith({});
-  });
-
+describe('AddUser', () => {
   afterEach(() => {
-    count++;
     jest.clearAllMocks();
+    cleanup();
+  });
+
+  it('user type field should default to `client user`', async () => {
+    const component = await getRenderedComponent();
+    const $userTypeSelect = component.queryByTestId(TEST_ID_USER_TYPE) as HTMLDivElement;
+    const $userTypeInput = $userTypeSelect.querySelector('input');
+    expect($userTypeInput.value).toBe('Client User');
+  });
+
+  it.each<[string, string]>([
+    ['first name field', TEST_ID_FIRST_NAME],
+    ['last name field', TEST_ID_LAST_NAME],
+    ['email address field', TEST_ID_EMAIL],
+    ['secondary email address field', TEST_ID_EMAIL_2],
+    ['phone number field', TEST_ID_PHONE],
+    ['secondary phone number field', TEST_ID_PHONE_2],
+    ['job title field', TEST_ID_JOB_TITLE],
+    ['account field', TEST_ID_ACCOUNT],
+    ['back button', TEST_ID_BACK],
+    ['create user button', TEST_ID_BACK],
+  ])('should render %s field', async (name, testId) => {
+    const component = await getRenderedComponent();
+
+    expect(component.queryByTestId(testId)).not.toBeNull();
+  });
+
+  describe('when user is `Dods Consultant`', () => {
+    let component;
+    beforeEach(async () => {
+      component = await getRenderedComponent();
+      act(() => clickSelectOption(component, 'user-type', 'Dods Consultant'));
+    });
+
+    it.each<[string, string]>([
+      ['job title', TEST_ID_JOB_TITLE],
+      ['account', TEST_ID_ACCOUNT],
+    ])('should NOT render %s field', async (name, testId) => {
+      expect(component.queryByTestId(testId)).toBeNull();
+    });
+  });
+
+  describe('when `back` button is clicked', () => {
+    beforeEach(async () => {
+      const component = await getRenderedComponent();
+      const $backButton = component.queryByTestId(TEST_ID_BACK) as HTMLButtonElement;
+      $backButton.click();
+    });
+    it('should navigate to users page', () => {
+      expect(mockRouterPushFn).toHaveBeenCalledWith('/account-management/users');
+      expect(mockRouterPushFn).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('should validate all form fields', () => {});
+
+  it('should validate account input', () => {});
+
+  describe('when form is incomplete', () => {
+    let component;
+    beforeEach(async () => {
+      component = await getRenderedComponent();
+      const $inputs = Array.from(component.container.querySelectorAll('input') as HTMLCollection);
+      $inputs.forEach(($input) => {
+        fireEvent.blur($input, { target: { value: '' } });
+      });
+    });
+
+    it('should not be submittable', () => {
+      expect(component.queryByTestId(TEST_ID_CREATE_USER)).toHaveProperty('disabled', true);
+    });
+  });
+
+  describe('when form is valid', () => {
+    let component: RenderResult;
+    beforeEach(async () => {
+      fetchJsonMock.mockResolvedValueOnce({ success: true });
+
+      component = await getRenderedComponent();
+
+      component.getByTestId(TEST_ID_ACCOUNT).click();
+      (component.getByTestId(TEST_ID_ACCOUNT_DROPDOWN).children[0] as HTMLDivElement).click();
+
+      [
+        { testId: TEST_ID_JOB_TITLE, validinput: 'developer' },
+        { testId: TEST_ID_FIRST_NAME, validinput: 'Seymour' },
+        { testId: TEST_ID_LAST_NAME, validinput: 'Buttz' },
+        { testId: TEST_ID_EMAIL, validinput: 'seymour@buttz.com' },
+        { testId: TEST_ID_PHONE, validinput: '07123080775' },
+      ].forEach((field) => {
+        const $input = component.getByTestId(field.testId);
+        fireEvent.change($input, { target: { value: field.validinput } });
+      });
+    });
+
+    it('should be submittable', () => {
+      expect(component.queryByTestId(TEST_ID_CREATE_USER)).not.toHaveProperty('disabled', true);
+    });
+
+    describe('and `create user` button is clicked', () => {
+      beforeEach(() => {
+        component.queryByTestId(TEST_ID_CREATE_USER).click();
+      });
+
+      it('should submit the form data', () => {
+        expect(fetchJsonMock).toHaveBeenLastCalledWith(
+          '/api/clientaccount/1234567890/teammember/new',
+          {
+            body: '{"userProfile":{"title":"developer","first_name":"Seymour","last_name":"Buttz","primary_email_address":"seymour@buttz.com","telephone_number_1":"07123080775","role_id":"24e7ca86-1788-4b6e-b153-9c963dc928cb"},"clientAccountId":"d4bbbd4b-e02f-4343-a7e9-397eea2b1bcd","teamMemberType":1}',
+            method: 'POST',
+          },
+        );
+        expect(fetchJsonMock).toHaveBeenCalledTimes(1);
+      });
+
+      describe('and there is a `referrer` query parameter', () => {
+        it('should navigate to the referrer path', () => {});
+      });
+    });
   });
 });

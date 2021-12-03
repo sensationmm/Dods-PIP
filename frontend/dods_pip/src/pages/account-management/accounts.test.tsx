@@ -182,7 +182,7 @@ describe('Account Management: Clients', () => {
 
     beforeEach(async () => {
       render = await renderComponentWithData();
-      $input = render.getByTestId(TEST_ID_SEARCH).querySelector('input');
+      $input = render.getByTestId(TEST_ID_SEARCH);
     });
 
     it('should request accounts data with search filter applied', async () => {
