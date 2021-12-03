@@ -103,6 +103,7 @@ export type GetUserOutput =
           telephoneNumber1: string | null;
           telephoneNumber2?: string | null;
           title: string | null;
+          clientAccount: Object;
       };
 
 export interface UserProfilePersisterV2 {
