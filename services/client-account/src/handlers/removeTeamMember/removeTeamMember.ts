@@ -5,7 +5,7 @@ import {
 } from '@dodsgroup/dods-lambda';
 import {
     ClientAccountRepositoryV2,
-    ClientAccountTeamRepository,
+    ClientAccountTeamRepositoryV2,
     IamRepository,
     UserProfileRepository,
 } from '../../repositories';
@@ -23,7 +23,7 @@ export const removeTeamMember: AsyncLambdaMiddleware<RemoveTeamMemberParameters>
         });
 
         const clientAccountTeam =
-            await ClientAccountTeamRepository.defaultInstance.findOne({
+            await ClientAccountTeamRepositoryV2.defaultInstance.findOne({
                 userId: user.id,
                 clientAccountId: clientAccount.id,
             });
@@ -39,7 +39,7 @@ export const removeTeamMember: AsyncLambdaMiddleware<RemoveTeamMemberParameters>
             );
         }
 
-        await ClientAccountTeamRepository.defaultInstance.delete({
+        await ClientAccountTeamRepositoryV2.defaultInstance.delete({
             clientAccountId: clientAccount.id,
             userId: user.id,
         });

@@ -1,6 +1,6 @@
 import { mocked } from 'ts-jest/utils';
 import { ClientAccountTeam, ClientAccountTeamOutput } from '@dodsgroup/dods-model';
-import { ClientAccountTeamRepository } from '../../../src/repositories/ClientAccountTeamRepository';
+import { ClientAccountTeamRepositoryV2 } from '../../../src/repositories/ClientAccountTeamRepositoryV2';
 
 const defaultClientAccountTeam: ClientAccountTeamOutput = { clientAccountId: 1, teamMemberType: 1, userId: 1 };
 
@@ -8,10 +8,10 @@ jest.mock('@dodsgroup/dods-model');
 
 const mockedClientAccountTeam = mocked(ClientAccountTeam, true);
 
-const CLASS_NAME = ClientAccountTeamRepository.name;
-const CREATE_FUNCTION_NAME = ClientAccountTeamRepository.defaultInstance.create.name;
-const FIND_ONE_FUNCTION_NAME = ClientAccountTeamRepository.defaultInstance.findOne.name;
-const DELETE_FUNCTION_NAME = ClientAccountTeamRepository.defaultInstance.delete.name;
+const CLASS_NAME = ClientAccountTeamRepositoryV2.name;
+const CREATE_FUNCTION_NAME = ClientAccountTeamRepositoryV2.defaultInstance.create.name;
+const FIND_ONE_FUNCTION_NAME = ClientAccountTeamRepositoryV2.defaultInstance.findOne.name;
+const DELETE_FUNCTION_NAME = ClientAccountTeamRepositoryV2.defaultInstance.delete.name;
 
 afterEach(() => {
     mockedClientAccountTeam.mockClear();
@@ -24,14 +24,14 @@ describe(`${CLASS_NAME} handler`, () => {
 
         mockedClientAccountTeam.create.mockReturnValue(defaultClientAccountTeam);
 
-        const response = await ClientAccountTeamRepository.defaultInstance.create(defaultClientAccountTeam);
+        const response = await ClientAccountTeamRepositoryV2.defaultInstance.create(defaultClientAccountTeam);
 
         expect(response).toEqual(defaultClientAccountTeam);
     });
 
     test(`${DELETE_FUNCTION_NAME} Valid case `, async () => {
 
-        await ClientAccountTeamRepository.defaultInstance.delete({ userId: 1, clientAccountId: 1 });
+        await ClientAccountTeamRepositoryV2.defaultInstance.delete({ userId: 1, clientAccountId: 1 });
 
         expect(mockedClientAccountTeam.destroy).toHaveBeenCalledTimes(1);
     });
@@ -39,7 +39,7 @@ describe(`${CLASS_NAME} handler`, () => {
     test(`${FIND_ONE_FUNCTION_NAME} Valid case `, async () => {
         mockedClientAccountTeam.findOne.mockResolvedValue(defaultClientAccountTeam as ClientAccountTeam);
 
-        const response = await ClientAccountTeamRepository.defaultInstance.findOne({ userId: 1, clientAccountId: 1, teamMemberType: 1 });
+        const response = await ClientAccountTeamRepositoryV2.defaultInstance.findOne({ userId: 1, clientAccountId: 1, teamMemberType: 1 });
 
         expect(response).toEqual(defaultClientAccountTeam);
     });
@@ -48,7 +48,7 @@ describe(`${CLASS_NAME} handler`, () => {
         mockedClientAccountTeam.findOne.mockResolvedValue(undefined as any);
 
         try {
-            await ClientAccountTeamRepository.defaultInstance.findOne({ userId: 1, clientAccountId: 1, teamMemberType: 1 });
+            await ClientAccountTeamRepositoryV2.defaultInstance.findOne({ userId: 1, clientAccountId: 1, teamMemberType: 1 });
 
             throw new Error('Code never should come in this point');
         } catch (error: any) {
