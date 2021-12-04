@@ -76,7 +76,14 @@ const Modal: FC<ModalProps> = ({
         <Styled.modalBody>{children}</Styled.modalBody>
         <Styled.modalFooter data-test="modal-footer" alignment={buttonAlignment}>
           {buttons.map((buttonProps, index) => (
-            <Button key={index} {...{ ...buttonProps }} />
+            <Button
+              key={index}
+              {...{ ...buttonProps }}
+              onClick={(e) => {
+                buttonProps.onClick && buttonProps.onClick(e);
+                closeModal();
+              }}
+            />
           ))}
         </Styled.modalFooter>
       </Styled.modal>
