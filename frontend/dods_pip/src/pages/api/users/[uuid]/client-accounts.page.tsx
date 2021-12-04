@@ -3,7 +3,6 @@ import withSession from '../../../../lib/session';
 import { Api } from '../../../../utils/api';
 
 export default withSession(async (req, res) => {
-  console.log('api client-accounts');
   try {
     const { uuid } = req.query;
     const result = await fetchJson(

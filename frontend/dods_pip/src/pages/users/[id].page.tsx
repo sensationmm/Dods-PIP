@@ -78,6 +78,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
 
   const onDelete = async () => {
     setLoading(true);
+    setShowDelete(false);
 
     try {
       const response = await fetchJson(
@@ -88,7 +89,6 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
 
       if (success) {
         setLoading(true);
-        setShowDelete(false);
 
         router.push(`/accounts/${userData?.clientAccount?.uuid}?userDeleted=true`);
       }
