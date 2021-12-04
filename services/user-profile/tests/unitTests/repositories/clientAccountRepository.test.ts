@@ -1,6 +1,5 @@
-import { ClientAccount } from '@dodsgroup/dods-model';
+import { ClientAccount, ClientAccountInput } from '@dodsgroup/dods-model';
 import { mocked } from 'ts-jest/utils';
-import { ClientAccountInput } from '../../../src/domain';
 import { ClientAccountRepository } from '../../../src/repositories/ClientAccountRepository';
 
 
@@ -22,7 +21,7 @@ describe(`${CLASS_NAME} tests`, () => {
 
         mockedClientAccount.findOne.mockResolvedValue({} as ClientAccount);
 
-        const parameters: ClientAccountInput = { uuid: '0e6c0561-8ff1-4f74-93bc-77444b156c6f' };
+        const parameters: Partial<ClientAccountInput> = { uuid: '0e6c0561-8ff1-4f74-93bc-77444b156c6f' };
 
         const response = await ClientAccountRepository.defaultInstance.findOne(parameters);
 
@@ -32,14 +31,14 @@ describe(`${CLASS_NAME} tests`, () => {
     it(`${FIND_ONE_FUNCTION_NAME} Invalid Input`, async () => {
         mockedClientAccount.findOne.mockResolvedValue(undefined as any);
 
-        const parameters: ClientAccountInput = { uuid: '0e6c0561-8ff1-4f74-93bc-77444b156c6f' };
+        const parameters: Partial<ClientAccountInput> = { uuid: '0e6c0561-8ff1-4f74-93bc-77444b156c6f' };
 
         try {
             await ClientAccountRepository.defaultInstance.findOne(parameters);
             
             throw new Error('Code never should come in this point');
         } catch (error: any) {
-            expect(error.message).toEqual(`Error: ClientAccountUUID ${parameters.uuid} does not exist`);
+            expect(error.message).toEqual(`Error: ClientAccount with ${parameters} does not exist`);
         }
     });
 });

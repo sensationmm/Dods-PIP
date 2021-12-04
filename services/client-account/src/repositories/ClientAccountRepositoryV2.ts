@@ -1,19 +1,13 @@
-import {
-    ClientAccount,
-    ClientAccountInput,
-    ClientAccountOutput,
-} from '@dodsgroup/dods-model';
-
-import { ClientAccountPersisterV2 } from '../domain';
+import { ClientAccount, ClientAccountInput, ClientAccountOutput, } from '@dodsgroup/dods-model';
+import { ClientAccountError, ClientAccountPersisterV2 } from '../domain';
 
 export class ClientAccountRepositoryV2 implements ClientAccountPersisterV2 {
-    static defaultInstance: ClientAccountPersisterV2 =
-        new ClientAccountRepositoryV2();
+    static defaultInstance: ClientAccountPersisterV2 = new ClientAccountRepositoryV2(ClientAccount);
 
-    async findOne(
-        where: Partial<ClientAccountInput>
-    ): Promise<ClientAccountOutput> {
-        const clientAccountModel = await ClientAccount.findOne({
+    constructor(private model: typeof ClientAccount) { }
+
+    async findOne(where: Partial<ClientAccountInput>): Promise<ClientAccountOutput> {
+        const result = await this.model.findOne({
             where,
             include: [
                 //ClientAccount.associations.salesContactUser,
@@ -21,10 +15,13 @@ export class ClientAccountRepositoryV2 implements ClientAccountPersisterV2 {
             ],
         });
 
-        if (clientAccountModel) {
-            return clientAccountModel;
-        } else {
-            throw new Error('Error: clientAccount not found');
+        if (!result) {
+            throw new ClientAccountError(`Error: ClientAccount with ${JSON.stringify(where)} does not exist`);
         }
+        return result;
+    }
+
+    async incrementSubscriptionSeats(where: Partial<ClientAccountInput>): Promise<ClientAccountOutput> {
+        return await this.model.increment('subscriptionSeats', { where });
     }
 }

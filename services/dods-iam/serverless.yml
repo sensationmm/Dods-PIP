@@ -75,6 +75,7 @@ provider:
         - cognito-idp:AdminDisableUser
         - cognito-idp:AdminEnableUser
         - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminDeleteUser
         - cognito-idp:AdminUpdateUserAttributes
         - cognito-idp:AdminDeleteUserAttributes
       Resource: !GetAtt DodsUserPool.Arn

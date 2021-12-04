@@ -1,19 +1,18 @@
-import { ClientAccount } from "@dodsgroup/dods-model";
-import { ClientAccountError } from "../domain";
-import { ClientAccountInput, ClientAccountPersister } from "../domain/interfaces/ClientAccountPersister";
+import { ClientAccount, ClientAccountInput, ClientAccountOutput } from "@dodsgroup/dods-model";
+import { ClientAccountError, ClientAccountPersister } from "../domain";
 
 export class ClientAccountRepository implements ClientAccountPersister {
 
-    static defaultInstance: ClientAccountPersister = new ClientAccountRepository();
+    static defaultInstance: ClientAccountPersister = new ClientAccountRepository(ClientAccount);
 
-    async findOne(parameters: ClientAccountInput): Promise<ClientAccount> {
+    constructor(private model: typeof ClientAccount) { }
 
-        const { uuid } = parameters;
+    async findOne(where: Partial<ClientAccountInput>): Promise<ClientAccountOutput> {
 
-        const result = await ClientAccount.findOne({ where: { uuid } });
+        const result = await this.model.findOne({ where, });
 
         if (!result) {
-            throw new ClientAccountError(`Error: ClientAccountUUID ${uuid} does not exist`);
+            throw new ClientAccountError(`Error: ClientAccount with ${JSON.stringify(where)} does not exist`);
         }
 
         return result;

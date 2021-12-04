@@ -18,9 +18,8 @@ export class ClientAccountTeamRepositoryV2 implements ClientAccountTeamPersister
 
         if (clientAccountTeam) {
             return clientAccountTeam;
-        } else {
-            throw new Error('Error: clientAccountTeam not found');
         }
+        throw new Error('Error: clientAccountTeam not found');
     }
 
     async delete(where: Partial<ClientAccountTeamInput>): Promise<void> {

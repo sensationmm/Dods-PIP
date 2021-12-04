@@ -68,7 +68,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             searchTerm: 'Juan',
             limit: '2',
             offset: '0',
-        };
+        } as SearchClientAccountParameters;
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
@@ -94,9 +94,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test(`${FUNCTION_NAME} Invalid input`, async () => {
         const searchParams = {
             searchTerm: 'Failed Search',
-            limit: '1',
-            offset: '0',
-        };
+            // limit: '1',
+            // offset: '0',
+        } as SearchClientAccountParameters;
 
         const expectedResponse = new HttpResponse(HttpStatusCode.NOT_FOUND, {
             success: false,
