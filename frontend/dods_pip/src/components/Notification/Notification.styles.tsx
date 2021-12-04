@@ -22,7 +22,7 @@ export const wrapper = styled.div<WrapperProps>`
   justify-content: space-between;
   align-items: center;
   width: 640px;
-  height: 80px;
+  min-height: 80px;
   padding: ${spacing(4)} ${spacing(6)};
   background: ${color.base.white};
   border-radius: 8px;

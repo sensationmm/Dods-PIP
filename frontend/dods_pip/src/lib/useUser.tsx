@@ -9,9 +9,14 @@ import { Api, BASE_URI } from '../utils/api';
 
 export type User = {
   id?: string;
+  isActive?: number;
   isDodsUser?: boolean;
-  clientAccountName?: string;
+  clientAccount?: {
+    name: string;
+    uuid: string;
+  };
   clientAccountId?: string;
+  clientAccountName?: string;
   displayName?: string;
   emailAddress?: string;
   title?: string;
@@ -19,6 +24,7 @@ export type User = {
   secondaryEmail?: string;
   telephoneNumber1?: string;
   telephoneNumber2?: string;
+  memberSince: Date;
 };
 
 export interface UserAuth extends User {

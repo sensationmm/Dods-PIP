@@ -22,6 +22,15 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
 
   const [pageAccountName, setPageAccountName] = React.useState<string>('');
 
+  React.useEffect(() => {
+    if (router?.query?.userDeleted) {
+      addNotification({
+        title: 'User deleted',
+        type: 'confirm',
+      });
+    }
+  }, [router]);
+
   return (
     <div data-test="page-account-management-add-client">
       <Head>
@@ -31,22 +40,26 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
 
       <main>
         <Panel bgColor={color.base.ivory}>
-          <Breadcrumbs
-            history={[
-              { href: '/account-management/accounts', label: 'Accounts' },
-              { href: '', label: pageAccountName },
-            ]}
-          />
+          {pageAccountName && (
+            <>
+              <Breadcrumbs
+                history={[
+                  { href: '/account-management/accounts', label: 'Accounts' },
+                  { href: '', label: pageAccountName },
+                ]}
+              />
 
-          <Spacer size={6} />
+              <Spacer size={6} />
 
-          <AccountsStyled.header>
-            <Text type="h1" headingStyle="hero">
-              {pageAccountName}
-            </Text>
-          </AccountsStyled.header>
+              <AccountsStyled.header>
+                <Text type="h1" headingStyle="hero">
+                  {pageAccountName}
+                </Text>
+              </AccountsStyled.header>
 
-          <Spacer size={12} />
+              <Spacer size={12} />
+            </>
+          )}
 
           <Users accountId={accountId} />
 

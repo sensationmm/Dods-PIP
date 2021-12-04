@@ -39,6 +39,7 @@ export interface AddUserFormProps {
   setTelephoneNumber2: (val: string) => void;
   errors: Partial<FormFields>;
   setErrors: (errors: Partial<FormFields>) => void;
+  isEdit?: boolean;
 }
 
 export type FormFields = {
@@ -74,6 +75,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   setTelephoneNumber2,
   errors,
   setErrors,
+  isEdit = false,
 }) => {
   const validateAccount = (val?: string) => {
     const formErrors = JSON.parse(JSON.stringify(errors));
@@ -148,6 +150,8 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             label="Account"
             error={errors.account}
             onBlur={validateAccount}
+            isDisabled={isEdit}
+            helperText={isEdit ? 'Account cannot be edited' : ''}
           />
           <InputText
             id="jobTitle"
@@ -170,7 +174,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
         required
         label="Email Address"
         placeholder="Type the email address"
-        helperText="Will be used as a username"
+        helperText={isEdit ? 'Username cannot be edited' : 'Will be used as a username'}
         onBlur={() =>
           validateField('emailAddress', emailAddress, [
             ValidationType.Required,
@@ -178,6 +182,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
           ])
         }
         error={errors.emailAddress}
+        isDisabled={isEdit}
       />
       <InputText
         id="emailAddress2"

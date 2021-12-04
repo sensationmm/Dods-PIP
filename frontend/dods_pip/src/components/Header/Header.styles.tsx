@@ -162,6 +162,7 @@ export const accountMenu = styled.div`
   white-space: nowrap;
   top: calc(100% + ${spacing(5)});
   right: 0;
+  overflow: hidden;
 `;
 
 export const accountMenuSub = styled.div`
@@ -181,7 +182,6 @@ export const accountMenuSub = styled.div`
 
 export const accountMenuItem = styled.div`
   position: relative;
-  padding: ${spacing(4)} ${spacing(6)};
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -191,8 +191,10 @@ export const accountMenuItem = styled.div`
     margin-right: ${spacing(4)};
   }
 
-  > a {
+  > a,
+  > div {
     color: ${color.theme.blue};
+    padding: ${spacing(4)} ${spacing(6)};
   }
 
   > a,

@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import InputPassword from '../../components/_form/InputPassword';
+import Toggle from '../../components/_form/Toggle';
 import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
-import Avatar from '../../components/Avatar';
 import Badge from '../../components/Badge';
 import Button from '../../components/Button';
 import ButtonLink from '../../components/ButtonLink';
@@ -19,13 +19,26 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import useUser, { User } from '../../lib/useUser';
 import { Api, BASE_URI } from '../../utils/api';
+import { showTeamList } from '../account-management/accounts.page';
 import { teamList as TeamList } from '../account-management/accounts.styles';
+import { TeamMember } from '../account-management/add-client/type';
 import AddUserForm, { FormFields } from '../account-management/add-user-form';
 import * as AccountStyled from '../accounts/index.styles';
-import UserInfo from '../my-profile/userInfo';
+import UserInfo from './userInfo';
 import * as Styled from './users.styles';
 
 interface UsersProps extends LoadingHOCProps {}
+
+type ClientAccount = {
+  uuid: string;
+  name: string;
+  subscription: {
+    uuid: string;
+    name: string;
+  };
+  collections: number;
+  team: TeamMember[];
+};
 
 export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => {
   const { user } = useUser({ redirectTo: '/' });
@@ -34,7 +47,9 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   userId = userId as string;
 
   const [showReset, setShowReset] = React.useState<boolean>(false);
+  const [showDelete, setShowDelete] = React.useState<boolean>(false);
   const [userData, setUserData] = React.useState<User>();
+  const [assocAccounts, setAssocAccounts] = React.useState<ClientAccount[]>();
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
   const [firstName, setFirstName] = React.useState<string>('');
   const [lastName, setLastName] = React.useState<string>('');
@@ -44,6 +59,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   const [emailAddress2, setEmailAddress2] = React.useState<string>('');
   const [telephoneNumber, setTelephoneNumber] = React.useState<string>('');
   const [telephoneNumber2, setTelephoneNumber2] = React.useState<string>('');
+  const [isActive, setIsActive] = React.useState<boolean>(true);
   const [password, setPassword] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Partial<FormFields>>({});
 
@@ -57,18 +73,55 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       method: 'GET',
     });
     const { data = {} } = response;
-    setUserData({ ...data, displayName: `${data.firstName} ${data.lastName}` });
+    setUserData({ ...(data as User), displayName: `${data.firstName} ${data.lastName}` });
+  };
+
+  const onDelete = async () => {
+    setLoading(true);
+
+    try {
+      const response = await fetchJson(
+        `${BASE_URI}${Api.ClientAccount}/${userData?.clientAccount?.uuid}${Api.TeamMember}`,
+        { method: 'DELETE', body: JSON.stringify({ userId: userId }) },
+      );
+      const { success = false } = response;
+
+      if (success) {
+        setLoading(true);
+        setShowDelete(false);
+
+        router.push(`/accounts/${userData?.clientAccount?.uuid}?userDeleted=true`);
+      }
+    } catch (e) {
+      // show server error
+      setShowDelete(false);
+      setLoading(false);
+      addNotification({
+        type: 'warn',
+        title: 'Error',
+        text: e.data.message,
+      });
+    }
+  };
+
+  const getAssociatedAccounts = async (id: string) => {
+    const response = await fetchJson(`${BASE_URI}${Api.Users}/${id}${Api.ClientAccounts}`, {
+      method: 'GET',
+    });
+    const { data = [] } = response;
+    setAssocAccounts(data as ClientAccount[]);
   };
 
   React.useEffect(() => {
     loadUser();
+    userId && getAssociatedAccounts(userId as string);
   }, [userId]);
 
   const actions = [] as JSX.Element[];
-  if (user && userId && user.id === userId) {
+  if (user && userId && user.id === userId && !user.isDodsUser) {
     actions.push(
       <Button
-        key="button-reset"
+        key="button-1"
         type="secondary"
         label="Reset password"
         icon={Icons.Refresh}
@@ -78,6 +131,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   } else if (!user?.isDodsUser && userData?.isDodsUser) {
     actions.push(
       <ButtonLink
+        key="button-1"
         type="secondary"
         label="Send an email"
         href={`mailto:${userData?.emailAddress}`}
@@ -87,12 +141,18 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   } else if (user?.isDodsUser) {
     actions.push(
       <Button
+        key="button-1"
         type="text"
         label="Delete user"
-        onClick={() => console.log('Delete')}
+        onClick={() => setShowDelete(true)}
         icon={Icons.Bin}
       />,
-      <Button label="Edit profile" onClick={() => setShowEdit(true)} icon={Icons.Edit} />,
+      <Button
+        key="button-2"
+        label="Edit profile"
+        onClick={() => setShowEdit(true)}
+        icon={Icons.Edit}
+      />,
     );
   }
 
@@ -127,14 +187,14 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
 
       <main>
         <UserInfo
-          user={userData}
+          userData={userData}
           addNotification={addNotification}
           setLoading={setLoading}
           actions={actions}
           isDodsUser={user?.isDodsUser}
         />
 
-        {user?.isDodsUser && (
+        {user?.isDodsUser && userData?.isDodsUser && (
           <Panel>
             <AccountStyled.sumWrapper>
               <SectionAccordion
@@ -144,7 +204,11 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
                       Accounts assigned
                     </Text>
                     <AccountStyled.badgeContainer>
-                      <Badge size="small" label="Accounts assigned" number={0} />
+                      <Badge
+                        size="small"
+                        label="Accounts assigned"
+                        number={assocAccounts ? assocAccounts.length : undefined}
+                      />
                     </AccountStyled.badgeContainer>
                   </AccountStyled.sectionCustomHeader>
                 }
@@ -153,48 +217,26 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
                 <PlainTable
                   headings={['Name', 'Subscription', 'Collections', 'Users', '']}
                   colWidths={[4, 2, 2, 3, 1]}
-                  rows={[
-                    [
-                      '',
-                      <Text key="name-1" bold>
-                        Account name
-                      </Text>,
-                      <Text key="subscription-1">Silver</Text>,
-                      <Text key="collections-1">5</Text>,
-                      <TeamList key={`row-1`}>
-                        <Avatar size="small" type="client" />
-                        <Avatar size="small" type="consultant" />
-                        <Avatar size="small" type="client" />
-                      </TeamList>,
-                      <IconButton
-                        key={`button-1`}
-                        isSmall
-                        onClick={() => console.log('account clicked')}
-                        icon={Icons.ChevronRightBold}
-                        type="text"
-                      />,
-                    ],
-                    [
-                      '',
-                      <Text key="name-2" bold>
-                        Account name
-                      </Text>,
-                      <Text key="subscription-2">Silver</Text>,
-                      <Text key="collections-2">5</Text>,
-                      <TeamList key={`row-2`}>
-                        <Avatar size="small" type="client" />
-                        <Avatar size="small" type="consultant" />
-                        <Avatar size="small" type="client" />
-                      </TeamList>,
-                      <IconButton
-                        key={`button-2`}
-                        isSmall
-                        onClick={() => console.log('account clicked')}
-                        icon={Icons.ChevronRightBold}
-                        type="text"
-                      />,
-                    ],
-                  ]}
+                  rows={
+                    assocAccounts
+                      ? assocAccounts?.map((account, count) => [
+                          '',
+                          <Text key={`name-${count}`} bold>
+                            {account.name}
+                          </Text>,
+                          <Text key={`subscription-${count}`}>{account.subscription.name}</Text>,
+                          <Text key={`collections-${count}`}>{account.collections}</Text>,
+                          <TeamList key={`row-1`}>{showTeamList(account.team)}</TeamList>,
+                          <IconButton
+                            key={`button-1`}
+                            isSmall
+                            onClick={() => router.push(`/accounts/${account.uuid}`)}
+                            icon={Icons.ChevronRightBold}
+                            type="text"
+                          />,
+                        ])
+                      : []
+                  }
                 />
                 <Spacer size={5} />
               </SectionAccordion>
@@ -251,6 +293,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               setTelephoneNumber2={setTelephoneNumber2}
               errors={errors}
               setErrors={setErrors}
+              isEdit={true}
             />
 
             <Spacer size={6} />
@@ -265,6 +308,19 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               <Styled.passwordReset>
                 <Button type="secondary" label="Reset password" icon={Icons.Refresh} />
               </Styled.passwordReset>
+            </div>
+
+            <Spacer size={6} />
+
+            <div>
+              <Styled.activeToggle>
+                <Toggle
+                  isActive={isActive}
+                  onChange={setIsActive}
+                  labelOff="Inactive"
+                  labelOn="Active"
+                />
+              </Styled.activeToggle>
             </div>
           </Styled.content>
         </Modal>
@@ -291,6 +347,32 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
           <Text type="bodyLarge">
             We will send you an email with instructions to create a new password.
           </Text>
+        </Modal>
+      )}
+
+      {showDelete && (
+        <Modal
+          size="large"
+          title="Do you wish to delete?"
+          onClose={() => setShowDelete(false)}
+          buttons={[
+            {
+              isSmall: true,
+              type: 'secondary',
+              label: 'Back',
+              onClick: () => setShowDelete(false),
+            },
+            {
+              isSmall: true,
+              type: 'primary',
+              label: 'Confirm',
+              onClick: onDelete,
+              icon: Icons.Bin,
+            },
+          ]}
+          buttonAlignment="right"
+        >
+          <Text type="bodyLarge">This user will be permanently deleted from the database.</Text>
         </Modal>
       )}
     </div>

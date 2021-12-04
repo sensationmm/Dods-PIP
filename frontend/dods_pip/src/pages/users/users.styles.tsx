@@ -17,3 +17,7 @@ export const passwordReset = styled.div`
   display: flex;
   padding-top: 30px;
 `;
+
+export const activeToggle = styled.div`
+  display: flex;
+`;

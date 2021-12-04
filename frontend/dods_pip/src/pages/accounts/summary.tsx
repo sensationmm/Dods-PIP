@@ -476,7 +476,7 @@ const Summary: React.FC<SummaryProps> = ({
                   <div />
                 )}
               </Styled.sumAccountWrapper>
-              <Spacer size={1} />
+              <Spacer size={3} />
               <PlainTable
                 headings={['Consultant', 'Access', 'Contact', '']}
                 colWidths={[2, 2, 3]}
@@ -502,27 +502,39 @@ const Summary: React.FC<SummaryProps> = ({
                         {consultant.primaryEmailAddress}
                       </a>
                     </Text>
-                    <Spacer size={2} />
-                    <Text>
-                      <span>Email</span>
-                      <a href={'mailto:' + consultant.secondaryEmailAddress}>
-                        {consultant.secondaryEmailAddress}
-                      </a>
-                    </Text>
-                    <Spacer size={2} />
-                    <Text>
-                      <span>Tel (W)</span>
-                      <a href={'tel:' + consultant.telephoneNumber1}>
-                        {consultant.telephoneNumber1}
-                      </a>
-                    </Text>
-                    <Spacer size={2} />
-                    <Text>
-                      <span>Tel (M)</span>
-                      <a href={'tel:' + consultant.telephoneNumber2}>
-                        {consultant.telephoneNumber2}
-                      </a>
-                    </Text>
+                    {consultant.secondaryEmailAddress && (
+                      <>
+                        <Spacer size={2} />
+                        <Text>
+                          <span>Email</span>
+                          <a href={'mailto:' + consultant.secondaryEmailAddress}>
+                            {consultant.secondaryEmailAddress}
+                          </a>
+                        </Text>
+                      </>
+                    )}
+                    {consultant.telephoneNumber1 && (
+                      <>
+                        <Spacer size={2} />
+                        <Text>
+                          <span>Tel (W)</span>
+                          <a href={'tel:' + consultant.telephoneNumber1}>
+                            {consultant.telephoneNumber1}
+                          </a>
+                        </Text>
+                      </>
+                    )}
+                    {consultant.telephoneNumber2 && (
+                      <>
+                        <Spacer size={2} />
+                        <Text>
+                          <span>Tel (M)</span>
+                          <a href={'tel:' + consultant.telephoneNumber2}>
+                            {consultant.telephoneNumber2}
+                          </a>
+                        </Text>
+                      </>
+                    )}
                   </Styled.sumConsultantContact>,
                   <IconButton
                     key={`dods-user-${consultant.id}`}
