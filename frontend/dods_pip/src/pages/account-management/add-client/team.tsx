@@ -297,7 +297,7 @@ const Team: React.FC<TeamProps> = ({
           secondary_email_address: clientEmail2,
           telephone_number_1: clientTelephone,
           telephone_number_2: clientTelephone2,
-          role_id: RoleType.User,
+          role_id: RoleType.ClientUser,
         },
         teamMemberType: TeamMemberType.ClientUser,
       };
@@ -627,7 +627,7 @@ const Team: React.FC<TeamProps> = ({
 
                   <Spacer size={10} />
 
-                  {/* 
+                  {/*
                 Not needed, but in case we want it back
                 Always use RoleType.User
               <RadioGroup

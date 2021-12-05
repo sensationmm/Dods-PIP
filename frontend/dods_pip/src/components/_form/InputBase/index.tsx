@@ -49,6 +49,7 @@ const InputBase: React.FC<InputBaseProps> = ({
   placeholder,
   tabIndex,
   titleField,
+  testId,
 }) => {
   return (
     <Styled.wrapper data-test="component-input-base">
@@ -66,6 +67,7 @@ const InputBase: React.FC<InputBaseProps> = ({
           titleField={titleField}
           id={id}
           data-test="component-input-base-input"
+          data-testid={testId}
           disabled={isDisabled}
           className={classNames({
             error: typeof error === 'string',

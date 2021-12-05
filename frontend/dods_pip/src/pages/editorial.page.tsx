@@ -107,7 +107,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
         <title>Dods PIP | Editorial Repository</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Panel bgColor={color.base.greyLighter}>
+      <Panel bgColor={color.base.ivory}>
         <Breadcrumbs
           history={[
             { href: '/', label: 'Dods' },

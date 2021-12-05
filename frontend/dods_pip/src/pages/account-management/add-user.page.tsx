@@ -1,64 +1,94 @@
-import trim from 'lodash/trim';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 
 import Label from '../../components/_form/Label';
-import Select from '../../components/_form/Select';
+import Select, { SelectProps } from '../../components/_form/Select';
 import PageHeader from '../../components/_layout/PageHeader';
 import Panel from '../../components/_layout/Panel';
+import Spacer from '../../components/_layout/Spacer';
 import Button from '../../components/Button';
 import { Icons } from '../../components/Icon/assets';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import { RoleType } from '../account-management/add-client/type';
+import fetchJson from '../../lib/fetchJson';
+import useUser from '../../lib/useUser';
+import { Api, BASE_URI, toQueryString } from '../../utils/api';
+import { RoleType } from './add-client/type';
 import * as Styled from './add-user.styles';
-import AddUserForm from './add-user-form';
-
-export type Errors = {
-  firstName?: string;
-  lastName?: string;
-  emailAddress?: string;
-  emailAddress2?: string;
-  telephoneNumber?: string;
-  telephoneNumber2?: string;
-  account?: string;
-  jobTitle?: string;
-};
+import AddUserForm, { FormFields } from './add-user-form';
 
 interface AddUserProps extends LoadingHOCProps {}
 
-export const AddUser: React.FC<AddUserProps> = () => {
+export const AddUser: React.FC<AddUserProps> = ({ setLoading }) => {
   const router = useRouter();
-  const [userType, setUserType] = React.useState<string>(RoleType.Admin);
-  const [firstName, setFirstName] = React.useState<string>('');
-  const [lastName, setLastName] = React.useState<string>('');
-  const [account, setAccount] = React.useState<string>('');
-  const [jobTitle, setJobTitle] = React.useState<string>('');
-  const [emailAddress, setEmailAddress] = React.useState<string>('');
-  const [emailAddress2, setEmailAddress2] = React.useState<string>('');
-  const [telephoneNumber, setTelephoneNumber] = React.useState<string>('');
-  const [telephoneNumber2, setTelephoneNumber2] = React.useState<string>('');
-  const [errors, setErrors] = React.useState<Errors>({});
+  const { user } = useUser();
 
-  React.useEffect(() => {
-    if (userType !== RoleType.Admin && userType !== RoleType.User) {
-      setAccount('');
-      setJobTitle('');
-    }
-  }, [userType]);
+  const [formFields, setFormFields] = useState<FormFields>({
+    firstName: '',
+    lastName: '',
+    emailAddress: '',
+    emailAddress2: '',
+    telephoneNumber: '',
+    telephoneNumber2: '',
+    account: '',
+    jobTitle: '',
+    userType: RoleType.ClientUser,
+  });
+  const [errors, setErrors] = useState<Partial<FormFields>>({});
 
-  const isClientUser = userType === RoleType.Admin || userType === RoleType.User;
+  const isClientUser = formFields.userType === RoleType.ClientUser;
 
   const isComplete =
-    trim(firstName) !== '' &&
-    trim(lastName) !== '' &&
-    trim(emailAddress) !== '' &&
-    (!isClientUser || trim(account) !== '') &&
+    formFields.firstName !== '' &&
+    formFields.lastName !== '' &&
+    formFields.emailAddress !== '' &&
+    (!isClientUser || formFields.account !== '') &&
     Object.keys(errors).length === 0;
 
+  const setFormFieldProp = (field: keyof FormFields, value: string) => {
+    setFormFields({ ...formFields, ...{ [field]: value.trim() } });
+  };
+
+  const createUser = async () => {
+    setLoading(true);
+    const data = {
+      userProfile: {
+        title: formFields.jobTitle,
+        first_name: formFields.firstName,
+        last_name: formFields.lastName,
+        primary_email_address: formFields.emailAddress,
+        telephone_number_1: formFields.telephoneNumber,
+        ...(formFields.emailAddress2 && { secondary_email_address: formFields.emailAddress2 }),
+        ...(formFields.telephoneNumber2 && {
+          secondary_email_address: formFields.telephoneNumber2,
+        }),
+        role_id: formFields.userType,
+      },
+      clientAccountId: formFields.account,
+      teamMemberType: user?.isDodsUser ? 1 : 3, // ¯\_(ツ)_/¯ Random!
+    };
+
+    try {
+      const result = await fetchJson(
+        `${BASE_URI}${Api.ClientAccount}/${user?.clientAccountId}/teammember/new`,
+        {
+          method: 'POST',
+          body: JSON.stringify(data),
+        },
+      );
+
+      if (result.success && router.query?.referrer) {
+        await router.push(router.query?.referrer as string);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
+  };
+
   return (
-    <Styled.wrapper data-test="page-add-user">
+    <Styled.wrapper data-testid="page-add-user">
       <Head>
         <title>Dods PIP | Account Management | Add User</title>
         <link rel="icon" href="/favicon.ico" />
@@ -72,63 +102,72 @@ export const AddUser: React.FC<AddUserProps> = () => {
               <Label htmlFor="user-type" label="User type" />
               <Select
                 id="user-type"
+                testId={'user-type'}
                 options={[
-                  { label: 'Client - Admin', value: RoleType.Admin },
-                  { label: 'Client - Team Member', value: RoleType.User },
-                  { label: 'Dods - Admin', value: RoleType.DodsAdmin },
-                  { label: 'Dods - Team Member', value: RoleType.DodsUser },
-                  { label: 'Dods - Account Manager', value: RoleType.DodsAccMgr },
+                  { label: 'Dods Consultant', value: RoleType.DodsConsultant },
+                  { label: 'Client User', value: RoleType.ClientUser },
                 ]}
-                value={userType}
-                onChange={setUserType}
+                value={formFields.userType}
+                onChange={(value) => setFormFieldProp('userType', value)}
               />
             </Styled.userType>
           }
           flexDirection="column"
         />
 
-        <Panel bgColor={color.base.greyLighter} isNarrow>
+        <Panel bgColor={color.base.ivory} isNarrow>
           <Styled.content>
             <AddUserForm
-              firstName={firstName}
-              setFirstName={setFirstName}
-              lastName={lastName}
-              setLastName={setLastName}
+              firstName={formFields.firstName}
+              setFirstName={(value) => setFormFieldProp('firstName', value)}
+              lastName={formFields.lastName}
+              setLastName={(value) => setFormFieldProp('lastName', value)}
               isClientUser={isClientUser}
-              account={account}
-              setAccount={setAccount}
-              jobTitle={jobTitle}
-              setJobTitle={setJobTitle}
-              emailAddress={emailAddress}
-              setEmailAddress={setEmailAddress}
-              emailAddress2={emailAddress2}
-              setEmailAddress2={setEmailAddress2}
-              telephoneNumber={telephoneNumber}
-              setTelephoneNumber={setTelephoneNumber}
-              telephoneNumber2={telephoneNumber2}
-              setTelephoneNumber2={setTelephoneNumber2}
+              account={formFields.account}
+              accountItems={[
+                // TODO: Refactor component to allow async item fetching
+                { value: 'd4bbbd4b-e02f-4343-a7e9-397eea2b1bcd', label: 'B&B Repair' },
+                { value: '68e9b1b2-3e06-4354-a83e-195199a0d082', label: 'cookie jar2' },
+                { value: 'd666a38e-9fdb-400d-a7a6-57e4661adf9f', label: 'DEMBER' },
+                { value: '8cc32f01-37bb-4dd2-9dc8-4df26078af8d', label: 'FEGIME' },
+              ]}
+              setAccount={(value) => setFormFieldProp('account', value)}
+              jobTitle={formFields.jobTitle}
+              setJobTitle={(value) => setFormFieldProp('jobTitle', value)}
+              emailAddress={formFields.emailAddress}
+              setEmailAddress={(value) => setFormFieldProp('emailAddress', value)}
+              emailAddress2={formFields.emailAddress2}
+              setEmailAddress2={(value) => setFormFieldProp('emailAddress2', value)}
+              telephoneNumber={formFields.telephoneNumber}
+              setTelephoneNumber={(value) => setFormFieldProp('telephoneNumber', value)}
+              telephoneNumber2={formFields.telephoneNumber2}
+              setTelephoneNumber2={(value) => setFormFieldProp('telephoneNumber2', value)}
               errors={errors}
               setErrors={setErrors}
             />
 
-            <div />
-
-            <Styled.pageActions>
-              <Button
-                isSmall
-                type="secondary"
-                label="Back"
-                icon={Icons.ChevronLeft}
-                onClick={() => router.push('/account-management/users')}
-              />
-              <Button
-                isSmall
-                label="Create User"
-                icon={Icons.Tick}
-                iconAlignment="right"
-                disabled={!isComplete}
-              />
-            </Styled.pageActions>
+            <div>
+              <Spacer size={0.5} />
+              <Styled.pageActions>
+                <Button
+                  isSmall
+                  testId="button-back"
+                  type="secondary"
+                  label="Back"
+                  icon={Icons.ChevronLeft}
+                  onClick={() => router.push('/account-management/users')}
+                />
+                <Button
+                  isSmall
+                  testId="button-create-user"
+                  label="Create User"
+                  icon={Icons.Tick}
+                  iconAlignment="right"
+                  disabled={!isComplete}
+                  onClick={createUser}
+                />
+              </Styled.pageActions>
+            </div>
           </Styled.content>
         </Panel>
       </main>

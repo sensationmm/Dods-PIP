@@ -1,9 +1,5 @@
-import { ClientAccount } from "@dodsgroup/dods-model";
-
-export type ClientAccountInput = { uuid: string; }
-
-export type ClientAccountOutput = ClientAccount;
+import { ClientAccountInput, ClientAccountOutput } from "@dodsgroup/dods-model";
 
 export interface ClientAccountPersister {
-    findOne(parameters: ClientAccountInput): Promise<ClientAccountOutput>;
+    findOne(parameters: Partial<ClientAccountInput>): Promise<ClientAccountOutput>;
 }

@@ -2,8 +2,8 @@ import { createUser } from '../../../src/handlers/createUser/createUser';
 import { UserProfileRepositoryV2, IamRepository, ClientAccountRepository } from '../../../src/repositories';
 import { mocked } from 'ts-jest/utils';
 import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { ClientAccountOutput, CreateUserInput } from '../../../src/domain';
-import { User } from '@dodsgroup/dods-model';
+import { CreateUserInput } from '../../../src/domain';
+import { User, ClientAccountOutput, } from '@dodsgroup/dods-model';
 
 const defaultContext = createContext();
 

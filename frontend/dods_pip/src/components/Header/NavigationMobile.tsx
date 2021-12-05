@@ -91,7 +91,7 @@ const NavigationMobile: React.FC<NavigationMobileProps> = ({
           </Styled.accountMenuItem>
         )}
         <Styled.accountMenuItem data-test="menu-item-profile" onClick={() => setActive(false)}>
-          <Link href="/my-profile">
+          <Link href={`/users/${user?.id}`}>
             <a>
               <Avatar type={user.isDodsUser ? 'consultant' : 'client'} size="small" />
               My Account

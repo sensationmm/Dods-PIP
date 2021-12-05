@@ -81,7 +81,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(
             {
                 uuid: 'ba52a39b-814a-41df-a0b8-60083f25eeee',
-                subscriptionSeats: 0,
+                // subscriptionSeats: 0,
             } as ClientAccountModel
         );
 

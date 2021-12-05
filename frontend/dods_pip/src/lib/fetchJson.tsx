@@ -6,6 +6,8 @@ interface CustomError extends Error {
 }
 
 export type UserResponse = {
+  id?: string;
+  userId?: string;
   accessToken?: string;
   isDodsUser?: boolean;
   clientAccountId?: string;
@@ -28,6 +30,7 @@ export default async function fetchJson(
   try {
     let headers = {
       'Content-Type': 'application/json',
+      'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
     };
     const isAuthPath = /signin|signout$/i.test(url);
 

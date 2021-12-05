@@ -74,6 +74,52 @@ export enum LocationValue {
   UK = 'UK',
 }
 
+export const showTeamList = (team: ClientAccountTeamMember[]) => {
+  let finalTeam = [];
+  let teamList: ClientAccountTeamMember[] = team;
+  const filterByClient = (team: ClientAccountTeamMember) =>
+    team.teamMemberType === TeamMemberType.ClientUser;
+
+  const filterByConsultant = (team: ClientAccountTeamMember) =>
+    [TeamMemberType.AccountManager, TeamMemberType.TeamMember].includes(team.teamMemberType);
+
+  const teamClient = team.slice(3).filter(filterByClient).length;
+  const teamConsultant = team.slice(3).filter(filterByConsultant).length;
+
+  if (team.length > 5) {
+    if (teamClient > 0 && teamConsultant > 0) {
+      teamList = team.slice(0, 3);
+    } else if (teamClient > 0 || teamConsultant > 0) {
+      teamList = team.slice(0, 4);
+    }
+  }
+
+  const overflowTeamClient = team.slice(teamList.length).filter(filterByClient).length;
+  const overflowTeamConsultant = team.slice(teamList.length).filter(filterByConsultant).length;
+
+  finalTeam = teamList.map((member, count) => {
+    const type = member.teamMemberType === TeamMemberType.ClientUser ? 'client' : 'consultant';
+    return <Avatar key={`team-${count}`} type={type} size="small" alt={member.name} />;
+  });
+  if (overflowTeamClient > 0) {
+    finalTeam.push(
+      <Avatar key="overflow-client" type="client" number={overflowTeamClient} size="small" />,
+    );
+  }
+  if (overflowTeamConsultant > 0) {
+    finalTeam.push(
+      <Avatar
+        key="overflow-consultant"
+        type="consultant"
+        number={overflowTeamConsultant}
+        size="small"
+      />,
+    );
+  }
+
+  return finalTeam;
+};
+
 interface AccountsProps extends LoadingHOCProps {}
 
 export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
@@ -164,7 +210,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       </Head>
 
       <main>
-        <Panel bgColor={color.base.greyLighter}>
+        <Panel bgColor={color.base.ivory}>
           <Breadcrumbs
             history={[
               { href: '/account-management', label: 'Account Management' },
@@ -271,34 +317,6 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                 return renderInCompletedRow(account);
               }
               const { uuid } = account;
-              const filterByClient = (team: ClientAccountTeamMember) =>
-                team.teamMemberType === TeamMemberType.ClientUser;
-
-              const filterByConsultant = (team: ClientAccountTeamMember) =>
-                [TeamMemberType.AccountManager, TeamMemberType.TeamMember].includes(
-                  team.teamMemberType,
-                );
-
-              const teamClient = account.team.slice(3).filter(filterByClient).length;
-              const teamConsultant = account.team.slice(3).filter(filterByConsultant).length;
-
-              let team = account.team;
-
-              /* istanbul ignore else */
-              if (account.team.length > 5) {
-                if (teamClient > 0 && teamConsultant > 0) {
-                  team = account.team.slice(0, 3);
-                } else if (teamClient > 0 || teamConsultant > 0) {
-                  team = account.team.slice(0, 4);
-                }
-              }
-
-              const overflowTeamClient = account.team
-                .slice(team.length)
-                .filter(filterByClient).length;
-              const overflowTeamConsultant = account.team
-                .slice(team.length)
-                .filter(filterByConsultant).length;
 
               return [
                 account.name.substring(0, 1),
@@ -308,24 +326,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                 <Text key={`account-${uuid}-subscription`}>{account.subscription}</Text>,
                 <Text key={`account-${uuid}-projects`}>{account.projects}</Text>,
                 <Styled.teamList key={`account-${uuid}-team`}>
-                  {team.map((member) => {
-                    const type =
-                      member.teamMemberType === TeamMemberType.ClientUser ? 'client' : 'consultant';
-                    return (
-                      <Avatar
-                        key={`team-${member.id}`}
-                        type={type}
-                        size="small"
-                        alt={member.name}
-                      />
-                    );
-                  })}
-                  {overflowTeamClient > 0 && (
-                    <Avatar type="client" number={overflowTeamClient} size="small" />
-                  )}
-                  {overflowTeamConsultant > 0 && (
-                    <Avatar type="consultant" number={overflowTeamConsultant} size="small" />
-                  )}
+                  {showTeamList(account.team)}
                 </Styled.teamList>,
                 <IconButton
                   data-testid="account-page-btn-to-account"

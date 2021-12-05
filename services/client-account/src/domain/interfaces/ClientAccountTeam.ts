@@ -20,6 +20,8 @@ export interface TeamMemberResponse {
     telephoneNumber1: string;
     telephoneNumber2?: string;
     role?: Object | undefined;
+    isActive?: boolean;
+    memberSince?: Date;
 }
 
 export interface TeamMember {

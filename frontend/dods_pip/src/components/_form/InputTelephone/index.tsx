@@ -20,6 +20,7 @@ const InputTelephone: React.FC<InputTelephoneProps> = ({
   onBlur,
   tabIndex,
   placeholder,
+  testId,
 }) => {
   const regex = new RegExp('^[0-9()+]*$');
 
@@ -36,6 +37,7 @@ const InputTelephone: React.FC<InputTelephoneProps> = ({
       <Input
         id={id}
         data-test="component-input-telephone"
+        testId={testId}
         type="text"
         size={size}
         label={label}
