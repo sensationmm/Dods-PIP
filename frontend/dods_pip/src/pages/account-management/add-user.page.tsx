@@ -39,12 +39,17 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
     { label: 'Dods Consultant', value: RoleType.DodsConsultant },
     { label: 'Client User', value: RoleType.ClientUser },
   ]);
+
+
   const [errors, setErrors] = useState<Partial<FormFields>>({});
 
   React.useEffect(() => {
     if (router.query?.type === 'accountsAddNewUser') {
       setUserTypeSelectDisabled(true);
-      setFormFields({ ...formFields, ...{ userType: RoleType.ClientUser } });
+      setFormFields({
+        ...formFields,
+        ...{ userType: RoleType.ClientUser, account: String(router.query?.accountId) },
+      });
       setUserTypeOptions([{ label: 'Client User', value: RoleType.ClientUser }]);
     }
   }, [router.query]);
