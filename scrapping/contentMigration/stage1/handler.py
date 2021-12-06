@@ -120,6 +120,16 @@ def consumer(event, context):
                         "tagId": annotation.tag.text if annotation.tag is not None else "",
                         "facetType": annotation.suggestedfacet.text if annotation.suggestedfacet is not None else "",
                         "taxonomyType": annotation.suggestedtype.text if annotation.suggestedtype is not None else "",
+                        "termLabel": annotation.value.text if annotation.value is not None else "",
+                    }
+                    taxonomy_terms.append(taxonomy_term)
+                coarse_annotations = soup.findChildren('coarseannotation')
+                for coarse_annotation in coarse_annotations:
+                    taxonomy_term = {
+                        "tagId": coarse_annotation.tag.text if coarse_annotation.tag is not None else "",
+                        "facetType": "",
+                        "taxonomyType": "",
+                        "termLabel": coarse_annotation.value.text if coarse_annotation.value is not None else "",
                     }
                     taxonomy_terms.append(taxonomy_term)
                 content["taxonomyTerms"] = taxonomy_terms
