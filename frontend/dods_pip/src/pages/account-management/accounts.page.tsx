@@ -334,6 +334,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   onClick={() => goToAccount(uuid)}
                   icon={Icons.ChevronRightBold}
                   type="text"
+                  isSmall
                 />,
               ];
             })}
