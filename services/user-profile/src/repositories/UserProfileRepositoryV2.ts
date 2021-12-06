@@ -1,9 +1,4 @@
-import {
-    ClientAccount,
-    Role,
-    SubscriptionType,
-    User,
-} from '@dodsgroup/dods-model';
+import { ClientAccount, Role, SubscriptionType, User, UserOutput } from '@dodsgroup/dods-model';
 import {
     ClientAccountObj,
     CreateUserPersisterInput,
@@ -13,6 +8,7 @@ import {
     GetUserOutput,
     SearchUsersInput,
     SearchUsersOutput,
+    UpdateUserPersisterInput,
     UserAccountsReponse,
     UserProfileError,
     UserProfilePersisterV2,
@@ -26,8 +22,7 @@ export const DODS_USER = '83618280-9c84-441c-94d1-59e4b24cbe3d';
 export const CLIENT_ACCOUNT_NAME = 'name';
 
 export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
-    static defaultInstance: UserProfilePersisterV2 =
-        new UserProfileRepositoryV2();
+    static defaultInstance: UserProfilePersisterV2 = new UserProfileRepositoryV2();
 
     async getUser(parameters: GetUserInput): Promise<GetUserOutput> {
         const user = await User.findOne({
@@ -36,9 +31,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         });
 
         if (!user) {
-            throw new UserProfileError(
-                `Error: UserUUID ${parameters.userId} does not exist`
-            );
+            throw new UserProfileError(`Error: UserUUID ${parameters.userId} does not exist`);
         }
         let clientAccount: ClientAccountObj = {
             uuid: undefined,
@@ -81,19 +74,9 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         };
     }
 
-    async searchUsers(
-        parameters: SearchUsersInput
-    ): Promise<SearchUsersOutput> {
-        const {
-            name,
-            startsWith,
-            role,
-            clientAccountId,
-            limit,
-            offset,
-            sortBy,
-            sortDirection,
-        } = parameters;
+    async searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput> {
+        const { name, startsWith, role, clientAccountId, limit, offset, sortBy, sortDirection } =
+            parameters;
 
         let whereClause: any = {};
 
@@ -114,9 +97,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             const roleRecord = await Role.findOne({ where: { uuid: role } });
 
             if (!roleRecord) {
-                throw new UserProfileError(
-                    `Error: RoleUuid ${role} does not exist`
-                );
+                throw new UserProfileError(`Error: RoleUuid ${role} does not exist`);
             }
 
             whereClause[ROLE_ID_COLUMN] = roleRecord?.id;
@@ -205,17 +186,13 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         };
     }
 
-    async createUser(
-        parameters: CreateUserPersisterInput
-    ): Promise<CreateUserPersisterOutput> {
+    async createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput> {
         const { roleId } = parameters;
 
         const roleRecord = await Role.findOne({ where: { uuid: roleId } });
 
         if (!roleRecord) {
-            throw new UserProfileError(
-                `Error: Role uuid: ${roleId} does not exist`
-            );
+            throw new UserProfileError(`Error: Role uuid: ${roleId} does not exist`);
         }
 
         const newUser = await User.create({
@@ -227,18 +204,37 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         return newUser;
     }
 
-    async getUserClientAccounts(
-        parameters: GetUserClientAccounts
-    ): Promise<UserAccountsReponse> {
+    async updateUser(parameters: UpdateUserPersisterInput): Promise<UserOutput> {
         const {
-            limit,
-            offset,
             userId,
-            name,
-            subscriptionId,
-            sortBy,
-            sortDirection,
+            title,
+            firstName,
+            lastName,
+            secondaryEmail,
+            telephoneNumber1,
+            telephoneNumber2,
+            isActive,
         } = parameters;
+
+        let updatedUser = await User.findOne({ where: { uuid: userId } });
+
+        if (!updatedUser) {
+            throw new UserProfileError(`Error: User uuid: ${userId} does not exist`);
+        }
+
+        return await updatedUser.update({
+            title,
+            firstName,
+            lastName,
+            secondaryEmail,
+            telephoneNumber1,
+            telephoneNumber2,
+            isActive,
+        });
+    }
+
+    async getUserClientAccounts(parameters: GetUserClientAccounts): Promise<UserAccountsReponse> {
+        const { limit, offset, userId, name, subscriptionId, sortBy, sortDirection } = parameters;
 
         let userIdClause: any = {};
 
@@ -261,9 +257,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         });
 
         if (!user) {
-            throw new UserProfileError(
-                `Error: UserUUID ${userId} does not exist`
-            );
+            throw new UserProfileError(`Error: UserUUID ${userId} does not exist`);
         }
 
         const clientsUuid = await ClientAccount.findAll({
@@ -308,8 +302,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
 
                 account.team?.map((item) => {
                     if (item.uuid === userId) {
-                        currentTeamMemberType =
-                            item.ClientAccountTeam?.teamMemberType;
+                        currentTeamMemberType = item.ClientAccountTeam?.teamMemberType;
                     }
                     team.push({
                         firstName: item.firstName,

@@ -12,7 +12,7 @@ ROOT_COMMIT=$(get_commit)
 SUBDIR_COMMIT=$(get_commit services/user-profile)
 
 if [ "$SUBDIR_COMMIT" == "$ROOT_COMMIT" ]; then
-	cd services/client-account
+	cd services/user-profile
 	echo 'Pre-commit checks... linting, tests and build... please fix any errors'
 	npm run test:coverage
 fi
