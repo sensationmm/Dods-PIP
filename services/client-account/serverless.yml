@@ -85,6 +85,8 @@ custom:
         docker:
             # Enable this flag to run "docker ..." commands as sudo
             sudo: False
+    apiGatewayCaching:
+        enabled: true
 
 plugins:
     - serverless-webpack
@@ -92,6 +94,7 @@ plugins:
     - serverless-localstack
     - serverless-dependson-plugin
     - serverless-offline
+    - serverless-api-gateway-caching
 
 functions:
     health:
@@ -99,9 +102,11 @@ functions:
         description: Triggered when http request comes
         events:
             - http:
-                  method: get
-                  path: health
-                  cors: true
+                method: get
+                path: health
+                cors: true
+                caching:
+                    enabled: false
         tags:
             foo: bar
 
@@ -112,6 +117,8 @@ functions:
             - http:
                   method: get
                   path: clientaccount/{clientAccountId}
+                  caching:
+                      enabled: false
 
     createClientAccount:
         handler: src/handlers/createClientAccount/index.handle
@@ -120,6 +127,8 @@ functions:
             - http:
                   method: post
                   path: clientaccount
+                  caching:
+                      enabled: false
 
     searchClientAccount:
         handler: src/handlers/searchClientAccount/index.handle
@@ -128,6 +137,8 @@ functions:
             - http:
                   method: get
                   path: clientaccount
+                  caching:
+                      enabled: false
 
     getSubscriptionTypes:
         handler: src/handlers/getSubscriptionTypes/index.handle
@@ -136,6 +147,8 @@ functions:
             - http:
                   method: get
                   path: subscription-types
+                  caching:
+                      enabled: false
 
     addTeamMemberToClientAccount:
         handler: src/handlers/addTeamMemberToClientAccount/index.handle
@@ -144,6 +157,8 @@ functions:
             - http:
                   method: put
                   path: clientaccount/{clientAccountId}/teammember
+                  caching:
+                      enabled: false
 
     createTeamMember:
         handler: src/handlers/createTeamMember/index.handle
@@ -152,6 +167,8 @@ functions:
             - http:
                   method: post
                   path: clientaccount/{clientAccountId}/teammember/new
+                  caching:
+                      enabled: false
 
     removeTeamMember:
         handler: src/handlers/removeTeamMember/index.handle
@@ -160,6 +177,8 @@ functions:
             - http:
                   method: delete
                   path: clientaccount/{clientAccountId}/teammember
+                  caching:
+                      enabled: false
 
     getClientAccountTeamMembers:
         handler: src/handlers/getClientAccountTeamMembers/index.handle
@@ -168,6 +187,8 @@ functions:
             - http:
                   method: get
                   path: clientaccount/{clientAccountId}/teammember
+                  caching:
+                      enabled: false
 
     updateClientAccount:
         handler: src/handlers/updateClientAccount/index.handle
@@ -176,6 +197,8 @@ functions:
             - http:
                   method: put
                   path: clientaccount/{clientAccountId}/subscription
+                  caching:
+                      enabled: false
 
     getRemainingSeats:
         handler: src/handlers/getRemainingSeats/index.handle
@@ -184,6 +207,8 @@ functions:
             - http:
                   method: get
                   path: clientaccount/{clientAccountId}/seats
+                  caching:
+                      enabled: false
 
     checkClientAccountName:
         handler: src/handlers/checkClientAccountName/index.handle
@@ -192,6 +217,8 @@ functions:
             - http:
                   method: post
                   path: checkaccountname
+                  caching:
+                      enabled: false
 
     updateClientAccountHeader:
         handler: src/handlers/updateClientAccountHeader/index.handle
@@ -200,3 +227,5 @@ functions:
             - http:
                   method: put
                   path: clientaccount/{clientAccountId}/header
+                  caching:
+                      enabled: false
