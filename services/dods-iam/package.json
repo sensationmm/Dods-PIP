@@ -55,6 +55,7 @@
     "openapi-types": "^9.3.0",
     "pre-commit": "^1.2.2",
     "serverless": "^2.64.0",
+    "serverless-api-gateway-caching": "^1.7.4",
     "serverless-dependson-plugin": "^1.1.2",
     "serverless-localstack": "^0.4.35",
     "serverless-offline": "^8.2.0",

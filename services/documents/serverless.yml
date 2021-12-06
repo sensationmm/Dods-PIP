@@ -80,13 +80,15 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
-
+  apiGatewayCaching:
+    enabled: true
 plugins:
   - serverless-webpack
   - serverless-prune-plugin
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  - serverless-api-gateway-caching
 
 functions:
   health:
@@ -97,6 +99,8 @@ functions:
             method: get
             path: documents/health
             cors: true
+            caching:
+              enabled: false
       tags:
         foo: bar
 
@@ -107,6 +111,8 @@ functions:
       - http:
           method: get
           path: documents/{documentId}
+          caching:
+            enabled: false
 
   updateDocument:
     handler: src/handlers/updateDocument/index.handle
@@ -115,6 +121,8 @@ functions:
       - http:
           method: put
           path: documents/{documentId}
+          caching:
+            enabled: false
 
   createDocument:
     handler: src/handlers/createDocument/index.handle
@@ -124,5 +132,7 @@ functions:
           method: post
           path: documents
           # cors: true
+          caching:
+            enabled: false
     # tags:
     #   foo: bar
