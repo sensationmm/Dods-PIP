@@ -40,7 +40,6 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
     { label: 'Client User', value: RoleType.ClientUser },
   ]);
 
-
   const [errors, setErrors] = useState<Partial<FormFields>>({});
 
   React.useEffect(() => {
