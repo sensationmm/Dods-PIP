@@ -61,7 +61,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
             </>
           )}
 
-          <Users accountId={accountId} />
+          <Users accountId={accountId} setLoading={setLoading} addNotification={addNotification} />
 
           <Spacer size={4} />
 
