@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import Label from '../../components/_form/Label';
-import Select, { SelectProps } from '../../components/_form/Select';
+import Select from '../../components/_form/Select';
 import PageHeader from '../../components/_layout/PageHeader';
 import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
@@ -13,17 +13,17 @@ import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import useUser from '../../lib/useUser';
-import { Api, BASE_URI, toQueryString } from '../../utils/api';
+import { Api, BASE_URI } from '../../utils/api';
 import { RoleType } from './add-client/type';
 import * as Styled from './add-user.styles';
 import AddUserForm, { FormFields } from './add-user-form';
 
 interface AddUserProps extends LoadingHOCProps {}
 
-export const AddUser: React.FC<AddUserProps> = ({ setLoading }) => {
+export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading }) => {
   const router = useRouter();
   const { user } = useUser();
-
+  const [userTypeSelectDisabled, setUserTypeSelectDisabled] = React.useState(false);
   const [formFields, setFormFields] = useState<FormFields>({
     firstName: '',
     lastName: '',
@@ -35,7 +35,23 @@ export const AddUser: React.FC<AddUserProps> = ({ setLoading }) => {
     jobTitle: '',
     userType: RoleType.ClientUser,
   });
+  const [userTypeOptions, setUserTypeOptions] = React.useState([
+    { label: 'Dods Consultant', value: RoleType.DodsConsultant },
+    { label: 'Client User', value: RoleType.ClientUser },
+  ]);
+
   const [errors, setErrors] = useState<Partial<FormFields>>({});
+
+  React.useEffect(() => {
+    if (router.query?.type === 'accountsAddNewUser') {
+      setUserTypeSelectDisabled(true);
+      setFormFields({
+        ...formFields,
+        ...{ userType: RoleType.ClientUser, account: String(router.query?.accountId) },
+      });
+      setUserTypeOptions([{ label: 'Client User', value: RoleType.ClientUser }]);
+    }
+  }, [router.query]);
 
   const isClientUser = formFields.userType === RoleType.ClientUser;
 
@@ -71,18 +87,21 @@ export const AddUser: React.FC<AddUserProps> = ({ setLoading }) => {
 
     try {
       const result = await fetchJson(
-        `${BASE_URI}${Api.ClientAccount}/${user?.clientAccountId}/teammember/new`,
+        `${BASE_URI}${Api.ClientAccount}/${user?.clientAccountId}${Api.TeamMemberCreate}`,
         {
           method: 'POST',
           body: JSON.stringify(data),
         },
       );
-
       if (result.success && router.query?.referrer) {
-        await router.push(router.query?.referrer as string);
+        await router.push(`${router.query?.referrer}?userAdded=true` as string);
       }
     } catch (e) {
-      console.log(e);
+      addNotification({
+        type: 'warn',
+        title: 'Error',
+        text: e.data.message,
+      });
     }
     setLoading(false);
   };
@@ -103,12 +122,10 @@ export const AddUser: React.FC<AddUserProps> = ({ setLoading }) => {
               <Select
                 id="user-type"
                 testId={'user-type'}
-                options={[
-                  { label: 'Dods Consultant', value: RoleType.DodsConsultant },
-                  { label: 'Client User', value: RoleType.ClientUser },
-                ]}
+                options={userTypeOptions}
                 value={formFields.userType}
                 onChange={(value) => setFormFieldProp('userType', value)}
+                isDisabled={userTypeSelectDisabled}
               />
             </Styled.userType>
           }
