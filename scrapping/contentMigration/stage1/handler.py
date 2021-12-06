@@ -76,12 +76,6 @@ def consumer(event, context):
                 )
                 html_content = html_content['Body'].read().decode('utf-8')
 
-                content_content = s3_client.get_object(
-                    Bucket=INPUT_BUCKET,
-                    Key=message['file_path_content']
-                )
-                content_content = content_content['Body'].read().decode('utf-8')
-
                 content["documentId"] = item.code.text if item.code is not None else str(uuid.uuid4())
                 content["jurisdiction"] = "UK"
                 content["documentTitle"] = item.revision.localisation.title.text \
@@ -110,7 +104,7 @@ def consumer(event, context):
                 content["feedFormat"] = item.revision.feedformator.text if item.revision.feedformator is not None else ""
                 content["language"] = item.revision.localisation.language.text \
                     if item.revision.localisation.language is not None else "en"
-                content["originalContent"] = str(content_content)
+                content["originalContent"] = ""
                 content["documentContent"] = str(html_content)
 
                 annotations = soup.findChildren('granularannotation')
