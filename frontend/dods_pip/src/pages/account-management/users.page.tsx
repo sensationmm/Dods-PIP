@@ -67,7 +67,6 @@ type userAccounts = UserAccount[];
 interface UsersProps extends LoadingHOCProps {}
 
 export const Users: React.FC<UsersProps> = ({ setLoading }) => {
-  // const mockUsers = MockDataUsersAccounts.users as userAccounts;
   const [showFilter, setShowFilter] = React.useState<boolean>(true);
   const [filters, setFilters] = React.useState<Filters>({});
   const [usersList, setUsersList] = React.useState<userAccounts>([]);

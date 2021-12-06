@@ -26,6 +26,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   value,
   placeholder,
   testId,
+  isDisabled,
   ...rest
 }) => {
   const [search, setSearch] = React.useState<string>('');
@@ -56,7 +57,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   return (
     <Styled.wrapper
       data-test="component-search-dropdown"
-      onClick={() => isFilter && !results.length && setResults(values)}
+      onClick={() => isFilter && !results.length && !isDisabled && setResults(values)}
     >
       <OutsideClickHandler onOutsideClick={reset}>
         <InputSearch
@@ -66,6 +67,8 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           value={search}
           onChange={searchHandler}
           placeholder={value ? '' : placeholder}
+          error={search !== '' && results.length === 0 ? 'No results found!' : undefined}
+          isDisabled={isDisabled}
         >
           {isFilter && value && !search && (
             <Styled.searchValue>

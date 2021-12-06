@@ -1,10 +1,14 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import InputTelephone from '../../components/_form/InputTelephone';
 import InputText from '../../components/_form/InputText';
 import SearchDropdown from '../../components/_form/SearchDropdown';
 import { SelectProps } from '../../components/_form/Select';
+import fetchJson from '../../lib/fetchJson';
+import { Api, BASE_URI } from '../../utils/api';
 import * as Validation from '../../utils/validation';
+import { ClientAccount, ClientAccounts } from './accounts.page';
 
 enum ValidationType {
   Required,
@@ -25,7 +29,6 @@ export interface AddUserFormProps {
   setLastName: (val: string) => void;
   isClientUser: boolean;
   account: string;
-  accountItems?: SelectProps['options'];
   setAccount: (val: string) => void;
   jobTitle: string;
   setJobTitle: (val: string) => void;
@@ -61,7 +64,6 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   setLastName,
   isClientUser,
   account,
-  accountItems = [],
   setAccount,
   jobTitle,
   setJobTitle,
@@ -77,6 +79,9 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   setErrors,
   isEdit = false,
 }) => {
+  const router = useRouter();
+  const [accounts, setAccounts] = React.useState<SelectProps['options']>([]);
+  const [disabledAccount, setDisableAccount] = React.useState<boolean>(false);
   const validateAccount = (val?: string) => {
     const formErrors = JSON.parse(JSON.stringify(errors));
     if (isClientUser && val === '') {
@@ -109,6 +114,27 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
     setErrors(formErrors);
   };
 
+  const loadAccounts = async (account: string) => {
+    try {
+      const results = await fetchJson(`${BASE_URI}${Api.ClientAccount}?startsWith=${account}`, {
+        method: 'GET',
+      });
+      const { data = [] } = results;
+      const result = (data as ClientAccounts).map((item: ClientAccount) => ({
+        value: item.uuid,
+        label: item.name,
+      }));
+      setAccounts(result);
+    } catch (e) {
+      setAccounts([]);
+    }
+  };
+
+  React.useEffect(() => {
+    loadAccounts(router.query.pageAccountName as string);
+    setDisableAccount(true);
+  }, [router.query.pageAccountName]);
+
   return (
     <div data-test="add-user-form">
       <InputText
@@ -140,7 +166,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             id="account"
             testId={'account'}
             value={account}
-            values={accountItems}
+            values={accounts}
             placeholder="Search an account"
             onChange={(val: string) => {
               setAccount(val);
@@ -150,8 +176,9 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             label="Account"
             error={errors.account}
             onBlur={validateAccount}
-            isDisabled={isEdit}
+            isDisabled={isEdit || disabledAccount}
             helperText={isEdit ? 'Account cannot be edited' : ''}
+            onKeyPress={(val) => loadAccounts(val)}
           />
           <InputText
             id="jobTitle"
