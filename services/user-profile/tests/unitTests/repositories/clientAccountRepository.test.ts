@@ -38,7 +38,7 @@ describe(`${CLASS_NAME} tests`, () => {
             
             throw new Error('Code never should come in this point');
         } catch (error: any) {
-            expect(error.message).toEqual(`Error: ClientAccount with ${parameters} does not exist`);
+            expect(error.message).toEqual(`Error: ClientAccount with ${JSON.stringify(parameters)} does not exist`);
         }
     });
 });
