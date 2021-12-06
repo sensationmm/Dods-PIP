@@ -134,6 +134,15 @@ functions:
           path: users
           caching:
             enabled: false
+  updateUser:
+    handler: src/handlers/updateUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: user/{userId}
+          caching:
+            enabled: false
   getClientAccountsByUser:
     handler: src/handlers/getClientAccountsByUser/index.handle
     description: Triggered when http request comes
