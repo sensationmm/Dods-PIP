@@ -32,7 +32,7 @@ def s3_list_folders(prefix: str):
             bucket = s3.Bucket(name=INPUT_BUCKET)
             message = {}
             for obj in bucket.objects.filter(Prefix=o.get('Prefix')):
-                if '.ml' in obj.key or 'dodsil' in obj.key or '.html' in obj.key:
+                if '.ml' in obj.key or '.html' in obj.key:
                     message = Validator().prepare_migration_content_message(message, obj.key)
             if bool(message):
                 string_message = dumps(message)
