@@ -27,7 +27,9 @@ class Validator:
     @staticmethod
     def migration_content_file_paths_validator(body: dict):
         required_paths = {
-            'file_path_content_document': ''
+            'file_path_content': '',
+            'file_path_metadata': '',
+            'file_path_html': ''
         }
         if (required_paths.keys() <= body.keys()):
             logger.info(f'Message body: {body}')
@@ -50,6 +52,16 @@ class Validator:
 
     @staticmethod
     def prepare_migration_content_message(message: dict, filename: str):
+        if '.ml' in filename:
+            message['file_path_metadata'] = filename
+        elif '.html' in filename:
+            message['file_path_html'] = filename
+        elif '.dodsil' in filename:
+            message['file_path_content'] = filename
+        return message
+
+    @staticmethod
+    def prepare_migration_content_message_for_stage2(message: dict, filename: str):
         if '.json' in filename:
             message['file_path_content_document'] = filename
         return message
