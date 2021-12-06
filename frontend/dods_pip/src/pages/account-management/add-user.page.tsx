@@ -90,8 +90,7 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         },
       );
       if (result.success && router.query?.referrer) {
-        localStorage.setItem('userSuccessfullyCreatedNotification', 'true');
-        await router.push(router.query?.referrer as string);
+        await router.push(`${router.query?.referrer}?userAdded=true` as string);
       }
     } catch (e) {
       addNotification({

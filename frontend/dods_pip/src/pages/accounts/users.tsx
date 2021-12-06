@@ -12,7 +12,7 @@ import Modal from '../../components/Modal';
 import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
 import color from '../../globals/color';
-import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
+import { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import { TeamMemberType } from '../account-management/add-client/type';
@@ -41,35 +41,32 @@ export type TeamUser = {
 
 const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading }) => {
   const [users, setUsers] = React.useState<TeamUser[]>();
-  const [remainingSeats, setRemainingSeats] = React.useState(0);
+  const [remainingSeats, setRemainingSeats] = React.useState<number>();
   const [noRemainingSeatsModal, setNoRemainingSeatsModal] = React.useState(false);
   const router = useRouter();
 
   useEffect(() => {
     //displaying notification to see if user has been created before redirecting back to this page
-    if (localStorage.getItem('userSuccessfullyCreatedNotification')) {
+
+    if (router?.query?.userAdded) {
       addNotification({
         type: 'confirm',
         title: 'You have successfully created a new Client User',
       });
-      localStorage.removeItem('userSuccessfullyCreatedNotification');
     }
 
     // featching remainin seats
-    async function fetchRemainingSeats() {
+    const fetchRemainingSeats = async () => {
       setLoading(true);
-      const result = await fetchJson(
-        `${BASE_URI}${Api.ClientAccount}/${router.query.id}${Api.Seats}`,
-        {
-          method: 'GET',
-        },
-      );
+      const result = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}${Api.Seats}`, {
+        method: 'GET',
+      });
       const { data } = result;
       setRemainingSeats(Number(data));
       setLoading(false);
-    }
-    fetchRemainingSeats();
-  }, []);
+    };
+    accountId && fetchRemainingSeats();
+  }, [accountId]);
 
   const loadUsers = async () => {
     if (accountId === '') {
@@ -96,10 +93,11 @@ const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading })
   );
   const activeUsers = clientUsers?.filter((user) => user.isActive === 1).length;
   const inactiveUsers = clientUsers?.filter((user) => user.isActive === 0).length;
-  const seatsAllowance = clientUsers ? clientUsers?.length + remainingSeats : 0;
+  const seatsAllowance =
+    clientUsers && remainingSeats !== undefined ? clientUsers?.length + remainingSeats : 0;
 
   const handleAddUser = async () => {
-    if (remainingSeats > 0) {
+    if (remainingSeats && remainingSeats > 0) {
       router.push(`/account-management/add-user?type=accountsAddNewUser&referrer=${router.asPath}`);
     } else {
       setNoRemainingSeatsModal(true);
@@ -115,7 +113,11 @@ const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading })
               User
             </Text>
             <Styled.badgeContainer>
-              <Badge size="small" label="Seats allowance" number={seatsAllowance} />
+              <Badge
+                size="small"
+                label="Seats allowance"
+                number={remainingSeats !== undefined ? seatsAllowance : undefined}
+              />
               <Badge size="small" label="Seats remaning" number={remainingSeats} />
               <Badge size="small" label="Active users" number={users ? activeUsers : undefined} />
               <Badge
@@ -129,7 +131,10 @@ const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading })
               label="Add User"
               icon={Icons.Add}
               iconAlignment="right"
-              onClick={handleAddUser}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddUser();
+              }}
             />
           </Styled.sectionCustomHeader>
         }
