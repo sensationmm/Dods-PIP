@@ -1,0 +1,66 @@
+service: dods-auto-tagging
+
+configValidationMode: warn
+
+frameworkVersion: ^2.54.0
+
+variablesResolutionMode: 20210326
+
+projectDir: ../
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: python3.7
+  stage: ${opt:stage, 'dev'}
+  deploymentBucket:
+    name: pip-${self:provider.stage}-services-lambdas
+
+  lambdaHashingVersion: 20201221
+  stackTags:
+    service: ${self:service}
+    env: ${self:provider.stage}
+    version: 1
+    teamsEmail: dods.project@somoglobal.com
+    team: dods
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+        - s3:PutObject
+        - s3:GetObject
+        - s3:GetObjectAcl
+      Resource:
+        - "*"
+  vpc:
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
+
+  apiGateway:
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, "local"}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, "local"}
+    description: Default Gateway for ${self:provider.stage} deployed by Terraform
+
+  environment:
+    SERVERLESS_STAGE: ${self:provider.stage}
+    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
+    ES_KEY_ID: ${env:ES_KEY_ID}
+    ES_API_KEY: ${env:ES_API_KEY}
+    CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: true
+functions:
+  auto-tagging:
+    handler: autoTagging.handle
+    description: Triggered when http request comes
+    runtime: python3.7
+    timeout: 20
