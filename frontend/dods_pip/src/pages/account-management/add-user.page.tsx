@@ -135,12 +135,9 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         <Panel bgColor={color.base.ivory} isNarrow>
           <Styled.content>
             <AddUserForm
-              firstName={formFields.firstName}
-              setFirstName={(value) => setFormFieldProp('firstName', value)}
-              lastName={formFields.lastName}
-              setLastName={(value) => setFormFieldProp('lastName', value)}
+              fieldData={formFields}
+              onFieldChange={setFormFieldProp}
               isClientUser={isClientUser}
-              account={formFields.account}
               accountItems={[
                 // TODO: Refactor component to allow async item fetching
                 { value: 'd4bbbd4b-e02f-4343-a7e9-397eea2b1bcd', label: 'B&B Repair' },
@@ -148,17 +145,6 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
                 { value: 'd666a38e-9fdb-400d-a7a6-57e4661adf9f', label: 'DEMBER' },
                 { value: '8cc32f01-37bb-4dd2-9dc8-4df26078af8d', label: 'FEGIME' },
               ]}
-              setAccount={(value) => setFormFieldProp('account', value)}
-              jobTitle={formFields.jobTitle}
-              setJobTitle={(value) => setFormFieldProp('jobTitle', value)}
-              emailAddress={formFields.emailAddress}
-              setEmailAddress={(value) => setFormFieldProp('emailAddress', value)}
-              emailAddress2={formFields.emailAddress2}
-              setEmailAddress2={(value) => setFormFieldProp('emailAddress2', value)}
-              telephoneNumber={formFields.telephoneNumber}
-              setTelephoneNumber={(value) => setFormFieldProp('telephoneNumber', value)}
-              telephoneNumber2={formFields.telephoneNumber2}
-              setTelephoneNumber2={(value) => setFormFieldProp('telephoneNumber2', value)}
               errors={errors}
               setErrors={setErrors}
             />
