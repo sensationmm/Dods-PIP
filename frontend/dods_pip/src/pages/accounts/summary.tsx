@@ -478,8 +478,8 @@ const Summary: React.FC<SummaryProps> = ({
               </Styled.sumAccountWrapper>
               <Spacer size={3} />
               <PlainTable
-                headings={['Consultant', 'Access', 'Contact', '']}
-                colWidths={[2, 2, 3]}
+                headings={['Consultant', 'Contact', '']}
+                colWidths={[5, 5, 1]}
                 rows={consultantsComplete.map((consultant) => [
                   accountId,
                   <Styled.sumConsultantAvatar key={consultant.name}>
@@ -494,7 +494,6 @@ const Summary: React.FC<SummaryProps> = ({
                       </Text>
                     </div>
                   </Styled.sumConsultantAvatar>,
-                  <Text key={consultant.name}>{consultant.access}</Text>,
                   <Styled.sumConsultantContact key={consultant.name}>
                     <Text>
                       <span>Email</span>

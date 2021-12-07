@@ -25,7 +25,7 @@ def s3_list_folders(prefix: str):
             message = {}
             for obj in bucket.objects.filter(Prefix=o.get('Prefix')):
                 if '.json' in obj.key:
-                    message = Validator().prepare_migration_content_message(message, obj.key)
+                    message = Validator().prepare_migration_content_message_for_stage2(message, obj.key)
             if bool(message):
                 string_message = dumps(message)
                 try:

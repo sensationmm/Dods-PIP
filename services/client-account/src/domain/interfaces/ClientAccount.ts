@@ -26,7 +26,7 @@ export interface ClientAccountResponse extends ClientAccount {
     //id: number;
     uuid: string;
     team?: {
-        name: string;
+        firstName: string;
         type?: 'Team Member' | 'Account Manager' | 'Client User';
     }[];
     subscription?: SubscriptionTypeResponse;
@@ -40,7 +40,8 @@ export interface SearchClientAccountResponse {
     location?: number;
     projects?: number;
     team?: {
-        name: string;
+        firstName: string;
+        lastName: string;
         type?: 'Team Member' | 'Account Manager' | 'Client User';
     }[];
     isUK: boolean;

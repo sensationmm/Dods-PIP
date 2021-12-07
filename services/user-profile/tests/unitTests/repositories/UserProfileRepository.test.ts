@@ -100,7 +100,6 @@ UserProfileModelMock.$queryInterface.$useHandler((query: any, queryOptions: any)
     }
     if (query === 'create') {
         if (queryOptions[0].firstName === '') {
-            console.log('TETSETSETST');
             throw new Error('Error: First Name can not be empty');
         }
     }

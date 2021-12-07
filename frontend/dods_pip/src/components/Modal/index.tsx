@@ -74,11 +74,20 @@ const Modal: FC<ModalProps> = ({
           )}
         </Styled.modalHeader>
         <Styled.modalBody>{children}</Styled.modalBody>
-        <Styled.modalFooter data-test="modal-footer" alignment={buttonAlignment}>
-          {buttons.map((buttonProps, index) => (
-            <Button key={index} {...{ ...buttonProps }} />
-          ))}
-        </Styled.modalFooter>
+        {buttons.length > 0 && (
+          <Styled.modalFooter data-test="modal-footer" alignment={buttonAlignment}>
+            {buttons.map((buttonProps, index) => (
+              <Button
+                key={index}
+                {...{ ...buttonProps }}
+                onClick={(e) => {
+                  buttonProps.onClick && buttonProps.onClick(e);
+                  closeModal();
+                }}
+              />
+            ))}
+          </Styled.modalFooter>
+        )}
       </Styled.modal>
     </Styled.veil>,
     document.getElementById(portalContainerId) as Element,

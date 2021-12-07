@@ -117,7 +117,7 @@ const AddClient: React.FC<AddClientProps> = ({
 }) => {
   const router = useRouter();
   const userSeatsDefault = '5';
-  const consultantHoursDefault = '10';
+  const consultantHoursDefault = '0';
   const LAST_STEP = 3;
   const TODAY = format(new Date(), 'yyyy-MM-dd').toString();
 
