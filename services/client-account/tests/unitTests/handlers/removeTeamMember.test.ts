@@ -1,9 +1,11 @@
-import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { ClientAccountOutput, ClientAccountTeamOutput, UserOutput } from '@dodsgroup/dods-model';
-import { mocked } from 'ts-jest/utils';
+import { ClientAccountOutput, ClientAccountTeamOutput } from '@dodsgroup/dods-model';
+import { ClientAccountRepositoryV2, ClientAccountTeamRepositoryV2, IamRepository, UserProfileRepository } from '../../../src/repositories';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+
 import { RemoveTeamMemberParameters } from '../../../src/domain';
+import { UserProfileModelAttributes } from '../../../src/db';
+import { mocked } from 'ts-jest/utils';
 import { removeTeamMember } from '../../../src/handlers/removeTeamMember/removeTeamMember';
-import { ClientAccountRepositoryV2, ClientAccountTeamRepositoryV2, UserProfileRepository, IamRepository } from '../../../src/repositories';
 
 jest.mock('../../../src/repositories/ClientAccountRepositoryV2');
 jest.mock('../../../src/repositories/ClientAccountTeamRepositoryV2');
@@ -37,7 +39,7 @@ describe(`${FUNCTION_NAME}`, () => {
 
         const defaultFindOneInClientAccountRepositoryResponse = { id: 1 } as ClientAccountOutput;
 
-        const defaultFindOneInUserProfileResponse = { id: 1 } as UserOutput;
+        const defaultFindOneInUserProfileResponse = { id: 1 } as UserProfileModelAttributes;
 
         const defaultFindOneInClientAccountTeamResponse = { userId: 1, clientAccountId: 1, teamMemberType: 3 } as ClientAccountTeamOutput;
 
@@ -69,7 +71,7 @@ describe(`${FUNCTION_NAME}`, () => {
 
         const defaultFindOneInClientAccountRepositoryResponse = { id: 1 } as ClientAccountOutput;
 
-        const defaultFindOneInUserProfileResponse = { id: 1 } as UserOutput;
+        const defaultFindOneInUserProfileResponse = { id: 1 } as UserProfileModelAttributes;
 
         const defaultFindOneInClientAccountTeamResponse = { userId: 1, clientAccountId: 1, teamMemberType: 1 } as ClientAccountTeamOutput;
 

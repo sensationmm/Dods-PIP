@@ -1,7 +1,7 @@
 import { AsyncLambdaMiddleware, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-
-import { CreateUserInput, UserProfileError } from '../../domain';
 import { ClientAccountRepository, UserProfileRepositoryV2 } from '../../repositories';
+import { CreateUserInput, UserProfileError } from '../../domain';
+
 import { IamRepository } from '../../repositories/IamRepository';
 
 export const createUser: AsyncLambdaMiddleware<CreateUserInput> = async (parameters) => {
@@ -37,6 +37,7 @@ export const createUser: AsyncLambdaMiddleware<CreateUserInput> = async (paramet
         success: true,
         message: 'User was created succesfully',
         User: {
+            uuid: response.uuid,
             displayName: response.fullName,
             userName: response.primaryEmail,
             emailAddress: response.primaryEmail,

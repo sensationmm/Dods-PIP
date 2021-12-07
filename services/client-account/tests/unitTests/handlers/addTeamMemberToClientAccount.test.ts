@@ -1,11 +1,10 @@
-import { ClientAccountModel } from '../../../src/db';
+import { ClientAccountModel, UserProfileModelAttributes } from '../../../src/db';
 import { ClientAccountRepository, ClientAccountTeamRepository, UserProfileRepository, } from '../../../src/repositories';
 import { HttpResponse, HttpStatusCode, createContext, } from '@dodsgroup/dods-lambda';
 
 import { ClientAccountTeamParameters } from '../../../src/domain';
 import { addTeamMemberToClientAccount } from '../../../src/handlers/addTeamMemberToClientAccount/addTeamMemberToClientAccount';
 import { mocked } from 'ts-jest/utils';
-import { UserOutput } from '@dodsgroup/dods-model';
 
 const FUNCTION_NAME = addTeamMemberToClientAccount.name;
 
@@ -46,7 +45,7 @@ const defaultUserProfile = {
     title: 'Mr',
     roleId: 1,
     primaryEmail: 'k@h.com',
-} as UserOutput;
+} as UserProfileModelAttributes;
 
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.findOne.mockClear();
