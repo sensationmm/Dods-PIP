@@ -33,8 +33,7 @@ describe('Modal', () => {
     expect(wrapper.find(SELECTOR_VEIL)).toHaveLength(1);
     expect(wrapper.find(SELECTOR_MODAL)).toHaveLength(1);
     expect(wrapper.find(SELECTOR_CLOSE)).toHaveLength(1);
-    expect(wrapper.find(SELECTOR_FOOTER)).toHaveLength(1);
-    expect(wrapper.find(SELECTOR_FOOTER).children()).toHaveLength(0);
+    expect(wrapper.find(SELECTOR_FOOTER)).toHaveLength(0);
   });
 
   describe('when isDismissible is true', () => {

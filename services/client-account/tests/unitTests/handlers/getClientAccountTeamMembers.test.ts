@@ -17,7 +17,8 @@ const FUNCTION_NAME = getClientAccountTeamMembers.name;
 const SUCCESS_ACCOUNT_RESPONSE: TeamMemberResponse[] = [
     {
         id: '89139c46-711d-42cf-affd-b865dd9191eb',
-        name: 'Latest Tester',
+        firstName: 'Latest',
+        lastName: ' Tester',
         teamMemberType: 1,
         title: 'Mr',
         primaryEmailAddress: 'diego@example.com',
@@ -32,7 +33,8 @@ const SUCCESS_ACCOUNT_RESPONSE: TeamMemberResponse[] = [
     },
     {
         id: '30360fcd-91be-46f3-8177-e2123f756838',
-        name: 'Employee Example',
+        firstName: 'Latest',
+        lastName: ' Tester',
         teamMemberType: 2,
         title: 'Mr',
         primaryEmailAddress: 'diego@example.com',

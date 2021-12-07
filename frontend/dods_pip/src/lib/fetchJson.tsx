@@ -30,6 +30,7 @@ export default async function fetchJson(
   try {
     let headers = {
       'Content-Type': 'application/json',
+      'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
     };
     const isAuthPath = /signin|signout$/i.test(url);
 

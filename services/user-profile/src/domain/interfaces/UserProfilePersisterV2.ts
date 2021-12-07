@@ -53,10 +53,11 @@ export interface IamPersister {
         clientAccountId: string,
         clientAccountName: string
     ): Promise<RequestOutput<CreateUserOutput>>;
-    updateUserAttributes(
-        email: string,
-        userAttributes: Array<UserAttributes>
-    ): Promise<void>;
+    updateUserAttributes(email: string, userAttributes: Array<UserAttributes>): Promise<void>;
+
+    enableUser(email: string): Promise<void>;
+
+    disableUser(email: string): Promise<void>;
 }
 
 export type CreateUserPersisterInput = Pick<
@@ -69,6 +70,14 @@ export type CreateUserPersisterOutput = UserOutput;
 export type CreateUserInput = CreateUserPersisterInput & {
     clientAccountId: string;
 };
+
+export type UpdateUserPersisterInput = Omit<Partial<UserInput>, 'primaryEmail'> & {
+    userId: string;
+};
+
+export type UpdateUserPersisterOutput = UserOutput;
+
+export type UpdateUserInput = UpdateUserPersisterInput;
 
 export type GetUserInput = { userId: string };
 
@@ -119,10 +128,7 @@ export type GetUserOutput =
 export interface UserProfilePersisterV2 {
     getUser(parameters: GetUserInput): Promise<GetUserOutput>;
     searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput>;
-    createUser(
-        parameters: CreateUserPersisterInput
-    ): Promise<CreateUserPersisterOutput>;
-    getUserClientAccounts(
-        parameters: GetUserClientAccounts
-    ): Promise<UserAccountsReponse>;
+    createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput>;
+    getUserClientAccounts(parameters: GetUserClientAccounts): Promise<UserAccountsReponse>;
+    updateUser(parameters: UpdateUserPersisterInput): Promise<UpdateUserPersisterOutput>;
 }

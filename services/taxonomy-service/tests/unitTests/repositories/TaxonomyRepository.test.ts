@@ -113,7 +113,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test('searchTaxonomiesRepository creates the correct query object', async () => {
-        const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}, {"bool": {"should": [ {"match": {"label": TAXONOMY_PARAMETERS.tags}}, {"match": {"altLabels": TAXONOMY_PARAMETERS.tags}}]}}]}}}, "size": 500}
+        const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}, {"bool": {"should": [ {"match": {"label": TAXONOMY_PARAMETERS.tags}}, {"match": {"altLabel.en": TAXONOMY_PARAMETERS.tags}}]}}]}}}, "size": 500}
 
         const taxonomy_query = await TaxonomyRepository.createSearchQuery(TAXONOMY_PARAMETERS)
 
@@ -122,7 +122,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     test('searchTaxonomiesRepository with a limit creates the correct query object', async () => {
         const data: TaxonomiesParameters = { tags: 'unemployment', taxonomy: 'Topics', limit: 1 };
-        const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}, {"bool": {"should": [ {"match": {"label": TAXONOMY_PARAMETERS.tags}}, {"match": {"altLabels": TAXONOMY_PARAMETERS.tags}}]}}]}}}, "size": data.limit}
+        const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}, {"bool": {"should": [ {"match": {"label": TAXONOMY_PARAMETERS.tags}}, {"match": {"altLabel.en": TAXONOMY_PARAMETERS.tags}}]}}]}}}, "size": data.limit}
 
             const taxonomy_query = await TaxonomyRepository.createSearchQuery(data)
 

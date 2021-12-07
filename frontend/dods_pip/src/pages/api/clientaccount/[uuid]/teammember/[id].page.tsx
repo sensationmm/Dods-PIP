@@ -5,7 +5,6 @@ import { Api } from '../../../../../utils/api';
 export default withSession(async (req, res) => {
   try {
     const { uuid } = req.query;
-    console.log('teammember', uuid);
     const result = await fetchJson(
       `${process.env.APP_API_URL}${Api.ClientAccount}/${uuid}/${Api.TeamMember}`,
       {

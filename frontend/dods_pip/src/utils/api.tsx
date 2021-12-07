@@ -19,6 +19,7 @@ export enum Api {
   EditorialInfoTypes = '/information-types',
   EditorialStatus = '/editorial-record-status',
   EditorialRecords = '/editorial-record',
+  Seats = '/seats',
 }
 
 export const toQueryString = (params: Record<string, any> = {}): string => {

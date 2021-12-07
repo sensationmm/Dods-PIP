@@ -254,6 +254,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
                 onClick={() => router.push(`/users/${uuid}`)}
                 icon={Icons.ChevronRightBold}
                 type="text"
+                isSmall
               />,
             ];
           })}

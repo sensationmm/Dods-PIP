@@ -97,9 +97,9 @@ export const showTeamList = (team: ClientAccountTeamMember[]) => {
   const overflowTeamClient = team.slice(teamList.length).filter(filterByClient).length;
   const overflowTeamConsultant = team.slice(teamList.length).filter(filterByConsultant).length;
 
-  finalTeam = teamList.map((member) => {
+  finalTeam = teamList.map((member, count) => {
     const type = member.teamMemberType === TeamMemberType.ClientUser ? 'client' : 'consultant';
-    return <Avatar key={`team-${member.id}`} type={type} size="small" alt={member.name} />;
+    return <Avatar key={`team-${count}`} type={type} size="small" alt={member.name} />;
   });
   if (overflowTeamClient > 0) {
     finalTeam.push(
@@ -334,6 +334,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   onClick={() => goToAccount(uuid)}
                   icon={Icons.ChevronRightBold}
                   type="text"
+                  isSmall
                 />,
               ];
             })}

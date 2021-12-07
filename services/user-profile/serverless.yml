@@ -86,6 +86,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
+  # apiGatewayCaching:
+    # enabled: true
 
 plugins:
   - serverless-webpack
@@ -93,6 +95,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  # - serverless-api-gateway-caching
 
 functions:
   createUserProfile:
@@ -102,6 +105,8 @@ functions:
       - http:
           method: post
           path: user
+          # caching:
+            # enabled: false
   searchUsers:
     handler: src/handlers/searchUsers/index.handle
     description: Triggered when http request comes
@@ -109,6 +114,8 @@ functions:
       - http:
           method: get
           path: users
+          # caching:
+            # enabled: false
   getUser:
     handler: src/handlers/getUser/index.handle
     description: Triggered when http request comes
@@ -116,6 +123,8 @@ functions:
       - http:
           method: get
           path: user/{userId}
+          # caching:
+            # enabled: false
   createUser:
     handler: src/handlers/createUser/index.handle
     description: Triggered when http request comes
@@ -123,6 +132,17 @@ functions:
       - http:
           method: post
           path: users
+          # caching:
+            # enabled: false
+  updateUser:
+    handler: src/handlers/updateUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: user/{userId}
+          # caching:
+            # enabled: false
   getClientAccountsByUser:
     handler: src/handlers/getClientAccountsByUser/index.handle
     description: Triggered when http request comes
@@ -130,3 +150,5 @@ functions:
       - http:
           method: get
           path: users/{userId}/client-accounts
+          # caching:
+            # enabled: false

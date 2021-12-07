@@ -32,7 +32,7 @@ export class TaxonomyRepository implements Taxonomy {
                                 "bool": {
                                     "should": [
                                         {"match": {"label": data.tags}},
-                                        {"match": {"altLabels": data.tags}}
+                                        {"match": {"altLabel.en": data.tags}}
                                     ]
                                 }
                             }
@@ -64,9 +64,11 @@ export class TaxonomyRepository implements Taxonomy {
                 tag: es_doc._source.label,
                 score: es_doc._score,
                 inScheme: es_doc._source.inScheme,
-                alternative_labels: es_doc._source.altLabels,
                 hierarchy: es_doc._source.hierarchy,
             };
+            try {
+                es_tag.alternative_labels = es_doc._source.altLabel.en;
+            } catch (exception) {}
             tag_results.push(es_tag)
         });
 
