@@ -64,6 +64,3 @@ functions:
     description: Triggered when http request comes
     runtime: python3.7
     timeout: 20
-    events:
-      - sqs:
-          arn: arn:aws:sqs:eu-west-1:390773179818:pip-dev-hoc-debates-ingestion-content-transform-queue.fifo
