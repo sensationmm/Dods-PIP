@@ -38,7 +38,7 @@ def handle(event, context):
             taxonomy_term = taxonomy['_source']['label']
             safe_taxonomy_term = taxonomy_term.replace('(', '\(').replace(')', '\)').replace('|', '\|')
             taxonomy_replacement = '<a href=”#”>' + taxonomy_term + '<span class=”tooltip”' + taxonomy_type + ' -> ' + taxonomy_term + '</span></a>'
-            post_match_content = re.sub(r'((^|\W)' + safe_taxonomy_term + '(\W|.))(?!(.(?!<a))*</a>)', taxonomy_replacement, content, flags=re.IGNORECASE)
+            post_match_content = re.sub(r'((^|\W)' + safe_taxonomy_term + '(\W|.|,|$))(?!(.(?!<a))*</a>)', taxonomy_replacement, content, flags=re.IGNORECASE)
             if post_match_content != content:
                 content_tags.append({
                     "tagId": taxonomy['_id'],
