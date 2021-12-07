@@ -119,8 +119,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
-  apiGatewayCaching:
-    enabled: true
+  # apiGatewayCaching:
+    # enabled: true
 
 plugins:
   - serverless-webpack
@@ -128,7 +128,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
-  - serverless-api-gateway-caching
+  # - serverless-api-gateway-caching
 
 functions:
   changePassword:
@@ -138,8 +138,8 @@ functions:
       - http:
           method: post
           path: changePassword
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   resetPassword:
     description: Triggered when http request comes
     handler: src/handlers/http/resetPassword/index.handle
@@ -147,8 +147,8 @@ functions:
       - http:
           method: post
           path: resetPassword
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   signIn:
     description: Triggered when http request comes
     handler: src/handlers/http/signIn/index.handle
@@ -156,8 +156,8 @@ functions:
       - http:
           method: post
           path: signIn
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   signOut:
     description: Triggered when http request comes
     handler: src/handlers/http/signOut/index.handle
@@ -165,8 +165,8 @@ functions:
       - http:
           method: post
           path: signOut
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   signUp:
     description: Triggered when http request comes
     handler: src/handlers/http/signUp/index.handle
@@ -174,8 +174,8 @@ functions:
       - http:
           method: post
           path: signUp
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   resendConfirmationCode:
     description: Triggered when http request comes
     handler: src/handlers/http/resendConfirmationCode/index.handle
@@ -183,8 +183,8 @@ functions:
       - http:
           method: post
           path: resendConfirmationCode
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   confirmRegistration:
     description: Triggered when http request comes
     handler: src/handlers/http/confirmRegistration/index.handle
@@ -192,8 +192,8 @@ functions:
       - http:
           method: post
           path: confirmRegistration
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   forgotPassword:
     description: Triggered when http request comes
     handler: src/handlers/http/forgotPassword/index.handle
@@ -201,8 +201,8 @@ functions:
       - http:
           method: post
           path: forgotPassword
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   updateUserAttributes:
     description: Triggered when http request comes
     handler: src/handlers/http/updateUserAttributes/index.handle
@@ -210,8 +210,8 @@ functions:
       - http:
           method: post
           path: updateUserAttributes
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   deleteUserAttributes:
     description: Triggered when http request comes
     handler: src/handlers/http/deleteUserAttributes/index.handle
@@ -219,8 +219,8 @@ functions:
       - http:
           method: post
           path: deleteUserAttributes
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   createUser:
     description: Triggered when http request comes
     handler: src/handlers/http/createUser/index.handle
@@ -228,8 +228,8 @@ functions:
       - http:
           method: post
           path: createUser
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   deleteUser:
     description: Triggered when http request comes
     handler: src/handlers/http/deleteUser/index.handle
@@ -237,8 +237,8 @@ functions:
       - http:
           method: post
           path: deleteUser
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   destroyUser:
     description: Triggered when http request comes
     handler: src/handlers/http/destroyUser/index.handle
@@ -246,8 +246,8 @@ functions:
       - http:
           method: post
           path: destroyUser
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   getUserData:
     description: Triggered when http request comes
     handler: src/handlers/http/getUserData/index.handle
@@ -255,8 +255,8 @@ functions:
       - http:
           method: get
           path: getUserData
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   disableUser:
     description: Triggered when http request comes
     handler: src/handlers/http/disableUser/index.handle
@@ -264,8 +264,8 @@ functions:
       - http:
           method: post
           path: disableUser
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
   enableUser:
     description: Triggered when http request comes
     handler: src/handlers/http/enableUser/index.handle
@@ -273,8 +273,8 @@ functions:
       - http:
           method: post
           path: enableUser
-          caching:
-            enabled: false
+          # caching:
+            # enabled: false
 
   customMessage:
     description: Triggered before AWS Cognito send notification

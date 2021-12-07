@@ -87,8 +87,8 @@ custom:
         docker:
             # Enable this flag to run "docker ..." commands as sudo
             sudo: False
-    apiGatewayCaching:
-        enabled: true
+    # apiGatewayCaching:
+        # enabled: true
 
 plugins:
     - serverless-webpack
@@ -96,7 +96,7 @@ plugins:
     - serverless-localstack
     - serverless-dependson-plugin
     - serverless-offline
-    - serverless-api-gateway-caching
+    # - serverless-api-gateway-caching
 
 functions:
     createEditorialRecord:
@@ -106,8 +106,8 @@ functions:
             - http:
                   method: post
                   path: editorial-record
-                  caching:
-                      enabled: false
+                #   caching:
+                    #   enabled: false
     
     updateEditorialRecord:
         handler: src/handlers/updateEditorialRecord/index.handle
@@ -116,8 +116,8 @@ functions:
             - http:
                   method: put
                   path: editorial-record/{recordId}
-                  caching:
-                      enabled: false
+                #   caching:
+                    #   enabled: false
     
     getEditorialRecord:
         handler: src/handlers/getEditorialRecord/index.handle
@@ -126,8 +126,8 @@ functions:
             - http:
                   method: get
                   path: editorial-record/{recordId}
-                  caching:
-                      enabled: false
+                #   caching:
+                    #   enabled: false
     
     lockEditorialRecord:
         handler: src/handlers/lockEditorialRecord/index.handle
@@ -136,8 +136,8 @@ functions:
             - http:
                   method: put
                   path: editorial-record/{recordId}/lock
-                  caching:
-                      enabled: false
+                #   caching:
+                    #   enabled: false
     
     getContentSourcesList:
         handler: src/handlers/getContentSourcesList/index.handle
@@ -146,8 +146,8 @@ functions:
             - http:
                   method: get
                   path: content-sources
-                  caching:
-                      enabled: false
+                #   caching:
+                    #   enabled: false
 
     getInformationTypesList:
         handler: src/handlers/getInformationTypesList/index.handle
@@ -156,8 +156,8 @@ functions:
             - http:
                   method: get
                   path: information-types
-                  caching:
-                      enabled: false
+                #   caching:
+                    #   enabled: false
 
     getEditorialRecordStatusList:
         handler: src/handlers/getEditorialRecordStatusList/index.handle
@@ -166,8 +166,8 @@ functions:
             - http:
                   method: get
                   path: editorial-record-status
-                  caching:
-                      enabled: false
+                #   caching:
+                    #   enabled: false
 
     searchEditorialRecords:
         handler: src/handlers/searchEditorialRecords/index.handle
@@ -176,5 +176,5 @@ functions:
             - http:
                   method: get        
                   path: editorial-record
-                  caching:
-                      enabled: false
+                #   caching:
+                    #   enabled: false
