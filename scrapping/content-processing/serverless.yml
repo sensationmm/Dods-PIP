@@ -1,0 +1,41 @@
+service: content-processing
+
+frameworkVersion: '2'
+projectDir: ../
+variablesResolutionMode: 20210326
+configValidationMode: error
+
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  deploymentBucket:
+    name: pip-${self:provider.stage}-scrapping-lambdas
+
+  environment:
+    DEBATES_HOC_UK_Q: ${ssm:/infra/${self:provider.stage}/content-processing/debates-hoc-uk}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*        
+      Resource: "arn:aws:s3:::*"
+
+    - Effect: "Allow"
+      Action:
+        - "sqs:*"
+      Resource: "arn:aws:sqs:*"
+
+functions:
+  content-ingested:
+    name: content-ingested-${self:provider.stage}
+    handler: content.handler
+    events:
+     - s3: 
+         bucket: pip-${self:provider.stage}-content-extraction
+         event: s3:ObjectCreated:*
+         existing: true
+

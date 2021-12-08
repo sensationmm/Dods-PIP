@@ -47,6 +47,7 @@
     "open": "^8.2.1",
     "pre-commit": "^1.2.2",
     "serverless": "^2.57.0",
+    "serverless-api-gateway-caching": "^1.7.4",
     "serverless-dependson-plugin": "^1.1.2",
     "serverless-localstack": "^0.4.34",
     "serverless-offline": "^8.1.0",
@@ -70,6 +71,7 @@
     "joi": "^17.4.2",
     "lodash": "^4.17.21",
     "nut-pipe": "^1.1.6",
+    "webpack": "^5.64.4",
     "yamljs": "^0.3.0"
   }
 }

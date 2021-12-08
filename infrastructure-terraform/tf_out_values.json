@@ -1,0 +1,82 @@
+{
+  "dev_backend_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev"
+  },
+  "dev_db_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "pip-dev-clients-rds.cjsy5u6jeoud.eu-west-1.rds.amazonaws.com"
+  },
+  "dev_db_bastion": {
+    "sensitive": false,
+    "type": "string",
+    "value": "ssh -i ~/.ssh/dods-bastion-key.pem admin@3.249.96.90"
+  },
+  "dev_frontend_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "http://pip-dev-fargate-lb-1826645209.eu-west-1.elb.amazonaws.com"
+  },
+  "prod_backend_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://ptj39c1w19.execute-api.eu-west-1.amazonaws.com/production"
+  },
+  "prod_db_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "pip-production-clients-rds.cftk9xwprk29.eu-west-1.rds.amazonaws.com"
+  },
+  "prod_db_bastion": {
+    "sensitive": false,
+    "type": "string",
+    "value": "ssh -i ~/.ssh/dods-bastion-key.pem admin@54.216.44.114"
+  },
+  "prod_frontend_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "http://pip-production-fargate-lb-1219860305.eu-west-1.elb.amazonaws.com"
+  },
+  "qa_backend_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://fz02gxbz09.execute-api.eu-west-1.amazonaws.com/qa"
+  },
+  "qa_db_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "pip-qa-clients-rds.cedmoibgghrd.eu-west-1.rds.amazonaws.com"
+  },
+  "qa_db_bastion": {
+    "sensitive": false,
+    "type": "string",
+    "value": "ssh -i ~/.ssh/dods-bastion-key.pem admin@52.19.139.227"
+  },
+  "qa_frontend_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "http://pip-qa-fargate-lb-2136712671.eu-west-1.elb.amazonaws.com"
+  },
+  "test_backend_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://nbv1vb4ao9.execute-api.eu-west-1.amazonaws.com/test"
+  },
+  "test_db_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "pip-test-clients-rds.c3ydj4ksayxh.eu-west-1.rds.amazonaws.com"
+  },
+  "test_db_bastion": {
+    "sensitive": false,
+    "type": "string",
+    "value": "ssh -i ~/.ssh/dods-bastion-key.pem admin@52.50.114.158"
+  },
+  "test_frontend_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "http://pip-test-fargate-lb-1817426860.eu-west-1.elb.amazonaws.com"
+  }
+}

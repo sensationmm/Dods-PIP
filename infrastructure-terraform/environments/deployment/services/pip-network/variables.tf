@@ -32,7 +32,15 @@ variable "app_image" {
   default     = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/dods-pip/frontend-dods-pip:639732e4f367758bb6eddb333fc5f620b4d80029"
 }
 
+variable "api_gateway" {
+  description = "API Gateway serving backend services"
+  default     = ""
+}
 
+variable "fe_api_key" {
+  description = "API Key authorized to reach backend services"
+  default     = ""
+}
 
 variable "vpc_id" {
   description = "vpc variable"

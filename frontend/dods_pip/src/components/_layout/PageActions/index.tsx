@@ -10,6 +10,7 @@ export interface PageActionsProps {
   backLabel?: string;
   backHandler?: () => void;
   isLeftAligned?: boolean;
+  isRightAligned?: boolean;
 }
 
 const PageActions: React.FC<PageActionsProps> = ({
@@ -18,10 +19,15 @@ const PageActions: React.FC<PageActionsProps> = ({
   backLabel = 'Back',
   backHandler,
   isLeftAligned = false,
+  isRightAligned = false,
 }) => {
   const router = useRouter();
   return (
-    <Styled.wrapper data-test="component-page-actions" leftAlign={isLeftAligned}>
+    <Styled.wrapper
+      data-test="component-page-actions"
+      leftAlign={isLeftAligned}
+      rightAlign={isRightAligned}
+    >
       {hasBack && (
         <Button
           data-test="actions-back-button"

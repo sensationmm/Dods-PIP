@@ -24,17 +24,18 @@ const base = styled.button<ButtonProps>`
   border-width: 1px;
   border-style: solid;
   width: ${({ width, isIconButton }) =>
-    !isIconButton ? (width === 'auto' ? '100%' : '140px') : '40px'};
+    !isIconButton ? (width === 'auto' ? '100%' : width === 'full' ? '100%' : '140px') : '40px'};
   padding: ${({ isIconButton }) => (!isIconButton ? `0 ${spacing(4)}` : '0')};
   height: 40px;
   border-radius: 8px;
   cursor: ${({ disabled }) => !disabled && 'pointer'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
   position: relative;
-  box-shadow: ${({ disabled }) => (!disabled ? elevation.selectShadow : 'none')};
+  box-shadow: ${({ disabled }) => (!disabled ? elevation.dropShadow1 : 'none')};
   display: ${({ width }) => (width === 'auto' ? 'block' : 'flex')};
   justify-content: center;
   align-items: center;
+  text-decoration: none;
 
   &.inline {
     width: auto;
@@ -94,9 +95,9 @@ const base = styled.button<ButtonProps>`
 `;
 
 export const primary = styled(base)<ButtonProps>`
-  color: ${({ disabled }) => (!disabled ? color.base.white : color.base.greyDark)}; 
-  border-color: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)}; 
-  background ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)};
+  color: ${({ disabled }) => (!disabled ? color.base.white : color.base.greyDark)};
+  border-color: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)};
+  background: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyMid)};
 
   &:active,
   &:hover,
@@ -108,7 +109,7 @@ export const primary = styled(base)<ButtonProps>`
 
 export const secondary = styled(base)`
   color: ${({ disabled }) => (!disabled ? color.theme.blueMid : color.base.greyDark)};
-  background ${({ disabled }) => (!disabled ? color.base.white : color.base.greyLight)};
+  background: ${({ disabled }) => (!disabled ? color.base.white : color.base.greyLight)};
   border-color: ${({ disabled }) => (!disabled ? color.base.greyLight : color.base.greyLight)};
 
   &:active,

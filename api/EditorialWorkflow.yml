@@ -23,41 +23,55 @@ paths:
             parameters:
                 - in: query
                   name: searchTerm
-                  description: Search Criteria
+                  description: Search records with coincidences on name
                   schema:
                       type: string
                   required: false
                 - in: query
                   name: contentSource
-                  description: Search Criteria
+                  description: Filter records using content source
                   schema:
                       type: string
                   required: false
                 - in: query
                   name: informationType
-                  description: Search Criteria
+                  description: Filter records using information type
                   schema:
                       type: string
                   required: false
                 - in: query
                   name: status
-                  description: Search Criteria
+                  description: Filter records using status
                   schema:
                       type: string
                       format: uuid
                       example: d290f1ss-6c54-4b01-98e6-d701748f7151
                   required: false
                 - in: query
-                  name: page
-                  description: Current page selected in pagination
+                  name: offset
+                  description: Pagination parameter
                   schema:
                       type: integer
                   required: false
                 - in: query
-                  name: pageSize
-                  description: Quantity of items per page in pagination
+                  name: limit
+                  description: Pagination parameter
                   schema:
                       type: integer
+                  required: false
+                - in: query
+                  name: startDate
+                  description: Filter records starting from a specific date
+                  schema:
+                      type: string
+                      format: date
+                  required: false
+                - in: query
+                  name: endDate
+                  description: Filter records until a specific date
+                  schema:
+                      type: string
+                      format: date
                   required: false
             responses:
                 '200':
@@ -68,9 +82,145 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+    /editorial-record/{recordId}:
+        put:
+            summary: Update Editorial Record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            requestBody:
+                $ref: '#/components/requestBodies/UpdateEditorialRecord'
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
+        get:
+            summary: Get Editorial Record by UUID
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
+    /editorial-record/{recordId}/lock:
+        put:
+            summary: Update Editorial Record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            requestBody:
+                $ref: '#/components/requestBodies/LockEditorialRecord'
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
+    /content-sources:
+        get:
+            summary: List content sources based upon data in Editorial Records table
+            responses:
+                '200':
+                    $ref: '#/components/responses/ContentSourcesListResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
+    /information-types:
+        get:
+            summary: List information types based upon data in Editorial Records table
+            responses:
+                '200':
+                    $ref: '#/components/responses/InformationTypesListResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
+    /editorial-record-status:
+        get:
+            summary: List of status based upon data in Editorial Records Statuses table
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordStatusListResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
 
 components:
     responses:
+        ContentSourcesListResponse:
+            description: Content sources in editorial records
+            content: 
+                application/json:
+                    schema:
+                        type: 'object'
+                        required:
+                            - success
+                            - contentSources
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            contentSources:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/ContentSourcesListResponse'
+        InformationTypesListResponse:
+            description: Information types in editorial records
+            content: 
+                application/json:
+                    schema:
+                        type: 'object'
+                        required:
+                            - success
+                            - informationTypes
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            informationTypes:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/InformationTypesListResponse'
         EditorialRecordResponse:
             description: Response with single Editorial Record
             content:
@@ -99,6 +249,23 @@ components:
                                 type: array
                                 items:
                                     $ref: '#/components/schemas/EditorialRecordResponse'
+        EditorialRecordStatusListResponse:
+            description: Editorial Records status in editorial records table
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+                        required:
+                            - success
+                            - statuses
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            status:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/EditorialRecordStatusResponse'
 
         BadRequest:
             description: Bad request
@@ -132,7 +299,28 @@ components:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/EditorialRecordRequest'
+                        $ref: '#/components/schemas/CreateEditorialRecordRequest'
+        UpdateEditorialRecord:
+            description: A JSON object containing Editorial Record information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/UpdateEditorialRecordRequest'
+        LockEditorialRecord:
+            description: A JSON object containing Editorial Record information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        required:
+                          - assignedEditorId
+                        properties:
+                            assignedEditorId:
+                                type: string
+                                format: uuid
+                                example: d290f1ss-6c54-4b01-98e6-d701748f7151
 
     schemas:
         Error:
@@ -164,11 +352,37 @@ components:
                     type: string
                     format: date
                     example: '2020-09-01 09:30:26'     
-            required:
-                - documentName
-                - s3Location
         
-        EditorialRecordRequest:
+        EditorialRecordStatusBase:
+            type: object
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                    example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                name:
+                    type: string
+                    example: In Progress
+        
+        ContentSourceBase:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                    example: House of Commons
+
+        InformationTypeBase:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                    example: Press Release
+
+        UpdateEditorialRecordRequest:
             allOf:
               - $ref: '#/components/schemas/EditorialRecordBase'
             type: object
@@ -181,6 +395,23 @@ components:
                     type: string
                     format: uuid
                     example: d290f1ss-6c54-4b01-98e6-d701748f7151
+
+        CreateEditorialRecordRequest:
+            allOf:
+              - $ref: '#/components/schemas/EditorialRecordBase'
+            type: object
+            properties:
+                assignedEditorId:
+                    type: string
+                    format: uuid
+                    example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                statusId:
+                    type: string
+                    format: uuid
+                    example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            required:
+                - documentName
+                - s3Location
 
         EditorialRecordResponse:
             allOf:
@@ -200,7 +431,7 @@ components:
                             type: string
                             format: uuid
                             example: d290f1ss-6c54-4b01-98e6-d701748f7151
-                        name:
+                        fullName:
                             type: string
                             example: John Doe
                 status:
@@ -220,4 +451,47 @@ components:
                 updatedAt:
                     type: string
                     format: date
-                    example: '2020-09-01 09:30:26'           
+                    example: '2020-09-01 09:30:26'
+        EditorialRecordStatusResponse:
+            allOf:
+              - $ref: '#/components/schemas/EditorialRecordStatusBase'
+            type: object
+            required:
+              - uuid
+              - name
+            properties:
+                uuid: 
+                    type: string
+                    format: uuid
+                    example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                name:
+                    type: string
+                    example: In Progress
+
+        ContentSourcesListResponse:
+            allOf:
+              - $ref: '#/components/schemas/ContentSourceBase'
+            type: object
+            required:
+              - id
+              - name
+            properties:
+                id: 
+                    type: string
+                name:
+                    type: string
+                    example: House of Commons
+        
+        InformationTypesListResponse:
+            allOf:
+              - $ref: '#/components/schemas/InformationTypeBase'
+            type: object
+            required:
+              - id
+              - name
+            properties:
+                id: 
+                    type: string
+                name:
+                    type: string
+                    example: Press Release

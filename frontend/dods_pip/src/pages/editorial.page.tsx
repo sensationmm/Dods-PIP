@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import DatePicker from '../components/_form/DatePicker';
 import InputSearch from '../components/_form/InputSearch';
@@ -16,7 +16,9 @@ import RepositoryTable, { RepositoryTableProps } from '../components/RepositoryT
 import Text from '../components/Text';
 import color from '../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
+import fetchJson from '../lib/fetchJson';
 import MockEditorialData from '../mocks/data/repository.json';
+import { Api, BASE_URI } from '../utils/api';
 import * as Styled from './editorial.page.styles';
 
 interface EditorialProps extends LoadingHOCProps {}
@@ -29,27 +31,20 @@ interface Filters {
   itemsPerPage?: number;
 }
 
-export enum EditorialStatus {
-  Ingested = 'ingested',
-  Draft = 'draft',
-  Scheduled = 'scheduled',
-  InProgress = 'in progress',
-  Published = 'published',
-}
+type filterValue = Record<selectFilter, { label: string; value: string }[]>;
+type selectFilter = 'contentSources' | 'informationTypes' | 'status';
 
-export const Editorial: React.FC<EditorialProps> = () => {
+export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
   const [isActiveFilter, setIsActiveFilter] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({});
+
+  const [selectFilterValues, setSelectFilterValues] = useState<filterValue>({
+    contentSources: [],
+    informationTypes: [],
+    status: [],
+  });
+
   const editorialData = MockEditorialData.data as unknown as RepositoryTableProps['data'];
-  const statusValues = Object.values(EditorialStatus).map((value) => ({ label: value, value }));
-  const contentSourceValues = [1, 2, 3, 4, 5, 6].map((index) => ({
-    label: `source ${index}`,
-    value: `source${index}`,
-  }));
-  const infoTypeValues = [1, 2, 3, 4, 5, 6].map((index) => ({
-    label: `type ${index}`,
-    value: `type${index}`,
-  }));
 
   const addFilters = (newFilters: Filters) => setFilters({ ...filters, ...newFilters });
   const removeFilter = (filterKey: keyof Filters) => {
@@ -61,13 +56,58 @@ export const Editorial: React.FC<EditorialProps> = () => {
     value ? addFilters({ [filter]: value }) : removeFilter(filter);
   };
 
+  const getFilterValues = async (): Promise<filterValue[]> => {
+    setLoading(true);
+    try {
+      const dataSources = await Promise.all([
+        fetchJson(`${BASE_URI}${Api.EditorialContentSources}`, { method: 'GET' }),
+        fetchJson(`${BASE_URI}${Api.EditorialInfoTypes}`, { method: 'GET' }),
+        fetchJson(`${BASE_URI}${Api.EditorialStatus}`, { method: 'GET' }),
+      ]);
+      setLoading(false);
+
+      return (['contentSources', 'informationTypes', 'status'] as selectFilter[]).map((type) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const valuesFromDataSource: Record<string, any> | undefined = dataSources.find((value) =>
+          // eslint-disable-next-line no-prototype-builtins
+          value.hasOwnProperty(type),
+        );
+
+        if (!valuesFromDataSource) return;
+
+        return {
+          [type]: valuesFromDataSource[type].map((data: Record<string, string>) => {
+            return { label: data.name, value: data.uuid || data.id };
+          }),
+        };
+      }) as filterValue[];
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      const filterValues = await getFilterValues();
+      let _values = {};
+      filterValues.forEach((values) => {
+        _values = { ..._values, ...values };
+      });
+
+      setSelectFilterValues(_values as filterValue);
+    })();
+  }, []);
+
   return (
-    <div data-test="page-home">
+    <div data-testid="page-editorial">
       <Head>
         <title>Dods PIP | Editorial Repository</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Panel bgColor={color.base.greyLighter}>
+      <Panel bgColor={color.base.ivory}>
         <Breadcrumbs
           history={[
             { href: '/', label: 'Dods' },
@@ -79,6 +119,7 @@ export const Editorial: React.FC<EditorialProps> = () => {
           <Text type="h1" headingStyle="hero">
             Editorial Repository
           </Text>
+          <Spacer size={9} />
           <Button
             icon={Icons.Add}
             iconAlignment="left"
@@ -91,75 +132,68 @@ export const Editorial: React.FC<EditorialProps> = () => {
         </Styled.row>
         <Spacer size={12} />
 
-        <div id={'TO-BE-REMOVED'}>
-          TEMPORARY DEBUGGING WHILE API SERVICES ARE NOT AVAILABLE
-          <br />
-          <br />
-          {JSON.stringify(filters)}
-          <br />
-          <br />
-        </div>
+        <Styled.row>
+          <Styled.filterToggle
+            data-test="filter-toggle"
+            onClick={() => setIsActiveFilter(!isActiveFilter)}
+          >
+            <Text type="bodySmall" bold uppercase color={color.base.black}>
+              Filter
+            </Text>
+            <Icon
+              src={isActiveFilter ? Icons.ChevronUpBold : Icons.ChevronDownBold}
+              color={color.theme.blueMid}
+            />
+          </Styled.filterToggle>
 
-        <div>
-          <Styled.row>
-            <Styled.filterToggle
-              data-test="filter-toggle"
-              onClick={() => setIsActiveFilter(!isActiveFilter)}
-            >
-              <Text type="bodySmall" bold uppercase color={color.base.black}>
-                Filter
-              </Text>
-              <Icon
-                src={isActiveFilter ? Icons.ChevronUpBold : Icons.ChevronDownBold}
-                color={color.theme.blueMid}
+          <DataCount total={editorialData.length} />
+        </Styled.row>
+
+        <Spacer size={6} />
+
+        {isActiveFilter && (
+          <Styled.row data-test="filter-content">
+            <Styled.column>
+              <SearchDropdown
+                testId="editorial-content-source-filter"
+                size={'medium'}
+                id={'content-source-filter'}
+                placeholder="Content source"
+                selectedValues={[filters.contentSource || '']}
+                values={selectFilterValues.contentSources}
+                onChange={(value) => onFilterChange('contentSource', value)}
               />
-            </Styled.filterToggle>
+              <SearchDropdown
+                testId="editorial-info-type-filter"
+                size={'medium'}
+                id={'info-type'}
+                selectedValues={[filters.informationType || '']}
+                placeholder="Information type"
+                values={selectFilterValues.informationTypes}
+                onChange={(value) => onFilterChange('informationType', value)}
+              />
+              <SearchDropdown
+                testId="editorial-status-filter"
+                size={'medium'}
+                id={'status'}
+                selectedValues={[filters.status || '']}
+                placeholder="Status"
+                values={selectFilterValues.status}
+                onChange={(value) => onFilterChange('status', value)}
+              />
+            </Styled.column>
 
-            <DataCount total={editorialData.length} />
+            <Styled.searchWrapper>
+              <InputSearch
+                id="search-filter"
+                onChange={(value) => onFilterChange('searchQuery', value)}
+                value={filters.searchQuery || ''}
+                size="medium"
+              />
+            </Styled.searchWrapper>
           </Styled.row>
+        )}
 
-          <Spacer size={6} />
-
-          {isActiveFilter && (
-            <Styled.row data-test="filter-content">
-              <Styled.column>
-                <SearchDropdown
-                  size={'medium'}
-                  id={'content-source-filter'}
-                  placeholder="Content source"
-                  selectedValues={[filters.contentSource || '']}
-                  values={contentSourceValues}
-                  onChange={(value) => onFilterChange('contentSource', value)}
-                />
-                <SearchDropdown
-                  size={'medium'}
-                  id={'info-type'}
-                  selectedValues={[filters.informationType || '']}
-                  placeholder="Browse information type"
-                  values={infoTypeValues}
-                  onChange={(value) => onFilterChange('informationType', value)}
-                />
-                <SearchDropdown
-                  size={'medium'}
-                  id={'status'}
-                  selectedValues={[filters.status || '']}
-                  placeholder="Status"
-                  values={statusValues}
-                  onChange={(value) => onFilterChange('status', value)}
-                />
-              </Styled.column>
-
-              <div>
-                <InputSearch
-                  id="search-filter"
-                  onChange={(value) => onFilterChange('searchQuery', value)}
-                  value={filters.searchQuery || ''}
-                  size="medium"
-                />
-              </div>
-            </Styled.row>
-          )}
-        </div>
         <Spacer size={3} />
         <hr />
         <Spacer size={3} />
@@ -178,7 +212,7 @@ export const Editorial: React.FC<EditorialProps> = () => {
                   id={'dateFilter'}
                   value={filters.date || ''}
                   onChange={(value) => onFilterChange('date', value)}
-                  label={'filter by date'}
+                  placeholder={'filter by date'}
                   size={'medium'}
                 />
               </Styled.dateFilter>

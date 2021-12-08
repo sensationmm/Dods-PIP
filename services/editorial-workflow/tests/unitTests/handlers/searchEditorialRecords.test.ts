@@ -42,6 +42,62 @@ describe(`${FUNCTION_NAME} handler`, () => {
             startDate: '2021-11-08T23:20:38.000Z',
             offset: '2',
             limit: '13',
+            sortBy: 'creationDate',
+            sortDirection: 'asc',
+        };
+        const response = await searchEditorialRecords(requestParams, defaultContext);
+
+        const searchUsersResult = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'Editorial Records Found',
+            data: defaultFoundRecords,
+        });
+
+        expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith(
+            requestParams
+        );
+        expect(response).toEqual(searchUsersResult);
+    });
+
+    test('Document Name valid input', async () => {
+        const requestParams = {
+            searchTerm: 'Test',
+            contentSource: 'Random',
+            informationType: 'Random Doc',
+            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+            endDate: '2021-11-08T23:21:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+            offset: '2',
+            limit: '13',
+            sortBy: 'documentName',
+            sortDirection: 'asc',
+        };
+        const response = await searchEditorialRecords(requestParams, defaultContext);
+
+        const searchUsersResult = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'Editorial Records Found',
+            data: defaultFoundRecords,
+        });
+
+        expect(EditorialRecordRepository.defaultInstance.listEditorialRecords).toBeCalledWith(
+            requestParams
+        );
+        expect(response).toEqual(searchUsersResult);
+    });
+
+    test('Status valid input', async () => {
+        const requestParams = {
+            searchTerm: 'Test',
+            contentSource: 'Random',
+            informationType: 'Random Doc',
+            status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
+            endDate: '2021-11-08T23:21:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+            offset: '2',
+            limit: '13',
+            sortBy: 'status',
+            sortDirection: 'asc',
         };
         const response = await searchEditorialRecords(requestParams, defaultContext);
 
@@ -65,8 +121,6 @@ describe(`${FUNCTION_NAME} handler`, () => {
             status: '89cf96f7-d380-4c30-abcf-74c57843f50c',
             endDate: '2021-11-08T23:21:58.000Z',
             startDate: '2021-11-08T23:20:38.000Z',
-            offset: '',
-            limit: '',
         };
         await searchEditorialRecords(requestParams, defaultContext);
 
@@ -75,5 +129,19 @@ describe(`${FUNCTION_NAME} handler`, () => {
             offset: '0',
             limit: '20',
         });
+    });
+
+    test('endDate before startDate - should return "Bad Request"', async () => {
+        const requestParams = {
+            endDate: '2021-11-08T23:19:58.000Z',
+            startDate: '2021-11-08T23:20:38.000Z',
+        };
+        const response = await searchEditorialRecords(requestParams, defaultContext);
+        const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+            success: false,
+            message: `End date must be greater than start date`,
+        });
+
+        expect(response).toEqual(expectedResponse);
     });
 });

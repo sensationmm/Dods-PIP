@@ -1,0 +1,158 @@
+openapi: 3.0.0
+info:
+  description: Dods Search Service API
+  version: "1.0.0"
+  title: Search Service API
+servers:
+  - url: /api
+paths:
+  /search/contents/{contentId}:
+    get:
+      summary: Get content detail by content id
+      operationId: getContent
+      parameters:
+        - $ref: '#/components/parameters/documentId'
+      responses:
+        "200":
+          $ref: "#/components/responses/GetDocument"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    Errors:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+    GetContentSuccess:
+      type: object
+      properties:
+          success:
+              type: boolean
+          document:
+              $ref: '#/components/schemas/ContentEntity'
+    ContentEntity:
+      type: object
+      properties:
+        documentId:
+          type: string
+          example: 2fcc763e-4df0-11ec-81d3-0242ac130003
+        jurisdiction:
+          type: string
+          example: UK
+        documentTitle:
+          type: string
+          example: New Which? research reveals the most sustainable savings providers
+        organisationName:
+          type: string
+        sourceReferenceFormat:
+          type: string
+          example: text/plain
+        sourceReferenceUri:
+          type: string
+          example: https://press.which.co.uk/whichpressreleases/new-which-research-reveals-the-most-sustainable-savings-providers/
+        createdBy:
+          type: string
+          example: taerekim@gmail.com
+        internallyCreated:
+          type: boolean
+        schemaType:
+          type: string
+          example: External
+        contentSource:
+          type: string
+          example: UK Stakeholder
+        informationType:
+          type: string
+          example: Press Releases
+        contentDateTime:
+          type: string
+          format: date-time
+          example: "2021-08-18T10:29:20.778+01:00"
+        createdDateTime:
+          type: string
+          format: date-time
+          example: "2021-08-18T10:29:51.960+01:00"
+        ingestedDateTime:
+          type: string
+          format: date-time
+          example: "2021-08-18T10:29:51.960+01:00"
+        version:
+          type: string
+          example: "1.0"
+        countryOfOrigin:
+          type: string
+          example: GBR
+        feedFormat:
+          type: string
+          example: text/plain
+        language:
+          type: string
+          example: en
+        taxonomyTerms:
+          type: object
+        originalContent:
+          type: string
+        documentContent:
+          type: string
+      required:
+        - documentTitle
+        - contentSource
+        - informationType
+        - createdDateTime
+
+  parameters:
+    documentId:
+      in: path
+      name: documentId
+      schema:
+        type: string
+      required: true
+      description: Document ID of interest
+    document:
+      in: header
+      name: document
+      schema:
+        type: string
+      required: true
+      description: Received Document
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    BadRequest:
+      description: Bad Request. Input must be valid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Message"
+              - $ref: "#/components/schemas/Errors"
+    NotAcceptable:
+      description: Not Acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    GetContent:
+      description: "Get a document using its UUID"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetContentSuccess'

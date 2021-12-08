@@ -5,7 +5,7 @@ locals {
 
 variable "environment" {
   description = "environment for stack"
-  default     = "develop"
+  default     = "dev"
 }
 
 variable "project" {
@@ -111,3 +111,12 @@ variable "az_count" {
 // - Custom Fargate policy Variables
 // --------------------------------------------------------------------------------------------------------------------
 
+variable "api_gateway" {
+  description = "API Gateway serving backend services"
+  default     = ""
+}
+
+variable "fe_api_key" {
+  description = "API Key authorized to reach backend services"
+  default     = ""
+}

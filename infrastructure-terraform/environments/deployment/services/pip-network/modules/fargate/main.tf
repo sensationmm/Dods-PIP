@@ -155,6 +155,20 @@ resource "aws_alb_listener" "front_end" {
   }
 }
 
+resource "aws_alb_listener" "front_end_https" {
+  count             = var.environment == "production" ? 1 : 0
+  load_balancer_arn = aws_alb.builder.id
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "arn:aws:acm:eu-west-1:186202231680:certificate/797ac35b-8a83-4a55-b889-844f8bb44704"
+
+  default_action {
+    target_group_arn = aws_alb_target_group.app_target_group.id
+    type             = "forward"
+  }
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 // - ECS Definition: Scaling
 // --------------------------------------------------------------------------------------------------------------------
@@ -231,15 +245,17 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 data "template_file" "app" {
   template = file("${path.module}/templates/app.json.tpl")
   vars = {
-    host_port      = var.app_port
-    name           = local.main_resource_name
     app_image      = var.app_image
     app_port       = var.app_port
-    fargate_cpu    = var.fargate_cpu
-    fargate_memory = var.fargate_memory
+    api_gateway    = var.api_gateway
     aws_region     = var.aws_region
     environment    = var.environment
+    fargate_cpu    = var.fargate_cpu
+    fargate_memory = var.fargate_memory
+    fe_api_key     = var.fe_api_key
+    host_port      = var.app_port
     log_group_name = var.log_group_name
+    name           = local.main_resource_name
   }
 }
 

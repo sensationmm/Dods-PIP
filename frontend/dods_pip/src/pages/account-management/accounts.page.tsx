@@ -24,19 +24,19 @@ import useDebounce from '../../lib/useDebounce';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
 import * as Styled from './accounts.styles';
+import { TeamMemberType } from './add-client/type';
 
 type Filters = {
   search?: string;
   aToZ?: string;
   account?: string;
   subscription?: string;
-  location?: string;
 };
 
 type ClientAccountTeamMember = {
   id: string;
   name: string;
-  type: 'consultant' | 'client';
+  teamMemberType: TeamMemberType;
 };
 
 type ClientAccount = {
@@ -56,7 +56,6 @@ type ClientAccount = {
 type ClientAccounts = ClientAccount[];
 
 type FilterParams = {
-  locations?: string;
   isCompleted?: boolean;
   subscriptionTypes?: string;
   limit?: number;
@@ -74,6 +73,52 @@ export enum LocationValue {
   EU = 'EU',
   UK = 'UK',
 }
+
+export const showTeamList = (team: ClientAccountTeamMember[]) => {
+  let finalTeam = [];
+  let teamList: ClientAccountTeamMember[] = team;
+  const filterByClient = (team: ClientAccountTeamMember) =>
+    team.teamMemberType === TeamMemberType.ClientUser;
+
+  const filterByConsultant = (team: ClientAccountTeamMember) =>
+    [TeamMemberType.AccountManager, TeamMemberType.TeamMember].includes(team.teamMemberType);
+
+  const teamClient = team.slice(3).filter(filterByClient).length;
+  const teamConsultant = team.slice(3).filter(filterByConsultant).length;
+
+  if (team.length > 5) {
+    if (teamClient > 0 && teamConsultant > 0) {
+      teamList = team.slice(0, 3);
+    } else if (teamClient > 0 || teamConsultant > 0) {
+      teamList = team.slice(0, 4);
+    }
+  }
+
+  const overflowTeamClient = team.slice(teamList.length).filter(filterByClient).length;
+  const overflowTeamConsultant = team.slice(teamList.length).filter(filterByConsultant).length;
+
+  finalTeam = teamList.map((member, count) => {
+    const type = member.teamMemberType === TeamMemberType.ClientUser ? 'client' : 'consultant';
+    return <Avatar key={`team-${count}`} type={type} size="small" alt={member.name} />;
+  });
+  if (overflowTeamClient > 0) {
+    finalTeam.push(
+      <Avatar key="overflow-client" type="client" number={overflowTeamClient} size="small" />,
+    );
+  }
+  if (overflowTeamConsultant > 0) {
+    finalTeam.push(
+      <Avatar
+        key="overflow-consultant"
+        type="consultant"
+        number={overflowTeamConsultant}
+        size="small"
+      />,
+    );
+  }
+
+  return finalTeam;
+};
 
 interface AccountsProps extends LoadingHOCProps {}
 
@@ -94,9 +139,6 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       offset: activePage * numPerPage,
       ...(filters.subscription && { subscriptionTypes: filters.subscription }),
       ...(filters.account && { isCompleted: filters.account === AccountValue.Completed }),
-      ...(filters.location && {
-        locations: filters.location === LocationValue.UK ? LocationValue.UK : LocationValue.EU,
-      }),
       ...(filters.aToZ && { startsWith: filters.aToZ }),
       ...(filters.search && { searchTerm: encodeURI(filters.search) }),
     };
@@ -126,15 +168,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
     (async () => {
       await loadFilteredAccounts();
     })();
-  }, [
-    debouncedValue,
-    filters.subscription,
-    filters.account,
-    filters.aToZ,
-    filters.location,
-    numPerPage,
-    activePage,
-  ]);
+  }, [debouncedValue, filters.subscription, filters.account, filters.aToZ, numPerPage, activePage]);
 
   const subscriptionPlaceholder = 'All Subscriptions';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
@@ -176,7 +210,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
       </Head>
 
       <main>
-        <Panel bgColor={color.base.greyLighter}>
+        <Panel bgColor={color.base.ivory}>
           <Breadcrumbs
             history={[
               { href: '/account-management', label: 'Account Management' },
@@ -192,9 +226,9 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
             </Text>
             <Button
               onClick={() => router.push('/account-management/add-client')}
-              isSmall
+              isSmall={false}
               icon={Icons.Add}
-              label="Add Client Account"
+              label="Add Account"
             />
           </Styled.header>
 
@@ -224,7 +258,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   <Select
                     testId="account-page-subscription-filter"
                     id="filter-subscription"
-                    size="small"
+                    size="medium"
                     options={subscriptionList}
                     onChange={(value) => setFilters({ ...filters, ...{ subscription: value } })}
                     value={filters.subscription || ''}
@@ -234,7 +268,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   <Select
                     testId="account-page-account-filter"
                     id="filter-account"
-                    size="small"
+                    size="medium"
                     options={[
                       { value: '', label: 'All Accounts' },
                       { value: AccountValue.Completed, label: 'Only Completed' },
@@ -245,31 +279,17 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                     placeholder="All Accounts"
                     isFilter
                   />
-                  <Select
-                    testId="account-page-location-filter"
-                    id="filter-location"
-                    size="small"
-                    options={[
-                      { value: '', label: 'All Locations' },
-                      { value: LocationValue.EU, label: 'Europe' },
-                      { value: LocationValue.UK, label: 'UK' },
-                    ]}
-                    onChange={(value) => setFilters({ ...filters, ...{ location: value } })}
-                    value={filters.location || ''}
-                    placeholder="All Locations"
-                    isFilter
-                  />
                 </Styled.filterContentCol>
 
-                <Styled.filterContentCol>
+                <Styled.searchWrapper>
                   <InputSearch
                     testId="account-page-search"
                     id="filter-search"
                     onChange={(value) => setFilters({ ...filters, ...{ search: value } })}
                     value={filters.search || ''}
-                    size="small"
+                    size="medium"
                   />
-                </Styled.filterContentCol>
+                </Styled.searchWrapper>
               </Styled.filterContent>
             )}
           </Styled.filterContainer>
@@ -298,31 +318,6 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
               }
               const { uuid } = account;
 
-              const teamClient = account.team
-                .slice(3)
-                .filter((team) => team.type === 'client').length;
-              const teamConsultant = account.team
-                .slice(3)
-                .filter((team) => team.type === 'consultant').length;
-
-              let team = account.team;
-
-              /* istanbul ignore else */
-              if (account.team.length > 5) {
-                if (teamClient > 0 && teamConsultant > 0) {
-                  team = account.team.slice(0, 3);
-                } else if (teamClient > 0 || teamConsultant > 0) {
-                  team = account.team.slice(0, 4);
-                }
-              }
-
-              const overflowTeamClient = account.team
-                .slice(team.length)
-                .filter((team) => team.type === 'client').length;
-              const overflowTeamConsultant = account.team
-                .slice(team.length)
-                .filter((team) => team.type === 'consultant').length;
-
               return [
                 account.name.substring(0, 1),
                 <Text key={`account-${uuid}-name`} bold>
@@ -331,22 +326,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                 <Text key={`account-${uuid}-subscription`}>{account.subscription}</Text>,
                 <Text key={`account-${uuid}-projects`}>{account.projects}</Text>,
                 <Styled.teamList key={`account-${uuid}-team`}>
-                  {team.map((member) => {
-                    return (
-                      <Avatar
-                        key={`team-${member.id}`}
-                        type={member.type}
-                        size="small"
-                        alt={member.name}
-                      />
-                    );
-                  })}
-                  {overflowTeamClient > 0 && (
-                    <Avatar type="client" number={overflowTeamClient} size="small" />
-                  )}
-                  {overflowTeamConsultant > 0 && (
-                    <Avatar type="consultant" number={overflowTeamConsultant} size="small" />
-                  )}
+                  {showTeamList(account.team)}
                 </Styled.teamList>,
                 <IconButton
                   data-testid="account-page-btn-to-account"
@@ -354,6 +334,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
                   onClick={() => goToAccount(uuid)}
                   icon={Icons.ChevronRightBold}
                   type="text"
+                  isSmall
                 />,
               ];
             })}

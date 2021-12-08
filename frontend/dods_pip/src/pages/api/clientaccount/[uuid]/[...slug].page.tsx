@@ -22,6 +22,7 @@ export default withSession(async (req, res) => {
         {
           method,
         },
+        req,
       );
 
       res.json(response);
@@ -29,7 +30,7 @@ export default withSession(async (req, res) => {
       const { response: fetchResponse } = error;
       res.status(fetchResponse?.status || 500).json(error.data);
     }
-  } else if (method === 'PUT') {
+  } else if (method === 'PUT' || method === 'DELETE') {
     try {
       const response = await fetchJson(
         `${process.env.APP_API_URL}${Api.ClientAccount}/${uuid}/${slug[0]}`,

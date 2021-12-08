@@ -1,7 +1,7 @@
 import React from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
-import { DropdownValue } from '../../../utils/type';
+import { DropdownValue } from '../../../pages/account-management/add-client/type';
 import Text from '../../Text';
 import InputSearch, { InputSearchProps } from '../InputSearch';
 import { SelectProps } from '../Select';
@@ -25,6 +25,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   isFilter = false,
   value,
   placeholder,
+  testId,
   ...rest
 }) => {
   const [search, setSearch] = React.useState<string>('');
@@ -61,6 +62,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
         <InputSearch
           data-test="search-field"
           {...rest}
+          testId={testId}
           value={search}
           onChange={searchHandler}
           placeholder={value ? '' : placeholder}
@@ -76,6 +78,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 
         <Dropdown
           data-test="results-dropdown"
+          testId={testId + '-dropdown'}
           isOpen={results?.length > 0}
           hasHelper={rest.helperText !== undefined && rest.helperText !== ''}
           hasError={rest.error !== undefined}

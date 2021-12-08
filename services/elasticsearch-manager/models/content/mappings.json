@@ -1,0 +1,170 @@
+{
+  "properties": {
+    "documentId": {
+      "type": "keyword"
+    },
+    "jurisdiction": {
+      "type": "keyword"
+    },
+    "documentTitle": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    },
+    "organisationName": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    },
+    "sourceReferenceFormat": {
+      "type": "keyword"
+    },
+    "sourceReferenceUri": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    },
+    "createdBy": {
+      "type": "text",
+      "analyzer": "email_analyzer"
+    },
+    "internallyCreated": {
+      "type": "boolean"
+    },
+    "schemaType": {
+      "type": "keyword"
+    },
+    "contentSource": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    },
+    "informationType": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    },
+    "contentDateTime": {
+      "type": "date"
+    },
+    "createdDateTime": {
+      "type": "date"
+    },
+    "ingestedDateTime": {
+      "type": "date"
+    },
+    "version": {
+      "type": "keyword"
+    },
+    "countryOfOrigin": {
+      "type": "keyword"
+    },
+    "feedFormat": {
+      "type": "keyword"
+    },
+    "language": {
+      "type": "keyword"
+    },
+    "taxonomyTerms": {
+      "type": "nested",
+      "properties": {
+        "tagId": {
+          "type": "keyword"
+        },
+        "termLabel": {
+          "type": "text",
+          "fielddata": true,
+          "analyzer": "analyzer_case_insensitive",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            },
+            "nocase": {
+              "type": "text",
+              "analyzer": "analyzer_case_insensitive"
+            }
+          }
+        },
+        "facetType": {
+          "type": "keyword"
+        },
+        "taxonomyType": {
+          "type": "keyword"
+        }
+      }
+    },
+    "originalContent": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    },
+    "documentContent": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    }
+  }
+}

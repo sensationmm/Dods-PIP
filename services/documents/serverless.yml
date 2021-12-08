@@ -1,29 +1,22 @@
-service: dods-nodejs-lambda-documents
-
+service: documents
 configValidationMode: warn
-
 frameworkVersion: ^2.64.0
-
 variablesResolutionMode: 20210326
-
 projectDir: ../
 
 provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
+  stage: ${opt:stage, 'dev'}
+  lambdaHashingVersion: 20201221
   deploymentBucket:
     name: pip-${self:provider.stage}-services-lambdas
-  stage: ${opt:stage, 'local'}
-  lambdaHashingVersion: 20201221
 
-  #------- This section is only required for Lambdas that need
-  #        to connect to the central Dods DB (RDS instance).
-  #------- Uncomment this section your functions need to connect to Dods DB
-  # vpc:
-  #   securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
-  #   subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
-   
+  #- Gio: Putting this service on private VPC so it gets secure access to other services
+  vpc:
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
   stackTags:
     service: ${self:service}
     env: ${self:provider.stage}
@@ -38,63 +31,30 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        # - "xray:PutTraceSegments"
-        # - "xray:PutTelemetryRecords"
         - s3:PutObject
         - s3:GetObject
+      Resource:
+        - "*"
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
       Resource:
         - "*"
   # This section ties the functions to a particular API Gateway instead of creating a new one
   # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
   # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-    restApiId: ${self:custom.envs.${self:provider.stage}.apiGatewayId, ""}
-    restApiRootResourceId: ${self:custom.envs.${self:provider.stage}.apiRootResourceId, ""}
-    description: Default Gateway for ${self:provider.stage} deployed with dods-iam
-
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, ""} 
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, ""} 
+    description: Default Gateway for ${self:provider.stage} deployed by Terraform
 
   environment:
-    NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    # SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint, self:custom.endpoints.dev.sayTurkishHelloEndpoint}
-    # SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint, self:custom.endpoints.dev.sayEnglishHelloEndpoint}
-    # GET_FULL_NAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getFullNameEndpoint, self:custom.endpoints.dev.getFullNameEndpoint}
     CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
 
 custom:
-  envs:
-    dev:
-      DB_HOST: ${ssm:/infra/dev/rds/endpoint}
-      DB_NAME: dods
-      DB_USER: ${ssm:/infra/dev/rds/username}
-      DB_PASSWORD: ${ssm:/infra/dev/rds/password}
-      apiGatewayId: emhumq7ktf
-      apiRootResourceId: lzvvrnid32
-
-    qa:
-      DB_HOST: ${ssm:/infra/qa/rds/endpoint}
-      DB_NAME: dods
-      DB_USER: ${ssm:/infra/qa/rds/username}
-      DB_PASSWORD: ${ssm:/infra/qa/rds/password}
-      apiGatewayId: e5txxyf6ik
-      apiRootResourceId: bxik56m9t1
-      
-    local:
-      DB_HOST: localhost
-      DB_NAME: dods
-      DB_USER: dods
-      DB_PASSWORD: dods
-
-  endpoints:
-    dev:
-      # sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
-      # sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
-      # getFullNameEndpoint: http://localhost:1083/getFullName
-    prod:
-      # sayTurkishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
-      # sayEnglishHelloEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
-      # getFullNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/getFullName
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -120,13 +80,15 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
-
+  # apiGatewayCaching:
+    # enabled: true
 plugins:
   - serverless-webpack
   - serverless-prune-plugin
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  # - serverless-api-gateway-caching
 
 functions:
   health:
@@ -135,8 +97,10 @@ functions:
       events:
         - http:
             method: get
-            path: health
+            path: documents/health
             cors: true
+            # caching:
+              # enabled: false
       tags:
         foo: bar
 
@@ -147,6 +111,8 @@ functions:
       - http:
           method: get
           path: documents/{documentId}
+          # caching:
+            # enabled: false
 
   updateDocument:
     handler: src/handlers/updateDocument/index.handle
@@ -155,6 +121,8 @@ functions:
       - http:
           method: put
           path: documents/{documentId}
+          # caching:
+            # enabled: false
 
   createDocument:
     handler: src/handlers/createDocument/index.handle
@@ -164,5 +132,7 @@ functions:
           method: post
           path: documents
           # cors: true
+          # caching:
+            # enabled: false
     # tags:
     #   foo: bar

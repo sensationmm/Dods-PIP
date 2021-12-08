@@ -31,6 +31,7 @@ const InputText: React.FC<InputTextProps> = ({
   placeholder,
   children,
   titleField,
+  testId,
 }) => {
   return (
     <Styled.wrapper className={classNames({ icon: icon !== undefined })}>
@@ -38,6 +39,7 @@ const InputText: React.FC<InputTextProps> = ({
         titleField={titleField}
         id={id}
         data-test="component-input-text"
+        testId={testId}
         type="text"
         size={size}
         length={length}

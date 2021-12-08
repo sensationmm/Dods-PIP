@@ -6,6 +6,7 @@
     "scripts": {
         "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
         "test:coverage": "NODE_ENV=test jest --detectOpenHandles --coverage",
+        "test:coverage:watch": "NODE_ENV=test jest --detectOpenHandles --coverage --watch-all",
         "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
         "test:report": "open coverage/integration-tests-report.html && open coverage/lcov-report/index.html",
         "dev": "scripts/setUpDev.sh && AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=development serverless offline --stage local && scripts/tearDown.sh",
@@ -54,6 +55,7 @@
         "pre-commit": "^1.2.2",
         "sequelize-mock": "^0.10.2",
         "serverless": "^2.64.0",
+        "serverless-api-gateway-caching": "^1.7.4",
         "serverless-dependson-plugin": "^1.1.2",
         "serverless-localstack": "^0.4.35",
         "serverless-offline": "^8.2.0",
@@ -69,7 +71,7 @@
     },
     "dependencies": {
         "@dodsgroup/dods-lambda": "^1.3.4",
-        "@dodsgroup/dods-model": "^1.0.9",
+        "@dodsgroup/dods-model": "^1.0.21",
         "aws-lambda": "^1.0.6",
         "aws-sdk": "^2.979.0",
         "axios": "^0.21.1",

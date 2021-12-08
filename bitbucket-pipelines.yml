@@ -97,6 +97,20 @@ pipelines:
             - npm install
             - SERVERLESS_STAGE=dev npm run test:coverage
 
+#      - step:
+#          name: Documents Service
+#          image: gioatsomoglobal/nodejs-builder:0.2
+#          caches:
+#            - node
+#          condition:
+#            changesets:
+#              includePaths:
+#                - "services/documents/**"
+#          script:
+#            - cd services/documents
+#            - npm install
+#            - SERVERLESS_STAGE=dev npm run test:coverage
+
       - step:
           name: Editorial Workflow Service
           image: gioatsomoglobal/nodejs-builder:0.2
@@ -171,7 +185,7 @@ pipelines:
               - npm install
               - SERVERLESS_STAGE=dev ./setenv.sh
               - source *.env
-              - NODE_ENV=test npm run test:coverage 
+              # - NODE_ENV=test npm run test:coverage 
               - npx serverless deploy --stage dev
 
         - step: 
@@ -187,6 +201,21 @@ pipelines:
               - npm install
               - export SERVERLESS_STAGE=dev
               - npm run test:coverage 
+              - npx serverless deploy --stage dev
+
+        - step: 
+            name: Documents Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/documents/**"
+            script:
+              - cd services/documents
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              # - npm run test:coverage 
               - npx serverless deploy --stage dev
 
         - step: 
@@ -231,6 +260,21 @@ pipelines:
               - cd ../../tools
               - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
 
+        - step: 
+            name: Taxonomy Service Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/taxonomy-service/**"
+            script:
+              - cd services/taxonomy-service
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              # - npm run test:coverage 
+              - npx serverless deploy --stage dev
+
         - step:
             name: Terraform Plan
             deployment: dev
@@ -244,18 +288,28 @@ pipelines:
               - cd infrastructure-terraform
               - terraform init
               - terraform plan -var db_password="${CLIENT_PROFILE_DB_PASSWORD}"
-              - echo "Review the plan. If you decide to apply it, run the custom job 'infrastructure-deployment'"
+              - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve
+              - terraform output --json > tf_out_values.json
+              - terraform-docs markdown table --output-values --output-values-from tf_out_values.json . > INFRA.md
+              - ./push_back.sh
 
   custom:
-    deployment-to-staging:
+    deploy-frontend-production:
       - step:
-          name: Deploy to staging environment
+          name: Deploy frontend to production environment
           image: gioatsomoglobal/devopstools:0.4.5
-          deployment: Staging
+          deployment: production
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
-            - cd tools
-            - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
+            - cd ${FRONTEND_SRC}
+            - yarn install
+            - yarn lint
+            - yarn test
+            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
+            - docker build -t ${IMAGE_NAME} .
+            - docker push ${IMAGE_NAME}
+            - cd ../../tools
+            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME
 
     storybook-deployment:
       - step:
@@ -268,13 +322,3 @@ pipelines:
             - yarn build-storybook
             - aws s3 rm s3://test-dods-pip-storybook/
             - aws s3 mv --acl public-read --recursive ./storybook-static/ s3://test-dods-pip-storybook/
-
-    infrastructure-deployment:
-      - step:
-          name: Terraform Apply
-          image: gioatsomoglobal/devopstools:0.4.6
-          size: 2x
-          script:
-            - cd infrastructure-terraform
-            - terraform init
-            - terraform apply -var db_password="${CLIENT_PROFILE_DB_PASSWORD}" -auto-approve

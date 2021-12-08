@@ -117,6 +117,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
+  apiGatewayCaching:
+    enabled: true
 
 plugins:
   - serverless-webpack
@@ -124,6 +126,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  - serverless-api-gateway-caching
 
 functions:
   health:
@@ -134,6 +137,8 @@ functions:
           method: get
           path: health
           cors: true
+          caching:
+            enabled: false
     tags:
       foo: bar
 
@@ -144,6 +149,8 @@ functions:
       - http:
           method: get
           path: sayHello
+          caching:
+            enabled: false
 
   sayEnglishHello:
     handler: src/handlers/sayEnglishHello/index.handle
@@ -152,6 +159,8 @@ functions:
       - http:
           method: get
           path: sayEnglishHello
+          caching:
+            enabled: false
 
   sayTurkishHello:
     handler: src/handlers/sayTurkishHello/index.handle
@@ -160,6 +169,8 @@ functions:
       - http:
           method: get
           path: sayTurkishHello
+          caching:
+            enabled: false
 
   getFullName:
     handler: src/handlers/getFullName/index.handle
@@ -168,3 +179,5 @@ functions:
       - http:
           method: get
           path: getFullName
+          caching:
+            enabled: false

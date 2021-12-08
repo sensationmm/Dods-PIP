@@ -19,8 +19,8 @@ import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import useSubscriptionTypes from '../../../lib/useSubscriptionTypes';
 import { Api, BASE_URI } from '../../../utils/api';
-import { DateFormat, EndDateType, RenewalType } from './index.page';
 import * as Styled from './index.styles';
+import { DateFormat, EndDateType, RenewalType } from './type';
 
 export type Errors = {
   location?: string;
@@ -37,6 +37,8 @@ export interface SubscriptionProps {
   accountId: string;
   addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
+  editMode: boolean;
+  onCloseEditModal: () => void;
   isEU: boolean;
   setIsEU: (val: boolean) => void;
   isUK: boolean;
@@ -59,12 +61,15 @@ export interface SubscriptionProps {
   setErrors: (errors: Errors) => void;
   onSubmit: () => void;
   onBack: () => void;
+  onEditSuccess: (val: Record<any, unknown>) => void;
 }
 
 const Subscription: React.FC<SubscriptionProps> = ({
   accountId,
   addNotification,
   setLoading,
+  editMode,
+  onCloseEditModal,
   isEU,
   setIsEU,
   isUK,
@@ -87,8 +92,11 @@ const Subscription: React.FC<SubscriptionProps> = ({
   setErrors,
   onSubmit,
   onBack,
+  onEditSuccess,
 }) => {
   const [endDateHelper, setEndDateHelper] = React.useState<string>('');
+  const [pristine, setPristine] = React.useState<boolean>(true);
+  const [saving, setSaving] = React.useState<boolean>(false); // editMode - disabled save button when saving request in progress
 
   React.useEffect(() => {
     let date;
@@ -146,12 +154,8 @@ const Subscription: React.FC<SubscriptionProps> = ({
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
 
   const handleSave = async () => {
-    if (!isComplete) {
-      // incomplete form inputs
-      return false;
-    }
-
     setLoading(true);
+    setSaving(true);
 
     const rollover = renewalType === RenewalType.Annual;
     const payload = {
@@ -173,9 +177,15 @@ const Subscription: React.FC<SubscriptionProps> = ({
     const { message = '', success = false } = response;
 
     setLoading(false);
+    setSaving(false);
 
     if (success) {
-      onSubmit(); // go to next step
+      if (editMode) {
+        onEditSuccess(payload);
+        onCloseEditModal(); // close modal windows
+      } else {
+        onSubmit(); // go to next step
+      }
     } else {
       // show server error
       addNotification({
@@ -193,6 +203,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
     } else {
       delete formErrors.subscriptionType;
     }
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -203,6 +214,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
     } else {
       delete formErrors.userSeats;
     }
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -213,6 +225,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
     } else {
       delete formErrors.consultantHours;
     }
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -223,6 +236,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
     } else {
       delete formErrors.endDate;
     }
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -233,12 +247,27 @@ const Subscription: React.FC<SubscriptionProps> = ({
     } else {
       delete formErrors.endDateType;
     }
+    setPristine(false);
     setErrors(formErrors);
+  };
+
+  const onChangeRenewalType = (val: string) => {
+    setPristine(false);
+    setRenewalType(val);
+
+    if (val === RenewalType.Annual) {
+      setEndDateType('');
+      setEndDate('');
+    }
   };
 
   return (
     <main data-test="subscription">
-      <Panel isNarrow bgColor={color.base.ivory}>
+      <Panel
+        isPadded={!editMode}
+        isNarrow={!editMode}
+        bgColor={editMode ? color.base.white : color.base.ivory}
+      >
         <SectionHeader
           title="Subscription details "
           subtitle="Please select the subscription that suits this Account."
@@ -258,13 +287,19 @@ const Subscription: React.FC<SubscriptionProps> = ({
                 id="location-eu"
                 label="EU Coverage"
                 isChecked={isEU}
-                onChange={() => setIsEU(!isEU)}
+                onChange={() => {
+                  setPristine(false);
+                  setIsEU(!isEU);
+                }}
               />
               <Checkbox
                 id="location-uk"
                 label="UK Coverage"
                 isChecked={isUK}
-                onChange={() => setIsUK(!isUK)}
+                onChange={() => {
+                  setPristine(false);
+                  setIsUK(!isUK);
+                }}
               />
             </Styled.locations>
           </Styled.allocationTitle>
@@ -305,7 +340,10 @@ const Subscription: React.FC<SubscriptionProps> = ({
             label="User Seats"
             required
             value={parseInt(userSeats)}
-            onChange={(value) => setUserSeats(value.toString())}
+            onChange={(value) => {
+              setPristine(false);
+              setUserSeats(value.toString());
+            }}
             error={errors.userSeats}
             minVal={1}
             onBlur={(error) => setUserSeatsError(error)}
@@ -316,7 +354,10 @@ const Subscription: React.FC<SubscriptionProps> = ({
             label="Consultant hours"
             required
             value={parseInt(consultantHours)}
-            onChange={(value) => setConsultantHours(value.toString())}
+            onChange={(value) => {
+              setPristine(false);
+              setConsultantHours(value.toString());
+            }}
             error={errors.consultantHours}
             onBlur={(error) => setConsultantHoursError(error)}
           />
@@ -337,7 +378,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             groupName="renewal-type"
             label="Renewal type"
             required={true}
-            onChange={setRenewalType}
+            onChange={onChangeRenewalType}
             items={[
               { label: 'Annual Renewal', value: RenewalType.Annual },
               { label: 'End date', value: RenewalType.EndDate },
@@ -355,7 +396,10 @@ const Subscription: React.FC<SubscriptionProps> = ({
             required
             value={startDate}
             minDate={format(new Date(), DateFormat.API).toString()}
-            onChange={setStartDate}
+            onChange={(val) => {
+              setPristine(false);
+              setStartDate(val);
+            }}
             helperText="dd/mm/yyyy format"
             maxDate={endDate}
           />
@@ -366,7 +410,10 @@ const Subscription: React.FC<SubscriptionProps> = ({
               label="Assign an end date"
               required
               value={endDate}
-              onChange={setEndDate}
+              onChange={(val) => {
+                setPristine(false);
+                setEndDate(val);
+              }}
               helperText="dd/mm/yyyy format"
               minDate={startDate}
               onBlur={validateEndDate}
@@ -399,16 +446,36 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
         <Spacer size={20} />
 
-        <PageActions data-test="page-actions" hasBack backHandler={onBack}>
-          <Button
-            data-test="continue-button"
-            label="Save and continue"
-            onClick={handleSave}
-            icon={Icons.ChevronRightBold}
-            iconAlignment="right"
-            disabled={!isComplete}
-          />
-        </PageActions>
+        {editMode ? (
+          <PageActions isRightAligned={true} data-test="page-actions">
+            <Button
+              data-test="cancel-button"
+              label="Cancel"
+              type="secondary"
+              onClick={onCloseEditModal}
+              disabled={saving}
+            />
+            <Button
+              data-test="continue-button"
+              label="Save"
+              onClick={handleSave}
+              icon={Icons.TickBold}
+              iconAlignment="left"
+              disabled={!isComplete || pristine || saving}
+            />
+          </PageActions>
+        ) : (
+          <PageActions data-test="page-actions" hasBack backHandler={onBack}>
+            <Button
+              data-test="continue-button"
+              label="Save and continue"
+              onClick={handleSave}
+              icon={Icons.ChevronRightBold}
+              iconAlignment="right"
+              disabled={!isComplete}
+            />
+          </PageActions>
+        )}
       </Panel>
     </main>
   );

@@ -9,6 +9,15 @@ export interface CreateEditorialRecordParameters extends EditorialRecordBase {
     statusId?: string;
 }
 
+export interface UpdateEditorialRecordParameters extends Partial<CreateEditorialRecordParameters> {
+    recordId: string;
+}
+
+export interface LockEditorialRecordParameters {
+    recordId: string;
+    assignedEditorId: string;
+}
+
 export interface GenericListingRecord {
     id: string;
     name: string;
@@ -33,10 +42,12 @@ export interface SearchEditorialRecordParameters {
     contentSource?: string;
     informationType?: string;
     status?: string;
-    offset: string;
-    limit: string;
+    offset?: string;
+    limit?: string;
     startDate?: string;
     endDate?: string;
+    sortBy?: string;
+    sortDirection?: string;
 }
 
 export interface EditorialRecordListOutput {
@@ -45,14 +56,9 @@ export interface EditorialRecordListOutput {
     results: Array<EditorialRecordOutput>;
 }
 
+export interface ContentSourceOutput extends GenericListingRecord {}
 
-export interface ContentSourceOutput extends GenericListingRecord {
-
-}
-
-export interface InformationTypeOutput extends GenericListingRecord {
-
-}
+export interface InformationTypeOutput extends GenericListingRecord {}
 
 export interface EditorRecordStatusOutput {
     uuid: string;

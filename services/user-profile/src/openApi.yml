@@ -10,10 +10,9 @@ paths:
   /user:
     get:
       summary: List all User Profiles
-      operationId: getUser
       parameters:
         - $ref: "#/components/parameters/limit"
-        - $ref: '#/components/parameters/with_roles'
+        - $ref: "#/components/parameters/with_roles"
       responses:
         "200":
           description: List of User Profiles in the system
@@ -64,14 +63,8 @@ paths:
         required: true
         description: UUID of the User to get
     get:
-      summary: Get an User by ID
-      parameters:
-        - in: query
-          name: with_roles
-          description: Return User Profiles with role data
-          schema:
-            type: boolean
-          allowEmptyValue: true
+      summary: Get an User by UUID
+      operationId: getUser
       responses:
         "200":
           description: Specified client account
@@ -95,7 +88,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserProfile"
+              $ref: "#/components/schemas/UserUpdate"
       responses:
         "200":
           description: Succesfully updated User Profile
@@ -140,15 +133,16 @@ paths:
   /users:
     get:
       summary: Returns a list of users for a given first name and last name
-      operationId: searchUser
+      operationId: searchUsers
       parameters:
         - $ref: "#/components/parameters/name"
         - $ref: "#/components/parameters/startsWith"
         - $ref: "#/components/parameters/role"
+        - $ref: "#/components/parameters/clientAccountId"
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/offset"
-        - $ref: '#/components/parameters/sortBy'
-        - $ref: '#/components/parameters/sortDirection'
+        - $ref: "#/components/parameters/sortBy"
+        - $ref: "#/components/parameters/sortDirection"
       responses:
         "200":
           description: List of User Profiles in the system
@@ -164,12 +158,37 @@ paths:
           description: Not authenticated
         "403":
           description: Does not have correct permissions
+    post:
+      operationId: createUser
+      summary: Add new User
+      requestBody:
+        description: Add new User
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "200":
+          description: Succesfully created User Profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid User Profile supplied
+        "401":
+          description: Not authenticated
+        "403":
+          description: Does not have correct permissions
+        "409":
+          description: an existing item already exists
   /role:
     get:
       summary: List all Roles
       operationId: getRole
       parameters:
-        - $ref: '#/components/parameters/limit'
+        - $ref: "#/components/parameters/limit"
       responses:
         "200":
           description: List of User Profiles in the system
@@ -179,6 +198,51 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Role"
+        "401":
+          description: Not authenticated
+        "403":
+          description: Does not have correct permissions
+          
+  /users/{userId}/client-accounts:
+    get:
+      summary: Get Clients accounts related to a User
+      operationId: getClientAccountsByUser
+      parameters:
+          - in: path
+            name: userId
+            schema:
+              type: string
+            required: true
+            description: Name or partial name to search by
+          - $ref: "#/components/parameters/limit"
+          - $ref: "#/components/parameters/offset"
+          - $ref: "#/components/parameters/sortByClient"
+          - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          description: List of Clients accounts related to a User
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Showing Results
+                  limit:
+                    type: number
+                    example: 30
+                  offset:
+                    type: number
+                    example: 0
+                  
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ClientAccount"
         "401":
           description: Not authenticated
         "403":
@@ -216,6 +280,36 @@ components:
         - last_name
         - primary_email_address
         - telephone_number_1
+        
+    ClientAccount:
+      type: object
+      properties:
+        uuid:
+          type: string
+          example: cd44bad6-8eeb-4870-abb8-72d297ea7a3e
+        name:
+          type: string
+          example: Company
+        notes:
+          type: string
+          example: testing notes
+        collection:
+          type: number
+          example: 0
+        teamMemberType:
+          type: number
+          example: 1
+        subscription:
+          type: object
+          properties:
+            uuid:
+              type: string
+              example: 13c351ed-d92a-41a9-b412-55dc0f0d28d3
+            name: 
+              type: string
+              example: Gold
+              
+
     UserProfile:
       allOf: # Combines the BasicErrorModel and the inline model
         - $ref: "#/components/schemas/UserProfileBase"
@@ -265,6 +359,58 @@ components:
               example: d290f1ss-6c54-4b01-98e6-d701748f7151
           required:
             - role_id
+    UserCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Mr
+        firstName:
+          type: string
+          example: Jane
+        lastName:
+          type: string
+          example: Blogs
+        primaryEmail:
+          type: string
+          example: Jane.Blogs@email.com
+        secondaryEmail:
+          type: string
+          example: Jane.Blogs@email.com
+        telephoneNumber:
+          type: string
+          example: "+442071838750"
+        roleId:
+          type: string
+        clientAccountId:
+          type: string
+      required:
+        - firstName
+        - lastName
+        - primaryEmail
+        - roleId
+
+    UserUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Mr
+        firstName:
+          type: string
+          example: Jane
+        lastName:
+          type: string
+          example: Blogs
+        secondaryEmail:
+          type: string
+          example: Jane.Blogs@email.com
+        telephoneNumber1:
+          type: string
+          example: "+442071838750"
+        telephoneNumber2:
+          type: string
+          example: "+442071838750"
 
   parameters:
     name:
@@ -275,15 +421,23 @@ components:
       required: false
       description: User Profile's FirstName or LastName
     startsWith:
-        in: query
-        name: startsWith
-        schema:
-            type: string
-        required: false
-        description: User Profile's lastName starts with letter
+      in: query
+      name: startsWith
+      schema:
+        type: string
+      required: false
+      description: User Profile's lastName starts with letter
     role:
       in: query
       name: role
+      schema:
+        type: string
+        format: uuid
+      required: false
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    clientAccountId:
+      in: query
+      name: clientAccountId
       schema:
         type: string
         format: uuid
@@ -310,30 +464,43 @@ components:
       required: false
       description: Offset value for pagination
     sortBy:
-        in: query
-        name: sortBy
-        schema:
-            type: string
-            default: lastName
-            enum:
-              - lastName
-              - account
-              - email
-              - role
-        required: false
-        description: sort User Profile by name or subscription
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: lastName
+        enum:
+          - lastName
+          - account
+          - primaryEmail
+          - role
+      required: false
+      description: sort User Profile by name or subscription
+    sortByClient:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: name
+        enum:
+          - name
+          - subscription
+
+      required: false
+      description: sort ClientAccounts by name or subscription
+      
     sortDirection:
-        in: query
-        name: sortDirection
-        schema:
-            type: string
-            default: ASC
-            enum:
-              - ASC
-              - DESC
-        required: false
-        description: direction ASC or DESC
-    
+      in: query
+      name: sortDirection
+      schema:
+        type: string
+        default: ASC
+        enum:
+          - ASC
+          - DESC
+      required: false
+      description: direction ASC or DESC
+
     with_roles:
       in: query
       name: with_roles

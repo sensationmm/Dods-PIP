@@ -15,7 +15,8 @@
     "deploy:prod": "AWS_PROFILE=dods-prod AWS_REGION=eu-west-1 serverless deploy --stage prod",
     "remove:deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage dev",
     "remove:deploy:prod": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage prod",
-    "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}"
+    "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}",
+    "serverlessConfig:print": "AWS_PROFILE=dods-dev serverless print --stage dev"
   },
   "pre-commit": [
     "test:coverage",
@@ -42,6 +43,7 @@
     "@cucumber/cucumber": "^7.3.1",
     "@cucumber/pretty-formatter": "^1.0.0-alpha.1",
     "@types/aws-lambda": "^8.10.83",
+    "@types/axios": "^0.14.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.1",
@@ -53,6 +55,7 @@
     "openapi-types": "^9.3.0",
     "pre-commit": "^1.2.2",
     "serverless": "^2.64.0",
+    "serverless-api-gateway-caching": "^1.7.4",
     "serverless-dependson-plugin": "^1.1.2",
     "serverless-localstack": "^0.4.35",
     "serverless-offline": "^8.2.0",
@@ -71,6 +74,7 @@
     "amazon-cognito-identity-js": "^5.1.2",
     "aws-lambda": "^1.0.6",
     "aws-sdk": "^2.997.0",
+    "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "date-fns": "^2.24.0",
     "joi": "^17.4.2"

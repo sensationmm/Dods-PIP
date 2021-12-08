@@ -8,11 +8,13 @@ import Text from '../Text';
 import * as Styled from './Modal.styles';
 
 export type modalSize = 'small' | 'medium' | 'large' | 'xlarge';
+type modalButtonAlignment = 'center' | 'right';
 export interface ModalProps {
   onClose?: () => void;
   title?: string;
   size?: modalSize;
   buttons?: ButtonProps[];
+  buttonAlignment?: modalButtonAlignment;
   isDismissible?: boolean;
   portalContainerId?: string;
 }
@@ -22,6 +24,7 @@ const Modal: FC<ModalProps> = ({
   onClose,
   title = '',
   buttons = [],
+  buttonAlignment = 'center',
   children,
   isDismissible = true,
   portalContainerId = '__next',
@@ -30,7 +33,9 @@ const Modal: FC<ModalProps> = ({
     /^Escape$/i.test(e.key) && closeModal();
   };
 
-  const onVeilClose = (e: any) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const onVeilClose = (e) => {
     /veil/i.test(e?.target?.classList.toString()) && closeModal();
   };
 
@@ -69,11 +74,20 @@ const Modal: FC<ModalProps> = ({
           )}
         </Styled.modalHeader>
         <Styled.modalBody>{children}</Styled.modalBody>
-        <Styled.modalFooter data-test="modal-footer">
-          {buttons.map((buttonProps, index) => (
-            <Button key={index} {...{ ...buttonProps }} />
-          ))}
-        </Styled.modalFooter>
+        {buttons.length > 0 && (
+          <Styled.modalFooter data-test="modal-footer" alignment={buttonAlignment}>
+            {buttons.map((buttonProps, index) => (
+              <Button
+                key={index}
+                {...{ ...buttonProps }}
+                onClick={(e) => {
+                  buttonProps.onClick && buttonProps.onClick(e);
+                  closeModal();
+                }}
+              />
+            ))}
+          </Styled.modalFooter>
+        )}
       </Styled.modal>
     </Styled.veil>,
     document.getElementById(portalContainerId) as Element,

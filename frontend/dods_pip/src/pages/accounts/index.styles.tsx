@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { secondary, wrapper as btnWrapper } from '../../components/Button/Button.styles';
 import {
+  content as sectionContent,
   header as sectionHeader,
   headerContent as sectionHeaderContent,
 } from '../../components/SectionAccordion/SectionAccordion.styles';
@@ -16,11 +17,15 @@ export const sumWrapper = styled.div`
   background-color: ${color.base.white};
 
   ${sectionHeader} {
-    padding: ${spacing(8)} ${spacing(8)} 0 ${spacing(8)};
+    padding: ${spacing(8)};
   }
 
   ${sectionHeaderContent} {
     width: 100%;
+  }
+
+  ${sectionContent} {
+    padding-top: ${spacing(4)};
   }
 
   a {
@@ -41,7 +46,7 @@ export const sectionCustomHeader = styled.div`
 
   ${btnWrapper} {
     margin-left: auto;
-    margin-right: ${spacing(7.5)};
+    margin-right: ${spacing(8)};
   }
 
   ${secondary} {
@@ -53,7 +58,7 @@ export const sectionCustomHeader = styled.div`
 
 export const badgeContainer = styled.div`
   display: flex;
-  margin-left: ${spacing(12.5)};
+  margin-left: ${spacing(12)};
 
   > div {
     margin-right: ${spacing(10)};
@@ -83,7 +88,7 @@ export const sumAvatarName = styled.div`
   justify-content: flex-start;
 
   > div {
-    margin-right: ${spacing(2.5)};
+    margin-right: ${spacing(3)};
   }
 `;
 
@@ -93,11 +98,14 @@ export const sumUserNav = styled.div`
   padding: ${spacing(5)} ${spacing(8)};
 `;
 
-export const sumAccountWrapper = styled.div`
+type SumAccountWrapperProps = {
+  padded?: boolean;
+};
+export const sumAccountWrapper = styled.div<SumAccountWrapperProps>`
   display: flex;
   align-items: flex-start;
   background-color: transparent;
-  padding: 0 ${spacing(8)};
+  padding: ${({ padded = true }) => (padded ? `0 ${spacing(8)}` : `0`)};
 
   > div {
     &:last-child {
@@ -113,7 +121,7 @@ export const sumAccountContent = styled.div`
     display: flex;
 
     p {
-      margin-bottom: ${spacing(3.5)};
+      margin-bottom: ${spacing(4)};
 
       &:first-child {
         min-width: ${spacing(40)};
@@ -135,8 +143,7 @@ export const sumAccountContentDetails = styled.div`
 export const sumAccountContentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: ${spacing(8.5)} ${spacing(24.25)};
-  margin-bottom: ${spacing(8.5)};
+  gap: ${spacing(8)} ${spacing(24)};
 
   p {
     margin-bottom: ${spacing(2)};
@@ -148,7 +155,7 @@ export const sumAccountContentNotes = styled.div`
 
   p {
     &:first-child {
-      margin-bottom: ${spacing(2.5)};
+      margin-bottom: ${spacing(3)};
     }
   }
 `;
@@ -168,7 +175,7 @@ export const sumConsultantAvatar = styled.div`
 
   > div {
     &:first-child {
-      margin-right: ${spacing(2.5)};
+      margin-right: ${spacing(3)};
     }
   }
 `;
@@ -179,4 +186,11 @@ export const sumConsultantContact = styled.div`
     margin-right: ${spacing(6)};
     min-width: ${spacing(17)};
   }
+`;
+
+export const loader = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100px;
+  margin-bottom: ${spacing(12)};
 `;

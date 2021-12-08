@@ -1,21 +1,51 @@
+import { NextIronRequest } from './session';
+
 interface CustomError extends Error {
   response?: Response;
   data?: Record<string, unknown>;
 }
 
-interface CustomResponse extends Response {
+export type UserResponse = {
+  id?: string;
+  userId?: string;
   accessToken?: string;
+  isDodsUser?: boolean;
+  clientAccountId?: string;
+  clientAccountName?: string;
+  displayName?: string;
+};
+
+interface CustomResponse extends Response, UserResponse {
   data?: Record<string, unknown>;
   totalRecords?: number;
   message?: string;
   success?: boolean;
 }
 
-export default async function fetchJson(url: string, args?: RequestInit): Promise<CustomResponse> {
+export default async function fetchJson(
+  url: string,
+  args?: RequestInit,
+  req?: NextIronRequest,
+): Promise<CustomResponse> {
   try {
+    let headers = {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
+    };
+    const isAuthPath = /signin|signout$/i.test(url);
+
+    if (!isAuthPath && req?.session) {
+      const { accessToken = undefined } = req.session.get('user');
+
+      headers = {
+        ...headers,
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      };
+    }
+
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...args?.headers, ...headers },
       ...args,
     });
 
@@ -33,7 +63,7 @@ export default async function fetchJson(url: string, args?: RequestInit): Promis
     error.data = {
       name: data?.name || 'UnknownException',
       code: response.status,
-      message: 'An error happened. Please try again.',
+      message: data?.message || 'An error happened. Please try again.',
     };
 
     throw error;

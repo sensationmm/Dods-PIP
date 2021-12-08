@@ -10,6 +10,7 @@ export const heading = styled.span`
   h5,
   h6 {
     font-family: 'Libre Baskerville';
+    font-weight: 400;
     padding: 0;
     margin: 0;
     font-weight: 300;

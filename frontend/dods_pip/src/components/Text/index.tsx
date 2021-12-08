@@ -72,6 +72,11 @@ const Text: React.FC<TextProps> = ({
       element = Styled.label;
       className = type;
       break;
+    case 'liSmall':
+    case 'liLarge':
+      element = Styled.li;
+      className = type;
+      break;
     case 'headerTitle':
       element = Styled.span;
       className = type;

@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, Model, Optional } from '@dodsgroup/dods-model';
 
 import sequelize from '../sequelize';
 
@@ -9,7 +9,8 @@ export interface RoleTypeAttributes {
     dodsRole: boolean;
 }
 
-interface RoleTypeCreationAttributes extends Optional<RoleTypeAttributes, 'id' | 'uuid'> {}
+interface RoleTypeCreationAttributes
+    extends Optional<RoleTypeAttributes, 'id' | 'uuid'> {}
 
 class RoleTypeModel
     extends Model<RoleTypeAttributes, RoleTypeCreationAttributes>

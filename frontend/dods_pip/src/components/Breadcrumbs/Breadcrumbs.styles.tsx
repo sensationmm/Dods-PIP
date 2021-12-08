@@ -10,6 +10,11 @@ export const wrapper = styled.div`
 export const anchor = styled.a`
   text-decoration: none;
   margin-right: ${spacing(3)};
+  color: inherit;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 export const slash = styled.span`

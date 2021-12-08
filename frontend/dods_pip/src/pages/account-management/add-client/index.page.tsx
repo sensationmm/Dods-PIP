@@ -1,4 +1,3 @@
-import { add, format } from 'date-fns';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -6,203 +5,15 @@ import React from 'react';
 import PageHeader from '../../../components/_layout/PageHeader';
 import ProgressTracker from '../../../components/ProgressTracker';
 import LoadingHOC, { LoadingHOCProps } from '../../../hoc/LoadingHOC';
-import fetchJson from '../../../lib/fetchJson';
-import { Api, BASE_URI } from '../../../utils/api';
-import { DropdownValue, TeamMember } from '../../../utils/type';
-import AccountInfo, { Errors as ErrorsStep1 } from './account-info';
-import Subscription, { Errors as ErrorsStep2 } from './subscription';
-import Team, { Errors as ErrorsStep3 } from './team';
-
-export enum RenewalType {
-  Annual = 'annual',
-  EndDate = 'endDate',
-}
-
-export enum DateFormat {
-  UI = 'dd/MM/yyyy',
-  API = 'yyyy-MM-dd',
-}
-
-export enum EndDateType {
-  One = '1year',
-  Two = '2year',
-  Three = '3year',
-  Trial = '2weektrial',
-  Custom = 'custom',
-}
-
-export type Subscription = {
-  uuid: string;
-  name: string;
-};
+import AddClient from './add-client';
 
 interface AddClientProps extends LoadingHOCProps {}
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const getEndDateType = ({ contractStartDate = '', contractEndDate = '' }): string => {
-  let endDateType = 'custom';
-
-  if (contractStartDate === '' || contractEndDate === '') {
-    return '';
-  }
-
-  const formattedEndDate = format(new Date(contractEndDate), DateFormat.API);
-  const startDate = new Date(contractStartDate);
-
-  let formattedDate = format(add(startDate, { weeks: 2 }), DateFormat.API);
-  if (formattedDate === formattedEndDate) {
-    endDateType = EndDateType.Trial;
-    return endDateType;
-  }
-
-  formattedDate = format(add(startDate, { years: 1 }), DateFormat.API);
-  if (formattedDate === formattedEndDate) {
-    endDateType = EndDateType.One;
-    return endDateType;
-  }
-
-  formattedDate = format(add(startDate, { years: 2 }), DateFormat.API);
-  if (formattedDate === formattedEndDate) {
-    endDateType = EndDateType.Two;
-    return endDateType;
-  }
-
-  formattedDate = format(add(startDate, { years: 3 }), DateFormat.API);
-  if (formattedDate === formattedEndDate) {
-    endDateType = EndDateType.Three;
-    return endDateType;
-  }
-
-  return endDateType;
-};
-
-export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoading }) => {
+export const AddClientPage: React.FC<AddClientProps> = ({ addNotification, setLoading }) => {
   const router = useRouter();
   const { id = '' } = router.query;
-  const userSeatsDefault = '5';
-  const consultantHoursDefault = '10';
-  const LAST_STEP = 3;
-  const TODAY = format(new Date(), 'yyyy-MM-dd').toString();
-
   const [activeStep, setActiveStep] = React.useState<number>(1);
-  const [accountId, setAccountId] = React.useState<string>(id as string); // returned by API after a POST (or get from URL for incomplete flow)
-  const [savedAccountName, setSavedAccountName] = React.useState<string>('');
-  const [accountName, setAccountName] = React.useState<string>('');
-  const [accountNotes, setAccountNotes] = React.useState<string>('');
-  const [contactName, setContactName] = React.useState<string>('');
-  const [contactEmail, setContactEmail] = React.useState<string>('');
-  const [contactTelephone, setContactTelephone] = React.useState<string>('');
-  const [errorsStep1, setErrorsStep1] = React.useState<ErrorsStep1>({});
-
-  const [isEU, setIsEU] = React.useState<boolean>(false);
-  const [isUK, setIsUK] = React.useState<boolean>(false);
-  const [subscriptionType, setSubscriptionType] = React.useState<string>('');
-  const [userSeats, setUserSeats] = React.useState<string>(userSeatsDefault);
-  const [consultantHours, setConsultantHours] = React.useState<string>(consultantHoursDefault);
-  const [renewalType, setRenewalType] = React.useState<string>(RenewalType.Annual);
-  const [startDate, setStartDate] = React.useState<string>(TODAY);
-  const [endDate, setEndDate] = React.useState<string>('');
-  const [endDateType, setEndDateType] = React.useState<string>('');
-  const [errorsStep2, setErrorsStep2] = React.useState<ErrorsStep2>({});
-
-  const [teamMembers, setTeamMembers] = React.useState<Array<string | DropdownValue>>([]);
-  const [accountManagers, setAccountManagers] = React.useState<Array<string | DropdownValue>>([]);
-  const [clientUsers, setClientUsers] = React.useState<Array<TeamMember>>([]);
-  const [clientFirstName, setClientFirstName] = React.useState<string>('');
-  const [clientLastName, setClientLastName] = React.useState<string>('');
-  const [clientJobTitle, setClientJobTitle] = React.useState<string>('');
-  const [clientEmail, setClientEmail] = React.useState<string>('');
-  const [clientEmail2, setClientEmail2] = React.useState<string>('');
-  const [clientTelephone, setClientTelephone] = React.useState<string>('');
-  const [clientTelephone2, setClientTelephone2] = React.useState<string>('');
-  const [clientAccess, setClientAccess] = React.useState<string>('');
-  const [errorsStep3, setErrorsStep3] = React.useState<ErrorsStep3>({});
-
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [activeStep]);
-
-  const loadAccount = async () => {
-    if (id === '') {
-      return false;
-    }
-
-    // get account info
-    setLoading(true);
-    const response = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${id}`, { method: 'GET' });
-    const { data = {} } = response;
-    const { uuid = '' } = data;
-    if (uuid === id) {
-      // client exist and not completed
-      const {
-        name = '',
-        notes = '',
-        contactName = '',
-        contactEmailAddress = '',
-        contactTelephoneNumber = '',
-        isEU = false,
-        isUK = false,
-        subscription = {},
-        lastStepCompleted = 1,
-      } = data;
-      let {
-        subscriptionSeats,
-        consultantHours,
-        contractStartDate = '',
-        contractEndDate = '',
-        contractRollover,
-      } = data;
-      contractEndDate = contractEndDate === null ? '' : contractEndDate;
-      contractStartDate = contractStartDate === null ? TODAY : contractStartDate;
-      subscriptionSeats =
-        subscriptionSeats === 0 || subscriptionSeats === null
-          ? userSeatsDefault
-          : subscriptionSeats;
-      consultantHours = consultantHours === null ? consultantHoursDefault : consultantHours;
-      contractRollover = contractRollover === null ? true : contractRollover;
-      setAccountId(uuid as string);
-      setAccountName(name as string);
-      setSavedAccountName(name as string);
-      setAccountNotes(notes as string);
-      setContactName(contactName as string);
-      setContactEmail(contactEmailAddress as string);
-      setContactTelephone(contactTelephoneNumber as string);
-      setStartDate(contractStartDate as string);
-      setEndDate(contractEndDate as string);
-      const dateType = getEndDateType({
-        contractStartDate: contractStartDate as string,
-        contractEndDate: contractEndDate as string,
-      });
-      setEndDateType(dateType);
-
-      if (contractRollover) {
-        setRenewalType(RenewalType.Annual);
-      } else {
-        setRenewalType(RenewalType.EndDate);
-      }
-
-      setUserSeats(subscriptionSeats as string);
-      setConsultantHours(consultantHours as string);
-      setIsEU(isEU as boolean);
-      setIsUK(isUK as boolean);
-
-      setSubscriptionType((subscription as Subscription).uuid);
-
-      let step = (lastStepCompleted as number) + 1;
-      if (step > LAST_STEP) {
-        step = LAST_STEP;
-      }
-      setActiveStep(step);
-    } else {
-      // incorrect client
-      setAccountId('');
-    }
-    setLoading(false);
-  };
-
-  React.useEffect(() => {
-    loadAccount();
-  }, [id]);
+  const [accountId, setAccountId] = React.useState<string>(id as string);
 
   const steps = [{ label: 'Account Info' }, { label: 'Subscription' }, { label: 'Team' }];
 
@@ -218,99 +29,17 @@ export const AddClient: React.FC<AddClientProps> = ({ addNotification, setLoadin
         content={<ProgressTracker condensed steps={steps} activeStep={activeStep} />}
       />
 
-      {activeStep === 1 && (
-        <AccountInfo
-          data-test="step-1"
-          addNotification={addNotification}
-          setLoading={setLoading}
-          accountId={accountId}
-          setAccountId={setAccountId}
-          accountName={accountName}
-          savedAccountName={savedAccountName}
-          setSavedAccountName={setSavedAccountName}
-          setAccountName={setAccountName}
-          accountNotes={accountNotes}
-          setAccountNotes={setAccountNotes}
-          contactName={contactName}
-          setContactName={setContactName}
-          contactTelephone={contactTelephone}
-          setContactTelephone={setContactTelephone}
-          contactEmail={contactEmail}
-          setContactEmail={setContactEmail}
-          onBack={() => router.push('/account-management/accounts')}
-          onSubmit={() => setActiveStep(2)}
-          errors={errorsStep1}
-          setErrors={setErrorsStep1}
-        />
-      )}
-
-      {activeStep === 2 && (
-        <Subscription
-          data-test="step-2"
-          addNotification={addNotification}
-          setLoading={setLoading}
-          accountId={accountId}
-          isEU={isEU}
-          setIsEU={setIsEU}
-          isUK={isUK}
-          setIsUK={setIsUK}
-          subscriptionType={subscriptionType}
-          setSubscriptionType={setSubscriptionType}
-          userSeats={userSeats}
-          setUserSeats={setUserSeats}
-          consultantHours={consultantHours}
-          setConsultantHours={setConsultantHours}
-          renewalType={renewalType}
-          setRenewalType={setRenewalType}
-          startDate={startDate}
-          setStartDate={setStartDate}
-          endDate={endDate}
-          setEndDate={setEndDate}
-          endDateType={endDateType}
-          setEndDateType={setEndDateType}
-          errors={errorsStep2}
-          setErrors={setErrorsStep2}
-          onSubmit={() => setActiveStep(3)}
-          onBack={() => setActiveStep(1)}
-        />
-      )}
-
-      {activeStep === LAST_STEP && (
-        <Team
-          data-test="step-3"
-          addNotification={addNotification}
-          setLoading={setLoading}
-          accountId={accountId}
-          teamMembers={teamMembers}
-          setTeamMembers={setTeamMembers}
-          accountManagers={accountManagers}
-          setAccountManagers={setAccountManagers}
-          clientUsers={clientUsers}
-          setClientUsers={setClientUsers}
-          clientFirstName={clientFirstName}
-          setClientFirstName={setClientFirstName}
-          clientLastName={clientLastName}
-          setClientLastName={setClientLastName}
-          clientJobTitle={clientJobTitle}
-          setClientJobTitle={setClientJobTitle}
-          clientEmail={clientEmail}
-          setClientEmail={setClientEmail}
-          clientEmail2={clientEmail2}
-          setClientEmail2={setClientEmail2}
-          clientTelephone={clientTelephone}
-          setClientTelephone={setClientTelephone}
-          clientTelephone2={clientTelephone2}
-          setClientTelephone2={setClientTelephone2}
-          clientAccess={clientAccess}
-          setClientAccess={setClientAccess}
-          errors={errorsStep3}
-          setErrors={setErrorsStep3}
-          onSubmit={() => router.push(`/accounts/${accountId}`)}
-          onBack={() => setActiveStep(2)}
-        />
-      )}
+      <AddClient
+        accountId={accountId}
+        editMode={false}
+        activeStep={activeStep}
+        addNotification={addNotification}
+        setLoading={setLoading}
+        setActiveStep={setActiveStep}
+        setAccountId={setAccountId}
+      />
     </div>
   );
 };
 
-export default LoadingHOC(AddClient);
+export default LoadingHOC(AddClientPage);

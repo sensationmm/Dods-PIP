@@ -29,8 +29,10 @@ export type Errors = {
 export interface AccountInfoProps {
   addNotification: (props: PushNotificationProps) => void;
   setLoading: (state: boolean) => void;
+  editMode: boolean;
+  onCloseEditModal: () => void;
   accountId: string;
-  setAccountId: (val: string) => void;
+  setAccountId?: (val: string) => void;
   savedAccountName: string;
   setSavedAccountName: (val: string) => void;
   accountName: string;
@@ -47,11 +49,14 @@ export interface AccountInfoProps {
   setErrors: (errors: Errors) => void;
   onSubmit: () => void;
   onBack: () => void;
+  onEditSuccess: (val: Record<any, unknown>) => void;
 }
 
 const AccountInfo: React.FC<AccountInfoProps> = ({
   addNotification,
   setLoading,
+  editMode,
+  onCloseEditModal,
   accountId,
   setAccountId,
   savedAccountName,
@@ -70,6 +75,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   setErrors,
   onSubmit,
   onBack,
+  onEditSuccess,
 }) => {
   const isComplete =
     Object.keys(errors).length === 0 &&
@@ -78,8 +84,12 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     contactTelephone != '' &&
     contactEmail !== '';
 
+  const [pristine, setPristine] = React.useState<boolean>(true);
+  const [saving, setSaving] = React.useState<boolean>(false); // editMode - disabled save button when saving request in progress
+
   const handleSave = async () => {
     setLoading(true);
+    setSaving(true);
 
     const payload = {
       name: trim(accountName),
@@ -109,11 +119,17 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       const { uuid = '' } = data;
       if (uuid !== '') {
         // all good
-        if (method === 'POST') {
+        if (method === 'POST' && setAccountId) {
           setAccountId(uuid as string);
         }
         setSavedAccountName(trim(accountName));
-        onSubmit(); // go to next step
+
+        if (editMode) {
+          onEditSuccess(payload);
+          onCloseEditModal(); // close modal windows
+        } else {
+          onSubmit(); // go to next step
+        }
       }
     } catch (e) {
       // show server error
@@ -125,6 +141,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     }
 
     setLoading(false);
+    setSaving(false);
   };
 
   const validateAccountName = async () => {
@@ -147,6 +164,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       }
     }
 
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -158,6 +176,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       delete formErrors.contactName;
     }
 
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -171,6 +190,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       delete formErrors.contactEmail;
     }
 
+    setPristine(false);
     setErrors(formErrors);
   };
 
@@ -183,12 +203,18 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     } else {
       delete formErrors.contactTelephone;
     }
+
+    setPristine(false);
     setErrors(formErrors);
   };
 
   return (
     <main data-test="account-info">
-      <Panel isNarrow bgColor={color.base.ivory}>
+      <Panel
+        isPadded={!editMode}
+        isNarrow={!editMode}
+        bgColor={editMode ? color.base.white : color.base.ivory}
+      >
         <SectionHeader
           title="About the Account"
           subtitle="Please add the client details below."
@@ -219,7 +245,10 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
           <TextArea
             label="Account notes"
-            onChange={setAccountNotes}
+            onChange={(value) => {
+              setPristine(false);
+              setAccountNotes(value);
+            }}
             value={accountNotes}
             placeholder="Type the account notes"
             characterLimit={500}
@@ -289,17 +318,36 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
         </Styled.wrapper>
 
         <Spacer size={20} />
-
-        <PageActions data-test="page-actions" hasBack backHandler={onBack}>
-          <Button
-            data-test="continue-button"
-            label="Save and continue"
-            onClick={handleSave}
-            icon={Icons.ChevronRightBold}
-            iconAlignment="right"
-            disabled={!isComplete}
-          />
-        </PageActions>
+        {editMode ? (
+          <PageActions isRightAligned={true} data-test="page-actions">
+            <Button
+              data-test="cancel-button"
+              label="Cancel"
+              type="secondary"
+              onClick={onCloseEditModal}
+              disabled={saving}
+            />
+            <Button
+              data-test="continue-button"
+              label="Save"
+              onClick={handleSave}
+              icon={Icons.TickBold}
+              iconAlignment="left"
+              disabled={!isComplete || pristine || saving}
+            />
+          </PageActions>
+        ) : (
+          <PageActions data-test="page-actions" hasBack backHandler={onBack}>
+            <Button
+              data-test="continue-button"
+              label="Save and continue"
+              onClick={handleSave}
+              icon={Icons.ChevronRightBold}
+              iconAlignment="right"
+              disabled={!isComplete}
+            />
+          </PageActions>
+        )}
       </Panel>
     </main>
   );

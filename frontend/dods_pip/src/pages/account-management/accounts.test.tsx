@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Accounts, LocationValue } from './accounts.page';
+import { Accounts } from './accounts.page';
 import { useRouter } from 'next/router';
 import fetchJson from '../../lib/fetchJson';
 import { mockClientData, mockSubscriptionsData } from './mockAccountData';
@@ -48,11 +48,10 @@ const SELECTOR_BREADCRUMBS = '[data-test="component-breadcrumbs"]';
 const SELECTOR_SELECT_OPTIONS = '[data-test^="option-"]';
 const SELECTOR_ATOZ_FILTER = '[data-test="component-AZFilter"]';
 const SELECTOR_ATOZ_FILTER_ALL_BTN = '[data-test="button-all"]';
-const TEXT_SELECTOR_CLIENT_BTN = 'Add Client Account';
+const TEXT_SELECTOR_CLIENT_BTN = 'Add Account';
 const TEST_ID_SUBSCRIPTION_FILTER = 'account-page-subscription-filter';
 const TEST_ID_ITEMS_PER_PAGE_FILTER = 'select-items-per-page';
 const TEST_ID_ACCOUNT_FILTER = 'account-page-account-filter';
-const TEST_ID_LOCATION_FILTER = 'account-page-location-filter';
 const TEST_ID_FILTER_TOGGLE = 'account-page-filter-toggle';
 const TEST_ID_SEARCH = 'account-page-search';
 const TEST_ID_FILTER_CONTENT = 'account-page-filter-content';
@@ -73,15 +72,6 @@ const SELECT_FILTER_CASES = [
       [false, 2],
     ],
   ],
-  [
-    'location',
-    TEST_ID_LOCATION_FILTER,
-    'locations',
-    [
-      [LocationValue.EU, 1],
-      [LocationValue.UK, 2],
-    ],
-  ],
 ];
 
 describe('Account Management: Clients', () => {
@@ -92,6 +82,7 @@ describe('Account Management: Clients', () => {
     jest.clearAllMocks();
   });
 
+  // TODO: Move following 3 cases to template component once created
   it('should render breadcrumbs', async () => {
     const render = await renderComponentWithData();
     const $breadCrumbs = render.container.querySelector(SELECTOR_BREADCRUMBS);
@@ -191,7 +182,7 @@ describe('Account Management: Clients', () => {
 
     beforeEach(async () => {
       render = await renderComponentWithData();
-      $input = render.getByTestId(TEST_ID_SEARCH).querySelector('input');
+      $input = render.getByTestId(TEST_ID_SEARCH);
     });
 
     it('should request accounts data with search filter applied', async () => {
@@ -271,6 +262,7 @@ describe('Account Management: Clients', () => {
     });
   });
 
+  // TODO: Move test case to template component once created
   describe('when items per page selection is made', () => {
     let $filter, render, $filterOptions;
     beforeEach(async () => {

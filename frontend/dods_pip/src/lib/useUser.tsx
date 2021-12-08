@@ -7,8 +7,33 @@ import useSWR from 'swr';
 
 import { Api, BASE_URI } from '../utils/api';
 
+export type User = {
+  id?: string;
+  isActive?: number;
+  isDodsUser?: boolean;
+  clientAccount?: {
+    name: string;
+    uuid: string;
+  };
+  clientAccountId?: string;
+  clientAccountName?: string;
+  displayName?: string;
+  emailAddress?: string;
+  title?: string;
+  primaryEmail?: string;
+  secondaryEmail?: string;
+  telephoneNumber1?: string;
+  telephoneNumber2?: string;
+  memberSince: Date;
+};
+
+export interface UserAuth extends User {
+  isLoggedIn: boolean;
+  accessToken: string;
+}
+
 type UseUser = {
-  user: Record<string, unknown>;
+  user: UserAuth;
   mutateUser: (data?: any, shouldRevalidate?: boolean | undefined) => Promise<any>;
 };
 

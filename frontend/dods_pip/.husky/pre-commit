@@ -13,7 +13,7 @@ SUBDIR_COMMIT=$(get_commit frontend/dods_pip)
 if [ "$SUBDIR_COMMIT" == "$ROOT_COMMIT" ]; then
 	cd frontend/dods_pip
 	echo 'Pre-commit checks... linting, tests and build... please fix any errors'
-	yarn test
+	yarn test --only-changed
 	yarn lint
 	yarn build
 fi

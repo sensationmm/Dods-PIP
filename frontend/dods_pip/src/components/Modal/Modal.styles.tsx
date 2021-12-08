@@ -2,18 +2,20 @@ import styled, { keyframes } from 'styled-components';
 
 import color from '../../globals/color';
 import elevation from '../../globals/elevation';
+import media from '../../globals/media';
 import spacing from '../../globals/spacing';
 import { modalSize } from './index';
 
 const THEME: Record<modalSize, Record<string, string>> = {
-  small: { width: '400px', height: '288px' },
-  medium: { width: '540px', height: '368px' },
-  large: { width: '780px', height: '470px' },
-  xlarge: { width: '1280px', height: '687px' },
+  small: { width: '400px' },
+  medium: { width: '540px' },
+  large: { width: '780px' },
+  xlarge: { width: '1280px' },
 };
 
 interface ModalStyleProps {
   size: modalSize;
+  hasButtons: boolean;
 }
 
 const ANIMATION_DURATION = 200;
@@ -51,10 +53,11 @@ export const veil = styled.div`
   z-index: 1000;
 `;
 
-export const modal = styled.div.attrs(({ size }: ModalStyleProps) => {
+export const modal = styled.div.attrs(({ size, hasButtons }: ModalStyleProps) => {
   return {
     width: THEME[size].width,
     height: THEME[size].height,
+    hasButtons: hasButtons,
   };
 })`
   margin: ${spacing(4)};
@@ -62,34 +65,47 @@ export const modal = styled.div.attrs(({ size }: ModalStyleProps) => {
   display: flex;
   flex-direction: column;
   max-width: ${({ width }) => width};
-  height: ${({ height }) => height};
   max-height: calc(100vh - ${spacing(8)});
   width: 100%;
   background: ${color.base.white};
   border-radius: 8px;
   box-shadow: ${elevation.notification};
+  padding-bottom: ${({ hasButtons }) => (!hasButtons ? spacing(10) : 0)};
 `;
 
 export const modalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   padding: ${spacing(4)};
-  border-bottom: 1px solid ${color.base.greyLighter};
+
+  ${media.greaterThan('md')`
+    padding: ${spacing(10)} ${spacing(8)};
+  `};
 `;
 
 export const modalBody = styled.div`
   overflow-y: scroll;
   padding: 0 ${spacing(4)};
   height: 100%;
+
+  ${media.greaterThan('md')`
+    padding: 0 ${spacing(8)};
+  `};
 `;
 
-export const modalFooter = styled.div`
+type ModalFooterProps = {
+  alignment: string;
+};
+export const modalFooter = styled.div<ModalFooterProps>`
   display: flex;
-  justify-content: center;
+  justify-content: ${({ alignment }) => (alignment === 'right' ? 'flex-end' : 'center')};
   padding: ${spacing(4)};
-  border-top: 1px solid ${color.base.greyLighter};
 
-  > *:not(last-child) {
+  ${media.greaterThan('md')`
+    padding: ${spacing(10)} ${spacing(8)};
+  `};
+
+  > *:not(:last-child) {
     margin-right: ${spacing(2)};
   }
 `;

@@ -52,6 +52,8 @@ const config = {
 
 const { nodeEnv, mariaDb: { host, name, user, password, driver, connectionLimit, seederStorage } } = config
 
+export const env = nodeEnv;
+
 export default {
   [nodeEnv || "development"]: {
     host: host,

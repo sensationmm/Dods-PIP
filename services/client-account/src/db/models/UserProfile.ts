@@ -1,6 +1,6 @@
+import { ClientAccountTeamModel, Role } from '.';
 import { DataTypes, Model } from 'sequelize';
 
-import { ClientAccountTeamModel } from '.';
 import { UserProfileModelAttributes } from '../types';
 import sequelize from '../sequelize';
 
@@ -18,7 +18,7 @@ class UserProfileModel
     public secondaryEmail!: string;
     public telephoneNumber1!: string;
     public telephoneNumber2!: string;
-
+    public isActive!: boolean;
     public fullName!: string;
     public ClientAccountTeamModel?: ClientAccountTeamModel;
 
@@ -26,6 +26,8 @@ class UserProfileModel
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
     public readonly deletedAt!: Date | null;
+
+    public userRole?: Role;
 }
 
 UserProfileModel.init(
@@ -57,7 +59,10 @@ UserProfileModel.init(
             comment: 'null',
         },
         fullName: {
-            type: DataTypes.VIRTUAL(DataTypes.STRING, ['firstName', 'lastName']),
+            type: DataTypes.VIRTUAL(DataTypes.STRING, [
+                'firstName',
+                'lastName',
+            ]),
             get() {
                 return `${this.firstName} ${this.lastName}`;
             },
@@ -91,6 +96,11 @@ UserProfileModel.init(
             allowNull: false,
             comment: 'null',
             field: 'telephone_number_2',
+        },
+        isActive: {
+            type: DataTypes.TINYINT({ length: 1 }),
+            allowNull: false,
+            defaultValue: 1,
         },
     },
     {

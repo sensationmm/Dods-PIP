@@ -136,6 +136,19 @@ paths:
                     $ref: '#/components/responses/AddClientAccountTeamResponse'
                 '400':
                     $ref: '#/components/responses/BadRequest'
+        delete:
+            operationId: removeTeamMember
+            summary: 'Remove Team Member'
+            description: 'Remove Team Member'
+            parameters:
+                - $ref: '#/components/parameters/clientAccountId'
+            requestBody:
+                $ref: '#/components/requestBodies/ClientAccountTeamDeleteBody'
+            responses:
+                '200':
+                    $ref: '#/components/responses/AddClientAccountTeamResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
 
     /clientaccount/{clientAccountId}/teammember/new:
         post:
@@ -371,7 +384,7 @@ components:
                         type: string
                     teamMemberType:
                         type: number
-                        enum: [1, 2]
+                        enum: [1,2,3]
                 example:
                   - userId: 94a57103-3bf0-4a29-bdba-99a4650c1849
                     teamMemberType: 1 
@@ -711,3 +724,16 @@ components:
                 application/json:
                     schema:
                         $ref: '#/components/schemas/ClientAccountUpdateSubscription'
+        ClientAccountTeamDeleteBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            userId:
+                                type: string
+                                description: User UUID
+                                example: 94a57103-3bf0-4a29-bdba-99a4650c1849
+                        required:
+                          - userId

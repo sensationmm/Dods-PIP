@@ -32,10 +32,9 @@ provider:
     lambda: true
 
   apiGateway:
-    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, ""}
-    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, ""}
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, file(../env-config.dev.js):apiGatewayId}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, file(../env-config.dev.js):apiRootResourceId}
     description: Default Gateway for ${self:provider.stage} deployed with Terraform
-
 
   environment:
     NODE_ENV: development
@@ -48,6 +47,7 @@ provider:
     LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: ${self:custom.resourceNames.DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE}
     FAILED_LOGIN_ATTEMPT_COUNT: 3
     LOGIN_LAST_PASSWORDS_NOT_REUSE_MINUTES: 262800 # 6 months
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     RESET_PASSWORD_URL: ${file(../env-config.${self:provider.stage}.js):frontendURL}/password-reset
 
   eventBridge:
@@ -74,6 +74,10 @@ provider:
       Action:
         - cognito-idp:AdminDisableUser
         - cognito-idp:AdminEnableUser
+        - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminDeleteUser
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:AdminDeleteUserAttributes
       Resource: !GetAtt DodsUserPool.Arn
     - Effect: Allow
       Action:
@@ -115,6 +119,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
+  # apiGatewayCaching:
+    # enabled: true
 
 plugins:
   - serverless-webpack
@@ -122,6 +128,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  # - serverless-api-gateway-caching
 
 functions:
   changePassword:
@@ -131,6 +138,8 @@ functions:
       - http:
           method: post
           path: changePassword
+          # caching:
+            # enabled: false
   resetPassword:
     description: Triggered when http request comes
     handler: src/handlers/http/resetPassword/index.handle
@@ -138,6 +147,8 @@ functions:
       - http:
           method: post
           path: resetPassword
+          # caching:
+            # enabled: false
   signIn:
     description: Triggered when http request comes
     handler: src/handlers/http/signIn/index.handle
@@ -145,6 +156,8 @@ functions:
       - http:
           method: post
           path: signIn
+          # caching:
+            # enabled: false
   signOut:
     description: Triggered when http request comes
     handler: src/handlers/http/signOut/index.handle
@@ -152,6 +165,8 @@ functions:
       - http:
           method: post
           path: signOut
+          # caching:
+            # enabled: false
   signUp:
     description: Triggered when http request comes
     handler: src/handlers/http/signUp/index.handle
@@ -159,6 +174,8 @@ functions:
       - http:
           method: post
           path: signUp
+          # caching:
+            # enabled: false
   resendConfirmationCode:
     description: Triggered when http request comes
     handler: src/handlers/http/resendConfirmationCode/index.handle
@@ -166,6 +183,8 @@ functions:
       - http:
           method: post
           path: resendConfirmationCode
+          # caching:
+            # enabled: false
   confirmRegistration:
     description: Triggered when http request comes
     handler: src/handlers/http/confirmRegistration/index.handle
@@ -173,6 +192,8 @@ functions:
       - http:
           method: post
           path: confirmRegistration
+          # caching:
+            # enabled: false
   forgotPassword:
     description: Triggered when http request comes
     handler: src/handlers/http/forgotPassword/index.handle
@@ -180,6 +201,35 @@ functions:
       - http:
           method: post
           path: forgotPassword
+          # caching:
+            # enabled: false
+  updateUserAttributes:
+    description: Triggered when http request comes
+    handler: src/handlers/http/updateUserAttributes/index.handle
+    events:
+      - http:
+          method: post
+          path: updateUserAttributes
+          # caching:
+            # enabled: false
+  deleteUserAttributes:
+    description: Triggered when http request comes
+    handler: src/handlers/http/deleteUserAttributes/index.handle
+    events:
+      - http:
+          method: post
+          path: deleteUserAttributes
+          # caching:
+            # enabled: false
+  createUser:
+    description: Triggered when http request comes
+    handler: src/handlers/http/createUser/index.handle
+    events:
+      - http:
+          method: post
+          path: createUser
+          # caching:
+            # enabled: false
   deleteUser:
     description: Triggered when http request comes
     handler: src/handlers/http/deleteUser/index.handle
@@ -187,6 +237,17 @@ functions:
       - http:
           method: post
           path: deleteUser
+          # caching:
+            # enabled: false
+  destroyUser:
+    description: Triggered when http request comes
+    handler: src/handlers/http/destroyUser/index.handle
+    events:
+      - http:
+          method: post
+          path: destroyUser
+          # caching:
+            # enabled: false
   getUserData:
     description: Triggered when http request comes
     handler: src/handlers/http/getUserData/index.handle
@@ -194,6 +255,8 @@ functions:
       - http:
           method: get
           path: getUserData
+          # caching:
+            # enabled: false
   disableUser:
     description: Triggered when http request comes
     handler: src/handlers/http/disableUser/index.handle
@@ -201,6 +264,8 @@ functions:
       - http:
           method: post
           path: disableUser
+          # caching:
+            # enabled: false
   enableUser:
     description: Triggered when http request comes
     handler: src/handlers/http/enableUser/index.handle
@@ -208,6 +273,8 @@ functions:
       - http:
           method: post
           path: enableUser
+          # caching:
+            # enabled: false
 
   customMessage:
     description: Triggered before AWS Cognito send notification
@@ -330,6 +397,27 @@ resources:
             StringAttributeConstraints:
               MinLength: 3
               MaxLength: 256
+          - Name: "clientAccountId"
+            AttributeDataType: Number
+            Mutable: true
+          - Name: "ClientAccountId"
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 0
+              MaxLength: 50
+          - Name: "clientAccountName"
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 0
+              MaxLength: 100
+          - Name: "UserProfileUuid"
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MinLength: 0
+              MaxLength: 100
 
     DodsUserPoolClient:
       Type: AWS::Cognito::UserPoolClient

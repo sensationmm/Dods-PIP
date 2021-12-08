@@ -28,7 +28,7 @@ exec: true     # Enable running commands in your container.
 variables:
   SECRET_COOKIE_PASSWORD: 2gyZ3GDw3LHZQKDhPmPDL3sjREVRXPr8
   BACKEND_API_KEY: 8b8pv1rGpssR8eeUMjQPjsi8dC2ztrP1GTG1K2w
-  APP_API_URL: https://emhumq7ktf.execute-api.eu-west-1.amazonaws.com/dev  
+  APP_API_URL: https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev
   NODE_ENV: dev
 
 #secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.

@@ -4,10 +4,25 @@ export interface ClientAccountTeam {
     teamMemberType: number;
 }
 
+export interface RoleInfo {
+    uuid: string;
+    title?: string;
+    dodsRole?: boolean;
+}
+
 export interface TeamMemberResponse {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     teamMemberType?: 'Team Member' | 'Account Manager' | 'Client User' | number;
+    title: string;
+    primaryEmailAddress: string;
+    secondaryEmailAddress?: string;
+    telephoneNumber1: string;
+    telephoneNumber2?: string;
+    role?: Object | undefined;
+    isActive?: boolean;
+    memberSince?: Date;
 }
 
 export interface TeamMember {
@@ -31,5 +46,10 @@ export interface NewTeamMemberParameters {
         role_id: string;
     };
     teamMemberType: number;
+    clientAccountId: string;
+}
+
+export interface RemoveTeamMemberParameters {
+    userId: string;
     clientAccountId: string;
 }

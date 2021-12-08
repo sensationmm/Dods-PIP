@@ -1,11 +1,7 @@
 service: user-profile
-
 configValidationMode: warn
-
-frameworkVersion: ^2.57.0
-
+frameworkVersion: ^2.64.0
 variablesResolutionMode: 20210326
-
 projectDir: ../
 
 provider:
@@ -18,8 +14,8 @@ provider:
 
   lambdaHashingVersion: 20201221
   vpc:
-    securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds}
-    subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds}
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../env-config.dev.js):securityGroupIds}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../env-config.dev.js):subnetIds}
   stackTags:
     service: ${self:service}
     env: ${self:provider.stage}
@@ -47,16 +43,14 @@ provider:
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-    restApiId: ${file(../apig.${self:provider.stage}.yml):apiGatewayId, ""}
-    restApiRootResourceId: ${file(../apig.${self:provider.stage}.yml):apiRootResourceId, ""}
-    description: Default Gateway for ${self:provider.stage} deployed with dods-iam
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, file(../env-config.dev.js):apiGatewayId}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, file(../env-config.dev.js):apiRootResourceId}
+    description: Default Gateway for ${self:provider.stage} deployed with Terraform
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    GET_USER_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getUserEndpoint, "http://localhost:1081/user"}
-    GET_USERBYNAME_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getUserByNameEndpoint, "http://localhost:1081/userByName"}
-    GET_ROLE_ENDPOINT: ${self:custom.envs.${self:provider.stage}.getRoleEndpoint, "http://localhost:1081/role"}
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     DB_CONNECTION_LIMIT: 5
     DB_DRIVER: mariadb
     DB_NAME: dods
@@ -65,24 +59,6 @@ provider:
     DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
 
 custom:
-  envs:
-    dev:
-      getUserEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
-      getUserByNameEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
-      getRoleEndpoint: https://emhumq7ktf.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
-
-    qa:
-      getUserEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/user
-      getUserByNameEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/userByName
-      getRoleEndpoint: https://e5txxyf6ik.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/role
-
-    local:
-      getUserEndpoint: http://localhost:1081/user
-      getUserByNameEndpoint: http://localhost:1081/userByName
-      getRoleEndpoint: http://localhost:1081/role
-      MARIA_DB_HOST: "localhost"
-      MARIA_DB_USERNAME: "root"
-      MARIA_DB_PASSWORD: "rootPass"
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules:
@@ -110,6 +86,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
+  # apiGatewayCaching:
+    # enabled: true
 
 plugins:
   - serverless-webpack
@@ -117,6 +95,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  # - serverless-api-gateway-caching
 
 functions:
   createUserProfile:
@@ -126,6 +105,8 @@ functions:
       - http:
           method: post
           path: user
+          # caching:
+            # enabled: false
   searchUsers:
     handler: src/handlers/searchUsers/index.handle
     description: Triggered when http request comes
@@ -133,3 +114,41 @@ functions:
       - http:
           method: get
           path: users
+          # caching:
+            # enabled: false
+  getUser:
+    handler: src/handlers/getUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: user/{userId}
+          # caching:
+            # enabled: false
+  createUser:
+    handler: src/handlers/createUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: users
+          # caching:
+            # enabled: false
+  updateUser:
+    handler: src/handlers/updateUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: user/{userId}
+          # caching:
+            # enabled: false
+  getClientAccountsByUser:
+    handler: src/handlers/getClientAccountsByUser/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: users/{userId}/client-accounts
+          # caching:
+            # enabled: false

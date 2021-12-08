@@ -83,7 +83,14 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: ['subscriptionType', 'team'],
+            include: [
+                { model: this.subsModel, as: 'subscriptionType' },
+                {
+                    model: this.userModel,
+                    as: 'team',
+                    include: ['userRole'],
+                },
+            ],
         });
 
         if (clientAccountModel) {
@@ -219,6 +226,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
                     {
                         model: this.userModel,
                         as: 'team',
+                        include: ['userRole'],
                     },
                 ],
                 distinct: true,
@@ -367,7 +375,14 @@ export class ClientAccountRepository implements ClientAccountPersister {
 
         const clientAccountModel = await this.model.findOne({
             where: { uuid: clientAccountId },
-            include: ['team'],
+
+            include: [
+                {
+                    model: this.userModel,
+                    as: 'team',
+                    include: ['userRole'],
+                },
+            ],
         });
 
         if (clientAccountModel) {
@@ -513,8 +528,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
         let foundClientModel = await this.model.findOne({
             where: { uuid: clientAccountId },
         });
+
         if (foundClientModel) {
-            if (name === foundClientModel.name) return true;
+            if (
+                name.toLocaleLowerCase() ===
+                foundClientModel.name.toLocaleLowerCase()
+            )
+                return true;
             else return false;
         } else {
             throw new Error('Error: clientAccount not found');

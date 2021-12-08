@@ -2,8 +2,12 @@
 import { useEffect, useState } from 'react';
 
 import fetchJson from '../lib/fetchJson';
+import {
+  DropdownValue,
+  TeamMember,
+  TeamMemberType,
+} from '../pages/account-management/add-client/type';
 import { Api, BASE_URI } from '../utils/api';
-import { TeamMember, TeamType } from '../utils/type';
 
 type Error = {
   code?: string;
@@ -11,50 +15,73 @@ type Error = {
 };
 
 type UseTeamMembers = {
-  clients: TeamMember[] | [];
-  consultants: TeamMember[] | [];
-  teams: TeamMember[] | [];
   error?: Error;
 };
 
 type params = {
-  uuid: string;
-  setConsultantUsers?: (vals: Array<TeamMember>) => void;
-  setClientUsers?: (vals: Array<TeamMember>) => void;
+  accountId: string;
+  setAccountManagers?: (vals: Array<DropdownValue>) => void;
+  setTeamMembers?: (vals: Array<DropdownValue>) => void;
+  setClientUsers?: (vals: Array<DropdownValue>) => void;
 };
 
 export default function useTeamMembers({
-  uuid,
+  accountId,
   setClientUsers,
-  setConsultantUsers,
+  setAccountManagers,
+  setTeamMembers,
 }: params): UseTeamMembers {
-  const [teams, setTeams] = useState<TeamMember[]>([]);
-  const [consultants, setConsultants] = useState<TeamMember[]>([]);
-  const [clients, setClients] = useState<TeamMember[]>([]);
   const [error, setError] = useState<Error>({});
 
   const load = async () => {
     try {
-      const results = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${uuid}${Api.TeamMember}`, {
-        method: 'GET',
-      });
+      const results = await fetchJson(
+        `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMember}`,
+        {
+          method: 'GET',
+        },
+      );
       const { data = [] } = results;
 
       if (Array.isArray(data)) {
-        setTeams(data);
-        const consultantsOnly = data.filter(
-          (team: TeamMember) => team.type === TeamType.Consultant,
+        const accountManagers = data.filter(
+          (team: TeamMember) => team.teamMemberType === TeamMemberType.AccountManager,
         );
-        const clientsOnly = data.filter((team: TeamMember) => team.type === TeamType.Client);
-        setConsultants(consultantsOnly);
-        setClients(clientsOnly);
+        const teamMembers = data.filter(
+          (team: TeamMember) => team.teamMemberType === TeamMemberType.TeamMember,
+        );
+        const clientUsers = data.filter(
+          (team: TeamMember) => team.teamMemberType === TeamMemberType.ClientUser,
+        );
 
-        if (setConsultantUsers) {
-          setConsultantUsers(consultantsOnly);
+        if (setAccountManagers) {
+          setAccountManagers(
+            accountManagers.map((item: TeamMember) => ({
+              label: item.name,
+              value: item.id,
+              userData: item,
+            })),
+          );
+        }
+
+        if (setTeamMembers) {
+          setTeamMembers(
+            teamMembers.map((item: TeamMember) => ({
+              label: item.name,
+              value: item.id,
+              userData: item,
+            })),
+          );
         }
 
         if (setClientUsers) {
-          setClientUsers(clientsOnly);
+          setClientUsers(
+            clientUsers.map((item: TeamMember) => ({
+              label: item.name,
+              value: item.id,
+              userData: item,
+            })),
+          );
         }
       }
     } catch ({ data = {} }) {
@@ -66,5 +93,5 @@ export default function useTeamMembers({
     load();
   }, []);
 
-  return { teams, consultants, clients, error };
+  return { error };
 }

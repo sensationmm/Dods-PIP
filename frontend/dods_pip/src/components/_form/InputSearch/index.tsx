@@ -27,9 +27,10 @@ const InputSearch: React.FC<InputSearchProps> = ({
 }) => {
   const isFilled = value.length > 0;
   return (
-    <Styled.wrapper isFilled={isFilled} data-testid={testId}>
+    <Styled.wrapper isFilled={isFilled}>
       <Input
         id={id}
+        testId={testId}
         data-test="component-input-search"
         type="text"
         size={size}

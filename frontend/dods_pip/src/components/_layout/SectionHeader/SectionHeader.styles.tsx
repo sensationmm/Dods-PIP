@@ -4,7 +4,7 @@ import spacing from '../../../globals/spacing';
 
 export const wrapper = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
 `;
 
 export const titles = styled.div`

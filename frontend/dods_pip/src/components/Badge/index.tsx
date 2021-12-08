@@ -57,7 +57,7 @@ const Badge: React.FC<BadgeProps> = ({ size, type = 'infoLight', label, number }
           type={size === 'small' ? 'bodySmall' : 'body'}
           color={type === 'infoLight' ? color.theme.blueMid : color.base.white}
         >
-          {number}
+          {number?.toString() || '--'}
         </Text>
       </Component>
       {label && label.length > 0 && (

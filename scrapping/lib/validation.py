@@ -59,3 +59,9 @@ class Validator:
         elif '.dodsil' in filename:
             message['file_path_content'] = filename
         return message
+
+    @staticmethod
+    def prepare_migration_content_message_for_stage2(message: dict, filename: str):
+        if '.json' in filename:
+            message['file_path_content_document'] = filename
+        return message

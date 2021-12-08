@@ -24,13 +24,13 @@ describe('Avatar', () => {
   it('renders medium icon variant', () => {
     const wrapper = shallow(<Avatar type="client" size="medium" />);
     const icon = wrapper.find(Icon);
-    expect(icon.props().size).toEqual(IconSize.xlarge);
+    expect(icon.props().size).toEqual(IconSize.xxlarge);
   });
 
   it('renders large icon variant', () => {
     const wrapper = shallow(<Avatar type="client" size="large" />);
     const icon = wrapper.find(Icon);
-    expect(icon.props().size).toEqual(IconSize.xxlarge);
+    expect(icon.props().size).toEqual(IconSize.xxxlarge);
   });
 
   it('renders small text variant', () => {

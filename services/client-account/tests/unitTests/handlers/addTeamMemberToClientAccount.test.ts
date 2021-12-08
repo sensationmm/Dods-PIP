@@ -1,14 +1,6 @@
-import { ClientAccountModel, UserProfileModel } from '../../../src/db';
-import {
-    ClientAccountRepository,
-    ClientAccountTeamRepository,
-    UserProfileRepository,
-} from '../../../src/repositories';
-import {
-    HttpResponse,
-    HttpStatusCode,
-    createContext,
-} from '@dodsgroup/dods-lambda';
+import { ClientAccountModel, UserProfileModelAttributes } from '../../../src/db';
+import { ClientAccountRepository, ClientAccountTeamRepository, UserProfileRepository, } from '../../../src/repositories';
+import { HttpResponse, HttpStatusCode, createContext, } from '@dodsgroup/dods-lambda';
 
 import { ClientAccountTeamParameters } from '../../../src/domain';
 import { addTeamMemberToClientAccount } from '../../../src/handlers/addTeamMemberToClientAccount/addTeamMemberToClientAccount';
@@ -21,20 +13,10 @@ jest.mock('../../../src/repositories/ClientAccountTeamRepository');
 jest.mock('../../../src/repositories/UserProfileRepository');
 
 const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
-const mockedClientAccountTeamRepository = mocked(
-    ClientAccountTeamRepository,
-    true
-);
+const mockedClientAccountTeamRepository = mocked(ClientAccountTeamRepository, true);
 const mockedUserProfileRepository = mocked(UserProfileRepository, true);
 
 const defaultContext = createContext();
-// const defaultClientAccountTeamParameters: ClientAccountTeamParameters = {
-//     clientAccountTeam: {
-//         userUuid: 'bb52a39b-814a-41df-a0b8-60083f25ec9a',
-//         teamMemberType: 1,
-//         clientAccountUuid: 'cc52a39b-814a-41df-a0b8-60083f25ec9a',
-//     },
-// };
 
 const defaultClientAccountTeamParameters: ClientAccountTeamParameters = {
     clientAccountId: 'e004005e-d375-4be6-972e-9d1bd87c42db',
@@ -63,7 +45,7 @@ const defaultUserProfile = {
     title: 'Mr',
     roleId: 1,
     primaryEmail: 'k@h.com',
-} as UserProfileModel;
+} as UserProfileModelAttributes;
 
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.findOne.mockClear();
@@ -98,7 +80,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(
             {
                 uuid: 'ba52a39b-814a-41df-a0b8-60083f25eeee',
-                subscriptionSeats: 0,
+                // subscriptionSeats: 0,
             } as ClientAccountModel
         );
 

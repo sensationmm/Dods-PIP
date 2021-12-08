@@ -15,6 +15,14 @@ module "vpc" {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+// - Central API Gateway
+// --------------------------------------------------------------------------------------------------------------------
+module "api-gateway" {
+  source      = "./services/api-gateway"
+  environment = var.environment
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 // - Primary PIP Frontend Network
 // --------------------------------------------------------------------------------------------------------------------
 module "pip-network" {
@@ -22,6 +30,8 @@ module "pip-network" {
   environment = var.environment
 
   app_image          = var.app_image
+  api_gateway        = module.api-gateway.api_gateway_url
+  fe_api_key         = module.api-gateway.api_key_front
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnet_ids
   public_subnet_ids  = module.vpc.public_subnet_ids
@@ -60,9 +70,9 @@ module "migration" {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-// - API Gateway
+// - Extracted content
 // --------------------------------------------------------------------------------------------------------------------
-module "api_gateway" {
-  source      = "./services/api-gateway"
+module "extracted-content" {
+  source      = "./services/extracted-content"
   environment = var.environment
 }

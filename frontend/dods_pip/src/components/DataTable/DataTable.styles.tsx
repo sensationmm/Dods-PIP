@@ -91,7 +91,7 @@ export const plainTableCell = styled.td<TableCellProps>`
   background: ${color.base.white};
   border-bottom: 1px solid ${color.shadow.blue};
   text-align: left;
-  vertical-align: top;
+  vertical-align: center;
 `;
 
 export const plainCellNoData = styled.td`

@@ -3,8 +3,10 @@ export const BASE_URI = '/api';
 export enum Api {
   CheckAccountName = '/checkaccountname',
   ClientAccount = '/clientaccount',
+  ClientAccounts = '/client-accounts',
   EnableUser = '/enableUser',
   ForgotPassword = '/forgotPassword',
+  GetUser = '/get-user',
   Login = '/login',
   Logout = '/logout',
   ResetPassword = '/resetPassword',
@@ -13,6 +15,11 @@ export enum Api {
   TeamMemberCreate = '/teammember/new',
   User = '/user',
   Users = '/users',
+  EditorialContentSources = '/content-sources',
+  EditorialInfoTypes = '/information-types',
+  EditorialStatus = '/editorial-record-status',
+  EditorialRecords = '/editorial-record',
+  Seats = '/seats',
 }
 
 export const toQueryString = (params: Record<string, any> = {}): string => {
