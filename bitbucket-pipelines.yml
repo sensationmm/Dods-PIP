@@ -97,19 +97,19 @@ pipelines:
             - npm install
             - SERVERLESS_STAGE=dev npm run test:coverage
 
-      - step:
-          name: Documents Service
-          image: gioatsomoglobal/nodejs-builder:0.2
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/documents/**"
-          script:
-            - cd services/documents
-            - npm install
-            - SERVERLESS_STAGE=dev npm run test:coverage
+#      - step:
+#          name: Documents Service
+#          image: gioatsomoglobal/nodejs-builder:0.2
+#          caches:
+#            - node
+#          condition:
+#            changesets:
+#              includePaths:
+#                - "services/documents/**"
+#          script:
+#            - cd services/documents
+#            - npm install
+#            - SERVERLESS_STAGE=dev npm run test:coverage
 
       - step:
           name: Editorial Workflow Service

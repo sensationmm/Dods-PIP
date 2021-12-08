@@ -88,7 +88,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserProfile"
+              $ref: "#/components/schemas/UserUpdate"
       responses:
         "200":
           description: Succesfully updated User Profile
@@ -389,6 +389,28 @@ components:
         - lastName
         - primaryEmail
         - roleId
+
+    UserUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Mr
+        firstName:
+          type: string
+          example: Jane
+        lastName:
+          type: string
+          example: Blogs
+        secondaryEmail:
+          type: string
+          example: Jane.Blogs@email.com
+        telephoneNumber1:
+          type: string
+          example: "+442071838750"
+        telephoneNumber2:
+          type: string
+          example: "+442071838750"
 
   parameters:
     name:

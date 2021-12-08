@@ -2,6 +2,7 @@ service: dods-search-service
 
 configValidationMode: warn
 
+frameworkVersion: ^2.54.0
 
 variablesResolutionMode: 20210326
 
@@ -78,6 +79,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
+  # apiGatewayCaching:
+    # enabled: true
 
 plugins:
   - serverless-webpack
@@ -85,6 +88,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  # - serverless-api-gateway-caching
 package:
   include:
     - node_modules/**
@@ -104,3 +108,5 @@ functions:
       - http:
           method: post
           path: search/contents/query
+                  # caching:
+                    # enabled: false

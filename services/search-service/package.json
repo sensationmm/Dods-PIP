@@ -48,6 +48,7 @@
     "open": "^8.2.1",
     "pre-commit": "^1.2.2",
     "serverless": "^1.54.0",
+    "serverless-api-gateway-caching": "^1.7.4",
     "serverless-dependson-plugin": "^1.1.2",
     "serverless-localstack": "^0.4.34",
     "serverless-offline": "^5.12.1",

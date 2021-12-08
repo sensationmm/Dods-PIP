@@ -12,7 +12,8 @@ export interface RoleInfo {
 
 export interface TeamMemberResponse {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     teamMemberType?: 'Team Member' | 'Account Manager' | 'Client User' | number;
     title: string;
     primaryEmailAddress: string;

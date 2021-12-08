@@ -15,6 +15,7 @@ const THEME: Record<modalSize, Record<string, string>> = {
 
 interface ModalStyleProps {
   size: modalSize;
+  hasButtons: boolean;
 }
 
 const ANIMATION_DURATION = 200;
@@ -52,10 +53,11 @@ export const veil = styled.div`
   z-index: 1000;
 `;
 
-export const modal = styled.div.attrs(({ size }: ModalStyleProps) => {
+export const modal = styled.div.attrs(({ size, hasButtons }: ModalStyleProps) => {
   return {
     width: THEME[size].width,
     height: THEME[size].height,
+    hasButtons: hasButtons,
   };
 })`
   margin: ${spacing(4)};
@@ -68,6 +70,7 @@ export const modal = styled.div.attrs(({ size }: ModalStyleProps) => {
   background: ${color.base.white};
   border-radius: 8px;
   box-shadow: ${elevation.notification};
+  padding-bottom: ${({ hasButtons }) => (!hasButtons ? spacing(10) : 0)};
 `;
 
 export const modalHeader = styled.div`
