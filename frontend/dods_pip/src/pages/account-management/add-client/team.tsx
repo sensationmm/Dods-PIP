@@ -24,6 +24,7 @@ import useTeamMembers from '../../../lib/useTeamMembers';
 import { Api, BASE_URI } from '../../../utils/api';
 import { getUserName } from '../../../utils/string';
 import * as Validation from '../../../utils/validation';
+import { UserAccount } from '../users.page';
 import * as Styled from './index.styles';
 import { DropdownValue, RoleType, TeamMember, TeamMemberType } from './type';
 
@@ -200,10 +201,12 @@ const Team: React.FC<TeamProps> = ({
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {
-        const values = data.map((item: User) => ({
-          value: item.uuid,
-          label: getUserName(item),
-        }));
+        const values = data
+          .filter((item) => (item as UserAccount).isDodsUser)
+          .map((item: User) => ({
+            value: item.uuid,
+            label: getUserName(item),
+          }));
 
         setUsers(values);
       }
