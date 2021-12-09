@@ -209,6 +209,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
           title: 'User updated',
           type: 'confirm',
         });
+        await loadUser();
       }
     } catch (e) {
       console.log(e);
