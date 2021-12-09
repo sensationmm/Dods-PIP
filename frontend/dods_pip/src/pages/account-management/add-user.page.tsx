@@ -135,23 +135,9 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         <Panel bgColor={color.base.ivory} isNarrow>
           <Styled.content>
             <AddUserForm
-              firstName={formFields.firstName}
-              setFirstName={(value) => setFormFieldProp('firstName', value)}
-              lastName={formFields.lastName}
-              setLastName={(value) => setFormFieldProp('lastName', value)}
+              fieldData={formFields}
+              onFieldChange={setFormFieldProp}
               isClientUser={isClientUser}
-              account={formFields.account}
-              setAccount={(value) => setFormFieldProp('account', value)}
-              jobTitle={formFields.jobTitle}
-              setJobTitle={(value) => setFormFieldProp('jobTitle', value)}
-              emailAddress={formFields.emailAddress}
-              setEmailAddress={(value) => setFormFieldProp('emailAddress', value)}
-              emailAddress2={formFields.emailAddress2}
-              setEmailAddress2={(value) => setFormFieldProp('emailAddress2', value)}
-              telephoneNumber={formFields.telephoneNumber}
-              setTelephoneNumber={(value) => setFormFieldProp('telephoneNumber', value)}
-              telephoneNumber2={formFields.telephoneNumber2}
-              setTelephoneNumber2={(value) => setFormFieldProp('telephoneNumber2', value)}
               errors={errors}
               setErrors={setErrors}
             />

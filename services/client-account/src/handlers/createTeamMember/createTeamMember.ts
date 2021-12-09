@@ -7,7 +7,6 @@ import {
 import {
     ClientAccountRepository,
     UserProfileRepository,
-    UserProfileServiceRepository,
 } from '../../repositories';
 
 import { NewTeamMemberParameters } from '../../domain/interfaces/ClientAccountTeam';
@@ -38,19 +37,26 @@ export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> =
             );
         }
 
-        const newUser =
-            await UserProfileServiceRepository.defaultInstance.createUser(
-                userProfile
-            );
+        const createUserResponse =
+            await UserProfileRepository.defaultInstance.createUser({
+                title: userProfile.title,
+                firstName: userProfile.first_name,
+                lastName: userProfile.last_name,
+                primaryEmail: userProfile.primary_email_address,
+                roleId: userProfile.role_id,
+                secondaryEmail: userProfile.secondary_email_address,
+                telephoneNumber: userProfile.telephone_number_1,
+                clientAccountId,
+            });
 
-        if (!newUser) {
+        if (!createUserResponse) {
             return new HttpResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, {
                 success: false,
                 message: 'Could not create User Profile',
             });
         }
 
-        const userId = newUser.id;
+        const userId = createUserResponse.data.uuid;
 
         await ClientAccountRepository.defaultInstance.addTeamMember({
             clientAccountId,
@@ -64,17 +70,6 @@ export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> =
             3
         );
 
-        const createUserResponse =
-            await UserProfileRepository.defaultInstance.createUser({
-                title: userProfile.title,
-                firstName: userProfile.first_name,
-                lastName: userProfile.last_name,
-                primaryEmail: userProfile.primary_email_address,
-                roleId: userProfile.role_id,
-                secondaryEmail: userProfile.secondary_email_address,
-                telephoneNumber: userProfile.telephone_number_1,
-                clientAccountId,
-            });
 
         if (createUserResponse.success) {
             console.log(createUserResponse.data);

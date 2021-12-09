@@ -23,7 +23,6 @@ export interface UsersProps {
   addNotification: LoadingHOCProps['addNotification'];
   setLoading: LoadingHOCProps['setLoading'];
   accountId: string;
-  pageAccountName: string;
 }
 
 export type TeamUser = {
@@ -40,12 +39,7 @@ export type TeamUser = {
   isActive?: number;
 };
 
-const Users: React.FC<UsersProps> = ({
-  accountId,
-  pageAccountName,
-  addNotification,
-  setLoading,
-}) => {
+const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading }) => {
   const [users, setUsers] = React.useState<TeamUser[]>();
   const [remainingSeats, setRemainingSeats] = React.useState<number>();
   const [noRemainingSeatsModal, setNoRemainingSeatsModal] = React.useState(false);
@@ -105,7 +99,7 @@ const Users: React.FC<UsersProps> = ({
   const handleAddUser = async () => {
     if (remainingSeats && remainingSeats > 0) {
       router.push(
-        `/account-management/add-user?type=accountsAddNewUser&referrer=${router.asPath}&accountId=${accountId}&pageAccountName=${pageAccountName}`,
+        `/account-management/add-user?type=accountsAddNewUser&referrer=${router.asPath}&accountId=${accountId}`,
       );
     } else {
       setNoRemainingSeatsModal(true);

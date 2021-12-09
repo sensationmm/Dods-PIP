@@ -1,21 +1,21 @@
-import { CreateUserOutput, CreateUserPersisterInput, RequestOutput, UserProfilePersister, config } from '../domain';
-import { UserProfileModel, UserProfileModelAttributes } from '../db';
+import { CreateUserOutput, CreateUserPersisterInput, RequestOutput, UserProfilePersisterV2, config } from '../domain';
+import { User, UserInput, UserOutput } from '@dodsgroup/dods-model';
 import { col, fn, where } from 'sequelize';
 
 import axios from 'axios';
 
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL } } } = config;
 
-export class UserProfileRepository implements UserProfilePersister {
-    static defaultInstance: UserProfilePersister = new UserProfileRepository(UserProfileModel);
+export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
+    static defaultInstance: UserProfilePersisterV2 = new UserProfileRepositoryV2();
 
-    constructor(private userModel: typeof UserProfileModel, private baseURL: string = apiGatewayBaseURL) { }
+    constructor(private baseURL: string = apiGatewayBaseURL) { }
 
-    async findOne(where: Partial<UserProfileModelAttributes>): Promise<UserProfileModel> {
-        const clientAccountModel = await this.userModel.findOne({ where });
+    async findOne(where: Partial<UserInput>): Promise<UserOutput> {
+        const result = await User.findOne({ where });
 
-        if (clientAccountModel) {
-            return clientAccountModel;
+        if (result) {
+            return result;
         } else {
             throw new Error('Error: userProfile not found');
         }
@@ -23,7 +23,7 @@ export class UserProfileRepository implements UserProfilePersister {
 
     async checkUserEmailAvailability(primaryEmailAddress: string): Promise<boolean> {
         const lowerCaseEmail = primaryEmailAddress.trim().toLocaleLowerCase();
-        const coincidences = await this.userModel.findAll({
+        const coincidences = await User.findAll({
             where: {
                 primaryEmail: where(
                     fn('LOWER', col('primary_email')),
@@ -44,7 +44,7 @@ export class UserProfileRepository implements UserProfilePersister {
         return { success, data: User, error };
     }
 
-    async updateUser(values: Partial<UserProfileModelAttributes>, where: Partial<UserProfileModelAttributes>): Promise<void> {
-        await this.userModel.update(values, { where });
+    async updateUser(values: Partial<UserInput>, where: Partial<UserInput>): Promise<void> {
+        await User.update(values, { where });
     }
 }

@@ -528,8 +528,13 @@ export class ClientAccountRepository implements ClientAccountPersister {
         let foundClientModel = await this.model.findOne({
             where: { uuid: clientAccountId },
         });
+
         if (foundClientModel) {
-            if (name === foundClientModel.name) return true;
+            if (
+                name.toLocaleLowerCase() ===
+                foundClientModel.name.toLocaleLowerCase()
+            )
+                return true;
             else return false;
         } else {
             throw new Error('Error: clientAccount not found');

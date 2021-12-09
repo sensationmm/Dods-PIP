@@ -9,6 +9,7 @@ export type SearchUsersInput = {
     offset?: number;
     sortBy?: string;
     sortDirection?: string;
+    isActive?: string;
 };
 
 export type SearchUsersResultType = Pick<
@@ -112,18 +113,18 @@ export type ClientAccountObj = {
 export type GetUserOutput =
     | Pick<UserInput, 'firstName' | 'lastName'>
     | {
-          primaryEmail: string;
-          role: Object;
-          isDodsUser: boolean;
-          secondaryEmail?: string | null;
-          telephoneNumber1: string | null;
-          telephoneNumber2?: string | null;
-          title: string | null;
-          clientAccount: ClientAccountObj;
-          clientAccountId: string | null;
-          isActive: boolean;
-          memberSince: Date;
-      };
+        primaryEmail: string;
+        role: Object;
+        isDodsUser: boolean;
+        secondaryEmail?: string | null;
+        telephoneNumber1: string | null;
+        telephoneNumber2?: string | null;
+        title: string | null;
+        clientAccount: ClientAccountObj;
+        clientAccountId: string | null;
+        isActive: boolean;
+        memberSince: Date;
+    };
 
 export interface UserProfilePersisterV2 {
     getUser(parameters: GetUserInput): Promise<GetUserOutput>;

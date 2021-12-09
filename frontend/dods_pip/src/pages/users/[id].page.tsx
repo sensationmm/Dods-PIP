@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import InputPassword from '../../components/_form/InputPassword';
 import Toggle from '../../components/_form/Toggle';
@@ -21,7 +21,7 @@ import useUser, { User } from '../../lib/useUser';
 import { Api, BASE_URI } from '../../utils/api';
 import { showTeamList } from '../account-management/accounts.page';
 import { teamList as TeamList } from '../account-management/accounts.styles';
-import { TeamMember } from '../account-management/add-client/type';
+import { RoleType, TeamMember } from '../account-management/add-client/type';
 import AddUserForm, { FormFields } from '../account-management/add-user-form';
 import * as AccountStyled from '../accounts/index.styles';
 import UserInfo from './userInfo';
@@ -48,20 +48,23 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
 
   const [showReset, setShowReset] = React.useState<boolean>(false);
   const [showDelete, setShowDelete] = React.useState<boolean>(false);
-  const [userData, setUserData] = React.useState<User>();
   const [assocAccounts, setAssocAccounts] = React.useState<ClientAccount[]>();
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
-  const [firstName, setFirstName] = React.useState<string>('');
-  const [lastName, setLastName] = React.useState<string>('');
-  const [account, setAccount] = React.useState<string>('');
-  const [jobTitle, setJobTitle] = React.useState<string>('');
-  const [emailAddress, setEmailAddress] = React.useState<string>('');
-  const [emailAddress2, setEmailAddress2] = React.useState<string>('');
-  const [telephoneNumber, setTelephoneNumber] = React.useState<string>('');
-  const [telephoneNumber2, setTelephoneNumber2] = React.useState<string>('');
   const [isActive, setIsActive] = React.useState<boolean>(true);
   const [password, setPassword] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Partial<FormFields>>({});
+  const [userData, setUserData] = React.useState<User>();
+  const [formFields, setFormFields] = useState<FormFields>({
+    firstName: '',
+    lastName: '',
+    emailAddress: '',
+    emailAddress2: '',
+    telephoneNumber: '',
+    telephoneNumber2: '',
+    account: '',
+    jobTitle: '',
+    userType: RoleType.ClientUser,
+  });
 
   const loadUser = async () => {
     if (userId === '') {
@@ -73,7 +76,26 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       method: 'GET',
     });
     const { data = {} } = response;
-    setUserData({ ...(data as User), displayName: `${data.firstName} ${data.lastName}` });
+    setUserData({
+      ...(data as User),
+      displayName: `${data.firstName} ${data.lastName}`,
+    });
+
+    // TODO: Fix lazy typings
+    setFormFields({
+      account: ((data.clientAccount as Record<string, string>)?.uuid as string) || '',
+      emailAddress: (data.primaryEmail as string) || '',
+      emailAddress2: (data.secondaryEmail as string) || '',
+      jobTitle: (data.jobTitle as string) || '',
+      telephoneNumber: (data.telephoneNumber1 as string) || '',
+      telephoneNumber2: (data.telephoneNumber2 as string) || '',
+      userType:
+        (data.role as Record<string, string>)?.uuid === RoleType.ClientUser
+          ? RoleType.ClientUser
+          : RoleType.DodsConsultant,
+      firstName: (data.firstName as string) || '',
+      lastName: (data.lastName as string) || '',
+    });
   };
 
   const onDelete = async () => {
@@ -90,7 +112,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       if (success) {
         setLoading(true);
 
-        router.push(`/accounts/${userData?.clientAccount?.uuid}?userDeleted=true`);
+        await router.push(`/accounts/${userData?.clientAccount?.uuid}?userDeleted=true`);
       }
     } catch (e) {
       // show server error
@@ -112,9 +134,15 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     setAssocAccounts(data as ClientAccount[]);
   };
 
-  React.useEffect(() => {
-    loadUser();
-    userId && getAssociatedAccounts(userId as string);
+  const setUserFormData = (field: keyof FormFields, value: string) => {
+    setFormFields({ ...formFields, ...{ [field]: value.trim() } });
+  };
+
+  useEffect(() => {
+    (async () => {
+      await loadUser();
+      userId && (await getAssociatedAccounts(userId as string));
+    })();
   }, [userId]);
 
   const actions = [] as JSX.Element[];
@@ -156,7 +184,35 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     );
   }
 
-  const onEdit = () => console.log('Update');
+  const onUpdate = async () => {
+    setLoading(true);
+    const data = {
+      firstName: formFields.firstName,
+      lastName: formFields.lastName,
+      secondaryEmailAddress: formFields.emailAddress2,
+      title: formFields.jobTitle,
+      telephoneNumber1: formFields.telephoneNumber,
+      telephoneNumber2: formFields.telephoneNumber2,
+      isActive: isActive,
+    };
+
+    try {
+      const result = await fetchJson(`${BASE_URI}${Api.Users}/${userId}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+
+      if (result.success) {
+        addNotification({
+          title: 'User updated',
+          type: 'confirm',
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
+  };
 
   const onReset = async () => {
     setShowReset(false);
@@ -259,7 +315,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
             {
               type: 'primary',
               label: 'Update',
-              onClick: onEdit,
+              onClick: onUpdate,
               icon: Icons.Tick,
               iconAlignment: 'right',
             },
@@ -268,23 +324,9 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
         >
           <Styled.content>
             <AddUserForm
-              firstName={firstName}
-              setFirstName={setFirstName}
-              lastName={lastName}
-              setLastName={setLastName}
+              fieldData={formFields}
+              onFieldChange={setUserFormData}
               isClientUser={!userData?.isDodsUser}
-              account={account}
-              setAccount={setAccount}
-              jobTitle={jobTitle}
-              setJobTitle={setJobTitle}
-              emailAddress={emailAddress}
-              setEmailAddress={setEmailAddress}
-              emailAddress2={emailAddress2}
-              setEmailAddress2={setEmailAddress2}
-              telephoneNumber={telephoneNumber}
-              setTelephoneNumber={setTelephoneNumber}
-              telephoneNumber2={telephoneNumber2}
-              setTelephoneNumber2={setTelephoneNumber2}
               errors={errors}
               setErrors={setErrors}
               isEdit={true}

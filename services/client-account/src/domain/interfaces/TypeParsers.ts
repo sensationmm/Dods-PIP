@@ -94,7 +94,8 @@ export function parseSearchClientAccountResponse(
 export function parseTeamMember(item: UserProfileModel): TeamMemberResponse {
     return {
         id: item.uuid,
-        name: item.fullName,
+        firstName: item.firstName,
+        lastName: item.lastName,
         teamMemberType: item.ClientAccountTeamModel!.parsedType,
         title: item.title,
         primaryEmailAddress: item.primaryEmail,

@@ -22,12 +22,13 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import useDebounce from '../../lib/useDebounce';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
+import { RoleType } from './add-client/type';
 import * as Styled from './users.styles';
 
 type Filters = {
   search?: string;
   aToZ?: string;
-  status?: string;
+  isActive?: string;
   role?: string;
 };
 
@@ -45,22 +46,18 @@ type UserAccount = {
   email: string;
   role: Role;
   type: UserType;
-  active: boolean;
+  isActive: boolean;
+  isDodsUser: boolean;
 };
 
 type FilterParams = {
   limit?: number;
   offset?: number;
   startsWith?: string;
-  searchTerm?: string;
-  status?: string;
+  name?: string;
+  isActive?: string;
   role?: string;
 };
-
-enum UserStatusValue {
-  Active = 'active',
-  Inactive = 'inactive',
-}
 
 type userAccounts = UserAccount[];
 
@@ -81,10 +78,10 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
     const params: FilterParams = {
       limit: numPerPage,
       offset: activePage * numPerPage,
-      ...(filters.status && { active: filters.status === UserStatusValue.Active }),
+      ...(filters.isActive && { isActive: filters.isActive }),
       ...(filters.role && { role: filters.role }),
       ...(filters.aToZ && { startsWith: filters.aToZ }),
-      ...(filters.search && { searchTerm: encodeURI(filters.search) }),
+      ...(filters.search && { name: encodeURI(filters.search) }),
     };
 
     return toQueryString(params);
@@ -112,7 +109,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
   }, [
     debouncedValue,
     filters.aToZ,
-    filters.status,
+    filters.isActive,
     filters.role,
     filters.search,
     numPerPage,
@@ -176,11 +173,11 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
                 size="medium"
                 options={[
                   { value: '', label: 'All Users' },
-                  { value: UserStatusValue.Active, label: 'Active Users' },
-                  { value: UserStatusValue.Inactive, label: 'Inactive Users' },
+                  { value: 'true', label: 'Active Users' },
+                  { value: 'false', label: 'Inactive Users' },
                 ]}
-                onChange={(value) => setFilters({ ...filters, ...{ status: value } })}
-                value={filters.status || ''}
+                onChange={(value) => setFilters({ ...filters, ...{ isActive: value } })}
+                value={filters.isActive || ''}
                 placeholder="All Users"
                 isFilter
               />
@@ -189,8 +186,8 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
                 size="medium"
                 options={[
                   { value: '', label: 'Role' },
-                  { value: 'Admin', label: 'Admin' },
-                  { value: 'User', label: 'User' },
+                  { value: RoleType.DodsConsultant, label: 'Consultant' },
+                  { value: RoleType.ClientUser, label: 'User' },
                 ]}
                 onChange={(value) => setFilters({ ...filters, ...{ role: value } })}
                 value={filters.role || ''}
@@ -227,18 +224,16 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
           colWidths={[8, 4, 4, 4, 1]}
           rows={usersList.map((user: UserAccount) => {
             const { uuid } = user;
-            user.type = 'client';
-            user.active = true;
             return [
               user.lastName.substring(0, 1),
               <Styled.avatarName key={`user-${uuid}`}>
                 <Avatar
-                  type={user.type}
+                  type={user.isDodsUser ? 'consultant' : 'client'}
                   size="small"
-                  disabled={!user.active}
+                  disabled={!user.isActive}
                   alt={user.firstName + ' ' + user.lastName}
                 />
-                <Text bold={true} color={!user.active ? color.base.grey : color.theme.blue}>
+                <Text bold={true} color={!user.isActive ? color.base.grey : color.theme.blue}>
                   {user.firstName} {user.lastName}
                 </Text>
               </Styled.avatarName>,
