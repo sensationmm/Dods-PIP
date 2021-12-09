@@ -27,7 +27,6 @@ class Validator:
     @staticmethod
     def migration_content_file_paths_validator(body: dict):
         required_paths = {
-            'file_path_content': '',
             'file_path_metadata': '',
             'file_path_html': ''
         }
@@ -56,8 +55,6 @@ class Validator:
             message['file_path_metadata'] = filename
         elif '.html' in filename:
             message['file_path_html'] = filename
-        elif '.dodsil' in filename:
-            message['file_path_content'] = filename
         return message
 
     @staticmethod

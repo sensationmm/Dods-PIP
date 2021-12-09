@@ -32,7 +32,7 @@ def s3_list_folders(prefix: str):
             bucket = s3.Bucket(name=INPUT_BUCKET)
             message = {}
             for obj in bucket.objects.filter(Prefix=o.get('Prefix')):
-                if '.ml' in obj.key or 'dodsil' in obj.key or '.html' in obj.key:
+                if '.ml' in obj.key or '.html' in obj.key:
                     message = Validator().prepare_migration_content_message(message, obj.key)
             if bool(message):
                 string_message = dumps(message)
@@ -76,12 +76,6 @@ def consumer(event, context):
                 )
                 html_content = html_content['Body'].read().decode('utf-8')
 
-                content_content = s3_client.get_object(
-                    Bucket=INPUT_BUCKET,
-                    Key=message['file_path_content']
-                )
-                content_content = content_content['Body'].read().decode('utf-8')
-
                 content["documentId"] = item.code.text if item.code is not None else str(uuid.uuid4())
                 content["jurisdiction"] = "UK"
                 content["documentTitle"] = item.revision.localisation.title.text \
@@ -110,7 +104,7 @@ def consumer(event, context):
                 content["feedFormat"] = item.revision.feedformator.text if item.revision.feedformator is not None else ""
                 content["language"] = item.revision.localisation.language.text \
                     if item.revision.localisation.language is not None else "en"
-                content["originalContent"] = str(content_content)
+                content["originalContent"] = ""
                 content["documentContent"] = str(html_content)
 
                 annotations = soup.findChildren('granularannotation')
@@ -120,6 +114,16 @@ def consumer(event, context):
                         "tagId": annotation.tag.text if annotation.tag is not None else "",
                         "facetType": annotation.suggestedfacet.text if annotation.suggestedfacet is not None else "",
                         "taxonomyType": annotation.suggestedtype.text if annotation.suggestedtype is not None else "",
+                        "termLabel": annotation.value.text if annotation.value is not None else "",
+                    }
+                    taxonomy_terms.append(taxonomy_term)
+                coarse_annotations = soup.findChildren('coarseannotation')
+                for coarse_annotation in coarse_annotations:
+                    taxonomy_term = {
+                        "tagId": coarse_annotation.tag.text if coarse_annotation.tag is not None else "",
+                        "facetType": "",
+                        "taxonomyType": "",
+                        "termLabel": coarse_annotation.value.text if coarse_annotation.value is not None else "",
                     }
                     taxonomy_terms.append(taxonomy_term)
                 content["taxonomyTerms"] = taxonomy_terms

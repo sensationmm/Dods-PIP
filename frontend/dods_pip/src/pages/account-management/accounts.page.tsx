@@ -74,7 +74,7 @@ export enum LocationValue {
   UK = 'UK',
 }
 
-export const showTeamList = (team: ClientAccountTeamMember[]) => {
+export const showTeamList = (team: ClientAccountTeamMember[]): JSX.Element[] => {
   let finalTeam = [];
   let teamList: ClientAccountTeamMember[] = team;
   const filterByClient = (team: ClientAccountTeamMember) =>
@@ -198,6 +198,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
         onClick={() => goToAccountSetup(uuid)}
         icon={Icons.ChevronRightBold}
         type="text"
+        isSmall
       />,
     ];
   };
