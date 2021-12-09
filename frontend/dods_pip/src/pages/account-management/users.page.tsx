@@ -38,7 +38,7 @@ export type Role = {
   dodsRole: number;
 };
 
-type UserAccount = {
+export type UserAccount = {
   uuid: number;
   firstName: string;
   lastName: string;
