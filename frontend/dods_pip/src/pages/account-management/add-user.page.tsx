@@ -82,7 +82,7 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         role_id: formFields.userType,
       },
       clientAccountId: formFields.account,
-      teamMemberType: user?.isDodsUser ? 1 : 3, // ¯\_(ツ)_/¯ Random!
+      teamMemberType: formFields.userType === RoleType.ClientUser ? 3 : 1,
     };
 
     try {
