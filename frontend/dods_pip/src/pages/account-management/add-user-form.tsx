@@ -180,6 +180,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             isDisabled={isEdit || disabledAccount}
             helperText={isEdit ? 'Account cannot be edited' : ''}
             onKeyPress={(val, search?: string) => loadAccounts(val, search)}
+            onKeyPressHasSearch
           />
           <InputText
             id="jobTitle"

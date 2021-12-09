@@ -23,6 +23,7 @@ import fetchJson from '../../lib/fetchJson';
 import useDebounce from '../../lib/useDebounce';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import * as Styled from './accounts.styles';
 import { TeamMemberType } from './add-client/type';
 
@@ -35,7 +36,8 @@ type Filters = {
 
 type ClientAccountTeamMember = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   teamMemberType: TeamMemberType;
 };
 
@@ -99,7 +101,7 @@ export const showTeamList = (team: ClientAccountTeamMember[]): JSX.Element[] => 
 
   finalTeam = teamList.map((member, count) => {
     const type = member.teamMemberType === TeamMemberType.ClientUser ? 'client' : 'consultant';
-    return <Avatar key={`team-${count}`} type={type} size="small" alt={member.name} />;
+    return <Avatar key={`team-${count}`} type={type} size="small" alt={getUserName(member)} />;
   });
   if (overflowTeamClient > 0) {
     finalTeam.push(

@@ -19,6 +19,7 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import useUser, { User } from '../../lib/useUser';
 import { Api, BASE_URI } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import { showTeamList } from '../account-management/accounts.page';
 import { teamList as TeamList } from '../account-management/accounts.styles';
 import { RoleType, TeamMember } from '../account-management/add-client/type';
@@ -121,7 +122,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       addNotification({
         type: 'warn',
         title: 'Error',
-        text: e.data.message,
+        text: (e as any).data.message,
       });
     }
   };
@@ -187,6 +188,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   const onUpdate = async () => {
     setLoading(true);
     const data = {
+      name: getUserName(formFields),
       firstName: formFields.firstName,
       lastName: formFields.lastName,
       secondaryEmailAddress: formFields.emailAddress2,

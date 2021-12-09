@@ -14,8 +14,9 @@ export interface SearchDropdownProps extends Omit<InputSearchProps, 'value'> {
   values: SelectProps['options'];
   selectedValues?: Array<string | DropdownValue>;
   onChange: (val: string, item?: DropdownValue) => void;
-  onKeyPress?: (val: string, search: string) => void;
+  onKeyPress?: (val: string, search?: string) => void;
   isFilter?: boolean;
+  onKeyPressHasSearch?: boolean;
 }
 
 const SearchDropdown: React.FC<SearchDropdownProps> = ({
@@ -28,6 +29,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   placeholder,
   testId,
   isDisabled,
+  onKeyPressHasSearch = false,
   ...rest
 }) => {
   const [search, setSearch] = React.useState<string>('');
@@ -35,7 +37,11 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 
   const searchHandler = (val: string) => {
     if (typeof onKeyPress === 'function') {
-      onKeyPress('0000', val);
+      if (onKeyPressHasSearch) {
+        onKeyPress('0000', val);
+      } else {
+        onKeyPress(val);
+      }
     }
 
     setSearch(val);
