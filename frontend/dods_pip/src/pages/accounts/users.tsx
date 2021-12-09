@@ -27,7 +27,8 @@ export interface UsersProps {
 
 export type TeamUser = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   type: string;
   role?: Role;
   access?: string;
@@ -151,21 +152,22 @@ const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading })
             <PlainTable
               headings={['Name', 'Email', 'Role', '']}
               colWidths={[4, 3, 2, 1]}
-              rows={clientUsers?.map((user) => {
+              rows={clientUsers?.map((user, userCount) => {
+                const name = `${user.firstName} ${user.lastName}`;
                 return [
                   accountId,
-                  <Styled.sumAvatarName key={`team-${user.name}`}>
-                    <Avatar type="client" size="small" alt={user.name} />
-                    <Text bold={true}>{user.name}</Text>
+                  <Styled.sumAvatarName key={`team-${name}`}>
+                    <Avatar type="client" size="small" alt={name} />
+                    <Text bold={true}>{name}</Text>
                   </Styled.sumAvatarName>,
-                  <Text key={`${user.name}-email`}>
-                    <a key={user.name} href={'mailto:' + user.primaryEmailAddress}>
+                  <Text key={`user-${userCount}-email`}>
+                    <a key={`user-${userCount}`} href={'mailto:' + user.primaryEmailAddress}>
                       {user.primaryEmailAddress}
                     </a>
                   </Text>,
-                  <Text key={`${user.name}-role`}>{user?.role?.title}</Text>,
+                  <Text key={`user-${userCount}-role`}>{user?.role?.title}</Text>,
                   <IconButton
-                    key={`${user.name}-link`}
+                    key={`user-${userCount}-link`}
                     onClick={() => router.push(`/users/${user.id}`)}
                     icon={Icons.ChevronRightBold}
                     type="text"
