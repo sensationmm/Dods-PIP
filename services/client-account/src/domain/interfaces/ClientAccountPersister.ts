@@ -14,9 +14,7 @@ export interface ClientAccountPersister {
         clientAccount: ClientAccountParameters
     ): Promise<ClientAccountResponse | undefined>;
     getClientAccount(clientAccountId: string): Promise<ClientAccountResponse>;
-    findOne(
-        where: Partial<ClientAccountModelAttributes>
-    ): Promise<ClientAccountModel>;
+    findOne(where: Partial<ClientAccountModelAttributes>): Promise<ClientAccountModel>;
 
     searchClientAccount(
         clientAccount: SearchClientAccountParameters
@@ -34,13 +32,11 @@ export interface ClientAccountPersister {
 
     getClientAccountSeats(clientAccountId: string): Promise<number>;
 
-    getClientAccountUsers(clientAccountUuid: string): Promise<number>;
+    getClientAccountOccupiedSeats(clientAccountUuid: string): Promise<number>;
 
     getClientAccountAvailableSeats(clientAccountId: string): Promise<number>;
 
-    getClientAccountTeam(
-        clientAccountId: string
-    ): Promise<TeamMemberResponse[]>;
+    getClientAccountTeam(clientAccountId: string): Promise<TeamMemberResponse[]>;
 
     checkNameAvailability(name: string): Promise<boolean>;
 
