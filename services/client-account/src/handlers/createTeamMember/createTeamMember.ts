@@ -30,7 +30,7 @@ export const createTeamMember: AsyncLambdaMiddleware<NewTeamMemberParameters> =
                 clientAccountId
             );
 
-        if (availableSeats < 1) {
+        if (availableSeats < 1 && teamMemberType === 3) {
             throw new HttpError(
                 'Client Account has not enough available seats',
                 HttpStatusCode.FORBIDDEN

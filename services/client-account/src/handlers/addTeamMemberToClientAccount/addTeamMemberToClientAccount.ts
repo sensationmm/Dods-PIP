@@ -22,16 +22,18 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
                 uuid: clientAccountTeamMembers.clientAccountId,
             });
 
-        const clientAccountTeams =
-            await ClientAccountRepository.defaultInstance.getClientAccountUsers(
+        const occupiedSeats =
+            await ClientAccountRepository.defaultInstance.getClientAccountOccupiedSeats(
                 clientAccountTeamMembers.clientAccountId
             );
 
         const { subscriptionSeats = 0 } = clientAccount;
 
         if (
-            subscriptionSeats - clientAccountTeams <
-            clientAccountTeamMembers.teamMembers.length
+            subscriptionSeats - occupiedSeats <=
+            clientAccountTeamMembers.teamMembers.filter(
+                (teamMember) => teamMember.teamMemberType === 3
+            ).length
         ) {
             throw new HttpError(
                 'Client Account has not enough available seats',

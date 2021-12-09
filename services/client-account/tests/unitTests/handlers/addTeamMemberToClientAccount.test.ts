@@ -1,7 +1,11 @@
-import { ClientAccountModel, UserProfileModelAttributes } from '../../../src/db';
-import { ClientAccountRepository, ClientAccountTeamRepository, UserProfileRepository, } from '../../../src/repositories';
-import { HttpResponse, HttpStatusCode, createContext, } from '@dodsgroup/dods-lambda';
+import {
+    ClientAccountRepository,
+    ClientAccountTeamRepository,
+    UserProfileRepository,
+} from '../../../src/repositories';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
+import { ClientAccountModel } from '../../../src/db';
 import { ClientAccountTeamParameters } from '../../../src/domain';
 import { addTeamMemberToClientAccount } from '../../../src/handlers/addTeamMemberToClientAccount/addTeamMemberToClientAccount';
 import { mocked } from 'ts-jest/utils';
@@ -45,7 +49,7 @@ const defaultUserProfile = {
     title: 'Mr',
     roleId: 1,
     primaryEmail: 'k@h.com',
-} as UserProfileModelAttributes;
+} as any;
 
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.findOne.mockClear();
@@ -64,9 +68,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             defaultClientAccount
         );
 
-        mockedUserProfileRepository.defaultInstance.findOne.mockResolvedValue(
-            defaultUserProfile
-        );
+        mockedUserProfileRepository.defaultInstance.findOne.mockResolvedValue(defaultUserProfile);
 
         const response = await addTeamMemberToClientAccount(
             defaultClientAccountTeamParameters,
@@ -77,36 +79,25 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test(`${FUNCTION_NAME} Invalid input`, async () => {
-        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue(
-            {
-                uuid: 'ba52a39b-814a-41df-a0b8-60083f25eeee',
-                // subscriptionSeats: 0,
-            } as ClientAccountModel
-        );
+        mockedClientAccountRepository.defaultInstance.findOne.mockResolvedValue({
+            uuid: 'ba52a39b-814a-41df-a0b8-60083f25eeee',
+            // subscriptionSeats: 0,
+        } as ClientAccountModel);
 
-        mockedUserProfileRepository.defaultInstance.findOne.mockResolvedValue(
-            defaultUserProfile
-        );
+        mockedUserProfileRepository.defaultInstance.findOne.mockResolvedValue(defaultUserProfile);
 
-        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(
+        mockedClientAccountRepository.defaultInstance.getClientAccountOccupiedSeats.mockResolvedValue(
             0
         );
 
         try {
-            await addTeamMemberToClientAccount(
-                defaultClientAccountTeamParameters,
-                defaultContext
-            );
+            await addTeamMemberToClientAccount(defaultClientAccountTeamParameters, defaultContext);
 
             expect(true).toEqual(false);
         } catch (error: any) {
-            expect(error.message).toEqual(
-                'Client Account has not enough available seats'
-            );
+            expect(error.message).toEqual('Client Account has not enough available seats');
 
-            expect(
-                mockedClientAccountRepository.defaultInstance.findOne
-            ).toHaveBeenCalledTimes(1);
+            expect(mockedClientAccountRepository.defaultInstance.findOne).toHaveBeenCalledTimes(1);
         }
     });
 });
