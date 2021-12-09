@@ -51,6 +51,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   setErrors,
   isEdit = false,
 }) => {
+  const router = useRouter();
   const [accounts, setAccounts] = React.useState<SelectProps['options']>([]);
   const [disabledAccount, setDisabledAccount] = React.useState<boolean>();
   const setFieldValue = (field: keyof FormFields, value: string) => {
@@ -126,11 +127,14 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   React.useEffect(() => {
     if (fieldData.account) {
       loadAccounts(fieldData.account as string);
-      if (typeof disabledAccount === undefined) {
-        setDisabledAccount(true);
-      }
     }
   }, [fieldData.account]);
+
+  React.useEffect(() => {
+    if (router.query.accountId) {
+      setDisabledAccount(true);
+    }
+  }, [router.query.accountId]);
 
   return (
     <div data-test="add-user-form">
