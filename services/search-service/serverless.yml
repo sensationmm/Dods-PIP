@@ -22,11 +22,9 @@ provider:
   stackTags:
     service: ${self:service}
     env: ${self:provider.stage}
-    version: 1
+    version: "1"
     teamsEmail: dods.project@somoglobal.com
     team: dods
-  tags:
-    myTag1: myTag1
   tracing:
     apiGateway: true
     lambda: true
@@ -38,12 +36,12 @@ provider:
       Resource:
         - "*"
   vpc:
-    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
-    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../vpc.${self:provider.stage}.js):securityGroupIds}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../vpc.${self:provider.stage}.js):subnetIds}
 
   apiGateway:
-    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, "local"} 
-    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, "local"} 
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, "dev"}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, "dev"}
     description: Default Gateway for ${self:provider.stage} deployed by Terraform
 
   environment:
@@ -103,5 +101,12 @@ functions:
             - http:
                   method: get
                   path: search/contents/{contentId}
+  rawQuery:
+    handler: src/handlers/rawQuery/index.handle
+    description: Process raw query
+    events:
+      - http:
+          method: post
+          path: search/contents/query
                   # caching:
                     # enabled: false

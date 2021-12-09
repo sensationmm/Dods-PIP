@@ -19,6 +19,19 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+  /search/query/:
+    post:
+      summary: Run a raw ES query
+      operationId: rawQuery
+      parameters:
+        - $ref: '#/components/parameters/rawQuery'
+      responses:
+        "200":
+          $ref: "#/components/responses/RawQueryResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   schemas:
@@ -43,6 +56,16 @@ components:
               type: boolean
           document:
               $ref: '#/components/schemas/ContentEntity'
+    RawQueryReturn:
+      type: object
+      properties:
+        total:
+          type: object
+        hits:
+          type: object
+        max_score:
+          type: number
+
     ContentEntity:
       type: object
       properties:
@@ -128,6 +151,13 @@ components:
         type: string
       required: true
       description: Received Document
+    rawQuery:
+      in: body
+      name: query
+      schema:
+        type: string
+      required: true
+      description: Raw Query to run
 
   responses:
     NotFound:
@@ -156,3 +186,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GetContentSuccess'
+    RawQueryResponse:
+      description: "Response from Raw Query, very loose as it depends on the query"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RawQueryReturn'
