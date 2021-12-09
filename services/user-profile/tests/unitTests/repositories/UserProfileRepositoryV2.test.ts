@@ -132,6 +132,7 @@ describe(`${CLASS_NAME}`, () => {
             sortBy: 'role',
             sortDirection: 'ASC',
             clientAccountId: 'client-account-id',
+            isActive: 'true'
         };
 
         const response1 =
