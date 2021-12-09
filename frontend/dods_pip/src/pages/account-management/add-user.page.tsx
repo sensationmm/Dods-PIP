@@ -138,13 +138,6 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
               fieldData={formFields}
               onFieldChange={setFormFieldProp}
               isClientUser={isClientUser}
-              accountItems={[
-                // TODO: Refactor component to allow async item fetching
-                { value: 'd4bbbd4b-e02f-4343-a7e9-397eea2b1bcd', label: 'B&B Repair' },
-                { value: '68e9b1b2-3e06-4354-a83e-195199a0d082', label: 'cookie jar2' },
-                { value: 'd666a38e-9fdb-400d-a7a6-57e4661adf9f', label: 'DEMBER' },
-                { value: '8cc32f01-37bb-4dd2-9dc8-4df26078af8d', label: 'FEGIME' },
-              ]}
               errors={errors}
               setErrors={setErrors}
             />

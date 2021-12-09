@@ -39,7 +39,7 @@ type ClientAccountTeamMember = {
   teamMemberType: TeamMemberType;
 };
 
-type ClientAccount = {
+export type ClientAccount = {
   uuid: string;
   name: string;
   subscription: {
@@ -53,7 +53,7 @@ type ClientAccount = {
   isCompleted: boolean;
 };
 
-type ClientAccounts = ClientAccount[];
+export type ClientAccounts = ClientAccount[];
 
 type FilterParams = {
   isCompleted?: boolean;

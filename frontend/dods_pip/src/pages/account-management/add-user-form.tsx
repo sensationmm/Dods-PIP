@@ -1,10 +1,14 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import InputTelephone from '../../components/_form/InputTelephone';
 import InputText from '../../components/_form/InputText';
 import SearchDropdown from '../../components/_form/SearchDropdown';
 import { SelectProps } from '../../components/_form/Select';
+import fetchJson from '../../lib/fetchJson';
+import { Api, BASE_URI } from '../../utils/api';
 import * as Validation from '../../utils/validation';
+import { ClientAccount, ClientAccounts } from './accounts.page';
 
 enum ValidationType {
   Required,
@@ -22,7 +26,6 @@ export interface AddUserFormProps {
   fieldData: FormFields;
   onFieldChange: (field: keyof FormFields, value: string) => void;
   isClientUser: boolean;
-  accountItems?: SelectProps['options'];
   errors: Partial<FormFields>;
   setErrors: (errors: Partial<FormFields>) => void;
   isEdit?: boolean;
@@ -44,11 +47,13 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   fieldData,
   onFieldChange,
   isClientUser,
-  accountItems = [],
   errors,
   setErrors,
   isEdit = false,
 }) => {
+  const router = useRouter();
+  const [accounts, setAccounts] = React.useState<SelectProps['options']>([]);
+  const [disabledAccount, setDisabledAccount] = React.useState<boolean>();
   const setFieldValue = (field: keyof FormFields, value: string) => {
     onFieldChange(field, value);
   };
@@ -85,6 +90,52 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
     setErrors(formErrors);
   };
 
+  const loadAccounts = async (account: string, accountSearch?: string) => {
+    if (account) {
+      try {
+        let url;
+        if (accountSearch) {
+          url = `${BASE_URI}${Api.ClientAccount}?startsWith=${accountSearch}`;
+        } else {
+          url = `${BASE_URI}${Api.ClientAccount}/${account}`;
+        }
+        const results = await fetchJson(url, {
+          method: 'GET',
+        });
+        const { data = [] } = results;
+        if (accountSearch) {
+          const result = (data as ClientAccounts).map((item: ClientAccount) => ({
+            value: item.uuid,
+
+            label: item.name,
+          }));
+
+          setAccounts(result);
+        } else {
+          const result = {
+            value: (data as ClientAccount).uuid,
+            label: (data as ClientAccount).name,
+          };
+          setAccounts([result]);
+        }
+      } catch (e) {
+        setAccounts([]);
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    if (fieldData.account) {
+      loadAccounts(fieldData.account as string);
+    }
+  }, [fieldData.account]);
+
+  React.useEffect(() => {
+    if (router.query.accountId) {
+      setDisabledAccount(true);
+    }
+  }, [router.query.accountId]);
+
   return (
     <div data-test="add-user-form">
       <InputText
@@ -116,7 +167,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             id="account"
             testId={'account'}
             value={fieldData.account}
-            values={accountItems}
+            values={accounts}
             placeholder="Search an account"
             onChange={(value: string) => {
               setFieldValue('account', value);
@@ -126,8 +177,9 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             label="Account"
             error={errors.account}
             onBlur={validateAccount}
-            isDisabled={isEdit}
+            isDisabled={isEdit || disabledAccount}
             helperText={isEdit ? 'Account cannot be edited' : ''}
+            onKeyPress={(val, search?: string) => loadAccounts(val, search)}
           />
           <InputText
             id="jobTitle"

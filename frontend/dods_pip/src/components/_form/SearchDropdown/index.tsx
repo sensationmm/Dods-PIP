@@ -1,6 +1,7 @@
 import React from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
+import color from '../../../globals/color';
 import { DropdownValue } from '../../../pages/account-management/add-client/type';
 import Text from '../../Text';
 import InputSearch, { InputSearchProps } from '../InputSearch';
@@ -13,7 +14,7 @@ export interface SearchDropdownProps extends Omit<InputSearchProps, 'value'> {
   values: SelectProps['options'];
   selectedValues?: Array<string | DropdownValue>;
   onChange: (val: string, item?: DropdownValue) => void;
-  onKeyPress?: (val: string) => void;
+  onKeyPress?: (val: string, search: string) => void;
   isFilter?: boolean;
 }
 
@@ -26,6 +27,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   value,
   placeholder,
   testId,
+  isDisabled,
   ...rest
 }) => {
   const [search, setSearch] = React.useState<string>('');
@@ -33,7 +35,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 
   const searchHandler = (val: string) => {
     if (typeof onKeyPress === 'function') {
-      onKeyPress(val);
+      onKeyPress('0000', val);
     }
 
     setSearch(val);
@@ -56,7 +58,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   return (
     <Styled.wrapper
       data-test="component-search-dropdown"
-      onClick={() => isFilter && !results.length && setResults(values)}
+      onClick={() => isFilter && !results.length && !isDisabled && setResults(values)}
     >
       <OutsideClickHandler onOutsideClick={reset}>
         <InputSearch
@@ -66,10 +68,15 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           value={search}
           onChange={searchHandler}
           placeholder={value ? '' : placeholder}
+          error={search !== '' && results.length === 0 ? 'No results found!' : undefined}
+          isDisabled={isDisabled}
         >
           {isFilter && value && !search && (
             <Styled.searchValue>
-              <Text data-test="search-value">
+              <Text
+                data-test="search-value"
+                color={!isDisabled ? color.theme.blueMid : color.base.grey}
+              >
                 {values.find((val) => val.value === value)?.label}
               </Text>
             </Styled.searchValue>
