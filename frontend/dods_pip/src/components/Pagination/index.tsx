@@ -25,24 +25,17 @@ type PaginationType = {
 const Pagination = (dataLength: number): PaginationType => {
   const [activePage, setActivePage] = React.useState<number>(0);
   const [numPerPage, setNumPerPage] = React.useState<NumPerPage>('30');
+  const numPages = Math.ceil(dataLength / parseInt(numPerPage));
 
   useEffect(() => {
     setActivePage(0);
   }, [dataLength]);
 
   const pageButtons = () => {
-    const numPages = Math.ceil(dataLength / parseInt(numPerPage));
     const buttons = [];
 
-    for (let i = 0; i < Math.ceil(dataLength / parseInt(numPerPage)); i++) {
-      if (
-        i === 0 ||
-        i === numPages - 1 ||
-        i === activePage ||
-        (activePage < 3 && i < 3) ||
-        (activePage > numPages - 4 && i > numPages - 4) ||
-        numPages <= 5
-      ) {
+    for (let i = 0; i < numPages; i++) {
+      if (i === 0 || i === activePage || (activePage < 5 && i < 5) || numPages <= 5) {
         buttons.push(
           <Styled.button
             key={`button-${i}`}
@@ -54,17 +47,47 @@ const Pagination = (dataLength: number): PaginationType => {
           </Styled.button>,
         );
       }
-
-      if (
-        numPages > 5 &&
-        ((i === 0 && activePage >= 3) || (i === numPages - 2 && activePage < numPages - 3))
-      ) {
-        buttons.push(<Styled.spacer key={`spacer-${i}`}>...</Styled.spacer>);
-      }
     }
 
     return (
       <Styled.buttonsContainer data-test="buttons-container">{buttons}</Styled.buttonsContainer>
+    );
+  };
+
+  const inlinePageNav = () => {
+    const inlinePages = [];
+
+    for (let i = 0; i < numPages; i++) {
+      const iValue = (i + 1).toString();
+      inlinePages.push({ value: iValue, label: iValue });
+    }
+
+    return (
+      <Styled.inlineNav>
+        <Text type="bodySmall" color={color.base.grey} data-test="viewing-page">
+          Viewing page
+        </Text>
+        <Select
+          testId="inline-pages"
+          id="inline-pagination"
+          data-test="set-pages"
+          size="small"
+          options={inlinePages}
+          onChange={(e) => {
+            setActivePage(parseInt(e) - 1);
+          }}
+          placeholder=""
+          value={(activePage + 1).toString()}
+          isFullWidth={false}
+          isFilter
+        />
+        <Text type="bodySmall" color={color.base.grey} data-test="item-text">
+          of
+        </Text>
+        <Text type="bodySmall" bold color={color.theme.blueMid} data-test="item-pages">
+          {numPages}
+        </Text>
+      </Styled.inlineNav>
     );
   };
 
@@ -129,11 +152,11 @@ const Pagination = (dataLength: number): PaginationType => {
             <Icon
               size={IconSize.medium}
               src={Icons.ChevronLeftBold}
-              color={hasPrev ? color.theme.blueMid : color.base.grey}
+              color={hasPrev ? color.base.greyDark : color.base.greyMid}
             />
           </Styled.pageChanger>
         )}
-        {pageButtons()}
+        {numPages <= 5 ? pageButtons() : inlinePageNav()}
         {numPages > 1 && (
           <Styled.pageChanger
             data-test="buttons-next-arrow"
@@ -143,7 +166,7 @@ const Pagination = (dataLength: number): PaginationType => {
             <Icon
               size={IconSize.medium}
               src={Icons.ChevronRightBold}
-              color={hasNext ? color.theme.blueMid : color.base.grey}
+              color={hasNext ? color.base.greyDark : color.base.greyMid}
             />
           </Styled.pageChanger>
         )}
