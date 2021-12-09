@@ -22,6 +22,7 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import useDebounce from '../../lib/useDebounce';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import { RoleType } from './add-client/type';
 import * as Styled from './users.styles';
 
@@ -231,10 +232,10 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
                   type={user.isDodsUser ? 'consultant' : 'client'}
                   size="small"
                   disabled={!user.isActive}
-                  alt={user.firstName + ' ' + user.lastName}
+                  alt={getUserName(user)}
                 />
                 <Text bold={true} color={!user.isActive ? color.base.grey : color.theme.blue}>
-                  {user.firstName} {user.lastName}
+                  {getUserName(user)}
                 </Text>
               </Styled.avatarName>,
               <Text key={`user-${uuid}-account`}>{user.account}</Text>,

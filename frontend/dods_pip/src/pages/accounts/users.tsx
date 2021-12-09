@@ -15,6 +15,7 @@ import color from '../../globals/color';
 import { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import { TeamMemberType } from '../account-management/add-client/type';
 import { Role } from '../account-management/users.page';
 import * as Styled from './index.styles';
@@ -153,7 +154,7 @@ const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading })
               headings={['Name', 'Email', 'Role', '']}
               colWidths={[4, 3, 2, 1]}
               rows={clientUsers?.map((user, userCount) => {
-                const name = `${user.firstName} ${user.lastName}`;
+                const name = getUserName(user);
                 return [
                   accountId,
                   <Styled.sumAvatarName key={`team-${name}`}>
