@@ -34,6 +34,7 @@ export interface SummaryProps {
   accountId: string;
   setPageAccountName?: (state: string) => void;
   editable?: boolean;
+  setRefetchSeats?: (refetch: boolean) => void;
 }
 
 const Summary: React.FC<SummaryProps> = ({
@@ -42,6 +43,7 @@ const Summary: React.FC<SummaryProps> = ({
   accountId,
   setPageAccountName,
   editable = true,
+  setRefetchSeats,
 }) => {
   const router = useRouter();
   const [ready, setReady] = React.useState<boolean>(false);
@@ -174,7 +176,7 @@ const Summary: React.FC<SummaryProps> = ({
     setIsEU(isEU);
     setIsUK(isUK);
     setSubscriptionType(subscription);
-    ready && router.reload();
+    userSeats !== subscriptionSeats && setRefetchSeats && setRefetchSeats(true);
   };
 
   const onAfterEditTeam = (data: { team: TeamMember[] }) => {
