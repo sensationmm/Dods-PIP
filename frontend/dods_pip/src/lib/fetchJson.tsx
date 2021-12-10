@@ -1,5 +1,10 @@
 import { NextIronRequest } from './session';
 
+interface CustomError extends Error {
+  response?: Response;
+  data?: Record<string, unknown>;
+}
+
 export type UserResponse = {
   id?: string;
   userId?: string;
@@ -49,8 +54,16 @@ export default async function fetchJson(
     if (response.ok) {
       return data;
     }
-
-    return response;
+    const error = new Error(response.statusText) as CustomError;
+    error.response = response;
+    error.data = {
+      ...data,
+      ...response,
+      name: data?.name || 'UnknownException',
+      code: response.status,
+      message: data?.message || 'An error happened. Please try again.',
+    };
+    throw error;
   } catch (error) {
     if (!error.data) {
       error.data = { message: `!!${error.message}` };
