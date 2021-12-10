@@ -142,9 +142,14 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   useEffect(() => {
     (async () => {
       await loadUser();
-      userId && (await getAssociatedAccounts(userId as string));
     })();
   }, [userId]);
+
+  useEffect(() => {
+    (async () => {
+      userData?.isDodsUser && userId && (await getAssociatedAccounts(userId as string));
+    })();
+  }, [userId, userData]);
 
   const actions = [] as JSX.Element[];
   if (user && userId && user.id === userId && !user.isDodsUser) {
