@@ -14,9 +14,21 @@ import { ClientAccountTeamParameters } from '../../domain';
 
 export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTeamParameters> =
     async (clientAccountTeamMembers) => {
+        var TeamsUuid = clientAccountTeamMembers.teamMembers.map(function (item) { return item["userId"]; });
+        const isDuplicated = TeamsUuid.filter((item, index) => TeamsUuid.indexOf(item) != index)
+
+        if (isDuplicated.length > 0) {
+            return new HttpResponse(HttpStatusCode.OK, {
+                sucess: false,
+                message: 'The same user cannot be saved multiple times.',
+
+            });
+        }
+
         await ClientAccountRepository.defaultInstance.deleteClientAccountTeamMembers(
             clientAccountTeamMembers.clientAccountId
         );
+
         const clientAccount =
             await ClientAccountRepository.defaultInstance.findOne({
                 uuid: clientAccountTeamMembers.clientAccountId,
