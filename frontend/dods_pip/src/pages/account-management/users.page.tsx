@@ -64,7 +64,7 @@ type userAccounts = UserAccount[];
 
 interface UsersProps extends LoadingHOCProps {}
 
-export const Users: React.FC<UsersProps> = ({ setLoading }) => {
+export const Users: React.FC<UsersProps> = ({ setLoading, addNotification }) => {
   const [showFilter, setShowFilter] = React.useState<boolean>(true);
   const [filters, setFilters] = React.useState<Filters>({});
   const [usersList, setUsersList] = React.useState<userAccounts>([]);
@@ -116,6 +116,15 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
     numPerPage,
     activePage,
   ]);
+
+  React.useEffect(() => {
+    if (router?.query?.userAdded) {
+      addNotification({
+        type: 'confirm',
+        title: 'You have successfully created a new User',
+      });
+    }
+  }, [router?.query]);
 
   return (
     <div data-testid="page-account-management-users">
