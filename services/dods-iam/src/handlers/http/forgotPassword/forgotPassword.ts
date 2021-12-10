@@ -19,7 +19,7 @@ export const forgotPassword: AsyncLambdaMiddleware<ForgotPasswordParameters> = a
     } catch (error: any) {
         response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, {
             success: false, 
-            errorMessage: error
+            error: error
         });
     }
 
