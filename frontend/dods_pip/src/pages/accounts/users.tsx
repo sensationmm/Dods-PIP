@@ -24,6 +24,8 @@ export interface UsersProps {
   addNotification: LoadingHOCProps['addNotification'];
   setLoading: LoadingHOCProps['setLoading'];
   accountId: string;
+  refetchSeats: boolean;
+  setRefetchSeats: (refetch: boolean) => void;
 }
 
 export type TeamUser = {
@@ -41,11 +43,28 @@ export type TeamUser = {
   isActive?: number;
 };
 
-const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading }) => {
+const Users: React.FC<UsersProps> = ({
+  accountId,
+  addNotification,
+  setLoading,
+  refetchSeats,
+  setRefetchSeats,
+}) => {
   const [users, setUsers] = React.useState<TeamUser[]>();
   const [remainingSeats, setRemainingSeats] = React.useState<number>();
   const [noRemainingSeatsModal, setNoRemainingSeatsModal] = React.useState(false);
   const router = useRouter();
+
+  // featching remainin seats
+  const fetchRemainingSeats = async () => {
+    setLoading(true);
+    const result = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}${Api.Seats}`, {
+      method: 'GET',
+    });
+    const { data } = result;
+    setRemainingSeats(Number(data));
+    setLoading(false);
+  };
 
   useEffect(() => {
     //displaying notification to see if user has been created before redirecting back to this page
@@ -56,19 +75,12 @@ const Users: React.FC<UsersProps> = ({ accountId, addNotification, setLoading })
         title: 'You have successfully created a new Client User',
       });
     }
-
-    // featching remainin seats
-    const fetchRemainingSeats = async () => {
-      setLoading(true);
-      const result = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}${Api.Seats}`, {
-        method: 'GET',
-      });
-      const { data } = result;
-      setRemainingSeats(Number(data));
-      setLoading(false);
-    };
     accountId && fetchRemainingSeats();
   }, [accountId]);
+
+  useEffect(() => {
+    refetchSeats && fetchRemainingSeats() && setRefetchSeats(false);
+  }, [refetchSeats]);
 
   const loadUsers = async () => {
     if (accountId === '') {
