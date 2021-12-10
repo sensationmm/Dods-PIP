@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import Spacer from '../../components/_layout/Spacer';
@@ -43,6 +43,7 @@ const Summary: React.FC<SummaryProps> = ({
   setPageAccountName,
   editable = true,
 }) => {
+  const router = useRouter();
   const [ready, setReady] = React.useState<boolean>(false);
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
@@ -173,6 +174,7 @@ const Summary: React.FC<SummaryProps> = ({
     setIsEU(isEU);
     setIsUK(isUK);
     setSubscriptionType(subscription);
+    ready && router.reload();
   };
 
   const onAfterEditTeam = (data: { team: TeamMember[] }) => {
