@@ -57,8 +57,9 @@ export class TaxonomyRepository implements Taxonomy {
             throw new HttpBadRequestError("No tags found to search")
         }
         const es_response = await this.elasticsearch.search(await TaxonomyRepository.createSearchQuery(data))
-        console.log(es_response)
+        console.log(JSON.stringify(es_response))
         es_response.body.hits.hits.forEach((es_doc: any) => {
+            let alt_labels: Array<string> = []
             const es_tag: TaxonomyItem = {
                 id: es_doc._source.id,
                 tag: es_doc._source.label,
@@ -66,12 +67,30 @@ export class TaxonomyRepository implements Taxonomy {
                 inScheme: es_doc._source.inScheme,
                 hierarchy: es_doc._source.hierarchy,
             };
-            try {
-                es_tag.alternative_labels = es_doc._source.altLabel.en;
-            } catch (exception) {}
+            if ('altLabel.en' in es_doc._source) {
+                if(Array.isArray(es_doc._source['altLabel.en'])){
+                    alt_labels.push(...es_doc._source['altLabel.en'])
+                } else {
+                    alt_labels.push(es_doc._source['altLabel.en'])
+                }
+            }
+            if ('altLabel.fr' in es_doc._source) {
+                if(Array.isArray(es_doc._source['altLabel.fr'])){
+                    alt_labels.push(...es_doc._source['altLabel.fr'])
+                } else {
+                    alt_labels.push(es_doc._source['altLabel.fr'])
+                }
+            }
+            if ('altLabel.de' in es_doc._source) {
+                if(Array.isArray(es_doc._source['altLabel.de'])){
+                    alt_labels.push(...es_doc._source['altLabel.de'])
+                } else {
+                    alt_labels.push(es_doc._source['altLabel.de'])
+                }
+            }
+            es_tag.alternative_labels = alt_labels
             tag_results.push(es_tag)
         });
-
         return {
             //@ts-ignore
             taxonomy: taxonomySet,
