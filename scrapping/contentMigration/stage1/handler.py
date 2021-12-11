@@ -20,7 +20,7 @@ content_type = 'Content migration step-1'
 s3_client = boto3.client('s3')
 sqs_client = boto3.client('sqs')
 config = Config().config_read(("config.ini"))
-content = content = Common().get_file_content(os.path.abspath(os.curdir) + '/templates/content_template_new.json')
+content = Common().get_file_content(os.path.abspath(os.curdir) + '/templates/content_template_new.json')
 
 
 def s3_list_folders(prefix: str):
