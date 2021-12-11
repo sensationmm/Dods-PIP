@@ -32,7 +32,9 @@ export class TaxonomyRepository implements Taxonomy {
                                 "bool": {
                                     "should": [
                                         {"match": {"label": data.tags}},
-                                        {"match": {"altLabel.en": data.tags}}
+                                        {"match": {"altLabel.en": data.tags}},
+                                        {"match": {"altLabel.de": data.tags}},
+                                        {"match": {"altLabel.fr": data.tags}}
                                     ]
                                 }
                             }
