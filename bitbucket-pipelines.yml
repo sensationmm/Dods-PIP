@@ -298,6 +298,7 @@ pipelines:
       - step:
           name: Deploy frontend to production environment
           image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
           services:
             - docker
           deployment: production
