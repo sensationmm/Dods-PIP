@@ -5,20 +5,21 @@ import spacing from '../../globals/spacing';
 import { ChipsSize } from '.';
 
 type WrapperProps = {
-  selected?: boolean;
+  clickable?: boolean;
   disabled?: boolean;
   iconOrAvatar?: boolean;
   theme: string;
 };
 
 export const wrapper = styled.div<WrapperProps>`
+  position: relative;
   cursor: pointer;
   display: inline-block;
   border: 1px solid ${color.base.greyLight};
-  background: ${({ selected, disabled, theme }) =>
+  background: ${({ clickable, disabled, theme }) =>
     disabled
       ? color.base.ivory
-      : selected
+      : clickable
       ? theme === 'light'
         ? color.shadow.blue
         : color.base.white
@@ -32,10 +33,10 @@ export const wrapper = styled.div<WrapperProps>`
   justify-content: center;
   align-items: center;
   &:hover {
-    background: ${({ disabled, selected, theme }) =>
+    background: ${({ disabled, clickable, theme }) =>
       disabled
         ? color.base.ivory
-        : selected
+        : clickable
         ? theme === 'light'
           ? color.base.white
           : color.shadow.blue
@@ -57,17 +58,16 @@ export const contentWrapper = styled.div`
 
 type CloseButtonProps = {
   disabled?: boolean;
-  selected?: boolean;
   hovering?: boolean;
 };
 
 export const closeButton = styled.div<CloseButtonProps>`
-  display: ${({ selected, hovering, disabled }) =>
-    selected && hovering ? 'inline' : selected && disabled ? 'inline' : 'none'};
+  display: ${({ hovering, disabled }) => (hovering ? 'block' : disabled ? 'block' : 'none')};
+  position: absolute;
+  right: 2px;
   padding: ${spacing(1.5)};
   border-radius: 50%;
   background: ${({ disabled }) => (disabled ? color.base.grey : color.theme.blue)};
-  margin-left: ${spacing(2)};
 `;
 
 type IconWrapperType = {

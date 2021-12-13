@@ -30,19 +30,20 @@ const Chips: React.FC<ChipsProps> = ({
   theme = 'light',
 }) => {
   const [hovering, setHovering] = React.useState<boolean>(false);
-  const [active, setActive] = React.useState<boolean>(false);
+
+  const isClickable = onCloseClick !== undefined;
 
   return (
     <Styled.wrapper
       iconOrAvatar={icon || avatarType ? true : false}
       data-test="component-chip"
-      selected={active}
+      clickable={isClickable}
       disabled={disabled}
       theme={theme}
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
+      onMouseEnter={() => isClickable && setHovering(true)}
+      onMouseLeave={() => isClickable && setHovering(false)}
     >
-      <Styled.contentWrapper data-test="content-wrapper" onClick={() => setActive(!active)}>
+      <Styled.contentWrapper data-test="content-wrapper">
         {avatarType && !icon && (
           <Styled.avatarWrapper>
             <Avatar
@@ -58,7 +59,7 @@ const Chips: React.FC<ChipsProps> = ({
             size={chipsSize}
             hovering={hovering}
             disabled={disabled}
-            selected={active}
+            // selected={active}
             data-test="left-icon-wrapper"
           >
             <Icon
@@ -78,20 +79,21 @@ const Chips: React.FC<ChipsProps> = ({
           {label}
         </Text>
       </Styled.contentWrapper>
-      <Styled.closeButton
-        data-test="close-button"
-        selected={active}
-        disabled={disabled}
-        hovering={hovering}
-        onClick={() => onCloseClick?.(value === '' ? label : value)}
-      >
-        <Icon
-          src={Icons.CrossBold}
-          size={IconSize.small}
-          color={color.base.white}
-          data-test="closeButtonIcon"
-        />
-      </Styled.closeButton>
+      {isClickable && (
+        <Styled.closeButton
+          data-test="close-button"
+          disabled={disabled}
+          hovering={hovering}
+          onClick={() => onCloseClick?.(value === '' ? label : value)}
+        >
+          <Icon
+            src={Icons.CrossBold}
+            size={IconSize.small}
+            color={color.base.white}
+            data-test="closeButtonIcon"
+          />
+        </Styled.closeButton>
+      )}
     </Styled.wrapper>
   );
 };

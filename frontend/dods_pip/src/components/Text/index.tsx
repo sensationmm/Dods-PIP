@@ -63,11 +63,6 @@ const Text: React.FC<TextProps> = ({
       element = Styled.p;
       className = type;
       break;
-    case 'liSmall':
-    case 'liLarge':
-      element = Styled.li;
-      className = type;
-      break;
     case 'labelSmall':
       element = Styled.label;
       className = type;
