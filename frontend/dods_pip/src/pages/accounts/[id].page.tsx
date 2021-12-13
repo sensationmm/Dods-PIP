@@ -21,6 +21,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
   accountId = accountId as string;
 
   const [pageAccountName, setPageAccountName] = React.useState<string>('');
+  const [refetchSeats, setRefetchSeats] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (router?.query?.userDeleted) {
@@ -61,7 +62,13 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
             </>
           )}
 
-          <Users accountId={accountId} setLoading={setLoading} addNotification={addNotification} />
+          <Users
+            accountId={accountId}
+            setLoading={setLoading}
+            addNotification={addNotification}
+            refetchSeats={refetchSeats}
+            setRefetchSeats={setRefetchSeats}
+          />
 
           <Spacer size={4} />
 
@@ -74,6 +81,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
             setLoading={setLoading}
             accountId={accountId}
             setPageAccountName={setPageAccountName}
+            setRefetchSeats={setRefetchSeats}
           />
         </Panel>
       </main>

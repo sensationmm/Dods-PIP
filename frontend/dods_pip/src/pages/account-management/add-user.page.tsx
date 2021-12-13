@@ -93,8 +93,12 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
           body: JSON.stringify(data),
         },
       );
-      if (result.success && router.query?.referrer) {
-        await router.push(`${router.query?.referrer}?userAdded=true` as string);
+      if (result.success) {
+        if (router.query?.referrer) {
+          await router.push(`${router.query?.referrer}?userAdded=true` as string);
+        } else {
+          router.push(`/account-management/users?userAdded=true` as string);
+        }
       }
     } catch (e) {
       addNotification({

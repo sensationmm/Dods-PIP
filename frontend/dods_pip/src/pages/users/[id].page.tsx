@@ -142,9 +142,14 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   useEffect(() => {
     (async () => {
       await loadUser();
-      userId && (await getAssociatedAccounts(userId as string));
     })();
   }, [userId]);
+
+  useEffect(() => {
+    (async () => {
+      userData?.isDodsUser && userId && (await getAssociatedAccounts(userId as string));
+    })();
+  }, [userId, userData]);
 
   const actions = [] as JSX.Element[];
   if (user && userId && user.id === userId && !user.isDodsUser) {
@@ -217,20 +222,28 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     setLoading(false);
   };
 
-  const onReset = async () => {
+  const onReset = async (email: string) => {
     setShowReset(false);
     setLoading(true);
 
     try {
-      await fetchJson(`${BASE_URI}${Api.ForgotPassword}`, {
-        body: JSON.stringify({ email: 'kevin.reynolds1+user@gmail.com' }),
+      const result = await fetchJson(`${BASE_URI}${Api.ForgotPassword}`, {
+        body: JSON.stringify({ email }),
       });
 
-      addNotification({
-        title: 'We’ve sent you a link to reset your password. ',
-        text: 'Please check your email and follow the instructions.',
-        type: 'confirm',
-      });
+      if (result.success) {
+        addNotification({
+          title: 'We’ve sent you a link to reset your password. ',
+          text: 'Please check your email and follow the instructions.',
+          type: 'confirm',
+        });
+      } else {
+        addNotification({
+          title: 'Something went wrong',
+          text: result.message,
+          type: 'warn',
+        });
+      }
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -376,7 +389,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               isSmall: true,
               type: 'primary',
               label: 'Confirm',
-              onClick: onReset,
+              onClick: () => onReset(userData?.primaryEmail || ''),
               icon: Icons.ChevronRight,
               iconAlignment: 'right',
             },

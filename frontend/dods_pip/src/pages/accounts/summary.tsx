@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import Spacer from '../../components/_layout/Spacer';
@@ -34,6 +34,7 @@ export interface SummaryProps {
   accountId: string;
   setPageAccountName?: (state: string) => void;
   editable?: boolean;
+  setRefetchSeats?: (refetch: boolean) => void;
 }
 
 const Summary: React.FC<SummaryProps> = ({
@@ -42,7 +43,9 @@ const Summary: React.FC<SummaryProps> = ({
   accountId,
   setPageAccountName,
   editable = true,
+  setRefetchSeats,
 }) => {
+  const router = useRouter();
   const [ready, setReady] = React.useState<boolean>(false);
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
@@ -173,6 +176,7 @@ const Summary: React.FC<SummaryProps> = ({
     setIsEU(isEU);
     setIsUK(isUK);
     setSubscriptionType(subscription);
+    userSeats !== subscriptionSeats && setRefetchSeats && setRefetchSeats(true);
   };
 
   const onAfterEditTeam = (data: { team: TeamMember[] }) => {
