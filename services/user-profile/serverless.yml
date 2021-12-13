@@ -8,6 +8,7 @@ provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
+  timeout: 10
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
     name: pip-${self:provider.stage}-services-lambdas
@@ -101,6 +102,7 @@ functions:
   createUserProfile:
     handler: src/handlers/createUserProfile/index.handle
     description: Triggered when http request comes
+    timeout: 60
     events:
       - http:
           method: post
@@ -128,6 +130,7 @@ functions:
   createUser:
     handler: src/handlers/createUser/index.handle
     description: Triggered when http request comes
+    timeout: 60
     events:
       - http:
           method: post
