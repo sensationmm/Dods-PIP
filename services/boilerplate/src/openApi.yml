@@ -28,6 +28,8 @@ paths:
       operationId: sayHello
       summary: "Get Greeting Message"
       description: "Get Greeting Message"
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/language"
         - $ref: "#/components/parameters/title"
@@ -92,7 +94,16 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+security:
+  - bearerAuth: []
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
   schemas:
     Message:
       type: object

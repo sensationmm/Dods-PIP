@@ -13,12 +13,23 @@ export const openApiValidatorMiddleware: AsyncLambdaMiddlewareWithServices<APIGa
     let openApiRequest;
     let body;
 
-    if (genericOpenApiValidator) {
+    const [, authorization] = Object.entries(event.headers).find(([key, _]) => key.toLowerCase() === 'authorization') || [];
+    services!['authorization'] = authorization;
+
+    if (validateRequests) {
         const openApiRequestData = await awsOpenApiRequestAdapter(event as any);
-        openApiRequest = await genericOpenApiValidator.validateRequest(openApiRequestData);
+
+        openApiRequestData.headers['authorization'] = authorization;
+
+        openApiRequest = await genericOpenApiValidator.validateRequest({ ...openApiRequestData });
+
+        delete openApiRequestData.headers['authorization'];
+
         data = { ...openApiRequestData.rawHeaders, ...openApiRequestData.params, ...openApiRequestData.query };
         body = openApiRequestData.body;
         Object.assign(data, body);
+
+        services!['openApiDefinition'] = openApiRequest.openapi;
     } else {
         data = { ...event.queryStringParameters, ...event.headers, ...event.pathParameters };
 
