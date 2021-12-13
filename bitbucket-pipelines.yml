@@ -312,7 +312,7 @@ pipelines:
             - docker build -t ${IMAGE_NAME} .
             - docker push ${IMAGE_NAME}
             - cd ../../tools
-            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME
+            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
 
     storybook-deployment:
       - step:
