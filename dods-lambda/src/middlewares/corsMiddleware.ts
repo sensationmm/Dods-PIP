@@ -1,19 +1,19 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { AsyncLambdaMiddleware } from "nut-pipe";
-import { HttpResponse, HttpStatusCode } from "..";
+import { HttpResponse, HttpStatusCode, Logger } from "..";
 
 const { CORS_ORIGINS = '*' } = process.env;
 
 const corsOrigins = CORS_ORIGINS.split(',');
 
 const corsIsAllowed = (conf: CorsConfig, origin?: string): boolean =>
-    origin == undefined || conf.allow.map((ao) => ao == '*' || ao.indexOf(origin) !== -1).reduce((prev, current) => prev || current);
+    origin == undefined || conf.allowOrigin.map((ao) => ao == '*' || ao.indexOf(origin) !== -1).reduce((prev, current) => prev || current);
 
 export class CorsConfig {
-    allow: Array<string>;
+    allowOrigin: Array<string>;
     allowCredentials: boolean;
     constructor(allow: Array<string>, allowCredentials: boolean) {
-        this.allow = allow;
+        this.allowOrigin = allow;
         this.allowCredentials = allowCredentials;
     }
 }
@@ -21,6 +21,8 @@ export class CorsConfig {
 export const DefaultCorsConfig = new CorsConfig(corsOrigins, true);
 
 export const corsMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = async (event, context, callback, next) => {
+
+    Logger.info('CorsMiddleware Entry', { ...DefaultCorsConfig });
 
     if (!corsIsAllowed(DefaultCorsConfig, event.headers?.Origin)) {
         return new HttpResponse(HttpStatusCode.FORBIDDEN, {
@@ -34,6 +36,8 @@ export const corsMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = async
     event.headers['Access-Control-Allow-Credentials'] = 'true';
 
     const result = await next!(event, context, callback);
+
+    Logger.info('CorsMiddleware Success');
 
     return result;
 };

@@ -1,4 +1,3 @@
-// import { OpenApiValidator } from 'express-openapi-validator/dist/openapi.validator';
 import { middleware, } from 'express-openapi-validator';
 import { cloneDeep } from 'lodash';
 import { OpenApiSpecLoader, Spec } from 'express-openapi-validator/dist/framework/openapi.spec.loader';
@@ -7,42 +6,59 @@ import { OpenApiAdaptedRequest } from './OpenApiAdaptedRequest';
 import { OpenApiRequestHandler, OpenApiRequestMetadata, OpenAPIV3, OpenApiValidatorOpts } from 'express-openapi-validator/dist/framework/types';
 import { HttpError } from '../domain/error';
 import { HttpStatusCode } from '..';
-// import { OpenApiContext } from 'express-openapi-validator/dist/framework/openapi.context';
 import { buildPipeline } from 'nut-pipe';
 
 export class GenericOpenApiValidator {
   private apiSpec: OpenAPIV3.Document | string;
-  private middlewares: OpenApiRequestHandler[];
+  private middlewares: Function[];
   private middleware: any;
-  // private metadataMiddlewareFunction: OpenApiRequestHandler;
-  // private securityMiddlewareFunction: OpenApiRequestHandler;
-  // private requestValidationFunction: OpenApiRequestHandler;
-  // private responseValidationFunction: OpenApiRequestHandler;
   private metadataIndex: number;
+  private responseValidationFunction: OpenApiRequestHandler;
   private static compiledSpec: Promise<Spec>;
 
   constructor(options: OpenApiValidatorOpts) {
-    // const oav = new OpenApiValidator(options);
 
     this.apiSpec = cloneDeep(options.apiSpec);
 
-    this.middlewares = middleware(options);
+    const middlewareHandlers = middleware(options);
 
     GenericOpenApiValidator.compiledSpec = new OpenApiSpecLoader({ apiDoc: this.apiSpec, validateApiSpec: false, $refParser: { mode: 'dereference' } }).load();
-    // const requestHandlers = oav.installMiddleware(GenericOpenApiValidator.compiledSpec);
-    // this.metadataMiddlewareFunction = this.middlewares.find(m => m.name === 'metadataMiddleware')!;
-    // this.securityMiddlewareFunction = middlewares.find(m => m.name === 'securityMiddleware')!;
-    // this.requestValidationFunction = middlewares.find(m => m.name === 'requestMiddleware')!;
-    // this.responseValidationFunction = middlewares.find(m => m.name === 'responseMiddleware')!;
 
-    // if (!options.validateResponses) {
-    //   this.responseValidationFunction = () => true;
-    // }
+    this.metadataIndex = middlewareHandlers.indexOf(middlewareHandlers.find(m => m.name === 'metadataMiddleware')!);
+    this.responseValidationFunction = middlewareHandlers.find(m => m.name === 'responseMiddleware')!;
+    middlewareHandlers.splice(middlewareHandlers.indexOf(this.responseValidationFunction), 1);
 
-    // const multipartIndex = this.middlewares.indexOf(this.middlewares.find(m => m.name === 'multipartMiddleware')!);
-    // this.middlewares.splice(multipartIndex, 1);
+    if (!options.validateResponses) {
+      this.responseValidationFunction = () => {
+        return true;
+      }
+    }
 
-    this.metadataIndex = this.middlewares.indexOf(this.middlewares.find(m => m.name === 'metadataMiddleware')!);
+    this.middlewares = middlewareHandlers.map(middleware => {
+
+      return async (req: any, res: any, next: any) => {
+
+        await new Promise(async (resolve, reject) => {
+
+          middleware(req, res, async (error) => {
+
+            if (error) {
+              reject(error);
+            } else {
+              resolve('ok');
+            }
+          });
+
+        });
+
+        typeof next === 'function' && await next(req, res);
+
+      };
+
+    });
+
+    this.middlewares.push(async () => { });
+
   }
 
   private static getSchema = (spec: Spec, route: string, method: string): OpenAPIV3.OperationObject => {
@@ -103,30 +119,7 @@ export class GenericOpenApiValidator {
     const openApiObject = { openApiRoute: route, expressRoute: route, schema: schema, pathParams: {} };
     const openApiRequest = new OpenApiAdaptedRequest(route, method, inputData.headers, inputData.query, inputData.body, inputData.params, openApiObject);
 
-    const list = this.middlewares.map(middleware => {
-
-      return async (req: any, res: any, next: any) => {
-
-        await new Promise(async (resolve, reject) => {
-
-          middleware(req, res, async (error) => {
-
-            if (error) {
-              reject(error);
-            } else {
-              resolve('ok');
-            }
-          });
-
-        });
-
-        typeof next === 'function' && await next(req, res);
-
-      };
-
-    });
-
-    list[this.metadataIndex] = async (req, res, next) => {
+    this.middlewares[this.metadataIndex] = async (req: any, res: any, next: any) => {
 
       // Metadata middleware function modifies openApiRequest object - return params property to previous state
       req.params = openApiRequest.originalParams;
@@ -137,9 +130,7 @@ export class GenericOpenApiValidator {
       await next(req, res);
     };
 
-    list.push(async () => { });
-
-    this.middleware = buildPipeline(list);
+    this.middleware = buildPipeline(this.middlewares);
 
     try {
       await this.middleware(openApiRequest, {});
@@ -148,31 +139,6 @@ export class GenericOpenApiValidator {
 
       throw error;
     }
-
-
-
-    // //@ts-ignore
-    // await this.metadataMiddlewareFunction(openApiRequest, {}, error => {
-    //   if (error) {
-    //     throw error;
-    //   }
-    //   // Metadata middleware function modifies openApiRequest object - return params property to previous state
-    //   openApiRequest.params = openApiRequest.originalParams;
-    //   openApiRequest.openapi.pathParams = openApiRequest.originalParams;
-    // });
-
-    // //@ts-ignore
-    // await this.requestValidationFunction(openApiRequest, {}, error => {
-    //   if (error) {
-    //     // Capitalize first letter
-    //     const message = (error.message as string).charAt(0).toUpperCase() + (error.message as string).slice(1);
-    //     const errorObject = {
-    //       message,
-    //       statusCode: 400
-    //     }
-    //     throw errorObject;
-    //   }
-    // });
 
     return openApiRequest;
   }
@@ -197,20 +163,20 @@ export class GenericOpenApiValidator {
     }
     let wrappedError;
 
-    // //@ts-ignore
-    // await this.responseValidationFunction(request, responseObj, (error) => {
-    //   // responseObj.json(response);
+    //@ts-ignore
+    await this.responseValidationFunction(request, responseObj, (error) => {
+      // responseObj.json(response);
 
-    //   if (error) {
-    //     // Capitalize first letter
-    //     const message = (error.message as string).charAt(0).toUpperCase() + (error.message as string).slice(1);
-    //     const errorObject = {
-    //       message,
-    //       statusCode: 400
-    //     }
-    //     throw errorObject;
-    //   }
-    // });
+      if (error) {
+        // Capitalize first letter
+        const message = (error.message as string).charAt(0).toUpperCase() + (error.message as string).slice(1);
+        const errorObject = {
+          message,
+          statusCode: 400
+        }
+        throw errorObject;
+      }
+    });
 
     if (wrappedError) {
       throw wrappedError;

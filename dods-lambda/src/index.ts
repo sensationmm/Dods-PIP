@@ -40,7 +40,7 @@ export const buildLambdaFunction = <T extends AsyncMiddleware>(handler: T, optio
         }
     }
 
-    const services: Record<string, any> = { openApiDocument, genericOpenApiValidator, validateRequests, validateResponses, elapsedMilliseconds: 0, ...args };
+    const services: Record<string, any> = { openApiDocument, genericOpenApiValidator, validateRequests, validateResponses, validateSecurity, elapsedMilliseconds: 0, ...args };
 
     return buildPipeline([errorMiddleware, ...middlewares, handler], services);
 };
