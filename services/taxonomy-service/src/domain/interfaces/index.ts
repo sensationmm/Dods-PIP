@@ -15,6 +15,7 @@ export interface TaxonomyItem {
     inScheme: string[];
     alternative_labels?: string[];
     hierarchy?: string;
+    ancestorTerms?: string[];
 }
 
 export interface TaxonomySearchResponse {
@@ -35,4 +36,5 @@ export interface TaxonomyNode {
     termName: string;
     id: string;
     childTerms: TaxonomyNode[];
+    ancestorTerms?: string[];
 }
