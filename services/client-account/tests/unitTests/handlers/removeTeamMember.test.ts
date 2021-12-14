@@ -65,9 +65,7 @@ describe(`${FUNCTION_NAME}`, () => {
 
         expect(mockedClientAccountRepositoryV2.defaultInstance.findOne).toHaveBeenCalledTimes(1);
         expect(mockedUserProfileRepository.defaultInstance.findOne).toHaveBeenCalledTimes(1);
-        expect(mockedClientAccountTeamRepository.defaultInstance.findOne).toHaveBeenCalledTimes(1);
         expect(mockedIamRepository.defaultInstance.destroyUser).toHaveBeenCalledTimes(1);
-
         expect(mockedUserProfileRepositoryV2.defaultInstance.deleteUser).toHaveBeenCalledTimes(1);
     });
 
