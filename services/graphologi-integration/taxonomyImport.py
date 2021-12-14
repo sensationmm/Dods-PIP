@@ -102,6 +102,8 @@ def handle(event, context):
                     taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
                     updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
 
+        taxo_df_labeled['ancestorTerms'] = taxo_df_labeled['ancestorTerms'].apply(lambda x: json.loads(x))
+
         es = Elasticsearch(cloud_id=esCloudId, api_key=(esKeyId, esApiKey))
 
         # Create a dict with no null values to insert into ES
