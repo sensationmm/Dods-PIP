@@ -195,7 +195,7 @@ const Team: React.FC<TeamProps> = ({
     setSaving(false);
   };
 
-  const debaouncedSearchUsers = debounce(async (name) => {
+  const debounceSearchUsers = debounce(async (name) => {
     try {
       const response = await fetchJson(`${BASE_URI}${Api.Users}?name=${name}`, { method: 'GET' });
       const { success = false, data = [] } = response;
@@ -215,7 +215,7 @@ const Team: React.FC<TeamProps> = ({
     }
   }, 150);
 
-  const searchUsers = useMemo(() => debaouncedSearchUsers, []);
+  const searchUsers = useMemo(() => debounceSearchUsers, []);
 
   const removeClientUser = (userId: string) => {
     // remove `userId` from clientUsers array
