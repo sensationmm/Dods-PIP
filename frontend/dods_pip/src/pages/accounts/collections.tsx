@@ -9,9 +9,11 @@ import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
 import * as Styled from './index.styles';
 
-export interface CollectionsProps {}
+export interface CollectionsProps {
+  canAddCollection?: boolean;
+}
 
-const Collections: React.FC<CollectionsProps> = () => {
+const Collections: React.FC<CollectionsProps> = ({ canAddCollection = true }) => {
   return (
     <Styled.sumWrapper>
       <SectionAccordion
@@ -23,13 +25,15 @@ const Collections: React.FC<CollectionsProps> = () => {
             <Styled.badgeContainer>
               <Badge size="small" label="Collections" number={0} />
             </Styled.badgeContainer>
-            <Button
-              type="secondary"
-              label="Add Collection"
-              icon={Icons.Add}
-              iconAlignment="right"
-              onClick={(e) => e.stopPropagation()}
-            />
+            {canAddCollection && (
+              <Button
+                type="secondary"
+                label="Add Collection"
+                icon={Icons.Add}
+                iconAlignment="right"
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
           </Styled.sectionCustomHeader>
         }
         isOpen={true}

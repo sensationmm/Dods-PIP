@@ -31,10 +31,10 @@ export class TaxonomyRepository implements Taxonomy {
                             {
                                 "bool": {
                                     "should": [
-                                        {"match": {"label": data.tags}},
-                                        {"match": {"altLabel.en": data.tags}},
-                                        {"match": {"altLabel.de": data.tags}},
-                                        {"match": {"altLabel.fr": data.tags}}
+                                        {"wildcard": {"label": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.en": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.de": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.fr": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
                                     ]
                                 }
                             }
