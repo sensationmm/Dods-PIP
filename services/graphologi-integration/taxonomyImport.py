@@ -71,10 +71,18 @@ def handle(event, context):
             for narrower in df['narrower'].iloc()[0]:
                 hierarchy = df['hierarchy'].iloc()[0] + '->' + df['label'].iloc()[0]
                 taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+                ancestorTerms = json.loads(df['ancestorTerms'].iloc()[0])
+                ancestorTerms.append({
+                  "tagId": df['id'].iloc()[0],
+                  "termLabel": df['label'].iloc()[0],
+                  "rank": len(ancestorTerms)
+                })
+                taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
                 updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
 
         taxonomies = taxo_df_labeled['topConceptOf'].dropna().unique()
         taxo_df_labeled['hierarchy'] = ''
+        taxo_df_labeled['ancestorTerms'] = '[]'
         for taxonomy in taxonomies:
             topConcepts = taxo_df_labeled[taxo_df_labeled['topConceptOf'] == taxonomy]
             for i, row in topConcepts.iterrows():
@@ -85,6 +93,13 @@ def handle(event, context):
                     else:
                         hierarchy = row['label']
                     taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+                    ancestorTerms = json.loads(row['ancestorTerms'])
+                    ancestorTerms.append({
+                      "tagId": row['id'],
+                      "termLabel": row['label'],
+                      "rank": len(ancestorTerms)
+                    })
+                    taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
                     updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
 
         es = Elasticsearch(cloud_id=esCloudId, api_key=(esKeyId, esApiKey))
