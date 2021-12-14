@@ -143,6 +143,7 @@ paths:
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/sortBy"
         - $ref: "#/components/parameters/sortDirection"
+        - $ref: "#/components/parameters/isActive"
       responses:
         "200":
           description: List of User Profiles in the system
@@ -500,6 +501,14 @@ components:
           - DESC
       required: false
       description: direction ASC or DESC
+
+    isActive:
+      in: query
+      name: isActive
+      schema:
+        type: boolean
+      required: false
+      description: is User Active
 
     with_roles:
       in: query

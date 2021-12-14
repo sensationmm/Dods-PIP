@@ -38,14 +38,12 @@ const CREATE_FUNCTION =
 const GET_CLIENT_ACCOUNT_SUBS_SEATS =
     ClientAccountRepository.defaultInstance.getClientAccountSeats.name;
 const GET_CLIENT_ACCOUNT_USERS =
-    ClientAccountRepository.defaultInstance.getClientAccountUsers.name;
+    ClientAccountRepository.defaultInstance.getClientAccountOccupiedSeats.name;
 const UPDATE_CLIENT_ACCOUNT_HEADER =
     ClientAccountRepository.defaultInstance.updateClientAccountHeader.name;
-const UPDATE_COMPLETION =
-    ClientAccountRepository.defaultInstance.UpdateCompletion.name;
+const UPDATE_COMPLETION = ClientAccountRepository.defaultInstance.UpdateCompletion.name;
 
-const SEARCH_FUNCTION =
-    ClientAccountRepository.defaultInstance.searchClientAccount.name;
+const SEARCH_FUNCTION = ClientAccountRepository.defaultInstance.searchClientAccount.name;
 
 const dbMock = new SequelizeMock();
 
@@ -71,15 +69,9 @@ const ClientAccountMock = dbMock.define(
     }
 );
 
-ClientAccountMock.$queryInterface.$useHandler(function (
-    query: any,
-    queryOptions: any
-) {
+ClientAccountMock.$queryInterface.$useHandler(function (query: any, queryOptions: any) {
     if (query === 'findOne') {
-        if (
-            queryOptions[0].where.uuid ===
-            '22dd3ef9-6871-4773-8298-f190cc8d5c85'
-        ) {
+        if (queryOptions[0].where.uuid === '22dd3ef9-6871-4773-8298-f190cc8d5c85') {
             return ClientAccountMock.build({
                 id: 1,
                 uuid: '22dd3ef9-6871-4773-8298-f190cc8d5c85',
@@ -89,10 +81,7 @@ ClientAccountMock.$queryInterface.$useHandler(function (
                 contactEmailAddress: 'marti@example.com',
                 contactTelephoneNumber: '+122233443',
             });
-        } else if (
-            queryOptions[0].where.uuid ===
-            'f4ad407b-6a88-4438-9538-7ef15b61c7fa'
-        ) {
+        } else if (queryOptions[0].where.uuid === 'f4ad407b-6a88-4438-9538-7ef15b61c7fa') {
             return ClientAccountMock.build({
                 uuid: 'f4ad407b-6a88-4438-9538-7ef15b61c7fa',
                 name: 'OtherNames',
@@ -105,10 +94,7 @@ ClientAccountMock.$queryInterface.$useHandler(function (
                 contractEndDate: new Date('2022-02-01T01:01:01.000Z'),
                 subscription: undefined,
             });
-        } else if (
-            queryOptions[0].where.uuid ===
-            '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e'
-        ) {
+        } else if (queryOptions[0].where.uuid === '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e') {
             return ClientAccountMock.build({
                 id: 3,
                 uuid: '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e',
@@ -122,25 +108,22 @@ ClientAccountMock.$queryInterface.$useHandler(function (
                     {
                         uuid: '89139c46-711d-42cf-affd-b865dd9191eb',
                         fullName: 'Latest Tester',
-                        ClientAccountModel: {
-                            parsedType: 'consultant',
+                        ClientAccountTeamModel: {
+                            teamMemberType: 1,
                         },
                     },
                     {
                         uuid: '30360fcd-91be-46f3-8177-e2123f756838',
-                        FullName: 'Employee Example',
-                        ClientAccountModel: {
-                            parsedType: 'client',
+                        fullName: 'Employee Example',
+                        ClientAccountTeamModel: {
+                            teamMemberType: 3,
                         },
                     },
                 ],
             });
         }
 
-        if (
-            queryOptions[0].where.uuid ===
-            'b0605d89-6200-4861-a9d5-258ccb33cbe3'
-        ) {
+        if (queryOptions[0].where.uuid === 'b0605d89-6200-4861-a9d5-258ccb33cbe3') {
             return ClientAccountMock.build({
                 id: 1,
                 uuid: 'b0605d89-6200-4861-a9d5-258ccb33cbe3',
@@ -177,15 +160,9 @@ const SubscriptionTypeMock = dbMock.define('dods_subscription_types', {
     contentType: 2,
 });
 
-SubscriptionTypeMock.$queryInterface.$useHandler(function (
-    query: any,
-    queryOptions: any
-) {
+SubscriptionTypeMock.$queryInterface.$useHandler(function (query: any, queryOptions: any) {
     if (query === 'findOne') {
-        if (
-            queryOptions[0].where.uuid ===
-            '4de05e7d-3394-4890-8347-a4db53b3691f'
-        ) {
+        if (queryOptions[0].where.uuid === '4de05e7d-3394-4890-8347-a4db53b3691f') {
             return SubscriptionTypeMock.build({
                 id: 1,
                 uuid: '4de05e7d-3394-4890-8347-a4db53b3691f',
@@ -249,9 +226,7 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
             isEU: false,
         };
 
-        const response = await testRepository.updateClientAccount(
-            clientAccount
-        );
+        const response = await testRepository.updateClientAccount(clientAccount);
 
         expect(response).toEqual({
             ...SUCCESS_UPDATE_CLIENT_ACCOUNT,
@@ -315,9 +290,7 @@ describe(`${UPDATE_FUNCTION} handler`, () => {
             isEU: false,
         };
 
-        const expectedError = new Error(
-            'Error: clientAccountId cannot be empty'
-        );
+        const expectedError = new Error('Error: clientAccountId cannot be empty');
 
         try {
             await testRepository.updateClientAccount(clientAccount);
@@ -363,9 +336,7 @@ describe(`${GET_FUNCTION} handler`, () => {
     test(`${GET_FUNCTION} empty Client Account`, async () => {
         const clientAccountId = '';
 
-        const expectedError = new Error(
-            'Error: clientAccountId cannot be empty'
-        );
+        const expectedError = new Error('Error: clientAccountId cannot be empty');
 
         try {
             await testRepository.getClientAccount(clientAccountId);
@@ -457,9 +428,7 @@ describe(`${GET_CLIENT_ACCOUNT_SUBS_SEATS} handler`, () => {
 
         const expectedAmountSeats = 27;
 
-        const response = await testRepository.getClientAccountSeats(
-            clientAccountId
-        );
+        const response = await testRepository.getClientAccountSeats(clientAccountId);
 
         expect(response).toEqual(expectedAmountSeats);
     });
@@ -476,9 +445,7 @@ describe(`${GET_CLIENT_ACCOUNT_SUBS_SEATS} handler`, () => {
     });
     test(`${GET_CLIENT_ACCOUNT_USERS} empty client Account `, async () => {
         const clientAccountId = '';
-        const expectedError = new Error(
-            'Error: clientAccountId cannot be empty'
-        );
+        const expectedError = new Error('Error: clientAccountId cannot be empty');
 
         try {
             await testRepository.getClientAccountSeats(clientAccountId);
@@ -492,11 +459,9 @@ describe(`${GET_CLIENT_ACCOUNT_USERS} handler`, () => {
     test(`${GET_CLIENT_ACCOUNT_USERS} Valid input Happy case `, async () => {
         const clientAccountId = '9dfa3e0c-c6bc-4d04-b660-eeceba3f458e';
 
-        const expectedAmountUsers = 2;
+        const expectedAmountUsers = 1;
 
-        const response = await testRepository.getClientAccountUsers(
-            clientAccountId
-        );
+        const response = await testRepository.getClientAccountOccupiedSeats(clientAccountId);
         expect(response).toEqual(expectedAmountUsers);
     });
 
@@ -506,7 +471,7 @@ describe(`${GET_CLIENT_ACCOUNT_USERS} handler`, () => {
         const expectedError = new Error('Error: clientAccount not found');
 
         try {
-            await testRepository.getClientAccountUsers(clientAccountId);
+            await testRepository.getClientAccountOccupiedSeats(clientAccountId);
         } catch (error) {
             expect(error).toEqual(expectedError);
         }
@@ -515,12 +480,10 @@ describe(`${GET_CLIENT_ACCOUNT_USERS} handler`, () => {
     test(`${GET_CLIENT_ACCOUNT_USERS} empty client Account `, async () => {
         const clientAccountId = '';
 
-        const expectedError = new Error(
-            'Error: clientAccountUuid cannot be empty'
-        );
+        const expectedError = new Error('Error: clientAccountUuid cannot be empty');
 
         try {
-            await testRepository.getClientAccountUsers(clientAccountId);
+            await testRepository.getClientAccountOccupiedSeats(clientAccountId);
         } catch (error) {
             expect(error).toEqual(expectedError);
         }

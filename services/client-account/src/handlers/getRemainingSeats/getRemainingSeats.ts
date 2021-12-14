@@ -10,7 +10,7 @@ import { GetClientAccountParameters } from '../../domain';
 export const getRemainingSeats: AsyncLambdaMiddleware<GetClientAccountParameters> =
     async (parameters) => {
         const clientAccountUsers =
-            await ClientAccountRepository.defaultInstance.getClientAccountUsers(
+            await ClientAccountRepository.defaultInstance.getClientAccountOccupiedSeats(
                 parameters.clientAccountId
             );
 

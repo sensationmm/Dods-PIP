@@ -49,23 +49,20 @@ export default async function fetchJson(
       ...args,
     });
 
-    const data = await response
-      .clone()
-      .json()
-      .catch(() => response.text());
+    const data = await response.json();
 
     if (response.ok) {
       return data;
     }
-
     const error = new Error(response.statusText) as CustomError;
     error.response = response;
     error.data = {
+      ...data,
+      ...response,
       name: data?.name || 'UnknownException',
       code: response.status,
       message: data?.message || 'An error happened. Please try again.',
     };
-
     throw error;
   } catch (error) {
     if (!error.data) {

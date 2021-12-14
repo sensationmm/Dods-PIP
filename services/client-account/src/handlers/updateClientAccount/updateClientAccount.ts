@@ -32,6 +32,16 @@ export const updateClientAccount: AsyncLambdaMiddleware<UpdateClientAccountParam
             }
         }
 
+        const occupiedSeats = await ClientAccountRepository.defaultInstance.getClientAccountOccupiedSeats(clientAccount.clientAccountId);
+
+
+        if (clientAccount.subscriptionSeats <= occupiedSeats) {
+            return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+                success: false,
+                message: 'Subscription seats must be greater than those already occupied.',
+            });
+        }
+
         await ClientAccountRepository.defaultInstance.UpdateCompletion(
             clientAccount.clientAccountId,
             false,

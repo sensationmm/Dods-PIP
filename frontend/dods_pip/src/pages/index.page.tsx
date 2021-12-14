@@ -41,6 +41,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
   const [errors, setErrors] = React.useState<Errors>({});
   const [failureCount, setFailureCount] = React.useState<number>(0);
   const [unblockingRequested, setUnblockingRequested] = React.useState(false);
+  const [showInactiveMsg, setShowInactiveMsg] = React.useState<boolean>(false);
 
   useEffect(() => {
     /* istanbul ignore next*/
@@ -102,7 +103,11 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
         setLoading(false);
       } catch (error) {
         if (error.data.name === 'NotAuthorizedException') {
-          setFailureCount(error.data.failedLoginAttemptCount);
+          if (error.data.isActive === false) {
+            setShowInactiveMsg(true);
+          } else {
+            setFailureCount(error.data.failedLoginAttemptCount);
+          }
           setLoading(false);
         } else {
           setErrors({ form: 'FAIL' });
@@ -187,6 +192,21 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
                     helperText={'Please enter your password'}
                     error={errors.password}
                   />
+
+                  {showInactiveMsg && (
+                    <>
+                      <Spacer size={4} />
+                      <ErrorBox data-test={'failure-count'}>
+                        <Text type={'bodySmall'} bold>
+                          Account inactive
+                        </Text>
+                        <Spacer size={2} />
+                        <Text type={'bodySmall'}>
+                          Contact your account consultant to restore access
+                        </Text>
+                      </ErrorBox>
+                    </>
+                  )}
 
                   {failureCount > 0 && (
                     <>

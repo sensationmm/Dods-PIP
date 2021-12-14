@@ -75,7 +75,7 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
     }
 
     async searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput> {
-        const { name, startsWith, role, clientAccountId, limit, offset, sortBy, sortDirection } =
+        const { name, startsWith, role, clientAccountId, limit, offset, sortBy, sortDirection, isActive } =
             parameters;
 
         let whereClause: any = {};
@@ -115,8 +115,19 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             orderBy = [User.associations.accounts, 'name', sortDirection];
         }
 
+        if (isActive !== undefined) {
+            if (isActive) {
+                whereClause['is_active'] = true;
+            }
+            else {
+                whereClause['is_active'] = false;
+            }
+        }
+
+
         const { rows, count } = await User.findAndCountAll({
             where: whereClause,
+            distinct: true,
             subQuery: false,
             include: [User.associations.role, User.associations.accounts],
             order: [orderBy],

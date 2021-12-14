@@ -6,7 +6,7 @@ export default withSession(async (req, res) => {
   try {
     const { uuid } = req.query;
     const result = await fetchJson(
-      `${process.env.APP_API_URL}${Api.Users}/${uuid}`,
+      `${process.env.APP_API_URL}${Api.User}/${uuid}`,
       {
         method: 'PUT',
         body: JSON.stringify(req.body),

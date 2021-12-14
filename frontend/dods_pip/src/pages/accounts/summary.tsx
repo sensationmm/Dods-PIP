@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import Spacer from '../../components/_layout/Spacer';
@@ -17,6 +17,7 @@ import { PushNotificationProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import { Api, BASE_URI } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import AddClient, { getEndDateType } from '../account-management/add-client/add-client';
 import {
   DateFormat,
@@ -42,6 +43,7 @@ const Summary: React.FC<SummaryProps> = ({
   setPageAccountName,
   editable = true,
 }) => {
+  const router = useRouter();
   const [ready, setReady] = React.useState<boolean>(false);
   const [accountName, setAccountName] = React.useState<string>('');
   const [accountNotes, setAccountNotes] = React.useState<string>('');
@@ -172,6 +174,7 @@ const Summary: React.FC<SummaryProps> = ({
     setIsEU(isEU);
     setIsUK(isUK);
     setSubscriptionType(subscription);
+    ready && router.reload();
   };
 
   const onAfterEditTeam = (data: { team: TeamMember[] }) => {
@@ -234,9 +237,13 @@ const Summary: React.FC<SummaryProps> = ({
     userSeats,
     consultantHours,
     renewalType,
-    teamMembers: teamMembers.map((user) => ({ label: user.name, value: user.id, userData: user })),
+    teamMembers: teamMembers.map((user) => ({
+      label: getUserName(user),
+      value: user.id,
+      userData: user,
+    })),
     accountManagers: accountManagers.map((user) => ({
-      label: user.name,
+      label: getUserName(user),
       value: user.id,
       userData: user,
     })),
@@ -480,12 +487,12 @@ const Summary: React.FC<SummaryProps> = ({
               <PlainTable
                 headings={['Consultant', 'Contact', '']}
                 colWidths={[5, 5, 1]}
-                rows={consultantsComplete.map((consultant) => [
+                rows={consultantsComplete.map((consultant, consultantCount) => [
                   accountId,
-                  <Styled.sumConsultantAvatar key={consultant.name}>
+                  <Styled.sumConsultantAvatar key={`avatar-${consultantCount}`}>
                     <Avatar type="consultant" size="small" alt="consultant" />
                     <div>
-                      <Text bold={true}>{consultant.name}</Text>
+                      <Text bold={true}>{getUserName(consultant)}</Text>
                       <Spacer size={2} />
                       <Text>
                         {consultant.teamMemberType === TeamMemberType.AccountManager
@@ -494,7 +501,7 @@ const Summary: React.FC<SummaryProps> = ({
                       </Text>
                     </div>
                   </Styled.sumConsultantAvatar>,
-                  <Styled.sumConsultantContact key={consultant.name}>
+                  <Styled.sumConsultantContact key={`contact-${consultantCount}`}>
                     <Text>
                       <span>Email</span>
                       <a href={'mailto:' + consultant.primaryEmailAddress}>

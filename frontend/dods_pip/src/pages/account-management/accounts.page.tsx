@@ -23,6 +23,7 @@ import fetchJson from '../../lib/fetchJson';
 import useDebounce from '../../lib/useDebounce';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import * as Styled from './accounts.styles';
 import { TeamMemberType } from './add-client/type';
 
@@ -35,11 +36,12 @@ type Filters = {
 
 type ClientAccountTeamMember = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   teamMemberType: TeamMemberType;
 };
 
-type ClientAccount = {
+export type ClientAccount = {
   uuid: string;
   name: string;
   subscription: {
@@ -53,7 +55,7 @@ type ClientAccount = {
   isCompleted: boolean;
 };
 
-type ClientAccounts = ClientAccount[];
+export type ClientAccounts = ClientAccount[];
 
 type FilterParams = {
   isCompleted?: boolean;
@@ -74,7 +76,7 @@ export enum LocationValue {
   UK = 'UK',
 }
 
-export const showTeamList = (team: ClientAccountTeamMember[]) => {
+export const showTeamList = (team: ClientAccountTeamMember[]): JSX.Element[] => {
   let finalTeam = [];
   let teamList: ClientAccountTeamMember[] = team;
   const filterByClient = (team: ClientAccountTeamMember) =>
@@ -99,7 +101,7 @@ export const showTeamList = (team: ClientAccountTeamMember[]) => {
 
   finalTeam = teamList.map((member, count) => {
     const type = member.teamMemberType === TeamMemberType.ClientUser ? 'client' : 'consultant';
-    return <Avatar key={`team-${count}`} type={type} size="small" alt={member.name} />;
+    return <Avatar key={`team-${count}`} type={type} size="small" alt={getUserName(member)} />;
   });
   if (overflowTeamClient > 0) {
     finalTeam.push(
@@ -198,6 +200,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
         onClick={() => goToAccountSetup(uuid)}
         icon={Icons.ChevronRightBold}
         type="text"
+        isSmall
       />,
     ];
   };

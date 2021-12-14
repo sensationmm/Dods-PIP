@@ -22,6 +22,7 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import useDebounce from '../../lib/useDebounce';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import { RoleType } from './add-client/type';
 import * as Styled from './users.styles';
 
@@ -38,7 +39,7 @@ export type Role = {
   dodsRole: number;
 };
 
-type UserAccount = {
+export type UserAccount = {
   uuid: number;
   firstName: string;
   lastName: string;
@@ -63,8 +64,7 @@ type userAccounts = UserAccount[];
 
 interface UsersProps extends LoadingHOCProps {}
 
-export const Users: React.FC<UsersProps> = ({ setLoading }) => {
-  // const mockUsers = MockDataUsersAccounts.users as userAccounts;
+export const Users: React.FC<UsersProps> = ({ setLoading, addNotification }) => {
   const [showFilter, setShowFilter] = React.useState<boolean>(true);
   const [filters, setFilters] = React.useState<Filters>({});
   const [usersList, setUsersList] = React.useState<userAccounts>([]);
@@ -116,6 +116,15 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
     numPerPage,
     activePage,
   ]);
+
+  React.useEffect(() => {
+    if (router?.query?.userAdded) {
+      addNotification({
+        type: 'confirm',
+        title: 'You have successfully created a new User',
+      });
+    }
+  }, [router?.query]);
 
   return (
     <div data-testid="page-account-management-users">
@@ -232,10 +241,10 @@ export const Users: React.FC<UsersProps> = ({ setLoading }) => {
                   type={user.isDodsUser ? 'consultant' : 'client'}
                   size="small"
                   disabled={!user.isActive}
-                  alt={user.firstName + ' ' + user.lastName}
+                  alt={getUserName(user)}
                 />
                 <Text bold={true} color={!user.isActive ? color.base.grey : color.theme.blue}>
-                  {user.firstName} {user.lastName}
+                  {getUserName(user)}
                 </Text>
               </Styled.avatarName>,
               <Text key={`user-${uuid}-account`}>{user.account}</Text>,

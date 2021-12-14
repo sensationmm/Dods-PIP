@@ -13,7 +13,7 @@ const mockedClientAccountRepository = mocked(ClientAccountRepository, true);
 
 afterEach(() => {
     mockedClientAccountRepository.defaultInstance.getClientAccountSeats.mockClear();
-    mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockClear();
+    mockedClientAccountRepository.defaultInstance.getClientAccountOccupiedSeats.mockClear();
 });
 
 const defaultContext = createContext();
@@ -36,7 +36,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             expectedSubscriptionSeats
         );
 
-        mockedClientAccountRepository.defaultInstance.getClientAccountUsers.mockResolvedValue(
+        mockedClientAccountRepository.defaultInstance.getClientAccountOccupiedSeats.mockResolvedValue(
             expectedClientUsersResponse
         );
 

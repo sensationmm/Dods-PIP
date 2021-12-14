@@ -22,7 +22,9 @@ import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import useTeamMembers from '../../../lib/useTeamMembers';
 import { Api, BASE_URI } from '../../../utils/api';
+import { getUserName } from '../../../utils/string';
 import * as Validation from '../../../utils/validation';
+import { UserAccount } from '../users.page';
 import * as Styled from './index.styles';
 import { DropdownValue, RoleType, TeamMember, TeamMemberType } from './type';
 
@@ -186,7 +188,7 @@ const Team: React.FC<TeamProps> = ({
       addNotification({
         type: 'warn',
         title: 'Error',
-        text: e.data.message,
+        text: (e as any).data.message,
       });
     }
     setLoading(false);
@@ -199,10 +201,12 @@ const Team: React.FC<TeamProps> = ({
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {
-        const values = data.map((item: User) => ({
-          value: item.uuid,
-          label: `${item.firstName} ${item.lastName}`,
-        }));
+        const values = data
+          .filter((item) => (item as UserAccount).isDodsUser)
+          .map((item: User) => ({
+            value: item.uuid,
+            label: getUserName(item),
+          }));
 
         setUsers(values);
       }
@@ -316,7 +320,10 @@ const Team: React.FC<TeamProps> = ({
         );
         setClientUsers(
           // convert TeamMember to DropDownValue
-          clientsOnly.map((item: TeamMember) => ({ label: item.name, value: item.id })),
+          clientsOnly.map((item: TeamMember) => ({
+            label: getUserName({ firstName: item.firstName, lastName: item.lastName }),
+            value: item.id,
+          })),
         );
 
         // reset form
@@ -335,7 +342,7 @@ const Team: React.FC<TeamProps> = ({
       addNotification({
         type: 'warn',
         title: 'Error',
-        text: e.data.message,
+        text: (e as any).data.message,
       });
     }
     setLoading(false);
