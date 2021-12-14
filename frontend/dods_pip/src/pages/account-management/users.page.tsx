@@ -33,6 +33,11 @@ type Filters = {
   role?: string;
 };
 
+export type ClientAccount = {
+  uuid: string;
+  name: string;
+};
+
 export type Role = {
   uuid: string;
   title: string;
@@ -43,8 +48,8 @@ export type UserAccount = {
   uuid: number;
   firstName: string;
   lastName: string;
-  account: string;
-  email: string;
+  clientAccount: ClientAccount;
+  primaryEmail: string;
   role: Role;
   type: UserType;
   isActive: boolean;
@@ -247,9 +252,11 @@ export const Users: React.FC<UsersProps> = ({ setLoading, addNotification }) => 
                   {getUserName(user)}
                 </Text>
               </Styled.avatarName>,
-              <Text key={`user-${uuid}-account`}>{user.account}</Text>,
+              <Text key={`user-${uuid}-account`}>
+                {user.clientAccount && user.clientAccount.name}
+              </Text>,
               <Styled.email key={`user-${uuid}-email`}>
-                <a href={'mailto:' + user.email}>{user.email}</a>
+                <a href={'mailto:' + user.primaryEmail}>{user.primaryEmail}</a>
               </Styled.email>,
               <Text key={`user-${uuid}-role`}>{user.role.title}</Text>,
               <IconButton
