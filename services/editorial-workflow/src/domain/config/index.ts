@@ -68,4 +68,5 @@ export const config = {
             connectionLimit: envVars.DB_CONNECTION_LIMIT as number,
         },
     },
+
 };

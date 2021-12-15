@@ -23,7 +23,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         private editorialRecordModel: typeof EditorialRecord,
         private editorialRecordStatusModel: typeof EditorialRecordStatus,
         private userModel: typeof User
-    ) {}
+    ) { }
 
     static defaultInstance = new EditorialRecordRepository(
         EditorialRecord,
@@ -52,15 +52,15 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             contentSource,
             status: status
                 ? {
-                      uuid: status.uuid,
-                      status: status.status,
-                  }
+                    uuid: status.uuid,
+                    status: status.status,
+                }
                 : undefined,
             assignedEditor: assignedEditor
                 ? {
-                      uuid: assignedEditor.uuid,
-                      fullName: assignedEditor.fullName,
-                  }
+                    uuid: assignedEditor.uuid,
+                    fullName: assignedEditor.fullName,
+                }
                 : undefined,
             createdAt,
             updatedAt,
@@ -262,6 +262,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
 
         return this.mapRecordOutput(record);
     }
+
 
     async listEditorialRecords(
         params: SearchEditorialRecordParameters
