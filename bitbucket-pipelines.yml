@@ -68,6 +68,21 @@ pipelines:
             - serverless deploy --stage dev
 
       - step:
+          name: Deploy Search Service
+          image: gioatsomoglobal/nodejs-builder:0.2
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/search-service/**"
+          script:
+            - cd services/search-service
+            - npm install
+            - SERVERLESS_STAGE=dev npm run test:coverage
+            - npm run deploy:dev
+
+      - step:
           name: User Profile Service
           image: gioatsomoglobal/devopstools:0.4.3
           caches:
