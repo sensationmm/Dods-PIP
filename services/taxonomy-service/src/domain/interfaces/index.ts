@@ -9,8 +9,9 @@ export interface TaxonomiesParameters {
 }
 
 export interface TaxonomyItem {
-    id: string;
-    tag: string;
+    tagId: string;
+    facetType?: string;
+    termLabel: string;
     score: number;
     inScheme: string[];
     alternative_labels?: string[];

@@ -63,8 +63,9 @@ export class TaxonomyRepository implements Taxonomy {
         es_response.body.hits.hits.forEach((es_doc: any) => {
             let alt_labels: Array<string> = []
             const es_tag: TaxonomyItem = {
-                id: es_doc._source.id,
-                tag: es_doc._source.label,
+                tagId: es_doc._source.id,
+                facetType: taxonomySet,
+                termLabel: es_doc._source.label,
                 score: es_doc._score,
                 inScheme: es_doc._source.inScheme,
                 hierarchy: es_doc._source.hierarchy,
