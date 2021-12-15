@@ -26,6 +26,7 @@ export interface UsersProps {
   accountId: string;
   refetchSeats: boolean;
   setRefetchSeats: (refetch: boolean) => void;
+  canAddNewUser?: boolean;
 }
 
 export type TeamUser = {
@@ -49,6 +50,7 @@ const Users: React.FC<UsersProps> = ({
   setLoading,
   refetchSeats,
   setRefetchSeats,
+  canAddNewUser = true,
 }) => {
   const [users, setUsers] = React.useState<TeamUser[]>();
   const [remainingSeats, setRemainingSeats] = React.useState<number>();
@@ -142,16 +144,18 @@ const Users: React.FC<UsersProps> = ({
                 number={users ? inactiveUsers : undefined}
               />
             </Styled.badgeContainer>
-            <Button
-              type="secondary"
-              label="Add User"
-              icon={Icons.Add}
-              iconAlignment="right"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddUser();
-              }}
-            />
+            {canAddNewUser && (
+              <Button
+                type="secondary"
+                label="Add User"
+                icon={Icons.Add}
+                iconAlignment="right"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddUser();
+                }}
+              />
+            )}
           </Styled.sectionCustomHeader>
         }
         isOpen={true}

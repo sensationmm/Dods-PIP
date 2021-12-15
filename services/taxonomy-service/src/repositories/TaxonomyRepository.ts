@@ -31,10 +31,10 @@ export class TaxonomyRepository implements Taxonomy {
                             {
                                 "bool": {
                                     "should": [
-                                        {"match": {"label": data.tags}},
-                                        {"match": {"altLabel.en": data.tags}},
-                                        {"match": {"altLabel.de": data.tags}},
-                                        {"match": {"altLabel.fr": data.tags}}
+                                        {"wildcard": {"label": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.en": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.de": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.fr": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
                                     ]
                                 }
                             }
@@ -63,11 +63,13 @@ export class TaxonomyRepository implements Taxonomy {
         es_response.body.hits.hits.forEach((es_doc: any) => {
             let alt_labels: Array<string> = []
             const es_tag: TaxonomyItem = {
-                id: es_doc._source.id,
-                tag: es_doc._source.label,
+                tagId: es_doc._source.id,
+                facetType: taxonomySet,
+                termLabel: es_doc._source.label,
                 score: es_doc._score,
                 inScheme: es_doc._source.inScheme,
                 hierarchy: es_doc._source.hierarchy,
+                ancestorTerms: es_doc._source.ancestorTerms
             };
             if ('altLabel.en' in es_doc._source) {
                 if(Array.isArray(es_doc._source['altLabel.en'])){
@@ -122,7 +124,12 @@ export class TaxonomyRepository implements Taxonomy {
         const currentTaxonomy = body.hits.hits[0]
         const currentLabel = currentTaxonomy._source.label
         const currentId = currentTaxonomy._id;
-        let returnObject: TaxonomyNode = { termName: currentLabel, id: currentId, childTerms: []}
+        let returnObject: TaxonomyNode = {
+            termName: currentLabel,
+            id: currentId,
+            childTerms: [],
+            ancestorTerms: currentTaxonomy.ancestorTerms
+        }
 
         if (currentTaxonomy._source.narrower) {
             for (const narrowerTaxonomyTopic of currentTaxonomy._source.narrower) {
@@ -142,7 +149,12 @@ export class TaxonomyRepository implements Taxonomy {
         await Promise.all(body.hits.hits.map(async (topConcept: any) => {
             const termName = topConcept._source.label;
             const termId = topConcept._id;
-            let branchObject: TaxonomyNode = { termName: termName, id: termId, childTerms: []}
+            let branchObject: TaxonomyNode = {
+                termName: termName,
+                id: termId,
+                childTerms: [],
+                ancestorTerms: topConcept.ancestorTerms
+            }
             if (topConcept._source.narrower) {
                 for (const narrowerTopic of topConcept._source.narrower) {
                     const narrowerBranch: TaxonomyNode = await this.getNarrowerTopics(narrowerTopic)

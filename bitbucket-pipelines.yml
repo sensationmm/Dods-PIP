@@ -298,6 +298,9 @@ pipelines:
       - step:
           name: Deploy frontend to production environment
           image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
+          services:
+            - docker
           deployment: production
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
@@ -309,7 +312,7 @@ pipelines:
             - docker build -t ${IMAGE_NAME} .
             - docker push ${IMAGE_NAME}
             - cd ../../tools
-            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME
+            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
 
     storybook-deployment:
       - step:
