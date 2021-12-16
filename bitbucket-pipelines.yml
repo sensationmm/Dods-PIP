@@ -187,23 +187,23 @@ pipelines:
               - NODE_ENV=test npm run test:coverage 
               - npx serverless deploy --stage dev
 
-      - step:
-          name: Search Service Deploy
-          size: 2x
-          image: gioatsomoglobal/nodejs-builder:0.2
-          condition:
-            changesets:
-              includePaths:
-                - "services/search-service/**"
-          script:
-            - cd services/search-service
-            - npm install
-            # - SERVERLESS_STAGE=dev npm run test:coverage
-            - export SERVERLESS_STAGE=dev
-            - npm run test:coverage 
-            # - npm run deploy:dev
-            - npx serverless deploy --stage dev
-
+        - step:
+            name: Search Service Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/search-service/**"
+            script:
+              - cd services/search-service
+              - npm install
+              # - SERVERLESS_STAGE=dev npm run test:coverage
+              - export SERVERLESS_STAGE=dev
+              - npm run test:coverage 
+              # - npm run deploy:dev
+              - npx serverless deploy --stage dev
+              
         - step: 
             name: User Profile Deploy
             size: 2x
