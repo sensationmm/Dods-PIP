@@ -79,6 +79,7 @@ pipelines:
           script:
             - cd services/search-service
             - npm install
+            - export SERVERLESS_PORT=3000
             - SERVERLESS_STAGE=dev npm run test:coverage
 
       - step:
@@ -198,6 +199,7 @@ pipelines:
               - cd services/search-service
               - npm install
               - export SERVERLESS_STAGE=dev
+              - export SERVERLESS_PORT=3000
               - npm run test:coverage 
               - npx serverless deploy --stage dev
               
