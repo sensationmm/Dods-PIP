@@ -54,16 +54,17 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
   }, [router.query]);
 
   const isClientUser = formFields.userType === RoleType.ClientUser;
+  const hasValue = (value: string) => /^\w/.test(value);
 
   const isComplete =
-    formFields.firstName !== '' &&
-    formFields.lastName !== '' &&
-    formFields.emailAddress !== '' &&
-    (!isClientUser || formFields.account !== '') &&
+    hasValue(formFields.firstName) &&
+    hasValue(formFields.lastName) &&
+    hasValue(formFields.emailAddress) &&
+    (!isClientUser || hasValue(formFields.account)) &&
     Object.keys(errors).length === 0;
 
   const setFormFieldProp = (field: keyof FormFields, value: string) => {
-    setFormFields({ ...formFields, ...{ [field]: value.trim() } });
+    setFormFields({ ...formFields, ...{ [field]: value } });
   };
 
   const createUser = async () => {
