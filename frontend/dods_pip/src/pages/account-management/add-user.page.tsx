@@ -81,7 +81,7 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         }),
         role_id: formFields.userType,
       },
-      clientAccountId: formFields.account,
+      clientAccountId: isClientUser ? formFields.account : user?.clientAccountId,
       teamMemberType: formFields.userType === RoleType.ClientUser ? 3 : 1,
     };
 
