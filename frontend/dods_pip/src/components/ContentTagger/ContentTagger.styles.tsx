@@ -4,8 +4,10 @@ import color from '../../globals/color';
 import elevation from '../../globals/elevation';
 import spacing from '../../globals/spacing';
 import { hexAToRGBA } from '../../utils/color';
+import { checkbox as Checkbox } from '../_form/Checkbox/Checkbox.styles';
+import { label as Label } from '../_form/Label/Label.styles';
 import { wrapper as Toggle } from '../_form/Toggle/Toggle.styles';
-import { wrapper as Button } from '../Button/Button.styles';
+import { text as ButtonText, wrapper as Button } from '../Button/Button.styles';
 import { Icon } from '../Icon/Icon.styles';
 
 type WrapperProps = {
@@ -15,6 +17,7 @@ type WrapperProps = {
 export const wrapper = styled.div<WrapperProps>`
   width: ${({ collapsed }) => (collapsed ? '160px' : '350px')};
   display: ${({ collapsed }) => (collapsed ? 'flex' : 'block')};
+  position: relative;
 `;
 
 type BoxProps = {
@@ -82,14 +85,6 @@ export const instructions = styled.div`
   justify-content: center;
 `;
 
-export const search = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: ${spacing(4)} ${spacing(6)};
-  cursor: pointer;
-`;
-
 export const searchButton = styled.div`
   border: 1px solid ${color.base.greyLight};
   border-radius: 8px;
@@ -101,22 +96,47 @@ export const searchButton = styled.div`
   box-shadow: ${elevation.dropShadow2};
 `;
 
-type TagPanelProps = {
-  disabled: boolean;
+export const inProgress = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: ${color.alert.orange};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+type SearchProps = {
+  inProgress: boolean;
 };
 
-export const tagPanel = styled.div<TagPanelProps>`
-  position: relative;
+export const search = styled.div<SearchProps>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${spacing(4)} ${spacing(6)};
+  cursor: pointer;
 
-  &::after {
-    content: ${({ disabled }) => (disabled ? "''" : undefined)};
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: ${hexAToRGBA(color.base.white, 0.4)};
+  ${searchButton} {
+    display: ${({ inProgress }) => (inProgress ? 'none' : 'flex')};
   }
+
+  ${inProgress} {
+    display: ${({ inProgress }) => (inProgress ? 'flex' : 'none')};
+  }
+
+  &:hover {
+    ${searchButton} {
+      display: flex;
+    }
+    ${inProgress} {
+      display: none;
+    }
+  }
+`;
+
+export const tagPanel = styled.div`
+  position: relative;
 `;
 
 export const tagPanelHeader = styled.div`
@@ -164,12 +184,15 @@ export const browserWindow = styled.div`
   align-items: center;
 `;
 
-export const browser = styled.div`
+type BrowserProps = {
+  hasHighlight: boolean;
+};
+export const browser = styled.div<BrowserProps>`
   position: relative;
   width: 100%;
   max-width: 80%;
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: ${({ hasHighlight }) => (!hasHighlight ? '1fr 350px' : '1fr')};
   column-gap: ${spacing(5)};
   height: 80vh;
 
@@ -237,9 +260,85 @@ export const tagTreeChildren = styled.div`
   padding-left: 35px;
 `;
 
+export const tagSearch = styled.div`
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-column-gap: ${spacing(5)};
+  grid-row-gap: ${spacing(5)};
+
+  > div {
+    position: relative;
+
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      height: 1px;
+      width: 105%;
+      bottom: -${spacing(2.5)};
+      background: ${color.base.greyLight};
+    }
+
+    &:nth-child(2n) {
+      &:after {
+        left: -5%;
+      }
+    }
+  }
+
+  > ${Checkbox} {
+    flex-shrink: 0;
+  }
+
+  > p:first-of-type {
+    padding-left: 36px;
+  }
+`;
+
+export const searchCheckbox = styled.div`
+  display: flex;
+  align-items: center;
+
+  ${Label} {
+    margin: 0;
+  }
+`;
+
+export const highlight = styled.div`
+  display: flex;
+
+  > p:first-of-type {
+    margin-right: ${spacing(1)};
+  }
+`;
+
 type TabContentProps = {
   isSearch?: boolean;
 };
+
+export const multipleWarningInfo = styled.div`
+  padding: ${spacing(2)};
+  background: ${color.shadow.grey};
+  border-radius: 8px;
+`;
+
+export const autoTag = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  div {
+    flex-shrink: 0;
+  }
+`;
+
+export const autoTagButtons = styled.div`
+  display: flex;
+
+  ${ButtonText} {
+    padding: 0 ${spacing(2)} 0 36px !important;
+  }
+`;
 
 export const tabContent = styled.div<TabContentProps>`
   height: ${({ isSearch = false }) => (isSearch ? `calc(80vh - 321px)` : `calc(80vh - 188px)`)};
@@ -352,4 +451,18 @@ export const closeWarningText = styled.div`
   justify-content: center;
   align-items: center;
   height: calc(100% - 56px);
+`;
+
+export const clear = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  padding: ${spacing(10)};
+  background: ${hexAToRGBA(color.base.white, 0.8)};
 `;

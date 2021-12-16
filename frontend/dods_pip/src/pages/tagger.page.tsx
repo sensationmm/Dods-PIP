@@ -5,19 +5,29 @@ import Panel from '../components/_layout/Panel';
 import ContentTagger, { ContentTaggerProps } from '../components/ContentTagger';
 import Text from '../components/Text';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
-import MockTagging from '../mocks/data/tagging.json';
 
 interface TaggerProps extends LoadingHOCProps {}
 
 export const Tagger: React.FC<TaggerProps> = () => {
-  const [tags, setTags] = React.useState<ContentTaggerProps['tags']>(MockTagging.activeTags);
+  const [tags, setTags] = React.useState<ContentTaggerProps['tags']>([
+    {
+      id: 'http://www.dods.co.uk/taxonomy/instance/Topics/ba68835e-6584-4c14-ab83-29fcae407cda',
+      tagId: 'http://www.dods.co.uk/taxonomy/instance/Topics/ba68835e-6584-4c14-ab83-29fcae407cda',
+      termLabel: 'radiation and nuclear waste',
+      termName: 'radiation and nuclear waste',
+      type: 'Topics',
+      instances: 3,
+    },
+  ]);
+
   return (
     <Panel isNarrow>
       <Columns>
         <ul>
           {tags.map((tag) => (
             <li key={`li-${tag.id}`}>
-              <Text>{tag.termName}</Text>
+              {/* @TODO: remove termName when API catches up */}
+              <Text>{tag.termLabel || tag.termName}</Text>{' '}
             </li>
           ))}
         </ul>

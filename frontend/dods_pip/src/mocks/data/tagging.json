@@ -1,5 +1,5 @@
 {
-  "geographies": [
+  "Geographies": [
     {
       "termName":"A top level term",
       "id":"123445e6e",
@@ -28,14 +28,14 @@
       "childTerms":[]
     }
   ],
-  "people":[
+  "People":[
     {
       "termName":"A top level term",
       "id":"123445e6j",
       "childTerms":[]
     }
   ],
-  "topics":[
+  "Topics":[
     {
       "termName": "Intellectual Property Rights",
       "id": "http://www.dods.co.uk/taxonomy/instance/Topics/31488fd0-c3fd-4876-bd28-65773d31cbd3",
@@ -15120,7 +15120,7 @@
     ]
     }
     ],
-  "organisations":[
+  "Organisations":[
     {
       "termName":"A top level term",
       "id":"123445e6i",

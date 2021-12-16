@@ -20,6 +20,9 @@ export enum Api {
   EditorialStatus = '/editorial-record-status',
   EditorialRecords = '/editorial-record',
   Seats = '/seats',
+  Taxonomies = '/taxonomies',
+  TaxonomySearch = '/taxonomy',
+  TaxonomyTree = '/taxonomy/tree',
 }
 
 export const toQueryString = (params: Record<string, any> = {}): string => {
