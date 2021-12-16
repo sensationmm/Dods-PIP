@@ -15,7 +15,7 @@ const loadConfig = (schema: Schema) => {
     return envVars;
 };
 
-const stages = ['production', 'development', 'test'];
+const stages = ['production', 'dev', 'test'];
 
 const envVarsSchema = Joi.object()
     .keys({

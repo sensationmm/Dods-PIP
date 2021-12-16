@@ -96,12 +96,13 @@ package:
 
 functions:
   getContent:
-        handler: src/handlers/getContent/index.handle
-        description: Get content detail by content id
-        events:
-            - http:
-                  method: get
-                  path: search/contents/{contentId}
+    handler: src/handlers/getContent/index.handle
+    description: Get content detail by content id
+    events:
+      - http:
+          method: get
+          path: search/contents/{contentId}
+
   rawQuery:
     handler: src/handlers/rawQuery/index.handle
     description: Process raw query

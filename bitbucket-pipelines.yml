@@ -68,6 +68,21 @@ pipelines:
             - serverless deploy --stage dev
 
       - step:
+          name: Test Search Service
+          image: gioatsomoglobal/nodejs-builder:0.2
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/search-service/**"
+          script:
+            - cd services/search-service
+            - npm install
+            - export SERVERLESS_PORT=3000
+            - SERVERLESS_STAGE=dev npm run test:coverage
+
+      - step:
           name: User Profile Service
           image: gioatsomoglobal/devopstools:0.4.3
           caches:
@@ -172,6 +187,22 @@ pipelines:
               - NODE_ENV=test npm run test:coverage 
               - npx serverless deploy --stage dev
 
+        - step:
+            name: Search Service Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/search-service/**"
+            script:
+              - cd services/search-service
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - export SERVERLESS_PORT=3000
+              - npm run test:coverage 
+              - npx serverless deploy --stage dev
+              
         - step: 
             name: User Profile Deploy
             size: 2x
