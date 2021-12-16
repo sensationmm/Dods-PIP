@@ -78,7 +78,7 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         telephone_number_1: formFields.telephoneNumber,
         ...(formFields.emailAddress2 && { secondary_email_address: formFields.emailAddress2 }),
         ...(formFields.telephoneNumber2 && {
-          secondary_email_address: formFields.telephoneNumber2,
+          telephone_number_2: formFields.telephoneNumber2,
         }),
         role_id: formFields.userType,
       },
