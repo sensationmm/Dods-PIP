@@ -5,7 +5,7 @@ import Text from '../../Text';
 import * as Styled from './Label.styles';
 
 export interface LabelProps {
-  label: string;
+  label: string | JSX.Element;
   required?: boolean;
   optional?: boolean;
   noMargin?: boolean;

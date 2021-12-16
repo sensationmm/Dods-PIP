@@ -11,6 +11,7 @@ export interface ToggleProps {
   onChange: (val: boolean) => void;
   labelOff?: string;
   labelOn?: string;
+  isSmall?: boolean;
 }
 
 const Toggle: React.FC<ToggleProps> = ({
@@ -19,6 +20,7 @@ const Toggle: React.FC<ToggleProps> = ({
   onChange,
   labelOff,
   labelOn,
+  isSmall = false,
 }) => {
   const Component = isActive ? Styled.toggleActive : Styled.toggle;
 
@@ -35,35 +37,35 @@ const Toggle: React.FC<ToggleProps> = ({
       onKeyDown={trigger}
       tabIndex={0}
       disabled={isDisabled}
+      hasOffLabel={labelOff !== undefined}
+      hasOnLabel={labelOn !== undefined}
+      small={isSmall}
     >
       {labelOff && (
         <Text
-          type="body"
-          color={
-            isDisabled ? color.base.grey : !isActive ? color.theme.blueDark : color.base.greyDark
-          }
+          type={isSmall ? 'bodySmall' : 'body'}
+          color={isDisabled ? color.base.grey : !isActive ? color.theme.blue : color.base.greyDark}
           bold={!isActive}
         >
-          <span onClick={() => onChange(false)}>{labelOff}</span>
+          <span onClick={() => (isDisabled ? null : onChange(false))}>{labelOff}</span>
         </Text>
       )}
       <Component
         data-test="toggle-control"
         className={classNames({ disabled: isDisabled })}
         onClick={() => (isDisabled ? null : onChange(!isActive))}
+        small={isSmall}
       >
-        <Styled.control />
+        <Styled.control small={isSmall} />
       </Component>
 
       {labelOn && (
         <Text
-          type="body"
-          color={
-            isDisabled ? color.base.grey : isActive ? color.theme.blueDark : color.base.greyDark
-          }
+          type={isSmall ? 'bodySmall' : 'body'}
+          color={isDisabled ? color.base.grey : isActive ? color.theme.blue : color.base.greyDark}
           bold={isActive}
         >
-          <span onClick={() => onChange(true)}>{labelOn}</span>
+          <span onClick={() => (isDisabled ? null : onChange(true))}>{labelOn}</span>
         </Text>
       )}
     </Styled.wrapper>
