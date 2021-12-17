@@ -1,67 +1,52 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-//import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
-//import { Lambda } from 'aws-sdk';
-import { Lambda, S3 } from 'aws-sdk';
 
+import { DocumentPublishRepository } from '../../repositories/DocumentPublishRepository';
+import { DocumentStorageRepository } from '../../repositories/DocumentStorageRepository';
 import { EditorialRecordRepository } from '../../repositories/EditorialRecordRepository';
+import { config } from '../../domain';
 
 export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = async ({
     recordId,
 }) => {
-    const region = process.env.AWS_REGION
-    const lambdaClient = new Lambda({ region: region });
-    const s3Client = new S3({ region: region });
 
     const editorialRecord = await EditorialRecordRepository.defaultInstance.getEditorialRecord(recordId);
 
-    const documentARN = editorialRecord.s3Location;
+    if (editorialRecord.isPublished) {
+        return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+            success: false,
+            message: 'Record is already published',
 
-    const keyName = documentARN.substring(documentARN.indexOf("/") + 1, documentARN.length);
-
-    const getFileParams = {
-        Bucket: 'dods-dev-editorial-record-documents',
-        Key: keyName
+        })
     }
 
-    let bucketErr = false;
-    let errorCode;
+    const documentARN = editorialRecord.s3Location;
 
-    const content = await s3Client.getObject(getFileParams, function (err) {
+    let lambdaReponse = false;
 
-        if (err) {
-            errorCode = err.code;
-            bucketErr = true;
-        }
+    const bucketResponse = await DocumentStorageRepository.defaultInstance.getDocumentByArn(documentARN);
 
-    }).promise();
+    if (bucketResponse.payload) {
+        lambdaReponse = await DocumentPublishRepository.defaultInstance.publishDocument(config.aws.lambdas.contentIndexer, bucketResponse.payload)
+    }
 
-    const documentContent = content.Body?.toString('utf-8');
+    if (bucketResponse.success && lambdaReponse) {
 
-    // lambda content indexing invokation
+        const updateParams = { recordId, isPublished: true }
 
-    const lambdaReponse = await lambdaClient.invoke({ FunctionName: 'content-indexer-dev', Payload: documentContent }, function (error, data) {
-        if (error) {
-            console.log(error);
-        }
-        if (data) {
-            console.log(data);
-        }
-    }).promise();
+        const updatedRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams);
 
-    if (!bucketErr && lambdaReponse.Payload === 'true') {
         return new HttpResponse(HttpStatusCode.OK, {
             success: true,
-            message: 'ARN Bucket',
-            data: documentARN,
+            message: 'Editorial Record Published',
+            data: updatedRecord,
         });
     }
 
     else {
 
-
         return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
             success: false,
-            message: errorCode,
+            message: bucketResponse.payload,
 
         });
 

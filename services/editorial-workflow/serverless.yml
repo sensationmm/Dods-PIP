@@ -60,6 +60,8 @@ provider:
         DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'rootPass'}
         BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/
         BUCKET_EDITORIAL: dods-dev-editorial-record-documents
+        CONTENT_INDEXER_LAMBDA: content-indexer-dev
+
 
 custom:
     webpack:

@@ -39,6 +39,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             informationType,
             contentSource,
             status,
+            isPublished,
+            isArchived,
             assignedEditor,
             createdAt,
             updatedAt,
@@ -62,6 +64,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
                     fullName: assignedEditor.fullName,
                 }
                 : undefined,
+            isPublished,
+            isArchived,
             createdAt,
             updatedAt,
         };
@@ -157,6 +161,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             informationType,
             statusId,
             assignedEditorId,
+            isPublished
         } = parameters;
 
         const record = await this.editorialRecordModel.findOne({
@@ -177,6 +182,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             s3Location,
             contentSource,
             informationType,
+            isPublished
         });
 
         if (assignedEditorId) {
