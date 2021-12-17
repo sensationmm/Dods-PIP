@@ -1,8 +1,12 @@
-import { AsyncLambdaHandler } from '@dodsgroup/dods-lambda';
+import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 import { createScheduleParameters } from '../../domain';
 import { ScheduleRepository } from '../../repositories/ScheduleRpository';
 
 export const createSchedule: AsyncLambdaHandler<createScheduleParameters> = async (data) => {
-    console.log(data)
-    return await ScheduleRepository.defaultInstance.createSchedule(data)
+    await ScheduleRepository.defaultInstance.createSchedule(data);
+
+    return new HttpResponse(HttpStatusCode.OK, {
+        "success": true,
+        "message": "schedule created with ID " + data.id
+    });
 };

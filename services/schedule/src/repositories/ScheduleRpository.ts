@@ -6,8 +6,7 @@ import elasticsearch from "../elasticsearch"
 
 export class ScheduleRepository implements Schedule {
 
-    constructor(private elasticsearch: typeof Client) {
-    }
+    constructor(private elasticsearch: typeof Client) {}
 
     static defaultInstance: Schedule = new ScheduleRepository(elasticsearch);
 
@@ -33,7 +32,7 @@ export class ScheduleRepository implements Schedule {
     }
 
     async createSchedule(data: createScheduleParameters): Promise<any> {
-        const query = ScheduleRepository.createSearchQuery(data)
-        return this.elasticsearch.watcher.putWatch(query)
+        const query = ScheduleRepository.createSearchQuery(data);
+        return this.elasticsearch.watcher.putWatch(query);
     }
 }
