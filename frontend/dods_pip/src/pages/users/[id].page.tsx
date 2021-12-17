@@ -81,6 +81,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       ...(data as User),
       displayName: `${data.firstName} ${data.lastName}`,
     });
+    setIsActive(Boolean(data.isActive));
 
     // TODO: Fix lazy typings
     setFormFields({
