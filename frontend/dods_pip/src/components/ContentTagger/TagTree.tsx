@@ -26,8 +26,7 @@ const TagTree: React.FC<TagTreeProps> = ({
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const numChildren = tag.childTerms ? tag.childTerms.length : 0;
-  const termLabel = tag.termLabel || tag.termName; // @TODO: remove termName when API catches up
-  const label = numChildren > 0 ? `${termLabel} (${numChildren})` : termLabel;
+  const label = numChildren > 0 ? `${tag.termLabel} (${numChildren})` : tag.termLabel;
 
   const allTags = existingTags.concat(addedTags.concat(addedTagsToSave));
 
@@ -35,7 +34,7 @@ const TagTree: React.FC<TagTreeProps> = ({
 
   const countSelectedChildren = (tag: TagsData) => {
     tag.childTerms?.forEach((child) => {
-      if (allTags.find((t) => t.id === child.id) !== undefined) {
+      if (allTags.find((t) => t.tagId === child.tagId) !== undefined) {
         childrenSelected++;
       }
       countSelectedChildren(child);
@@ -44,24 +43,21 @@ const TagTree: React.FC<TagTreeProps> = ({
 
   countSelectedChildren(tag);
 
-  const termId = tag.tagId || tag.id; // @TODO remove tag.id when API catches up
-  const isChecked = allTags.find((t) => t.id === termId) !== undefined;
+  const isChecked = allTags.find((t) => t.tagId === tag.tagId) !== undefined;
 
   return (
     <>
       <Styled.tagTreeWrapper>
         <Styled.tagTree>
           <Checkbox
-            id={`browse-${termId}`}
-            key={`browse-${termId}`}
+            id={`browse-${tag.tagId}`}
+            key={`browse-${tag.tagId}`}
             label={label}
             isChecked={isChecked}
             bold={isChecked}
             onChange={() => onChange(tag)}
             isDisabled={
-              existingTags
-                .concat(addedTagsToSave)
-                .find((t) => t.id === termId || t.tagId === termId) !== undefined // @TODO remove tag.id when API catches up
+              existingTags.concat(addedTagsToSave).find((t) => t.tagId === tag.tagId) !== undefined
             }
           />
           {numChildren > 0 && (
@@ -87,7 +83,7 @@ const TagTree: React.FC<TagTreeProps> = ({
         <Styled.tagTreeChildren>
           {tag.childTerms?.map((child) => (
             <TagTree
-              key={`tag-tree-${child.id}`}
+              key={`tag-tree-${child.tagId}`}
               tag={child}
               existingTags={existingTags}
               addedTags={addedTags}
