@@ -1,11 +1,14 @@
+import json
+import os
+
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 import pandas as pd
 import numpy as np
 import requests
+import boto3
 
-import json
-import os
+s3 = boto3.client('s3')
 
 graphifiUsername = os.environ['GRAPHIFY_USERNAME']
 graphifiPassword = os.environ['GRAPHIFY_PASSWORD']
@@ -66,11 +69,15 @@ def handle(event, context):
 
         # Create hierarchy
         def updateHierarchy(df):
+            branch_node = {
+                "termLabel": df['label'].iloc()[0],
+                "tagId": df['id'].iloc()[0],
+                "childTerms": []
+            }
             if (df['narrower'].empty or df['narrower'].astype(str).iloc[0] == 'nan'):
-                return False
+                return branch_node
             for narrower in df['narrower'].iloc()[0]:
                 hierarchy = df['hierarchy'].iloc()[0] + '->' + df['label'].iloc()[0]
-                taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
                 ancestorTerms = json.loads(df['ancestorTerms'].iloc()[0])
                 ancestorTerms.append({
                   "tagId": df['id'].iloc()[0],
@@ -78,21 +85,30 @@ def handle(event, context):
                   "rank": len(ancestorTerms)
                 })
                 taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
-                updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
+                taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+                branch_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower]))
+
+            return branch_node
 
         taxonomies = taxo_df_labeled['topConceptOf'].dropna().unique()
         taxo_df_labeled['hierarchy'] = ''
         taxo_df_labeled['ancestorTerms'] = '[]'
         for taxonomy in taxonomies:
+            taxonomy_short = taxonomy.split('/')[-1]
+            tree = []
             topConcepts = taxo_df_labeled[taxo_df_labeled['topConceptOf'] == taxonomy]
             for i, row in topConcepts.iterrows():
+                tree_node = {
+                    "termLabel": row['label'],
+                    "tagId": row['id'],
+                    "childTerms": []
+                }
                 for narrower in row['narrower']:
                     narrow = taxo_df_labeled[taxo_df_labeled['id'] == narrower].iloc()[0]
                     if narrow['hierarchy']:
                         hierarchy = narrow['hierarchy'] + '->' + row['label']
                     else:
                         hierarchy = row['label']
-                    taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
                     ancestorTerms = json.loads(row['ancestorTerms'])
                     ancestorTerms.append({
                       "tagId": row['id'],
@@ -100,7 +116,11 @@ def handle(event, context):
                       "rank": len(ancestorTerms)
                     })
                     taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
-                    updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower])
+                    taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+                    tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower]))
+                tree.append(tree_node)
+            s3.put_object(Body=(bytes(json.dumps(tree).encode('UTF-8'))), Bucket=os.environ['TAXONOMY_TREE_BUCKET'], Key=taxonomy_short + '.json')
+
 
         taxo_df_labeled['ancestorTerms'] = taxo_df_labeled['ancestorTerms'].apply(lambda x: json.loads(x))
 
