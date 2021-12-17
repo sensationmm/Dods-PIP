@@ -158,3 +158,12 @@ def payload_creation(page_content):
     html_file = '<html><head>' + meta_content + '</head><body>' + str(session_content) \
                 + str(source_content) + '</body></html>'
     return html_file
+
+def content_document_date(date_str):
+    day_week = re.search(
+        r'(Mo(n(day)?)?|Tu(e(sday)?)?|We(d(nesday)?)?|Th(u(rsday)?)?|Fr(i(day)?)?|Sa(t(urday)?)?|Su(n(day)?)?).*',
+        date_str, re.IGNORECASE)
+    date = day_week.group()[:-1]
+    return date
+
+
