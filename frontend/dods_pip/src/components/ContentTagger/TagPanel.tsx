@@ -34,7 +34,7 @@ const TagPanel: React.FC<TagPanelProps> = ({
       <Styled.tagPanelContent open={isOpen}>
         {selectedTags.length > 0 ? (
           selectedTags.map((tag, count) => {
-            let termLabel = tag.termLabel !== undefined ? tag.termLabel : (tag.termName as string); // @TODO: remove termName when API catches up
+            let termLabel = tag.termLabel; // @TODO: remove termName when API catches up
             if (tag.instances !== undefined) {
               termLabel += ` (${tag.instances})`;
             }
