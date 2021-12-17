@@ -68,11 +68,24 @@ def handle(event, context):
         taxo_df_labeled['topConceptOf'] = taxo_df_labeled.apply(extractTopConcept, axis=1)
 
         # Create hierarchy
-        def updateHierarchy(df):
+        def updateHierarchy(df, taxonomy_short):
+            alternative_labels = []
+            if 'altLabel.fr' in df.columns:
+                row_alt_labels = df[['altLabel.en', 'altLabel.fr', 'altLabel.de']].iloc()[0].values.tolist()
+                for labels in row_alt_labels:
+                    if labels == '':
+                        continue
+                    if type(labels) == str:
+                        alternative_labels.append(labels)
+                    else:
+                        alternative_labels.extend(labels)
             branch_node = {
                 "termLabel": df['label'].iloc()[0],
+                "facetType": taxonomy_short.capitalize(),
+                "inScheme": df['inScheme'].iloc()[0],
+                "alternative_labels": alternative_labels,
                 "tagId": df['id'].iloc()[0],
-                "childTerms": []
+                "childTerms": [],
             }
             if (df['narrower'].empty or df['narrower'].astype(str).iloc[0] == 'nan'):
                 return branch_node
@@ -86,22 +99,37 @@ def handle(event, context):
                 })
                 taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
                 taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
-                branch_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower]))
+                branch_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short))
 
             return branch_node
 
         taxonomies = taxo_df_labeled['topConceptOf'].dropna().unique()
+        if 'altLabel.fr' in taxo_df_labeled.columns:
+            taxo_df_labeled[['altLabel.en', 'altLabel.fr', 'altLabel.de']] = taxo_df_labeled[['altLabel.en', 'altLabel.fr', 'altLabel.de']].fillna("")
         taxo_df_labeled['hierarchy'] = ''
         taxo_df_labeled['ancestorTerms'] = '[]'
         for taxonomy in taxonomies:
-            taxonomy_short = taxonomy.split('/')[-1]
             tree = []
+            taxonomy_short = taxonomy.split('/')[-1]
             topConcepts = taxo_df_labeled[taxo_df_labeled['topConceptOf'] == taxonomy]
             for i, row in topConcepts.iterrows():
+                alternative_labels = []
+                if 'altLabel.fr' in row:
+                    row_alt_labels = row[['altLabel.en', 'altLabel.fr', 'altLabel.de']].values.tolist()
+                    for labels in row_alt_labels:
+                        if labels == '':
+                            continue
+                        if type(labels) == str:
+                            alternative_labels.append(labels)
+                        else:
+                            alternative_labels.extend(labels)
                 tree_node = {
                     "termLabel": row['label'],
+                    "facetType": taxonomy_short.capitalize(),
+                    "inScheme": row['inScheme'],
+                    "alternative_labels": alternative_labels,
                     "tagId": row['id'],
-                    "childTerms": []
+                    "childTerms": [],
                 }
                 for narrower in row['narrower']:
                     narrow = taxo_df_labeled[taxo_df_labeled['id'] == narrower].iloc()[0]
@@ -117,7 +145,8 @@ def handle(event, context):
                     })
                     taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
                     taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
-                    tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower]))
+                    tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short))
+                    tree_node['ancestorTerms'] = ancestorTerms
                 tree.append(tree_node)
             s3.put_object(Body=(bytes(json.dumps(tree).encode('UTF-8'))), Bucket=os.environ['TAXONOMY_TREE_BUCKET'], Key=taxonomy_short + '.json')
 
