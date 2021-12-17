@@ -1,5 +1,9 @@
+import {
+    ClientAccountServiceRepository,
+    IamRepository,
+    UserProfileRepositoryV2,
+} from '../../../src/repositories';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
-import { IamRepository, UserProfileRepositoryV2 } from '../../../src/repositories';
 import { UpdateUserInput, UserProfileError } from '../../../src/domain';
 
 import { User } from '@dodsgroup/dods-model';
@@ -20,21 +24,39 @@ const defaultUpdateUserRepositoryResult = {
     isActive: true,
 } as User;
 
+const defaultGetUserRepositoryResult = {
+    ...defaultUpdateUserRepositoryResult,
+    isDodsUser: false,
+    clientAccount: {
+        uuid: 'test',
+        name: 'test',
+        teamMemberType: 3,
+    },
+    clientAccountId: 'test',
+    memberSince: new Date(),
+};
+
 jest.mock('../../../src/repositories/UserProfileRepositoryV2');
 jest.mock('../../../src/repositories/IamRepository');
+jest.mock('../../../src/repositories/ClientAccountServiceRepository');
 
 const mockedUserProfileRepositoryV2 = mocked(UserProfileRepositoryV2, true);
 const mockedIamRepository = mocked(IamRepository, true);
+const mockedClientAccountServiceRepository = mocked(ClientAccountServiceRepository, true);
 
 const FUNCTION_NAME = updateUser.name;
 
 afterEach(() => {
     mockedIamRepository.mockClear();
-    mockedUserProfileRepositoryV2.mockReset();
+    mockedUserProfileRepositoryV2.mockClear();
+    mockedClientAccountServiceRepository.mockClear();
 });
 
 describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input, isActive unchanged', async () => {
+        mockedUserProfileRepositoryV2.defaultInstance.getUser.mockResolvedValue(
+            defaultGetUserRepositoryResult
+        );
         mockedUserProfileRepositoryV2.defaultInstance.updateUser.mockResolvedValue(
             defaultUpdateUserRepositoryResult
         );
@@ -68,10 +90,15 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test('Valid input, isActive set to true', async () => {
+        mockedUserProfileRepositoryV2.defaultInstance.getUser.mockResolvedValue(
+            defaultGetUserRepositoryResult
+        );
+
         mockedUserProfileRepositoryV2.defaultInstance.updateUser.mockResolvedValue(
             defaultUpdateUserRepositoryResult
         );
         mockedIamRepository.defaultInstance.enableUser.mockResolvedValue();
+        mockedClientAccountServiceRepository.defaultInstance.getRemainingSeats.mockResolvedValue(1);
 
         const updateUserInput: UpdateUserInput = {
             userId: 'updatedUser',
@@ -83,10 +110,14 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         await updateUser(updateUserInput, defaultContext);
 
+        expect(ClientAccountServiceRepository.defaultInstance.getRemainingSeats).toBeCalled();
         expect(IamRepository.defaultInstance.enableUser).toBeCalled();
     });
 
     test('Valid input, isActive set to false', async () => {
+        mockedUserProfileRepositoryV2.defaultInstance.getUser.mockResolvedValue(
+            defaultGetUserRepositoryResult
+        );
         mockedUserProfileRepositoryV2.defaultInstance.updateUser.mockResolvedValue(
             defaultUpdateUserRepositoryResult
         );
@@ -137,6 +168,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 },
             },
         };
+        mockedUserProfileRepositoryV2.defaultInstance.getUser.mockResolvedValue(
+            defaultGetUserRepositoryResult
+        );
         mockedUserProfileRepositoryV2.defaultInstance.updateUser.mockResolvedValue(
             defaultUpdateUserRepositoryResult
         );

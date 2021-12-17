@@ -8,6 +8,7 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
+import useUser from '../../lib/useUser';
 import * as AccountsStyled from '../account-management/accounts.styles';
 import Collections from './collections';
 import Summary from './summary';
@@ -17,6 +18,7 @@ interface ClientAccountProps extends LoadingHOCProps {}
 
 export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, setLoading }) => {
   const router = useRouter();
+  const { user } = useUser();
   let { id: accountId = '' } = router.query;
   accountId = accountId as string;
 
@@ -32,6 +34,14 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
     }
   }, [router]);
 
+  const breadcrumbHistory = [{ href: '', label: pageAccountName }];
+
+  if (user?.isDodsUser)
+    breadcrumbHistory.unshift({
+      href: '/account-management/accounts',
+      label: 'Accounts',
+    });
+
   return (
     <div data-test="page-account-management-add-client">
       <Head>
@@ -43,12 +53,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
         <Panel bgColor={color.base.ivory}>
           {pageAccountName && (
             <>
-              <Breadcrumbs
-                history={[
-                  { href: '/account-management/accounts', label: 'Accounts' },
-                  { href: '', label: pageAccountName },
-                ]}
-              />
+              <Breadcrumbs history={breadcrumbHistory} />
 
               <Spacer size={6} />
 
@@ -68,11 +73,12 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
             addNotification={addNotification}
             refetchSeats={refetchSeats}
             setRefetchSeats={setRefetchSeats}
+            canAddNewUser={user?.isDodsUser}
           />
 
           <Spacer size={4} />
 
-          <Collections />
+          <Collections canAddCollection={user?.isDodsUser} />
 
           <Spacer size={4} />
 
@@ -80,6 +86,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
             addNotification={addNotification}
             setLoading={setLoading}
             accountId={accountId}
+            editable={user?.isDodsUser}
             setPageAccountName={setPageAccountName}
             setRefetchSeats={setRefetchSeats}
           />

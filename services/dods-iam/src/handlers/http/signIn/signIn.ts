@@ -32,17 +32,24 @@ export const signIn: AsyncLambdaMiddleware<SignInParameters> = async ({ email, p
 
         response = new HttpResponse(HttpStatusCode.OK, tokens);
     } catch (error: any) {
-        const failedLoginAttemptCount = await LoginRepository.defaultInstance.incrementFailedLoginAttempt(email);
 
-        if (failedLoginAttemptCount >= config.aws.resources.cognito.failedLoginAttemptCount) {
-            await AwsCognito.defaultInstance.disableUser(email)
-            error.message = "User is disabled."
-            error.UserDisabled = true;
+        const { code, name, message } = error;
+
+        if (message !== 'User is disabled.' && code === 'NotAuthorizedException') {
+            const failedLoginAttemptCount = await LoginRepository.defaultInstance.incrementFailedLoginAttempt(email);
+
+            if (failedLoginAttemptCount >= config.aws.resources.cognito.failedLoginAttemptCount) {
+                await AwsCognito.defaultInstance.disableUser(email)
+                error.message = "User is disabled."
+                error.UserDisabled = true;
+            }
+
+            error.failedLoginAttemptCount = failedLoginAttemptCount;
         }
 
-        error.failedLoginAttemptCount = failedLoginAttemptCount;
+        const isActive = !(message === 'User is disabled.');
 
-        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
+        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, { name, code, message, isActive });
     }
 
     return response;

@@ -47,4 +47,22 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
     async updateUser(values: Partial<UserInput>, where: Partial<UserInput>): Promise<void> {
         await User.update(values, { where });
     }
+
+
+    async deleteUser(userId: string): Promise<boolean> {
+        const userProfile = await User.findOne({
+            where: { uuid: userId },
+        });
+
+        if (userProfile) {
+            User.destroy({
+                where: {
+                    uuid: userId,
+                },
+            });
+            return true;
+        } else {
+            throw new Error('Error: user not found');
+        }
+    }
 }

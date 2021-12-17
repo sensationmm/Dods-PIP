@@ -68,6 +68,21 @@ pipelines:
             - serverless deploy --stage dev
 
       - step:
+          name: Test Search Service
+          image: gioatsomoglobal/nodejs-builder:0.2
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/search-service/**"
+          script:
+            - cd services/search-service
+            - npm install
+            - export SERVERLESS_PORT=3000
+            - SERVERLESS_STAGE=dev npm run test:coverage
+
+      - step:
           name: User Profile Service
           image: gioatsomoglobal/devopstools:0.4.3
           caches:
@@ -172,6 +187,22 @@ pipelines:
               - NODE_ENV=test npm run test:coverage 
               - npx serverless deploy --stage dev
 
+        - step:
+            name: Search Service Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/search-service/**"
+            script:
+              - cd services/search-service
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - export SERVERLESS_PORT=3000
+              - npm run test:coverage 
+              - npx serverless deploy --stage dev
+              
         - step: 
             name: User Profile Deploy
             size: 2x
@@ -298,6 +329,9 @@ pipelines:
       - step:
           name: Deploy frontend to production environment
           image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
+          services:
+            - docker
           deployment: production
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
@@ -309,7 +343,7 @@ pipelines:
             - docker build -t ${IMAGE_NAME} .
             - docker push ${IMAGE_NAME}
             - cd ../../tools
-            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME
+            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
 
     storybook-deployment:
       - step:
