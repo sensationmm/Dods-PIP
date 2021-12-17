@@ -102,8 +102,8 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
       window.scrollTo(0, 0);
     };
 
-    const start = activePage * parseInt(numPerPage);
-    const end = start + parseInt(numPerPage);
+    const start = activePage * Number(numPerPage);
+    const end = start + Number(numPerPage);
 
     return (
       <Styled.stats data-test="component-pagination-stats">
@@ -136,7 +136,7 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
             ]}
             onChange={changeLayout}
             placeholder=""
-            value={numPerPage}
+            value={String(numPerPage)}
             isFullWidth={false}
             isFilter
           />
@@ -147,13 +147,13 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const PaginationContent = (data: any) => {
-    const start = activePage * parseInt(numPerPage);
-    const end = start + numPerPage;
+    const start = activePage * Number(numPerPage);
+    const end = start + Number(numPerPage);
     return data.slice(start, end);
   };
 
   const PaginationButtons: React.FC = () => {
-    const numPages = Math.ceil(dataLength / parseInt(numPerPage));
+    const numPages = Math.ceil(dataLength / Number(numPerPage));
     const hasPrev = activePage > 0;
     const hasNext = activePage < numPages - 1;
     return (
@@ -197,7 +197,7 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
 
   return {
     activePage,
-    numPerPage: parseInt(numPerPage, 10),
+    numPerPage: Number(numPerPage),
     PaginationStats,
     PaginationContent,
     PaginationButtons,

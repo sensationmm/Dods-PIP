@@ -194,3 +194,10 @@ export const loader = styled.div`
   height: 100px;
   margin-bottom: ${spacing(12)};
 `;
+
+export const footerPagintation = styled.div`
+  margin-top: ${spacing(10)};
+  margin-bottom: ${spacing(4)};
+  padding-right: ${spacing(10)};
+  padding-left: ${spacing(10)};
+`;
