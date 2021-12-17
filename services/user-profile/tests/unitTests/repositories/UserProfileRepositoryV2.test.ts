@@ -3,7 +3,6 @@ import {
     CreateUserPersisterInput,
     GetUserClientAccounts,
     GetUserInput,
-    GetUserOutput,
     SearchUsersInput,
     UserAccountsReponse,
 } from '../../../src/domain';
@@ -93,15 +92,11 @@ const mockedClient = mocked(ClientAccount);
 mockedUser.findAndCountAll.mockResolvedValue(defaultSearchUsersSequelizeResult);
 
 const CLASS_NAME = UserProfileRepositoryV2.name;
-const SEARCH_USERS_FUNCTION_NAME =
-    UserProfileRepositoryV2.defaultInstance.searchUsers.name;
-const CREATE_USER_FUNCTION_NAME =
-    UserProfileRepositoryV2.defaultInstance.createUser.name;
-const GET_USER_FUNCTION_NAME =
-    UserProfileRepositoryV2.defaultInstance.getUser.name;
+const SEARCH_USERS_FUNCTION_NAME = UserProfileRepositoryV2.defaultInstance.searchUsers.name;
+const CREATE_USER_FUNCTION_NAME = UserProfileRepositoryV2.defaultInstance.createUser.name;
+const GET_USER_FUNCTION_NAME = UserProfileRepositoryV2.defaultInstance.getUser.name;
 
-const GET_ACCOUNT_BY_USER =
-    UserProfileRepositoryV2.defaultInstance.getUserClientAccounts.name;
+const GET_ACCOUNT_BY_USER = UserProfileRepositoryV2.defaultInstance.getUserClientAccounts.name;
 
 afterAll(() => {
     mockedRole.mockClear();
@@ -112,10 +107,9 @@ describe(`${CLASS_NAME}`, () => {
     test(`${SEARCH_USERS_FUNCTION_NAME} Valid input Happy case`, async () => {
         const searchUsersParameters: SearchUsersInput = {};
 
-        const response =
-            await UserProfileRepositoryV2.defaultInstance.searchUsers(
-                searchUsersParameters
-            );
+        const response = await UserProfileRepositoryV2.defaultInstance.searchUsers(
+            searchUsersParameters
+        );
 
         expect(response).toEqual(defaultSearchUsersRepositoryResult);
     });
@@ -132,22 +126,20 @@ describe(`${CLASS_NAME}`, () => {
             sortBy: 'role',
             sortDirection: 'ASC',
             clientAccountId: 'client-account-id',
-            isActive: 'true'
+            isActive: 'true',
         };
 
-        const response1 =
-            await UserProfileRepositoryV2.defaultInstance.searchUsers(
-                searchUsersParameters
-            );
+        const response1 = await UserProfileRepositoryV2.defaultInstance.searchUsers(
+            searchUsersParameters
+        );
 
         expect(response1).toEqual(defaultSearchUsersRepositoryResult);
 
         searchUsersParameters.sortBy = 'account';
 
-        const response2 =
-            await UserProfileRepositoryV2.defaultInstance.searchUsers(
-                searchUsersParameters
-            );
+        const response2 = await UserProfileRepositoryV2.defaultInstance.searchUsers(
+            searchUsersParameters
+        );
 
         expect(response2).toEqual(defaultSearchUsersRepositoryResult);
     });
@@ -166,9 +158,7 @@ describe(`${CLASS_NAME}`, () => {
         };
 
         try {
-            await UserProfileRepositoryV2.defaultInstance.searchUsers(
-                searchUsersParameters
-            );
+            await UserProfileRepositoryV2.defaultInstance.searchUsers(searchUsersParameters);
 
             throw new Error('Code never should come in this point');
         } catch (error: any) {
@@ -199,10 +189,7 @@ describe(`${CLASS_NAME}`, () => {
             roleId: roleSequelizeResult.id.toString(),
         };
 
-        const response =
-            await UserProfileRepositoryV2.defaultInstance.createUser(
-                parameters
-            );
+        const response = await UserProfileRepositoryV2.defaultInstance.createUser(parameters);
 
         expect(response).toEqual(userSequelizeResult);
     });
@@ -221,15 +208,11 @@ describe(`${CLASS_NAME}`, () => {
         };
 
         try {
-            await UserProfileRepositoryV2.defaultInstance.createUser(
-                parameters
-            );
+            await UserProfileRepositoryV2.defaultInstance.createUser(parameters);
 
             throw new Error('Code never should come in this point');
         } catch (error: any) {
-            expect(error.message).toEqual(
-                `Error: Role uuid: ${parameters.roleId} does not exist`
-            );
+            expect(error.message).toEqual(`Error: Role uuid: ${parameters.roleId} does not exist`);
         }
     });
 
@@ -250,11 +233,11 @@ describe(`${CLASS_NAME}`, () => {
             userId: '24e7ca86-1788-4b6e-b153-9c963dc922ew',
         };
 
-        const expectedResponse: GetUserOutput = {
+        const expectedResponse: any = {
             firstName: findOneInUserResponse.firstName,
             lastName: findOneInUserResponse.lastName,
             primaryEmail: findOneInUserResponse.primaryEmail,
-            clientAccount: { name: undefined, uuid: undefined },
+            clientAccount: { name: undefined, uuid: undefined, teamMemberType: undefined },
 
             role: {
                 uuid: '83618280-9c84-441c-94d1-59e4b24cbe3d',
@@ -264,9 +247,7 @@ describe(`${CLASS_NAME}`, () => {
             isDodsUser: findOneInUserResponse.role.uuid === DODS_USER,
         };
 
-        const response = await UserProfileRepositoryV2.defaultInstance.getUser(
-            parameters
-        );
+        const response = await UserProfileRepositoryV2.defaultInstance.getUser(parameters);
 
         expect(response).toEqual(expectedResponse);
     });
@@ -283,9 +264,7 @@ describe(`${CLASS_NAME}`, () => {
 
             throw new Error('Code never should come in this point');
         } catch (error: any) {
-            expect(error.message).toEqual(
-                `Error: UserUUID ${parameters.userId} does not exist`
-            );
+            expect(error.message).toEqual(`Error: UserUUID ${parameters.userId} does not exist`);
         }
     });
 
@@ -296,24 +275,18 @@ describe(`${CLASS_NAME}`, () => {
 
         mockedClient.findAll.mockResolvedValue(findAllClientsResponse);
 
-        mockedClient.findAndCountAll.mockResolvedValue(
-            defaultClientAccountsSequelizeResult
-        );
+        mockedClient.findAndCountAll.mockResolvedValue(defaultClientAccountsSequelizeResult);
 
         const parameters: GetUserClientAccounts = {
             userId: '24e7ca86-1788-4b6e-b153-9c963dc922ew',
         };
 
         try {
-            await UserProfileRepositoryV2.defaultInstance.getUserClientAccounts(
-                parameters
-            );
+            await UserProfileRepositoryV2.defaultInstance.getUserClientAccounts(parameters);
 
             throw new Error('Code never should come in this point');
         } catch (error: any) {
-            expect(error.message).toEqual(
-                `Error: UserUUID ${parameters.userId} does not exist`
-            );
+            expect(error.message).toEqual(`Error: UserUUID ${parameters.userId} does not exist`);
         }
     });
 
@@ -339,9 +312,7 @@ describe(`${CLASS_NAME}`, () => {
         mockedUser.findOne.mockResolvedValue(findOneInUserResponse);
         mockedClient.findAll.mockResolvedValue(findAllClientsResponse);
 
-        mockedClient.findAndCountAll.mockResolvedValue(
-            defaultClientAccountsSequelizeResult
-        );
+        mockedClient.findAndCountAll.mockResolvedValue(defaultClientAccountsSequelizeResult);
 
         const parameters: GetUserClientAccounts = {
             userId: '24e7ca86-1788-4b6e-b153-9c963dc922ew',
@@ -365,10 +336,9 @@ describe(`${CLASS_NAME}`, () => {
             clients: clients,
         };
 
-        const response =
-            await UserProfileRepositoryV2.defaultInstance.getUserClientAccounts(
-                parameters
-            );
+        const response = await UserProfileRepositoryV2.defaultInstance.getUserClientAccounts(
+            parameters
+        );
 
         expect(response).toEqual(expectedResponse);
     });

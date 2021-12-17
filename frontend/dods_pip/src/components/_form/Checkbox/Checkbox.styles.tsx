@@ -5,8 +5,12 @@ import opacity from '../../../globals/opacity';
 import spacing from '../../../globals/spacing';
 import { hexAToRGBA } from '../../../utils/color';
 
-export const checkbox = styled.div`
-  cursor: pointer;
+type CheckboxProps = {
+  disabled: boolean;
+};
+
+export const checkbox = styled.div<CheckboxProps>`
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
 export const checkboxLayout = styled.div`

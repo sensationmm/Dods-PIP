@@ -7,13 +7,31 @@ import { hexAToRGBA } from '../../../utils/color';
 
 type WrapperProps = {
   disabled: boolean;
+  hasOnLabel: boolean;
+  hasOffLabel: boolean;
+  small: boolean;
 };
 
 export const wrapper = styled.div<WrapperProps>`
   position: relative;
   outline: 0;
   display: grid;
-  grid-template-columns: 1fr 48px 1fr;
+  grid-template-columns: ${({ hasOffLabel, hasOnLabel, small }) =>
+    hasOnLabel && hasOffLabel
+      ? small
+        ? '1fr 32px 1fr'
+        : '1fr 48px 1fr'
+      : hasOnLabel
+      ? small
+        ? '1fr 32px'
+        : '1fr 48px'
+      : hasOffLabel
+      ? small
+        ? '32px 1fr'
+        : '48px 1fr'
+      : small
+      ? '32px'
+      : '48px'};
   column-gap: ${spacing(3)};
   align-items: center;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
@@ -21,14 +39,22 @@ export const wrapper = styled.div<WrapperProps>`
   p:first-of-type {
     text-align: right !important;
   }
+
+  p {
+    white-space: nowrap;
+  }
 `;
 
-export const control = styled.div`
+type ToggleProps = {
+  small: boolean;
+};
+
+export const control = styled.div<ToggleProps>`
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
+  top: ${({ small }) => (small ? '3px' : '2px')};
+  left: ${({ small }) => (small ? '3px' : '2px')};
+  width: ${({ small }) => (small ? '10px' : '20px')};
+  height: ${({ small }) => (small ? '10px' : '20px')};
   background: ${color.base.white};
   border-radius: 11px;
   transition: all 0.2s;
@@ -42,10 +68,10 @@ export const control = styled.div`
   }
 `;
 
-export const toggle = styled.div`
+export const toggle = styled.div<ToggleProps>`
   position: relative;
-  width: 48px;
-  height: 24px;
+  width: ${({ small }) => (small ? '32px' : '48px')};
+  height: ${({ small }) => (small ? '16px' : '24px')};
   background: ${color.base.greyMid};
   border-radius: 12px;
 
@@ -65,16 +91,16 @@ export const toggle = styled.div`
   &:focus::before {
     content: '';
     position: absolute;
-    width: 56px;
-    height: 32px;
-    top: -4px;
-    left: -4px;
+    width: ${({ small }) => (small ? '36px' : '56px')};
+    height: ${({ small }) => (small ? '20px' : '32px')};
+    top: ${({ small }) => (small ? '-2px' : '-4px')};
+    left: ${({ small }) => (small ? '-2px' : '-4px')};
     background: ${hexAToRGBA(color.theme.blueMid, opacity.high)};
-    border-radius: 16px;
+    border-radius: ${({ small }) => (small ? '12px' : '16px')};
   }
 `;
 
-export const toggleActive = styled(toggle)`
+export const toggleActive = styled(toggle)<ToggleProps>`
   background: ${color.theme.blueMid};
 
   &:hover {
@@ -83,6 +109,6 @@ export const toggleActive = styled(toggle)`
 
   ${control} {
     left: auto;
-    right: 2px;
+    right: ${({ small }) => (small ? '3px' : '2px')};
   }
 `;

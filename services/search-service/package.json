@@ -5,16 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
-    "test:coverage": "jest --coverage",
+    "test:coverage": "jest --detectOpenHandles --coverage",
     "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
     "test:report": "open coverage/integration-tests-report.html && open coverage/lcov-report/index.html",
     "dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 NODE_ENV=dev serverless offline --stage dev",
     "validate:env": "SERVERLESS_STAGE=prod ts-node ./src/domain/config/index.ts",
     "package": "serverless package",
     "deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless deploy --stage dev",
-    "deploy:prod": "AWS_PROFILE=dods-prod AWS_REGION=eu-west-1 serverless deploy --stage prod",
+    "deploy:prod": "AWS_PROFILE=dods-prod AWS_REGION=eu-west-1 serverless deploy --stage production",
     "remove:deploy:dev": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage dev",
-    "remove:deploy:prod": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage prod",
+    "remove:deploy:prod": "AWS_PROFILE=dods-dev AWS_REGION=eu-west-1 serverless remove --stage production",
     "serverlessConfig": "serverless config credentials --provider aws --profile dods --key {aws_access_key_id} --secret {aws_secret_access_key}"
   },
   "pre-commit": [

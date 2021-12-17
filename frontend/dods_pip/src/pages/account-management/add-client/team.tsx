@@ -1,7 +1,7 @@
 import debounce from 'lodash/debounce';
 import filter from 'lodash/filter';
 import trim from 'lodash/trim';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
 import InputText from '../../../components/_form/InputText';
@@ -195,7 +195,7 @@ const Team: React.FC<TeamProps> = ({
     setSaving(false);
   };
 
-  const searchUsers = debounce(async (name) => {
+  const debounceSearchUsers = debounce(async (name) => {
     try {
       const response = await fetchJson(`${BASE_URI}${Api.Users}?name=${name}`, { method: 'GET' });
       const { success = false, data = [] } = response;
@@ -213,7 +213,9 @@ const Team: React.FC<TeamProps> = ({
     } catch (e) {
       console.log(e);
     }
-  }, 500);
+  }, 150);
+
+  const searchUsers = useMemo(() => debounceSearchUsers, []);
 
   const removeClientUser = (userId: string) => {
     // remove `userId` from clientUsers array

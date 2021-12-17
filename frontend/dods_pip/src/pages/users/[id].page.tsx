@@ -87,7 +87,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       account: ((data.clientAccount as Record<string, string>)?.uuid as string) || '',
       emailAddress: (data.primaryEmail as string) || '',
       emailAddress2: (data.secondaryEmail as string) || '',
-      jobTitle: (data.jobTitle as string) || '',
+      jobTitle: (data.title as string) || '',
       telephoneNumber: (data.telephoneNumber1 as string) || '',
       telephoneNumber2: (data.telephoneNumber2 as string) || '',
       userType:
@@ -136,7 +136,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   };
 
   const setUserFormData = (field: keyof FormFields, value: string) => {
-    setFormFields({ ...formFields, ...{ [field]: value.trim() } });
+    setFormFields({ ...formFields, ...{ [field]: value } });
   };
 
   useEffect(() => {

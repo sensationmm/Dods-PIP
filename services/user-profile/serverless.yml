@@ -8,6 +8,7 @@ provider:
   name: aws
   region: eu-west-1
   runtime: nodejs14.x
+  timeout: 10
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
     name: pip-${self:provider.stage}-services-lambdas
@@ -50,7 +51,7 @@ provider:
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage} 
     DB_CONNECTION_LIMIT: 5
     DB_DRIVER: mariadb
     DB_NAME: dods
@@ -66,7 +67,8 @@ custom:
         - mariadb
     keepOutputDirectory: false
   serverless-offline:
-    httpPort: 3000
+    httpPort: 4000
+    lambdaPort: 4002
   prune:
     automatic: true
     number: 1
@@ -101,6 +103,7 @@ functions:
   createUserProfile:
     handler: src/handlers/createUserProfile/index.handle
     description: Triggered when http request comes
+    timeout: 60
     events:
       - http:
           method: post
@@ -128,6 +131,7 @@ functions:
   createUser:
     handler: src/handlers/createUser/index.handle
     description: Triggered when http request comes
+    timeout: 60
     events:
       - http:
           method: post
