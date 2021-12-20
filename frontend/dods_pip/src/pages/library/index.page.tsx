@@ -44,22 +44,27 @@ const aggregations = {
 
 interface LibraryProps extends LoadingHOCProps {}
 
-interface ESResponse {
-  es_reponse?: Record<string, any> | null;
+export interface ESResponse {
+  es_response?: Record<string, any>;
+  hits?: Record<string, any>;
+  aggregations?: Record<string, any>;
+  documentContent?: string;
+  contentSource?: string;
+  informationType?: string;
+  documentTitle?: string;
 }
 
 interface RequestPayload {
-  query?: Record<string, any> | null;
+  query?: Record<string, any>;
   aggregations: Record<string, any>;
 }
-
 
 export const Library: React.FC<LibraryProps> = () => {
   const [apiResponse, setApiResponse] = useState<ESResponse>({});
 
-  const [contentSources, setContentSources] = useState(null);
-  const [informationTypes, setInformationTypes] = useState(null);
-  const [jurisdictions, setJurisdictions] = useState(null);
+  const [contentSources, setContentSources] = useState([]);
+  const [informationTypes, setInformationTypes] = useState([]);
+  const [jurisdictions, setJurisdictions] = useState([]);
 
   const [requestPayload, setRequestPayload] = useState<RequestPayload>({
     aggregations: aggregations,
@@ -121,21 +126,21 @@ export const Library: React.FC<LibraryProps> = () => {
 
     (async () => {
       try {
-        const response: ESResponse = await fetchJson(`${BASE_URI}${Api.ContentSearchApp}`, {
+        const response = (await fetchJson(`${BASE_URI}${Api.ContentSearchApp}`, {
           body: JSON.stringify({ query: sPayload }),
           method: 'POST',
-        });
+        })) as ESResponse;
 
-        setApiResponse(response.es_response);
+        setApiResponse(response.es_response as ESResponse);
 
         setContentSources(
-          (response.es_response.aggregations.contentSource?.buckets).filter(checkEmptyAggregation),
+          (response.es_response?.aggregations.contentSource?.buckets).filter(checkEmptyAggregation),
         );
         setInformationTypes(
-          response.es_response.aggregations.informationType?.buckets.filter(checkEmptyAggregation),
+          response.es_response?.aggregations.informationType?.buckets.filter(checkEmptyAggregation),
         );
         setJurisdictions(
-          response.es_response.aggregations.jurisdiction?.buckets.filter(checkEmptyAggregation),
+          response.es_response?.aggregations.jurisdiction?.buckets.filter(checkEmptyAggregation),
         );
       } catch (error) {
         console.log(error);
@@ -158,7 +163,7 @@ export const Library: React.FC<LibraryProps> = () => {
             <Spacer size={12} />
             <Styled.contentWrapper>
               <section>
-                {apiResponse.hits.hits.map((hit, i) => {
+                {apiResponse?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
                   const formattedTime = moment(hit._source.contentDateTime).format(
                     'Do MMMM YYYY h:mm',
                   );
@@ -198,7 +203,9 @@ export const Library: React.FC<LibraryProps> = () => {
                           )}
                           <Styled.bottomRow>
                             <Styled.tagsWrapper>
-                              {hit._source.taxonomyTerms.map((taxonomy, i) => {
+                              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                              {/* @ts-ignore */}
+                              {hit._source.taxonomyTerms.map((taxonomy: Record<string, any>, i) => {
                                 if (i > 5) {
                                   return;
                                 }
@@ -236,7 +243,7 @@ export const Library: React.FC<LibraryProps> = () => {
                       <Box size={'extraSmall'}>
                         <div>
                           <h3>Content Source</h3>
-                          {contentSources.map((contentSource, i) => {
+                          {contentSources.map((contentSource: Record<string, any>, i) => {
                             return (
                               <Styled.filtersTag
                                 onClick={() => {
@@ -262,7 +269,7 @@ export const Library: React.FC<LibraryProps> = () => {
                       <Box size={'extraSmall'}>
                         <div>
                           <h3>Information Type</h3>
-                          {informationTypes.map((informationType, i) => {
+                          {informationTypes.map((informationType: Record<string, any>, i) => {
                             return (
                               <Styled.filtersTag
                                 onClick={() => {
@@ -287,7 +294,7 @@ export const Library: React.FC<LibraryProps> = () => {
                     <Box size={'extraSmall'}>
                       <div>
                         <h3>Jurisdiction</h3>
-                        {jurisdictions.map((jurisdiction, i) => {
+                        {jurisdictions.map((jurisdiction: Record<string, any>, i) => {
                           return (
                             <Styled.filtersTag
                               onClick={() => {
