@@ -154,8 +154,6 @@ const Subscription: React.FC<SubscriptionProps> = ({
   const subscriptionPlaceholder = 'Select a subscription type';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
 
-  console.log('subscriptionType', subscriptionType);
-
   const handleSave = async () => {
     setLoading(true);
     setSaving(true);
