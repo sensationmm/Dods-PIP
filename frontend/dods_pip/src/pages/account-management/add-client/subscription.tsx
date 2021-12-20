@@ -136,6 +136,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
   const isComplete =
     (isEU || isUK) &&
+    subscriptionType &&
     subscriptionType !== '' &&
     userSeats !== '' &&
     consultantHours !== '' &&
@@ -152,6 +153,8 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
   const subscriptionPlaceholder = 'Select a subscription type';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
+
+  console.log('subscriptionType', subscriptionType);
 
   const handleSave = async () => {
     setLoading(true);
