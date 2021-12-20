@@ -1,6 +1,5 @@
 import moment from 'moment';
 import Head from 'next/head';
-import Image from 'next/Image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
@@ -15,7 +14,6 @@ import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
-import exampleJpeg from './example.jpg';
 import * as Styled from './library.styles';
 
 const aggregations = {
@@ -174,9 +172,7 @@ export const Library: React.FC<LibraryProps> = () => {
                         <Styled.boxContent>
                           <Styled.topRow>
                             <span>
-                              <Styled.imageContainer>
-                                <Image height={55} width={55} alt="test-image" src={exampleJpeg} />
-                              </Styled.imageContainer>
+                              <Styled.imageContainer></Styled.imageContainer>
                               <div>
                                 <h2> {hit._source.documentTitle}</h2>
                                 <Styled.contentSource>
