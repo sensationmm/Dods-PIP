@@ -148,7 +148,8 @@ describe('Team', () => {
   beforeEach(() => {
     useStateSpy
       .mockImplementationOnce(() => [states[count].createUser, mockSetCreateUser])
-      .mockImplementationOnce(() => [states[count].addUser, mockSetAddUser]);
+      .mockImplementationOnce(() => [states[count].addUser, mockSetAddUser])
+      .mockImplementation(() => [undefined, jest.fn]);
     setActiveStep = jest.fn();
     wrapper = shallow(<Team {...props[count]} />);
   });

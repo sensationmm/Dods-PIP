@@ -30,6 +30,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   testId,
   isDisabled,
   onKeyPressHasSearch = false,
+  error,
   ...rest
 }) => {
   const [search, setSearch] = React.useState<string>('');
@@ -74,7 +75,9 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           value={search}
           onChange={searchHandler}
           placeholder={value ? '' : placeholder}
-          error={search !== '' && results.length === 0 ? 'No results found!' : undefined}
+          error={
+            search !== '' && results.length === 0 ? 'No results found!' : error ? error : undefined
+          }
           isDisabled={isDisabled}
         >
           {isFilter && value && !search && (
@@ -94,7 +97,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           testId={testId + '-dropdown'}
           isOpen={results?.length > 0}
           hasHelper={rest.helperText !== undefined && rest.helperText !== ''}
-          hasError={rest.error !== undefined}
+          hasError={error !== undefined}
           options={results}
           size={rest.size}
           selectedValue={selectedValues}
