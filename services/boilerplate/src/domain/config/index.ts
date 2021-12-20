@@ -21,9 +21,17 @@ const envVarsSchema = Joi.object()
         NODE_ENV: Joi.string().valid(...stages).default('test'),
         SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
+        CORS_ORIGINS: Joi.string().required().default('*'),
+        DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
+        DB_HOST: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
+        DB_USER: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_CONNECTION_LIMIT: Joi.number().default(5),
+        API_GATEWAY_BASE_URL: Joi.string().required(),
         SAY_TURKISH_HELLO_ENDPOINT: Joi.string().required(),
         SAY_ENGLISH_HELLO_ENDPOINT: Joi.string().required(),
-        GET_FULL_NAME_ENDPOINT: Joi.string().required()
+        GET_FULL_NAME_ENDPOINT: Joi.string().required(),
     })
     .unknown();
 
@@ -40,10 +48,20 @@ export const config = {
     },
     dods: {
         downstreamEndpoints: {
+            apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
             sayTurkishHelloEndpointUrl: envVars.SAY_TURKISH_HELLO_ENDPOINT as string,
             sayEnglishHelloEndpointUrl: envVars.SAY_ENGLISH_HELLO_ENDPOINT as string,
             getFullNameEndpointUrl: envVars.GET_FULL_NAME_ENDPOINT as string
         } as DownstreamEndpoints
     },
-    aws: {}
+    aws: {
+        mariaDb: {
+            dbDriver: envVars.DB_DRIVER as string,
+            host: envVars.DB_HOST as string,
+            database: envVars.DB_NAME as string,
+            username: envVars.DB_USER as string,
+            password: envVars.DB_PASSWORD as string,
+            connectionLimit: envVars.DB_CONNECTION_LIMIT as number,
+        },
+    }
 };
