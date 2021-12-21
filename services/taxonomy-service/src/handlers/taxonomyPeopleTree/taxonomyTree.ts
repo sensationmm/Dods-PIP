@@ -9,7 +9,7 @@ export const taxonomyTree = async (): Promise<APIGatewayProxyResultV2> => {
     let taxonomy_tree = []
     const params: S3.GetObjectRequest = {
         Bucket: BUCKET,
-        Key:'Topics.json'
+        Key:'People.json'
     };
     console.log(params)
     const response = await getFromS3(params);
