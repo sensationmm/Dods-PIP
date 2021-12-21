@@ -16,7 +16,5 @@ export const removeTeamMember: AsyncLambdaMiddleware<RemoveTeamMemberParameters>
 
         await UserProfileRepositoryV2.defaultInstance.deleteUser(userId);
 
-        await ClientAccountRepositoryV2.defaultInstance.incrementSubscriptionSeats({ id: clientAccount.id });
-
         return new HttpResponse(HttpStatusCode.OK, { success: true, message: 'Team member successfully removed.', });
     };
