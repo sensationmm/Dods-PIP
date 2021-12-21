@@ -352,7 +352,7 @@ pipelines:
           size: 2x
           services:
             - docker
-          deployment: dev
+          deployment: Dev
           script:
             - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
             - cd ${FRONTEND_SRC}
