@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  description: DODS Schedule Service API
+  version: 1.0.0
+  title: DODS Schedule Service
+  contact:
+    email: kenanhancer@gmail.com
+  license:
+    name: GPL 3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+servers:
+  - url: /api
+
+paths:
+  /scheduler/create:
+    post:
+      operationId: createSchedule
+      summary: "Create a watcher schedule for doc publishing"
+      parameters:
+        - $ref: '#/components/parameters/createSchedule'
+      responses:
+        "200":
+          $ref: "#/components/responses/CreateSchedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    Errors:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+    CreateScheduleReturn:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 008f811e5ccf44d3a0df5b7f70a8e85d
+        scheduleType:
+          type: string
+          example: publishing
+        cron:
+          type: string
+          example: "0 0 13 24 DEC ? 2021"
+
+  parameters:
+    createSchedule:
+      in: body
+      name: Schedule
+      schema:
+        type: object
+        required:
+          - id
+          - scheduleType
+          - cron
+        properties:
+          id:
+            type: string
+            example: 008f811e5ccf44d3a0df5b7f70a8e85d
+          scheduleType:
+            type: string
+            example: publishing
+          cron:
+            type: string
+            example: "0 0 13 24 DEC ? 2021"
+
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    BadRequest:
+      description: Bad Request. Input must be valid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Message"
+              - $ref: "#/components/schemas/Errors"
+    NotAcceptable:
+      description: Not Acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    CreateSchedule:
+      description: "Response from scheduler creation"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateScheduleReturn'
