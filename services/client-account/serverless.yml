@@ -67,6 +67,7 @@ custom:
         keepOutputDirectory: false
     serverless-offline:
         httpPort: 3000
+        lambdaPort: 3002
     prune:
         automatic: true
         number: 1

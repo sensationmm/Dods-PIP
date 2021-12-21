@@ -6,9 +6,13 @@ export const radioGroup = styled.div`
   width: 100%;
 `;
 
-export const radioGroupWrapper = styled.fieldset`
+type RadioGroupWrapperProps = {
+  stacked: boolean;
+};
+export const radioGroupWrapper = styled.fieldset<RadioGroupWrapperProps>`
   border: 0;
   display: flex;
+  flex-direction: ${({ stacked }) => (stacked ? 'column' : 'row')};
   flex-wrap: wrap;
   padding: 0;
 

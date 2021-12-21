@@ -6,6 +6,7 @@ import spacing from '../../../globals/spacing';
 import { boxSizing } from './index';
 
 const THEME = {
+  extraSmall: { paddingDesktop: spacing(2) },
   small: { paddingDesktop: spacing(8) },
   medium: { paddingDesktop: spacing(14) },
   large: { paddingDesktop: spacing(20) },

@@ -11,8 +11,14 @@ a {
   font-family: 'Open Sans';
 }
 
-b {
+b,
+strong {
   font-family: 'Open Sans Bold';
+}
+
+ol,
+ul {
+  padding-left: 20px;
 }
 
 hr {

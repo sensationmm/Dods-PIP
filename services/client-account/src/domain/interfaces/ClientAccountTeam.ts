@@ -26,6 +26,7 @@ export interface TeamMemberResponse {
 }
 
 export interface TeamMember {
+    isActive?: boolean;
     userId?: string;
     teamMemberType: number;
 }

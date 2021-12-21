@@ -187,11 +187,9 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             testId={'job-title'}
             value={fieldData.jobTitle}
             onChange={(value) => setFieldValue('jobTitle', value)}
-            required
             label="Job Title"
             placeholder="Type the job title"
             error={errors.jobTitle}
-            onBlur={() => validateField('jobTitle', fieldData.jobTitle, [ValidationType.Required])}
           />
         </>
       )}

@@ -156,10 +156,10 @@ export class TaxonomyRepository implements Taxonomy {
                 ancestorTerms: topConcept.ancestorTerms
             }
             if (topConcept._source.narrower) {
-                for (const narrowerTopic of topConcept._source.narrower) {
+                await Promise.all(topConcept._source.narrower.map(async (narrowerTopic: any) => {
                     const narrowerBranch: TaxonomyNode = await this.getNarrowerTopics(narrowerTopic)
                     branchObject.childTerms.push(narrowerBranch)
-                }
+                }));
             }
             tree.push(branchObject)
 

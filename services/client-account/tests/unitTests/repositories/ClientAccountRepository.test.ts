@@ -118,6 +118,7 @@ ClientAccountMock.$queryInterface.$useHandler(function (query: any, queryOptions
                         ClientAccountTeamModel: {
                             teamMemberType: 3,
                         },
+                        isActive: true,
                     },
                 ],
             });

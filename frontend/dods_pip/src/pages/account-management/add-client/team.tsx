@@ -126,6 +126,7 @@ const Team: React.FC<TeamProps> = ({
   const [users, setUsers] = React.useState<DropdownValue[]>([]);
   const [pristine, setPristine] = React.useState<boolean>(true);
   const [saving, setSaving] = React.useState<boolean>(false); // editMode - disabled save button when saving request in progress
+  const [duplicateError, setDuplicateError] = React.useState<string>();
 
   const isComplete = accountManagers.length > 0 || teamMembers.length > 0 || clientUsers.length > 0;
   const isUserComplete =
@@ -173,7 +174,7 @@ const Team: React.FC<TeamProps> = ({
         `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMember}`,
         { method: 'PUT', body: JSON.stringify({ teamMembers: payload }) },
       );
-      const { success = false, data = [] } = response;
+      const { success = false, data = [], message } = response;
 
       if (success || (Array.isArray(data) && data.length > 0)) {
         if (editMode) {
@@ -182,6 +183,8 @@ const Team: React.FC<TeamProps> = ({
         } else {
           onSubmit();
         }
+      } else if (!success && message === 'The same user cannot be saved multiple times.') {
+        setDuplicateError('The same user cannot hold multiple roles on the same account.');
       }
     } catch (e) {
       // show server error
@@ -338,6 +341,7 @@ const Team: React.FC<TeamProps> = ({
         setClientTelephone('');
         setClientTelephone2('');
         // setClientAccess('');
+        setDuplicateError('');
       }
     } catch (e) {
       // show server error
@@ -360,6 +364,7 @@ const Team: React.FC<TeamProps> = ({
     setClientTelephone('');
     setClientTelephone2('');
     // setClientAccess('');
+    setDuplicateError('');
   };
 
   return (
@@ -459,6 +464,7 @@ const Team: React.FC<TeamProps> = ({
             }}
             selectedValues={teamMembers}
             icon="consultant"
+            error={duplicateError}
           />
 
           <Spacer size={12} />
@@ -478,6 +484,7 @@ const Team: React.FC<TeamProps> = ({
             }}
             selectedValues={accountManagers}
             icon="consultant"
+            error={duplicateError}
           />
         </SectionAccordion>
 
