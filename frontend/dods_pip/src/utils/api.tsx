@@ -23,6 +23,8 @@ export enum Api {
   Taxonomies = '/taxonomies',
   TaxonomySearch = '/taxonomy',
   TaxonomyTree = '/taxonomy/tree',
+  ContentSearch = '/search/contents/query',
+  ContentSearchApp = '/library',
 }
 
 export const toQueryString = (params: Record<string, any> = {}): string => {

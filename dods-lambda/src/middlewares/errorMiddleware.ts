@@ -3,32 +3,43 @@ import { AsyncLambdaMiddleware } from "nut-pipe";
 import { HttpResponse, HttpStatusCode } from "../domain";
 import { Logger } from '../utility';
 
+const isApiGatewayResponse = (response: any): response is APIGatewayProxyStructuredResultV2 => response.statusCode !== undefined
+
 export const errorMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = async (event, context, callback, next) => {
 
-    let response: APIGatewayProxyStructuredResultV2;
+    Logger.info('ErrorMiddleware Entry');
+
+    let response: APIGatewayProxyStructuredResultV2 = undefined as any;
+    let error: any;
 
     try {
 
         const result = await next!(event, context, callback);
 
-        const apiGatewayResult = result as APIGatewayProxyStructuredResultV2;
-
-        if (apiGatewayResult && apiGatewayResult.statusCode) {
-            response = apiGatewayResult;
+        if (isApiGatewayResponse(result)) {
+            response = result;
         } else {
             response = new HttpResponse(HttpStatusCode.OK, result);
         }
 
-    } catch (error: any) {
-        const { stack = undefined, statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR, message, ...rest } = typeof error === 'string' ? { message: error } : error;
+    } catch (err: any) {
 
-        response = new HttpResponse(statusCode, {
-            success: false,
-            message,
-            error: rest,
-        });
+        error = err;
 
-        Logger.error('ErrorMiddleware:', error);
+    } finally {
+        if (error) {
+            const { stack = undefined, statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR, message, ...rest } = typeof error === 'string' ? { message: error } : error;
+
+            response = new HttpResponse(statusCode, {
+                success: false,
+                message,
+                error: rest,
+            });
+
+            Logger.error('ErrorMiddleware:', error);
+        } else {
+            Logger.info('ErrorMiddleware Success');
+        }
     }
 
     return response;

@@ -21,6 +21,7 @@ export class OpenApiAdaptedRequest {
     public body: any,
     public params: Record<string, any>,
     public openapi: {
+      openApiRoute: string,
       expressRoute: string,
       schema: any,
       pathParams: {}
