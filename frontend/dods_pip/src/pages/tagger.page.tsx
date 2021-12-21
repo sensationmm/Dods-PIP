@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import Columns from '../components/_layout/Columns';
@@ -9,6 +10,8 @@ import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
 interface TaggerProps extends LoadingHOCProps {}
 
 export const Tagger: React.FC<TaggerProps> = () => {
+  const router = useRouter();
+  const { highlight = undefined } = router.query;
   const [tags, setTags] = React.useState<ContentTaggerProps['tags']>([
     {
       tagId: 'http://www.dods.co.uk/taxonomy/instance/Topics/ba68835e-6584-4c14-ab83-29fcae407cda',
@@ -29,7 +32,12 @@ export const Tagger: React.FC<TaggerProps> = () => {
           ))}
         </ul>
 
-        <ContentTagger tags={tags} setTags={setTags} />
+        <ContentTagger
+          tags={tags}
+          setTags={setTags}
+          highlight={highlight as string}
+          highlightWordCount={3}
+        />
       </Columns>
     </Panel>
   );
