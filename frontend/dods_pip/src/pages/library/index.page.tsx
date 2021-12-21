@@ -19,14 +19,14 @@ import * as Styled from './library.styles';
 const aggregations = {
   jurisdiction: {
     terms: {
-      field: 'jurisdiction',
+      field: 'jurisdiction.keyword',
       min_doc_count: 0,
       size: 500,
     },
   },
   informationType: {
     terms: {
-      field: 'informationType',
+      field: 'informationType.keyword',
       min_doc_count: 0,
       size: 500,
     },

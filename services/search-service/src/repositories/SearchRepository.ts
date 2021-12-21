@@ -38,7 +38,8 @@ export class SearchRepository implements Search {
 
     async rawQuery(query: object){
         const fullQuery = {index: 'content', "body": query}
+        const response = await this.elasticsearch.search(fullQuery)
 
-        return await this.elasticsearch.search(fullQuery)['body']
+        return response['body']
     }
 }
