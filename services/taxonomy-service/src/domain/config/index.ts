@@ -63,6 +63,7 @@ const envVarsSchema = Joi.object()
         ES_CLOUD_ID: Joi.string().required(),
         ES_KEY_ID: Joi.string().required(),
         ES_API_KEY: Joi.string().required(),
+        TAXONOMY_TREE_BUCKET: Joi.string().required(),
     })
     .unknown();
 
@@ -80,7 +81,9 @@ export const config = {
     dods: {
         downstreamEndpoints: {}
     },
-    aws: {},
+    aws: {
+        TAXONOMY_TREE_BUCKET: envVars.TAXONOMY_TREE_BUCKET as string,
+    },
     elasticsearch: {
         esCloudId: envVars.ES_CLOUD_ID as string,
         esKeyId: envVars.ES_KEY_ID as string,
