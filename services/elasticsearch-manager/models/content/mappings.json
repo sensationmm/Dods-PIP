@@ -158,10 +158,59 @@
             }
           }
         },
+        "alternativeLabels": {
+          "type": "text",
+          "fielddata": true,
+          "analyzer": "analyzer_case_insensitive",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            },
+            "nocase": {
+              "type": "text",
+              "analyzer": "analyzer_case_insensitive"
+            }
+          }
+        },
         "facetType": {
           "type": "keyword"
         },
         "taxonomyType": {
+          "type": "keyword"
+        },
+        "inScheme": {
+          "type": "keyword"
+        },
+        "ancestorTerms": {
+          "type": "nested",
+          "properties": {
+            "tagId": {
+              "type": "keyword"
+            },
+            "termLabel": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "analyzer_case_insensitive",
+              "fields": {
+                "keyword": {
+                  "type": "keyword"
+                },
+                "nocase": {
+                  "type": "text",
+                  "analyzer": "analyzer_case_insensitive"
+                }
+              }
+            },
+            "rank": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "aggs_fields": {
+      "properties": {
+        "ancestorTermsLabel": {
           "type": "keyword"
         }
       }
