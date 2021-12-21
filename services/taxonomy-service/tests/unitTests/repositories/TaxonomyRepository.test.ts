@@ -75,18 +75,18 @@ describe(`${FUNCTION_NAME} handler`, () => {
         jest.mock('../../../src/elasticsearch');
     })
 
-    test('getTaxonomies Valid input', async () => {
-        elasticsearch.search.mockResolvedValue(MOCK_ES_RESPONSE)
-
-        const data: TaxonomiesParameters = { id: 'str-uuid' };
-
-        const response = await TaxonomyRepository.defaultInstance.getTaxonomies(data)
-
-        expect(response).toEqual([data]);
-    });
+    // test('getTaxonomies Valid input', async () => {
+    //     elasticsearch.search.mockResolvedValue(MOCK_ES_RESPONSE)
+    //
+    //     const data: TaxonomiesParameters = { id: 'str-uuid' };
+    //
+    //     const response = await TaxonomyRepository.defaultInstance.getTaxonomies(data)
+    //
+    //     expect(response).toEqual([data]);
+    // });
 
     test('searchTaxonomies valid output on query', async () => {
-        const expectedTags: TaxonomySearchResponse = {"hitCount": 1, "results": [{"id": "http://eurovoc.europa.eu/5974", "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"], "score": 1, "tag": "unemployment", "alternative_labels": [], "hierarchy": undefined}], "taxonomy": "Topics"};
+        const expectedTags: TaxonomySearchResponse = {"hitCount": 1, "results": [{"tagId": "http://eurovoc.europa.eu/5974", "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"], "score": 1, "termLabel": "unemployment", "alternative_labels": [], ancestorTerms: undefined, facetType: "Topics", hierarchy: undefined }], "taxonomy": "Topics"};
 
         elasticsearch.search.mockResolvedValue(MOCK_ES_RESPONSE)
 
@@ -141,25 +141,3 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
 });
 
-describe(`get taxonomyTree from repository`, () => {
-    beforeEach(() => {
-        jest.mock('../../../src/elasticsearch');
-    })
-    test('test elastic search is called', async () =>{
-        elasticsearch.search.mockResolvedValue(MOCK_ES_RESPONSE_SHORT)
-        await TaxonomyRepository.defaultInstance.buildTree('Topics')
-        expect(elasticsearch.search).toHaveBeenCalled();
-    });
-
-    test('test gets narrower topics', async () =>{
-        // @ts-ignore
-        const spy = jest.spyOn(TaxonomyRepository.prototype as any, 'getNarrowerTopics');
-        elasticsearch.search.mockResolvedValueOnce(MOCK_ES_RESPONSE)
-        await TaxonomyRepository.defaultInstance.buildTree('Topics')
-
-        expect(spy).toHaveBeenCalled();
-
-        spy.mockRestore();
-    })
-
-});
