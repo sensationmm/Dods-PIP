@@ -1,0 +1,225 @@
+openapi: 3.0.0
+info:
+  description: DODS Boilerplate
+  version: 1.0.0
+  title: DODS Boilerplate
+  contact:
+    email: kenanhancer@gmail.com
+  license:
+    name: GPL 3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+servers:
+  - url: /api
+
+paths:
+  /health:
+    get:
+      operationId: health
+      summary: "Get Health Message"
+      description: "Get Health Message"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /sayHello:
+    get:
+      operationId: sayHello
+      summary: "Get Greeting Message"
+      description: "Get Greeting Message"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/language"
+        - $ref: "#/components/parameters/title"
+        - $ref: "#/components/parameters/firstName"
+        - $ref: "#/components/parameters/lastName"
+      responses:
+        "200":
+          $ref: "#/components/responses/SayHello"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /getFullName:
+    get:
+      operationId: getFullName
+      summary: "Get full name of person"
+      description: "Get full name of person"
+      parameters:
+        - $ref: "#/components/parameters/title"
+        - $ref: "#/components/parameters/firstName"
+        - $ref: "#/components/parameters/lastName"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetFullName"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /sayEnglishHello:
+    get:
+      operationId: sayEnglishHello
+      summary: "Get English Greeting Message"
+      description: "Get English Greeting Message"
+      parameters:
+        - $ref: "#/components/parameters/title"
+        - $ref: "#/components/parameters/firstName"
+        - $ref: "#/components/parameters/lastName"
+      responses:
+        "200":
+          $ref: "#/components/responses/SayEnglishHello"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /sayTurkishHello:
+    get:
+      operationId: sayTurkishHello
+      summary: "Get Turkish Greeting Message"
+      description: "Get Turkish Greeting Message"
+      parameters:
+        - $ref: "#/components/parameters/title"
+        - $ref: "#/components/parameters/firstName"
+        - $ref: "#/components/parameters/lastName"
+      responses:
+        "200":
+          $ref: "#/components/responses/SayTurkishHello"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    Errors:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  parameters:
+    language:
+      in: header
+      name: language
+      schema:
+        type: string
+        enum:
+          - English
+          - Turkish
+      required: true
+      description: Language of Greeting Message
+    title:
+      in: header
+      name: title
+      schema:
+        type: string
+        enum:
+          - Mr
+          - Mrs
+          - Miss
+          - Ms
+      required: true
+      description: Title of Person
+    firstName:
+      in: header
+      name: firstName
+      schema:
+        type: string
+      required: true
+      description: First name of Person
+    lastName:
+      in: header
+      name: lastName
+      schema:
+        type: string
+      required: true
+      description: Last name of Person
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    BadRequest:
+      description: Bad Request. Input must be valid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Message"
+              - $ref: "#/components/schemas/Errors"
+    NotAcceptable:
+      description: Not Acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    SayHello:
+      description: "{greeting} {title} {firstName} {lastName}"
+      content:
+        application/json:
+          schema:
+            type: "string"
+          examples:
+            Kenan:
+              value: Merhaba Mr Kenan Hancer
+            Larissa:
+              value: Hello Mrs Larissa Cottrell
+    GetFullName:
+      description: "{title} {firstName} {lastName}"
+      content:
+        application/json:
+          schema:
+            type: "string"
+          examples:
+            Kenan:
+              value: Mr Kenan Hancer
+            Larissa:
+              value: Mrs Larissa Cottrell
+    SayEnglishHello:
+      description: "Hello {title} {firstName} {lastName}"
+      content:
+        application/json:
+          schema:
+            type: "string"
+          examples:
+            Kenan:
+              value: Hello Mr Kenan Hancer
+            Larissa:
+              value: Hello Mrs Larissa Cottrell
+    SayTurkishHello:
+      description: "Merhaba {title} {firstName} {lastName}"
+      content:
+        application/json:
+          schema:
+            type: "string"
+          examples:
+            Kenan:
+              value: Merhaba Mr Kenan Hancer
+            Larissa:
+              value: Merhaba Mrs Larissa Cottrell

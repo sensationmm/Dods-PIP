@@ -32,6 +32,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   onKeyPress,
   selectedValues = [],
   icon,
+  error,
 }) => {
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
@@ -123,6 +124,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
           selectedValues={selectedValues}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          error={error}
         />
       </Styled.container>
     </Styled.wrapper>

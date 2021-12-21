@@ -2,6 +2,13 @@ import fetchJson from '../../../lib/fetchJson';
 import withSession from '../../../lib/session';
 import { Api } from '../../../utils/api';
 
+export type resultTypes = {
+  Geographies?: Record<string, unknown>;
+  Topics?: Record<string, unknown>;
+  People?: Record<string, unknown>;
+  Organisations?: Record<string, unknown>;
+};
+
 export default withSession(async (req, res) => {
   const { search } = req.query;
   try {
@@ -15,13 +22,6 @@ export default withSession(async (req, res) => {
       },
       req,
     );
-
-    type resultTypes = {
-      Geographies?: Record<string, unknown>;
-      Topics?: Record<string, unknown>;
-      People?: Record<string, unknown>;
-      Organisations?: Record<string, unknown>;
-    };
 
     const transformedResult: resultTypes = {};
     Array.isArray(result) &&

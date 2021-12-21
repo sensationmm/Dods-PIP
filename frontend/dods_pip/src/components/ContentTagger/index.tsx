@@ -45,9 +45,7 @@ type TagSearchData = {
 
 export type TagsData = {
   tagId: string;
-  id: string;
   termLabel: string;
-  termName?: string; // @TODO: remove termName when API catches up
   alternative_labels?: Array<string>;
   childTerms?: TagsData[];
   ancestorTerms?: TagsData[];
@@ -101,7 +99,6 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
   const loadTree = async () => {
     setFetchingTagsData(true);
     const response = await fetchJson(`${BASE_URI}${Api.TaxonomyTree}`);
-    // const { data = {} } = response;
     setTagsData(response as unknown as TagTreeData);
     setFetchingTagsData(false);
   };
@@ -465,16 +462,16 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
                         >
                           {ucFirst(type.label)}
                           {isBrowsing && hasTagTree && tagsData
-                            ? ` (${
+                            ? ` (${new Intl.NumberFormat().format(
                                 flatten(tagsData[type.label as TagTreeDataType] as TagsData[])
-                                  .length
-                              })`
+                                  .length,
+                              )})`
                             : !isBrowsing && !searchingTagsData && tagsSearch
-                            ? ` (${
+                            ? ` (${new Intl.NumberFormat().format(
                                 flatten(
                                   tagsSearch[type.label as TagTreeDataType].results as TagsData[],
-                                ).length
-                              })`
+                                ).length,
+                              )})`
                             : ''}
                         </Text>
                       </Styled.tab>
@@ -602,9 +599,11 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
                     Total{' '}
                     <strong style={{ color: color.theme.blueMid }}>
                       {tagsData
-                        ? flatten(
-                            tagsData[tagTypes[activeTab].label as TagTreeDataType] as TagsData[],
-                          ).length
+                        ? new Intl.NumberFormat().format(
+                            flatten(
+                              tagsData[tagTypes[activeTab].label as TagTreeDataType] as TagsData[],
+                            ).length,
+                          )
                         : '-'}
                     </strong>{' '}
                     items

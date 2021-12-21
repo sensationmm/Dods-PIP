@@ -106,6 +106,23 @@ custom:
     DOD_LOGIN_EVENT_BUS_ARN: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/${self:custom.resourceNames.DODS_LOGIN_EVENT_BUS_NAME}
     DODS_USER_POOL_NAME: ${self:service}-${self:provider.stage}-UserPool
     DODS_USER_POOL_CLIENT_NAME: ${self:service}-${self:provider.stage}-UserPoolClient
+  env:
+    dev:
+      ses_from: michael.brown@somoglobal.com
+      ses_source_arn: arn:aws:ses:eu-west-1:390773179818:identity/michael.brown@somoglobal.com
+      cognito_reply_to: donotreply@somoglobal.com
+    qa:
+      ses_from: michael.brown@somoglobal.com
+      ses_source_arn: arn:aws:ses:eu-west-1:817206606893:identity/michael.brown@somoglobal.com
+      cognito_reply_to: donotreply@somoglobal.com
+    test:
+      ses_from: giovanni.espinosa@somoglobal.com
+      ses_source_arn: arn:aws:ses:eu-west-1:072266309162:identity/giovanni.espinosa@somoglobal.com
+      cognito_reply_to: donotreply@somoglobal.com
+    production:
+      ses_from: donotreply@dodspoliticalintelligence.com
+      ses_source_arn: arn:aws:ses:eu-west-1:186202231680:identity/donotreply@dodspoliticalintelligence.com
+      cognito_reply_to: donotreply@dodspoliticalintelligence.com
   localstack:
     stages:
       # list of stages for which the plugin should be enabled
@@ -368,8 +385,10 @@ resources:
         AutoVerifiedAttributes:
           - email
         EmailConfiguration:
-          EmailSendingAccount: COGNITO_DEFAULT
-          ReplyToEmailAddress: donotreply@domain.tld
+          EmailSendingAccount: DEVELOPER
+          From: ${self:custom.env.${self:provider.stage}.ses_from}
+          ReplyToEmailAddress: ${self:custom.env.${self:provider.stage}.cognito_reply_to}
+          SourceArn: ${self:custom.env.${self:provider.stage}.ses_source_arn}
         Policies:
           PasswordPolicy:
             TemporaryPasswordValidityDays: 7

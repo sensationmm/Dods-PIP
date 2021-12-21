@@ -31,6 +31,8 @@ const envVarsSchema = Joi.object()
         DB_PASSWORD: Joi.string().required(),
         DB_CONNECTION_LIMIT: Joi.number().default(5),
         BASE_URL: Joi.string().required(),
+        BUCKET_EDITORIAL: Joi.string().required(),
+        CONTENT_INDEXER_LAMBDA: Joi.string().required()
     })
     .unknown();
 
@@ -67,5 +69,12 @@ export const config = {
             password: envVars.DB_PASSWORD as string,
             connectionLimit: envVars.DB_CONNECTION_LIMIT as number,
         },
+        lambdas: {
+            contentIndexer: envVars.CONTENT_INDEXER_LAMBDA as string,
+        },
+        buckets: { documents: envVars.BUCKET_EDITORIAL as string, }
+
+
     },
+
 };

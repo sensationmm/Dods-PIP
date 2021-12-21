@@ -110,7 +110,9 @@ const Users: React.FC<UsersProps> = ({
   const activeUsers = clientUsers?.filter((user) => user.isActive === 1).length;
   const inactiveUsers = clientUsers?.filter((user) => user.isActive === 0).length;
   const seatsAllowance =
-    clientUsers && remainingSeats !== undefined ? clientUsers?.length + remainingSeats : 0;
+    clientUsers && activeUsers !== undefined && remainingSeats !== undefined
+      ? activeUsers + remainingSeats
+      : 0;
 
   const handleAddUser = async () => {
     if (remainingSeats && remainingSeats > 0) {
