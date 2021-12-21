@@ -84,6 +84,12 @@ custom:
     # Enable or disable caching globally
   # apiGatewayCaching:
     # enabled: true
+  warmup:
+    officeHoursWarmer:
+      enabled: true
+      events:
+        - schedule: cron(0/5 * ? * MON-SUN *)
+      concurrency: 1
 
 plugins:
   - serverless-webpack
@@ -91,6 +97,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  - serverless-plugin-warmup
   # - serverless-api-gateway-caching
 package:
   include:

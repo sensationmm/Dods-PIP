@@ -28,6 +28,8 @@ export const awsOpenApiRequestAdapter = async (inputData: APIGatewayEvent): Prom
     adaptedRequest.headers['content-type'] = contentType;
   }
 
+  // adaptedRequest.rawHeaders = inputData.headers;
+
   if (schema.parameters) {
     for (let parameter of schema.parameters) {
       const parameterObject = parameter as OpenAPIV3.ParameterObject;
