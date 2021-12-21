@@ -197,7 +197,7 @@ const Summary: React.FC<SummaryProps> = ({
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
   const { PaginationButtons, PaginationStats, activePage, numPerPage } = Pagination(
     consultantsComplete.length,
-    ['5'],
+    ['5', '10', '20'],
   );
   const initConsultTable = () => {
     const accountManagers = team.filter(
@@ -580,10 +580,10 @@ const Summary: React.FC<SummaryProps> = ({
                   />,
                 ])}
               />
-              <Styled.footerPagintation>
+              <Styled.footerPagination>
                 <PaginationStats />
                 <PaginationButtons />
-              </Styled.footerPagintation>
+              </Styled.footerPagination>
             </>
           )}
         </SectionAccordion>
