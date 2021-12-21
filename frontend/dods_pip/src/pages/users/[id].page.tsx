@@ -19,6 +19,7 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import useUser, { User } from '../../lib/useUser';
 import { Api, BASE_URI } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import { showTeamList } from '../account-management/accounts.page';
 import { teamList as TeamList } from '../account-management/accounts.styles';
 import { RoleType, TeamMember } from '../account-management/add-client/type';
@@ -80,13 +81,14 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       ...(data as User),
       displayName: `${data.firstName} ${data.lastName}`,
     });
+    setIsActive(Boolean(data.isActive));
 
     // TODO: Fix lazy typings
     setFormFields({
       account: ((data.clientAccount as Record<string, string>)?.uuid as string) || '',
       emailAddress: (data.primaryEmail as string) || '',
       emailAddress2: (data.secondaryEmail as string) || '',
-      jobTitle: (data.jobTitle as string) || '',
+      jobTitle: (data.title as string) || '',
       telephoneNumber: (data.telephoneNumber1 as string) || '',
       telephoneNumber2: (data.telephoneNumber2 as string) || '',
       userType:
@@ -121,7 +123,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       addNotification({
         type: 'warn',
         title: 'Error',
-        text: e.data.message,
+        text: (e as any).data.message,
       });
     }
   };
@@ -135,15 +137,20 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   };
 
   const setUserFormData = (field: keyof FormFields, value: string) => {
-    setFormFields({ ...formFields, ...{ [field]: value.trim() } });
+    setFormFields({ ...formFields, ...{ [field]: value } });
   };
 
   useEffect(() => {
     (async () => {
       await loadUser();
-      userId && (await getAssociatedAccounts(userId as string));
     })();
   }, [userId]);
+
+  useEffect(() => {
+    (async () => {
+      userData?.isDodsUser && userId && (await getAssociatedAccounts(userId as string));
+    })();
+  }, [userId, userData]);
 
   const actions = [] as JSX.Element[];
   if (user && userId && user.id === userId && !user.isDodsUser) {
@@ -187,6 +194,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   const onUpdate = async () => {
     setLoading(true);
     const data = {
+      name: getUserName(formFields),
       firstName: formFields.firstName,
       lastName: formFields.lastName,
       secondaryEmailAddress: formFields.emailAddress2,
@@ -207,6 +215,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
           title: 'User updated',
           type: 'confirm',
         });
+        await loadUser();
       }
     } catch (e) {
       console.log(e);
@@ -214,20 +223,28 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     setLoading(false);
   };
 
-  const onReset = async () => {
+  const onReset = async (email: string) => {
     setShowReset(false);
     setLoading(true);
 
     try {
-      await fetchJson(`${BASE_URI}${Api.ForgotPassword}`, {
-        body: JSON.stringify({ email: 'kevin.reynolds1+user@gmail.com' }),
+      const result = await fetchJson(`${BASE_URI}${Api.ForgotPassword}`, {
+        body: JSON.stringify({ email }),
       });
 
-      addNotification({
-        title: 'We’ve sent you a link to reset your password. ',
-        text: 'Please check your email and follow the instructions.',
-        type: 'confirm',
-      });
+      if (result.success) {
+        addNotification({
+          title: 'We’ve sent you a link to reset your password. ',
+          text: 'Please check your email and follow the instructions.',
+          type: 'confirm',
+        });
+      } else {
+        addNotification({
+          title: 'Something went wrong',
+          text: result.message,
+          type: 'warn',
+        });
+      }
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -327,12 +344,6 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               fieldData={formFields}
               onFieldChange={setUserFormData}
               isClientUser={!userData?.isDodsUser}
-              accountItems={[
-                { value: 'd4bbbd4b-e02f-4343-a7e9-397eea2b1bcd', label: 'B&B Repair' },
-                { value: '68e9b1b2-3e06-4354-a83e-195199a0d082', label: 'cookie jar2' },
-                { value: 'd666a38e-9fdb-400d-a7a6-57e4661adf9f', label: 'DEMBER' },
-                { value: '8cc32f01-37bb-4dd2-9dc8-4df26078af8d', label: 'FEGIME' },
-              ]}
               errors={errors}
               setErrors={setErrors}
               isEdit={true}
@@ -379,7 +390,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               isSmall: true,
               type: 'primary',
               label: 'Confirm',
-              onClick: onReset,
+              onClick: () => onReset(userData?.primaryEmail || ''),
               icon: Icons.ChevronRight,
               iconAlignment: 'right',
             },

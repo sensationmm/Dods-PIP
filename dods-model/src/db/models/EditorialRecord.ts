@@ -17,25 +17,28 @@ export interface EditorialRecordAttributes {
     contentSource?: string;
     assignedEditor?: User;
     status?: EditorialRecordStatus;
+    isPublished?: boolean;
+    isArchived?: boolean;
 }
 
 export interface EditorialRecordInput
     extends Optional<
-        EditorialRecordAttributes,
-        'uuid' | 'informationType' | 'contentSource' | 'assignedEditor' | 'status'
-    > {}
+    EditorialRecordAttributes,
+    'uuid' | 'informationType' | 'contentSource' | 'assignedEditor' | 'status' | 'isPublished' | 'isArchived'
+    > { }
 
-export interface EditorialRecordOutput extends Required<EditorialRecordAttributes> {}
+export interface EditorialRecordOutput extends Required<EditorialRecordAttributes> { }
 
 export class EditorialRecord
     extends Model<EditorialRecordAttributes, EditorialRecordInput>
-    implements EditorialRecordAttributes
-{
+    implements EditorialRecordAttributes {
     public uuid!: string;
     public documentName!: string;
     public s3Location!: string;
     public informationType?: string;
     public contentSource?: string;
+    public isPublished?: boolean;
+    public isArchived?: boolean;
 
     // mixins for association (optional)
     public assignedEditor?: User;
@@ -74,6 +77,16 @@ EditorialRecord.init(
         contentSource: {
             type: DataTypes.STRING({ length: 100 }),
             allowNull: true,
+        },
+        isPublished: {
+            type: DataTypes.TINYINT({ length: 1 }),
+            allowNull: false,
+            defaultValue: false,
+        },
+        isArchived: {
+            type: DataTypes.TINYINT({ length: 1 }),
+            allowNull: false,
+            defaultValue: false,
         },
     },
     {

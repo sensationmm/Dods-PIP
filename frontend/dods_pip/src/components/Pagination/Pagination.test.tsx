@@ -3,6 +3,34 @@ import React from 'react';
 
 import Pagination from '.';
 
+const dataShort = [
+  { name: 'Article1' },
+  { name: 'Article2' },
+  { name: 'Article3' },
+  { name: 'Article4' },
+  { name: 'Article5' },
+  { name: 'Article6' },
+  { name: 'Article7' },
+  { name: 'Article8' },
+  { name: 'Article9' },
+  { name: 'Article10' },
+  { name: 'Article11' },
+  { name: 'Article12' },
+  { name: 'Article13' },
+  { name: 'Article14' },
+  { name: 'Article15' },
+  { name: 'Article16' },
+  { name: 'Article17' },
+  { name: 'Article18' },
+  { name: 'Article19' },
+  { name: 'Article20' },
+  { name: 'Article21' },
+  { name: 'Article22' },
+  { name: 'Article23' },
+  { name: 'Article24' },
+  { name: 'Article25' },
+];
+
 const data = [
   { name: 'Article1' },
   { name: 'Article2' },
@@ -202,7 +230,7 @@ describe('Pagination', () => {
     });
 
     it('sets page when number clicked', () => {
-      const { PaginationButtons } = Pagination(data.length);
+      const { PaginationButtons } = Pagination(dataShort.length);
       const wrapper = shallow(<PaginationButtons />);
       const pageNumber = wrapper.find('[data-test="page-button-3"]');
       pageNumber.simulate('click');
@@ -210,26 +238,19 @@ describe('Pagination', () => {
     });
 
     describe('restricts viewable pages', () => {
-      it('page 3 of 10', () => {
-        const { PaginationButtons } = Pagination(data.length);
+      it('page 3 of 5', () => {
+        const { PaginationButtons } = Pagination(dataShort.length);
         const wrapper = shallow(<PaginationButtons />);
         const buttonsContainer = wrapper.find('[data-test="buttons-container"]');
-        expect(buttonsContainer.text()).toEqual('123...10');
+        expect(buttonsContainer.text()).toEqual('12345');
       });
+    });
 
-      it('page 5 of 10', () => {
-        const { PaginationButtons } = Pagination(data.length);
-        const wrapper = shallow(<PaginationButtons />);
-        const buttonsContainer = wrapper.find('[data-test="buttons-container"]');
-        expect(buttonsContainer.text()).toEqual('1...5...10');
-      });
-
-      it('page 8 of 10', () => {
-        const { PaginationButtons } = Pagination(data.length);
-        const wrapper = shallow(<PaginationButtons />);
-        const buttonsContainer = wrapper.find('[data-test="buttons-container"]');
-        expect(buttonsContainer.text()).toEqual('1...8910');
-      });
+    it('renders inline pagination if 6 or more pages', () => {
+      const { PaginationButtons } = Pagination(data.length);
+      const wrapper = shallow(<PaginationButtons />);
+      const selectContainer = wrapper.find('[data-test="set-pages"]');
+      expect(selectContainer.length).toEqual(1);
     });
   });
 

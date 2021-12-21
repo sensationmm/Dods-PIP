@@ -32,4 +32,5 @@ export interface UserProfilePersisterV2 {
     checkUserEmailAvailability(primaryEmailAddress: string): Promise<boolean>;
     createUser(parameters: CreateUserPersisterInput): Promise<RequestOutput<CreateUserOutput>>;
     updateUser(values: Partial<UserInput>, where: Partial<UserInput>): Promise<void>;
+    deleteUser(userId: string): Promise<boolean>;
 }

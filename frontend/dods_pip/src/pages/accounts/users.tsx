@@ -15,6 +15,7 @@ import color from '../../globals/color';
 import { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
+import { getUserName } from '../../utils/string';
 import { TeamMemberType } from '../account-management/add-client/type';
 import { Role } from '../account-management/users.page';
 import * as Styled from './index.styles';
@@ -23,12 +24,15 @@ export interface UsersProps {
   addNotification: LoadingHOCProps['addNotification'];
   setLoading: LoadingHOCProps['setLoading'];
   accountId: string;
-  pageAccountName: string;
+  refetchSeats: boolean;
+  setRefetchSeats: (refetch: boolean) => void;
+  canAddNewUser?: boolean;
 }
 
 export type TeamUser = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   type: string;
   role?: Role;
   access?: string;
@@ -42,14 +46,27 @@ export type TeamUser = {
 
 const Users: React.FC<UsersProps> = ({
   accountId,
-  pageAccountName,
   addNotification,
   setLoading,
+  refetchSeats,
+  setRefetchSeats,
+  canAddNewUser = true,
 }) => {
   const [users, setUsers] = React.useState<TeamUser[]>();
   const [remainingSeats, setRemainingSeats] = React.useState<number>();
   const [noRemainingSeatsModal, setNoRemainingSeatsModal] = React.useState(false);
   const router = useRouter();
+
+  // featching remainin seats
+  const fetchRemainingSeats = async () => {
+    setLoading(true);
+    const result = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}${Api.Seats}`, {
+      method: 'GET',
+    });
+    const { data } = result;
+    setRemainingSeats(Number(data));
+    setLoading(false);
+  };
 
   useEffect(() => {
     //displaying notification to see if user has been created before redirecting back to this page
@@ -60,19 +77,12 @@ const Users: React.FC<UsersProps> = ({
         title: 'You have successfully created a new Client User',
       });
     }
-
-    // featching remainin seats
-    const fetchRemainingSeats = async () => {
-      setLoading(true);
-      const result = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}${Api.Seats}`, {
-        method: 'GET',
-      });
-      const { data } = result;
-      setRemainingSeats(Number(data));
-      setLoading(false);
-    };
     accountId && fetchRemainingSeats();
   }, [accountId]);
+
+  useEffect(() => {
+    refetchSeats && fetchRemainingSeats() && setRefetchSeats(false);
+  }, [refetchSeats]);
 
   const loadUsers = async () => {
     if (accountId === '') {
@@ -100,12 +110,14 @@ const Users: React.FC<UsersProps> = ({
   const activeUsers = clientUsers?.filter((user) => user.isActive === 1).length;
   const inactiveUsers = clientUsers?.filter((user) => user.isActive === 0).length;
   const seatsAllowance =
-    clientUsers && remainingSeats !== undefined ? clientUsers?.length + remainingSeats : 0;
+    clientUsers && activeUsers !== undefined && remainingSeats !== undefined
+      ? activeUsers + remainingSeats
+      : 0;
 
   const handleAddUser = async () => {
     if (remainingSeats && remainingSeats > 0) {
       router.push(
-        `/account-management/add-user?type=accountsAddNewUser&referrer=${router.asPath}&accountId=${accountId}&pageAccountName=${pageAccountName}`,
+        `/account-management/add-user?type=accountsAddNewUser&referrer=${router.asPath}&accountId=${accountId}`,
       );
     } else {
       setNoRemainingSeatsModal(true);
@@ -134,16 +146,18 @@ const Users: React.FC<UsersProps> = ({
                 number={users ? inactiveUsers : undefined}
               />
             </Styled.badgeContainer>
-            <Button
-              type="secondary"
-              label="Add User"
-              icon={Icons.Add}
-              iconAlignment="right"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddUser();
-              }}
-            />
+            {canAddNewUser && (
+              <Button
+                type="secondary"
+                label="Add User"
+                icon={Icons.Add}
+                iconAlignment="right"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddUser();
+                }}
+              />
+            )}
           </Styled.sectionCustomHeader>
         }
         isOpen={true}
@@ -157,21 +171,22 @@ const Users: React.FC<UsersProps> = ({
             <PlainTable
               headings={['Name', 'Email', 'Role', '']}
               colWidths={[4, 3, 2, 1]}
-              rows={clientUsers?.map((user) => {
+              rows={clientUsers?.map((user, userCount) => {
+                const name = getUserName(user);
                 return [
                   accountId,
-                  <Styled.sumAvatarName key={`team-${user.name}`}>
-                    <Avatar type="client" size="small" alt={user.name} />
-                    <Text bold={true}>{user.name}</Text>
+                  <Styled.sumAvatarName key={`team-${name}`}>
+                    <Avatar type="client" size="small" alt={name} />
+                    <Text bold={true}>{name}</Text>
                   </Styled.sumAvatarName>,
-                  <Text key={`${user.name}-email`}>
-                    <a key={user.name} href={'mailto:' + user.primaryEmailAddress}>
+                  <Text key={`user-${userCount}-email`}>
+                    <a key={`user-${userCount}`} href={'mailto:' + user.primaryEmailAddress}>
                       {user.primaryEmailAddress}
                     </a>
                   </Text>,
-                  <Text key={`${user.name}-role`}>{user?.role?.title}</Text>,
+                  <Text key={`user-${userCount}-role`}>{user?.role?.title}</Text>,
                   <IconButton
-                    key={`${user.name}-link`}
+                    key={`user-${userCount}-link`}
                     onClick={() => router.push(`/users/${user.id}`)}
                     icon={Icons.ChevronRightBold}
                     type="text"

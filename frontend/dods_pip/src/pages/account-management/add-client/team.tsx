@@ -1,7 +1,7 @@
 import debounce from 'lodash/debounce';
 import filter from 'lodash/filter';
 import trim from 'lodash/trim';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import InputTelephone from '../../../components/_form/InputTelephone';
 import InputText from '../../../components/_form/InputText';
@@ -22,7 +22,9 @@ import { PushNotificationProps } from '../../../hoc/LoadingHOC';
 import fetchJson from '../../../lib/fetchJson';
 import useTeamMembers from '../../../lib/useTeamMembers';
 import { Api, BASE_URI } from '../../../utils/api';
+import { getUserName } from '../../../utils/string';
 import * as Validation from '../../../utils/validation';
+import { UserAccount } from '../users.page';
 import * as Styled from './index.styles';
 import { DropdownValue, RoleType, TeamMember, TeamMemberType } from './type';
 
@@ -124,6 +126,7 @@ const Team: React.FC<TeamProps> = ({
   const [users, setUsers] = React.useState<DropdownValue[]>([]);
   const [pristine, setPristine] = React.useState<boolean>(true);
   const [saving, setSaving] = React.useState<boolean>(false); // editMode - disabled save button when saving request in progress
+  const [duplicateError, setDuplicateError] = React.useState<string>();
 
   const isComplete = accountManagers.length > 0 || teamMembers.length > 0 || clientUsers.length > 0;
   const isUserComplete =
@@ -171,7 +174,7 @@ const Team: React.FC<TeamProps> = ({
         `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMember}`,
         { method: 'PUT', body: JSON.stringify({ teamMembers: payload }) },
       );
-      const { success = false, data = [] } = response;
+      const { success = false, data = [], message } = response;
 
       if (success || (Array.isArray(data) && data.length > 0)) {
         if (editMode) {
@@ -180,36 +183,42 @@ const Team: React.FC<TeamProps> = ({
         } else {
           onSubmit();
         }
+      } else if (!success && message === 'The same user cannot be saved multiple times.') {
+        setDuplicateError('The same user cannot hold multiple roles on the same account.');
       }
     } catch (e) {
       // show server error
       addNotification({
         type: 'warn',
         title: 'Error',
-        text: e.data.message,
+        text: (e as any).data.message,
       });
     }
     setLoading(false);
     setSaving(false);
   };
 
-  const searchUsers = debounce(async (name) => {
+  const debounceSearchUsers = debounce(async (name) => {
     try {
       const response = await fetchJson(`${BASE_URI}${Api.Users}?name=${name}`, { method: 'GET' });
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {
-        const values = data.map((item: User) => ({
-          value: item.uuid,
-          label: `${item.firstName} ${item.lastName}`,
-        }));
+        const values = data
+          .filter((item) => (item as UserAccount).isDodsUser)
+          .map((item: User) => ({
+            value: item.uuid,
+            label: getUserName(item),
+          }));
 
         setUsers(values);
       }
     } catch (e) {
       console.log(e);
     }
-  }, 500);
+  }, 150);
+
+  const searchUsers = useMemo(() => debounceSearchUsers, []);
 
   const removeClientUser = (userId: string) => {
     // remove `userId` from clientUsers array
@@ -316,7 +325,10 @@ const Team: React.FC<TeamProps> = ({
         );
         setClientUsers(
           // convert TeamMember to DropDownValue
-          clientsOnly.map((item: TeamMember) => ({ label: item.name, value: item.id })),
+          clientsOnly.map((item: TeamMember) => ({
+            label: getUserName({ firstName: item.firstName, lastName: item.lastName }),
+            value: item.id,
+          })),
         );
 
         // reset form
@@ -329,13 +341,14 @@ const Team: React.FC<TeamProps> = ({
         setClientTelephone('');
         setClientTelephone2('');
         // setClientAccess('');
+        setDuplicateError('');
       }
     } catch (e) {
       // show server error
       addNotification({
         type: 'warn',
         title: 'Error',
-        text: e.data.message,
+        text: (e as any).data.message,
       });
     }
     setLoading(false);
@@ -351,6 +364,7 @@ const Team: React.FC<TeamProps> = ({
     setClientTelephone('');
     setClientTelephone2('');
     // setClientAccess('');
+    setDuplicateError('');
   };
 
   return (
@@ -450,6 +464,7 @@ const Team: React.FC<TeamProps> = ({
             }}
             selectedValues={teamMembers}
             icon="consultant"
+            error={duplicateError}
           />
 
           <Spacer size={12} />
@@ -469,6 +484,7 @@ const Team: React.FC<TeamProps> = ({
             }}
             selectedValues={accountManagers}
             icon="consultant"
+            error={duplicateError}
           />
         </SectionAccordion>
 

@@ -11,6 +11,7 @@ provider:
   name: aws
   runtime: python3.7
   region: eu-west-1
+  timeout: 60
   lambdaHashingVersion: '20201221'
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
@@ -25,6 +26,7 @@ provider:
     GRAPHIFY_USERNAME: ${env:GRAPHIFY_USERNAME}
     GRAPHIFY_PASSWORD: ${env:GRAPHIFY_PASSWORD}
     TAXONOMY_IMPORT_SQS: { Ref: graphologiImportQueue }
+    TAXONOMY_TREE_BUCKET: pip-${self:provider.stage}-taxonomy-data
   
   iamRoleStatements:
     - Effect: Allow

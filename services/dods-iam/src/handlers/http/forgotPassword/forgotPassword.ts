@@ -13,9 +13,14 @@ export const forgotPassword: AsyncLambdaMiddleware<ForgotPasswordParameters> = a
     try {
         await AwsCognito.defaultInstance.forgotPassword(email);
 
-        response = new HttpResponse(HttpStatusCode.OK, "SUCCESS");
+        response = new HttpResponse(HttpStatusCode.OK, {
+            success: true
+        });
     } catch (error: any) {
-        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
+        response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, {
+            success: false, 
+            error: error
+        });
     }
 
     return response;

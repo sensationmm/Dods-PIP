@@ -36,17 +36,20 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         let clientAccount: ClientAccountObj = {
             uuid: undefined,
             name: undefined,
+            teamMemberType: undefined,
         };
         if (user.accounts?.length) {
             clientAccount = {
                 uuid: user.accounts[0].uuid,
                 name: user.accounts[0].name,
+                teamMemberType: user.accounts[0].ClientAccountTeam?.teamMemberType,
             };
             for (let i = 0; i < user.accounts.length; i++) {
                 if (user.accounts[i].isDodsAccount) {
                     clientAccount = {
                         uuid: user.accounts[i].uuid,
                         name: user.accounts[i].name,
+                        teamMemberType: user.accounts[i].ClientAccountTeam?.teamMemberType,
                     };
                 }
             }
@@ -68,14 +71,14 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
                 title: user.role.title,
                 dodsRole: user.role.dodsRole,
             },
-            clientAccountId: clientAccount ? clientAccount.uuid : null,
+            clientAccountId: clientAccount ? clientAccount.uuid! : null,
             clientAccount: clientAccount,
             isDodsUser: user.role.uuid === DODS_USER,
         };
     }
 
     async searchUsers(parameters: SearchUsersInput): Promise<SearchUsersOutput> {
-        const { name, startsWith, role, clientAccountId, limit, offset, sortBy, sortDirection } =
+        const { name, startsWith, role, clientAccountId, limit, offset, sortBy, sortDirection, isActive } =
             parameters;
 
         let whereClause: any = {};
@@ -115,8 +118,19 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
             orderBy = [User.associations.accounts, 'name', sortDirection];
         }
 
+        if (isActive !== undefined) {
+            if (isActive) {
+                whereClause['is_active'] = true;
+            }
+            else {
+                whereClause['is_active'] = false;
+            }
+        }
+
+
         const { rows, count } = await User.findAndCountAll({
             where: whereClause,
+            distinct: true,
             subQuery: false,
             include: [User.associations.role, User.associations.accounts],
             order: [orderBy],

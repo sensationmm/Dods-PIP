@@ -1,20 +1,18 @@
 import React from 'react';
 
 import Spacer from '../../_layout/Spacer';
-import Label from '../Label';
+import Label, { LabelProps } from '../Label';
 import Radio, { IRadioItem, radioTheme } from '../Radio';
 import * as Styled from './RadioGroup.styles';
 
-export interface IRadioGroupProps {
+export interface IRadioGroupProps extends LabelProps {
   items: IRadioItem[];
   groupName?: string;
   onChange: (val: string) => void;
-  label?: string;
   theme?: radioTheme;
   selectedValue?: string;
   isDisabled?: boolean;
-  required?: boolean;
-  optional?: boolean;
+  stackItems?: boolean;
 }
 
 const RadioGroup: React.FC<IRadioGroupProps> = ({
@@ -27,6 +25,7 @@ const RadioGroup: React.FC<IRadioGroupProps> = ({
   isDisabled = false,
   required = false,
   optional = false,
+  stackItems = false,
 }) => {
   const darkMode = theme === 'light';
 
@@ -39,7 +38,7 @@ const RadioGroup: React.FC<IRadioGroupProps> = ({
         </>
       )}
 
-      <Styled.radioGroupWrapper data-test="radio-group-items">
+      <Styled.radioGroupWrapper data-test="radio-group-items" stacked={stackItems}>
         {items?.map((item, i) => {
           const { label, value } = item;
           const isChecked = selectedValue === value;

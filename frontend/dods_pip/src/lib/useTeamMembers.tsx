@@ -8,6 +8,7 @@ import {
   TeamMemberType,
 } from '../pages/account-management/add-client/type';
 import { Api, BASE_URI } from '../utils/api';
+import { getUserName } from '../utils/string';
 
 type Error = {
   code?: string;
@@ -57,7 +58,7 @@ export default function useTeamMembers({
         if (setAccountManagers) {
           setAccountManagers(
             accountManagers.map((item: TeamMember) => ({
-              label: item.name,
+              label: getUserName(item),
               value: item.id,
               userData: item,
             })),
@@ -67,7 +68,7 @@ export default function useTeamMembers({
         if (setTeamMembers) {
           setTeamMembers(
             teamMembers.map((item: TeamMember) => ({
-              label: item.name,
+              label: getUserName(item),
               value: item.id,
               userData: item,
             })),
@@ -77,7 +78,7 @@ export default function useTeamMembers({
         if (setClientUsers) {
           setClientUsers(
             clientUsers.map((item: TeamMember) => ({
-              label: item.name,
+              label: getUserName(item),
               value: item.id,
               userData: item,
             })),

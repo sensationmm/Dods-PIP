@@ -8,6 +8,7 @@ provider:
     name: aws
     region: eu-west-1
     runtime: nodejs14.x
+    timeout: 10
     stage: ${opt:stage, 'dev'}
     deploymentBucket:
         name: pip-${self:provider.stage}-services-lambdas
@@ -66,6 +67,7 @@ custom:
         keepOutputDirectory: false
     serverless-offline:
         httpPort: 3000
+        lambdaPort: 3002
     prune:
         automatic: true
         number: 1
@@ -163,6 +165,7 @@ functions:
     createTeamMember:
         handler: src/handlers/createTeamMember/index.handle
         description: Triggered when http request comes
+        timeout: 60
         events:
             - http:
                   method: post

@@ -6,6 +6,8 @@ import AzFilter from './icon-azFilter.svg';
 import Bin from './icon-bin.svg';
 import Building from './icon-building.svg';
 import Calendar from './icon-calendar.svg';
+import Checklist from './icon-checklist.svg';
+import ChecklistBold from './icon-checklistBold.svg';
 import ChevronDown from './icon-chevronDown.svg';
 import ChevronDownBold from './icon-chevronDownBold.svg';
 import ChevronLeft from './icon-chevronLeft.svg';
@@ -36,9 +38,11 @@ import Phone from './icon-phone.svg';
 import PhoneBold from './icon-phoneBold.svg';
 import Refresh from './icon-refresh.svg';
 import Search from './icon-search.svg';
+import SearchBold from './icon-searchBold.svg';
 import Show from './icon-show.svg';
 import Subscription from './icon-subscription.svg';
 import Suitcase from './icon-suitcase.svg';
+import Tag from './icon-tag.svg';
 import Tick from './icon-tick.svg';
 import TickBold from './icon-tickBold.svg';
 import Users from './icon-users.svg';
@@ -56,6 +60,8 @@ export enum Icons {
   Bin = 'Bin',
   Building = 'Building',
   Calendar = 'Calendar',
+  Checklist = 'Checklist',
+  ChecklistBold = 'ChecklistBold',
   ChevronDown = 'ChevronDown',
   ChevronDownBold = 'ChevronDownBold',
   ChevronLeft = 'ChevronLeft',
@@ -86,9 +92,11 @@ export enum Icons {
   PhoneBold = 'PhoneBold',
   Refresh = 'Refresh',
   Search = 'Search',
+  SearchBold = 'SearchBold',
   Show = 'Show',
   Subscription = 'Subscription',
   Suitcase = 'Suitcase',
+  Tag = 'Tag',
   Tick = 'Tick',
   TickBold = 'TickBold',
   Users = 'Users',
@@ -105,6 +113,8 @@ const IconLibrary = {
   Bin,
   Building,
   Calendar,
+  Checklist,
+  ChecklistBold,
   ChevronDown,
   ChevronDownBold,
   ChevronLeft,
@@ -135,9 +145,11 @@ const IconLibrary = {
   PhoneBold,
   Refresh,
   Search,
+  SearchBold,
   Show,
   Subscription,
   Suitcase,
+  Tag,
   Tick,
   TickBold,
   Users,

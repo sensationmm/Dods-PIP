@@ -54,16 +54,17 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
   }, [router.query]);
 
   const isClientUser = formFields.userType === RoleType.ClientUser;
+  const hasValue = (value: string) => /^\w/.test(value);
 
   const isComplete =
-    formFields.firstName !== '' &&
-    formFields.lastName !== '' &&
-    formFields.emailAddress !== '' &&
-    (!isClientUser || formFields.account !== '') &&
+    hasValue(formFields.firstName) &&
+    hasValue(formFields.lastName) &&
+    hasValue(formFields.emailAddress) &&
+    (!isClientUser || hasValue(formFields.account)) &&
     Object.keys(errors).length === 0;
 
   const setFormFieldProp = (field: keyof FormFields, value: string) => {
-    setFormFields({ ...formFields, ...{ [field]: value.trim() } });
+    setFormFields({ ...formFields, ...{ [field]: value } });
   };
 
   const createUser = async () => {
@@ -77,12 +78,12 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         telephone_number_1: formFields.telephoneNumber,
         ...(formFields.emailAddress2 && { secondary_email_address: formFields.emailAddress2 }),
         ...(formFields.telephoneNumber2 && {
-          secondary_email_address: formFields.telephoneNumber2,
+          telephone_number_2: formFields.telephoneNumber2,
         }),
         role_id: formFields.userType,
       },
-      clientAccountId: formFields.account,
-      teamMemberType: user?.isDodsUser ? 1 : 3, // ¯\_(ツ)_/¯ Random!
+      clientAccountId: isClientUser ? formFields.account : user?.clientAccountId,
+      teamMemberType: formFields.userType === RoleType.ClientUser ? 3 : 1,
     };
 
     try {
@@ -93,8 +94,12 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
           body: JSON.stringify(data),
         },
       );
-      if (result.success && router.query?.referrer) {
-        await router.push(`${router.query?.referrer}?userAdded=true` as string);
+      if (result.success) {
+        if (router.query?.referrer) {
+          await router.push(`${router.query?.referrer}?userAdded=true` as string);
+        } else {
+          router.push(`/account-management/users?userAdded=true` as string);
+        }
       }
     } catch (e) {
       addNotification({
@@ -138,13 +143,6 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
               fieldData={formFields}
               onFieldChange={setFormFieldProp}
               isClientUser={isClientUser}
-              accountItems={[
-                // TODO: Refactor component to allow async item fetching
-                { value: 'd4bbbd4b-e02f-4343-a7e9-397eea2b1bcd', label: 'B&B Repair' },
-                { value: '68e9b1b2-3e06-4354-a83e-195199a0d082', label: 'cookie jar2' },
-                { value: 'd666a38e-9fdb-400d-a7a6-57e4661adf9f', label: 'DEMBER' },
-                { value: '8cc32f01-37bb-4dd2-9dc8-4df26078af8d', label: 'FEGIME' },
-              ]}
               errors={errors}
               setErrors={setErrors}
             />
