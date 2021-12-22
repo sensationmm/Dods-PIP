@@ -111,7 +111,7 @@ functions:
     events:
       - http:
           method: get
-          path: documents/{documentId}
+          path: documents
           # caching:
             # enabled: false
 
