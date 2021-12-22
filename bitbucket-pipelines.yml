@@ -308,7 +308,6 @@ pipelines:
 
         - step:
             name: Terraform Plan
-            deployment: dev
             size: 2x
             image: gioatsomoglobal/devopstools:0.4.6
             condition:
