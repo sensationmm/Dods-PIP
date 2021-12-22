@@ -112,19 +112,19 @@ pipelines:
             - npm install
             - SERVERLESS_STAGE=dev npm run test:coverage
 
-#      - step:
-#          name: Documents Service
-#          image: gioatsomoglobal/nodejs-builder:0.2
-#          caches:
-#            - node
-#          condition:
-#            changesets:
-#              includePaths:
-#                - "services/documents/**"
-#          script:
-#            - cd services/documents
-#            - npm install
-#            - SERVERLESS_STAGE=dev npm run test:coverage
+      - step:
+          name: Documents Service
+          image: gioatsomoglobal/nodejs-builder:0.2
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/documents/**"
+          script:
+            - cd services/documents
+            - npm install
+            - SERVERLESS_STAGE=dev npm run test:coverage
 
       - step:
           name: Editorial Workflow Service
@@ -246,7 +246,7 @@ pipelines:
               - cd services/documents
               - npm install
               - export SERVERLESS_STAGE=dev
-              # - npm run test:coverage 
+              - npm run test:coverage 
               - npx serverless deploy --stage dev
 
         - step: 
@@ -325,6 +325,26 @@ pipelines:
               - ./push_back.sh
 
   custom:
+    deploy-frontend-development:
+      - step:
+          name: Deploy frontend to development environment
+          image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
+          services:
+            - docker
+          deployment: dev
+          script:
+            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
+            - cd ${FRONTEND_SRC}
+            - yarn install
+            - yarn lint
+            - yarn test
+            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
+            - docker build -t ${IMAGE_NAME} .
+            - docker push ${IMAGE_NAME}
+            - cd ../../tools
+            - ./ecs_deploy --service-name frontend-service --cluster pip-dev-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
+
     deploy-frontend-production:
       - step:
           name: Deploy frontend to production environment
@@ -345,25 +365,6 @@ pipelines:
             - cd ../../tools
             - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
         
-    deploy-frontend-development:
-      - step:
-          name: Deploy frontend to development environment
-          image: gioatsomoglobal/devopstools:0.4.5
-          size: 2x
-          services:
-            - docker
-          deployment: Dev
-          script:
-            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
-            - cd ${FRONTEND_SRC}
-            - yarn install
-            - yarn lint
-            - yarn test
-            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
-            - docker build -t ${IMAGE_NAME} .
-            - docker push ${IMAGE_NAME}
-            - cd ../../tools
-            - ./ecs_deploy --service-name frontend-service --cluster pip-dev-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
 
     storybook-deployment:
       - step:
