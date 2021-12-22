@@ -35,10 +35,14 @@ export interface CreateNewDocument {
 }
 
 export interface getDocumentParameters {
-    documentId: string;
+  arn: string;
 }
 
 export interface CreateDocumentParameters {
-    document: string;
+  document: string;
 }
-export interface updateDocumentParameters extends getDocumentParameters, CreateDocumentParameters {}
+export interface updateDocumentParameters
+  extends getDocumentParameters,
+    CreateDocumentParameters {}
+
+export * from "./DocumentStoragePersister";
