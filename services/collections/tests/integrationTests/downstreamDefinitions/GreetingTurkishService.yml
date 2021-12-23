@@ -1,0 +1,108 @@
+openapi: 3.0.0
+info:
+  description: DODS Greeting Turkish Service
+  version: 1.0.0
+  title: DODS Greeting Turkish Service
+  contact:
+    email: kenanhancer@gmail.com
+  license:
+    name: GPL 3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+servers:
+  - url: localhost:1082
+
+paths:
+  /sayTurkishHello:
+    get:
+      operationId: sayTurkishHello
+      summary: "Get Turkish Greeting Message"
+      description: "Get Turkish Greeting Message"
+      parameters:
+        - $ref: "#/components/parameters/title"
+        - $ref: "#/components/parameters/firstName"
+        - $ref: "#/components/parameters/lastName"
+      responses:
+        "200":
+          $ref: "#/components/responses/SayTurkishHello"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    Errors:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  parameters:
+    title:
+      in: header
+      name: title
+      schema:
+        type: string
+        enum:
+          - Mr
+          - Mrs
+          - Miss
+          - Ms
+      required: true
+      description: Title of Person
+    firstName:
+      in: header
+      name: firstName
+      schema:
+        type: string
+      required: true
+      description: First name of Person
+    lastName:
+      in: header
+      name: lastName
+      schema:
+        type: string
+      required: true
+      description: Last name of Person
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    BadRequest:
+      description: Bad Request. Input must be valid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Message"
+              - $ref: "#/components/schemas/Errors"
+    NotAcceptable:
+      description: Not Acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    SayTurkishHello:
+      description: "Merhaba {title} {firstName} {lastName}"
+      content:
+        application/json:
+          schema:
+            type: "string"
+          examples:
+            Kenan:
+              value: Merhaba Mr Kenan Hancer
+            Larissa:
+              value: Merhaba Mrs Larissa Cottrell
