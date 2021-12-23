@@ -45,9 +45,18 @@ paths:
       operationId: updateDocument
       summary: "Update document at S3"
       description: "Update document at S3"
-      parameters:
-        - $ref: "#/components/parameters/arn"
-        - $ref: "#/components/parameters/document"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                arn:
+                  type: string
+                  example: arn:aws:s3:::bucket-name/key-path
+                document:
+                  $ref: "#/components/schemas/Document"
       responses:
         "200":
           $ref: "#/components/responses/UpdateDocument"
@@ -227,3 +236,4 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateDocumentSuccess'
+            

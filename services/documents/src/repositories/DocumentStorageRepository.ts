@@ -65,14 +65,14 @@ export class DocumentStorageRepository implements DocumentStoragePersister {
         const s3Client = new S3({ region: region });
         const keyName = documentARN.substring(documentARN.indexOf("/") + 1, documentARN.length);
         const bucket = documentARN.substring(documentARN.lastIndexOf(":") + 1, documentARN.indexOf("/"))
-        const getFileParams = {
+        const updateFileParams = {
             Bucket: bucket,
             Key: keyName,
             Body: JSON.stringify(payload),
         }
 
 
-        await s3Client.putObject(getFileParams, function (err) {
+        await s3Client.putObject(updateFileParams, function (err) {
             if (err) {
                 success = false
             }
