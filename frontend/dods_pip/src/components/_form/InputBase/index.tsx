@@ -21,6 +21,7 @@ export interface InputBaseProps {
   required?: boolean;
   optional?: boolean;
   helperText?: string;
+  onKeyDown: (e: KeyboardEvent) => void;
   onChange: (val: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -42,6 +43,7 @@ const InputBase: React.FC<InputBaseProps> = ({
   required = false,
   optional = false,
   helperText,
+  onKeyDown,
   onChange,
   onFocus,
   onBlur,
@@ -77,6 +79,7 @@ const InputBase: React.FC<InputBaseProps> = ({
           })}
           type={type}
           value={value}
+          onKeyDown={(e) => onKeyDown(e)}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           onFocus={onFocus}
