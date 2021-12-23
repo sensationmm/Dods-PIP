@@ -21,7 +21,7 @@ export interface InputBaseProps {
   required?: boolean;
   optional?: boolean;
   helperText?: string;
-  onKeyDown: (e: KeyboardEvent) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   onChange: (val: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -43,7 +43,9 @@ const InputBase: React.FC<InputBaseProps> = ({
   required = false,
   optional = false,
   helperText,
-  onKeyDown,
+  onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    return false;
+  },
   onChange,
   onFocus,
   onBlur,

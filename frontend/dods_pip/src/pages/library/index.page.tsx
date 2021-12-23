@@ -218,7 +218,7 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
     })();
   }, [requestPayload]);
 
-  const onSearch = (e: KeyboardEvent) => {
+  const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
       if (searchText) {
         setKeyWordQuery(searchText);
