@@ -11,10 +11,17 @@ import logging
 import requests
 import json
 import sys
+import os
+import uuid
 
 from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
+from hashlib import sha256
+from pynamodb.models import Model
+from pynamodb.exceptions import TableDoesNotExist
+from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
 
+from lib.common import Common
 
 logger = logging.getLogger(__file__)
 
@@ -47,7 +54,6 @@ DOCUMENT_TEMPLATE = {
     "contentDateTime": "",
     "createdDateTime": "",
     "documentContent": "",
-
     # Fixed values for now
     "version": "1.0",
     "jurisdiction": "UK",
@@ -57,7 +63,6 @@ DOCUMENT_TEMPLATE = {
     "language": "en",
     "internallyCreated": False,
     "schemaType": "external",
-
     # To be left blank here
     "taxonomyTerms": [],
     "createdBy": None,
@@ -66,9 +71,29 @@ DOCUMENT_TEMPLATE = {
 }
 
 
-
 class InvalidDate(Exception):
     pass
+
+
+class MalformedDocumentException(Exception):
+    pass
+
+
+class DataModel(Model):
+    """
+    DataModel for duplication tracking of Hansard API content.
+
+    Based on the criteria outlined on DOD-1255.
+    """
+
+    class Meta:
+        table_name = "hansard-api"
+        host = "http://localhost:8000"  # TODO enviorn driven
+
+    external_id = UnicodeAttribute(hash_key=True)
+    document_id = UnicodeAttribute()
+    title = UnicodeAttribute()  # Range key?
+    source_hash = UnicodeAttribute()
 
 
 def import_content(date: str, house: str = "commons"):
@@ -115,10 +140,79 @@ def import_content(date: str, house: str = "commons"):
         documents = get_documents(date, section)
 
         for document_summary in documents:
-            document = get_document(document_summary["ExternalId"])
-            mapped_document = map_document(document, date, house)
+            external_id = document_summary["ExternalId"]
 
-            store_document(mapped_document)
+            try:
+                document = get_mapped_external_document(external_id, date, house)
+            except MalformedDocumentException:
+                logger.error("Skipping malformed document")
+            else:
+                store_document(document)
+
+
+def get_mapped_external_document(external_id: dict, date: date, house: str) -> dict:
+    """
+    Retrieve the document with external_id from Hansard.
+
+    This returns a dictionary consisting of the original source data from the
+    API and the mapped content to be potentially stored. Data model keys are
+    also extracted at this stage for ease of further processing.
+    """
+
+    source_document = get_document(external_id)
+    mapped_document = map_document(source_document, date, house)
+
+    model = {
+        "external_id": external_id,
+        "document_id": mapped_document["documentId"],
+        "title": mapped_document["documentTitle"],
+        "source_hash": get_document_hash(source_document),
+    }
+
+    logger.debug(f"{model=}")
+
+    document = {
+        "house": house,
+        "date": date,
+        "model": model,
+        "source": source_document,
+        "mapped": mapped_document,
+    }
+
+    return document
+
+
+def store_document(document: dict):
+    """Process the document for storage to the filesystem and database."""
+
+    # aws dynamodb list-tables --endpoint-url http://localhost:8000
+    # aws dynamodb delete-table --table-name=hansard-api --endpoint-url http://localhost:8000
+
+    external_id = document["model"]["external_id"]
+    should_create_new_document = False
+
+    try:
+        model = DataModel.get(external_id)
+    except DataModel.DoesNotExist:
+
+        DataModel(**document["model"]).save()
+        should_create_new_document = True
+
+    except TableDoesNotExist:
+        # Expected only in local dev in certain situations
+        logger.error("Data Model table not found, creating and exiting...")
+        DataModel.create_table(read_capacity_units=1, write_capacity_units=1)
+        sys.exit(30)
+
+    else:
+        should_create_new_document = (
+            document["model"]["source_hash"] != model.source_hash
+        )
+
+    logger.info(f"{should_create_new_document=}")
+
+    if should_create_new_document:
+        create_document(document)
 
 
 def parse_date(date: str) -> datetime.date:
@@ -153,7 +247,9 @@ def get_house_was_sitting(date: date, house: str) -> bool:
         logger.info("NextSittingDate is null")
         return False
 
-    next_sitting_date = datetime.strptime(next_sitting_date_raw, "%Y-%m-%dT%H:%M:%S").date()
+    next_sitting_date = datetime.strptime(
+        next_sitting_date_raw, "%Y-%m-%dT%H:%M:%S"
+    ).date()
     was_sitting = next_sitting_date == date
 
     logger.info(f"House Was Sitting? {date=!s} {was_sitting=}")
@@ -233,7 +329,12 @@ def get_document(external_id: str) -> dict:
     response = requests.get(url)
     document = response.json()
 
-    title = document['Overview']['Title']
+    try:
+        title = document["Overview"]["Title"]
+    except KeyError:
+        logger.error("Malformed data returned, no overview...")
+        raise MalformedDocumentException(url)
+
     logger.info(f"Returning data for {title=}")
 
     return document
@@ -241,23 +342,30 @@ def get_document(external_id: str) -> dict:
 
 def map_document(document: dict, date: date, house: str) -> dict:
     title = document["Overview"]["Title"]
-    logger.info(f"Mapping document {title=}")
+    document_id = str(uuid.uuid4()).upper()
+
+    logger.info(f"Mapping document {title=} {document_id=}")
 
     mapped_document = DOCUMENT_TEMPLATE.copy()
+    mapped_document["documentId"] = document_id
     mapped_document["documentTitle"] = title
     mapped_document["contentSource"] = f"House of {house.title()}"
     mapped_document["contentDateTime"] = document["Overview"]["ContentLastUpdated"]
     mapped_document["createdDateTime"] = datetime.now().isoformat()
 
     mapped_document["documentContent"] = get_document_content(document)
-    mapped_document["sourceReferenceUri"] = get_document_source_reference_uri(document, date, house)
+    mapped_document["sourceReferenceUri"] = get_document_source_reference_uri(
+        document, date, house
+    )
 
     navigator_titles = {nav["Title"].upper() for nav in document["Navigator"]}
     mapped_document["contentLocation"] = get_document_content_location(navigator_titles)
     mapped_document["informationType"] = get_document_information_type(navigator_titles)
 
     is_written_statement = "WRITTEN STATEMENTS" in navigator_titles
-    mapped_document["originator"] = get_document_originator(document, is_written_statement=is_written_statement)
+    mapped_document["originator"] = get_document_originator(
+        document, is_written_statement=is_written_statement
+    )
 
     return mapped_document
 
@@ -299,7 +407,9 @@ def get_document_content_location(navigator_titles: set) -> str:
 
     return content_location
 
+
 def get_document_originator(document: dict, is_written_statement: bool) -> str:
+
     location = document["Overview"]["Location"].upper()
 
     if is_written_statement:
@@ -323,6 +433,7 @@ def get_document_originator(document: dict, is_written_statement: bool) -> str:
 
 
 def get_document_source_reference_uri(document, date, house):
+    """Return the inferred HTML URI for this document."""
 
     external_id = document["Overview"]["ExtId"]
     slug = document["Overview"]["Title"].replace(" ", "")
@@ -331,6 +442,7 @@ def get_document_source_reference_uri(document, date, house):
 
 
 def get_document_content(document: dict) -> str:
+    """Construct editable HTML formatted content from the source items."""
 
     TIMESTAMP = '<div class="timestamp"><p>{value}</p></div>'
     CONTRIBUTION = """<div class="timestamp">
@@ -363,11 +475,43 @@ def get_document_content(document: dict) -> str:
     return output
 
 
-def store_document(document: dict) -> None:
+def create_document(document: dict) -> str:
 
-    logger.info(f"Storing document {document['documentTitle']=}")
+    logger.info(f"Creating {document['model']=}")
+    path, filename = get_document_path(document)
 
-    return
+    try:
+        os.makedirs(path)
+    except FileExistsError:
+        pass
+
+    output_path = os.path.join(path, filename)
+
+    with open(output_path, "w") as output:
+        output.write(json.dumps(document["mapped"], indent=2))
+
+    logger.info(f"Wrote {document['model']['external_id']} to filesystem")
+
+    return output_path
+
+
+def get_document_path(document: dict) -> str:
+    """Construct filesystem-like (S3) path & filename for the document."""
+
+    path = f"hansard-{document['house']}/{document['date']}"
+    filename = f"{document['mapped']['documentId']}.json"
+
+    logger.debug(f"{path=} {filename=}")
+    return path, filename
+
+
+def get_document_hash(document: dict) -> str:
+    """Return an identifier for deduplication purposes."""
+
+    hash_code = sha256(json.dumps(document).encode("utf-8")).hexdigest()
+    logger.debug(f"{hash_code=}")
+
+    return hash_code
 
 
 def cli():
