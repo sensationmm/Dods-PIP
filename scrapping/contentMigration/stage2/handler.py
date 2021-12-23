@@ -1,10 +1,14 @@
-from lib.logger import logger
-import boto3
+import copy
 import os
-from lib.configs import Config
-from lib.validation import Validator
-from json import loads, dumps
 import re
+from json import loads, dumps
+
+import boto3
+
+from lib.configs import Config
+from lib.logger import logger
+from lib.validation import Validator
+from taxonomy_processor import TaxonomyProcessor
 
 INPUT_BUCKET = os.environ['INPUT_BUCKET']
 OUTPUT_BUCKET = os.environ['OUTPUT_BUCKET']
@@ -57,11 +61,63 @@ def consumer(event, context):
             }
             if required_paths.keys() <= message.keys():
                 logger.info(f'File path: {message["file_path_content_document"]}')
+
                 content_document = s3_client.get_object(
                     Bucket=INPUT_BUCKET,
                     Key=message['file_path_content_document']
                 )
-                content_document = dumps(loads(content_document['Body'].read()))
+                content_document = loads(content_document['Body'].read())
+                new_taxonomy_terms = []
+
+                for taxonomy in content_document['taxonomyTerms']:
+
+                    taxonomy_for_param = copy.deepcopy(taxonomy)
+
+                    new_taxonomy = TaxonomyProcessor.search_taxonomy_by_label(taxonomy_for_param)
+                    # If found taxonomy object by prefLabel.en, prefLabel.de or prefLabel.fr on elasticsearch
+                    if new_taxonomy != taxonomy:
+                        logger.info(f'Taxonomy matched by this label: {taxonomy["termLabel"]}')
+                        new_taxonomy_terms.append(new_taxonomy)
+                        continue
+
+                    new_taxonomy = TaxonomyProcessor.search_taxonomy_by_id(taxonomy)
+                    # If found taxonomy object by id on elasticsearch
+                    if new_taxonomy != taxonomy:
+                        logger.info(f'Taxonomy matched by this id: {taxonomy["tagId"]}')
+                        new_taxonomy_terms.append(new_taxonomy)
+                        continue
+
+                    new_taxonomy = TaxonomyProcessor.search_taxonomy_by_notation(taxonomy)
+                    # If found taxonomy object by id on elasticsearch
+                    if new_taxonomy != taxonomy:
+                        logger.info(f'Taxonomy matched by this notation: {taxonomy["termLabel"]}')
+                        new_taxonomy_terms.append(new_taxonomy)
+                        continue
+
+                    tag_id_for_param = copy.deepcopy(taxonomy['tagId'])
+                    tag_id = TaxonomyProcessor.convert_id_to_uuid(tag_id_for_param)
+
+                    if tag_id != taxonomy['tagId']:
+                        new_taxonomy = TaxonomyProcessor.search_taxonomy_by_id(taxonomy, tag_id)
+                        # If found taxonomy object by id on elasticsearch
+                        if new_taxonomy != taxonomy:
+                            logger.info(f'Taxonomy matched by this id: {tag_id}')
+                            new_taxonomy_terms.append(new_taxonomy)
+                            continue
+
+                        new_taxonomy = TaxonomyProcessor.search_taxonomy_by_notation(taxonomy, tag_id)
+                        # If found taxonomy object by id on elasticsearch
+                        if new_taxonomy != taxonomy:
+                            logger.info(f'Taxonomy matched by this notation: {tag_id}')
+                            new_taxonomy_terms.append(new_taxonomy)
+                            continue
+
+                    new_taxonomy_terms.append(taxonomy)
+
+                content_document['taxonomyTerms'] = new_taxonomy_terms
+
+                content_document = dumps(content_document)
+
                 anchors = re.findall("(<a[^>]*>([^<]+)</a>)", content_document)
 
                 for anchor in anchors:
