@@ -12,22 +12,7 @@ servers:
   - url: /api
 
 paths:
-  /documents/{documentId}:
-    put:
-      operationId: updateDocument
-      summary: "Update document at S3"
-      description: "Update document at S3"
-      parameters:
-        - $ref: "#/components/parameters/documentId"
-        - $ref: "#/components/parameters/document"
-      responses:
-        "200":
-          $ref: "#/components/responses/UpdateDocument"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
+    
   /documents:
     get:
       operationId: getDocument
@@ -51,6 +36,21 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/CreateDocument"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+    put:
+      operationId: updateDocument
+      summary: "Update document at S3"
+      description: "Update document at S3"
+      parameters:
+        - $ref: "#/components/parameters/arn"
+        - $ref: "#/components/parameters/document"
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateDocument"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -84,7 +84,10 @@ components:
       properties:
         success:
           type: boolean
-        document:
+        message:
+          type: string
+          example: Document Successfully Updated
+        payload:
           $ref: '#/components/schemas/Document'
     CreateDocumentSuccess:
       type: object
