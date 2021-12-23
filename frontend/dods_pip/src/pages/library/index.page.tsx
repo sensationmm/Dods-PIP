@@ -83,6 +83,8 @@ export interface ESResponse {
 interface RequestPayload {
   query?: Record<string, any>;
   aggregations: Record<string, any>;
+  size?: number;
+  from?: number;
 }
 
 export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
@@ -94,15 +96,22 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   const [people, setPeople] = useState([]);
   const [organizations, setOrganizations] = useState([]);
   const [geography, setGeography] = useState([]);
-
   const [searchText, setSearchText] = useState('');
 
+  const [offset, setOffset] = useState(0);
+  const [resultsSize, setResultsSize] = useState(20);
+
   const [requestPayload, setRequestPayload] = useState<RequestPayload>({
+    size: resultsSize,
+    from: offset,
     aggregations: aggregations,
   });
 
   const setKeyWordQuery = (keyword: string) => {
+    setOffset(0);
     setRequestPayload({
+      from: 0,
+      size: resultsSize,
       query: {
         multi_match: {
           query: keyword,
@@ -114,7 +123,11 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   };
 
   const setTagQuery = (tagId: string) => {
+    setOffset(0);
+
     setRequestPayload({
+      from: 0,
+      size: resultsSize,
       query: {
         nested: {
           path: 'taxonomyTerms',
@@ -128,7 +141,11 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   };
 
   const setContentSourceQuery = (contentSourceKey: string) => {
+    setOffset(0);
+
     setRequestPayload({
+      from: 0,
+      size: resultsSize,
       query: {
         match: {
           contentSource: contentSourceKey,
@@ -139,7 +156,11 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   };
 
   const setTopicQuery = (key: string) => {
+    setOffset(0);
+
     setRequestPayload({
+      from: 0,
+      size: resultsSize,
       query: {
         nested: {
           path: 'taxonomyTerms',
@@ -153,7 +174,11 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   };
 
   const setInformationTypeQuery = (informationTypeKey: string) => {
+    setOffset(0);
+
     setRequestPayload({
+      from: 0,
+      size: resultsSize,
       query: {
         match: {
           informationType: informationTypeKey,
@@ -164,7 +189,11 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   };
 
   const setJurisdictionQuery = (jurisdictionKey: string) => {
+    setOffset(0);
+
     setRequestPayload({
+      from: 0,
+      size: resultsSize,
       query: {
         match: {
           jurisdiction: jurisdictionKey,
@@ -177,6 +206,12 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   function checkEmptyAggregation(aggregation: { doc_count: number }) {
     return aggregation.doc_count !== 0;
   }
+
+  useEffect(() => {
+    const newRequestPayload = { ...requestPayload };
+    newRequestPayload.from = offset;
+    setRequestPayload(newRequestPayload);
+  }, [offset]);
 
   useEffect(() => {
     const sPayload = JSON.stringify(requestPayload);
@@ -251,6 +286,14 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
               onChange={(val) => setSearchText(val)}
             />
             <Spacer size={8} />
+            {apiResponse?.hits?.hits.length !== 0 && (
+              <div>
+                Showing {offset + 1} - {apiResponse?.hits?.hits.length + offset} of{' '}
+                {apiResponse?.hits?.total?.value}
+              </div>
+            )}
+            <Spacer size={8} />
+
             <Styled.contentWrapper>
               <section>
                 {apiResponse?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
@@ -322,6 +365,30 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                     </Styled.searchResult>
                   );
                 })}
+
+                {apiResponse?.hits?.hits && (
+                  <Styled.pagination>
+                    <span>Total {apiResponse.hits.total.value} Items</span>
+                    <div>
+                      <span
+                        onClick={() => {
+                          if (offset !== 0) {
+                            setOffset(offset - resultsSize);
+                          }
+                        }}
+                      >
+                        previous
+                      </span>
+                      <span
+                        onClick={() => {
+                          setOffset(offset + resultsSize);
+                        }}
+                      >
+                        next
+                      </span>
+                    </div>
+                  </Styled.pagination>
+                )}
               </section>
 
               <section>
