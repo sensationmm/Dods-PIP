@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { Icon } from '../components/Icon/Icon.styles';
-import media from '../globals/media';
-import spacing from '../globals/spacing';
+import { Icon } from '../../components/Icon/Icon.styles';
+import media from '../../globals/media';
+import spacing from '../../globals/spacing';
 
 export const row = styled.div`
   display: flex;

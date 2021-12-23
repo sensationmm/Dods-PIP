@@ -147,7 +147,7 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
     setAddedTags([]);
   };
 
-  const handleSaveToHighlight = (target: string) => {
+  const handleSaveToHighlight = () => {
     setTags(addedTags);
   };
 
@@ -155,7 +155,7 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
     if (highlightWordCount && highlightWordCount > 1) {
       setMultipleWarning(true);
     } else {
-      handleSaveToHighlight('one');
+      handleSaveToHighlight();
     }
   };
 
@@ -852,7 +852,7 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
                       isSmall
                       icon={Icons.Bin}
                       label="Confirm and close"
-                      onClick={() => handleSaveToHighlight(highlightApply)}
+                      onClick={() => handleSaveToHighlight()}
                     />
                   </Styled.actionsButton>
                 </Styled.actions>

@@ -1,10 +1,8 @@
-import React from 'react';
-
 import { useRouter } from 'next/router';
-import fetchJson from '../lib/fetchJson';
-import { act, cleanup, render, RenderResult, waitFor } from '@testing-library/react';
-import { Editorial } from './editorial.page';
-import { Api, BASE_URI } from '../utils/api';
+import fetchJson from '../../lib/fetchJson';
+import { act, cleanup, render, RenderResult } from '@testing-library/react';
+import { Editorial } from './index.page';
+import { Api, BASE_URI } from '../../utils/api';
 
 const mockRouterPushFn = jest.fn();
 jest.mock('next/router', () => ({
@@ -13,7 +11,7 @@ jest.mock('next/router', () => ({
   })),
 }));
 
-jest.mock('../lib/fetchJson', () => jest.fn());
+jest.mock('../../lib/fetchJson', () => jest.fn());
 
 const useRouterMock = useRouter as jest.Mock;
 const fetchJsonMock = fetchJson as jest.Mock;

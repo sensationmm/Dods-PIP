@@ -74,49 +74,42 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
 
     setErrors(formErrors);
 
-    if (Object.keys(formErrors).length === 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return Object.keys(formErrors).length === 0;
   };
 
   const onLogin = async () => {
+    if (!validateForm()) return;
     setLoading(true);
 
-    if (validateForm()) {
-      const body = {
-        email: emailAddress,
-        password: password,
-      };
+    const body = {
+      email: emailAddress,
+      password: password,
+    };
 
-      try {
-        const user = await fetchJson(`${BASE_URI}${Api.Login}`, {
-          body: JSON.stringify(body),
-        });
-        mutateUser(user);
+    try {
+      const user = await fetchJson(`${BASE_URI}${Api.Login}`, {
+        body: JSON.stringify(body),
+      });
+      await mutateUser(user);
 
-        if (remember) {
-          cookieCutter.set('dods-login-username', emailAddress);
-          cookieCutter.set('dods-login-password', password);
-        }
-        setLoading(false);
-      } catch (error) {
-        if (error.data.name === 'NotAuthorizedException') {
-          if (error.data.isActive === false) {
-            setShowInactiveMsg(true);
-          } else {
-            setFailureCount(error.data.failedLoginAttemptCount);
-          }
-          setLoading(false);
-        } else {
-          setErrors({ form: 'FAIL' });
-          setLoading(false);
-        }
+      if (remember) {
+        cookieCutter.set('dods-login-username', emailAddress);
+        cookieCutter.set('dods-login-password', password);
       }
-    } else {
       setLoading(false);
+    } catch (error) {
+      if (error.data.name === 'NotAuthorizedException') {
+        if (error.data.isActive === false) {
+          setShowInactiveMsg(true);
+        } else {
+          setFailureCount(error.data.failedLoginAttemptCount);
+        }
+      } else {
+        setErrors({ form: 'FAIL' });
+      }
     }
+
+    setLoading(false);
   };
 
   const onUnblock = async () => {

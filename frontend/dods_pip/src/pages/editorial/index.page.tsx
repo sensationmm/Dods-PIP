@@ -1,25 +1,25 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import DatePicker from '../components/_form/DatePicker';
-import InputSearch from '../components/_form/InputSearch';
-import SearchDropdown from '../components/_form/SearchDropdown';
-import Box from '../components/_layout/Box';
-import Panel from '../components/_layout/Panel';
-import Spacer from '../components/_layout/Spacer';
-import Breadcrumbs from '../components/Breadcrumbs';
-import Button from '../components/Button';
-import DataCount from '../components/DataCount';
-import Icon from '../components/Icon';
-import { Icons } from '../components/Icon/assets';
-import RepositoryTable, { RepositoryTableProps } from '../components/RepositoryTable';
-import Text from '../components/Text';
-import color from '../globals/color';
-import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
-import fetchJson from '../lib/fetchJson';
-import MockEditorialData from '../mocks/data/repository.json';
-import { Api, BASE_URI } from '../utils/api';
-import * as Styled from './editorial.page.styles';
+import DatePicker from '../../components/_form/DatePicker';
+import InputSearch from '../../components/_form/InputSearch';
+import SearchDropdown from '../../components/_form/SearchDropdown';
+import Box from '../../components/_layout/Box';
+import Panel from '../../components/_layout/Panel';
+import Spacer from '../../components/_layout/Spacer';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import Button from '../../components/Button';
+import DataCount from '../../components/DataCount';
+import Icon from '../../components/Icon';
+import { Icons } from '../../components/Icon/assets';
+import RepositoryTable, { RepositoryTableProps } from '../../components/RepositoryTable';
+import Text from '../../components/Text';
+import color from '../../globals/color';
+import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
+import fetchJson from '../../lib/fetchJson';
+import { Api, BASE_URI } from '../../utils/api';
+import * as Styled from './index.page.styles';
 
 interface EditorialProps extends LoadingHOCProps {}
 interface Filters {
@@ -44,7 +44,9 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
     status: [],
   });
 
-  const editorialData = MockEditorialData.data as unknown as RepositoryTableProps['data'];
+  const router = useRouter();
+
+  const editorialData = [] as RepositoryTableProps['data'];
 
   const addFilters = (newFilters: Filters) => setFilters({ ...filters, ...newFilters });
   const removeFilter = (filterKey: keyof Filters) => {
@@ -124,7 +126,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
             icon={Icons.Add}
             iconAlignment="left"
             inline
-            onClick={() => alert('Page URL does not yet exist')}
+            onClick={() => router.push('editorial/new')}
             width="auto"
             isSmall={true}
             label="Create Content"
