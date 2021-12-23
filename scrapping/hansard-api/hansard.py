@@ -178,7 +178,7 @@ def get_mapped_external_document(external_id: dict, date: date, house: str) -> d
         "source": source_document,
         "mapped": mapped_document,
     }
-    import ipdb; ipdb.set_trace()
+
     return document
 
 
