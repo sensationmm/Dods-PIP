@@ -44,6 +44,7 @@
         "@types/aws-lambda": "^8.10.83",
         "@types/axios": "^0.14.0",
         "@types/jest": "^27.0.1",
+        "@types/uuid": "^8.3.3",
         "copy-webpack-plugin": "^9.0.1",
         "cucumber-html-reporter": "^5.5.0",
         "jest": "^27.1.0",
@@ -78,6 +79,8 @@
         "aws-sdk": "^2.979.0",
         "axios": "^0.21.1",
         "joi": "^17.4.2",
-        "openapi-types": "^9.3.0"
+        "moment": "^2.29.1",
+        "openapi-types": "^9.3.0",
+        "uuid": "^8.3.2"
     }
 }

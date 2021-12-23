@@ -50,6 +50,7 @@ provider:
         description: Default Gateway for ${self:provider.stage} deployed by Terraform
 
     environment:
+        SERVERLESS_REGION: ${self:provider.region} 
         SERVERLESS_STAGE: ${self:provider.stage}
         SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
         DB_CONNECTION_LIMIT: 5
@@ -61,6 +62,8 @@ provider:
         BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/
         BUCKET_EDITORIAL: dods-dev-editorial-record-documents
         CONTENT_INDEXER_LAMBDA: content-indexer-dev
+        JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${self:provider.region}_KSdDYoclx/.well-known/jwks.json'
+
 
 
 custom:

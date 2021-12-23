@@ -24,9 +24,21 @@ export class GenericOpenApiValidator {
 
     GenericOpenApiValidator.compiledSpec = new OpenApiSpecLoader({ apiDoc: this.apiSpec, validateApiSpec: false, $refParser: { mode: 'dereference' } }).load();
 
-    this.metadataIndex = middlewareHandlers.indexOf(middlewareHandlers.find(m => m.name === 'metadataMiddleware')!);
     this.responseValidationFunction = middlewareHandlers.find(m => m.name === 'responseMiddleware')!;
-    middlewareHandlers.splice(middlewareHandlers.indexOf(this.responseValidationFunction), 1);
+
+    const responseMiddlewareIndex = middlewareHandlers.indexOf(this.responseValidationFunction);
+
+    if (responseMiddlewareIndex > -1) {
+      middlewareHandlers.splice(middlewareHandlers.indexOf(this.responseValidationFunction), 1);
+    }
+
+    const pathParamsMiddlewareIndex = middlewareHandlers.indexOf(middlewareHandlers.find(m => m.name === 'pathParamsMiddleware')!);
+
+    if (pathParamsMiddlewareIndex > -1) {
+      middlewareHandlers.splice(pathParamsMiddlewareIndex, 1);
+    }
+
+    this.metadataIndex = middlewareHandlers.indexOf(middlewareHandlers.find(m => m.name === 'metadataMiddleware')!);
 
     if (!options.validateResponses) {
       this.responseValidationFunction = () => {
@@ -119,16 +131,18 @@ export class GenericOpenApiValidator {
     const openApiObject = { openApiRoute: route, expressRoute: route, schema: schema, pathParams: {} };
     const openApiRequest = new OpenApiAdaptedRequest(route, method, inputData.headers, inputData.query, inputData.body, inputData.params, openApiObject);
 
-    this.middlewares[this.metadataIndex] = async (req: any, res: any, next: any) => {
+    if (this.metadataIndex > -1) {
+      this.middlewares[this.metadataIndex] = async (req: any, res: any, next: any) => {
 
-      // Metadata middleware function modifies openApiRequest object - return params property to previous state
-      req.params = openApiRequest.originalParams;
-      if (!req.openapi) {
-        req.openapi = openApiRequest.openapi as OpenApiRequestMetadata;
-      }
+        // Metadata middleware function modifies openApiRequest object - return params property to previous state
+        req.params = openApiRequest.originalParams;
+        if (!req.openapi) {
+          req.openapi = openApiRequest.openapi as OpenApiRequestMetadata;
+        }
 
-      await next(req, res);
-    };
+        await next(req, res);
+      };
+    }
 
     this.middleware = buildPipeline(this.middlewares);
 
