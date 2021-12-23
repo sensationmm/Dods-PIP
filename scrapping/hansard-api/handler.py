@@ -26,37 +26,14 @@ content_template_file_path = os.path.join(
 config = Config().config_read(("config.ini"))
 
 
+from hansard import import_content
+
 def run(event, context):
     logger.debug(
         'Starting scrapping process with BUCKET: "%s", prefix: "%s" ', BUCKET, PREFIX
     )
 
-    s3 = boto3.client("s3")
-
     try:
-        #
-        # Insert scraper specific code here
-        #
-        response = requests.get(config.get("parser", "sourceUrl")).content
-        soup = BeautifulSoup(response, "html5lib")
-        logger.info("Scraper %s : Completed", PREFIX)
-        # Document processing loop
-
-        # document = object
-        # try:
-        #     document = DataModel.get(hash_code)
-        # except DataModel.DoesNotExist:
-        #     logger.info(DataModel.DoesNotExist.msg)
-
-        # if hasattr(document, 'document_hash'):
-        #     continue
-        # else:
-        #     s3_response = s3.put_object(
-        #         Body=dumps(content).encode('UTF-8'),
-        #         Bucket=BUCKET,
-        #         Key=(PREFIX + '/' + short_date + '/' + hash_code)
-        #     )
-        #     logger.info('Object upload respondend with: %s', s3_response)
-        #     logger.info('Scraper %s : Completed', PREFIX)
+        import_content(context["date"], context["house"])
     except Exception:
         logger.exception("Unexpected exception during task run")
