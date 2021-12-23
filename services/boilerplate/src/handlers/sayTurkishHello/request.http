@@ -11,12 +11,12 @@ Content-Type: {{contentType}}
     "password": "{{signIn.password}}"
 }
 
-### Call getFullName
+### Call sayTurkishHello
 
 @accessToken = {{signin.response.body.accessToken}}
 
-# @name getFullName
-GET {{host}}/getFullName HTTP/1.1
+# @name sayTurkishHello
+GET {{host}}/sayTurkishHello HTTP/1.1
 authorization: bearer {{accessToken}}
 Content-Type: {{contentType}}
 title: Mr

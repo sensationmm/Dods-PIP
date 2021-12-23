@@ -11,14 +11,28 @@ Content-Type: {{contentType}}
     "password": "{{signIn.password}}"
 }
 
-### Call getFullName
+### Call sayHell oas Turkish
 
 @accessToken = {{signin.response.body.accessToken}}
 
-# @name getFullName
-GET {{host}}/getFullName HTTP/1.1
+# @name sayHello
+GET {{host}}/sayHello HTTP/1.1
 authorization: bearer {{accessToken}}
 Content-Type: {{contentType}}
+language: Turkish
+title: Mr
+firstName: Kenan
+lastName: Hancer
+
+### Call sayHello as English
+
+@accessToken = {{signin.response.body.accessToken}}
+
+# @name sayHello
+GET {{host}}/sayHello HTTP/1.1
+authorization: bearer {{accessToken}}
+Content-Type: {{contentType}}
+language: English
 title: Mr
 firstName: Kenan
 lastName: Hancer
