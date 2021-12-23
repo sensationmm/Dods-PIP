@@ -137,7 +137,7 @@ def import_content(date: str, house: str = "commons"):
     sections = get_sections(date, house)
 
     for section in sections:
-        documents = get_documents(date, section)
+        documents = get_documents(date, house, section)
 
         for document_summary in documents:
             external_id = document_summary["ExternalId"]
@@ -178,7 +178,7 @@ def get_mapped_external_document(external_id: dict, date: date, house: str) -> d
         "source": source_document,
         "mapped": mapped_document,
     }
-
+    import ipdb; ipdb.set_trace()
     return document
 
 
@@ -208,6 +208,12 @@ def store_document(document: dict):
         should_create_new_document = (
             document["model"]["source_hash"] != model.source_hash
         )
+
+        model.document_id = document["model"]["document_id"]
+        model.source_hash = document["model"]["source_hash"]
+        logger.info(f"Updated {model.document_id=} {model.source_hash=}")
+
+        model.save()
 
     logger.info(f"{should_create_new_document=}")
 
@@ -302,9 +308,9 @@ def filter_documents(documents: list) -> list:
     return filtered_documents
 
 
-def get_documents(date: date, section: str) -> list:
+def get_documents(date: date, house: str, section: str) -> list:
 
-    url = get_house_url("SECTION_TREES", date=date, section=section)
+    url = get_house_url("SECTION_TREES", date=date, house=house, section=section)
     logger.info(f"Getting documents {section=} {date=!s} {url=}")
 
     response = requests.get(url)
