@@ -40,7 +40,7 @@ export const awsOpenApiRequestAdapter = async (inputData: APIGatewayEvent): Prom
       switch (parameterObject.in) {
         case 'header': {
           const fv = pickFieldValue(parameterObject.name)(inputData.headers);
-          adaptedRequest.headers[parameterObject.name] = fv;
+          adaptedRequest.headers[parameterObject.name.toLowerCase()] = fv;
           adaptedRequest.rawHeaders[parameterObject.name] = fv;
           break;
         }
