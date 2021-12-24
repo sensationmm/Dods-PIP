@@ -33,11 +33,13 @@ class TaxonomyProcessor:
                             ]
                         }
                     }
-                },
+                }
             )
             if response['hits']['total']['value'] == 1:
                 content = response['hits']['hits'][0]['_source']
                 taxonomy_object['tagId'] = content['id']
+                taxonomy_object['facetType'] = 'Topics'
+                taxonomy_object['termLabel'] = taxonomy_object['prefLabel.en']
                 taxonomy_object['inScheme'] = content['inScheme']
                 taxonomy_object['ancestorTerms'] = content['ancestorTerms']
                 taxonomy_object['alternative_labels'] = content[
@@ -47,6 +49,8 @@ class TaxonomyProcessor:
     @staticmethod
     def search_taxonomy_by_id(taxonomy_object: dict, tag_id: str = None):
         tag_id = tag_id if tag_id is not None else taxonomy_object['tagId']
+        if int(tag_id) > 0:
+            tag_id = f"http://www.dods.co.uk/taxonomy/instance/Topics/{int(tag_id)}"
         if len(tag_id) > 0:
             response = es.search(
                 index="taxonomy",
@@ -73,6 +77,8 @@ class TaxonomyProcessor:
                 content = response['hits']['hits'][0]['_source']
                 taxonomy_object['tagId'] = content['id']
                 taxonomy_object['inScheme'] = content['inScheme']
+                taxonomy_object['facetType'] = 'Topics'
+                taxonomy_object['termLabel'] = taxonomy_object['prefLabel.en']
                 taxonomy_object['ancestorTerms'] = content['ancestorTerms']
                 taxonomy_object['alternative_labels'] = content[
                     'alternative_labels'] if 'alternative_labels' in content else ''
@@ -81,6 +87,8 @@ class TaxonomyProcessor:
     @staticmethod
     def search_taxonomy_by_notation(taxonomy_object: dict, tag_id: str = None):
         tag_id = tag_id if tag_id is not None else taxonomy_object['tagId']
+        if int(tag_id) > 0:
+            tag_id = f"http://eurovoc.europa.eu/{int(tag_id)}"
         if len(tag_id) > 0:
             response = es.search(
                 index="taxonomy",
@@ -95,7 +103,7 @@ class TaxonomyProcessor:
                                 },
                                 {
                                     "match_phrase": {
-                                        "id": str(tag_id)
+                                        "notation": str(tag_id)
                                     }
                                 }
                             ]
@@ -107,6 +115,8 @@ class TaxonomyProcessor:
                 content = response['hits']['hits'][0]['_source']
                 taxonomy_object['tagId'] = content['id']
                 taxonomy_object['inScheme'] = content['inScheme']
+                taxonomy_object['facetType'] = 'Topics'
+                taxonomy_object['termLabel'] = taxonomy_object['prefLabel.en']
                 taxonomy_object['ancestorTerms'] = content['ancestorTerms']
                 taxonomy_object['alternative_labels'] = content[
                     'alternative_labels'] if 'alternative_labels' in content else ''
