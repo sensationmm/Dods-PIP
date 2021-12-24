@@ -27,11 +27,6 @@ export = {
         onUpdate: 'CASCADE',
         onDelete: 'DELETE'
       },
-      document_id: {
-        type: DataTypes.STRING({ length: 36 }),
-        allowNull: false,
-        primaryKey: true
-      },
       added_by: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: true,

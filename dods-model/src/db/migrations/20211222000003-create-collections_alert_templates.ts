@@ -2,7 +2,7 @@ import { DataTypes, QueryInterface, Sequelize } from 'sequelize';
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable('dods_collection_alert_templates', {
+    return queryInterface.createTable('dods_collections_alert_templates', {
       id: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
@@ -36,6 +36,6 @@ export = {
     });
   },
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable('dods_collection_alert_templates');
+    return queryInterface.dropTable('dods_collections_alert_templates');
   }
 };
