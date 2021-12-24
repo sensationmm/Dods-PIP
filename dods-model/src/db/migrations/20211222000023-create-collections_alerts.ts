@@ -2,7 +2,7 @@ import { DataTypes, QueryInterface, Sequelize } from 'sequelize';
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable('dods_collections_alerts_queries', {
+    return queryInterface.createTable('dods_collections_alerts', {
       id: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
@@ -14,25 +14,43 @@ export = {
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
       },
-      alert_id: {
+      title: {
+        type: DataTypes.STRING({ length: 255 }),
+        allowNull: true,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        defaultValue: null
+      },
+      collection_id: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
-        defaultValue: null,
         references: {
-          model: 'dods_collections_alerts',
+          model: 'dods_collections',
           key: 'id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      name: {
+      template_id: {
+        type: DataTypes.INTEGER({ length: 11 }),
+        allowNull: true,
+        defaultValue: null,
+        references: {
+          model: 'dods_collections_alert_templates',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
+      schedule: {
         type: DataTypes.STRING({ length: 255 }),
         allowNull: false,
       },
-      query: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-        defaultValue: null
+      timezone: {
+        type: DataTypes.STRING({ length: 255 }),
+        allowNull: false,
       },
       is_active: {
         type: DataTypes.BOOLEAN,
@@ -79,6 +97,6 @@ export = {
     });
   },
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable('dods_collections_alerts_queries');
+    return queryInterface.dropTable('dods_collections_alerts');
   }
 };

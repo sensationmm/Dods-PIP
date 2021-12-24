@@ -2,14 +2,13 @@ import { DataTypes, QueryInterface, Sequelize } from 'sequelize';
 
 export = {
   up: (queryInterface: QueryInterface) => {
-    return queryInterface.createTable('dods_collections_documents', {
-      collection_id: {
+    return queryInterface.createTable('dods_collections_alerts_documents', {
+      alert_id: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
-        defaultValue: null,
         primaryKey: true,
         references: {
-          model: 'dods_collections',
+          model: 'dods_collections_alerts',
           key: 'id'
         },
         onUpdate: 'CASCADE',
@@ -39,6 +38,6 @@ export = {
     });
   },
   down: (queryInterface: QueryInterface) => {
-    return queryInterface.dropTable('dods_collections_documents');
+    return queryInterface.dropTable('dods_collections_alerts_documents');
   }
 };

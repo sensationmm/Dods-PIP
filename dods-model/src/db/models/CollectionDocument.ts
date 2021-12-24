@@ -7,9 +7,9 @@ import {
     Model,
     Optional,
 } from 'sequelize';
-import { Collection } from './Collection';
-
 import sequelizeConnection from '../config/sequelizeConnection';
+
+import { Collection } from './';
 
 interface CollectionDocumentAttributes {
     collectionId: number;
@@ -20,35 +20,29 @@ interface CollectionDocumentAttributes {
 export interface CollectionDocumentInput
     extends Optional<
     CollectionDocumentAttributes,
-        | 'collectionId'
-        | 'documentId'
-        | 'addedBy'
-    > {}
+    | 'collectionId'
+    | 'documentId'
+    | 'addedBy'
+    > { }
 
-
-export interface CollectionDocumentOutput
-    extends Required<CollectionDocumentAttributes> {}
+export interface CollectionDocumentOutput extends Required<CollectionDocumentAttributes> { }
 
 export class CollectionDocument
     extends Model<CollectionDocumentAttributes, CollectionDocumentInput>
-    implements CollectionDocumentAttributes, CollectionDocumentOutput
-{
+    implements CollectionDocumentAttributes, CollectionDocumentOutput {
+
     public collectionId!: number;
     public documentId!: string;
     public addedBy!: number;
-    
+
     // mixins for association (optional)
     public readonly collection!: Collection;
     public getCollection!: BelongsToGetAssociationMixin<Collection>;
-    public setCollection!: BelongsToSetAssociationMixin<
-        Collection,
-        number
-    >;
+    public setCollection!: BelongsToSetAssociationMixin<Collection, number>;
     public createCollection!: BelongsToCreateAssociationMixin<Collection>;
 
     public static associations: {
         collection: Association<CollectionDocument, Collection>;
-        
     };
 
     // Timestamps
@@ -63,8 +57,8 @@ CollectionDocument.init(
             defaultValue: null,
             primaryKey: true,
             references: {
-              model: 'dods_collections',
-              key: 'id'
+                model: 'dods_collections',
+                key: 'id'
             },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'

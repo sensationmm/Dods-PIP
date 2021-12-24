@@ -6,7 +6,6 @@ export = {
       alert_id: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
-        defaultValue: null,
         primaryKey: true,
         references: {
           model: 'dods_collections_alerts',
@@ -18,14 +17,13 @@ export = {
       user_id: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
-        defaultValue: null,
         primaryKey: true,
         references: {
           model: 'dods_users',
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'DELETE'
+        onDelete: 'CASCADE'
       },
       added_by: {
         type: DataTypes.INTEGER({ length: 11 }),
@@ -36,7 +34,7 @@ export = {
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
       },
       addet_at: {
         type: DataTypes.DATE,

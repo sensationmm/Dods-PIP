@@ -8,15 +8,14 @@ export interface AlertTemplateAttributes {
     isActive: boolean;
 }
 
-export interface AlertTemplateInput
-    extends Optional<AlertTemplateAttributes, 'id'> {}
+export interface AlertTemplateInput extends Optional<AlertTemplateAttributes, 'id'> { }
 
-export interface AlertTemplateOutput extends Required<AlertTemplateAttributes> {}
+export interface AlertTemplateOutput extends Required<AlertTemplateAttributes> { }
 
-export class AlertTemplate
+export class CollectionAlertTemplate
     extends Model<AlertTemplateAttributes, AlertTemplateInput>
-    implements AlertTemplateAttributes
-{
+    implements AlertTemplateAttributes {
+
     public id!: number;
     public name!: string;
     public isActive!: boolean;
@@ -27,7 +26,7 @@ export class AlertTemplate
     public readonly deletedAt!: Date | null;
 }
 
-AlertTemplate.init(
+CollectionAlertTemplate.init(
     {
         id: {
             type: DataTypes.INTEGER({ length: 11 }),
@@ -35,7 +34,7 @@ AlertTemplate.init(
             autoIncrement: true,
             primaryKey: true,
         },
-            name: {
+        name: {
             type: DataTypes.STRING({ length: 255 }),
             allowNull: false,
         },
