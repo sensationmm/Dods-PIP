@@ -9,13 +9,25 @@ import {
     Model,
     Optional,
 } from 'sequelize';
+<<<<<<< HEAD
 import sequelizeConnection from '../config/sequelizeConnection';
 import { ClientAccount, CollectionSavedQuery, CollectionDocument, CollectionAlert } from './';
+=======
+import { ClientAccount } from '.';
+import sequelizeConnection from '../config/sequelizeConnection';
+import { SavedQuery } from './SavedQuery';
+import { CollectionDocument } from './CollectionDocument';
+import { Alert } from './Alert';
+>>>>>>> c1d8d6887ad49e293b83236e47db4c92ee7028d9
 
 interface CollectionAttributes {
     id: number;
     uuid: string;
+<<<<<<< HEAD
     clientAccountId: number;
+=======
+    clientAccountId: number;
+>>>>>>> c1d8d6887ad49e293b83236e47db4c92ee7028d9
     name: string;
     isActive: boolean;
 }
