@@ -1,5 +1,5 @@
 from elasticsearch import Elasticsearch
-from json import loads
+from json import loads, dumps
 import os
 from dotenv import load_dotenv
 from logger import logger
@@ -16,11 +16,12 @@ client = Elasticsearch(hosts=[es_host], http_auth=(es_user, es_pass))
 def run(event, context):
     if ('data' not in event):
         raise ValueError(f'Data object is empty!')
-    data = event['data']
+    content = event['data']
     mappings = get_file_content(os.path.abspath(os.curdir) + '/models/content/mappings.json')
-    if Validator().data_validator(mappings, data):
+    if Validator().data_validator(mappings, content):
+        content = set_aggs_fields_content(content)
         try:
-            res = client.index(index="content", document=data)
+            res = client.index(index="content", document=content)
             logger.info(res['result'])
             return True
         except Exception as e:
@@ -28,6 +29,31 @@ def run(event, context):
     return False
 
 
+def set_aggs_fields_content(content: str):
+    content_dict = loads(content)
+    aggs_field_content = {}
+    topics = []
+    people = []
+    organizations = []
+    geography = []
+    for taxonomy in content_dict['taxonomyTerms']:
+        label = taxonomy['termLabel']
+        type = taxonomy['facetType']
+        if len(label) > 0:
+            if type == 'Topics':
+                topics.append(label)
+            elif type == 'People':
+                people.append(label)
+            elif type == 'Organisations':
+                organizations.append(label)
+            elif type == 'Geography':
+                geography.append(label)
+    aggs_field_content['topics'] = topics
+    aggs_field_content['people'] = people
+    aggs_field_content['organizations'] = organizations
+    aggs_field_content['geography'] = geography
+
+    return dumps(content)
 
 
 def get_file_content(path):
