@@ -30,11 +30,6 @@ provider:
     apiGateway: true
     lambda: true
   iamRoleStatements:
-    - Effect: 'Allow'
-      Action:
-        - 'lambda:InvokeFunction'
-      Resource: "*"
-
     - Effect: "Allow"
       Action:
         - s3:PutObject
@@ -93,7 +88,7 @@ custom:
   # apiGatewayCaching:
     # enabled: true
   warmup:
-    officeHoursWarmer:
+    taxoWarmer:
       enabled: true
       events:
         - schedule: cron(0/5 * ? * MON-SUN *)
