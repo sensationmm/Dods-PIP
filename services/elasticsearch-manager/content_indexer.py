@@ -30,12 +30,13 @@ def run(event, context):
 
 
 def set_aggs_fields_content(content: str):
-    content_dict = loads(content)
-    aggs_field_content = {}
+    content_dict = loads(dumps(content))
     topics = []
     people = []
     organizations = []
     geography = []
+    content_dict['internallyCreated'] = bool(int(content_dict['internallyCreated']))
+    content_dict['aggs_fields'] = {}
     for taxonomy in content_dict['taxonomyTerms']:
         label = taxonomy['termLabel']
         type = taxonomy['facetType']
@@ -48,12 +49,12 @@ def set_aggs_fields_content(content: str):
                 organizations.append(label)
             elif type == 'Geography':
                 geography.append(label)
-    aggs_field_content['topics'] = topics
-    aggs_field_content['people'] = people
-    aggs_field_content['organizations'] = organizations
-    aggs_field_content['geography'] = geography
+    content_dict['aggs_fields']['topics'] = topics
+    content_dict['aggs_fields']['people'] = people
+    content_dict['aggs_fields']['organizations'] = organizations
+    content_dict['aggs_fields']['geography'] = geography
 
-    return dumps(content)
+    return dumps(content_dict)
 
 
 def get_file_content(path):
