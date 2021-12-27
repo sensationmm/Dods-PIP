@@ -1,4 +1,4 @@
-POST http://localhost:3000/local/editorial-record HTTP/1.1
+POST {{host}}/editorial-record HTTP/1.1
 content-type: application/json
 
 {
@@ -10,7 +10,7 @@ content-type: application/json
 
 ###
 
-POST http://localhost:3000/local/editorial-record HTTP/1.1
+POST {{host}}/editorial-record HTTP/1.1
 content-type: application/json
 
 {
