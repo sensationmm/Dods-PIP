@@ -367,9 +367,11 @@ components:
             properties:
                 documentName:
                     type: string
+                    minLength: 1
                     example: Some UK Parliament Oral Question
                 s3Location:
                     type: string
+                    minLength: 1
                     example: arn:aws:s3:::editorial-workflow-prod/editorial-workflow/01012020/some-question.json
                 informationType:
                     type: string
@@ -534,6 +536,7 @@ components:
               $ref: '#/components/schemas/EditorialDocument'
             documentName:
               type: string
+              minLength: 1
             informationType:
               type: string
           required:
