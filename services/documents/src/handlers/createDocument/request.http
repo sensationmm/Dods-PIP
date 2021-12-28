@@ -1,0 +1,103 @@
+### createDocument with payload V1
+
+POST {{host}}/documents HTTP/1.1
+content-type: application/json
+
+{
+    "document": "{\"jurisdiction\":\"UK\",\"documentTitle\":\"Professional Qualifications Bill [Lords]\",\"organisationName\":\"\",\"sourceReferenceFormat\":\"text\/html\",\"sourceReferenceUri\":\"example.com\",\"createdBy\":\"\",\"internallyCreated\":false,\"schemaType\":\"\",\"contentSource\":\"House of Commons\",\"informationType\":\"Debates\",\"contentDateTime\":\"2021-12-15T00:00:00\",\"createdDateTime\":\"2021-12-16T01:30:46.299913\",\"ingestedDateTime\":\"\",\"version\":\"1.0\",\"countryOfOrigin\":\"GBR\",\"feedFormat\":\"text\/plain\",\"language\":\"en\",\"taxonomyTerms\":[],\"originalContent\":\"\",\"documentContent\":\"\"}"
+}
+
+### createDocument with payload V2
+
+POST {{host}}/documents HTTP/1.1
+content-type: application/json
+
+{
+    "documentId": "008f811e5ccf44d3a0df5b7f70a8e85d",
+    "jurisdiction": "UK",
+    "documentTitle": "New Which? research reveals the most sustainable savings providers",
+    "organisationName": "Which?",
+    "sourceReferenceFormat": "text/html",
+    "sourceReferenceUri": "https://press.which.co.uk/whichpressreleases/new-which-research-reveals-the-most-sustainable-savings-providers/",
+    "createdBy": "taerekim@gmail.com",
+    "internallyCreated": true,
+    "schemaType": "External",
+    "contentSource": "UK Stakeholder",
+    "contentLocation": "",
+    "originator": "",
+    "informationType": "Press Releases",
+    "contentDateTime": "2021-08-18T10:29:20.778+01:00",
+    "createdDateTime": "2021-08-18T10:29:51.960+01:00",
+    "ingestedDateTime": "2021-08-18T10:29:51.960+01:00",
+    "version": "1.0",
+    "countryOfOrigin": "GBR",
+    "feedFormat": "text/plain",
+    "language": "en",
+    "aggs_fields": {
+        "topics": [
+            "indoor air quality",
+            "building industry"
+        ],
+        "people": [
+            "Kieran Mullan"
+        ],
+        "organizations": [
+            "International Assemblies"
+        ],
+        "geography": [
+            "Eastern Asia"
+        ]
+    },
+    "taxonomyTerms": [
+        {
+            "tagId": "sdfsdfsdf",
+            "facetType": "Topics",
+            "inScheme": [
+                "http://www.dods.co.uk/taxonomy/instance/Topics"
+            ],
+            "termLabel": "Term 4",
+            "ancestorTerms": [
+                {
+                    "tagId": "sdfsdfsdf",
+                    "termLabel": "Term 2",
+                    "rank": 1
+                },
+                {
+                    "tagId": "sdfsdfsdf",
+                    "termLabel": "Term 1",
+                    "rank": 0
+                }
+            ],
+            "alternative_labels": [
+                "Term B",
+                "Term C"
+            ]
+        },
+        {
+            "tagId": "sdfsdfsdf",
+            "facetType": "Topics",
+            "inScheme": [
+                "http://www.dods.co.uk/taxonomy/instance/Topics"
+            ],
+            "termLabel": "Term 4",
+            "ancestorTerms": [
+                {
+                    "tagId": "sdfsdfsdf",
+                    "termLabel": "Term 2",
+                    "rank": 1
+                },
+                {
+                    "tagId": "sdfsdfsdf",
+                    "termLabel": "Term 1",
+                    "rank": 0
+                }
+            ],
+            "alternative_labels": [
+                "Term B",
+                "Term C"
+            ]
+        }
+    ],
+    "originalContent": "",
+    "documentContent": ""
+}
