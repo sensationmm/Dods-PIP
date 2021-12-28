@@ -2,13 +2,12 @@ import Link from 'next/link';
 import React from 'react';
 
 import color from '../../globals/color';
-import { UserResponse } from '../../lib/fetchJson';
 import Avatar from '../Avatar';
 import Button from '../Button';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import * as Styled from './Header.styles';
-import { Menu } from './index';
+import { Menu, UserResponse } from './index';
 
 export interface NavigationMobileProps {
   active: boolean;

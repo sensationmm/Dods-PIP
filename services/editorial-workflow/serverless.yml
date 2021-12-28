@@ -124,6 +124,16 @@ functions:
                   path: editorial-record/{recordId}
                 #   caching:
                     #   enabled: false
+
+    updateEditorialRecordDocument:
+        handler: src/handlers/updateEditorialRecordDocument/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: put
+                  path: editorial-record/{recordId}/document
+                #   caching:
+                    #   enabled: false
     
     getEditorialRecord:
         handler: src/handlers/getEditorialRecord/index.handle

@@ -28,6 +28,16 @@ export type Menu = {
   icon?: Icons;
 };
 
+export type UserResponse = {
+  id?: string;
+  userId?: string;
+  accessToken?: string;
+  isDodsUser?: boolean;
+  clientAccountId?: string;
+  clientAccountName?: string;
+  displayName?: string;
+};
+
 const Header: React.FC<HeaderProps> = ({ title }) => {
   const router = useRouter();
   // TODO: Migrate auth check to routing level before page loads

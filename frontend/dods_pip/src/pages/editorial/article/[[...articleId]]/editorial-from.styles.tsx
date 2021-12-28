@@ -1,6 +1,5 @@
+import spacing from '@dods-ui/globals/spacing';
 import styled from 'styled-components';
-
-import spacing from '../../globals/spacing';
 
 export const mainColumns = styled.div`
   display: flex;

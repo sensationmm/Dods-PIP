@@ -6,7 +6,7 @@ export interface EditorialRecordBase {
 }
 
 export interface CreateEditorialRecordParameters extends EditorialRecordBase {
-    assignedEditorId?: string;
+    assignedEditorId?: string | null;
     statusId?: string;
 }
 
@@ -110,3 +110,36 @@ export interface CreateEditorialRecordParametersV2 {
     informationType: string;
     document: EditorialDocument;
 }
+export interface DocumentParameters {
+    jurisdiction?: string
+    documentTitle?: string
+    organisationName?: string
+    sourceReferenceFormat?: string
+    sourceReferenceUri?: string
+    createdBy?: string
+    internallyCreated?: boolean
+    schemaType?: string
+    contentSource?: string
+    informationType?: string
+    contentDateTime?: string
+    createdDateTime?: string
+    ingestedDateTime?: string
+    version?: string
+    countryOfOrigin?: string
+    feedFormat?: string
+    language?: string
+    taxonomyTerms?: object[]
+    originalContent?: string
+    documentContent?: string
+}
+
+export interface UpdateEditorialRecordDocumentParameter {
+    document: DocumentParameters;
+    recordId: string;
+}
+
+export interface UpdateLambdaDocumentsParams {
+    arn: string,
+    document: DocumentParameters
+}
+

@@ -8,16 +8,17 @@ jest.mock('quill', () =>
     on: jest.fn(),
   })),
 );
+jest.mock('./blots/align', () => jest.fn());
+jest.mock('./blots/bold', () => jest.fn());
 jest.mock('./blots/font-style', () => jest.fn());
+jest.mock('./blots/italic', () => jest.fn());
 
 const COMPONENT_ID = 'test_id';
 
 const onTextChangeMock = jest.fn();
-const onSelectionChangeMock = jest.fn();
 const DEFAULT_PROPS: WysiwygEditorProps = {
   id: COMPONENT_ID,
   onTextChange: onTextChangeMock,
-  onSelectionChange: onSelectionChangeMock,
 };
 
 const getComponentWithProps = async (
