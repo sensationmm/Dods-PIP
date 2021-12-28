@@ -24,12 +24,11 @@ export interface CollectionInput extends Omit<CollectionAttributes, 'id' | 'uuid
     createdById: number;
 }
 
-export interface CollectionOutput extends Required<CollectionAttributes> {}
+export interface CollectionOutput extends Required<CollectionAttributes> { }
 
 export class Collection
     extends Model<CollectionAttributes, CollectionInput>
-    implements CollectionAttributes, CollectionOutput
-{
+    implements CollectionAttributes, CollectionOutput {
     public id!: number;
     public uuid!: string;
     public name!: string;
