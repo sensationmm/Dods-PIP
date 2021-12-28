@@ -276,8 +276,6 @@ pipelines:
             deployment: Test 
             services:
               - docker
-            caches:
-              - fe-node
 
             condition:
               changesets:
