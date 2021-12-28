@@ -57,6 +57,6 @@ AWS_ACCESS_KEY_ID=$(jq '.Credentials.AccessKeyId' session_info.json)
 AWS_SECRET_ACCESS_KEY=$(jq '.Credentials.SecretAccessKey' session_info.json)
 AWS_SESSION_TOKEN=$(jq '.Credentials.SessionToken' session_info.json)
 
-echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" > credentials.txt
-echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> credentials.txt
-echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> credentials.txt
+printf "export AWS_ACCESS_KEY_ID=%s\n" "$AWS_ACCESS_KEY_ID" > credentials.txt
+echo "export AWS_SECRET_ACCESS_KEY=%s\n" "$AWS_SECRET_ACCESS_KEY" >> credentials.txt
+echo "export AWS_SESSION_TOKEN=%s\n" "$AWS_SESSION_TOKEN" >> credentials.txt
