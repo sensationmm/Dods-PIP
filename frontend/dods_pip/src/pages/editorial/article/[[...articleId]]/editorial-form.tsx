@@ -1,14 +1,15 @@
+import InputText from '@dods-ui/components/_form/InputText';
+import SearchDropdown from '@dods-ui/components/_form/SearchDropdown';
+import { SelectItem } from '@dods-ui/components/_form/Select';
+import SectionHeader from '@dods-ui/components/_layout/SectionHeader';
+import Spacer from '@dods-ui/components/_layout/Spacer';
+import ContentTagger from '@dods-ui/components/ContentTagger';
+import Icon, { IconSize } from '@dods-ui/components/Icon';
+import { Icons } from '@dods-ui/components/Icon/assets';
+import * as Validation from '@dods-ui/utils/validation';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
-import InputText from '../../components/_form/InputText';
-import SearchDropdown from '../../components/_form/SearchDropdown';
-import SectionHeader from '../../components/_layout/SectionHeader';
-import Spacer from '../../components/_layout/Spacer';
-import ContentTagger from '../../components/ContentTagger';
-import Icon, { IconSize } from '../../components/Icon';
-import { Icons } from '../../components/Icon/assets';
-import * as Validation from '../../utils/validation';
 import * as Styled from './editorial-from.styles';
 
 export interface EditorialFormFields {
@@ -25,17 +26,23 @@ export interface EditorialFormProps {
   onFieldChange: (field: keyof EditorialFormFields, value: string) => void;
   errors: Partial<EditorialFormFields>;
   setErrors: (errors: Partial<EditorialFormFields>) => void;
+  infoTypeValues: SelectItem[];
+  contentSourceValues: SelectItem[];
+  //editorStaticContent: HTMLElement | HTMLCollection;
   isEdit?: boolean;
 }
 
 // We need to load this dynamically since it has multiple client side `document` calls
-const WysiwygEditor = dynamic(() => import('../../components/WysiwygEditor'), { ssr: false });
+const WysiwygEditor = dynamic(() => import('@dods-ui/components/WysiwygEditor'), { ssr: false });
 
 const EditorialForm: React.FC<EditorialFormProps> = ({
   fieldData,
   errors,
   setErrors,
   onFieldChange,
+  infoTypeValues,
+  contentSourceValues,
+  //editorStaticContent,
 }) => {
   const validateField = (fieldName: keyof EditorialFormFields, value: string | undefined) => {
     const formErrors = JSON.parse(JSON.stringify(errors));
@@ -61,10 +68,10 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
             testId="editorial-content-source"
             size={'medium'}
             id={'content-source'}
-            placeholder="Content source"
-            selectedValues={[]}
+            placeholder={fieldData.sourceName || 'Content source'}
+            selectedValues={[fieldData.sourceName]}
             label={'Content source'}
-            values={[]}
+            values={contentSourceValues}
             required
             onChange={(value) => {
               onFieldChange('sourceName', value);
@@ -76,10 +83,10 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
             testId="editorial-info-type"
             size={'medium'}
             id={'info-type'}
-            selectedValues={[]}
-            placeholder="Information type"
+            selectedValues={[fieldData.informationType]}
+            placeholder={fieldData.informationType || 'Information type'}
             label={'Information type'}
-            values={[]}
+            values={infoTypeValues}
             required
             onChange={(value) => {
               onFieldChange('informationType', value);
@@ -88,7 +95,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
             onBlur={() => validateField('informationType', fieldData.informationType)}
           />
           <InputText
-            id="contentSourceYrl"
+            id="contentSourceUrl"
             testId={'content-source-url'}
             value={fieldData.sourceUrl}
             optional
@@ -131,10 +138,9 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
 
         <WysiwygEditor
           placeholder={'Type or paste your content here'}
-          onSelectionChange={console.log}
-          onTextChange={(value) => onFieldChange('content', value.toString())}
+          onTextChange={(value) => onFieldChange('content', value)}
         >
-          {fieldData.content}
+          {/*{editorStaticContent}*/}
         </WysiwygEditor>
       </div>
 
