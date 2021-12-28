@@ -175,47 +175,44 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     test('Valid input for V2 payload', async () => {
         const requestParams: CreateEditorialRecordParametersV2 = {
-            "documentName": "testDocument2",
-            "contentSource": "string",
-            "informationType": "string",
-            "document": {
-                "jurisdiction": "string",
-                "documentTitle": "string",
-                "createdBy": "string",
-                "internallyCreated": true,
-                "schemaType": "Internal",
-                "contentSource": "string",
-                "informationType": "string",
-                "createdDateTime": new Date(),
-                "version": "1.0",
-                "feedFormat": "text/plain",
-                "taxonomyTerms": [
+            documentName: "testDocument2",
+            contentSource: "string",
+            informationType: "string",
+            document: {
+                jurisdiction: "string",
+                documentTitle: "string",
+                createdBy: "string",
+                internallyCreated: true,
+                schemaType: "Internal",
+                contentSource: "string",
+                informationType: "string",
+                taxonomyTerms: [
                     {
-                        "tagId": "sdfsdfsdf",
-                        "facetType": "Topics",
-                        "inScheme": [
+                        tagId: "sdfsdfsdf",
+                        facetType: "Topics",
+                        inScheme: [
                             "http://www.dods.co.uk/taxonomy/instance/Topics"
                         ],
-                        "termLabel": "Term 4",
-                        "ancestorTerms": [
+                        termLabel: "Term 4",
+                        ancestorTerms: [
                             {
-                                "tagId": "sdfsdfsdf",
-                                "termLabel": "Term 2",
-                                "rank": 1
+                                tagId: "sdfsdfsdf",
+                                termLabel: "Term 2",
+                                rank: 1
                             },
                             {
-                                "tagId": "sdfsdfsdf",
-                                "termLabel": "Term 1",
-                                "rank": 0
+                                tagId: "sdfsdfsdf",
+                                termLabel: "Term 1",
+                                rank: 0
                             }
                         ],
-                        "alternative_labels": [
+                        alternative_labels: [
                             "Term B",
                             "Term C"
                         ]
                     }
                 ],
-                "documentContent": "html content of the document"
+                documentContent: "html content of the document"
             }
         };
         const response = await createEditorialRecord(requestParams, defaultContext);

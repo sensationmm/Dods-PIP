@@ -98,9 +98,8 @@ export interface EditorialDocument {
     schemaType: string;
     contentSource: string;
     informationType: string;
-    createdDateTime: Date;
-    version: string;
-    feedFormat: string;
+    createdDateTime?: Date;
+    version?: string;
     taxonomyTerms: Array<TaxonomyTerm>;
     documentContent: string;
 }

@@ -52,6 +52,9 @@ export const createEditorialRecordV1 = async (params: CreateEditorialRecordParam
 };
 
 export const createEditorialRecordV2 = async (params: CreateEditorialRecordParametersV2) => {
+
+    params.document.createdDateTime = new Date();
+    params.document.version = '1.0';
     const { documentName, contentSource, informationType, document, document: { createdDateTime } } = params as CreateEditorialRecordParametersV2;
 
     const fileKey = `${contentSource}/${informationType}/${moment(createdDateTime).format('DD-MM-YYYY')}/${documentName}.json`;
