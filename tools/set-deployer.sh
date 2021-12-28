@@ -60,3 +60,4 @@ AWS_SESSION_TOKEN=$(jq '.Credentials.SessionToken' session_info.json)
 printf "export AWS_ACCESS_KEY_ID=%s\n" "$AWS_ACCESS_KEY_ID" > credentials.txt
 printf "export AWS_SECRET_ACCESS_KEY=%s\n" "$AWS_SECRET_ACCESS_KEY" >> credentials.txt
 printf "export AWS_SESSION_TOKEN=%s\n" "$AWS_SESSION_TOKEN" >> credentials.txt
+printf "export AWS_ACCOUNT_ID=%s\n" "$AWS_ACCOUNT" >> credentials.txt

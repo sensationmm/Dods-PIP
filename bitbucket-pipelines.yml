@@ -361,11 +361,19 @@ pipelines:
           caches:
             - docker
           script:
-            - export THIS='frontend/dods_pip'
             - tools/set-deployer.sh
-            - cat credentials.txt
             - source credentials.txt
-            - aws ecr describe-repositories
+            - export THIS='frontend/dods_pip'
+            - cd $THIS
+            - ls .dist
+            - TAG=$(ls -t1 | head -1)
+            - export IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${FRONTEND_IMAGE}:${TAG}
+            - docker load --input .dist/$TAG
+            - docker images
+            - docker tag ${TAG} ${IMAGE_NAME}
+            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
+            - docker push ${IMAGE_NAME}
+            - ../../tools/ecs_deploy --service-name frontend-service --cluster pip-${ENVIRONMENT,,}-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
 
     deploy-frontend-production:
       - step:
