@@ -332,7 +332,7 @@ pipelines:
       - step:
           name: "Frontend: Test and Build"
           image: node:lts-alpine3.14
-          # size: 2x
+          size: 2x
           services:
             - docker
           caches:
@@ -357,6 +357,7 @@ pipelines:
       - step:
           name: "Frontend: Deploy to Environment"
           image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
           services:
             - docker
           caches:
