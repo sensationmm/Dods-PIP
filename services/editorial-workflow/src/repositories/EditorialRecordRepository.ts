@@ -269,6 +269,20 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         return this.mapRecordOutput(record);
     }
 
+    async unssignedEditorToRecord(recordId: string
+    ): Promise<void> {
+
+        const record = await this.editorialRecordModel.findOne({
+            where: {
+                uuid: recordId,
+            },
+            include: ['status', 'assignedEditor'],
+        });
+
+        await record?.update({ 'assignedEditorId': null })
+
+    }
+
 
     async listEditorialRecords(
         params: SearchEditorialRecordParameters
