@@ -19,9 +19,7 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
     const updatedResponse = await DocumentServiceRepository.defaultInstance.updateDocument(updateDocumentsParams)
 
     if (updatedResponse) {
-        await EditorialRecordRepository.defaultInstance.unssignedEditorToRecord(params.recordId)
-
-
+        await EditorialRecordRepository.defaultInstance.unassignEditorToRecord(params.recordId)
 
         const statusId = config.dods.recordStatuses.draft;
 
