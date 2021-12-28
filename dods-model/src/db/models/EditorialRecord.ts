@@ -19,6 +19,7 @@ export interface EditorialRecordAttributes {
     status?: EditorialRecordStatus;
     isPublished?: boolean;
     isArchived?: boolean;
+    assignedEditorId?: number | null;
 }
 
 export interface EditorialRecordInput
