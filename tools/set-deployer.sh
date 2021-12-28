@@ -27,6 +27,12 @@ function fail {
 
 require_env_var ENVIRONMENT
 
+Environments=('DEV' 'PRODUCTION' 'QA' 'TEST')
+
+if [[ ! " ${Environments[*]} " =~ " ${ENVIRONMENT^^} " ]]; then
+   fail "Unexpected environment: ${ENVIRONMENT}. Must be one of ${Environments[@]}."
+fi
+
 E=$(echo ${ENVIRONMENT^^})
 ACCOUNT_VAR="${E}_ACCOUNT_ID"
 AWS_ACCOUNT=${!ACCOUNT_VAR}
@@ -46,7 +52,7 @@ aws sts assume-role \
                      --role-session-name ${E,,}-deployer \
                   > session_info.json
             
-test $? -eq 0 && fail "Error trying to assume role for $E environment."
+test $? -eq 0 && fail "Failed trying to assume role for $E environment."
 
 ROLE_EXPIRES=$(jq -r '.Credentials.Expiration' session_info.json)
 echo "Role valid until $ROLE_EXPIRES"
