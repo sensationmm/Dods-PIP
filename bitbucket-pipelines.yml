@@ -1,12 +1,17 @@
 definitions:
-  caches:
-    fe-node: frontend/dods-pip/node_modules
   services:
     docker:
       memory: 5120
 options:
   max-time: 30
+
 pipelines:
+  # pull-requests:
+  #   '**': # Run this step as default for any branch without an specific definition
+  #     - step:
+  #         script:
+  #           - tools/build.sh
+
   default:
     - parallel:
       - step:
@@ -16,7 +21,7 @@ pipelines:
           services:
             - docker
           caches:
-            - node
+            - docker
           condition:
             changesets:
               includePaths:
@@ -28,7 +33,6 @@ pipelines:
             - yarn test
             - yarn lint
             - docker build -t ${IMAGE_NAME} .
-            # - yarn build
 
       - step:
           name: Deploy Graphologi Webhook
@@ -324,7 +328,47 @@ pipelines:
               - ./push_back.sh
 
   custom:
-    deploy-frontend-development:
+    build_frontend:
+      - step:
+          name: "Frontend: Test and Build"
+          image: node:lts-alpine3.14
+          # size: 2x
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - export THIS='frontend/dods_pip'
+            - export HASH=$(echo ${BITBUCKET_COMMIT:0:7})
+            - cd $THIS
+            - yarn install
+            - yarn lint
+            - yarn test
+            - docker build -t "${HASH}" .
+            - docker save --output ".dist/${HASH}" "${HASH}"
+            - ls -la .dist
+          artifacts:
+            - frontend/dods_pip/.dist/**
+
+    deploy_frontend:
+      - variables:
+        - name: ENVIRONMENT
+          default: "dev"
+      - step:
+          name: "Frontend: Deploy to Environment"
+          image: gioatsomoglobal/devopstools:0.4.5
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - export THIS='frontend/dods_pip'
+            - tools/set-deployer.sh > credentials.txt
+            - cat credentials.txt
+            - source credentials.txt
+            - aws ecr describe-repositories
+
+    deploy-frontend-production:
       - step:
           name: Deploy frontend to development environment
           image: gioatsomoglobal/devopstools:0.4.5
