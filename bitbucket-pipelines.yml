@@ -362,7 +362,7 @@ pipelines:
             - docker
           script:
             - export THIS='frontend/dods_pip'
-            - tools/set-deployer.sh > credentials.txt
+            - tools/set-deployer.sh
             - cat credentials.txt
             - source credentials.txt
             - aws ecr describe-repositories

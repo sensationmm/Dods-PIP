@@ -40,27 +40,23 @@ AWS_ACCOUNT=${!ACCOUNT_VAR}
 echo "Environment: ${E}. Account ID: ${AWS_ACCOUNT}"
 
 echo "Assuming role for environment $E ..."
-# ROLE_CREDS=$(aws sts assume-role \
-#                      --external-id EXTERNAL_ID \
-#                      --role-arn arn:aws:iam::${AWS_ACCOUNT}:role/terraform-role \
-#                      --role-session-name ${AWS_ENV}-deployer
-#             )
 
 aws sts assume-role \
                      --external-id EXTERNAL_ID \
                      --role-arn arn:aws:iam::${AWS_ACCOUNT}:role/terraform-role \
                      --role-session-name ${E,,}-deployer \
                   > session_info.json
-            
-test $? -eq 0 && fail "Failed trying to assume role for $E environment."
+
+test $? -ne 0 && cat session_info.json && fail "Failed trying to assume role for $E environment."
 
 ROLE_EXPIRES=$(jq -r '.Credentials.Expiration' session_info.json)
-echo "Role valid until $ROLE_EXPIRES"
+echo "Done."
+echo "Role valid until ${ROLE_EXPIRES}."
 
 AWS_ACCESS_KEY_ID=$(jq '.Credentials.AccessKeyId' session_info.json)
 AWS_SECRET_ACCESS_KEY=$(jq '.Credentials.SecretAccessKey' session_info.json)
 AWS_SESSION_TOKEN=$(jq '.Credentials.SessionToken' session_info.json)
 
-echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
-echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
-echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN"
+echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" > credentials.txt
+echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> credentials.txt
+echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> credentials.txt
