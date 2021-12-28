@@ -25,9 +25,6 @@ content-type: application/json
         "schemaType": "Internal",
         "contentSource": "string",
         "informationType": "string",
-        "createdDateTime": "2021-08-18T10:29:51.960+01:00",
-        "version": "1.0",
-        "feedFormat": "text/plain",
         "taxonomyTerms": [
             {
                 "tagId": "sdfsdfsdf",

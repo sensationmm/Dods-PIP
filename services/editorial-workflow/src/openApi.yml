@@ -553,14 +553,9 @@ components:
               type: string
             createdBy:
               type: string
-            createdDateTime:
-              format: date-time
-              type: string
             documentContent:
               type: string
             documentTitle:
-              type: string
-            feedFormat:
               type: string
             informationType:
               type: string
@@ -574,8 +569,6 @@ components:
               items:
                 $ref: '#/components/schemas/TaxonomyTerm'
               type: array
-            version:
-              type: string
           required:
             - jurisdiction
             - documentTitle
@@ -584,9 +577,6 @@ components:
             - schemaType
             - contentSource
             - informationType
-            - createdDateTime
-            - version
-            - feedFormat
             - taxonomyTerms
             - documentContent
         
