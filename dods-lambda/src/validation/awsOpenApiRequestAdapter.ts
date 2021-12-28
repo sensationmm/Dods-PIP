@@ -7,7 +7,11 @@ const pickFieldValue = (path: string) => {
 
   const keys = path.split('.');
 
-  return (nestedObj: any) => keys.reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : undefined, nestedObj);
+  return (nestedObj: any) => keys.reduce((obj, key) => {
+    const [, value] = obj && Object.entries(obj).find(([k, _]) => k.toLowerCase() === key.toLowerCase()) || [];
+
+    return value;
+  }, nestedObj);
 }
 
 export const awsOpenApiRequestAdapter = async (inputData: APIGatewayEvent): Promise<HttpRequest> => {

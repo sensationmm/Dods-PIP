@@ -18,6 +18,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
   required,
   optional,
   helperText,
+  onKeyDown,
   onChange,
   onFocus,
   onBlur,
@@ -41,6 +42,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
         required={required}
         optional={optional}
         helperText={helperText}
+        onKeyDown={onKeyDown}
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}

@@ -7,7 +7,7 @@ const AVAILABLE_TAXONOMIES = [
     'Topics',
     'Organisations',
     'People',
-    'Grographies'
+    'Geography'
 ]
 
 export const getTaxonomies = async (requestPayload: TaxonomiesParameters): Promise<APIGatewayProxyResultV2> => {

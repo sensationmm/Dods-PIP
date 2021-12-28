@@ -3,6 +3,7 @@ import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lam
 import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
 import { createEditorialRecord } from '../../../src/handlers/createEditorialRecord/createEditorialRecord';
 import { mocked } from 'ts-jest/utils';
+import { CreateEditorialRecordParametersV2 } from '../../../src/domain';
 
 const defaultContext = createContext();
 
@@ -22,12 +23,22 @@ const basicCreatedRecord: any = {
     },
     createdAt: '2021-11-08T16:20:58.000Z',
     updatedAt: '2021-11-08T16:20:58.000Z',
-    reload: () => {},
-    setAssignedEditor: () => {},
-    setStatus: () => {},
+    reload: () => { },
+    setAssignedEditor: () => { },
+    setStatus: () => { },
 };
 
 jest.mock('../../../src/repositories/EditorialRecordRepository');
+
+const mockedPutObject = jest.fn();
+
+jest.mock('@aws-sdk/client-s3', () => {
+    return {
+        S3: jest.fn(() => ({
+            putObject: () => mockedPutObject()
+        }))
+    }
+});
 
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
 
@@ -160,5 +171,60 @@ describe(`${FUNCTION_NAME} handler`, () => {
         } catch (e) {
             expect(e).toHaveProperty('message', 'Generic Error');
         }
+    });
+
+    test('Valid input for V2 payload', async () => {
+        const requestParams: CreateEditorialRecordParametersV2 = {
+            documentName: "testDocument2",
+            contentSource: "string",
+            informationType: "string",
+            document: {
+                jurisdiction: "string",
+                documentTitle: "string",
+                createdBy: "string",
+                internallyCreated: true,
+                schemaType: "Internal",
+                contentSource: "string",
+                informationType: "string",
+                taxonomyTerms: [
+                    {
+                        tagId: "sdfsdfsdf",
+                        facetType: "Topics",
+                        inScheme: [
+                            "http://www.dods.co.uk/taxonomy/instance/Topics"
+                        ],
+                        termLabel: "Term 4",
+                        ancestorTerms: [
+                            {
+                                tagId: "sdfsdfsdf",
+                                termLabel: "Term 2",
+                                rank: 1
+                            },
+                            {
+                                tagId: "sdfsdfsdf",
+                                termLabel: "Term 1",
+                                rank: 0
+                            }
+                        ],
+                        alternative_labels: [
+                            "Term B",
+                            "Term C"
+                        ]
+                    }
+                ],
+                documentContent: "html content of the document"
+            }
+        };
+        const response = await createEditorialRecord(requestParams, defaultContext);
+
+        const expectedCreatedResponse = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'New Editorial Record created.',
+            data: basicCreatedRecord,
+        });
+
+        expect(response).toEqual(expectedCreatedResponse);
+
+        expect(mockedPutObject).toHaveBeenCalledTimes(1);
     });
 });

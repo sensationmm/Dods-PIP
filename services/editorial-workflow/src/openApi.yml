@@ -6,6 +6,7 @@ info:
 paths:
     /editorial-record:
         post:
+            operationId: createEditorialRecord
             summary: Create new Editorial Record
             requestBody:
                 $ref: '#/components/requestBodies/CreateEditorialRecord'
@@ -184,7 +185,6 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
-                    
     /editorial-record/{recordId}/publish:
         post:
             summary: Publish Editorial Record
@@ -323,7 +323,9 @@ components:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/CreateEditorialRecordRequest'
+                        anyOf:
+                            - $ref: '#/components/schemas/CreateEditorialRecordRequest'
+                            - $ref: '#/components/schemas/CreateEditorialRecordRequestV2'
         UpdateEditorialRecord:
             description: A JSON object containing Editorial Record information
             required: true
@@ -359,14 +361,17 @@ components:
             required:
                 - code
                 - message
+        
         EditorialRecordBase:
             type: object
             properties:
                 documentName:
                     type: string
+                    minLength: 1
                     example: Some UK Parliament Oral Question
                 s3Location:
                     type: string
+                    minLength: 1
                     example: arn:aws:s3:::editorial-workflow-prod/editorial-workflow/01012020/some-question.json
                 informationType:
                     type: string
@@ -476,6 +481,7 @@ components:
                     type: string
                     format: date
                     example: '2020-09-01 09:30:26'
+        
         EditorialRecordStatusResponse:
             allOf:
               - $ref: '#/components/schemas/EditorialRecordStatusBase'
@@ -519,3 +525,102 @@ components:
                 name:
                     type: string
                     example: Press Release
+
+        CreateEditorialRecordRequestV2:
+          type: object
+          additionalProperties: false
+          properties:
+            contentSource:
+              type: string
+            document:
+              $ref: '#/components/schemas/EditorialDocument'
+            documentName:
+              type: string
+              minLength: 1
+            informationType:
+              type: string
+          required:
+            - documentName
+            - contentSource
+            - informationType
+            - document
+        
+        EditorialDocument:
+          type: object
+          additionalProperties: false
+          properties:
+            contentSource:
+              type: string
+            createdBy:
+              type: string
+            documentContent:
+              type: string
+            documentTitle:
+              type: string
+            informationType:
+              type: string
+            internallyCreated:
+              type: boolean
+            jurisdiction:
+              type: string
+            schemaType:
+              type: string
+            taxonomyTerms:
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
+          required:
+            - jurisdiction
+            - documentTitle
+            - createdBy
+            - internallyCreated
+            - schemaType
+            - contentSource
+            - informationType
+            - taxonomyTerms
+            - documentContent
+        
+        TaxonomyTerm:
+          type: object
+          additionalProperties: false
+          properties:
+            alternative_labels:
+              items:
+                type: string
+              type: array
+            ancestorTerms:
+              items:
+                $ref: '#/components/schemas/AncestorTerm'
+              type: array
+            facetType:
+              type: string
+            inScheme:
+              items:
+                type: string
+              type: array
+            tagId:
+              type: string
+            termLabel:
+              type: string
+          required:
+            - tagId
+            - facetType
+            - inScheme
+            - termLabel
+            - ancestorTerms
+            - alternative_labels
+
+        AncestorTerm:
+          type: object
+          additionalProperties: false
+          properties:
+            rank:
+              type: number
+            tagId:
+              type: string
+            termLabel:
+              type: string
+          required:
+            - tagId
+            - termLabel
+            - rank

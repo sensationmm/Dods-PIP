@@ -12,13 +12,14 @@ servers:
   - url: /api
 
 paths:
-  /documents/{documentId}:
+    
+  /documents:
     get:
       operationId: getDocument
       summary: "Get Document from S3"
       description: "Get Document from S3"
       parameters:
-        - $ref: '#/components/parameters/documentId'
+        - $ref: "#/components/parameters/arn"
       responses:
         "200":
           $ref: "#/components/responses/GetDocument"
@@ -26,22 +27,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-    put:
-      operationId: updateDocument
-      summary: "Update document at S3"
-      description: "Update document at S3"
-      parameters:
-        - $ref: "#/components/parameters/documentId"
-        - $ref: "#/components/parameters/document"
-      responses:
-        "200":
-          $ref: "#/components/responses/UpdateDocument"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
-  /documents:
     post:
       operationId: createDocument
       summary: "Create Document on S3"
@@ -51,6 +36,30 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/CreateDocument"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+    put:
+      operationId: updateDocument
+      summary: "Update document at S3"
+      description: "Update document at S3"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                arn:
+                  type: string
+                  example: arn:aws:s3:::bucket-name/key-path
+                document:
+                  $ref: "#/components/schemas/Document"
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateDocument"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -84,7 +93,10 @@ components:
       properties:
         success:
           type: boolean
-        document:
+        message:
+          type: string
+          example: Document Successfully Updated
+        payload:
           $ref: '#/components/schemas/Document'
     CreateDocumentSuccess:
       type: object
@@ -177,6 +189,13 @@ components:
         type: string
       required: true
       description: Received Document
+    arn:
+      in: query
+      name: arn
+      schema:
+        type: string
+      required: true
+      description: Document arn of interest
 
   responses:
     NotFound:
@@ -217,37 +236,4 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateDocumentSuccess'
-    
-    # GetFullName:
-    #   description: "{title} {firstName} {lastName}"
-    #   content:
-    #     application/json:
-    #       schema:
-    #         type: "string"
-    #       examples:
-    #         Kenan:
-    #           value: Mr Kenan Hancer
-    #         Larissa:
-    #           value: Mrs Larissa Cottrell
-    # SayEnglishHello:
-    #   description: "Hello {title} {firstName} {lastName}"
-    #   content:
-    #     application/json:
-    #       schema:
-    #         type: "string"
-    #       examples:
-    #         Kenan:
-    #           value: Hello Mr Kenan Hancer
-    #         Larissa:
-    #           value: Hello Mrs Larissa Cottrell
-    # SayTurkishHello:
-    #   description: "Merhaba {title} {firstName} {lastName}"
-    #   content:
-    #     application/json:
-    #       schema:
-    #         type: "string"
-    #       examples:
-    #         Kenan:
-    #           value: Merhaba Mr Kenan Hancer
-    #         Larissa:
-    #           value: Merhaba Mrs Larissa Cottrell
+            

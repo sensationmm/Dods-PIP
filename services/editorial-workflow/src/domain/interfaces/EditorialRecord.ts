@@ -1,9 +1,10 @@
-interface EditorialRecordBase {
+export interface EditorialRecordBase {
     documentName: string;
     s3Location: string;
     informationType?: string;
     contentSource?: string;
 }
+
 export interface CreateEditorialRecordParameters extends EditorialRecordBase {
     assignedEditorId?: string;
     statusId?: string;
@@ -72,4 +73,40 @@ export interface DownstreamEndpoints { }
 
 export interface DistinctItem {
     item: string;
+}
+
+export interface AncestorTerm {
+    tagId: string;
+    termLabel: string;
+    rank: number;
+}
+
+export interface TaxonomyTerm {
+    tagId: string;
+    facetType: string;
+    inScheme: Array<string>;
+    termLabel: string;
+    ancestorTerms: Array<AncestorTerm>;
+    alternative_labels: Array<string>;
+}
+
+export interface EditorialDocument {
+    jurisdiction: string;
+    documentTitle: string;
+    createdBy: string;
+    internallyCreated: boolean;
+    schemaType: string;
+    contentSource: string;
+    informationType: string;
+    createdDateTime?: Date;
+    version?: string;
+    taxonomyTerms: Array<TaxonomyTerm>;
+    documentContent: string;
+}
+
+export interface CreateEditorialRecordParametersV2 {
+    documentName: string;
+    contentSource: string;
+    informationType: string;
+    document: EditorialDocument;
 }
