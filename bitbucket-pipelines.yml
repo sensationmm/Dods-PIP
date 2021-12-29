@@ -329,7 +329,7 @@ pipelines:
     build_frontend:
       - step:
           name: "Frontend: Test and Build"
-          image: node:lts-alpine3.14
+          image: gioatsomoglobal/devopstools:0.4.5
           size: 2x
           services:
             - docker
@@ -343,10 +343,9 @@ pipelines:
             - yarn lint
             - yarn test
             - docker build -t "${HASH}" .
-            - docker save --output ".dist/${HASH}" "${HASH}"
-            - ls -la .dist
-          artifacts:
-            - frontend/dods_pip/.dist/**
+            - docker save --output "${HASH}"
+            - aws s3 rm s3://pip-dev-services-lambdas/frontendImages/
+            - aws s3 cp ${HASH} s3://pip-dev-services-lambdas/frontendImages/
 
     deploy_frontend:
       - variables:
@@ -361,14 +360,14 @@ pipelines:
           caches:
             - docker
           script:
-            - tools/set-deployer.sh
-            - source credentials.txt
             - export THIS='frontend/dods_pip'
-            - cd $THIS
-            - ls .dist
-            - TAG=$(ls -t1 | head -1)
+            - cd $THIS && mkdir dist
+            - aws s3 cp s3://pip-dev-services-lambdas/frontendImages/* dist/
+            - TAG=$(ls -t1 dist/ | head -1)
+            - ../../tools/set-deployer.sh
+            - source ../../credentials.txt
             - export IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${FRONTEND_IMAGE}:${TAG}
-            - docker load --input .dist/$TAG
+            - docker load --input dist/$TAG
             - docker images
             - docker tag ${TAG} ${IMAGE_NAME}
             - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
