@@ -362,10 +362,10 @@ pipelines:
           script:
             - export THIS='frontend/dods_pip'
             - cd $THIS && mkdir dist
-            - aws s3 cp s3://pip-dev-services-lambdas/frontendImages/ dist/ --recursive
+            - aws s3 cp s3://pip-dev-services-lambdas/frontendImages/ dist/ --recursive --only-show-errors
             - TAG=$(ls -t1 dist/ | head -1)
             - ../../tools/set-deployer.sh
-            - source ../../credentials.txt
+            - source ../../tools/credentials.txt
             - export IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${FRONTEND_IMAGE}:${TAG}
             - docker load --input dist/$TAG
             - docker images
