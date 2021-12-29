@@ -5,6 +5,7 @@ configValidationMode: warn
 frameworkVersion: ^2.54.0
 
 variablesResolutionMode: 20210326
+useDotenv: true
 
 projectDir: ../
 
