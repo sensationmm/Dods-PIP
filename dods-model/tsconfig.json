@@ -26,6 +26,6 @@
     ".webpack/**/*",
     "_warmup/**/*",
     ".vscode/**/*",
-    "dist_/**/*"
+    "dist/**/*"
   ]
 }

@@ -3,6 +3,7 @@ import {
     ClientAccountTag,
     ClientAccountTeam,
     ClientAccountUser,
+    Collection,
     EditorialRecord,
     EditorialRecordStatus,
     Project,
@@ -28,6 +29,10 @@ if (process.env.NODE_ENV !== 'test') {
         as: 'salesContactUser',
         foreignKey: 'salesContact',
         targetKey: 'id',
+    });
+    ClientAccount.hasMany(Collection, {
+        as: 'collections',
+        foreignKey: 'clientAccountId',
     });
 
     ClientAccountTeam.belongsTo(ClientAccount, {
@@ -82,6 +87,17 @@ if (process.env.NODE_ENV !== 'test') {
         foreignKey: 'assignedEditorId',
         targetKey: 'id',
         as: 'assignedEditor',
+    });
+
+    Collection.belongsTo(ClientAccount, {
+        as: 'clientAccount',
+        foreignKey: 'clientAccountId',
+        targetKey: 'id',
+    });
+    Collection.belongsTo(User, {
+        as: 'createdBy',
+        foreignKey: 'createdById',
+        targetKey: 'id',
     });
 }
 

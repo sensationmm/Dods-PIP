@@ -1,16 +1,5 @@
-export type Title = "Mr" | "Mrs" | "Miss" | "Ms";
-
-export type Language = "English" | "Turkish";
-
-export interface SayLocalHelloParameters {
-    firstName: string;
-    lastName: string;
-    title: Title;
-}
-
-export interface SayHelloParameters extends SayLocalHelloParameters {
-    language: Language;
-}
+export * from './Collection';
+export * from './CollectionPersister';
 
 export interface DownstreamEndpoints {
     apiGatewayBaseURL: string;
