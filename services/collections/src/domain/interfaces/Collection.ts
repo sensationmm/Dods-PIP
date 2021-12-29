@@ -6,6 +6,11 @@ export interface CreateCollectionParameters
     createdById: string;
 }
 
+export interface UpdateCollectionParameters {
+    collectionId: string;
+    name: string;
+}
+
 export interface CollectionResponse {
     uuid: string;
     name: string;

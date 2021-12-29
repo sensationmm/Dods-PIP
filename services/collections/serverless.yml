@@ -135,3 +135,15 @@ functions:
       - http:
           method: post
           path: collections
+          caching:
+            enabled: false
+
+  updateCollection:
+    handler: src/handlers/updateCollection/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: collections/{collectionId}
+          caching:
+            enabled: false

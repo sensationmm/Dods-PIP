@@ -3,6 +3,7 @@ import {
     CollectionPersister,
     CollectionResponse,
     CreateCollectionPersisterParameters,
+    UpdateCollectionParameters
 } from '../domain';
 import { HttpError, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
@@ -17,7 +18,7 @@ export class CollectionRepository implements CollectionPersister {
         private model: typeof Collection,
         private clientAccountModel: typeof ClientAccount,
         private userModel: typeof User
-    ) {}
+    ) { }
 
     async createCollection(parameters: CreateCollectionPersisterParameters): Promise<Collection> {
         const { name, isActive, clientAccountId, createdById } = parameters;
@@ -61,18 +62,46 @@ export class CollectionRepository implements CollectionPersister {
             isActive,
             clientAccount: clientAccount
                 ? {
-                      uuid: clientAccount.uuid,
-                      name: clientAccount.name,
-                  }
+                    uuid: clientAccount.uuid,
+                    name: clientAccount.name,
+                }
                 : undefined,
             createdBy: createdBy
                 ? {
-                      uuid: createdBy.uuid,
-                      name: createdBy.fullName,
-                  }
+                    uuid: createdBy.uuid,
+                    name: createdBy.fullName,
+                }
                 : undefined,
             createdAt,
             updatedAt,
         };
+    }
+
+    async updateCollection(parameters: UpdateCollectionParameters): Promise<Collection> {
+
+        const { name, collectionId } = parameters
+        const collection = await this.model.findOne({
+            where: {
+                uuid: collectionId,
+            },
+            include: ['clientAccount', 'createdBy'],
+        });
+
+        if (!collection) {
+            throw new HttpError(
+                `Error: could not retrieve Collection with uuid: ${collectionId}`,
+                HttpStatusCode.BAD_REQUEST
+            );
+        }
+
+        await collection.update({
+            name: name,
+        });
+
+        await collection.reload({
+            include: ['clientAccount', 'createdBy'],
+        });
+
+        return collection;
     }
 }

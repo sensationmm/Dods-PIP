@@ -3,7 +3,7 @@ Host: localhost:3000
 Content-Type: application/json
 
 {
-    "clientAccountId": "24a97efc-3b63-44f1-92bf-186ba02f63d5",
+    "clientAccountId": "a170742a-f84d-40e9-9176-8fd6568149f7",
     "name": "Collection Name",
-    "createdById": "e276cee5-be01-4857-a7c2-96147c58eaa6"
+    "createdById": "9b48f3e1-fcc7-4c8a-8bfd-e7d62ce42aee"
 }
