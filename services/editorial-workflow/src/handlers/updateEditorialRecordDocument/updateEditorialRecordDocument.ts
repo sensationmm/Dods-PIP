@@ -30,10 +30,13 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
 
         const updatedEditorialRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams)
 
+        const response: any = { ...updatedEditorialRecord };
+        delete response.s3Location;
+
         return new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Document and editorial Record updated.',
-            data: updatedEditorialRecord
+            data: response
         });
     }
 
