@@ -16,7 +16,6 @@ export interface EditorialFormFields {
   sourceName: string;
   sourceUrl: string;
   informationType: string;
-  originator: string;
   title: string;
   content: string;
 }
@@ -102,15 +101,6 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
             label="Content Source (URL)"
             placeholder="www.api-link-source.com"
             onChange={(value) => onFieldChange('sourceUrl', value)}
-          />
-          <InputText
-            id="originator"
-            testId={'originator'}
-            value={fieldData.originator}
-            label="Originator"
-            placeholder="www.api-link-source.com"
-            optional
-            onChange={(value) => onFieldChange('originator', value)}
           />
         </Styled.inputFields>
 

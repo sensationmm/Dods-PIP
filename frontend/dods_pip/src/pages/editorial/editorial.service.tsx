@@ -1,22 +1,62 @@
-import {
-  CreateEditorialRecordParametersV2,
-  EditorialRecordOutput,
-} from '@dods-services/editorial-workflow/src/domain';
 import fetchJson from '@dods-ui/lib/fetchJson';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 
 export type metadataSelectionKey = 'contentSources' | 'informationTypes' | 'status';
 export type MetadataSelection = Record<metadataSelectionKey, { label: string; value: string }[]>;
+export type EditorialRecord = {
+  title: string;
+  createdBy: string; // user's given name
+  contentSource: {
+    name: string;
+    url?: string;
+  };
+  informationType: string;
+  taxonomyTerms: TaxonomyTerm[];
+  content: string;
+};
 
-export const createRecord = async (
-  payload: CreateEditorialRecordParametersV2,
-): Promise<EditorialRecordOutput> => {
+export type EditorialRecordResponse = {
+  documentName: string;
+  s3Location: string;
+  informationType?: string;
+  contentSource?: string;
+  uuid: string;
+  assignedEditor?: {
+    uuid: string;
+    fullName: string;
+  };
+  status?: {
+    uuid: string;
+    status: string;
+  };
+  isPublished?: boolean;
+  isArchived?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type AncestorTerm = {
+  tagId: string;
+  termLabel: string;
+  rank: number;
+};
+
+export type TaxonomyTerm = {
+  tagId: string;
+  facetType: string;
+  inScheme: string[];
+  termLabel: string;
+  ancestorTerms: AncestorTerm[];
+  alternative_labels: string[];
+};
+
+export const createRecord = async (payload: EditorialRecord): Promise<EditorialRecordResponse> => {
   const results = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
     method: 'POST',
     body: JSON.stringify(payload),
   });
 
-  return results.data as unknown as EditorialRecordOutput;
+  return results.data as unknown as EditorialRecordResponse;
 };
 
 export const getMetadataSelections = async (): Promise<MetadataSelection> => {

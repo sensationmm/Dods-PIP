@@ -1,4 +1,3 @@
-import { CreateEditorialRecordParametersV2 } from '@dods-services/editorial-workflow/src/domain';
 import Panel from '@dods-ui/components/_layout/Panel';
 import Spacer from '@dods-ui/components/_layout/Spacer';
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
@@ -9,6 +8,7 @@ import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import {
   createRecord,
+  EditorialRecord,
   getMetadataSelections,
   MetadataSelection,
 } from '@dods-ui/pages/editorial/editorial.service';
@@ -40,12 +40,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       sourceUrl: '',
       sourceName: '',
       informationType: '',
-      originator: '',
     },
   });
-  // const [staticEditorContent, setStaticEditorContent] = useState<
-  //   HTMLCollection | HTMLElement | null
-  // >(null);
+
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
 
@@ -74,17 +71,10 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     })();
   }, []);
 
-  // useEffect(() => {
-  //   const div = document.createElement('div');
-  //   div.innerHTML = fieldData.content;
-  //
-  //   setStaticEditorContent(div.children);
-  // }, []);
-
   const onSave = async () => {
     setLoading(true);
     // TODO populate with data once back end is correct
-    await createRecord({} as CreateEditorialRecordParametersV2);
+    await createRecord({} as EditorialRecord);
     setLoading(false);
     addNotification({ title: 'Record added successfully', type: 'confirm' });
   };

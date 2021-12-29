@@ -6,6 +6,7 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "useUnknownInCatchVariables": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -15,7 +16,6 @@
     "jsx": "preserve",
     "baseUrl": "./src",
     "paths": {
-      "@dods-services/*": ["../../../services/*"],
       "@dods-ui/*": ["./*"]
     }
   },
