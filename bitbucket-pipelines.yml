@@ -362,7 +362,7 @@ pipelines:
           script:
             - export THIS='frontend/dods_pip'
             - cd $THIS && mkdir dist
-            - aws s3 cp s3://pip-dev-services-lambdas/frontendImages/* dist/
+            - aws s3 cp s3://pip-dev-services-lambdas/frontendImages/ dist/ --recursive
             - TAG=$(ls -t1 dist/ | head -1)
             - ../../tools/set-deployer.sh
             - source ../../credentials.txt
