@@ -405,7 +405,7 @@ pipelines:
           script:
             - cd services/$SERVICE
             - |
-              if [[ -x .ci/build.sh ]]; then
+              if [[ -e .ci/build.sh ]]; then
                 echo "Running special building definitions from services/$SERVICE/.ci/build.sh"
                 bash .ci/build.sh
               else
