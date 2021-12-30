@@ -98,10 +98,12 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
 
     const newRecord = await EditorialRecordRepository.defaultInstance.createEditorialRecord(createEditorialRecordParams);
 
+    let { s3Location, ...recordResponse } = newRecord;
+
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
         message: 'New Editorial Record created.',
-        data: newRecord,
+        data: recordResponse,
     });
 };
 
