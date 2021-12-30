@@ -6,10 +6,14 @@ import {
     BelongsToManyGetAssociationsMixin,
     BelongsToSetAssociationMixin,
     DataTypes,
+    HasMany,
+    HasManyAddAssociationMixin,
+    HasManyCreateAssociationMixin,
+    HasManyGetAssociationsMixin,
     Model,
     Optional,
 } from 'sequelize';
-import { ClientAccountTeam, SubscriptionType, User } from './';
+import { ClientAccountTeam, Collection, SubscriptionType, User } from './';
 
 import sequelizeConnection from '../config/sequelizeConnection';
 
@@ -46,8 +50,7 @@ export interface ClientAccountInput
         | 'contractRollover'
     > {}
 
-export interface ClientAccountOutput
-    extends Required<ClientAccountAttributes> {}
+export interface ClientAccountOutput extends Required<ClientAccountAttributes> {}
 
 export class ClientAccount
     extends Model<ClientAccountAttributes, ClientAccountInput>
@@ -75,10 +78,7 @@ export class ClientAccount
     public subscription!: number | null;
     public readonly subscriptionType!: SubscriptionType;
     public getSubscriptionType!: BelongsToGetAssociationMixin<SubscriptionType>;
-    public setSubscriptionType!: BelongsToSetAssociationMixin<
-        SubscriptionType,
-        number
-    >;
+    public setSubscriptionType!: BelongsToSetAssociationMixin<SubscriptionType, number>;
     public createSubscriptionType!: BelongsToCreateAssociationMixin<SubscriptionType>;
 
     // mixins for association (optional)
@@ -92,10 +92,16 @@ export class ClientAccount
     public getTeam!: BelongsToManyGetAssociationsMixin<User>;
     public ClientAccountTeam?: ClientAccountTeam;
 
+    public readonly collections?: Collection[];
+    public getCollections!: HasManyGetAssociationsMixin<Collection>;
+    public addCollection!: HasManyAddAssociationMixin<Collection, number>;
+    public createCollection!: HasManyCreateAssociationMixin<Collection>;
+
     public static associations: {
         subscriptionType: Association<ClientAccount, SubscriptionType>;
         salesContactUser: Association<ClientAccount, User>;
         team: BelongsToMany<ClientAccount, User>;
+        collections: HasMany<ClientAccount, Collection>;
     };
 
     // Timestamps

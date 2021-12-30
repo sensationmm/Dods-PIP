@@ -1,0 +1,9 @@
+POST /local/collections HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+
+{
+    "clientAccountId": "24a97efc-3b63-44f1-92bf-186ba02f63d5",
+    "name": "Collection Name",
+    "createdById": "e276cee5-be01-4857-a7c2-96147c58eaa6"
+}

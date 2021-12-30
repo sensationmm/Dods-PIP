@@ -7,38 +7,31 @@ import {
     BelongsToSetAssociationMixin,
     DataTypes,
     Model,
-    Optional,
 } from 'sequelize';
+import { ClientAccount, CollectionAlert, CollectionDocument, CollectionSavedQuery, User } from './';
+
 import sequelizeConnection from '../config/sequelizeConnection';
-import { ClientAccount, CollectionSavedQuery, CollectionDocument, CollectionAlert } from './';
 
 interface CollectionAttributes {
     id: number;
     uuid: string;
-    clientAccountId: number;
     name: string;
     isActive: boolean;
 }
 
-export interface CollectionInput
-    extends Optional<
-    CollectionAttributes,
-    | 'id'
-    | 'uuid'
-    | 'clientAccountId'
-    | 'name'
-    > { }
+export interface CollectionInput extends Omit<CollectionAttributes, 'id' | 'uuid'> {
+    clientAccountId: number;
+    createdById: number;
+}
 
-
-export interface CollectionOutput extends Required<CollectionAttributes> { }
+export interface CollectionOutput extends Required<CollectionAttributes> {}
 
 export class Collection
     extends Model<CollectionAttributes, CollectionInput>
-    implements CollectionAttributes, CollectionOutput {
-
+    implements CollectionAttributes, CollectionOutput
+{
     public id!: number;
     public uuid!: string;
-    public clientAccountId!: number;
     public name!: string;
 
     public isActive!: boolean;
@@ -48,6 +41,10 @@ export class Collection
     public getClientAccount!: BelongsToGetAssociationMixin<ClientAccount>;
     public setClientAccount!: BelongsToSetAssociationMixin<ClientAccount, number>;
     public createClientAccount!: BelongsToCreateAssociationMixin<ClientAccount>;
+
+    public readonly createdBy!: User;
+    public getCreatedBy!: BelongsToGetAssociationMixin<User>;
+    public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
 
     public readonly savedQueries?: CollectionSavedQuery[];
     public getSavedQueries!: BelongsToManyGetAssociationsMixin<CollectionSavedQuery>;
@@ -63,6 +60,7 @@ export class Collection
 
     public static associations: {
         clientAccount: Association<Collection, ClientAccount>;
+        createdBy: Association<Collection, User>;
         savedQueries: BelongsToMany<Collection, CollectionSavedQuery>;
         alerts: BelongsToMany<Collection, CollectionAlert>;
         documents: BelongsToMany<Collection, CollectionDocument>;
@@ -87,23 +85,13 @@ Collection.init(
             defaultValue: DataTypes.UUIDV4,
             allowNull: false,
         },
-        clientAccountId: {
-            type: DataTypes.INTEGER({ length: 11 }),
-            allowNull: false,
-            references: {
-                model: 'dods_client_accounts',
-                key: 'id'
-            },
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE'
-        },
         name: {
             type: DataTypes.STRING({ length: 255 }),
             allowNull: false,
         },
         isActive: {
             type: DataTypes.BOOLEAN,
-            defaultValue: 0,
+            defaultValue: true,
             allowNull: true,
         },
     },

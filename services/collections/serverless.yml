@@ -128,42 +128,10 @@ functions:
     tags:
       foo: bar
 
-  sayHello:
-    handler: src/handlers/sayHello/index.handle
-    description: Triggered when http request comes
+  createCollection:
+    handler: src/handlers/createCollection/index.handle
+    description: Creates a New Collection
     events:
       - http:
-          method: get
-          path: sayHello
-          caching:
-            enabled: false
-
-  sayEnglishHello:
-    handler: src/handlers/sayEnglishHello/index.handle
-    description: Triggered when http request comes
-    events:
-      - http:
-          method: get
-          path: sayEnglishHello
-          caching:
-            enabled: false
-
-  sayTurkishHello:
-    handler: src/handlers/sayTurkishHello/index.handle
-    description: Triggered when http request comes
-    events:
-      - http:
-          method: get
-          path: sayTurkishHello
-          caching:
-            enabled: false
-
-  getFullName:
-    handler: src/handlers/getFullName/index.handle
-    description: Triggered when http request comes
-    events:
-      - http:
-          method: get
-          path: getFullName
-          caching:
-            enabled: false
+          method: post
+          path: collections
