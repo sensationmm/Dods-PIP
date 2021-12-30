@@ -12,6 +12,7 @@ custom:
   resource_prefix: migration-step-3
   app_acronym: migration-step-3-bucket
   default_stage: dev
+  account_id: 390773179818
   stage: ${opt:stage, self:custom.default_stage}
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
@@ -51,6 +52,7 @@ provider:
     OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
+    LAMBDA_AUTO_TAGGING_ARN: arn:aws:lambda:${self:custom.region}:${self:custom.account_id}:function:dods-auto-tagging-dev-auto-tagging
     CONTENT_BUCKET: ${file(../../serverless.common.yml):custom.content_bucket}
 
   iamRoleStatements:
