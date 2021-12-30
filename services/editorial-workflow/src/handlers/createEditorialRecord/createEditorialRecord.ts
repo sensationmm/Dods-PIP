@@ -1,9 +1,10 @@
+import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { CreateEditorialRecordParameters, EditorialDocument, config, } from '../../domain';
+
+import { EditorialRecordRepository } from '../../repositories/EditorialRecordRepository';
 import { S3 } from '@aws-sdk/client-s3';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
-import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { config, CreateEditorialRecordParameters, CreateEditorialRecordParametersV2, } from '../../domain';
-import { EditorialRecordRepository } from '../../repositories/EditorialRecordRepository';
 
 const { aws: { region, buckets: { documents: documentsBucket } } } = config;
 
@@ -51,14 +52,32 @@ export const createEditorialRecordV1 = async (params: CreateEditorialRecordParam
     });
 };
 
-export const createEditorialRecordV2 = async (params: CreateEditorialRecordParametersV2) => {
+export const createEditorialRecordV2 = async (params: EditorialDocument) => {
 
-    params.document.createdDateTime = new Date();
-    params.document.version = '1.0';
-    const { documentName, contentSource, informationType, document, document: { createdDateTime } } = params as CreateEditorialRecordParametersV2;
+    params = {
+        ...params,
+        jurisdiction: 'UK',
+        sourceReferenceFormat: 'text/html',
+        internallyCreated: true,
+        schemaType: 'Internal',
+        contentDateTime: new Date(),
+        createdDateTime: new Date(),
+        ingestedDateTime: new Date(),
+        version: '1.0',
+        language: 'en',
+        originalContent: '',
+    }
+    if (!params.taxonomyTerms) {
+        params.taxonomyTerms = [];
+    }
+
+    const documentName: any = params.documentTitle;
+
+    const { contentSource, informationType, createdDateTime } = params as EditorialDocument;
 
     const fileKey = `${contentSource}/${informationType}/${moment(createdDateTime).format('DD-MM-YYYY')}/${documentName}.json`;
 
+    const document = params;
     const documentId = uuidv4();
 
     Object.assign(document, { documentId });
@@ -69,8 +88,15 @@ export const createEditorialRecordV2 = async (params: CreateEditorialRecordParam
             Key: fileKey,
             Body: JSON.stringify(document),
         });
+    const createEditorialRecordParams = {
+        documentName: documentName,
+        s3Location: `arn:aws:s3:::${documentsBucket}/${fileKey}`,
+        informationType: params.informationType,
+        contentSource: params.contentSource,
+        statusId: config.dods.recordStatuses.created
+    }
 
-    const newRecord = await EditorialRecordRepository.defaultInstance.createEditorialRecord({ ...params, s3Location: `arn:aws:s3:::${documentsBucket}/${fileKey}`, statusId: config.dods.recordStatuses.created });
+    const newRecord = await EditorialRecordRepository.defaultInstance.createEditorialRecord(createEditorialRecordParams);
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
@@ -79,7 +105,7 @@ export const createEditorialRecordV2 = async (params: CreateEditorialRecordParam
     });
 };
 
-export const createEditorialRecord: AsyncLambdaHandler<CreateEditorialRecordParameters | CreateEditorialRecordParametersV2> = async (params) => {
+export const createEditorialRecord: AsyncLambdaHandler<CreateEditorialRecordParameters | EditorialDocument> = async (params) => {
 
     if (isCreateEditorialRecordParameters(params)) {
         return createEditorialRecordV1(params);

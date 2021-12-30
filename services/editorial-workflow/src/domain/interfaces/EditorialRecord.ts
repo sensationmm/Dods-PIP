@@ -91,17 +91,25 @@ export interface TaxonomyTerm {
 }
 
 export interface EditorialDocument {
-    jurisdiction: string;
-    documentTitle: string;
-    createdBy: string;
-    internallyCreated: boolean;
-    schemaType: string;
+    documentName?: string;
     contentSource: string;
     informationType: string;
+    jurisdiction?: string;
+    documentTitle?: string;
+    createdBy?: string;
+    sourceReferenceUri?: string
+    internallyCreated: boolean;
+    schemaType: string;
     createdDateTime?: Date;
     version?: string;
-    taxonomyTerms: Array<TaxonomyTerm>;
-    documentContent: string;
+    taxonomyTerms?: Array<TaxonomyTerm>;
+    documentContent?: string;
+    sourceReferenceFormat?: string;
+    language?: string;
+    contentDateTime?: Date;
+    ingestedDateTime?: Date;
+    originalContent?: string;
+
 }
 
 export interface CreateEditorialRecordParametersV2 {
@@ -133,8 +141,7 @@ export interface DocumentParameters {
     documentContent?: string
 }
 
-export interface UpdateEditorialRecordDocumentParameter {
-    document: DocumentParameters;
+export interface UpdateEditorialRecordDocumentParameter extends DocumentParameters {
     recordId: string;
 }
 

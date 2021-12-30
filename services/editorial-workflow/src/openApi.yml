@@ -348,8 +348,8 @@ components:
                 application/json:
                     schema:
                         anyOf:
-                            - $ref: '#/components/schemas/CreateEditorialRecordRequest'
                             - $ref: '#/components/schemas/CreateEditorialRecordRequestV2'
+                            - $ref: '#/components/schemas/CreateEditorialRecordRequest'
         UpdateEditorialRecord:
             description: A JSON object containing Editorial Record information
             required: true
@@ -563,18 +563,28 @@ components:
           properties:
             contentSource:
               type: string
-            document:
-              $ref: '#/components/schemas/EditorialDocument'
-            documentName:
-              type: string
-              minLength: 1
             informationType:
               type: string
+            createdBy:
+              type: string
+            documentContent:
+              type: string
+            documentTitle:
+              type: string
+            internallyCreated:
+              type: boolean
+            schemaType:
+              type: string
+            sourceReferenceUri:
+              type: string
+            taxonomyTerms:
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
           required:
-            - documentName
             - contentSource
             - informationType
-            - document
+            - documentTitle
         
         EditorialDocument:
           type: object
@@ -596,19 +606,17 @@ components:
               type: string
             schemaType:
               type: string
+            sourceReferenceUri:
+              type: string
             taxonomyTerms:
               items:
                 $ref: '#/components/schemas/TaxonomyTerm'
               type: array
           required:
-            - jurisdiction
             - documentTitle
             - createdBy
-            - internallyCreated
-            - schemaType
             - contentSource
             - informationType
-            - taxonomyTerms
             - documentContent
         
         TaxonomyTerm:
