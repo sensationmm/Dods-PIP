@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  description: DODS Boilerplate
+  description: Collection Service
   version: 1.0.0
-  title: DODS Boilerplate
+  title: Collection Service
   contact:
     email: kenanhancer@gmail.com
   license:
@@ -39,6 +39,25 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}:
+    put:
+      operationId: updateCollection
+      summary: "Update a collection associated to a Client Account"
+      description: "Update Collection Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateCollection"
+      responses:
+        "200":
+          $ref: "#/components/responses/CollectionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 # security:
 #   - bearerAuth: []
@@ -63,6 +82,13 @@ components:
         createdById:
           type: string
           format: uuid
+          
+    UpdateCollectionInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
 
     CollectionOutput:
       type: object
@@ -174,3 +200,11 @@ components:
              - name
              - clientAccountId
              - createdById
+             
+    UpdateCollection:
+      description: "Payload to update a collection"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateCollectionInput"
+

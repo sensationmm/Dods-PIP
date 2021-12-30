@@ -57,7 +57,9 @@ const mockFindOne = async (options: any) => {
     if (options.where.uuid === 'clientUUID') {
         return defaultClientAccount;
     }
-
+    if (options.where.uuid === 'collectionUUID') {
+        return defaultCollectionModel;
+    }
     return null;
 };
 
@@ -80,6 +82,7 @@ afterEach(() => {
 const CLASS_NAME = CollectionRepository.name;
 const CREATE_COLLECTION_NAME = CollectionRepository.defaultInstance.createCollection.name;
 const MAP_COLLECTION_NAME = CollectionRepository.defaultInstance.mapCollection.name;
+const UPDATE_COLLECTION_NAME = CollectionRepository.defaultInstance.updateCollection.name;
 
 describe(`${CLASS_NAME}.${CREATE_COLLECTION_NAME}`, () => {
     test('Happy case, all parameters', async () => {
@@ -148,4 +151,36 @@ describe(`${CLASS_NAME}.${MAP_COLLECTION_NAME}`, () => {
         const response = CollectionRepository.defaultInstance.mapCollection(incompleteModel);
         expect(response).toEqual(incompleteModel);
     });
+});
+
+describe(`${CLASS_NAME}.${UPDATE_COLLECTION_NAME}`, () => {
+    test('Happy case, all parameters', async () => {
+        const updateCollectionParams = {
+            collectionId: 'collectionUUID',
+            name: 'Test Collection',
+        };
+        const response = await CollectionRepository.defaultInstance.updateCollection(
+            updateCollectionParams
+        );
+        expect(response).toEqual(defaultCollectionModel);
+    });
+
+    test('Invalid collectionId, should throw', async () => {
+        const updateCollectionParams = {
+            collectionId: 'INVALID',
+            name: 'Test Collection',
+        };
+        try {
+            await CollectionRepository.defaultInstance.updateCollection(updateCollectionParams);
+            expect(true).toBe(false);
+        } catch (error) {
+            //expect(error instanceof HttpError).toBe(true);
+            expect(error).toHaveProperty(
+                'message',
+                `Error: could not retrieve Collection with uuid: INVALID`
+            );
+            //expect(error).toHaveProperty('statusCode', HttpStatusCode.BAD_REQUEST);
+        }
+    });
+
 });
