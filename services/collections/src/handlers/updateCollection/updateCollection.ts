@@ -19,12 +19,11 @@ export const updateCollection: AsyncLambdaHandler<UpdateCollectionParameters> = 
             message: 'Collection updated successfully',
             data: updatedResponse,
         });
-    } catch (error) {
-        //throw error;
+    } catch (error: any) {
 
         return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
             success: false,
-            message: error,
+            message: error.message,
         });
 
     }

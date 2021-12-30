@@ -87,10 +87,11 @@ export class CollectionRepository implements CollectionPersister {
             include: ['clientAccount', 'createdBy'],
         });
 
+
         if (!collection) {
-            throw new HttpError(
+
+            throw new Error(
                 `Error: could not retrieve Collection with uuid: ${collectionId}`,
-                HttpStatusCode.BAD_REQUEST
             );
         }
 

@@ -10,7 +10,7 @@
         "seed:undo": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:seed:undo",
         "migrate": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:migrate",
         "migrate:undo": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:migrate:undo",
-        "build": "webpack",
+        "build": "cp .env.example .env && ./node_modules/.bin/webpack --config webpack.config.js",
         "predeploy": "npm run build",
         "deploy": "npm publish"
     },
