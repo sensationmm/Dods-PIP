@@ -10,6 +10,8 @@ const defaultRecordModel: any = {
     s3Location: 'SomeLocation',
     informationType: 'Random Doc',
     contentSource: 'Manual Injection',
+    isArchived: false,
+    isPublished: false,
     status: {
         uuid: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
         status: 'In progress',
@@ -20,10 +22,10 @@ const defaultRecordModel: any = {
     },
     createdAt: '2021-11-08T16:20:58.000Z',
     updatedAt: '2021-11-08T16:20:58.000Z',
-    update: () => {},
-    reload: () => {},
-    setAssignedEditor: () => {},
-    setStatus: () => {},
+    update: () => { },
+    reload: () => { },
+    setAssignedEditor: () => { },
+    setStatus: () => { },
 };
 
 const defaultRecordOutput: any = {
@@ -36,6 +38,8 @@ const defaultRecordOutput: any = {
         uuid: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
         status: 'In progress',
     },
+    isArchived: false,
+    isPublished: false,
     assignedEditor: {
         uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
         fullName: 'Employee Example',
@@ -56,8 +60,8 @@ const defaultUnlockedRecordModel: any = {
     },
     createdAt: '2021-11-08T16:20:58.000Z',
     updatedAt: '2021-11-08T16:20:58.000Z',
-    update: () => {},
-    reload: () => {},
+    update: () => { },
+    reload: () => { },
     setAssignedEditor: function () {
         this.assignedEditor = {
             uuid: '0698280d-8b0f-4a2c-8892-e1599e407fb4',
@@ -92,6 +96,8 @@ const defaultListRecords: any = {
                 'arn:aws:s3:::editorial-workflow-prod/editorial-workflow/01012020/fried-brain.json',
             informationType: 'Random Doc',
             contentSource: 'Manual Injection',
+            isArchived: false,
+            isPublished: false,
             status: {
                 uuid: 'bbffb0d0-cb43-464d-a4ea-aa9ebd14a138',
                 status: 'In progress',

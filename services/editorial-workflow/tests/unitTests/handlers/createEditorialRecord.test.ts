@@ -10,7 +10,6 @@ const defaultContext = createContext();
 const basicCreatedRecord: any = {
     uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
     documentName: 'NewDocument',
-    s3Location: 'SomeLocation',
     informationType: 'Random Doc',
     contentSource: 'Manual Injection',
     status: {
