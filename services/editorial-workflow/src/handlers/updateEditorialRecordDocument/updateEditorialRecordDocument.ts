@@ -12,9 +12,11 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
     const record = await EditorialRecordRepository.defaultInstance.getEditorialRecord(params.recordId);
     const documentARN = record.s3Location;
 
+    let { recordId, ...document } = params;
+
     const updateDocumentsParams = {
         arn: documentARN,
-        document: params.document
+        document: document
     }
     const updatedResponse = await DocumentServiceRepository.defaultInstance.updateDocument(updateDocumentsParams)
 
