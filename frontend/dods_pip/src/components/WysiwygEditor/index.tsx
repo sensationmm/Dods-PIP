@@ -2,6 +2,7 @@ import './blots/font-style';
 import './blots/align';
 import './blots/bold';
 import './blots/italic';
+import './blots/content-tag';
 
 import color from '@dods-ui/globals/color';
 import Quill from 'quill';
@@ -9,12 +10,26 @@ import React, { useEffect } from 'react';
 
 import * as Styled from './wysiwyg-editor.styles';
 
+type ContentSelection = {
+  fromIndex: number;
+  toIndex: number;
+  text: string;
+};
+
+export type ContentTag = {
+  value: string;
+  type: string;
+  term: string;
+};
+
 export interface WysiwygEditorProps {
   id?: string;
   placeholder?: string;
   readOnly?: boolean;
   toolbarConfig?: [];
   onTextChange: (value: string) => void;
+  onSelection?: (selection: ContentSelection) => void;
+  tags?: ContentTag[];
 }
 
 const COLOURS = [
@@ -47,6 +62,20 @@ const appendCoreStyles = () =>
     document.head.appendChild(link);
   });
 
+const embedTags = (quillInstance: Quill, tags: ContentTag[]) => {
+  tags.forEach((tag) => {
+    if (tag.value?.length) {
+      const matches = quillInstance.getText().matchAll(RegExp(`\\b${tag.value}\\b`, 'igm'));
+      Array.from(matches).forEach((match) => {
+        // replace text with embedded 'content-tag
+        // Known bug here, the index shifts after each new element is added, therefore, the content replacement shifts exponentially -_-
+        quillInstance.deleteText(match.index as number, (tag.value as string).length);
+        quillInstance.insertEmbed(match.index as number, 'content-tag', tag);
+      });
+    }
+  });
+};
+
 const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   id = `wysiwyg-editor_${+new Date()}`,
   placeholder = 'Enter content...',
@@ -54,6 +83,8 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   readOnly = false,
   children,
   onTextChange,
+  onSelection,
+  tags = [],
 }) => {
   useEffect(() => {
     appendCoreStyles();
@@ -70,6 +101,19 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
     quill.on('text-change', function (delta, oldDelta, source) {
       onTextChange(document.querySelector('.ql-editor')?.innerHTML || '');
     });
+
+    onSelection &&
+      quill.on('selection-change', function (range, oldRange, source) {
+        if (range?.length <= 0) return;
+        onSelection({
+          fromIndex: range.index,
+          toIndex: range.length,
+          text: quill.getText(range.index, range.length),
+        });
+      });
+
+    // add tags markup to content
+    tags.length && embedTags(quill, tags);
   }, []);
 
   return (
