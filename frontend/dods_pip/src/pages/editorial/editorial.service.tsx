@@ -1,54 +1,10 @@
 import fetchJson from '@dods-ui/lib/fetchJson';
+import {
+  EditorialRecord,
+  EditorialRecordResponse,
+  MetadataSelection,
+} from '@dods-ui/pages/editorial/editorial.models';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
-
-export type metadataSelectionKey = 'contentSources' | 'informationTypes' | 'status';
-export type MetadataSelection = Record<metadataSelectionKey, { label: string; value: string }[]>;
-export type EditorialRecord = {
-  title: string;
-  createdBy: string; // user's given name
-  contentSource: {
-    name: string;
-    url?: string;
-  };
-  informationType: string;
-  taxonomyTerms: TaxonomyTerm[];
-  content: string;
-};
-
-export type EditorialRecordResponse = {
-  documentName: string;
-  s3Location: string;
-  informationType?: string;
-  contentSource?: string;
-  uuid: string;
-  assignedEditor?: {
-    uuid: string;
-    fullName: string;
-  };
-  status?: {
-    uuid: string;
-    status: string;
-  };
-  isPublished?: boolean;
-  isArchived?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type AncestorTerm = {
-  tagId: string;
-  termLabel: string;
-  rank: number;
-};
-
-export type TaxonomyTerm = {
-  tagId: string;
-  facetType: string;
-  inScheme: string[];
-  termLabel: string;
-  ancestorTerms: AncestorTerm[];
-  alternative_labels: string[];
-};
 
 export const createRecord = async (payload: EditorialRecord): Promise<EditorialRecordResponse> => {
   const results = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
@@ -57,6 +13,53 @@ export const createRecord = async (payload: EditorialRecord): Promise<EditorialR
   });
 
   return results.data as unknown as EditorialRecordResponse;
+};
+
+export const getEditorialPreview = async (documentID: string): Promise<EditorialRecordResponse> => {
+  // not sure if this should come from the local data or server
+  const results = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
+    method: 'GET',
+    body: documentID,
+  });
+
+  return results.data as unknown as EditorialRecordResponse;
+};
+
+export const deleteEditorialRecord = async (
+  documentID: string,
+): Promise<EditorialRecordResponse> => {
+  const results = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
+    method: 'DELETE',
+    body: documentID,
+  });
+
+  return results.data as unknown as EditorialRecordResponse;
+};
+
+export const setEditorialPublishState = async (payload: {
+  // Payload contract not confirmed
+  isPublished: boolean;
+  documentId: string;
+}): Promise<EditorialRecordResponse> => {
+  const results = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
+
+  return results.data as unknown as EditorialRecordResponse; // No idea what the response is yet
+};
+
+export const scheduleEditorial = async (payload: {
+  // Payload contract not confirmed
+  date: string;
+  documentId: string;
+}): Promise<EditorialRecordResponse> => {
+  const results = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
+
+  return results.data as unknown as EditorialRecordResponse; // No idea what the response is yet
 };
 
 export const getMetadataSelections = async (): Promise<MetadataSelection> => {
