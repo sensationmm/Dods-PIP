@@ -403,7 +403,7 @@ pipelines:
           caches:
             - docker
           script:
-            - echo "Running build for service: ${SERVICE}"
+            - 'echo "Running build for service: ${SERVICE}"'
             - cd services/$SERVICE
             - |
               if [[ -e .ci/build.sh ]]; then
