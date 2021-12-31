@@ -26,13 +26,14 @@ export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = 
     const bucketResponse = await DocumentStorageRepository.defaultInstance.getDocumentByArn(documentARN);
 
     if (bucketResponse.payload) {
-        lambdaReponse = await DocumentPublishRepository.defaultInstance.publishDocument(config.aws.lambdas.contentIndexer, bucketResponse.payload)
+
+        const dataPayload = { data: JSON.parse(bucketResponse.payload) }
+        lambdaReponse = await DocumentPublishRepository.defaultInstance.publishDocument(config.aws.lambdas.contentIndexer, JSON.stringify(dataPayload))
     }
 
     if (bucketResponse.success && lambdaReponse) {
 
         const updateParams = { recordId, isPublished: true }
-
         const updatedRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams);
 
         return new HttpResponse(HttpStatusCode.OK, {
