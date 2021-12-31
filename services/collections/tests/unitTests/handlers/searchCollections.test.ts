@@ -1,15 +1,15 @@
+import { mocked } from 'jest-mock';
 import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 import { CollectionsRepository, SearchCollectionsInput, SearchCollectionsOutput } from '@dodsgroup/dods-repositories';
-import { mocked } from 'jest-mock';
 import { searchCollections } from '../../../src/handlers/searchCollections/searchCollections';
-
-jest.mock('@dodsgroup/dods-repositories');
 
 const mockedCollectionRepository = mocked(CollectionsRepository, true);
 
 const defaultContext = createContext();
 
 const FUNCTION_NAME = searchCollections.name;
+
+jest.mock('@dodsgroup/dods-repositories');
 
 describe(`${FUNCTION_NAME} handler`, () => {
     it('Valid input', async () => {
