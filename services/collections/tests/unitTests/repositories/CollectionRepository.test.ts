@@ -2,7 +2,7 @@ import { Collection, Model } from '@dodsgroup/dods-model';
 import { HttpError, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
 import { CollectionRepository } from '../../../src/repositories';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 const defaultCollectionModel: any = {
     uuid: 'newUUID',
