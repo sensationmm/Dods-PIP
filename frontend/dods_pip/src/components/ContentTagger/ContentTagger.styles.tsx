@@ -182,6 +182,7 @@ export const browserWindow = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 100;
 `;
 
 type BrowserProps = {

@@ -720,7 +720,9 @@ components:
               type: string
               example: en
             taxonomyTerms:
-              type: object
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
             originalContent:
               type: string
             documentContent:
