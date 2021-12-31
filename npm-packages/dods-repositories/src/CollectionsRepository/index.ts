@@ -1,5 +1,7 @@
-import { Collection, Op, Sequelize } from "@dodsgroup/dods-model";
+import { ClientAccount, Collection, Op, Sequelize } from "@dodsgroup/dods-model";
 import { CollectionsPersister, SearchCollectionsInput, SearchCollectionsOutput } from "./domain";
+
+import { CollectionError } from "@dodsgroup/dods-domain"
 
 export * from './domain';
 
@@ -17,10 +19,19 @@ export class CollectionsRepository implements CollectionsPersister {
             sortDirection,
         } = parameters;
 
+        const clientAccount = await ClientAccount.findOne({
+            where: {
+                uuid: clientAccountId
+            }
+        })
+        if (!clientAccount) {
+            throw new CollectionError('ClientAccount not found');
+        }
+
         let whereClause: any = {
             [Op.and]: [
                 {
-                    clientAccountId,
+                    clientAccountId: clientAccount.id,
                     isActive: true,
                 }
             ]

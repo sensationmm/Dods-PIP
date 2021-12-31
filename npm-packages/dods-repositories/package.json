@@ -16,7 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "sequelize": "^7.0.0-alpha.3",
-    "@dodsgroup/dods-model": "file:../../dods-model"
+    "@dodsgroup/dods-model": "file:../../dods-model",
+    "@dodsgroup/dods-domain": "file:../../npm-packages/dods-domain"
   },
   "devDependencies": {
     "@types/node": "^16.11.12",
