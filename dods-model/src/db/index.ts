@@ -13,6 +13,9 @@ import {
     SubscriptionType,
     Task,
     User,
+    CollectionAlert,
+    CollectionSavedQuery,
+    CollectionDocument,
 } from './models';
 
 import sequelizeConnection from './config/sequelizeConnection';
@@ -99,6 +102,9 @@ if (process.env.NODE_ENV !== 'test') {
         foreignKey: 'createdById',
         targetKey: 'id',
     });
+    Collection.hasMany(CollectionAlert, { as: 'alerts' });
+    Collection.hasMany(CollectionSavedQuery, { as: 'savedQueries' });
+    Collection.hasMany(CollectionDocument, { as: 'documents' });
 }
 
 export * from './models';

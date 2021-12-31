@@ -5,6 +5,7 @@
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
     "scripts": {
+        "postinstall": "ls -1 -H node_modules/@dodsgroup/ | xargs -I '{}' -P 2 bash -c \"cd node_modules/@dodsgroup/{} && npm i && npm run build\"",
         "dev": "npm run build && node dist/index.js",
         "seed": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:seed:all",
         "seed:undo": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:seed:undo",

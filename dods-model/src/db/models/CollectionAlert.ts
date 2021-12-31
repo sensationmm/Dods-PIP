@@ -166,7 +166,6 @@ CollectionAlert.init(
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL'
     },
-
   },
   {
     tableName: 'dods_collections_alerts',

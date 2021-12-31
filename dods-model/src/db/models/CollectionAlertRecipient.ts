@@ -14,7 +14,7 @@ import { User, CollectionAlert } from '.';
 interface AlertRecipientAttributes {
     alertId: number;
     userId: number;
-    addedBy: number;
+    createdBy: number;
 }
 
 export interface AlertRecipientInput
@@ -22,7 +22,7 @@ export interface AlertRecipientInput
     AlertRecipientAttributes,
     | 'alertId'
     | 'userId'
-    | 'addedBy'
+    | 'createdBy'
     > { }
 
 
@@ -34,7 +34,7 @@ export class CollectionAlertRecipient
 
     public alertId!: number;
     public userId!: number;
-    public addedBy!: number;
+    public createdBy!: number;
 
     // mixins for association (optional)
     public readonly alert!: CollectionAlert;
@@ -53,7 +53,9 @@ export class CollectionAlertRecipient
     };
 
     // Timestamps
-    public readonly addedAt!: Date;
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+    public readonly deletedAt!: Date | null;
 }
 
 CollectionAlertRecipient.init(
@@ -81,7 +83,7 @@ CollectionAlertRecipient.init(
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'
         },
-        addedBy: {
+        createdBy: {
             type: DataTypes.INTEGER({ length: 11 }),
             allowNull: true,
             defaultValue: null,
@@ -92,7 +94,6 @@ CollectionAlertRecipient.init(
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'
         },
-
     },
     {
         tableName: 'dods_collections_alerts_recipients',

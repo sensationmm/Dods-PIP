@@ -14,7 +14,7 @@ import { Collection } from './';
 interface CollectionDocumentAttributes {
     collectionId: number;
     documentId: string;
-    addedBy: number;
+    createdBy: number;
 }
 
 export interface CollectionDocumentInput
@@ -22,7 +22,7 @@ export interface CollectionDocumentInput
     CollectionDocumentAttributes,
     | 'collectionId'
     | 'documentId'
-    | 'addedBy'
+    | 'createdBy'
     > { }
 
 export interface CollectionDocumentOutput extends Required<CollectionDocumentAttributes> { }
@@ -33,7 +33,7 @@ export class CollectionDocument
 
     public collectionId!: number;
     public documentId!: string;
-    public addedBy!: number;
+    public createdBy!: number;
 
     // mixins for association (optional)
     public readonly collection!: Collection;
@@ -46,7 +46,9 @@ export class CollectionDocument
     };
 
     // Timestamps
-    public readonly addedAt!: Date;
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+    public readonly deletedAt!: Date | null;
 }
 
 CollectionDocument.init(
@@ -68,7 +70,7 @@ CollectionDocument.init(
             allowNull: false,
             primaryKey: true
         },
-        addedBy: {
+        createdBy: {
             type: DataTypes.INTEGER({ length: 11 }),
             allowNull: true,
             defaultValue: null,

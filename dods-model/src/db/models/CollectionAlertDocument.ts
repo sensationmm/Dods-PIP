@@ -14,7 +14,7 @@ import { CollectionAlert } from './';
 interface AlertDocumentAttributes {
     alertId: number;
     documentId: string;
-    addedBy: number;
+    createdBy: number;
 }
 
 export interface AlertDocumentInput
@@ -22,7 +22,7 @@ export interface AlertDocumentInput
     AlertDocumentAttributes,
     | 'alertId'
     | 'documentId'
-    | 'addedBy'
+    | 'createdBy'
     > { }
 
 
@@ -34,7 +34,7 @@ export class CollectionAlertDocument
 
     public alertId!: number;
     public documentId!: string;
-    public addedBy!: number;
+    public createdBy!: number;
 
     // mixins for association (optional)
     public readonly alert!: CollectionAlert;
@@ -47,7 +47,9 @@ export class CollectionAlertDocument
     };
 
     // Timestamps
-    public readonly addedAt!: Date;
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+    public readonly deletedAt!: Date | null;
 }
 
 CollectionAlertDocument.init(
@@ -69,7 +71,7 @@ CollectionAlertDocument.init(
             allowNull: false,
             primaryKey: true
         },
-        addedBy: {
+        createdBy: {
             type: DataTypes.INTEGER({ length: 11 }),
             allowNull: true,
             defaultValue: null,

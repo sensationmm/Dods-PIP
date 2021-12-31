@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
+    "postinstall": "ls -1 -H node_modules/@dodsgroup/ | xargs -I '{}' -P 2 bash -c \"cd node_modules/@dodsgroup/{} && npm i && npm run build\"",
     "build": "webpack",
     "build:watch": "webpack watch",
     "predeploy": "npm run build",

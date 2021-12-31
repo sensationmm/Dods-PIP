@@ -1,6 +1,5 @@
 import Joi, { Schema } from 'joi';
 import { resolve } from 'path';
-import { DownstreamEndpoints } from '../interfaces';
 
 const loadConfig = (schema: Schema) => {
 
@@ -29,9 +28,6 @@ const envVarsSchema = Joi.object()
         DB_PASSWORD: Joi.string().required(),
         DB_CONNECTION_LIMIT: Joi.number().default(5),
         API_GATEWAY_BASE_URL: Joi.string().required(),
-        SAY_TURKISH_HELLO_ENDPOINT: Joi.string().required(),
-        SAY_ENGLISH_HELLO_ENDPOINT: Joi.string().required(),
-        GET_FULL_NAME_ENDPOINT: Joi.string().required(),
     })
     .unknown();
 
@@ -49,10 +45,7 @@ export const config = {
     dods: {
         downstreamEndpoints: {
             apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
-            sayTurkishHelloEndpointUrl: envVars.SAY_TURKISH_HELLO_ENDPOINT as string,
-            sayEnglishHelloEndpointUrl: envVars.SAY_ENGLISH_HELLO_ENDPOINT as string,
-            getFullNameEndpointUrl: envVars.GET_FULL_NAME_ENDPOINT as string
-        } as DownstreamEndpoints
+        }
     },
     aws: {
         mariaDb: {

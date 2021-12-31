@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  description: Collection Service
+  description: DODS Collections
   version: 1.0.0
-  title: Collection Service
+  title: DODS Collections
   contact:
     email: kenanhancer@gmail.com
   license:
@@ -12,24 +12,27 @@ servers:
   - url: /api
 
 paths:
-  /health:
+  /collections:
     get:
-      operationId: health
-      summary: "Get Health Message"
-      description: "Get Health Message"
+      operationId: searchCollections
+      summary: "Returns a list of collections"
+      description: "Returns a list of collections"
+      parameters:
+        - $ref: "#/components/parameters/searchTerm"
+        - $ref: "#/components/parameters/clientAccountId"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortBy"
+        - $ref: "#/components/parameters/sortDirection"
       responses:
         "200":
           description: OK
         "404":
           $ref: "#/components/responses/NotFound"
-
-  /collections:
     post:
       operationId: createCollection
       summary: "Creates a collection associated to a Client Account"
       description: "Create Collection Endpoint"
-      # security:
-      #   - bearerAuth: []
       requestBody:
         $ref: "#/components/requestBodies/CreateCollection"
       responses:
@@ -56,8 +59,7 @@ paths:
           $ref: "#/components/responses/CollectionResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+
 
 # security:
 #   - bearerAuth: []
@@ -146,6 +148,63 @@ components:
               type: string
 
   parameters:
+    clientAccountId:
+      in: query
+      name: clientAccountId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        format: int32
+        default: 30
+        minimum: 0
+        maximum: 100
+      required: false
+      allowEmptyValue: true
+    offset:
+      in: query
+      name: offset
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+      required: false
+      description: Offset value for pagination
+    sortBy:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: name
+        enum:
+          - name
+          - updatedAt
+      required: false
+      description: sort Collection by name or subscription
+    sortDirection:
+      in: query
+      name: sortDirection
+      schema:
+        type: string
+        default: ASC
+        enum:
+          - ASC
+          - DESC
+      required: false
+      description: direction ASC or DESC
+    searchTerm:
+        in: query
+        name: searchTerm
+        schema:
+            type: string
+        required: false
+        description: Collections by name's filtering using search term
     collectionId:
       in: path
       name: collectionId
@@ -153,6 +212,7 @@ components:
         type: string
         format: uuid
       required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
 
   responses:
     NotFound:

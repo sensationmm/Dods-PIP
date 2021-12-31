@@ -154,7 +154,6 @@ User.init(
             defaultValue: null,
             field: 'telephone_number_2',
         },
-
         isActive: {
             type: DataTypes.TINYINT({ length: 1 }),
             allowNull: false,
