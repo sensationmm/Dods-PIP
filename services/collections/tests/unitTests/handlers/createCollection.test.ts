@@ -2,7 +2,7 @@ import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lam
 
 import { CollectionRepository } from '../../../src/repositories/CollectionRepository';
 import { createCollection } from '../../../src/handlers/createCollection/createCollection';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 const defaultContext = createContext();
 

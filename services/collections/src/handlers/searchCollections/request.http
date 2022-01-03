@@ -1,0 +1,8 @@
+### search Collections V1
+GET {{host}}/collections?clientAccountId=94a57103-3bf0-4a29-bdba-99a4650c1849&sortBy=name&sortDirection=ASC HTTP/1.1
+
+### search Collections V2
+GET {{host}}/collections?clientAccountId=cd44bad6-8eeb-4870-abb8-72d297ea7a3e&searchTerm=deneme&sortBy=name&sortDirection=ASC HTTP/1.1
+
+### search Collections V3
+GET {{host}}/collections?clientAccountId=94a57103-3bf0-4a29-bdba-99a4650c1849&limit=10&offset=0 HTTP/1.1

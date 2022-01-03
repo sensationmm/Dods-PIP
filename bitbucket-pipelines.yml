@@ -187,13 +187,10 @@ pipelines:
               includePaths:
                 - "services/collections/**"
           script:
-            - export THIS='services/collections'
-            - cd dods-model
-            - npm install
-            - npm run build
-            - cd ../$THIS
+            - cd services/collections
             - npm install
             - npm run test:coverage
+
 
   branches:
     master:

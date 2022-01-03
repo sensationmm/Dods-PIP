@@ -115,18 +115,18 @@ plugins:
   - serverless-api-gateway-caching
 
 functions:
-  health:
-    handler: src/handlers/health/index.handle
-    description: Triggered when http request comes
-    events:
-      - http:
-          method: get
-          path: health
-          cors: true
-          caching:
-            enabled: false
-    tags:
-      foo: bar
+  # health:
+  #   handler: src/handlers/health/index.handle
+  #   description: Triggered when http request comes
+  #   events:
+  #     - http:
+  #         method: get
+  #         path: health
+  #         cors: true
+  #         caching:
+  #           enabled: false
+  #   tags:
+  #     foo: bar
 
   sayHello:
     handler: src/handlers/sayHello/index.handle
