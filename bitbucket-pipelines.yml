@@ -340,7 +340,7 @@ pipelines:
                   - "services/collections/**"
             script:
               - export THIS='services/collections'
-              - cd ../$THIS
+              - cd $THIS
               - npm install
               - npm run test:coverage
               - npx serverless deploy --stage dev
