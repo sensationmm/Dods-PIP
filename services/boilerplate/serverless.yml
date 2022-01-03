@@ -39,6 +39,11 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
+          - "rds:*"
+      Resource:
+          - "*"
+    - Effect: "Allow"
+      Action:
         - "xray:PutTraceSegments"
         - "xray:PutTelemetryRecords"
       Resource:
