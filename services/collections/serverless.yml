@@ -15,7 +15,7 @@ provider:
   runtime: nodejs14.x
   deploymentBucket:
     name: pip-${self:provider.stage}-scrapping-lambdas
-  stage: ${opt:stage, 'local'}
+  stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
 
   #------- This section is only required for Lambdas that need
