@@ -15,4 +15,9 @@ export class DocumentServiceRepository implements DocumentServicePersister {
         return { success };
     }
 
+    async getDocument(documentARN: string): Promise<Object> {
+        const response = await axios.get(`${this.baseURL}documents`, { params: { arn: documentARN } });
+        return { response };
+    }
+
 }
