@@ -4,7 +4,6 @@
   "description": "This README would normally document whatever steps are necessary to get your application up and running.",
   "main": "index.js",
   "scripts": {
-    "postinstall": "ls -1 -H node_modules/@dodsgroup/ | xargs -I '{}' -P 2 bash -c \"cd node_modules/@dodsgroup/{} && npm i && npm run build\"",
     "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
     "test:coverage": "NODE_ENV=test jest --detectOpenHandles --coverage",
     "test:integration": "scripts/setUp.sh && NODE_ENV=test cucumber-js && node cucumber.html.reporter.js && scripts/tearDown.sh",
