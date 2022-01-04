@@ -21,9 +21,9 @@ provider:
   #------- This section is only required for Lambdas that need
   #        to connect to the central Dods DB (RDS instance).
   #------- Uncomment this section your functions need to connect to Dods DB
-  # vpc:
-  #   securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
-  #   subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
+  vpc:
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../env-config.dev.js):securityGroupIds}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../env-config.dev.js):subnetIds}
 
   stackTags:
     service: ${self:service}
@@ -37,6 +37,11 @@ provider:
     apiGateway: true
     lambda: true
   iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+          - "rds:*"
+      Resource:
+          - "*"
     - Effect: "Allow"
       Action:
         - "xray:PutTraceSegments"

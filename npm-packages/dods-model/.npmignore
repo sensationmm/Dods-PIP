@@ -9,3 +9,5 @@ tsconfig.json
 createNpmrc.sh
 webpack.config.js
 tests/
+docker/*/data
+.env*
