@@ -438,6 +438,31 @@ pipelines:
             - docker push ${IMAGE_NAME}
             - ../../tools/ecs_deploy --service-name frontend-service --cluster pip-${ENVIRONMENT,,}-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
 
+    deploy_services:
+      - variables:
+        - name: ENVIRONMENT
+          default: "DEV"
+        - name: SERVICE
+          default: user-profile
+      - step:
+          name: "Backend Service: Deploy to Environment"
+          image: gioatsomoglobal/devopstools:0.4.5
+          script:
+            - export THIS="services/$SERVICE"
+            - cd $THIS 
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from services/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default service building definitions"
+                npm install
+                SERVERLESS_STAGE=dev npm run test:coverage
+              fi
+            - ../../tools/set-deployer.sh 
+            - source credentials.txt
+            - npx serverless deploy --stage ${ENVIRONMENT,,}
+
     deploy-frontend-production:
       - step:
           name: Deploy frontend to production environment
