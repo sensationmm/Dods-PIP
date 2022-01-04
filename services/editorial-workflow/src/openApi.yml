@@ -208,6 +208,30 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+                    
+    /editorial-record/{recordId}/document:
+        put:
+            summary: Update Editorial Record Document
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            requestBody:
+                $ref: '#/components/requestBodies/UpdateEditorialRecordDocument'
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
 
 components:
     responses:
@@ -324,8 +348,8 @@ components:
                 application/json:
                     schema:
                         anyOf:
-                            - $ref: '#/components/schemas/CreateEditorialRecordRequest'
                             - $ref: '#/components/schemas/CreateEditorialRecordRequestV2'
+                            - $ref: '#/components/schemas/CreateEditorialRecordRequest'
         UpdateEditorialRecord:
             description: A JSON object containing Editorial Record information
             required: true
@@ -347,6 +371,13 @@ components:
                                 type: string
                                 format: uuid
                                 example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        UpdateEditorialRecordDocument:
+            description: A JSON object containing Editorial Record Document information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Document'
 
     schemas:
         Error:
@@ -367,9 +398,11 @@ components:
             properties:
                 documentName:
                     type: string
+                    minLength: 1
                     example: Some UK Parliament Oral Question
                 s3Location:
                     type: string
+                    minLength: 1
                     example: arn:aws:s3:::editorial-workflow-prod/editorial-workflow/01012020/some-question.json
                 informationType:
                     type: string
@@ -530,17 +563,28 @@ components:
           properties:
             contentSource:
               type: string
-            document:
-              $ref: '#/components/schemas/EditorialDocument'
-            documentName:
-              type: string
             informationType:
               type: string
+            createdBy:
+              type: string
+            documentContent:
+              type: string
+            documentTitle:
+              type: string
+            internallyCreated:
+              type: boolean
+            schemaType:
+              type: string
+            sourceReferenceUri:
+              type: string
+            taxonomyTerms:
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
           required:
-            - documentName
             - contentSource
             - informationType
-            - document
+            - documentTitle
         
         EditorialDocument:
           type: object
@@ -550,14 +594,9 @@ components:
               type: string
             createdBy:
               type: string
-            createdDateTime:
-              format: date-time
-              type: string
             documentContent:
               type: string
             documentTitle:
-              type: string
-            feedFormat:
               type: string
             informationType:
               type: string
@@ -567,24 +606,17 @@ components:
               type: string
             schemaType:
               type: string
+            sourceReferenceUri:
+              type: string
             taxonomyTerms:
               items:
                 $ref: '#/components/schemas/TaxonomyTerm'
               type: array
-            version:
-              type: string
           required:
-            - jurisdiction
             - documentTitle
             - createdBy
-            - internallyCreated
-            - schemaType
             - contentSource
             - informationType
-            - createdDateTime
-            - version
-            - feedFormat
-            - taxonomyTerms
             - documentContent
         
         TaxonomyTerm:
@@ -631,3 +663,67 @@ components:
             - tagId
             - termLabel
             - rank
+            
+        Document:
+          type: object
+          properties:
+            jurisdiction:
+              type: string
+              example: UK
+            documentTitle:
+              type: string
+              example: New Which? research reveals the most sustainable savings providers
+            organisationName:
+              type: string
+            sourceReferenceFormat:
+              type: string
+              example: text/plain
+            sourceReferenceUri:
+              type: string
+              example: https://press.which.co.uk/whichpressreleases/new-which-research-reveals-the-most-sustainable-savings-providers/
+            createdBy:
+              type: string
+              example: taerekim@gmail.com
+            internallyCreated:
+              type: boolean
+            schemaType:
+              type: string
+              example: External
+            contentSource:
+              type: string
+              example: UK Stakeholder
+            informationType:
+              type: string
+              example: Press Releases
+            contentDateTime:
+              type: string
+              format: date-time
+              example: "2021-08-18T10:29:20.778+01:00"
+            createdDateTime:
+              type: string
+              format: date-time
+              example: "2021-08-18T10:29:51.960+01:00"
+            ingestedDateTime:
+              type: string
+              format: date-time
+              example: "2021-08-18T10:29:51.960+01:00"
+            version:
+              type: string
+              example: "1.0"
+            countryOfOrigin:
+              type: string
+              example: GBR
+            feedFormat:
+              type: string
+              example: text/plain
+            language:
+              type: string
+              example: en
+            taxonomyTerms:
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
+            originalContent:
+              type: string
+            documentContent:
+              type: string

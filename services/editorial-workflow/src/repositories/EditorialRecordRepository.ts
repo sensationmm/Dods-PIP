@@ -64,8 +64,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
                     fullName: assignedEditor.fullName,
                 }
                 : undefined,
-            isPublished,
-            isArchived,
+            isPublished: isPublished ? true : false,
+            isArchived: isArchived ? true : false,
             createdAt,
             updatedAt,
         };
@@ -267,6 +267,19 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         }
 
         return this.mapRecordOutput(record);
+    }
+
+    async unassignEditorToRecord(recordId: string
+    ): Promise<void> {
+
+        const record = await this.editorialRecordModel.findOne({
+            where: {
+                uuid: recordId,
+            }
+        });
+
+        await record?.update({ 'assignedEditorId': null })
+
     }
 
 

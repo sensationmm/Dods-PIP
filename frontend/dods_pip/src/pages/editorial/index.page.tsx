@@ -1,24 +1,24 @@
+import DatePicker from '@dods-ui/components/_form/DatePicker';
+import InputSearch from '@dods-ui/components/_form/InputSearch';
+import SearchDropdown from '@dods-ui/components/_form/SearchDropdown';
+import Box from '@dods-ui/components/_layout/Box';
+import Panel from '@dods-ui/components/_layout/Panel';
+import Spacer from '@dods-ui/components/_layout/Spacer';
+import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
+import Button from '@dods-ui/components/Button';
+import DataCount from '@dods-ui/components/DataCount';
+import Icon from '@dods-ui/components/Icon';
+import { Icons } from '@dods-ui/components/Icon/assets';
+import RepositoryTable, { RepositoryTableProps } from '@dods-ui/components/RepositoryTable';
+import Text from '@dods-ui/components/Text';
+import color from '@dods-ui/globals/color';
+import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
+import { MetadataSelection } from '@dods-ui/pages/editorial/editorial.models';
+import { getMetadataSelections } from '@dods-ui/pages/editorial/editorial.service';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import DatePicker from '../../components/_form/DatePicker';
-import InputSearch from '../../components/_form/InputSearch';
-import SearchDropdown from '../../components/_form/SearchDropdown';
-import Box from '../../components/_layout/Box';
-import Panel from '../../components/_layout/Panel';
-import Spacer from '../../components/_layout/Spacer';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import Button from '../../components/Button';
-import DataCount from '../../components/DataCount';
-import Icon from '../../components/Icon';
-import { Icons } from '../../components/Icon/assets';
-import RepositoryTable, { RepositoryTableProps } from '../../components/RepositoryTable';
-import Text from '../../components/Text';
-import color from '../../globals/color';
-import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import fetchJson from '../../lib/fetchJson';
-import { Api, BASE_URI } from '../../utils/api';
 import * as Styled from './index.page.styles';
 
 interface EditorialProps extends LoadingHOCProps {}
@@ -31,14 +31,11 @@ interface Filters {
   itemsPerPage?: number;
 }
 
-type filterValue = Record<selectFilter, { label: string; value: string }[]>;
-type selectFilter = 'contentSources' | 'informationTypes' | 'status';
-
 export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
   const [isActiveFilter, setIsActiveFilter] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({});
 
-  const [selectFilterValues, setSelectFilterValues] = useState<filterValue>({
+  const [selectFilterValues, setSelectFilterValues] = useState<MetadataSelection>({
     contentSources: [],
     informationTypes: [],
     status: [],
@@ -58,48 +55,12 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
     value ? addFilters({ [filter]: value }) : removeFilter(filter);
   };
 
-  const getFilterValues = async (): Promise<filterValue[]> => {
-    setLoading(true);
-    try {
-      const dataSources = await Promise.all([
-        fetchJson(`${BASE_URI}${Api.EditorialContentSources}`, { method: 'GET' }),
-        fetchJson(`${BASE_URI}${Api.EditorialInfoTypes}`, { method: 'GET' }),
-        fetchJson(`${BASE_URI}${Api.EditorialStatus}`, { method: 'GET' }),
-      ]);
-      setLoading(false);
-
-      return (['contentSources', 'informationTypes', 'status'] as selectFilter[]).map((type) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const valuesFromDataSource: Record<string, any> | undefined = dataSources.find((value) =>
-          // eslint-disable-next-line no-prototype-builtins
-          value.hasOwnProperty(type),
-        );
-
-        if (!valuesFromDataSource) return;
-
-        return {
-          [type]: valuesFromDataSource[type].map((data: Record<string, string>) => {
-            return { label: data.name, value: data.uuid || data.id };
-          }),
-        };
-      }) as filterValue[];
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-      return [];
-    }
-  };
-
   useEffect(() => {
     (async () => {
-      const filterValues = await getFilterValues();
-      let _values = {};
-      filterValues.forEach((values) => {
-        _values = { ..._values, ...values };
-      });
-
-      setSelectFilterValues(_values as filterValue);
+      setLoading(true);
+      const filterValues = await getMetadataSelections();
+      setSelectFilterValues(filterValues as MetadataSelection);
+      setLoading(false);
     })();
   }, []);
 
@@ -107,7 +68,6 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
     <div data-testid="page-editorial">
       <Head>
         <title>Dods PIP | Editorial Repository</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Panel bgColor={color.base.ivory}>
         <Breadcrumbs

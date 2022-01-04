@@ -1,15 +1,15 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 ##
-# List all dependencies between packages.
-# Package is identified with relative path to package's root directory from repository root.
+# List all dependencies between projects.
+# Poject is identified with relative path to project's root directory from repository root.
 #
-# Dependencies can be specified in text file where each line is path (from monorepo root) to other package.
-# Default location of dependency file is in root dir of each package on path `.ci/dependencies.txt`.
+# Dependencies can be specified in text file where each line is path (from monorepo root) to other project.
+# Default location of dependency file is in root dir of each project on path `.ci/dependencies.txt`.
 # Location of dependency file can be changed by setting environment variable `CI_DEPENDENCIES_FILE`.
 #
-# Outputs lines of tuples in format PACKAGE1 PACKAGE2 (separated by space), 
-# where PACKAGE1 depends on PACKAGE2.
+# Outputs lines of tuples in format PROJECT1 PROJECT2 (separated by space), 
+# where PROJECT1 depends on PROJECT2.
 #
 # Usage:
 #   list-dependencies.sh
@@ -21,22 +21,16 @@ set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
  
 # Configuration with default values
-# "${CI_DEPENDENCIES_FILE:=dependencies.txt}"
-# CI_DEPENDENCIES_FILE=dependencies.txt
-DEPENDENCIES_FILE=dependencies.txt
+: "${CI_DEPENDENCIES_FILE:=.ci/dependencies.txt}"
 
-# Look for dependecies of each package
-for PACKAGE in $(${DIR}/list-packages.sh); do
-    PACKAGE=${PACKAGE%\*}
+# Look for dependecies of each project
+for PROJECT in $(${DIR}/list-projects.sh); do   
 
-    #- TODO: Implement dependency listing based on Bazel configuration -#
-
-    # Temporarily look into dependency file where each row is path to other package
-    CI_DEPENDENCIES_FILE="$DIR/../$PACKAGE/$DEPENDENCIES_FILE"
-
-    if [[ -f $CI_DEPENDENCIES_FILE ]]; then
-        for INCLUDE in $(cat $CI_DEPENDENCIES_FILE); do 
-            echo "$PACKAGE $INCLUDE"
+    # Look into dependency file where each row is path to other project
+    DEPENDENCIES_FILE="$DIR/../$PROJECT/$CI_DEPENDENCIES_FILE"
+    if [[ -f $DEPENDENCIES_FILE ]]; then
+        for INCLUDE in $(cat $DEPENDENCIES_FILE); do 
+            echo "$PROJECT $INCLUDE"
         done
     fi
 done

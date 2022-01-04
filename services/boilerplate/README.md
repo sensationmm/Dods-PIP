@@ -17,6 +17,9 @@ This README would normally document whatever steps are necessary to get your app
 * How to run tests
 * Deployment instructions
 
+### Links ###
+* [How to set up REST Client extension in Visual Studio Code](../../baseReadme/README.md)
+
 ### Contribution guidelines ###
 
 * Writing tests

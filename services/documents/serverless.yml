@@ -46,13 +46,17 @@ provider:
   # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
   # We will move to dynamic Gateway selection based on sls stage.
   apiGateway:
-    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, ""} 
-    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, ""} 
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, file(../env-config.dev.js):apiGatewayId}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, file(../env-config.dev.js):apiRootResourceId}
     description: Default Gateway for ${self:provider.stage} deployed by Terraform
 
   environment:
+    SERVERLESS_REGION: ${self:provider.region} 
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    CORS_ORIGINS: "*"
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
 
 custom:

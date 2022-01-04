@@ -6,7 +6,7 @@ export interface EditorialRecordBase {
 }
 
 export interface CreateEditorialRecordParameters extends EditorialRecordBase {
-    assignedEditorId?: string;
+    assignedEditorId?: string | null;
     statusId?: string;
 }
 
@@ -91,18 +91,25 @@ export interface TaxonomyTerm {
 }
 
 export interface EditorialDocument {
-    jurisdiction: string;
-    documentTitle: string;
-    createdBy: string;
-    internallyCreated: boolean;
-    schemaType: string;
+    documentName?: string;
     contentSource: string;
     informationType: string;
-    createdDateTime: Date;
-    version: string;
-    feedFormat: string;
-    taxonomyTerms: Array<TaxonomyTerm>;
-    documentContent: string;
+    jurisdiction?: string;
+    documentTitle?: string;
+    createdBy?: string;
+    sourceReferenceUri?: string
+    internallyCreated: boolean;
+    schemaType: string;
+    createdDateTime?: Date;
+    version?: string;
+    taxonomyTerms?: Array<TaxonomyTerm>;
+    documentContent?: string;
+    sourceReferenceFormat?: string;
+    language?: string;
+    contentDateTime?: Date;
+    ingestedDateTime?: Date;
+    originalContent?: string;
+
 }
 
 export interface CreateEditorialRecordParametersV2 {
@@ -111,3 +118,35 @@ export interface CreateEditorialRecordParametersV2 {
     informationType: string;
     document: EditorialDocument;
 }
+export interface DocumentParameters {
+    jurisdiction?: string
+    documentTitle?: string
+    organisationName?: string
+    sourceReferenceFormat?: string
+    sourceReferenceUri?: string
+    createdBy?: string
+    internallyCreated?: boolean
+    schemaType?: string
+    contentSource?: string
+    informationType?: string
+    contentDateTime?: string
+    createdDateTime?: string
+    ingestedDateTime?: string
+    version?: string
+    countryOfOrigin?: string
+    feedFormat?: string
+    language?: string
+    taxonomyTerms?: object[]
+    originalContent?: string
+    documentContent?: string
+}
+
+export interface UpdateEditorialRecordDocumentParameter extends DocumentParameters {
+    recordId: string;
+}
+
+export interface UpdateLambdaDocumentsParams {
+    arn: string,
+    document: DocumentParameters
+}
+
