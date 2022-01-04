@@ -189,6 +189,7 @@ pipelines:
           script:
             - cd services/collections
             - npm install
+            - npm run create:dods-dev
             - SERVERLESS_STAGE=dev npm run test:coverage
 
 
@@ -342,7 +343,8 @@ pipelines:
               - export THIS='services/collections'
               - cd $THIS
               - npm install
-              # - npm run test:coverage
+              - npm run create:dods-dev
+              - npm run test:coverage
               - npx serverless deploy --stage dev
 
         - step:
