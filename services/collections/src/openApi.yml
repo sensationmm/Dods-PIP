@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  description: DODS Boilerplate
+  description: DODS Collections
   version: 1.0.0
-  title: DODS Boilerplate
+  title: DODS Collections
   contact:
     email: kenanhancer@gmail.com
   license:
@@ -12,90 +12,57 @@ servers:
   - url: /api
 
 paths:
-  /health:
+  /collections:
     get:
-      operationId: health
-      summary: "Get Health Message"
-      description: "Get Health Message"
+      operationId: searchCollections
+      summary: "Returns a list of collections"
+      description: "Returns a list of collections"
+      parameters:
+        - $ref: "#/components/parameters/searchTerm"
+        - $ref: "#/components/parameters/clientAccountId"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortBy"
+        - $ref: "#/components/parameters/sortDirection"
       responses:
         "200":
           description: OK
         "404":
           $ref: "#/components/responses/NotFound"
-
-  /sayHello:
-    get:
-      operationId: sayHello
-      summary: "Get Greeting Message"
-      description: "Get Greeting Message"
+    post:
+      operationId: createCollection
+      summary: "Creates a collection associated to a Client Account"
+      description: "Create Collection Endpoint"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateCollection"
+      responses:
+        "200":
+          $ref: "#/components/responses/CollectionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}:
+    put:
+      operationId: updateCollection
+      summary: "Update a collection associated to a Client Account"
+      description: "Update Collection Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
       security:
         - bearerAuth: []
-      parameters:
-        - $ref: "#/components/parameters/language"
-        - $ref: "#/components/parameters/title"
-        - $ref: "#/components/parameters/firstName"
-        - $ref: "#/components/parameters/lastName"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateCollection"
       responses:
         "200":
-          $ref: "#/components/responses/SayHello"
+          $ref: "#/components/responses/CollectionResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
 
-  /getFullName:
-    get:
-      operationId: getFullName
-      summary: "Get full name of person"
-      description: "Get full name of person"
-      parameters:
-        - $ref: "#/components/parameters/title"
-        - $ref: "#/components/parameters/firstName"
-        - $ref: "#/components/parameters/lastName"
-      responses:
-        "200":
-          $ref: "#/components/responses/GetFullName"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
 
-  /sayEnglishHello:
-    get:
-      operationId: sayEnglishHello
-      summary: "Get English Greeting Message"
-      description: "Get English Greeting Message"
-      parameters:
-        - $ref: "#/components/parameters/title"
-        - $ref: "#/components/parameters/firstName"
-        - $ref: "#/components/parameters/lastName"
-      responses:
-        "200":
-          $ref: "#/components/responses/SayEnglishHello"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
-  /sayTurkishHello:
-    get:
-      operationId: sayTurkishHello
-      summary: "Get Turkish Greeting Message"
-      description: "Get Turkish Greeting Message"
-      parameters:
-        - $ref: "#/components/parameters/title"
-        - $ref: "#/components/parameters/firstName"
-        - $ref: "#/components/parameters/lastName"
-      responses:
-        "200":
-          $ref: "#/components/responses/SayTurkishHello"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
-security:
-  - bearerAuth: []
+# security:
+#   - bearerAuth: []
 
 components:
   securitySchemes:
@@ -105,11 +72,71 @@ components:
       bearerFormat: JWT
       
   schemas:
+    CreateCollectionInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        clientAccountId:
+          type: string
+          format: uuid
+        createdById:
+          type: string
+          format: uuid
+          
+    UpdateCollectionInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+
+    CollectionOutput:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        isActive:
+          type: boolean
+        clientAccount:
+          $ref: "#/components/schemas/ClientAccount"
+        createdBy:
+          $ref: "#/components/schemas/User"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ClientAccount:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    User:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+
     Message:
       type: object
       properties:
         message:
           type: string
+
     Errors:
       type: object
       properties:
@@ -121,42 +148,71 @@ components:
               type: string
 
   parameters:
-    language:
-      in: header
-      name: language
+    clientAccountId:
+      in: query
+      name: clientAccountId
       schema:
         type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        format: int32
+        default: 30
+        minimum: 0
+        maximum: 100
+      required: false
+      allowEmptyValue: true
+    offset:
+      in: query
+      name: offset
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+      required: false
+      description: Offset value for pagination
+    sortBy:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: name
         enum:
-          - English
-          - Turkish
-      required: true
-      description: Language of Greeting Message
-    title:
-      in: header
-      name: title
+          - name
+          - updatedAt
+      required: false
+      description: sort Collection by name or subscription
+    sortDirection:
+      in: query
+      name: sortDirection
       schema:
         type: string
+        default: ASC
         enum:
-          - Mr
-          - Mrs
-          - Miss
-          - Ms
-      required: true
-      description: Title of Person
-    firstName:
-      in: header
-      name: firstName
+          - ASC
+          - DESC
+      required: false
+      description: direction ASC or DESC
+    searchTerm:
+        in: query
+        name: searchTerm
+        schema:
+            type: string
+        required: false
+        description: Collections by name's filtering using search term
+    collectionId:
+      in: path
+      name: collectionId
       schema:
         type: string
+        format: uuid
       required: true
-      description: First name of Person
-    lastName:
-      in: header
-      name: lastName
-      schema:
-        type: string
-      required: true
-      description: Last name of Person
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
 
   responses:
     NotFound:
@@ -179,47 +235,36 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Message"
-    SayHello:
-      description: "{greeting} {title} {firstName} {lastName}"
+    CollectionResponse:
+      description: "Response with single collection"
       content:
         application/json:
           schema:
-            type: "string"
-          examples:
-            Kenan:
-              value: Merhaba Mr Kenan Hancer
-            Larissa:
-              value: Hello Mrs Larissa Cottrell
-    GetFullName:
-      description: "{title} {firstName} {lastName}"
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              collection:
+                $ref: "#/components/schemas/CollectionOutput"
+
+  requestBodies:
+    CreateCollection:
+      description: "Payload to create a new collection"
       content:
         application/json:
           schema:
-            type: "string"
-          examples:
-            Kenan:
-              value: Mr Kenan Hancer
-            Larissa:
-              value: Mrs Larissa Cottrell
-    SayEnglishHello:
-      description: "Hello {title} {firstName} {lastName}"
+            $ref: "#/components/schemas/CreateCollectionInput"
+            required:
+             - name
+             - clientAccountId
+             - createdById
+             
+    UpdateCollection:
+      description: "Payload to update a collection"
       content:
         application/json:
           schema:
-            type: "string"
-          examples:
-            Kenan:
-              value: Hello Mr Kenan Hancer
-            Larissa:
-              value: Hello Mrs Larissa Cottrell
-    SayTurkishHello:
-      description: "Merhaba {title} {firstName} {lastName}"
-      content:
-        application/json:
-          schema:
-            type: "string"
-          examples:
-            Kenan:
-              value: Merhaba Mr Kenan Hancer
-            Larissa:
-              value: Merhaba Mrs Larissa Cottrell
+            $ref: "#/components/schemas/UpdateCollectionInput"
+

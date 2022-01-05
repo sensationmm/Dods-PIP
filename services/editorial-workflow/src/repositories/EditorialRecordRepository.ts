@@ -64,8 +64,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
                     fullName: assignedEditor.fullName,
                 }
                 : undefined,
-            isPublished,
-            isArchived,
+            isPublished: isPublished ? true : false,
+            isArchived: isArchived ? true : false,
             createdAt,
             updatedAt,
         };

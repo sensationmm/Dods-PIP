@@ -1,16 +1,19 @@
-import { CreateEditorialRecordParametersV2 } from '@dods-services/editorial-workflow/src/domain';
 import Panel from '@dods-ui/components/_layout/Panel';
 import Spacer from '@dods-ui/components/_layout/Spacer';
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
+import { TagsData } from '@dods-ui/components/ContentTagger';
 import StatusBar from '@dods-ui/components/StatusBar';
 import TeleportOnScroll from '@dods-ui/components/TeleportOnScroll';
 import Text from '@dods-ui/components/Text';
+import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
+import { MetadataSelection } from '@dods-ui/pages/editorial/editorial.models';
 import {
   createRecord,
   getMetadataSelections,
-  MetadataSelection,
+  scheduleEditorial,
+  setEditorialPublishState,
 } from '@dods-ui/pages/editorial/editorial.service';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -32,6 +35,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     informationTypes: [],
     status: [],
   });
+  const [tags, setTags] = React.useState<TagsData[]>([]);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [fieldData, setFieldData] = useState<EditorialFormFields>({
     ...{
@@ -40,12 +44,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       sourceUrl: '',
       sourceName: '',
       informationType: '',
-      originator: '',
     },
   });
-  // const [staticEditorContent, setStaticEditorContent] = useState<
-  //   HTMLCollection | HTMLElement | null
-  // >(null);
+
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
 
@@ -74,19 +75,51 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     })();
   }, []);
 
-  // useEffect(() => {
-  //   const div = document.createElement('div');
-  //   div.innerHTML = fieldData.content;
-  //
-  //   setStaticEditorContent(div.children);
-  // }, []);
-
   const onSave = async () => {
     setLoading(true);
-    // TODO populate with data once back end is correct
-    await createRecord({} as CreateEditorialRecordParametersV2);
+    // TODO complete data curation
+    await createRecord({
+      documentTitle: fieldData.title,
+      createdBy: 'user name', // get user data here
+      contentSource: fieldData.sourceName,
+      ...(fieldData.sourceUrl && { sourceReferenceUri: fieldData.sourceUrl }),
+      informationType: fieldData.informationType,
+      documentContent: fieldData.content,
+      taxonomyTerms: [], // get aggregated taxonomy terms
+    });
+
+    global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
     setLoading(false);
     addNotification({ title: 'Record added successfully', type: 'confirm' });
+  };
+
+  const onPublish = async () => {
+    setLoading(true);
+    // TODO populate with data once back end is correct
+    await setEditorialPublishState({ isPublished: true, documentId: 'guid-here' });
+    setLoading(false);
+    addNotification({ title: 'Document successfully published', type: 'confirm' });
+  };
+
+  const onSchedule = async () => {
+    const date = new Date().toISOString();
+    setLoading(true);
+    // TODO populate with data once back end is correct
+    await scheduleEditorial({ date, documentId: 'guid-here' });
+    setLoading(false);
+    addNotification({ title: `Document successfully scheduled for ${date}`, type: 'confirm' });
+  };
+
+  const onDelete = async () => {
+    const date = new Date().toISOString();
+    setLoading(true);
+    // TODO populate with data once back end is correct
+    await scheduleEditorial({ date, documentId: 'guid-here' });
+    setLoading(false);
+    addNotification({ title: `Document successfully deleted`, type: 'confirm' });
+    setTimeout(() => {
+      router.push('/editorial');
+    }, 600);
   };
 
   return (
@@ -118,10 +151,17 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             publishDisabled={isValidForm}
             scheduleDisabled={isValidForm}
             saveAndExitDisabled={isValidForm}
-            onSaveAndEdit={onSave}
-            schedule={true}
+            onSaveAndEdit={() => onSave()}
+            onPublish={() => onPublish()}
+            onDelete={onDelete}
+            onSchedule={() => onSchedule()}
+            onUnschedule={() => onSchedule()}
+            onUpdateArticle={() => onSave()}
+            onPreview={() => router.push('/editorial/preview')} // Preview active local content or from server??
+            onUnpublish={() => onPublish()}
+            schedule={isEditMode}
             saveAndExit={true}
-            publish={true}
+            publish={isEditMode}
           />
         </TeleportOnScroll>
       </Panel>
@@ -136,6 +176,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
               errors,
               setErrors,
               onFieldChange: setFieldValue,
+              onTagsChange: setTags,
+              tags: tags,
             }}
           />
         </main>

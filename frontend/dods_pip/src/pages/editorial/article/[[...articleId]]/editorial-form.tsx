@@ -3,12 +3,14 @@ import SearchDropdown from '@dods-ui/components/_form/SearchDropdown';
 import { SelectItem } from '@dods-ui/components/_form/Select';
 import SectionHeader from '@dods-ui/components/_layout/SectionHeader';
 import Spacer from '@dods-ui/components/_layout/Spacer';
-import ContentTagger from '@dods-ui/components/ContentTagger';
+import ContentTagger, { TagsData } from '@dods-ui/components/ContentTagger';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
+import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import * as Validation from '@dods-ui/utils/validation';
 import dynamic from 'next/dynamic';
 import React from 'react';
+import JsxParser from 'react-jsx-parser';
 
 import * as Styled from './editorial-from.styles';
 
@@ -16,7 +18,6 @@ export interface EditorialFormFields {
   sourceName: string;
   sourceUrl: string;
   informationType: string;
-  originator: string;
   title: string;
   content: string;
 }
@@ -28,7 +29,8 @@ export interface EditorialFormProps {
   setErrors: (errors: Partial<EditorialFormFields>) => void;
   infoTypeValues: SelectItem[];
   contentSourceValues: SelectItem[];
-  //editorStaticContent: HTMLElement | HTMLCollection;
+  tags?: TagsData[];
+  onTagsChange: (tags: TagsData[]) => void;
   isEdit?: boolean;
 }
 
@@ -42,7 +44,8 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   onFieldChange,
   infoTypeValues,
   contentSourceValues,
-  //editorStaticContent,
+  tags = [],
+  onTagsChange,
 }) => {
   const validateField = (fieldName: keyof EditorialFormFields, value: string | undefined) => {
     const formErrors = JSON.parse(JSON.stringify(errors));
@@ -51,6 +54,15 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
       : delete formErrors[fieldName];
 
     setErrors(formErrors);
+  };
+
+  const getContentTags = (tags: TagsData[] | undefined): ContentTag[] => {
+    if (!tags) return [] as ContentTag[];
+    return tags.map((tag) => ({
+      type: tag.type as string,
+      term: tag.termLabel,
+      value: tag.termLabel,
+    }));
   };
 
   return (
@@ -103,15 +115,6 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
             placeholder="www.api-link-source.com"
             onChange={(value) => onFieldChange('sourceUrl', value)}
           />
-          <InputText
-            id="originator"
-            testId={'originator'}
-            value={fieldData.originator}
-            label="Originator"
-            placeholder="www.api-link-source.com"
-            optional
-            onChange={(value) => onFieldChange('originator', value)}
-          />
         </Styled.inputFields>
 
         <Spacer size={10} />
@@ -139,12 +142,13 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
         <WysiwygEditor
           placeholder={'Type or paste your content here'}
           onTextChange={(value) => onFieldChange('content', value)}
+          tags={getContentTags(tags)}
         >
-          {/*{editorStaticContent}*/}
+          <JsxParser jsx={fieldData.content.toString()} />
         </WysiwygEditor>
       </div>
 
-      <ContentTagger tags={[]} setTags={console.log} />
+      <ContentTagger tags={tags} setTags={onTagsChange} />
     </Styled.mainColumns>
   );
 };
