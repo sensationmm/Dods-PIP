@@ -197,7 +197,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       name: getUserName(formFields),
       firstName: formFields.firstName,
       lastName: formFields.lastName,
-      secondaryEmailAddress: formFields.emailAddress2,
+      secondaryEmail: formFields.emailAddress2,
       title: formFields.jobTitle,
       telephoneNumber1: formFields.telephoneNumber,
       telephoneNumber2: formFields.telephoneNumber2,
