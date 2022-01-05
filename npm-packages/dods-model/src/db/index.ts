@@ -4,6 +4,10 @@ import {
     ClientAccountTeam,
     ClientAccountUser,
     Collection,
+    CollectionAlert,
+    CollectionAlertTemplate,
+    CollectionDocument,
+    CollectionSavedQuery,
     EditorialRecord,
     EditorialRecordStatus,
     Project,
@@ -12,10 +16,7 @@ import {
     Role,
     SubscriptionType,
     Task,
-    User,
-    CollectionAlert,
-    CollectionSavedQuery,
-    CollectionDocument,
+    User
 } from './models';
 
 import sequelizeConnection from './config/sequelizeConnection';
@@ -105,6 +106,31 @@ if (process.env.NODE_ENV !== 'test') {
     Collection.hasMany(CollectionAlert, { as: 'alerts' });
     Collection.hasMany(CollectionSavedQuery, { as: 'savedQueries' });
     Collection.hasMany(CollectionDocument, { as: 'documents' });
+
+    CollectionAlert.belongsTo(Collection, {
+        as: 'collection',
+        foreignKey: 'collectionId',
+        targetKey: 'id',
+    });
+
+    CollectionAlert.belongsTo(User, {
+        as: 'createdById',
+        foreignKey: 'createdBy',
+        targetKey: 'id',
+    });
+
+    CollectionAlert.belongsTo(User, {
+        as: 'updatedById',
+        foreignKey: 'updatedBy',
+        targetKey: 'id',
+    });
+
+    CollectionAlert.belongsTo(CollectionAlertTemplate, {
+        as: 'alertTemplate',
+        foreignKey: 'templateId',
+        targetKey: 'id',
+    });
+
 }
 
 export * from './models';

@@ -129,6 +129,16 @@ functions:
           caching:
             enabled: false
 
+  getCollectionAlerts:
+    handler: src/handlers/getCollectionAlerts/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: collections/{collectionId}/alerts
+          caching:
+            enabled: false
+
   updateCollection:
     handler: src/handlers/updateCollection/index.handle
     description: Triggered when http request comes
