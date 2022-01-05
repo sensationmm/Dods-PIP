@@ -1,7 +1,5 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { SearchCollectionAlertsParameters, getAlertsByCollectionResponse } from '../../domain';
-
-import { CollectionAlertsRepository } from '../../repositories';
+import { CollectionAlertsRepository, SearchCollectionAlertsParameters, getAlertsByCollectionResponse } from '@dodsgroup/dods-repositories';
 
 export const getCollectionAlerts: AsyncLambdaHandler<SearchCollectionAlertsParameters> = async (
     parameters

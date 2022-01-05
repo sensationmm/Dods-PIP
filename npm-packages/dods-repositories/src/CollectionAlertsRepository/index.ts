@@ -3,7 +3,9 @@ import {
     CollectionAlertsPersister,
     SearchCollectionAlertsParameters,
     getAlertsByCollectionResponse
-} from '../domain';
+} from './domain';
+
+export * from './domain';
 
 export class CollectionAlertsRepository implements CollectionAlertsPersister {
     static defaultInstance: CollectionAlertsRepository = new CollectionAlertsRepository(
