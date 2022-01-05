@@ -50,8 +50,6 @@ paths:
       description: "Update Collection Endpoint"
       parameters:
         - $ref: '#/components/parameters/collectionId'
-      security:
-        - bearerAuth: []
       requestBody:
         $ref: "#/components/requestBodies/UpdateCollection"
       responses:
@@ -60,9 +58,6 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
 
-
-# security:
-#   - bearerAuth: []
 
 components:
   securitySchemes:
