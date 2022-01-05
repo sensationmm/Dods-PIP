@@ -419,12 +419,15 @@ def get_document_originator(document: dict, is_written_statement: bool) -> str:
     location = document["Overview"]["Location"].upper()
 
     if is_written_statement:
-        originator = "TODO"
+        originator = get_written_statement_title(document)
 
     elif location == "GRAND COMMITTEE":
         originator = "Grand Committee"
 
-    elif location == "COMMONS CHAMBER":
+    # TODO: Check with ChrisP on Westminster Hall here - e.g.
+    # this doc: https://hansard.parliament.uk/Commons/2022-01-05/debates/854a027d-19ca-4fda-afb4-92cbf520961a/WestminsterHall
+    #
+    elif location in ("COMMONS CHAMBER", "WESTMINSTER HALL"):
         originator = "House of Commons"
 
     elif location == "LORDS CHAMBER":
@@ -432,10 +435,34 @@ def get_document_originator(document: dict, is_written_statement: bool) -> str:
 
     else:
         originator = "UKNOWN"
+        logger.error(f"Unexpected {location=} for {document['Overview']['ExtId']=}")
 
     logger.info(f"Determined {originator=}")
 
     return originator
+
+
+def get_written_statement_title(document: dict) -> str:
+
+    """Return the corresponding title from the child items."""
+
+    written_statements = [child for child in document["ChildDebates"] if child["Overview"]["Title"].upper() == "WRITTEN STATEMENTS"]
+
+    if not written_statements:
+        logger.error(f"No written statement found for {document['Overview']['ExtId']=}")
+        return "UNKNOWN"
+
+    elif len(written_statements) > 1:
+        logger.warning(f"Multiple ({len(written_statements)=}) for {document['Overview']['ExtId']=}")
+
+    statement = written_statements[0]
+
+    titles = [x["Title"] for x in written_statements[0]["Navigator"]]
+
+    if len(titles) > 1:
+        logger.warning(f"Multiple {titles=}")
+
+    return titles[0]
 
 
 def get_document_source_reference_uri(document, date, house):
