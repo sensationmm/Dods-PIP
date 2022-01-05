@@ -16,6 +16,7 @@ type WrapperProps = {
 
 export const wrapper = styled.div<WrapperProps>`
   width: ${({ collapsed }) => (collapsed ? '160px' : '350px')};
+  height: 70vh;
   display: ${({ collapsed }) => (collapsed ? 'flex' : 'block')};
   position: relative;
 `;
@@ -31,7 +32,7 @@ export const box = styled.div<BoxProps>`
   box-shadow: ${elevation.dropShadow2};
   width: 100%;
   padding: 0;
-  height: ${({ tags }) => (tags ? '60vh' : 'auto')};
+  height: ${({ tags }) => (tags ? 'calc(70vh - 92px)' : 'auto')};
   overflow: ${({ tags }) => (tags ? 'scroll' : 'auto')}; ;
 `;
 
