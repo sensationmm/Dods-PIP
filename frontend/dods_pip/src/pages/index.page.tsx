@@ -102,7 +102,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
         if (error.data.isActive === false) {
           setShowInactiveMsg(true);
         } else {
-          setFailureCount(error.data.failedLoginAttemptCount);
+          setFailureCount(failureCount + 1);
         }
       } else {
         setErrors({ form: 'FAIL' });
