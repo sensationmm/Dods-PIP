@@ -27,7 +27,7 @@ paths:
           $ref: "#/components/responses/NotFound"
 
   /scheduler/delete:
-    post:
+    delete:
       operationId: deleteSchedule
       summary: "Delete schedule for doc publishing"
       parameters:
@@ -35,6 +35,20 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/DeleteSchedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /scheduler/update:
+    put:
+      operationId: deleteSchedule
+      summary: "Delete schedule for doc publishing"
+      parameters:
+        - $ref: '#/components/parameters/updateSchedule'
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateSchedule"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -69,6 +83,15 @@ components:
         cron:
           type: string
           example: "0 0 13 24 DEC ? 2021"
+    UpdateScheduleReturn:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 008f811e5ccf44d3a0df5b7f70a8e85d
+        cron:
+          type: string
+          example: "0 0 13 24 DEC ? 2021"
     DeleteScheduleReturn:
       type: object
       properties:
@@ -96,6 +119,21 @@ components:
           scheduleType:
             type: string
             example: publishing
+          cron:
+            type: string
+            example: "0 0 13 24 DEC ? 2021"
+    updateSchedule:
+      in: body
+      name: updateSchedule
+      schema:
+        type: object
+        required:
+          - id
+          - cron
+        properties:
+          id:
+            type: string
+            example: 008f811e5ccf44d3a0df5b7f70a8e85d
           cron:
             type: string
             example: "0 0 13 24 DEC ? 2021"
@@ -141,10 +179,16 @@ components:
             $ref: '#/components/schemas/CreateScheduleReturn'
 
     DeleteSchedule:
-      description: "Response from scheduler delete"
+      description: "Response from scheduler deletion"
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/DeleteScheduleReturn'
+    UpdateSchedule:
+      description: "Response from scheduler updation"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateScheduleReturn'
 
     

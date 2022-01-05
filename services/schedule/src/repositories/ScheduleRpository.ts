@@ -1,8 +1,13 @@
 const { Client } = require('@elastic/elasticsearch')
 
-import {createScheduleParameters, deleteScheduleParameters} from "../domain";
+import {
+    createScheduleParameters, 
+    deleteScheduleParameters,
+    updateScheduleParameters,
+} from "../domain";
 import { Schedule } from "./Schedule"
 import elasticsearch from "../elasticsearch"
+import { Logger } from "@dodsgroup/dods-lambda";
 
 export class ScheduleRepository implements Schedule {
 
@@ -10,7 +15,7 @@ export class ScheduleRepository implements Schedule {
 
     static defaultInstance: Schedule = new ScheduleRepository(elasticsearch);
 
-    static createSearchQuery(data: createScheduleParameters): any{
+    static createSearchQuery(data: createScheduleParameters|updateScheduleParameters): any{
         return{
             id: data.id,
             active: true,
@@ -38,5 +43,15 @@ export class ScheduleRepository implements Schedule {
 
     async deleteSchedule(data: deleteScheduleParameters): Promise<any> {
         return this.elasticsearch.watcher.deleteWatch(data);
+    }
+
+    async updateSchedule(data: updateScheduleParameters): Promise<any> {
+        const schedule =  this.elasticsearch.watcher.getWatch(data);
+        if (schedule.statusCode == 200) {
+            const scheduleType = (schedule.body.watch.actions.webhook.webhook.path.split('/'))[3]
+            data.scheduleType = scheduleType
+            const query = ScheduleRepository.createSearchQuery(data);
+            return this.elasticsearch.watcher.putWatch(query);
+        }
     }
 }   
