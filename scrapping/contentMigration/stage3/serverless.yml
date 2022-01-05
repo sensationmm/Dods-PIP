@@ -64,6 +64,11 @@ provider:
         - "sqs:*"
       Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-3-queue.fifo"
 
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "arn:aws:lambda:eu-west-1:390773179818:function:dods-auto-tagging-dev-auto-tagging"
+
 functions:
   migrate:
     name: migration-step-3-publisher-${sls:stage}

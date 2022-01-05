@@ -40,6 +40,12 @@ provider:
               - "xray:PutTelemetryRecords"
           Resource:
               - "*"
+        - Effect: "Allow"
+              Action:
+                  - "xray:PutTraceSegments"
+                  - "xray:PutTelemetryRecords"
+              Resource:
+                  - "*"
     # This section ties the functions to a particular API Gateway instead of creating a new one
     # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
     # We will move to dynamic Gateway selection based on sls stage.
