@@ -7,8 +7,8 @@ import {
   Model,
   Optional,
 } from 'sequelize';
+import { Collection, User } from '.';
 
-import { Collection } from '.';
 import sequelizeConnection from '../config/sequelizeConnection';
 
 interface AlertQueryAttributes {
@@ -62,8 +62,13 @@ export class CollectionAlertQuery
   public setCollection!: BelongsToSetAssociationMixin<Collection, number>;
   public createCollection!: BelongsToCreateAssociationMixin<Collection>;
 
+  public readonly createdById!: User;
+  public getCreatedBy!: BelongsToGetAssociationMixin<User>;
+  public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
+
   public static associations: {
     collection: Association<CollectionAlertQuery, Collection>;
+    createdById: Association<CollectionAlertQuery, User>;
   };
 
   // Timestamps

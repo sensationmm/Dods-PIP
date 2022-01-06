@@ -26,4 +26,3 @@ export interface CollectionResponse {
     createdAt: Date;
     updatedAt: Date;
 }
-

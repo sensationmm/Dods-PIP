@@ -156,5 +156,13 @@ functions:
       - http:
           method: get
           path: collections/{collectionId}
+          
+  createAlert:
+    handler: src/handlers/createAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: collections/{collectionId}/alerts
           caching:
             enabled: false

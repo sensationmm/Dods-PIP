@@ -11,13 +11,13 @@ export class CollectionRepository implements CollectionPersister {
     static defaultInstance: CollectionRepository = new CollectionRepository(
         Collection,
         ClientAccount,
-        User
+        User,
     );
 
     constructor(
         private model: typeof Collection,
         private clientAccountModel: typeof ClientAccount,
-        private userModel: typeof User
+        private userModel: typeof User,
     ) { }
 
     async createCollection(parameters: CreateCollectionPersisterParameters): Promise<Collection> {
@@ -105,4 +105,6 @@ export class CollectionRepository implements CollectionPersister {
 
         return collection;
     }
+
+
 }
