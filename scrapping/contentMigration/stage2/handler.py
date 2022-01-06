@@ -90,7 +90,7 @@ def consumer(event, context):
                     new_taxonomy = TaxonomyProcessor.search_taxonomy_by_notation(taxonomy)
                     # If found taxonomy object by id on elasticsearch
                     if new_taxonomy != taxonomy:
-                        logger.info(f'Taxonomy matched by this notation: {taxonomy["termLabel"]}')
+                        logger.info(f'Taxonomy matched by this notation: {taxonomy["tagId"]}')
                         new_taxonomy_terms.append(new_taxonomy)
                         continue
 
