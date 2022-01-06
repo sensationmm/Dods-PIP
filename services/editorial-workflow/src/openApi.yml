@@ -232,6 +232,26 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+        get:
+            summary: Get document from editorial record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            responses:
+                '200':
+                    $ref: '#/components/responses/getEditorialRecordDocumentResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
 
 components:
     responses:
@@ -314,6 +334,23 @@ components:
                                 type: array
                                 items:
                                     $ref: '#/components/schemas/EditorialRecordStatusResponse'
+                                    
+        getEditorialRecordDocumentResponse:
+            description: Get editorial record document 
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            message: 
+                                type: string
+                                example: Document found
+                            document:
+                                type: object
+                                $ref: '#/components/schemas/Document'
 
         BadRequest:
             description: Bad request

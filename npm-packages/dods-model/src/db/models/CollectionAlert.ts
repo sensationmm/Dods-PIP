@@ -9,9 +9,9 @@ import {
   Model,
   Optional,
 } from 'sequelize';
-import sequelizeConnection from '../config/sequelizeConnection';
+import { Collection, CollectionAlertQuery, CollectionAlertTemplate, User } from '.';
 
-import { Collection, CollectionAlertTemplate, CollectionAlertQuery } from '.';
+import sequelizeConnection from '../config/sequelizeConnection';
 
 interface AlertAttributes {
   id: number;
@@ -25,6 +25,14 @@ interface AlertAttributes {
   createdBy: number;
   updatedBy: number;
   isActive: boolean;
+  isPublished: boolean;
+  lastStepCompleted: number;
+  isScheduled: boolean;
+  hasKeywordsHighlight: boolean;
+  collection?: Collection;
+  createdById?: User;
+  updatedById?: User;
+  alertTemplate?: CollectionAlertTemplate;
 }
 
 export interface AlertInput
@@ -60,6 +68,11 @@ export class CollectionAlert
   public updatedBy!: number;
 
   public isActive!: boolean;
+  public isPublished!: boolean;
+  public lastStepCompleted!: number;
+  public isScheduled!: boolean;
+  public hasKeywordsHighlight!: boolean;
+
 
   // mixins for association (optional)
   public readonly collection!: Collection;
@@ -76,10 +89,22 @@ export class CollectionAlert
   public getAlertQueries!: BelongsToManyGetAssociationsMixin<CollectionAlertQuery>;
   public AlertQueries?: CollectionAlertQuery[];
 
+  public readonly createdById!: User;
+  public getCreatedBy!: BelongsToGetAssociationMixin<User>;
+  public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
+
+  public readonly updatedById!: User;
+  public getUpdatedById!: BelongsToGetAssociationMixin<User>;
+  public setUpdatedById!: BelongsToSetAssociationMixin<User, number>;
+
+
   public static associations: {
     collection: Association<CollectionAlert, Collection>;
     alertTemplate: Association<CollectionAlert, CollectionAlertTemplate>;
     alertQueries: BelongsToMany<Collection, CollectionAlertQuery>;
+    createdById: Association<CollectionAlert, User>;
+    updatedById: Association<CollectionAlert, User>;
+
   };
 
   // Timestamps
@@ -165,6 +190,26 @@ CollectionAlert.init(
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL'
+    },
+    isPublished: {
+      type: DataTypes.TINYINT({ length: 1 }),
+      allowNull: false,
+      defaultValue: false,
+    },
+    lastStepCompleted: {
+      type: DataTypes.INTEGER({ length: 11 }),
+      allowNull: false,
+      defaultValue: 1
+    },
+    isScheduled: {
+      type: DataTypes.TINYINT({ length: 1 }),
+      allowNull: false,
+      defaultValue: false,
+    },
+    hasKeywordsHighlight: {
+      type: DataTypes.TINYINT({ length: 1 }),
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {

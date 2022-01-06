@@ -7,9 +7,9 @@ import {
   Model,
   Optional,
 } from 'sequelize';
-import sequelizeConnection from '../config/sequelizeConnection';
 
 import { Collection } from '.';
+import sequelizeConnection from '../config/sequelizeConnection';
 
 interface AlertQueryAttributes {
   id: number;
@@ -18,6 +18,8 @@ interface AlertQueryAttributes {
   name: string;
   query: string;
   isActive: boolean;
+  informationTypes: string;
+  contentSources: string;
   createdBy: number;
   updatedBy: number;
 }
@@ -31,6 +33,8 @@ export interface AlertQueryInput
   | 'name'
   | 'query'
   | 'createdBy'
+  | 'informationTypes'
+  | 'contentSources'
   > { }
 
 
@@ -47,6 +51,8 @@ export class CollectionAlertQuery
   public query!: string;
   public createdBy!: number;
   public updatedBy!: number;
+  informationTypes!: string;
+  contentSources!: string;
 
   public isActive!: boolean;
 
@@ -91,7 +97,7 @@ CollectionAlertQuery.init(
     },
     name: {
       type: DataTypes.STRING({ length: 255 }),
-      allowNull: false,
+      allowNull: true,
     },
     query: {
       type: DataTypes.TEXT,
@@ -124,6 +130,14 @@ CollectionAlertQuery.init(
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL'
+    },
+    informationTypes: {
+      type: DataTypes.STRING({ length: 255 }),
+      allowNull: true,
+    },
+    contentSources: {
+      type: DataTypes.STRING({ length: 255 }),
+      allowNull: true,
     },
 
   },

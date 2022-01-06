@@ -112,15 +112,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading, addNotification }) => 
 
   React.useEffect(() => {
     loadFilteredUsers();
-  }, [
-    debouncedValue,
-    filters.aToZ,
-    filters.isActive,
-    filters.role,
-    filters.search,
-    numPerPage,
-    activePage,
-  ]);
+  }, [debouncedValue, filters.aToZ, filters.isActive, filters.role, numPerPage, activePage]);
 
   React.useEffect(() => {
     if (router?.query?.userAdded) {

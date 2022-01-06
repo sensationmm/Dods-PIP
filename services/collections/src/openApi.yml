@@ -57,6 +57,32 @@ paths:
           $ref: "#/components/responses/CollectionResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+    get:
+      operationId: getCollection
+      summary: "Returns collection"
+      description: "Returns collection"
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}/alerts:
+    get:
+      operationId: getCollectionAlerts
+      summary: "Get the alerts associated to a Collection"
+      description: "Get Alerts Associated to a Collection"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetAlertsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
 
 components:
@@ -243,6 +269,29 @@ components:
                 type: string
               collection:
                 $ref: "#/components/schemas/CollectionOutput"
+                
+    GetAlertsResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Collection alerts found
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              alerts:
+                type: array
+                items:
+                  type: object
 
   requestBodies:
     CreateCollection:
@@ -262,4 +311,3 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateCollectionInput"
-
