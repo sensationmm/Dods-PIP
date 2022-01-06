@@ -85,9 +85,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
 
 
-# security:
-#   - bearerAuth: []
-
 components:
   securitySchemes:
     bearerAuth:
