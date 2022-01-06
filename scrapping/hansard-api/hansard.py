@@ -454,8 +454,19 @@ def get_written_statement_title(document: dict) -> str:
 
     elif len(written_statements) > 1:
         logger.warning(f"Multiple ({len(written_statements)=}) for {document['Overview']['ExtId']=}")
+    #import ipdb; ipdb.set_trace()
 
-    statement = written_statements[0]
+    # TODO - sort this out
+    """
+    pdb> document["ChildDebates"][1]["Navigator"][1]["Title"]
+    'Business, Energy and Industrial Strategy'
+    ipdb> len(document["Navigator"])
+    1
+    ipdb> document["Navigator"][0]
+    {'Id': 4281687, 'Title': 'Written Statements', 'ParentId': None, 'SortOrder': 1, 'ExternalId': '234df1ff-bd39-49f7-931e-4a3eb68828a0', 'HRSTag': None, 'HansardSection': None, 'Timecode': None}
+    ipdb>
+    [dods
+    """
 
     titles = [x["Title"] for x in written_statements[0]["Navigator"]]
 

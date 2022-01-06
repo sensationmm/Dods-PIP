@@ -2,4 +2,5 @@
 *.pyc
 *.pyo
 hansard-commons/*
+hansard-lords/*
 docker/*
