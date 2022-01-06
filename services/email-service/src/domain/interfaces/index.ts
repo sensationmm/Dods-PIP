@@ -1,20 +1,30 @@
-export type Title = "Mr" | "Mrs" | "Miss" | "Ms";
+export type MimeType = "application/json" | "application/xml" | "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" | "text/html" | "application/pdf" | "image/png";
 
-export type Language = "English" | "Turkish";
-
-export interface SayLocalHelloParameters {
-    firstName: string;
-    lastName: string;
-    title: Title;
+export interface SendGridPayload {
+    personalizations: [{
+        to: [{
+            email: string
+        }]
+    }],
+    from: {
+        email: string
+    },
+    subject: string,
+    content: [{
+        type: MimeType,
+        value: string
+    }]
 }
 
-export interface SayHelloParameters extends SayLocalHelloParameters {
-    language: Language;
+export interface SendEmailInput {
+    to: string[];
+    from: string;
+    subject: string;
+    mimeType: MimeType;
+    content: string;
 }
 
 export interface DownstreamEndpoints {
     apiGatewayBaseURL: string;
-    sayTurkishHelloEndpointUrl: string;
-    sayEnglishHelloEndpointUrl: string;
-    getFullNameEndpointUrl: string;
+    sendEmailUrl: string;
 }
