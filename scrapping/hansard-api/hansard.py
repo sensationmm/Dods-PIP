@@ -88,7 +88,16 @@ class DataModel(Model):
 
     class Meta:
         table_name = "hansard-api"
+
+        # TODO
         host = "http://localhost:8000"  # TODO enviorn driven
+
+        # Lifted from the lib/datamodel file here - we want this to
+        # write to that like the other scrapers.
+        # region = os.environ['REGION']
+        # host = os.environ['DYNAMODB_HOST']
+        # # 'https://dynamodb.us-east-1.amazonaws.com'
+
 
     external_id = UnicodeAttribute(hash_key=True)
     document_id = UnicodeAttribute()
@@ -530,6 +539,10 @@ def create_document(document: dict) -> str:
         pass
 
     output_path = os.path.join(path, filename)
+
+    # TODO - this should write the output to the relevant S3 bucket driven
+    # by the environement variables
+    # with s3 = boto3.client('s3') etc
 
     with open(output_path, "w") as output:
         output.write(json.dumps(document["mapped"], indent=2))
