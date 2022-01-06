@@ -18,6 +18,27 @@ export type SearchCollectionsOutput = {
     data: Array<any>;
 };
 
+export interface GetCollectionInput {
+    collectionId: string;
+}
+
+export interface GetCollectionOutput {
+    data: {
+        uuid: string;
+        name: string;
+        clientAccount: {
+            uuid: string;
+            name: string;
+        },
+        createdAt: Date;
+        updatedAt: Date;
+        alertsCount: number; //Count of alerts associated to collection
+        queriesCount: number; //Count of saved queries associated to collection
+        documentsCount: number; //Count of documents associated to collection
+    }
+}
+
 export interface CollectionsPersister {
     list(parameters: SearchCollectionsInput): Promise<SearchCollectionsOutput>;
+    get(parameters: GetCollectionInput): Promise<GetCollectionOutput>;
 }

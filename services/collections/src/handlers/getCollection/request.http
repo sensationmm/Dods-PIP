@@ -1,0 +1,2 @@
+### get Collection by uuid
+GET {{host}}/collections/94a57103-3bf0-4a29-bdba-99a4650c1849 HTTP/1.1
