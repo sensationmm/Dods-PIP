@@ -28,12 +28,12 @@ export const errorMiddleware: AsyncLambdaMiddleware<APIGatewayProxyEvent> = asyn
 
     } finally {
         if (error) {
-            const { stack = undefined, statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR, message, ...rest } = typeof error === 'string' ? { message: error } : error;
+            const { status = HttpStatusCode.INTERNAL_SERVER_ERROR, statusCode = status as HttpStatusCode, message } = typeof error === 'string' ? { message: error } : error;
 
             response = new HttpResponse(statusCode, {
                 success: false,
                 message,
-                error: rest,
+                // error: rest,
             });
 
             Logger.error('ErrorMiddleware:', error);

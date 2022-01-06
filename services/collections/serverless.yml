@@ -148,3 +148,13 @@ functions:
           path: collections/{collectionId}
           caching:
             enabled: false
+
+  getCollection:
+    handler: src/handlers/getCollection/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: collections/{collectionId}
+          caching:
+            enabled: false

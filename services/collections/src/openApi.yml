@@ -57,6 +57,17 @@ paths:
           $ref: "#/components/responses/CollectionResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+    get:
+      operationId: getCollection
+      summary: "Returns collection"
+      description: "Returns collection"
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
           
   /collections/{collectionId}/alerts:
     get:

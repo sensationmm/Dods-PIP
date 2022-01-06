@@ -1,7 +1,6 @@
 import { ClientAccount, Collection, Op, Sequelize } from "@dodsgroup/dods-model";
-import { CollectionsPersister, SearchCollectionsInput, SearchCollectionsOutput } from "./domain";
-
 import { CollectionError } from "@dodsgroup/dods-domain"
+import { CollectionsPersister, SearchCollectionsInput, SearchCollectionsOutput, GetCollectionInput, GetCollectionOutput } from "./domain";
 
 export * from './domain';
 
@@ -82,6 +81,42 @@ export class CollectionsRepository implements CollectionsPersister {
             totalRecords,
             filteredRecords,
             data: mappedRows,
+        };
+    }
+
+    async get(parameters: GetCollectionInput): Promise<GetCollectionOutput> {
+
+        const collection = await Collection.findOne({
+            where: {
+                uuid: parameters.collectionId,
+                isActive: true
+            },
+            include: [
+                Collection.associations.clientAccount,
+                Collection.associations.alerts,
+                Collection.associations.savedQueries,
+                Collection.associations.documents,
+            ],
+        });
+
+        if (!collection) {
+            throw new CollectionError('Collection not found');
+        }
+
+        return {
+            data: {
+                uuid: collection.uuid,
+                name: collection.name,
+                clientAccount: {
+                    uuid: collection.clientAccount.uuid,
+                    name: collection.clientAccount.name,
+                },
+                createdAt: collection.createdAt,
+                updatedAt: collection.updatedAt,
+                alertsCount: collection.alerts!.length,
+                queriesCount: collection.savedQueries!.length,
+                documentsCount: collection.documents!.length,
+            }
         };
     }
 }
