@@ -11,7 +11,7 @@ export class ScheduleRepository implements Schedule {
     static defaultInstance: Schedule = new ScheduleRepository(elasticsearch);
 
     static createSearchQuery(data: createScheduleParameters): any{
-        return{
+        return {
             id: data.id,
             active: true,
             body: {
@@ -28,7 +28,6 @@ export class ScheduleRepository implements Schedule {
                 }
             }
         }
-
     }
 
     async createSchedule(data: createScheduleParameters): Promise<any> {

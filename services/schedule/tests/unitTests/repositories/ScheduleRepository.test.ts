@@ -1,73 +1,47 @@
-import { SayLocalHelloParameters } from '../../../src/domain';
-import { GreetingRepository } from '../../../src/repositories/GreetingRepository';
-import { requestHandler } from '../../../src/utility/requestHandler'
+import elasticsearch from "../../../src/elasticsearch"
 
-jest.mock('../../../src/utility/requestHandler');
+import {createScheduleParameters} from "../../../src/domain";
+import {ScheduleRepository} from "../../../src/repositories/ScheduleRepository";
 
-const getFullName = (data: SayLocalHelloParameters) => `${data.title} ${data.firstName} ${data.lastName}`;
+jest.mock('../../../src/elasticsearch');
+elasticsearch.default.mockReturnValue({
+    watcher: jest.fn().mockReturnValue({putWatch: true})
+})
 
-const requestHandlerMock = (requestHandler as jest.Mock);
 
-const FUNCTION_NAME = GreetingRepository.name;
+const CREATE_SCHEDULE_INPUT: createScheduleParameters = {
+    "id": "123",
+    "scheduleType": "publishing",
+    "cron": "0 0 13 24 DEC ? 2021"
+}
 
-afterEach(() => {
-    requestHandlerMock.mockReset();
-});
+describe(`Schedule repository tests`, () => {
 
-describe(`${FUNCTION_NAME} handler`, () => {
+    test(`createSearchQuery returns correct query`, async () => {
+        const expectedQuery = {
+            id: CREATE_SCHEDULE_INPUT.id,
+            active: true,
+            body: {
+                trigger: {schedule: { "cron" : CREATE_SCHEDULE_INPUT.cron }},
+                actions: {webhook: {
+                    webhook: {
+                        method: "GET",
+                        url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + CREATE_SCHEDULE_INPUT.id + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
+                    }
+                }}
+            }
+        }
 
-    test('sayEnglishHello Valid input', async () => {
-        const data: SayLocalHelloParameters = { title: 'Mr', firstName: 'kenan', lastName: 'hancer' };
 
-        const getFullNameResponse = getFullName(data);
+        const searchQuery = ScheduleRepository.createSearchQuery(CREATE_SCHEDULE_INPUT)
 
-        const requestHandlerResponse = `Hello ${getFullNameResponse}`;
-
-        requestHandlerMock.mockReturnValue(requestHandlerResponse);
-
-        const response = await GreetingRepository.defaultInstance.sayEnglishHello(data);
-
-        expect(requestHandlerMock).toHaveBeenCalledTimes(1);
-
-        const expectedResponse = requestHandlerMock.mock.results[0].value;
-
-        expect(response).toEqual(expectedResponse);
-
+        expect(searchQuery).toEqual(expectedQuery)
     });
 
-    test('sayTurkishHello Valid input', async () => {
-        const data: SayLocalHelloParameters = { title: 'Mr', firstName: 'kenan', lastName: 'hancer' };
+    test(`createSchedule calls createSearchQuery`, async () => {
+        const spy = jest.spyOn(ScheduleRepository, 'createSearchQuery');
+        await ScheduleRepository.defaultInstance.createSchedule(CREATE_SCHEDULE_INPUT)
 
-        const getFullNameResponse = getFullName(data);
-
-        const requestHandlerResponse = `Merhaba ${getFullNameResponse}`;
-
-        requestHandlerMock.mockReturnValue(requestHandlerResponse);
-
-        const response = await GreetingRepository.defaultInstance.sayTurkishHello(data);
-
-        expect(requestHandlerMock).toHaveBeenCalledTimes(1);
-
-        const expectedResponse = requestHandlerMock.mock.results[0].value;
-
-        expect(response).toEqual(expectedResponse);
-
-    });
-
-    it('getFullName valid input', async () => {
-        const data: SayLocalHelloParameters = { title: 'Mr', firstName: 'kenan', lastName: 'hancer' };
-
-        const requestHandlerResponse = `${data.title} ${data.firstName} ${data.lastName}`;
-
-        requestHandlerMock.mockReturnValue(requestHandlerResponse);
-
-        const response = await GreetingRepository.defaultInstance.getFullName(data);
-
-        expect(requestHandlerMock).toHaveBeenCalledTimes(1);
-
-        const expectedResponse = requestHandlerMock.mock.results[0].value;
-
-        expect(response).toEqual(expectedResponse);
+        expect(spy).toHaveBeenCalled();
     });
 });
-
