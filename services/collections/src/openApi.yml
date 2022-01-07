@@ -68,6 +68,17 @@ paths:
           description: OK
         "404":
           $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteCollection
+      summary: "Delete collection"
+      description: "Delete collection"
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
           
   /collections/{collectionId}/alerts:
     get:

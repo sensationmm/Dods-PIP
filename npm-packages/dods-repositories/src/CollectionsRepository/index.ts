@@ -1,6 +1,13 @@
 import { ClientAccount, Collection, Op, Sequelize } from "@dodsgroup/dods-model";
 import { CollectionError } from "@dodsgroup/dods-domain"
-import { CollectionsPersister, SearchCollectionsInput, SearchCollectionsOutput, GetCollectionInput, GetCollectionOutput } from "./domain";
+import {
+    CollectionsPersister,
+    SearchCollectionsInput,
+    SearchCollectionsOutput,
+    GetCollectionInput,
+    GetCollectionOutput,
+    DeleteCollectionInput,
+} from "./domain";
 
 export * from './domain';
 
@@ -118,5 +125,27 @@ export class CollectionsRepository implements CollectionsPersister {
                 documentsCount: collection.documents!.length,
             }
         };
+    }
+
+    async delete(parameters: DeleteCollectionInput): Promise<boolean> {
+        const { collectionId } = parameters;
+
+        const collection = await Collection.findOne({
+            where: {
+                uuid: collectionId,
+                isActive: true
+            },
+            include: [Collection.associations.clientAccount, Collection.associations.createdBy],
+        });
+
+        if (!collection) {
+            throw new CollectionError('Collection not found');
+        }
+
+        await collection.update({ isActive: false });
+
+        await collection.destroy();
+
+        return true;
     }
 }

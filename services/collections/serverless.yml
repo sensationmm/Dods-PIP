@@ -166,3 +166,13 @@ functions:
           path: collections/{collectionId}/alerts
           caching:
             enabled: false
+
+  deleteCollection:
+    handler: src/handlers/deleteCollection/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: delete
+          path: collections/{collectionId}
+          caching:
+            enabled: false
