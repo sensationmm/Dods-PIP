@@ -112,10 +112,9 @@ def consumer(event, context):
                             new_taxonomy_terms.append(new_taxonomy)
                             continue
 
-                    new_taxonomy_terms.append(taxonomy)
+                    logger.info(f'Unmatched taxonomy term: {dumps(taxonomy)}')
 
                 content_document['taxonomyTerms'] = new_taxonomy_terms
-
                 content_document = dumps(content_document)
 
                 anchors = re.findall("(<a[^>]*>([^<]+)</a>)", content_document)
