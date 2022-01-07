@@ -210,7 +210,16 @@
     },
     "aggs_fields": {
       "properties": {
-        "ancestorTermsLabel": {
+        "topics": {
+          "type": "keyword"
+        },
+        "people": {
+          "type": "keyword"
+        },
+        "organisations": {
+          "type": "keyword"
+        },
+        "geography": {
           "type": "keyword"
         }
       }

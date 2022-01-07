@@ -1,23 +1,24 @@
 import WysiwygEditor, { WysiwygEditorProps } from './index';
 import { act, cleanup, render, RenderResult } from '@testing-library/react';
 import Quill from 'quill';
-import './blots/font-style';
 
 jest.mock('quill', () =>
   jest.fn().mockReturnValue(() => ({
     on: jest.fn(),
   })),
 );
+jest.mock('./blots/align', () => jest.fn());
+jest.mock('./blots/bold', () => jest.fn());
 jest.mock('./blots/font-style', () => jest.fn());
+jest.mock('./blots/italic', () => jest.fn());
+jest.mock('./blots/content-tag', () => jest.fn());
 
 const COMPONENT_ID = 'test_id';
 
 const onTextChangeMock = jest.fn();
-const onSelectionChangeMock = jest.fn();
 const DEFAULT_PROPS: WysiwygEditorProps = {
   id: COMPONENT_ID,
   onTextChange: onTextChangeMock,
-  onSelectionChange: onSelectionChangeMock,
 };
 
 const getComponentWithProps = async (

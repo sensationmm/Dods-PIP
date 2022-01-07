@@ -22,6 +22,7 @@ export interface StatusBarProps {
   scheduleDisabled?: boolean;
   schedule?: boolean;
   publishDisabled?: boolean;
+  saveAndExitDisabled?: boolean;
   publish?: boolean;
   unschedule?: boolean;
   unpublish?: boolean;
@@ -45,6 +46,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
   publish,
   publishDisabled,
   scheduleDisabled,
+  saveAndExitDisabled,
   unschedule,
   unpublish,
   updateArticle,
@@ -58,7 +60,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
   onSaveAndEdit,
   onUpdateArticle,
 }) => (
-  <Styled.wrapper data-test="statusbar-wraper">
+  <Styled.wrapper data-test="statusbar-wrapper">
     <Styled.group>
       <Styled.tagWrapper>
         <Text color={color.theme.blue}> Status: </Text>
@@ -87,6 +89,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
           <Button
             label="Save and Exit"
             type="secondary"
+            disabled={saveAndExitDisabled}
             onClick={onSaveAndEdit}
             icon={Icons.Exit}
           />
@@ -146,7 +149,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
   </Styled.wrapper>
 );
 
-export const MobileComponent: React.FC = () => {
+export const ReadOnlyMessage: React.FC = () => {
   return (
     <div data-test="mobile-component">
       <Styled.inlineView>
@@ -169,7 +172,7 @@ const StatusBar: React.FC<StatusBarProps> = ({ isTransparent, containerized = tr
     <Styled.card isTransparent={isTransparent} data-test="card-component">
       <Styled.container containerized={containerized}>
         {isMobileOrTablet ? (
-          <MobileComponent data-test="mobile-component" />
+          <ReadOnlyMessage data-test="mobile-component" />
         ) : (
           <MainContent {...props} />
         )}

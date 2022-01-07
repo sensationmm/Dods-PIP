@@ -12,22 +12,6 @@ servers:
   - url: /api
 
 paths:
-  /documents/{documentId}:
-    put:
-      operationId: updateDocument
-      summary: "Update document at S3"
-      description: "Update document at S3"
-      parameters:
-        - $ref: "#/components/parameters/documentId"
-        - $ref: "#/components/parameters/document"
-      responses:
-        "200":
-          $ref: "#/components/responses/UpdateDocument"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
   /documents:
     get:
       operationId: getDocument
@@ -46,11 +30,34 @@ paths:
       operationId: createDocument
       summary: "Create Document on S3"
       description: "Create Document on S3"
-      parameters:
-        - $ref: "#/components/parameters/document"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateDocument"
       responses:
         "200":
           $ref: "#/components/responses/CreateDocument"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateDocument
+      summary: "Update document at S3"
+      description: "Update document at S3"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                arn:
+                  type: string
+                  example: arn:aws:s3:::bucket-name/key-path
+                document:
+                  $ref: "#/components/schemas/Document"
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateDocument"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -75,24 +82,27 @@ components:
     GetDocumentSuccess:
       type: object
       properties:
-          success:
-              type: boolean
-          document:
-              $ref: '#/components/schemas/Document'
+        success:
+          type: boolean
+        document:
+          $ref: "#/components/schemas/Document"
     UpdateDocumentSuccess:
       type: object
       properties:
         success:
           type: boolean
-        document:
-          $ref: '#/components/schemas/Document'
+        message:
+          type: string
+          example: Document Successfully Updated
+        payload:
+          $ref: "#/components/schemas/Document"
     CreateDocumentSuccess:
       type: object
       properties:
         success:
           type: boolean
         documentContent:
-          $ref: '#/components/schemas/Document'
+          $ref: "#/components/schemas/Document"
         documentId:
           type: string
     Document:
@@ -161,6 +171,163 @@ components:
         - contentSource
         - informationType
         - createdDateTime
+    CreateDocumentRequest:
+      type: object
+      properties:
+        document:
+          type: string
+      required:
+        - document
+    CreateDocumentParametersV2:
+      additionalProperties: false
+      properties:
+        aggs_fields:
+          $ref: "#/components/schemas/AggField"
+        contentDateTime:
+          format: date-time
+          type: string
+        contentLocation:
+          type: string
+        contentSource:
+          type: string
+        countryOfOrigin:
+          type: string
+        createdBy:
+          type: string
+        createdDateTime:
+          format: date-time
+          type: string
+        documentContent:
+          type: string
+        documentId:
+          type: string
+        documentTitle:
+          type: string
+        feedFormat:
+          type: string
+        informationType:
+          type: string
+        ingestedDateTime:
+          format: date-time
+          type: string
+        internallyCreated:
+          type: boolean
+        jurisdiction:
+          type: string
+        language:
+          type: string
+        organisationName:
+          type: string
+        originalContent:
+          type: string
+        originator:
+          type: string
+        schemaType:
+          type: string
+        sourceReferenceFormat:
+          type: string
+        sourceReferenceUri:
+          type: string
+        taxonomyTerms:
+          items:
+            $ref: "#/components/schemas/TaxonomyTerm"
+          type: array
+        version:
+          type: string
+      required:
+        - documentId
+        - jurisdiction
+        - documentTitle
+        - organisationName
+        - sourceReferenceFormat
+        - sourceReferenceUri
+        - createdBy
+        - internallyCreated
+        - schemaType
+        - contentSource
+        - contentLocation
+        - originator
+        - informationType
+        - contentDateTime
+        - createdDateTime
+        - ingestedDateTime
+        - version
+        - countryOfOrigin
+        - feedFormat
+        - language
+        - aggs_fields
+        - taxonomyTerms
+        - originalContent
+        - documentContent
+      type: object
+    AggField:
+      additionalProperties: false
+      properties:
+        geography:
+          items:
+            type: string
+          type: array
+        organizations:
+          items:
+            type: string
+          type: array
+        people:
+          items:
+            type: string
+          type: array
+        topics:
+          items:
+            type: string
+          type: array
+      required:
+        - topics
+        - people
+        - organizations
+        - geography
+      type: object
+    AncestorTerm:
+      additionalProperties: false
+      properties:
+        rank:
+          type: number
+        tagId:
+          type: string
+        termLabel:
+          type: string
+      required:
+        - tagId
+        - termLabel
+        - rank
+      type: object
+    TaxonomyTerm:
+      additionalProperties: false
+      properties:
+        alternative_labels:
+          items:
+            type: string
+          type: array
+        ancestorTerms:
+          items:
+            $ref: "#/components/schemas/AncestorTerm"
+          type: array
+        facetType:
+          type: string
+        inScheme:
+          items:
+            type: string
+          type: array
+        tagId:
+          type: string
+        termLabel:
+          type: string
+      required:
+        - tagId
+        - facetType
+        - inScheme
+        - termLabel
+        - ancestorTerms
+        - alternative_labels
+      type: object
 
   parameters:
     documentId:
@@ -211,16 +378,27 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GetDocumentSuccess'
+            $ref: "#/components/schemas/GetDocumentSuccess"
     UpdateDocument:
       description: "Update a document fields using its UUID"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UpdateDocumentSuccess'
+            $ref: "#/components/schemas/UpdateDocumentSuccess"
     CreateDocument:
       description: "Create a new document"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/CreateDocumentSuccess'
+            $ref: "#/components/schemas/CreateDocumentSuccess"
+
+  requestBodies:
+    CreateDocument:
+      description: A JSON object containing Editorial Record information
+      required: true
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: "#/components/schemas/CreateDocumentRequest"
+              - $ref: "#/components/schemas/CreateDocumentParametersV2"

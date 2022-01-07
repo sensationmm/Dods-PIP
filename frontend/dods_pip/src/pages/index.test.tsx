@@ -32,7 +32,7 @@ jest.mock('../lib/useUser', () => {
   });
 });
 
-describe('Home', () => {
+describe.skip('Home', () => {
   let wrapper: ShallowWrapper,
     formEmail,
     formPassword,
