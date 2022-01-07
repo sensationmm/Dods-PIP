@@ -5,6 +5,7 @@ import {
     ClientAccountUser,
     Collection,
     CollectionAlert,
+    CollectionAlertQuery,
     CollectionAlertTemplate,
     CollectionDocument,
     CollectionSavedQuery,
@@ -128,6 +129,12 @@ if (process.env.NODE_ENV !== 'test') {
     CollectionAlert.belongsTo(CollectionAlertTemplate, {
         as: 'alertTemplate',
         foreignKey: 'templateId',
+        targetKey: 'id',
+    });
+
+    CollectionAlertQuery.belongsTo(User, {
+        as: 'createdById',
+        foreignKey: 'createdBy',
         targetKey: 'id',
     });
 

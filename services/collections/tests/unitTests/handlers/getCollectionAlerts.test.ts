@@ -26,7 +26,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             count: 0,
             alerts: []
         };
-        const querysByAlert = [] as Array<CollectionAlertQuery>;
+        const querysByAlert: Array<CollectionAlertQuery> = [] as Array<CollectionAlertQuery>;
         const recipientsByAlert = [] as Array<CollectionAlertRecipient>;
 
         mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts.mockResolvedValue({ count: 0, alerts: [] });
@@ -106,7 +106,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const response = await getCollectionAlerts(requestParams, defaultContext);
 
         const expectedResponse = new HttpResponse(HttpStatusCode.NOT_FOUND, {
-            success: true,
+            success: false,
             message: 'Collection does not exist',
         });
 

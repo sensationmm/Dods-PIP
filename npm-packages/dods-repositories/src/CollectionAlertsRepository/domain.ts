@@ -33,3 +33,26 @@ export interface CollectionAlertsPersister {
 
     getCollectionAlerts(parameters: SearchCollectionAlertsParameters): Promise<getAlertsByCollectionResponse>;
 }
+
+export interface CreateAlertParameters {
+    collectionId: string,
+    title: string,
+    alertQueries?: [{
+        query: string,
+        informationTypes: string,
+        contentSources: string
+    }]
+    createdBy: string
+}
+
+export interface CreateAlertQuery {
+
+    alertId: number,
+    query: string,
+    informationTypes: string,
+    contentSources: string,
+    createdBy: number
+
+}
+
+

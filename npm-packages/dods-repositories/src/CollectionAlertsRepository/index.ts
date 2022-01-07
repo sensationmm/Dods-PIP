@@ -1,9 +1,12 @@
-import { Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient } from '@dodsgroup/dods-model';
+import { Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
     CollectionAlertsPersister,
+    CreateAlertParameters,
     SearchCollectionAlertsParameters,
-    getAlertsByCollectionResponse
+    getAlertsByCollectionResponse,
 } from './domain';
+
+import { CollectionError } from "@dodsgroup/dods-domain"
 
 export * from './domain';
 
@@ -12,7 +15,9 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         CollectionAlert,
         Collection,
         CollectionAlertQuery,
-        CollectionAlertRecipient
+        CollectionAlertRecipient,
+        User,
+        CollectionAlert
 
     );
 
@@ -21,11 +26,13 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         private collectionModel: typeof Collection,
         private alertQueryModel: typeof CollectionAlertQuery,
         private recipientModel: typeof CollectionAlertRecipient,
+        private userModel: typeof User,
+        private alertModel: typeof CollectionAlert
 
     ) { }
 
-    mapCollection(model: CollectionAlert): Object {
-        const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate } = model;
+    mapAlert(model: CollectionAlert): Object {
+        const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, lastStepCompleted, isPublished } = model;
 
         const collectionAlert = {
             id,
@@ -34,12 +41,14 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             description,
             collection: collection ? { uuid: collection.uuid, name: collection.name } : {},
             template: alertTemplate ? { id: alertTemplate.id, name: alertTemplate.name } : {},
-            schedule,
-            timezone,
+            schedule: schedule ? schedule : "",
+            timezone: timezone ? timezone : "",
             createdBy: createdById ? { uuid: createdById.uuid, name: createdById.fullName, emailAddress: createdById.primaryEmail } : {},
             createdAt,
             updatedAt,
-            updatedById: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail } : {},
+            lastStepCompleted,
+            isPublished,
+            updatedBy: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail } : {},
         }
         model.collection.uuid;
 
@@ -54,9 +63,8 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             where: { uuid: collectionId }
         })
 
-
         if (!collection || !collection.isActive) {
-            throw new Error(
+            throw new CollectionError(
                 `Unable to retrieve Collection with uuid: ${collectionId}`
             );
         }
@@ -75,7 +83,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         return {
-            alerts: rows.map((collectionAlert) => this.mapCollection(collectionAlert)),
+            alerts: rows.map((collectionAlert) => this.mapAlert(collectionAlert)),
             count: count
         };
     }
@@ -100,6 +108,51 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         return recipients
+    }
+
+    async createAlert(parameters: CreateAlertParameters): Promise<CollectionAlert> {
+        const { collectionId, createdBy, title, alertQueries } = parameters;
+
+        if (!alertQueries?.length) {
+            throw new CollectionError(
+                `Error: AlertQueries shouldn't be empty`,
+            );
+        }
+
+        const alertOwner = await this.collectionModel.findOne({
+            where: {
+                uuid: collectionId,
+            },
+        });
+
+
+        if (!alertOwner) {
+            throw new CollectionError(
+                `Error: Collection with uuid: ${collectionId} does not exist`,
+            );
+        }
+        const alertCreator = await this.userModel.findOne({
+            where: {
+                uuid: createdBy,
+            },
+        });
+        if (!alertCreator) {
+            throw new CollectionError(
+                `Error: User with uuid: ${createdBy} does not exist`,
+
+            );
+        }
+        const createObject: any = { collectionId: alertOwner.id, title: title, createdBy: alertCreator.id }
+        const newAlert = await this.alertModel.create(createObject);
+
+        return await newAlert.reload({ include: ['collection', 'createdById'] });
+    }
+
+    async createQuery(parameters: any): Promise<CollectionAlertQuery> {
+
+        const newAlertQuery = await CollectionAlertQuery.create(parameters);
+
+        return await newAlertQuery.reload();
     }
 
 }
