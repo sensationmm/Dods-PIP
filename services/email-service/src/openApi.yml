@@ -10,19 +10,19 @@ info:
     url: "https://www.gnu.org/licenses/gpl-3.0.html"
 servers:
   - url: /api
-  
+
 tags:
-- name: 'email'
-  description: 'Email Service'
-  externalDocs:
-    description: 'Docs'
-    url: 'https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/637403146/Email+Service'
+  - name: "email"
+    description: "Email Service"
+    externalDocs:
+      description: "Docs"
+      url: "https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/637403146/Email+Service"
 
 paths:
   /email:
     post:
       tags:
-      - 'email'
+        - "email"
       operationId: email
       summary: "Send Email"
       description: "Sends an email based on the data in the request payload"
@@ -44,7 +44,7 @@ components:
           example: false
         message:
           type: string
-          example: 'an error ocurred while parsing the content'
+          example: "an error ocurred while parsing the content"
     SendEmailSuccess:
       type: object
       properties:
@@ -53,7 +53,7 @@ components:
           example: true
         message:
           type: string
-          example: 'email sent'
+          example: "email sent"
     SendEmailInput:
       type: object
       properties:
@@ -62,41 +62,43 @@ components:
           items:
             type: string
             format: email
-            minLength: 4
-          example: ['blue@somoglobal.com', 'green@somoglobal.com']
+            minLength: 1
+          example: ["blue@somoglobal.com", "green@somoglobal.com"]
           description: "The recipient email address"
           minItems: 1
+          maxItems: 1000
         from:
           type: string
           format: email
-          example: 'test@somoglobal.com'
+          example: "test@somoglobal.com"
           description: "The email address the email is from"
-          minLength: 4
+          minLength: 1
         subject:
           type: string
-          example: 'Welcome to Somo!'
-          description: 'The subject for the email'
+          example: "Welcome to Somo!"
+          description: "The subject for the email"
           minLength: 1
         mimeType:
           type: string
-          example: 'text/plain'
-          default: 'text/plain'
+          example: "text/plain"
+          default: "text/html"
           enum:
-            - 'application/json'
-            - 'application/xml'
-            - 'application/x-www-form-urlencoded'
-            - 'multipart/form-data'
-            - 'text/plain'
-            - 'text/html'
-            - 'application/pdf'
-            - 'image/png'
-          description: 'The mimeType of the email content'
+            - "application/json"
+            - "application/xml"
+            - "application/x-www-form-urlencoded"
+            - "multipart/form-data"
+            - "text/plain"
+            - "text/html"
+            - "application/pdf"
+            - "image/png"
+          description: "The mimeType of the email content"
+          minLength: 1
         content:
           type: string
-          example: 'Hello. Cheers!'
-          description: 'Email content'
+          example: "Hello. Cheers!"
+          description: "Email content"
           minLength: 1
-  
+
   requestBodies:
     SendEmail:
       description: "Payload to send emails"
@@ -104,8 +106,8 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/SendEmailInput'
-  
+            $ref: "#/components/schemas/SendEmailInput"
+
   responses:
     SendEmail:
       description: "Send email"

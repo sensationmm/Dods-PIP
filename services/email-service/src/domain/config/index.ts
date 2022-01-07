@@ -42,11 +42,10 @@ export const config = {
     dods: {
         downstreamEndpoints: {
             apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
-            sendEmailUrl: envVars.EMAIL_SERVICE_API_ENDPOINT as string
+            sendEmailUrl: envVars.SENDGRID_V3_MAIL_SEND_ENDPOINT as string
         } as DownstreamEndpoints
     },
     sendGrid: {
-        apiEndpoint: envVars.SENDGRID_V3_MAIL_SEND_ENDPOINT as string,
         apiKey: envVars.SENDGRID_API_KEY as string,
     }
 };

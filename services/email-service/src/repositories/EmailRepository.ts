@@ -9,6 +9,7 @@ export class EmailRepository implements Email {
     constructor(private config: DownstreamEndpoints) { }
 
     async sendEmail(data: SendGridPayload): Promise<any> {
-        return await requestHandler({ url: config.sendGrid.apiEndpoint, headers: { 'Authorization': `Bearer ${config.sendGrid.apiKey}` }, data, method: 'post' })
+        const headers = { 'Authorization': `Bearer ${config.sendGrid.apiKey}` };
+        return await requestHandler({ url: this.config.sendEmailUrl, method: 'post', headers, data })
     }
 }
