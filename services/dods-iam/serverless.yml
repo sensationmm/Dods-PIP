@@ -122,6 +122,7 @@ custom:
     production:
       ses_from: no-reply@dodspoliticalintelligence.com
       ses_source_arn: arn:aws:ses:eu-west-1:186202231680:identity/no-reply@dodspoliticalintelligence.com
+      cognito_reply_to: no-reply@dodspoliticalintelligence.com
 
   localstack:
     stages:
