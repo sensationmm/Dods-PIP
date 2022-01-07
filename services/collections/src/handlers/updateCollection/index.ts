@@ -4,6 +4,6 @@ import { updateCollection } from './updateCollection';
 
 export const handle = buildLambdaFunction(updateCollection, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
 });
