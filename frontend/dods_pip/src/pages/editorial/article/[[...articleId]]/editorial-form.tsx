@@ -9,7 +9,7 @@ import { Icons } from '@dods-ui/components/Icon/assets';
 import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import * as Validation from '@dods-ui/utils/validation';
 import dynamic from 'next/dynamic';
-import React from 'react';
+import React, { useState } from 'react';
 import JsxParser from 'react-jsx-parser';
 
 import * as Styled from './editorial-from.styles';
@@ -34,6 +34,12 @@ export interface EditorialFormProps {
   isEdit?: boolean;
 }
 
+type TextSelection = {
+  fromIndex: number;
+  toIndex: number;
+  text: string;
+};
+
 // We need to load this dynamically since it has multiple client side `document` calls
 const WysiwygEditor = dynamic(() => import('@dods-ui/components/WysiwygEditor'), { ssr: false });
 
@@ -47,6 +53,8 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   tags = [],
   onTagsChange,
 }) => {
+  const [selectedText, setSelectedText] = useState<string>();
+
   const validateField = (fieldName: keyof EditorialFormFields, value: string | undefined) => {
     const formErrors = JSON.parse(JSON.stringify(errors));
     !Validation.validateRequired(value as string)
@@ -63,6 +71,11 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
       term: tag.termLabel,
       value: tag.termLabel,
     }));
+  };
+
+  const onEditorTextSelection = (params: TextSelection) => {
+    console.info('<><><> selected', params);
+    setSelectedText(params.text);
   };
 
   return (
@@ -143,12 +156,13 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
           placeholder={'Type or paste your content here'}
           onTextChange={(value) => onFieldChange('content', value)}
           tags={getContentTags(tags)}
+          onSelection={onEditorTextSelection}
         >
           <JsxParser jsx={fieldData.content.toString()} />
         </WysiwygEditor>
       </div>
 
-      <ContentTagger tags={tags} setTags={onTagsChange} />
+      <ContentTagger highlight={selectedText} tags={tags} setTags={onTagsChange} />
     </Styled.mainColumns>
   );
 };
