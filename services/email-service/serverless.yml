@@ -59,7 +59,7 @@ provider:
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     SENDGRID_V3_MAIL_SEND_ENDPOINT: ${env:SENDGRID_V3_MAIL_SEND_ENDPOINT, 'https://api.sendgrid.com/v3/mail/send'}
-    SENDGRID_API_KEY: ${env:SENDGRID_API_KEY}
+    SENDGRID_API_KEY: ${env:SENDGRID_API_KEY, 'SENDGRID_API_KEY'}
 
 custom:
   webpack:

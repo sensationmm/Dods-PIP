@@ -22,7 +22,7 @@ export const sendEmail: AsyncLambdaHandler<SendEmailInput> = async (data) => {
         } else if (responseStatus === 400) {
             return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
                 success: false,
-                message: error.response.data.errors[0].message || 'A field in the request payload is not correct.',
+                message: error.response.data?.errors[0].message || 'A field in the request payload is not correct.',
             });
         } else if (responseStatus === 429) {
             return new HttpResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, {
