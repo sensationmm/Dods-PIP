@@ -26,3 +26,14 @@ export interface CollectionResponse {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface setAlertScheduleParameters {
+    collectionId: string,
+    alertId: string,
+    isScheduled: boolean,
+    hasKeywordsHighlight: boolean,
+    timezone: string,
+    schedule: string,
+    updatedBy: string,
+    alertTemplateId: number
+}

@@ -69,8 +69,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             );
         }
 
-
-
         const { rows, count } = await this.model.findAndCountAll({
             where: {
                 collectionId: collection.id,

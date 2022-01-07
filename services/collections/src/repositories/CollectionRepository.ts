@@ -1,9 +1,10 @@
-import { ClientAccount, Collection, User } from '@dodsgroup/dods-model';
+import { ClientAccount, Collection, CollectionAlert, User } from '@dodsgroup/dods-model';
 import {
     CollectionPersister,
     CollectionResponse,
     CreateCollectionPersisterParameters,
-    UpdateCollectionParameters
+    UpdateCollectionParameters,
+    setAlertScheduleParameters
 } from '../domain';
 import { HttpError, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
@@ -106,5 +107,82 @@ export class CollectionRepository implements CollectionPersister {
         return collection;
     }
 
+    async setAlertSchedule(parameters: setAlertScheduleParameters): Promise<CollectionAlert> {
 
+        const { isScheduled, schedule, alertId, hasKeywordsHighlight, timezone, updatedBy, alertTemplateId } = parameters
+
+        console.log(alertId);
+
+        if (isScheduled && !schedule) {
+            throw new Error(
+                `Error: must provide a schedule `,
+            );
+        }
+
+        const alert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+            },
+            include: ['alertTemplate', 'collection']
+        });
+
+        if (!alert) {
+            throw new Error(
+                `Error: Could not retrieve Collection with uuid: ${alertId}`,
+            );
+        }
+
+        const alertOwner = await User.findOne({
+            where: {
+                uuid: updatedBy,
+            },
+        });
+
+
+        if (!alertOwner) {
+            throw new Error(
+                `Error: User with uuid: ${updatedBy} does not exist`,
+            );
+        }
+
+        await alert.update({
+            isScheduled: isScheduled,
+            hasKeywordsHighlight: hasKeywordsHighlight,
+            timezone: timezone,
+            schedule: schedule,
+            updatedBy: alertOwner.id,
+            lastStepCompleted: 3,
+            templateId: alertTemplateId
+        });
+
+        await alert.reload({
+            include: ['alertTemplate', 'collection'],
+        });
+
+        return alert;
+    }
+
+    mapAlert(model: CollectionAlert): Object {
+        const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled } = model;
+
+        const collectionAlert = {
+            id,
+            uuid,
+            title,
+            description,
+            collection: collection ? { uuid: collection.uuid, name: collection.name } : {},
+            template: alertTemplate ? { id: alertTemplate.id, name: alertTemplate.name } : {},
+            schedule,
+            timezone,
+            createdBy: createdById ? { uuid: createdById.uuid, name: createdById.fullName, emailAddress: createdById.primaryEmail } : {},
+            createdAt,
+            updatedAt,
+            updatedById: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail } : {},
+            hasKeywordsHighlight: hasKeywordsHighlight,
+            isSchedule: isScheduled
+        }
+
+
+        return collectionAlert
+    }
 }
