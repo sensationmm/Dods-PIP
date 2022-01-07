@@ -1,0 +1,2 @@
+### delete Collection by uuid
+DELETE {{host}}/collections/54eb56a9-5245-4c00-b1cc-3aa879c5b028 HTTP/1.1
