@@ -10,6 +10,7 @@ pipelines:
     '**': # Run this step as default for any branch without an specific definition
       - step:
           name: Test and build changes
+          image: gioatsomoglobal/devopstools:0.4.6
           script:
             - tools/on-changes.sh build
 
