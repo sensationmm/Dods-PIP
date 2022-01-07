@@ -1,32 +1,13 @@
-# README #
+# README
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This folder defines Lambda handlers for the backend _email-service_
 
-### What is this repository for? ###
+## Important notes
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+This services uses SendGrid third-party service to send emails.
+In order to use SendGrid the lambda functions need access to an API Key.
 
-### How do I get set up? ###
+This API key is expected to be defined on the AWS Account that will host
+this lambda on the SSM Parameter Store with the following key:
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Links ###
-* [How to set up REST Client extension in Visual Studio Code](../../baseReadme/README.md)
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+- /infra/sendgrid/key

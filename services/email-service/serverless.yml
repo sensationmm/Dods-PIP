@@ -15,7 +15,7 @@ provider:
   runtime: nodejs14.x
   deploymentBucket:
     name: pip-${self:provider.stage}-scrapping-lambdas
-  stage: ${opt:stage, 'local'}
+  stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
 
   #------- This section is only required for Lambdas that need
@@ -58,8 +58,8 @@ provider:
     CORS_ORIGINS: "*"
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
-    SENDGRID_V3_MAIL_SEND_ENDPOINT: ${env:SENDGRID_V3_MAIL_SEND_ENDPOINT, 'https://api.sendgrid.com/v3/mail/send'}
-    SENDGRID_API_KEY: ${env:SENDGRID_API_KEY, 'PUT_SENDGRID_API_KEY_HERE'}
+    SENDGRID_V3_MAIL_SEND_ENDPOINT: 'https://api.sendgrid.com/v3/mail/send'
+    SENDGRID_API_KEY: ${env:SENDGRID_API_KEY, ssm:/infra/sendgrid/key} # Use local env-var, if not set, read from AWS SSM
 
 custom:
   webpack:
