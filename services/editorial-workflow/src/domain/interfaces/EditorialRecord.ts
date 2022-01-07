@@ -1,16 +1,18 @@
-interface EditorialRecordBase {
+export interface EditorialRecordBase {
     documentName: string;
     s3Location: string;
     informationType?: string;
     contentSource?: string;
 }
+
 export interface CreateEditorialRecordParameters extends EditorialRecordBase {
-    assignedEditorId?: string;
+    assignedEditorId?: string | null;
     statusId?: string;
 }
 
 export interface UpdateEditorialRecordParameters extends Partial<CreateEditorialRecordParameters> {
     recordId: string;
+    isPublished?: boolean;
 }
 
 export interface LockEditorialRecordParameters {
@@ -33,6 +35,8 @@ export interface EditorialRecordOutput extends EditorialRecordBase {
         uuid: string;
         status: string;
     };
+    isPublished?: boolean,
+    isArchived?: boolean,
     createdAt: Date;
     updatedAt: Date;
 }
@@ -56,17 +60,93 @@ export interface EditorialRecordListOutput {
     results: Array<EditorialRecordOutput>;
 }
 
-export interface ContentSourceOutput extends GenericListingRecord {}
+export interface ContentSourceOutput extends GenericListingRecord { }
 
-export interface InformationTypeOutput extends GenericListingRecord {}
+export interface InformationTypeOutput extends GenericListingRecord { }
 
 export interface EditorRecordStatusOutput {
     uuid: string;
     name: string;
 }
 
-export interface DownstreamEndpoints {}
+export interface DownstreamEndpoints { }
 
 export interface DistinctItem {
     item: string;
 }
+
+export interface AncestorTerm {
+    tagId: string;
+    termLabel: string;
+    rank: number;
+}
+
+export interface TaxonomyTerm {
+    tagId: string;
+    facetType: string;
+    inScheme: Array<string>;
+    termLabel: string;
+    ancestorTerms: Array<AncestorTerm>;
+    alternative_labels: Array<string>;
+}
+
+export interface EditorialDocument {
+    documentName?: string;
+    contentSource: string;
+    informationType: string;
+    jurisdiction?: string;
+    documentTitle?: string;
+    createdBy?: string;
+    sourceReferenceUri?: string
+    internallyCreated: boolean;
+    schemaType: string;
+    createdDateTime?: Date;
+    version?: string;
+    taxonomyTerms?: Array<TaxonomyTerm>;
+    documentContent?: string;
+    sourceReferenceFormat?: string;
+    language?: string;
+    contentDateTime?: Date;
+    ingestedDateTime?: Date;
+    originalContent?: string;
+
+}
+
+export interface CreateEditorialRecordParametersV2 {
+    documentName: string;
+    contentSource: string;
+    informationType: string;
+    document: EditorialDocument;
+}
+export interface DocumentParameters {
+    jurisdiction?: string
+    documentTitle?: string
+    organisationName?: string
+    sourceReferenceFormat?: string
+    sourceReferenceUri?: string
+    createdBy?: string
+    internallyCreated?: boolean
+    schemaType?: string
+    contentSource?: string
+    informationType?: string
+    contentDateTime?: string
+    createdDateTime?: string
+    ingestedDateTime?: string
+    version?: string
+    countryOfOrigin?: string
+    feedFormat?: string
+    language?: string
+    taxonomyTerms?: object[]
+    originalContent?: string
+    documentContent?: string
+}
+
+export interface UpdateEditorialRecordDocumentParameter extends DocumentParameters {
+    recordId: string;
+}
+
+export interface UpdateLambdaDocumentsParams {
+    arn: string,
+    document: DocumentParameters
+}
+

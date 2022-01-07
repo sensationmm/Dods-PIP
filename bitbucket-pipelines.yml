@@ -1,12 +1,17 @@
 definitions:
-  caches:
-    fe-node: frontend/dods-pip/node_modules
   services:
     docker:
       memory: 5120
 options:
   max-time: 30
+
 pipelines:
+  # pull-requests:
+  #   '**': # Run this step as default for any branch without an specific definition
+  #     - step:
+  #         script:
+  #           - tools/build.sh
+
   default:
     - parallel:
       - step:
@@ -16,7 +21,7 @@ pipelines:
           services:
             - docker
           caches:
-            - node
+            - docker
           condition:
             changesets:
               includePaths:
@@ -28,7 +33,6 @@ pipelines:
             - yarn test
             - yarn lint
             - docker build -t ${IMAGE_NAME} .
-            # - yarn build
 
       - step:
           name: Deploy Graphologi Webhook
@@ -68,6 +72,21 @@ pipelines:
             - serverless deploy --stage dev
 
       - step:
+          name: Test Search Service
+          image: gioatsomoglobal/nodejs-builder:0.2
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/search-service/**"
+          script:
+            - cd services/search-service
+            - npm install
+            - export SERVERLESS_PORT=3000
+            - SERVERLESS_STAGE=dev npm run test:coverage
+
+      - step:
           name: User Profile Service
           image: gioatsomoglobal/devopstools:0.4.3
           caches:
@@ -97,19 +116,19 @@ pipelines:
             - npm install
             - SERVERLESS_STAGE=dev npm run test:coverage
 
-#      - step:
-#          name: Documents Service
-#          image: gioatsomoglobal/nodejs-builder:0.2
-#          caches:
-#            - node
-#          condition:
-#            changesets:
-#              includePaths:
-#                - "services/documents/**"
-#          script:
-#            - cd services/documents
-#            - npm install
-#            - SERVERLESS_STAGE=dev npm run test:coverage
+      - step:
+          name: Documents Service
+          image: gioatsomoglobal/nodejs-builder:0.2
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/documents/**"
+          script:
+            - cd services/documents
+            - npm install
+            - SERVERLESS_STAGE=dev npm run test:coverage
 
       - step:
           name: Editorial Workflow Service
@@ -155,6 +174,25 @@ pipelines:
             - npm install
             - ./scrapping_deploy.sh
 
+      - step:
+          name: Test Collections Service
+          image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
+          services:
+            - docker
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/collections/**"
+          script:
+            - cd services/collections
+            - npm install
+            - npm run create:dods-dev
+            - SERVERLESS_STAGE=dev npm run test:coverage
+
+
   branches:
     master:
       - parallel:
@@ -172,6 +210,22 @@ pipelines:
               - NODE_ENV=test npm run test:coverage 
               - npx serverless deploy --stage dev
 
+        - step:
+            name: Search Service Deploy
+            size: 2x
+            image: gioatsomoglobal/devopstools:0.4.5
+            condition:
+              changesets:
+                includePaths:
+                  - "services/search-service/**"
+            script:
+              - cd services/search-service
+              - npm install
+              - export SERVERLESS_STAGE=dev
+              - export SERVERLESS_PORT=3000
+              - npm run test:coverage 
+              - npx serverless deploy --stage dev
+              
         - step: 
             name: User Profile Deploy
             size: 2x
@@ -215,7 +269,7 @@ pipelines:
               - cd services/documents
               - npm install
               - export SERVERLESS_STAGE=dev
-              # - npm run test:coverage 
+              - npm run test:coverage 
               - npx serverless deploy --stage dev
 
         - step: 
@@ -238,11 +292,9 @@ pipelines:
             name: Frontend Build and Deploy 
             size: 2x
             image: gioatsomoglobal/devopstools:0.4.3
-            deployment: Test
+            deployment: Test 
             services:
               - docker
-            caches:
-              - fe-node
 
             condition:
               changesets:
@@ -276,8 +328,27 @@ pipelines:
               - npx serverless deploy --stage dev
 
         - step:
+            name: Deploy Collections Service
+            image: gioatsomoglobal/devopstools:0.4.5
+            size: 2x
+            services:
+              - docker
+            caches:
+              - node
+            condition:
+              changesets:
+                includePaths:
+                  - "services/collections/**"
+            script:
+              - export THIS='services/collections'
+              - cd $THIS
+              - npm install
+              - npm run create:dods-dev
+              - npm run test:coverage
+              - npx serverless deploy --stage dev
+
+        - step:
             name: Terraform Plan
-            deployment: dev
             size: 2x
             image: gioatsomoglobal/devopstools:0.4.6
             condition:
@@ -294,6 +365,104 @@ pipelines:
               - ./push_back.sh
 
   custom:
+    build_frontend:
+      - step:
+          name: "Frontend: Test and Build"
+          image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - export THIS='frontend/dods_pip'
+            - export HASH=$(echo ${BITBUCKET_COMMIT:0:7})
+            - cd $THIS
+            - yarn install
+            - yarn lint
+            - yarn test
+            - docker build -t "${HASH}" .
+            - docker save --output "${HASH}"
+            - aws s3 rm s3://pip-dev-services-lambdas/frontendImages/
+            - aws s3 cp ${HASH} s3://pip-dev-services-lambdas/frontendImages/
+
+    build_services:
+      - variables:
+        - name: SERVICE
+          default: user-profile
+      - step:
+          name: "Services: Test and Build"
+          image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - 'echo "Running build for service: ${SERVICE}"'
+            - cd services/$SERVICE
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from services/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default service building definitions"
+                npm install
+                SERVERLESS_STAGE=dev npm run test:coverage
+              fi
+
+    deploy_frontend:
+      - variables:
+        - name: ENVIRONMENT
+          default: "DEV"
+      - step:
+          name: "Frontend: Deploy to Environment"
+          image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - export THIS='frontend/dods_pip'
+            - cd $THIS && mkdir dist
+            - aws s3 cp s3://pip-dev-services-lambdas/frontendImages/ dist/ --recursive --only-show-errors
+            - export TAG=$(ls -t1 dist/ | head -1)
+            - ../../tools/set-deployer.sh 
+            - source credentials.txt
+            - export IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${FRONTEND_IMAGE}:${TAG}
+            - docker load --input dist/$TAG
+            - docker images
+            - docker tag ${TAG} ${IMAGE_NAME}
+            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+            - docker push ${IMAGE_NAME}
+            - ../../tools/ecs_deploy --service-name frontend-service --cluster pip-${ENVIRONMENT,,}-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
+
+    deploy_services:
+      - variables:
+        - name: ENVIRONMENT
+          default: "DEV"
+        - name: SERVICE
+          default: user-profile
+      - step:
+          name: "Backend Service: Deploy to Environment"
+          image: gioatsomoglobal/devopstools:0.4.5
+          script:
+            - export THIS="services/$SERVICE"
+            - cd $THIS 
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from services/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default service building definitions"
+                npm install
+                SERVERLESS_STAGE=dev npm run test:coverage
+              fi
+            - ../../tools/set-deployer.sh 
+            - source credentials.txt
+            - npx serverless deploy --stage ${ENVIRONMENT,,}
+
     deploy-frontend-production:
       - step:
           name: Deploy frontend to production environment
@@ -313,7 +482,7 @@ pipelines:
             - docker push ${IMAGE_NAME}
             - cd ../../tools
             - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
-
+        
     storybook-deployment:
       - step:
           name: Storybook deployment (dev)

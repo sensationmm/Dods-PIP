@@ -4,6 +4,6 @@ import { updateEditorialRecord } from './updateEditorialRecord';
 
 export const handle = buildLambdaFunction(updateEditorialRecord, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
 });

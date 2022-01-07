@@ -23,7 +23,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         private editorialRecordModel: typeof EditorialRecord,
         private editorialRecordStatusModel: typeof EditorialRecordStatus,
         private userModel: typeof User
-    ) {}
+    ) { }
 
     static defaultInstance = new EditorialRecordRepository(
         EditorialRecord,
@@ -39,6 +39,8 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             informationType,
             contentSource,
             status,
+            isPublished,
+            isArchived,
             assignedEditor,
             createdAt,
             updatedAt,
@@ -52,16 +54,18 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             contentSource,
             status: status
                 ? {
-                      uuid: status.uuid,
-                      status: status.status,
-                  }
+                    uuid: status.uuid,
+                    status: status.status,
+                }
                 : undefined,
             assignedEditor: assignedEditor
                 ? {
-                      uuid: assignedEditor.uuid,
-                      fullName: assignedEditor.fullName,
-                  }
+                    uuid: assignedEditor.uuid,
+                    fullName: assignedEditor.fullName,
+                }
                 : undefined,
+            isPublished: isPublished ? true : false,
+            isArchived: isArchived ? true : false,
             createdAt,
             updatedAt,
         };
@@ -157,6 +161,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             informationType,
             statusId,
             assignedEditorId,
+            isPublished
         } = parameters;
 
         const record = await this.editorialRecordModel.findOne({
@@ -177,6 +182,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             s3Location,
             contentSource,
             informationType,
+            isPublished
         });
 
         if (assignedEditorId) {
@@ -262,6 +268,20 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
 
         return this.mapRecordOutput(record);
     }
+
+    async unassignEditorToRecord(recordId: string
+    ): Promise<void> {
+
+        const record = await this.editorialRecordModel.findOne({
+            where: {
+                uuid: recordId,
+            }
+        });
+
+        await record?.update({ 'assignedEditorId': null })
+
+    }
+
 
     async listEditorialRecords(
         params: SearchEditorialRecordParameters

@@ -26,6 +26,7 @@ provider:
     GRAPHIFY_USERNAME: ${env:GRAPHIFY_USERNAME}
     GRAPHIFY_PASSWORD: ${env:GRAPHIFY_PASSWORD}
     TAXONOMY_IMPORT_SQS: { Ref: graphologiImportQueue }
+    TAXONOMY_TREE_BUCKET: pip-${self:provider.stage}-taxonomy-data
   
   iamRoleStatements:
     - Effect: Allow

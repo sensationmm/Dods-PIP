@@ -81,13 +81,14 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       ...(data as User),
       displayName: `${data.firstName} ${data.lastName}`,
     });
+    setIsActive(Boolean(data.isActive));
 
     // TODO: Fix lazy typings
     setFormFields({
       account: ((data.clientAccount as Record<string, string>)?.uuid as string) || '',
       emailAddress: (data.primaryEmail as string) || '',
       emailAddress2: (data.secondaryEmail as string) || '',
-      jobTitle: (data.jobTitle as string) || '',
+      jobTitle: (data.title as string) || '',
       telephoneNumber: (data.telephoneNumber1 as string) || '',
       telephoneNumber2: (data.telephoneNumber2 as string) || '',
       userType:
@@ -136,7 +137,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   };
 
   const setUserFormData = (field: keyof FormFields, value: string) => {
-    setFormFields({ ...formFields, ...{ [field]: value.trim() } });
+    setFormFields({ ...formFields, ...{ [field]: value } });
   };
 
   useEffect(() => {
@@ -196,7 +197,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
       name: getUserName(formFields),
       firstName: formFields.firstName,
       lastName: formFields.lastName,
-      secondaryEmailAddress: formFields.emailAddress2,
+      secondaryEmail: formFields.emailAddress2,
       title: formFields.jobTitle,
       telephoneNumber1: formFields.telephoneNumber,
       telephoneNumber2: formFields.telephoneNumber2,

@@ -2,7 +2,7 @@ import React from 'react';
 
 import * as Styled from './Box.styles';
 
-export type boxSizing = 'small' | 'medium' | 'large';
+export type boxSizing = 'extraSmall' | 'small' | 'medium' | 'large';
 export interface BoxProps {
   size?: boxSizing;
 }

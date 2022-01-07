@@ -22,6 +22,7 @@ const envVarsSchema = Joi.object()
         NODE_ENV: Joi.string()
             .valid(...stages)
             .default('development'),
+        SERVERLESS_REGION: Joi.string().required(),
         SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
         DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
@@ -31,6 +32,8 @@ const envVarsSchema = Joi.object()
         DB_PASSWORD: Joi.string().required(),
         DB_CONNECTION_LIMIT: Joi.number().default(5),
         BASE_URL: Joi.string().required(),
+        BUCKET_EDITORIAL: Joi.string().required(),
+        CONTENT_INDEXER_LAMBDA: Joi.string().required(),
     })
     .unknown();
 
@@ -43,8 +46,7 @@ export const config = {
     test: {
         stage: envVars.SERVERLESS_STAGE as string,
         port: envVars.SERVERLESS_PORT as number,
-        endpoint:
-            `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string,
+        endpoint: `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string,
     },
     dods: {
         downstreamEndpoints: {
@@ -59,6 +61,7 @@ export const config = {
         },
     },
     aws: {
+        region: envVars.SERVERLESS_REGION as string,
         mariaDb: {
             dbDriver: envVars.DB_DRIVER as string,
             host: envVars.DB_HOST as string,
@@ -66,6 +69,12 @@ export const config = {
             username: envVars.DB_USER as string,
             password: envVars.DB_PASSWORD as string,
             connectionLimit: envVars.DB_CONNECTION_LIMIT as number,
+        },
+        lambdas: {
+            contentIndexer: envVars.CONTENT_INDEXER_LAMBDA as string,
+        },
+        buckets: {
+            documents: envVars.BUCKET_EDITORIAL as string,
         },
     },
 };

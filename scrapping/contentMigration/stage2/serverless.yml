@@ -4,6 +4,7 @@ frameworkVersion: '2'
 projectDir: ../../
 variablesResolutionMode: 20210326
 configValidationMode: error
+useDotenv: true
 
 plugins:
   - serverless-python-requirements
@@ -17,7 +18,7 @@ custom:
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
   s3_input_bucket: pip-dev-migration-stage-1-output
-  # s3_output_bucket: pip-dev-migration-stage-1-output
+  s3_output_bucket: pip-dev-migration-stage-2-output
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
   queue_name: pip-dev-migration-stage-2-queue.fifo
   pythonRequirements:
@@ -48,21 +49,24 @@ provider:
     KEY_PREFIX: ${self:custom.resource_prefix}
     REGION: ${file(../../serverless.common.yml):custom.region}
     INPUT_BUCKET: ${self:custom.s3_input_bucket}
-    # OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
+    OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
     CONTENT_BUCKET: ${file(../../serverless.common.yml):custom.content_bucket}
+    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
+    ES_KEY_ID: ${env:ES_KEY_ID}
+    ES_API_KEY: ${env:ES_API_KEY}
 
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - s3:*        
+        - s3:*
       Resource: "arn:aws:s3:::*"
 
     - Effect: "Allow"
       Action:
         - "sqs:*"
-      Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-1-queue.fifo"
+      Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-2-queue.fifo"
 
 functions:
   migrate:

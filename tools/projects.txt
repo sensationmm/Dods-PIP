@@ -1,0 +1,5 @@
+frontend/*
+infrastructure-terraform/*
+scraping/*
+services/*
+tools/*

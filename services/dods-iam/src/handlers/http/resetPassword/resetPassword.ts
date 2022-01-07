@@ -1,7 +1,8 @@
-import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
-import { ResetPasswordParameters } from "../../../domain";
-import { LoginRepository } from "../../../repositories";
+import { AsyncLambdaMiddleware, HttpError, HttpResponse, HttpStatusCode } from "@dodsgroup/dods-lambda";
+
 import { AwsCognito } from "../../../services";
+import { LoginRepository } from "../../../repositories";
+import { ResetPasswordParameters } from "../../../domain";
 
 export const resetPassword: AsyncLambdaMiddleware<ResetPasswordParameters> = async ({ email, newPassword, verificationCode }) => {
 
@@ -29,7 +30,7 @@ export const resetPassword: AsyncLambdaMiddleware<ResetPasswordParameters> = asy
             response = new HttpResponse(HttpStatusCode.OK, result);
         }
         else {
-            response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, 'This password is used previously');
+            response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, { success: false, message: 'This password is used previously' });
         }
     } catch (error: any) {
         response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);

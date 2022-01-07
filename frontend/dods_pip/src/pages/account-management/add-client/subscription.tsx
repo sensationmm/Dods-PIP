@@ -136,6 +136,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
 
   const isComplete =
     (isEU || isUK) &&
+    subscriptionType &&
     subscriptionType !== '' &&
     userSeats !== '' &&
     consultantHours !== '' &&

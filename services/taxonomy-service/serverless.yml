@@ -32,6 +32,8 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
+        - s3:PutObject
+        - s3:GetObject
         - "xray:PutTraceSegments"
         - "xray:PutTelemetryRecords"
       Resource:
@@ -52,6 +54,7 @@ provider:
     ES_CLOUD_ID: ${env:ES_CLOUD_ID}
     ES_KEY_ID: ${env:ES_KEY_ID}
     ES_API_KEY: ${env:ES_API_KEY}
+    TAXONOMY_TREE_BUCKET: pip-${self:provider.stage}-taxonomy-data
 
 custom:
   webpack:
@@ -84,6 +87,12 @@ custom:
     # Enable or disable caching globally
   # apiGatewayCaching:
     # enabled: true
+  warmup:
+    taxoWarmer:
+      enabled: true
+      events:
+        - schedule: cron(0/5 * ? * MON-SUN *)
+      concurrency: 1
 
 plugins:
   - serverless-webpack
@@ -91,6 +100,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
+  - serverless-plugin-warmup
   # - serverless-api-gateway-caching
 package:
   include:
@@ -137,3 +147,23 @@ functions:
           path: taxonomy/organisations/tree
           # caching:
             # enabled: true
+  taxonomyPeopleTree:
+    handler: src/handlers/taxonomyPeopleTree/index.handle
+    description: Triggered when http request comes
+    timeout: 20
+    events:
+      - http:
+          method: get
+          path: taxonomy/people/tree
+            # caching:
+          # enabled: true
+  taxonomyGeographyTree:
+    handler: src/handlers/taxonomyGeographyTree/index.handle
+    description: Triggered when http request comes
+    timeout: 20
+    events:
+      - http:
+          method: get
+          path: taxonomy/geography/tree
+            # caching:
+          # enabled: true

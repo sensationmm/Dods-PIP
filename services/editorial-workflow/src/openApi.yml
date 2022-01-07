@@ -6,6 +6,7 @@ info:
 paths:
     /editorial-record:
         post:
+            operationId: createEditorialRecord
             summary: Create new Editorial Record
             requestBody:
                 $ref: '#/components/requestBodies/CreateEditorialRecord'
@@ -184,6 +185,73 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+    /editorial-record/{recordId}/publish:
+        post:
+            summary: Publish Editorial Record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            requestBody:
+                $ref: '#/components/requestBodies/LockEditorialRecord'
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
+                    
+    /editorial-record/{recordId}/document:
+        put:
+            summary: Update Editorial Record Document
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            requestBody:
+                $ref: '#/components/requestBodies/UpdateEditorialRecordDocument'
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
+        get:
+            summary: Get document from editorial record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            responses:
+                '200':
+                    $ref: '#/components/responses/getEditorialRecordDocumentResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
 
 components:
     responses:
@@ -266,6 +334,23 @@ components:
                                 type: array
                                 items:
                                     $ref: '#/components/schemas/EditorialRecordStatusResponse'
+                                    
+        getEditorialRecordDocumentResponse:
+            description: Get editorial record document 
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            message: 
+                                type: string
+                                example: Document found
+                            document:
+                                type: object
+                                $ref: '#/components/schemas/Document'
 
         BadRequest:
             description: Bad request
@@ -299,7 +384,9 @@ components:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/CreateEditorialRecordRequest'
+                        anyOf:
+                            - $ref: '#/components/schemas/CreateEditorialRecordRequestV2'
+                            - $ref: '#/components/schemas/CreateEditorialRecordRequest'
         UpdateEditorialRecord:
             description: A JSON object containing Editorial Record information
             required: true
@@ -321,6 +408,13 @@ components:
                                 type: string
                                 format: uuid
                                 example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        UpdateEditorialRecordDocument:
+            description: A JSON object containing Editorial Record Document information
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Document'
 
     schemas:
         Error:
@@ -335,14 +429,17 @@ components:
             required:
                 - code
                 - message
+        
         EditorialRecordBase:
             type: object
             properties:
                 documentName:
                     type: string
+                    minLength: 1
                     example: Some UK Parliament Oral Question
                 s3Location:
                     type: string
+                    minLength: 1
                     example: arn:aws:s3:::editorial-workflow-prod/editorial-workflow/01012020/some-question.json
                 informationType:
                     type: string
@@ -452,6 +549,7 @@ components:
                     type: string
                     format: date
                     example: '2020-09-01 09:30:26'
+        
         EditorialRecordStatusResponse:
             allOf:
               - $ref: '#/components/schemas/EditorialRecordStatusBase'
@@ -495,3 +593,174 @@ components:
                 name:
                     type: string
                     example: Press Release
+
+        CreateEditorialRecordRequestV2:
+          type: object
+          additionalProperties: false
+          properties:
+            contentSource:
+              type: string
+            informationType:
+              type: string
+            createdBy:
+              type: string
+            documentContent:
+              type: string
+            documentTitle:
+              type: string
+            internallyCreated:
+              type: boolean
+            schemaType:
+              type: string
+            sourceReferenceUri:
+              type: string
+            taxonomyTerms:
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
+          required:
+            - contentSource
+            - informationType
+            - documentTitle
+        
+        EditorialDocument:
+          type: object
+          additionalProperties: false
+          properties:
+            contentSource:
+              type: string
+            createdBy:
+              type: string
+            documentContent:
+              type: string
+            documentTitle:
+              type: string
+            informationType:
+              type: string
+            internallyCreated:
+              type: boolean
+            jurisdiction:
+              type: string
+            schemaType:
+              type: string
+            sourceReferenceUri:
+              type: string
+            taxonomyTerms:
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
+          required:
+            - documentTitle
+            - createdBy
+            - contentSource
+            - informationType
+            - documentContent
+        
+        TaxonomyTerm:
+          type: object
+          additionalProperties: false
+          properties:
+            alternative_labels:
+              items:
+                type: string
+              type: array
+            ancestorTerms:
+              items:
+                $ref: '#/components/schemas/AncestorTerm'
+              type: array
+            facetType:
+              type: string
+            inScheme:
+              items:
+                type: string
+              type: array
+            tagId:
+              type: string
+            termLabel:
+              type: string
+          required:
+            - tagId
+            - facetType
+            - inScheme
+            - termLabel
+            - ancestorTerms
+            - alternative_labels
+
+        AncestorTerm:
+          type: object
+          additionalProperties: false
+          properties:
+            rank:
+              type: number
+            tagId:
+              type: string
+            termLabel:
+              type: string
+          required:
+            - tagId
+            - termLabel
+            - rank
+            
+        Document:
+          type: object
+          properties:
+            jurisdiction:
+              type: string
+              example: UK
+            documentTitle:
+              type: string
+              example: New Which? research reveals the most sustainable savings providers
+            organisationName:
+              type: string
+            sourceReferenceFormat:
+              type: string
+              example: text/plain
+            sourceReferenceUri:
+              type: string
+              example: https://press.which.co.uk/whichpressreleases/new-which-research-reveals-the-most-sustainable-savings-providers/
+            createdBy:
+              type: string
+              example: taerekim@gmail.com
+            internallyCreated:
+              type: boolean
+            schemaType:
+              type: string
+              example: External
+            contentSource:
+              type: string
+              example: UK Stakeholder
+            informationType:
+              type: string
+              example: Press Releases
+            contentDateTime:
+              type: string
+              format: date-time
+              example: "2021-08-18T10:29:20.778+01:00"
+            createdDateTime:
+              type: string
+              format: date-time
+              example: "2021-08-18T10:29:51.960+01:00"
+            ingestedDateTime:
+              type: string
+              format: date-time
+              example: "2021-08-18T10:29:51.960+01:00"
+            version:
+              type: string
+              example: "1.0"
+            countryOfOrigin:
+              type: string
+              example: GBR
+            feedFormat:
+              type: string
+              example: text/plain
+            language:
+              type: string
+              example: en
+            taxonomyTerms:
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
+            originalContent:
+              type: string
+            documentContent:
+              type: string

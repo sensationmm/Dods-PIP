@@ -1,6 +1,6 @@
 module.exports = {
   reactStrictMode: true,
-  pageExtensions: ['page.tsx'],
+  pageExtensions: ['page.tsx', 'page.ts'],
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
@@ -13,7 +13,7 @@ module.exports = {
     });
 
     output: {
-      hashFunction: "xxhash64"
+      hashFunction: 'xxhash64';
     }
 
     return config;

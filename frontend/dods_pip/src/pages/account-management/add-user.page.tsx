@@ -54,16 +54,17 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
   }, [router.query]);
 
   const isClientUser = formFields.userType === RoleType.ClientUser;
+  const hasValue = (value: string) => /^\w/.test(value);
 
   const isComplete =
-    formFields.firstName !== '' &&
-    formFields.lastName !== '' &&
-    formFields.emailAddress !== '' &&
-    (!isClientUser || formFields.account !== '') &&
+    hasValue(formFields.firstName) &&
+    hasValue(formFields.lastName) &&
+    hasValue(formFields.emailAddress) &&
+    (!isClientUser || hasValue(formFields.account)) &&
     Object.keys(errors).length === 0;
 
   const setFormFieldProp = (field: keyof FormFields, value: string) => {
-    setFormFields({ ...formFields, ...{ [field]: value.trim() } });
+    setFormFields({ ...formFields, ...{ [field]: value } });
   };
 
   const createUser = async () => {
@@ -77,11 +78,11 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         telephone_number_1: formFields.telephoneNumber,
         ...(formFields.emailAddress2 && { secondary_email_address: formFields.emailAddress2 }),
         ...(formFields.telephoneNumber2 && {
-          secondary_email_address: formFields.telephoneNumber2,
+          telephone_number_2: formFields.telephoneNumber2,
         }),
         role_id: formFields.userType,
       },
-      clientAccountId: formFields.account,
+      clientAccountId: isClientUser ? formFields.account : user?.clientAccountId,
       teamMemberType: formFields.userType === RoleType.ClientUser ? 3 : 1,
     };
 
