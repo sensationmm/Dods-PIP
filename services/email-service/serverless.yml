@@ -1,4 +1,4 @@
-service: dods-nodejs-lambda-email-service
+service: dods-email-service
 
 configValidationMode: warn
 
