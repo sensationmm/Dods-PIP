@@ -121,7 +121,7 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
   }, [taxonomySearch]);
 
   useEffect(() => {
-    if (highlight?.length > 0) {
+    if (highlight && highlight.length > 0) {
       setTaxonomySearch(highlight);
     }
   }, [highlight]);

@@ -74,7 +74,6 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   };
 
   const onEditorTextSelection = (params: TextSelection) => {
-    console.info('<><><> selected', params);
     setSelectedText(params.text);
   };
 
