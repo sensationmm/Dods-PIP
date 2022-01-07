@@ -13,19 +13,16 @@ from lib.configs import Config
 from lib.data_model import DataModel
 from lib.logger import logger
 from lib.validation import Validator
+import uuid
 
-from inner_utils import clean, payload_creation
+from inner_utils import clean, payload_creation, content_document_date
 
 BUCKET = os.environ['CONTENT_BUCKET']
 PREFIX = os.environ['KEY_PREFIX']
-content_type = 'Debates HOC (UK)'
 
-content_template_file_path = os.path.abspath(
-    os.curdir) + '/templates/content_template.json'
 config = Config().config_read("config.ini")
+content_template_file_path = os.path.abspath(os.curdir) + '/templates/content_template_new.json'
 
-
-# noinspection PyUnusedLocal
 def run(event, context):
     logger.debug(
         'Starting scrapping process with BUCKET: "%s", prefix: "%s" ', BUCKET, PREFIX)
@@ -83,6 +80,12 @@ def run(event, context):
                     pageContent = QAResponse.content.decode(
                         'utf-8', errors='ignore')
 
+                    selectPageContent = Selector(text=QAResponse.text)
+                    extractedDate = selectPageContent.css('h2.heading-level-3::text').get()
+                    contentDateTime = content_document_date(extractedDate)
+                    contentDateTimeObject = datetime.strptime(contentDateTime, '%A %d %B %Y')
+                    contentDateTime = contentDateTimeObject.isoformat()
+
                     if re.search(r'<p\s*class=\"hs_DebateType\">Question</p>', pageContent) is not None or re.search(
                             r'<QuestionText\s*', pageContent) is not None:
                         print("link Oral Answer::", link)
@@ -92,20 +95,22 @@ def run(event, context):
                         print("link Debates::", link)
                         print("title Debates::", title)
 
-                    content_field = {
-                        'html_content': payload_creation(pageContent)
-                    }
-
                     final_content = Common().get_file_content(content_template_file_path)
-                    final_content['contentType'] = content_type
-                    final_content['contentSource'] = config.get(
-                        'parser', 'contentSource')
-                    final_content['contentSourceURL'] = link
-                    final_content['extractDate'] = datetime.now().isoformat()
-                    final_content['content'] = content_field
-                    final_content['metadata'].append({
-                        'jurisdiction': 'UK'
-                    })
+                    final_content['documentId'] = uuid.uuid4().hex
+                    final_content['documentTitle'] = title
+                    final_content['organisationName'] = ''
+                    final_content['sourceReferenceFormat'] = 'text/html'
+                    final_content['sourceReferenceUri'] = link
+                    final_content['createdBy'] = ''
+                    final_content['schemaType'] = ''
+                    final_content['contentSource'] = config.get('parser', 'contentSource')
+                    final_content['informationType'] = config.get('parser', 'schemaType')
+                    final_content['contentDateTime'] = contentDateTime
+                    final_content['createdDateTime'] = datetime.now().isoformat()
+                    final_content['ingestedDateTime'] = ''
+                    final_content['taxonomyTerms'] = []
+                    final_content['originalContent'] = payload_creation(pageContent)
+                    final_content['documentContent'] = ''
 
                     try:
                         Validator().content_schema_validator(final_content)
@@ -126,7 +131,7 @@ def run(event, context):
                         continue
                     else:
                         s3_response = s3.put_object(
-                            Body=dumps(content_field).encode('UTF-8'),
+                            Body=dumps(final_content).encode('UTF-8'),
                             Bucket=BUCKET,
                             Key=(PREFIX + '/' + short_date + '/' + hash_code)
                         )
@@ -135,7 +140,7 @@ def run(event, context):
                         asset = DataModel()
                         asset.document_hash = hash_code
                         asset.save()
-                        logger.info('Scraper %s : Completed', PREFIX, link)
+                        logger.info('Scraper %s : Completed', link)
 
     except Exception as e:
         logger.exception(e)

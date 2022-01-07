@@ -59,6 +59,8 @@ provider:
         DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'root' }
         DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'rootPass'}
         BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/
+        BUCKET_EDITORIAL: dods-dev-editorial-record-documents
+        CONTENT_INDEXER_LAMBDA: content-indexer-dev
 
 
 custom:
@@ -177,5 +179,15 @@ functions:
             - http:
                   method: get        
                   path: editorial-record
+                #   caching:
+                    #   enabled: false
+
+    publishEditorialRecord:
+        handler: src/handlers/publishEditorialRecord/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: post        
+                  path: /editorial-record/{recordId}/publish
                 #   caching:
                     #   enabled: false

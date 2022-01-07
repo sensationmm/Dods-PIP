@@ -9,19 +9,19 @@ import {
     ClientAccountTeamRepository,
     UserProfileRepository,
 } from '../../repositories';
-
-import { ClientAccountTeamParameters } from '../../domain';
+import { ClientAccountTeamParameters, TeamMemberTypes } from '../../domain';
 
 export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTeamParameters> =
     async (clientAccountTeamMembers) => {
-        var TeamsUuid = clientAccountTeamMembers.teamMembers.map(function (item) { return item["userId"]; });
-        const isDuplicated = TeamsUuid.filter((item, index) => TeamsUuid.indexOf(item) != index)
+        var TeamsUuid = clientAccountTeamMembers.teamMembers.map(function (item) {
+            return item['userId'];
+        });
+        const isDuplicated = TeamsUuid.filter((item, index) => TeamsUuid.indexOf(item) != index);
 
         if (isDuplicated.length > 0) {
             return new HttpResponse(HttpStatusCode.OK, {
                 sucess: false,
                 message: 'The same user cannot be saved multiple times.',
-
             });
         }
 
@@ -29,10 +29,9 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
             clientAccountTeamMembers.clientAccountId
         );
 
-        const clientAccount =
-            await ClientAccountRepository.defaultInstance.findOne({
-                uuid: clientAccountTeamMembers.clientAccountId,
-            });
+        const clientAccount = await ClientAccountRepository.defaultInstance.findOne({
+            uuid: clientAccountTeamMembers.clientAccountId,
+        });
 
         const occupiedSeats =
             await ClientAccountRepository.defaultInstance.getClientAccountOccupiedSeats(
@@ -44,7 +43,8 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
         if (
             subscriptionSeats - occupiedSeats <=
             clientAccountTeamMembers.teamMembers.filter(
-                (teamMember) => teamMember.teamMemberType === 3
+                (teamMember) =>
+                    teamMember.teamMemberType === TeamMemberTypes.ClientUser && teamMember.isActive
             ).length
         ) {
             throw new HttpError(
@@ -55,10 +55,9 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
 
         await Promise.all(
             clientAccountTeamMembers.teamMembers.map(async (user) => {
-                const userProfile =
-                    await UserProfileRepository.defaultInstance.findOne({
-                        uuid: user.userId,
-                    });
+                const userProfile = await UserProfileRepository.defaultInstance.findOne({
+                    uuid: user.userId,
+                });
 
                 await ClientAccountTeamRepository.defaultInstance.create({
                     clientAccountId: clientAccount.id,
@@ -68,16 +67,11 @@ export const addTeamMemberToClientAccount: AsyncLambdaMiddleware<ClientAccountTe
             })
         );
 
-        await ClientAccountRepository.defaultInstance.UpdateCompletion(
-            clientAccount.uuid,
-            true,
-            3
-        );
+        await ClientAccountRepository.defaultInstance.UpdateCompletion(clientAccount.uuid, true, 3);
 
-        const teamMembers =
-            await ClientAccountRepository.defaultInstance.getClientAccountTeam(
-                clientAccountTeamMembers.clientAccountId
-            );
+        const teamMembers = await ClientAccountRepository.defaultInstance.getClientAccountTeam(
+            clientAccountTeamMembers.clientAccountId
+        );
 
         return new HttpResponse(HttpStatusCode.OK, {
             sucess: true,

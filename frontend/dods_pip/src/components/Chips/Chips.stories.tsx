@@ -20,4 +20,6 @@ export const Default = Template.bind({});
 Default.args = {
   label: 'Chip',
   disabled: false,
+  theme: 'light',
+  chipsSize: 'dense',
 };

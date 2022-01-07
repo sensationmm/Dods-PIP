@@ -20,6 +20,10 @@ interface CustomResponse extends Response, UserResponse {
   totalRecords?: number;
   message?: string;
   success?: boolean;
+  people: Record<string, unknown>;
+  organisations: Record<string, unknown>;
+  topics: Record<string, unknown>;
+  geographies: Record<string, unknown>;
 }
 
 export default async function fetchJson(

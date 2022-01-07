@@ -12,6 +12,7 @@ import {
     SearchClientAccountResponse,
     SearchClientAccountTotalRecords,
     TeamMemberResponse,
+    TeamMemberTypes,
     UpdateClientAccountHeaderParameters,
     UpdateClientAccountParameters,
     parseModelParameters,
@@ -314,7 +315,9 @@ export class ClientAccountRepository implements ClientAccountPersister {
         if (clientAccountModel) {
             // Only team members with teamMemberType === 3 (client users) count as occupied seats
             const userMembers = clientAccountModel.team!.filter(
-                (user) => user.ClientAccountTeamModel?.teamMemberType === 3
+                (user) =>
+                    user.ClientAccountTeamModel?.teamMemberType === TeamMemberTypes.ClientUser &&
+                    user.isActive
             );
             return userMembers.length;
         } else {
@@ -336,7 +339,9 @@ export class ClientAccountRepository implements ClientAccountPersister {
             return (
                 clientAccountModel.subscriptionSeats! -
                 clientAccountModel.team!.filter(
-                    (teamMember) => teamMember.ClientAccountTeamModel?.teamMemberType === 3
+                    (teamMember) =>
+                        teamMember.ClientAccountTeamModel?.teamMemberType ===
+                            TeamMemberTypes.ClientUser && teamMember.isActive
                 ).length
             );
         } else {

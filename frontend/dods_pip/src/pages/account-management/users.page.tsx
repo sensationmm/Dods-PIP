@@ -253,7 +253,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading, addNotification }) => 
                 </Text>
               </Styled.avatarName>,
               <Text key={`user-${uuid}-account`}>
-                {user.clientAccount && user.clientAccount.name}
+                {user.clientAccount && !user.isDodsUser ? user.clientAccount.name : 'Dods'}
               </Text>,
               <Styled.email key={`user-${uuid}-email`}>
                 <a href={'mailto:' + user.primaryEmail}>{user.primaryEmail}</a>

@@ -1,0 +1,169 @@
+service: dods-nodejs-lambda-boilerplate
+
+configValidationMode: warn
+
+frameworkVersion: ^2.68.0
+
+variablesResolutionMode: 20210326
+
+projectDir: ../
+
+provider:
+  name: aws
+  region: eu-west-1
+  profile: dods-dev
+  runtime: nodejs14.x
+  deploymentBucket:
+    name: pip-${self:provider.stage}-scrapping-lambdas
+  stage: ${opt:stage, 'local'}
+  lambdaHashingVersion: 20201221
+
+  #------- This section is only required for Lambdas that need
+  #        to connect to the central Dods DB (RDS instance).
+  #------- Uncomment this section your functions need to connect to Dods DB
+  # vpc:
+  #   securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
+  #   subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
+
+  stackTags:
+    service: ${self:service}
+    env: ${self:provider.stage}
+    version: 1
+    teamsEmail: kenan.hancer@somoglobal.com
+    team: dods
+  tags:
+    myTag1: myTag1
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
+  # This section ties the functions to a particular API Gateway instead of creating a new one
+  # for the time being, we have hardcoded values for API Gateway initally created  with dods-iam.
+  # We will move to dynamic Gateway selection based on sls stage.
+  apiGateway:
+    restApiId: ${file(../env-config.${self:provider.stage}.js):apiGatewayId, file(../env-config.dev.js):apiGatewayId}
+    restApiRootResourceId: ${file(../env-config.${self:provider.stage}.js):apiRootResourceId, file(../env-config.dev.js):apiRootResourceId}
+    description: Default Gateway for ${self:provider.stage} deployed by Terraform
+
+  environment:
+    NODE_ENV: ${opt:NODE_ENV, 'test'}
+    SERVERLESS_STAGE: ${self:provider.stage}
+    SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    CORS_ORIGINS: "*"
+    DB_CONNECTION_LIMIT: 5
+    DB_DRIVER: mariadb
+    DB_NAME: dods
+    DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
+    DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
+    DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+    SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint, self:custom.endpoints.default.sayTurkishHelloEndpoint}
+    SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint, self:custom.endpoints.default.sayEnglishHelloEndpoint}
+    GET_FULL_NAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getFullNameEndpoint, self:custom.endpoints.default.getFullNameEndpoint}
+
+custom:
+  endpoints:
+    default:
+      sayTurkishHelloEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
+      sayEnglishHelloEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
+      getFullNameEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/getFullName
+    local:
+      sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
+      sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
+      getFullNameEndpoint: http://localhost:1083/getFullName
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+    keepOutputDirectory: false
+  serverless-offline:
+    httpPort: 3000
+  prune:
+    automatic: true
+    number: 1
+  dependsOn:
+    enabled: true
+    chains: 8
+  localstack:
+    stages:
+      # list of stages for which the plugin should be enabled
+      - passive
+    host: http://localhost # optional - LocalStack host to connect to
+    edgePort: 4566 # optional - LocalStack edge port to connect to
+    autostart: false # optional - Start LocalStack in Docker on Serverless deploy
+    # lambda:
+    #   # Enable this flag to improve performance
+    #   mountCode: True
+    docker:
+      # Enable this flag to run "docker ..." commands as sudo
+      sudo: False
+  apiGatewayCaching:
+    enabled: true
+
+plugins:
+  - serverless-webpack
+  - serverless-prune-plugin
+  - serverless-localstack
+  - serverless-dependson-plugin
+  - serverless-offline
+  - serverless-api-gateway-caching
+
+functions:
+  health:
+    handler: src/handlers/health/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: health
+          cors: true
+          caching:
+            enabled: false
+    tags:
+      foo: bar
+
+  sayHello:
+    handler: src/handlers/sayHello/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: sayHello
+          caching:
+            enabled: false
+
+  sayEnglishHello:
+    handler: src/handlers/sayEnglishHello/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: sayEnglishHello
+          caching:
+            enabled: false
+
+  sayTurkishHello:
+    handler: src/handlers/sayTurkishHello/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: sayTurkishHello
+          caching:
+            enabled: false
+
+  getFullName:
+    handler: src/handlers/getFullName/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: getFullName
+          caching:
+            enabled: false

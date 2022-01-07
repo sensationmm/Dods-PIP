@@ -14,6 +14,7 @@ module.exports = {
         '!src/domain/**',
     ],
     modulePaths: ['<rootDir>'],
+    coveragePathIgnorePatterns: ['src/repositories/DocumentPublishRepository.ts','src/repositories/DocumentStorageRepository.ts'],
     coverageDirectory: './coverage',
     testPathIgnorePatterns: ['/node_modules/', '/dist/'],
     coverageReporters: ['json', 'lcov', 'text', 'cobertura'],

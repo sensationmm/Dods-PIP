@@ -87,57 +87,55 @@ describe('Core/Chips - Hover tests ', () => {
     useStateSpy,
     count = 0;
   const states = [
-    { hovering: false, active: false },
-    { hovering: false, active: false },
-    { hovering: true, active: false },
-    { hovering: true, active: false },
     { hovering: false },
-    { hovering: false, active: false, chipsSize: 'medium' },
-    { hovering: false, active: false, chipsSize: 'dense' },
-    { hovering: false, active: false, chipsSize: 'dense' },
-    { hovering: false, active: false, chipsSize: 'dense' },
+    { hovering: false },
+    { hovering: true },
+    { hovering: true },
+    { hovering: false },
+    { hovering: false, chipsSize: 'medium' },
+    { hovering: false, chipsSize: 'dense' },
+    { hovering: false, chipsSize: 'dense' },
+    { hovering: false, chipsSize: 'dense' },
   ];
 
   const mockSetHover = jest.fn();
-  const mockSetActive = jest.fn();
+  const mockOnCloseClick = jest.fn();
 
   beforeEach(() => {
     setState = jest.fn();
     useStateSpy = jest.spyOn(React, 'useState');
 
-    useStateSpy
-      .mockImplementationOnce(() => [states[count].hovering, mockSetHover])
-      .mockImplementationOnce(() => [states[count].active, mockSetActive]);
+    useStateSpy.mockImplementation(() => [states[count].hovering, mockSetHover]);
   });
 
-  it('sets hover on mouseenter', () => {
-    const wrapper = shallow(<Chips label="Label" />);
+  it('sets hover on mouseenter when clickable', () => {
+    const wrapper = shallow(<Chips label="Label" onCloseClick={mockOnCloseClick} />);
     const filter = wrapper.find('[data-test="component-chip"]');
     filter.simulate('mouseenter');
     expect(mockSetHover).toHaveBeenCalledWith(true);
   });
 
-  it('clears hover on mouseleave', () => {
-    const wrapper = shallow(<Chips label="Label" />);
+  it('clears hover on mouseleave when clickable', () => {
+    const wrapper = shallow(<Chips label="Label" onCloseClick={mockOnCloseClick} />);
     const filter = wrapper.find('[data-test="component-chip"]');
     filter.simulate('mouseleave');
     expect(mockSetHover).toHaveBeenCalledWith(false);
   });
 
-  it('Close button icon renders', () => {
-    const wrapper = shallow(<Chips label="Label" />);
+  it('Close button icon renders when clickable', () => {
+    const wrapper = shallow(<Chips label="Label" onCloseClick={mockOnCloseClick} />);
     const buttonIcon = wrapper.find('[data-test="closeButtonIcon"]');
     expect(buttonIcon.length).toEqual(1);
   });
 
   it('Close button icon has white color', () => {
-    const wrapper = shallow(<Chips label="Label" />);
+    const wrapper = shallow(<Chips label="Label" onCloseClick={mockOnCloseClick} />);
     const buttonIcon = wrapper.find('[data-test="closeButtonIcon"]');
     expect(buttonIcon.find(Icon).props().color).toEqual(color.base.white);
   });
 
   it('Close button icon should render', () => {
-    const wrapper = shallow(<Chips label="Label" />);
+    const wrapper = shallow(<Chips label="Label" onCloseClick={mockOnCloseClick} />);
     const buttonIcon = wrapper.find('[data-test="closeButtonIcon"]');
     expect(buttonIcon.length).toEqual(1);
   });
@@ -154,22 +152,15 @@ describe('Core/Chips - Hover tests ', () => {
     expect(label.find(Text).props().type).toEqual('bodySmall');
   });
 
-  it('calls onClick', () => {
-    const wrapper = shallow(<Chips label="Label" />);
-    const content = wrapper.find('[data-test="content-wrapper"]');
-    content.simulate('click');
-    expect(mockSetActive).toHaveBeenCalledTimes(1);
-  });
-
-  it('calls onCloseClick', () => {
-    const mockOnCloseClick = jest.fn();
+  it('calls onCloseClick when clickable', () => {
     const wrapper = shallow(<Chips label="Label" onCloseClick={mockOnCloseClick} />);
     const content = wrapper.find('[data-test="content-wrapper"]');
+    const filter = wrapper.find('[data-test="component-chip"]');
+    filter.simulate('mouseenter');
     const closeButton = wrapper.find('[data-test="close-button"]');
     content.simulate('click');
     closeButton.simulate('click');
 
-    expect(mockSetActive).toHaveBeenCalledTimes(1);
     expect(mockOnCloseClick).toHaveBeenCalledTimes(1);
   });
 

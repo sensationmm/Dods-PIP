@@ -18,6 +18,7 @@ export const Primary = Template.bind({});
 
 Primary.args = {
   isActive: false,
+  isSmall: false,
   isDisabled: false,
   labelOff: 'Off',
   labelOn: 'On',

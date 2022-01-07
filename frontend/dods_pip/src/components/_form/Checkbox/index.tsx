@@ -7,7 +7,8 @@ import { Icons } from '../../Icon/assets';
 import Label, { LabelProps } from '../Label';
 import * as Styled from './Checkbox.styles';
 
-export interface CheckboxProps extends LabelProps {
+export interface CheckboxProps extends Omit<LabelProps, 'label'> {
+  label?: LabelProps['label'];
   id: string;
   isChecked: boolean;
   onChange: (value: boolean) => void;
@@ -20,7 +21,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   label,
   isChecked,
   onChange,
-  isDisabled,
+  isDisabled = false,
   required,
   optional,
   bold,
@@ -36,7 +37,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   };
 
   return (
-    <Styled.checkbox data-test="component-checkbox" id={id}>
+    <Styled.checkbox data-test="component-checkbox" id={id} disabled={isDisabled}>
       <Styled.checkboxLayout
         data-test="component-checkbox-layout"
         onClick={() => (isDisabled ? null : onChange(!isChecked))}
@@ -59,17 +60,19 @@ const Checkbox: React.FC<CheckboxProps> = ({
             />
           )}
         </Component>
-        <Styled.checkboxLabelWrapper>
-          <Label
-            darkMode={darkMode}
-            label={label}
-            required={required}
-            optional={optional}
-            isDisabled={isDisabled}
-            noMargin
-            bold={bold}
-          />
-        </Styled.checkboxLabelWrapper>
+        {label && (
+          <Styled.checkboxLabelWrapper>
+            <Label
+              darkMode={darkMode}
+              label={label}
+              required={required}
+              optional={optional}
+              isDisabled={isDisabled}
+              noMargin
+              bold={bold}
+            />
+          </Styled.checkboxLabelWrapper>
+        )}
       </Styled.checkboxLayout>
     </Styled.checkbox>
   );
