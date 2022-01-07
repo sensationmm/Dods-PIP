@@ -1,7 +1,7 @@
 {
-  "name": "dods-nodejs-lambda-boilerplate",
+  "name": "dods-nodejs-lambda-email-service",
   "version": "1.0.0",
-  "description": "This README would normally document whatever steps are necessary to get your application up and running.",
+  "description": "Email Service using SendGrid API.",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
