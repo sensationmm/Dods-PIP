@@ -120,15 +120,9 @@ custom:
       ses_source_arn: arn:aws:ses:eu-west-1:072266309162:identity/giovanni.espinosa@somoglobal.com
       cognito_reply_to: donotreply@somoglobal.com
     production:
-<<<<<<< HEAD
       ses_from: no-reply@dodspoliticalintelligence.com
       ses_source_arn: arn:aws:ses:eu-west-1:186202231680:identity/no-reply@dodspoliticalintelligence.com
 
-=======
-      ses_from: donotreply@dodspoliticalintelligence.com
-      ses_source_arn: arn:aws:ses:eu-west-1:186202231680:identity/donotreply@dodspoliticalintelligence.com
-      cognito_reply_to: donotreply@dodspoliticalintelligence.com
->>>>>>> b7662702ea948e1a436724670a579672a1395c4d
   localstack:
     stages:
       # list of stages for which the plugin should be enabled
