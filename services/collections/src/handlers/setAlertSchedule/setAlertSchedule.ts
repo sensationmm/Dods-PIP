@@ -1,22 +1,26 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-
-import { CollectionRepository } from '../../repositories';
-import { setAlertScheduleParameters } from '../../domain';
+import { CollectionAlertsRepository, setAlertScheduleParameters } from '@dodsgroup/dods-repositories';
 
 export const setAlertSchedule: AsyncLambdaHandler<setAlertScheduleParameters> = async (
     parameters
 ) => {
 
-    const response = await CollectionRepository.defaultInstance.setAlertSchedule(parameters)
+    const response = await CollectionAlertsRepository.defaultInstance.setAlertSchedule(parameters)
+
+    const alertResponse: any = CollectionAlertsRepository.defaultInstance.mapAlert(response)
+
+    const alertQuery = await CollectionAlertsRepository.defaultInstance.getQuerysByAlert(alertResponse.id);
+    alertResponse.searchQueriesCount = alertQuery.length;
+    const recipientsQuery = await CollectionAlertsRepository.defaultInstance.getRecipientsByAlert(alertResponse.id);
+    alertResponse.recipientsCount = recipientsQuery.length;
 
 
-    const alertResponse = CollectionRepository.defaultInstance.mapAlert(response)
-
+    delete alertResponse?.id;
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
-        message: 'Collection alerts found',
-        response: alertResponse
+        message: 'The alert scheduling was set successfully',
+        alert: alertResponse
     });
 
 
