@@ -5,6 +5,7 @@ import spacing from '../../../globals/spacing';
 
 export const header = styled.header`
   display: flex;
+  justify-content: space-between;
 `;
 
 export const actionsSection = styled.section`
