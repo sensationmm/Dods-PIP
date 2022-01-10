@@ -1,13 +1,13 @@
-import elasticsearch from "../../../src/elasticsearch"
+import { createScheduleParameters } from "../../../src/domain";
+import { ScheduleRepository } from "../../../src/repositories/ScheduleRepository";
 
-import {createScheduleParameters} from "../../../src/domain";
-import {ScheduleRepository} from "../../../src/repositories/ScheduleRepository";
+const mockPutWatch = jest.fn();
 
-jest.mock('../../../src/elasticsearch');
-elasticsearch.default.mockReturnValue({
-    watcher: jest.fn().mockReturnValue({putWatch: true})
-})
-
+jest.mock('../../../src/elasticsearch', () => ({
+    watcher: {
+        putWatch: () => mockPutWatch()
+    }
+}));
 
 const CREATE_SCHEDULE_INPUT: createScheduleParameters = {
     "id": "123",
@@ -22,13 +22,15 @@ describe(`Schedule repository tests`, () => {
             id: CREATE_SCHEDULE_INPUT.id,
             active: true,
             body: {
-                trigger: {schedule: { "cron" : CREATE_SCHEDULE_INPUT.cron }},
-                actions: {webhook: {
+                trigger: { schedule: { "cron": CREATE_SCHEDULE_INPUT.cron } },
+                actions: {
                     webhook: {
-                        method: "GET",
-                        url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + CREATE_SCHEDULE_INPUT.id + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
+                        webhook: {
+                            method: "GET",
+                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + CREATE_SCHEDULE_INPUT.id + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
+                        }
                     }
-                }}
+                }
             }
         }
 
@@ -42,6 +44,7 @@ describe(`Schedule repository tests`, () => {
         const spy = jest.spyOn(ScheduleRepository, 'createSearchQuery');
         await ScheduleRepository.defaultInstance.createSchedule(CREATE_SCHEDULE_INPUT)
 
+        expect(mockPutWatch).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenCalled();
     });
 });

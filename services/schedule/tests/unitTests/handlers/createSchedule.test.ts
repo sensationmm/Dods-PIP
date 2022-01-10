@@ -1,7 +1,7 @@
 import { createSchedule } from '../../../src/handlers/createSchedule/createSchedule';
 import {createScheduleParameters} from "../../../src/domain";
 import {ScheduleRepository} from "../../../src/repositories/ScheduleRepository";
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
