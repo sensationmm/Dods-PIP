@@ -15,6 +15,7 @@ export interface HeaderProps {
   sourceReferenceUri?: string;
   informationType?: string;
   formattedTime?: string;
+  documentId?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -23,38 +24,51 @@ const Header: React.FC<HeaderProps> = ({
   sourceReferenceUri,
   informationType,
   formattedTime,
+  documentId,
 }) => {
   return (
-    <div>
-      <Breadcrumbs
-        history={[
-          { href: '/library', label: 'Library' },
-          { href: '/library', label: documentTitle || '' },
-        ]}
-      />
-      <Styled.heading>{documentTitle}</Styled.heading>
-      <Styled.infoRow>
-        <span aria-label="Content source">
-          <Styled.infoIcon>
-            <IconContentSource icon={contentSource} />
-          </Styled.infoIcon>
-          {sourceReferenceUri && (
-            <Link href={sourceReferenceUri}>
-              <a>{contentSource}</a>
-            </Link>
-          )}
-        </span>
-        <Styled.infoSpacer />
-        <span aria-label="Information type">
-          <Styled.infoIcon>
-            <Icon src={Icons.Document} size={IconSize.mediumLarge} color={color.base.greyDark} />
-          </Styled.infoIcon>
-          {informationType}
-        </span>
-        <Styled.infoSpacer />
-        <span aria-label="Published date">{formattedTime}</span>)
-      </Styled.infoRow>
-    </div>
+    <Styled.header>
+      <section>
+        <Breadcrumbs
+          history={[
+            { href: '/library', label: 'Library' },
+            { href: '/library', label: documentTitle || '' },
+          ]}
+        />
+        <Styled.heading>{documentTitle}</Styled.heading>
+        <Styled.infoRow>
+          <span aria-label="Content source">
+            <Styled.infoIcon>
+              <IconContentSource icon={contentSource} />
+            </Styled.infoIcon>
+            {sourceReferenceUri && (
+              <Link href={sourceReferenceUri}>
+                <a>{contentSource}</a>
+              </Link>
+            )}
+          </span>
+          <Styled.infoSpacer />
+          <span aria-label="Information type">
+            <Styled.infoIcon>
+              <Icon src={Icons.Document} size={IconSize.mediumLarge} color={color.base.greyDark} />
+            </Styled.infoIcon>
+            {informationType}
+          </span>
+          <Styled.infoSpacer />
+          <span aria-label="Published date">{formattedTime}</span>
+        </Styled.infoRow>
+      </section>
+      <Styled.actionsSection>
+        {documentId && (
+          <Link href={`/editorial/article/${documentId}`} passHref>
+            <Styled.editLink>
+              <Icon src={Icons.Pencil} color={color.base.white} size={IconSize.mediumLarge} />
+              <span>Edit</span>
+            </Styled.editLink>
+          </Link>
+        )}
+      </Styled.actionsSection>
+    </Styled.header>
   );
 };
 

@@ -12,7 +12,7 @@ export const DocumentViewer: React.FC = () => {
   const router = useRouter();
 
   const [apiResponse, setApiResponse] = useState<ESResponse>({});
-  const documentId = router.query.id;
+  const documentId = router.query.id as string;
   const [formattedTime, setFormattedTime] = useState('');
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const DocumentViewer: React.FC = () => {
 
   return (
     <Panel>
-      {apiResponse && (
+      {apiResponse.documentTitle && (
         <>
           <Header
             documentTitle={apiResponse.documentTitle}
@@ -57,6 +57,7 @@ export const DocumentViewer: React.FC = () => {
             sourceReferenceUri={apiResponse.sourceReferenceUri}
             informationType={apiResponse.informationType}
             formattedTime={formattedTime}
+            documentId={documentId}
           />
           <div
             dangerouslySetInnerHTML={{

@@ -3,6 +3,15 @@ import styled from 'styled-components';
 import color from '../../../globals/color';
 import spacing from '../../../globals/spacing';
 
+export const header = styled.header`
+  display: flex;
+`;
+
+export const actionsSection = styled.section`
+  width: 350px;
+  text-align: right;
+`;
+
 export const heading = styled.h1`
   font-family: 'Libre Baskerville';
   font-size: 48px;
@@ -33,4 +42,17 @@ export const infoSpacer = styled.span`
   margin: 0 ${spacing(2)};
   display: inline-block;
   vertical-align: middle;
+`;
+
+export const editLink = styled.a`
+  color: ${color.base.white};
+  background: ${color.theme.blueMid};
+  display: inline-flex;
+  align-items: center;
+  gap: ${spacing(3)};
+  border-radius: 8px;
+  font-size: 16px;
+  text-decoration: none;
+  padding: 0 ${spacing(4)};
+  height: 40px;
 `;
