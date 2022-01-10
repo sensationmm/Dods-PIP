@@ -1,3 +1,6 @@
+import Icon, { IconSize } from '@dods-ui/components/Icon';
+import { Icons } from '@dods-ui/components/Icon/assets';
+import color from '@dods-ui/globals/color';
 import moment from 'moment';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -39,7 +42,7 @@ export const DocumentViewer = () => {
 
           setFormattedTime(
             moment(response.es_response?.hits.hits[0]._source.contentDateTime).format(
-              'D MMMM YYYY [at] h:mm',
+              'D MMMM YYYY [at] hh:mm',
             ),
           );
         } catch (error) {
@@ -63,9 +66,24 @@ export const DocumentViewer = () => {
           <Styled.infoRow>
             {apiResponse && (
               <>
-                <Link href={apiResponse.sourceReferenceUri || ''}>{apiResponse.contentSource}</Link>{' '}
-                <Styled.infoSpacer /> {apiResponse.informationType} <Styled.infoSpacer />{' '}
-                {formattedTime}
+                <span aria-label="Content source">
+                  <Link href={apiResponse.sourceReferenceUri || ''}>
+                    <a>{apiResponse.contentSource}</a>
+                  </Link>
+                </span>
+                <Styled.infoSpacer />
+                <span aria-label="Information type">
+                  <Styled.infoIcon>
+                    <Icon
+                      src={Icons.Document}
+                      size={IconSize.mediumLarge}
+                      color={color.base.greyDark}
+                    />
+                  </Styled.infoIcon>
+                  {apiResponse.informationType}
+                </span>
+                <Styled.infoSpacer />
+                <span aria-label="Published date">{formattedTime}</span>
               </>
             )}
           </Styled.infoRow>

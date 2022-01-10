@@ -20,6 +20,7 @@ import Clock from './icon-clock.svg';
 import Cross from './icon-cross.svg';
 import CrossBold from './icon-crossBold.svg';
 import Disk from './icon-disk.svg';
+import Document from './icon-document.svg';
 import Edit from './icon-edit.svg';
 import Exit from './icon-exit.svg';
 import Grid from './icon-grid.svg';
@@ -74,6 +75,7 @@ export enum Icons {
   Cross = 'Cross',
   CrossBold = 'CrossBold',
   Disk = 'Disk',
+  Document = 'Document',
   Edit = 'Edit',
   Exit = 'Exit',
   Grid = 'Grid',
@@ -127,6 +129,7 @@ const IconLibrary = {
   Cross,
   CrossBold,
   Disk,
+  Document,
   Edit,
   Exit,
   Grid,

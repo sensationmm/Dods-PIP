@@ -175,10 +175,21 @@ export const infoRow = styled.div`
   margin-bottom: 55px;
 `;
 
-export const infoSpacer = styled.span`
-  margin: 0 ${spacing(2)};
+export const infoItem = styled.span``;
 
-  :before {
-    content: '|';
+export const infoIcon = styled.span`
+  > * {
+    margin: 0 ${spacing(1)} 0 0;
+    display: inline;
+    vertical-align: middle;
   }
+`;
+
+export const infoSpacer = styled.span`
+  width: 1px;
+  height: 16px;
+  background: ${color.base.greyDark};
+  margin: 0 ${spacing(2)};
+  display: inline-block;
+  vertical-align: middle;
 `;
