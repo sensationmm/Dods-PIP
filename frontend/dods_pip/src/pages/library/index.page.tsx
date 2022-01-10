@@ -9,6 +9,7 @@ import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
 import Icon, { IconSize } from '../../components/Icon/';
 import { Icons } from '../../components/Icon/assets';
+import { IconType as ContentSourceType } from '../../components/IconContentSource/assets';
 import Tag from '../../components/Tag';
 import Text from '../../components/Text';
 import color from '../../globals/color';
@@ -76,7 +77,7 @@ export interface ESResponse {
   hits?: Record<string, any>;
   aggregations?: Record<string, any>;
   documentContent?: string;
-  contentSource?: string;
+  contentSource?: ContentSourceType;
   informationType?: string;
   documentTitle?: string;
 }

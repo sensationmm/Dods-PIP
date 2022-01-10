@@ -1,5 +1,6 @@
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
+import IconContentSource from '@dods-ui/components/IconContentSource';
 import color from '@dods-ui/globals/color';
 import moment from 'moment';
 import Link from 'next/link';
@@ -51,6 +52,7 @@ export const DocumentViewer = () => {
       })();
     }
   }, [documentId]);
+
   return (
     <Styled.documentViewerWrapper>
       {apiResponse && (
@@ -67,9 +69,14 @@ export const DocumentViewer = () => {
             {apiResponse && (
               <>
                 <span aria-label="Content source">
-                  <Link href={apiResponse.sourceReferenceUri || ''}>
-                    <a>{apiResponse.contentSource}</a>
-                  </Link>
+                  <Styled.infoIcon>
+                    <IconContentSource icon={apiResponse.contentSource} />
+                  </Styled.infoIcon>
+                  {apiResponse.sourceReferenceUri && (
+                    <Link href={apiResponse.sourceReferenceUri}>
+                      <a>{apiResponse.contentSource}</a>
+                    </Link>
+                  )}
                 </span>
                 <Styled.infoSpacer />
                 <span aria-label="Information type">

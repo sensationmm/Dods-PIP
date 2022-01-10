@@ -175,8 +175,6 @@ export const infoRow = styled.div`
   margin-bottom: 55px;
 `;
 
-export const infoItem = styled.span``;
-
 export const infoIcon = styled.span`
   > * {
     margin: 0 ${spacing(1)} 0 0;
