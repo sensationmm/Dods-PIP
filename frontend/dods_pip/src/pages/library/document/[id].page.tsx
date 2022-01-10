@@ -1,20 +1,14 @@
-import Icon, { IconSize } from '@dods-ui/components/Icon';
-import { Icons } from '@dods-ui/components/Icon/assets';
-import IconContentSource from '@dods-ui/components/IconContentSource';
-import color from '@dods-ui/globals/color';
+import Panel from '@dods-ui/components/_layout/Panel';
 import moment from 'moment';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import Box from '../../../components/_layout/Box';
-import Breadcrumbs from '../../../components/Breadcrumbs';
 import fetchJson from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
 import { ESResponse } from '../index.page';
-import * as Styled from '../library.styles';
+import Header from './header';
 
-export const DocumentViewer = () => {
+export const DocumentViewer: React.FC = () => {
   const router = useRouter();
 
   const [apiResponse, setApiResponse] = useState<ESResponse>({});
@@ -54,54 +48,24 @@ export const DocumentViewer = () => {
   }, [documentId]);
 
   return (
-    <Styled.documentViewerWrapper>
+    <Panel>
       {apiResponse && (
-        <Box>
-          <Breadcrumbs
-            history={[
-              { href: '/', label: 'Dods' },
-              { href: '/library', label: 'Library' },
-              { href: '/library', label: apiResponse.documentTitle || '' },
-            ]}
+        <>
+          <Header
+            documentTitle={apiResponse.documentTitle}
+            contentSource={apiResponse.contentSource}
+            sourceReferenceUri={apiResponse.sourceReferenceUri}
+            informationType={apiResponse.informationType}
+            formattedTime={formattedTime}
           />
-          <h1>{apiResponse?.documentTitle}</h1>
-          <Styled.infoRow>
-            {apiResponse && (
-              <>
-                <span aria-label="Content source">
-                  <Styled.infoIcon>
-                    <IconContentSource icon={apiResponse.contentSource} />
-                  </Styled.infoIcon>
-                  {apiResponse.sourceReferenceUri && (
-                    <Link href={apiResponse.sourceReferenceUri}>
-                      <a>{apiResponse.contentSource}</a>
-                    </Link>
-                  )}
-                </span>
-                <Styled.infoSpacer />
-                <span aria-label="Information type">
-                  <Styled.infoIcon>
-                    <Icon
-                      src={Icons.Document}
-                      size={IconSize.mediumLarge}
-                      color={color.base.greyDark}
-                    />
-                  </Styled.infoIcon>
-                  {apiResponse.informationType}
-                </span>
-                <Styled.infoSpacer />
-                <span aria-label="Published date">{formattedTime}</span>
-              </>
-            )}
-          </Styled.infoRow>
           <div
             dangerouslySetInnerHTML={{
               __html: apiResponse?.documentContent || '',
             }}
           />
-        </Box>
+        </>
       )}
-    </Styled.documentViewerWrapper>
+    </Panel>
   );
 };
 
