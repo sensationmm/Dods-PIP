@@ -8,12 +8,12 @@ export interface IconProps {
   icon?: IconType;
 }
 
-const IconContentSource: React.FC<IconProps> = ({ icon }) => {
-  const src = Icons[icon || 'Dods'];
+const IconContentSource: React.FC<IconProps> = ({ icon = 'Dods' }) => {
+  const src = Icons[icon] || Icons.Dods;
 
   return (
     <Styled.IconContentSource data-test="component-icon">
-      <Image src={src} alt="" width="26" height="26" />
+      <Image src={src} alt="" width="26" height="26" unoptimized />
     </Styled.IconContentSource>
   );
 };
