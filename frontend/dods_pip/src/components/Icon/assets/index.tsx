@@ -17,6 +17,7 @@ import ChevronRightBold from './icon-chevronRightBold.svg';
 import ChevronUp from './icon-chevronUp.svg';
 import ChevronUpBold from './icon-chevronUpBold.svg';
 import Clock from './icon-clock.svg';
+import Copy from './icon-copy.svg';
 import Cross from './icon-cross.svg';
 import CrossBold from './icon-crossBold.svg';
 import Disk from './icon-disk.svg';
@@ -72,6 +73,7 @@ export enum Icons {
   ChevronUp = 'ChevronUp',
   ChevronUpBold = 'ChevronUpBold',
   Clock = 'Clock',
+  Copy = 'Copy',
   Cross = 'Cross',
   CrossBold = 'CrossBold',
   Disk = 'Disk',
@@ -126,6 +128,7 @@ const IconLibrary = {
   ChevronUp,
   ChevronUpBold,
   Clock,
+  Copy,
   Cross,
   CrossBold,
   Disk,
