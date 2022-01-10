@@ -13,6 +13,7 @@ export const actionsSection = styled.section`
 `;
 
 export const heading = styled.h1`
+  color: ${color.theme.blue};
   font-family: 'Libre Baskerville';
   font-size: 48px;
   font-weight: 400;
