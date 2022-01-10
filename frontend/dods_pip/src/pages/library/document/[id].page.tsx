@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
@@ -38,7 +39,7 @@ export const DocumentViewer = () => {
 
           setFormattedTime(
             moment(response.es_response?.hits.hits[0]._source.contentDateTime).format(
-              'Do MMMM YYYY h:mm',
+              'D MMMM YYYY [at] h:mm',
             ),
           );
         } catch (error) {
@@ -60,8 +61,13 @@ export const DocumentViewer = () => {
           />
           <h1>{apiResponse?.documentTitle}</h1>
           <Styled.infoRow>
-            {' '}
-            {apiResponse?.contentSource} | {apiResponse.informationType} | {formattedTime}
+            {apiResponse && (
+              <>
+                <Link href={apiResponse.sourceReferenceUri || ''}>{apiResponse.contentSource}</Link>{' '}
+                <Styled.infoSpacer /> {apiResponse.informationType} <Styled.infoSpacer />{' '}
+                {formattedTime}
+              </>
+            )}
           </Styled.infoRow>
           <div
             dangerouslySetInnerHTML={{

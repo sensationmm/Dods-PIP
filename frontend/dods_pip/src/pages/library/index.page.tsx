@@ -71,6 +71,7 @@ const aggregations = {
 
 interface LibraryProps extends LoadingHOCProps {}
 export interface ESResponse {
+  sourceReferenceUri?: string;
   es_response?: Record<string, any>;
   hits?: Record<string, any>;
   aggregations?: Record<string, any>;

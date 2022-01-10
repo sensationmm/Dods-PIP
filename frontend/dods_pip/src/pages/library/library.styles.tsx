@@ -162,11 +162,23 @@ export const documentViewerWrapper = styled.div`
   h1 {
     font-family: 'Libre Baskerville';
     font-size: 48px;
-    font-weight: 200;
+    font-weight: 400;
+    line-height: 56px;
+    margin-top: ${spacing(6)};
+    margin-bottom: ${spacing(8)};
   }
 `;
 
 export const infoRow = styled.div`
   color: ${color.base.greyDark};
+  font-size: 16px;
   margin-bottom: 55px;
+`;
+
+export const infoSpacer = styled.span`
+  margin: 0 ${spacing(2)};
+
+  :before {
+    content: '|';
+  }
 `;
