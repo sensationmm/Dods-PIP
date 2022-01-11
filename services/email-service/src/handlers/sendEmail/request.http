@@ -1,0 +1,14 @@
+@contentType = application/json
+
+# @name sendEmail
+POST /local/email HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+
+{
+    "to": ["your.email@somoglobal.com"],
+    "from": "no-reply@somoglobal.com",
+    "subject": "Hello There!",
+    "mimeType": "text/html",
+    "content": "<h1>This is the way</h1> <p>Hello test</p>"
+}

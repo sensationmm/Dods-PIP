@@ -1,0 +1,1708 @@
+{
+	"info": {
+		"_postman_id": "4fd54c2b-8d25-403d-b58e-6c630e2c31b9",
+		"name": "DODS Dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Profile Service",
+			"item": [
+				{
+					"name": "Search Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?name=diego&limit=30",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "diego"
+								},
+								{
+									"key": "limit",
+									"value": "100",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "30",
+									"disabled": true
+								},
+								{
+									"key": "role",
+									"value": "24e7ca86-1788-4b6e-b153-9c963dc928cb",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "lastName",
+									"disabled": true
+								},
+								{
+									"key": "sortDirection",
+									"value": "ASC",
+									"disabled": true
+								},
+								{
+									"key": "clientAccountId",
+									"value": "b78008cc-bb54-4204-8ff5-a8678b5811f4",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "startsWith",
+									"value": "M",
+									"disabled": true
+								},
+								{
+									"key": "isActive",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Consultant Team Member",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userProfile\": {\n        \"title\": \"DODS Consultant\",\n        \"first_name\": \"Torsten\",\n        \"last_name\": \" de Riese\",\n        \"primary_email_address\": \"Torsten.deRiese@dodsgroup.com\",\n        \"secondary_email_address\": \"\",\n        \"telephone_number_1\": \"+443214858576\",\n        \"telephone_number_2\": \"+443214858577\",\n        \"role_id\": \"83618280-9c84-441c-94d1-59e4b24cbe3d\"\n    }, \n    \"teamMemberType\": 1,\n    \"clientAccountId\": \"a170742a-f84d-40e9-9176-8fd6568149f7\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/a170742a-f84d-40e9-9176-8fd6568149f7/teammember/new",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"a170742a-f84d-40e9-9176-8fd6568149f7",
+								"teammember",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Client User Team Member",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userProfile\": {\n        \"title\": \"DODS Consultant\",\n        \"first_name\": \"Jhonny\",\n        \"last_name\": \"Lopez\",\n        \"primary_email_address\": \"jhonny.lopez+consultant600@somoglobal.com\",\n        \"secondary_email_address\": \"jhonny.lopez+consultant600@somoglobal.com\",\n        \"telephone_number_1\": \"+573214858576\",\n        \"telephone_number_2\": \"+573214858577\",\n        \"role_id\": \"d25c5ac2-d5df-4ae0-9cb7-c5817b725dba\"\n    }, \n    \"teamMemberType\": 3,\n    \"clientAccountId\": \"d4bbbd4b-e02f-4343-a7e9-397eea2b1bcd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/d4bbbd4b-e02f-4343-a7e9-397eea2b1bcd/teammember/new",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"d4bbbd4b-e02f-4343-a7e9-397eea2b1bcd",
+								"teammember",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create DODS Consultant User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"DODS Consultant\",\r\n    \"firstName\": \"Gio\",\r\n    \"lastName\": \"Espinosa\",\r\n    \"primaryEmail\": \"giovanny.espinosa+consultant@somoglobal.com\",\r\n    \"roleId\": \"83618280-9c84-441c-94d1-59e4b24cbe3d\",\r\n    \"clientAccountId\": \"a170742a-f84d-40e9-9176-8fd6568149f7\"\r\n    \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Client User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"DODS Consultant\",\r\n    \"firstName\": \"Jhonny\",\r\n    \"lastName\": \"Lopez\",\r\n    \"primaryEmail\": \"jhonny.lopez+consultant2@somoglobal.com\",\r\n    \"roleId\": \"24e7ca86-1788-4b6e-b153-9c963dc928cb\",\r\n    \"clientAccountId\": \"d25c5ac2-d5df-4ae0-9cb7-c5817b725dba\",\r\n    \"clientAccountName\": \"zimmer\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Team Members",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n    \"teamMembers\": [{\r\n        \"userId\": \"dbb95e64-6970-4bf4-a143-1f4f919f0ce4\",\r\n        \"teamMemberType\": 3\r\n    }]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/d4046ca9-8440-42f1-a74b-4ed27f490644/teammember",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"d4046ca9-8440-42f1-a74b-4ed27f490644",
+								"teammember"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/564d9690-cc12-4f3c-8900-986c25c2deda",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"564d9690-cc12-4f3c-8900-986c25c2deda"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Client Accounts By User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/564d9690-cc12-4f3c-8900-986c25c2deda/client-accounts?name=DODS&subscriptionId=2cb2e9fe-f17f-467a-aeba-8b3b6dd69aac&sortBy=name&sortDirection=desc&limit=10&offset=0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"564d9690-cc12-4f3c-8900-986c25c2deda",
+								"client-accounts"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "DODS"
+								},
+								{
+									"key": "subscriptionId",
+									"value": "2cb2e9fe-f17f-467a-aeba-8b3b6dd69aac"
+								},
+								{
+									"key": "sortBy",
+									"value": "name"
+								},
+								{
+									"key": "sortDirection",
+									"value": "desc"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Team Member",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"3983a86a-0b5f-4970-895a-f569bdec5820\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/6c0e0f58-aff8-4d0d-9a20-53215aee61cc/teammember",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"6c0e0f58-aff8-4d0d-9a20-53215aee61cc",
+								"teammember"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Updated Title\",\r\n    \"firstName\": \"Abhi\",\r\n    \"lastName\": \"Mah\",\r\n    \"secondaryEmail\": \"Updated secondaryEmail\",\r\n    \"telephoneNumber1\": \"Updated tel1\",\r\n    \"telephoneNumber2\": \"Updated tel2\",\r\n    \"isActive\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/8a13df19-bb0a-43ca-a3ec-3957ee35f818",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"8a13df19-bb0a-43ca-a3ec-3957ee35f818"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Client Accounts Services",
+			"item": [
+				{
+					"name": "Create Client Account",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {},
+						"strictSSL": true,
+						"followRedirects": true,
+						"disableCookies": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"clientAccount\": {\n        \"name\": \"BBC\",\n        \"notes\": \"British Broadcasting Corporation BBC\",\n        \"contactName\": \"John Reith\",\n        \"contactEmailAddress\": \"john.reith@bbcmail.com\",\n        \"contactTelephoneNumber\": \"+443123456531\"\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Client Account",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/a170742a-f84d-40e9-9176-8fd6568149f7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"a170742a-f84d-40e9-9176-8fd6568149f7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Client Accounts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount"
+							],
+							"query": [
+								{
+									"key": "locations",
+									"value": "uk",
+									"disabled": true
+								},
+								{
+									"key": "searchTerm",
+									"value": "DOD",
+									"disabled": true
+								},
+								{
+									"key": "subscriptionTypes",
+									"value": "85fc806f-d0fb-465a-a32a-e79730c59210,13c351ed-d92a-41a9-b412-55dc0f0d28d3",
+									"disabled": true
+								},
+								{
+									"key": "startsWith",
+									"value": "a",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "name",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "90",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "5",
+									"disabled": true
+								},
+								{
+									"key": "sortDirection",
+									"value": "asc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Subscription",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subscription\": \"85fc806f-d0fb-465a-a32a-e79730c59210\",\n    \"subscriptionSeats\": 20,\n    \"consultantHours\": 50,\n    \"contractStartDate\": \"2021-01-01T01:01:01.001Z\",\n    \"contractRollover\": false,\n    \"contractEndDate\": \"2022-02-01T01:01:01.001Z\",\n    \"isUK\": true,\n    \"isEU\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/010a6dad-9ac7-4f1f-b7fa-54536c475b66/subscription",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"010a6dad-9ac7-4f1f-b7fa-54536c475b66",
+								"subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Client Account",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Kramerica Industries\",\n    \"contactName\": \"Estelle Constanza\",\n    \"contactEmailAddress\": \"estelle.constanza@mailinator.com\",\n    \"contactTelephoneNumber\": \"\",\n    \"notes\": \"Latex manufacturing and Imports / Exports\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/010a6dad-9ac7-4f1f-b7fa-54536c475b66/header",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"010a6dad-9ac7-4f1f-b7fa-54536c475b66",
+								"header"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get subscriptions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/subscription-types",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"subscription-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Client Account Team Members",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/b78008cc-bb54-4204-8ff5-a8678b5811f4/teammember",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"b78008cc-bb54-4204-8ff5-a8678b5811f4",
+								"teammember"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Remaining Seats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clientaccount/b78008cc-bb54-4204-8ff5-a8678b5811f4/seats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clientaccount",
+								"b78008cc-bb54-4204-8ff5-a8678b5811f4",
+								"seats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Editorial Workflow Services",
+			"item": [
+				{
+					"name": "Create Editorial Record",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"documentName\": \"How to Search in DODS 3\",\r\n    \"s3Location\": \"arn:/here/document\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Editorial Record",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"documentName\": \"How to Search in DODS 3\",\n    \"s3Location\": \"arn:/here/document\",\n    \"contentSource\": \"House of Lords\",\n    \"informationType\": \"Press Release\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record/a558e9dd-5117-4e99-98bb-8cdab643989f",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record",
+								"a558e9dd-5117-4e99-98bb-8cdab643989f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lock Editorial Record",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"assignedEditorId\": \"66da99ce-4bfa-4bdf-9186-998ed4f7335c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record/22c6e56e-c9b9-4afd-b869-fe57ea998df8/lock",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record",
+								"22c6e56e-c9b9-4afd-b869-fe57ea998df8",
+								"lock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Editorial Record",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"documentName\": \"How to Search in DODS\",\r\n    \"s3Location\": \"arn:/here/document\",\r\n    \"contentSource\": \"House of Lords\",\r\n    \"informationType\": \"Press Release\",\r\n    \"statusId\": \"b54bea83-fa06-4bd4-852d-08e5908c55b5\",\r\n    \"assignedEditorId\": \"146d02aa-3b32-4c45-b558-82f21aeaff43\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record/22c6e56e-c9b9-4afd-b869-fe57ea998df8",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record",
+								"22c6e56e-c9b9-4afd-b869-fe57ea998df8"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Content Sources List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/content-sources",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"content-sources"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Information Types List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/information-types",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"information-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Editorial Record Statuses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LIst Editorial Records",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record"
+							],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "house",
+									"description": "Search term in the document name",
+									"disabled": true
+								},
+								{
+									"key": "contentSource",
+									"value": "House of Lords",
+									"description": "Search exact match in content source",
+									"disabled": true
+								},
+								{
+									"key": "informationType",
+									"value": "Press Release",
+									"description": "Search exact match in information type",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "a1c5e035-28d3-4ac3-b5b9-240e0b11dbce",
+									"description": "Search by status id",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "2021-11-10T18:30:28.000Z",
+									"description": "Search until this date",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": "2021-11-08T23:20:38.000Z",
+									"description": "Search from this date on",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "status",
+									"description": "Sort by: status, creationDate, documentName",
+									"disabled": true
+								},
+								{
+									"key": "sortDirection",
+									"value": "desc",
+									"description": "Sort direction: asc, desc",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Pagination parameter",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Page size",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create ER with Document",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \"contentSource\": \"House of Commons\",\r\n    \"informationType\": \"Press Release\",\r\n    \"documentTitle\": \"First Dev Test\",\r\n    \"sourceReferenceUri\": \"\",\r\n    \"createdBy\": \"Diego Avellaneda Torres\",\r\n    \"internallyCreated\": true,\r\n    \"documentContent\": \"<h1>DODS Typical Document</h1><p>Lorem Ipsum Dolor Sit Amet</p>\",\r\n    \"taxonomyTerms\": [\r\n        {\r\n            \"tagId\": \"sdfsdfsdf\",\r\n            \"facetType\": \"Topics\",\r\n            \"inScheme\": [\r\n                \"http://www.dods.co.uk/taxonomy/instance/Topics\"\r\n            ],\r\n            \"termLabel\": \"Term 4\",\r\n            \"ancestorTerms\": [\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 2\",\r\n                    \"rank\": 1\r\n                },\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 1\",\r\n                    \"rank\": 0\r\n                }\r\n            ],\r\n            \"alternative_labels\": [\r\n                \"Term B\",\r\n                \"Term C\"\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Editorial Record With Document",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \"contentSource\": \"House of Commons\",\r\n    \"informationType\": \"Press Release\",\r\n    \"documentTitle\": \"Second Dev Test\",\r\n    \"sourceReferenceUri\": \"\",\r\n    \"createdBy\": \"Diego Avellaneda\",\r\n    \"internallyCreated\": true,\r\n    \"documentContent\": \"<h1>DODS Typical Document</h1><p>Lorem Ipsum Dolor Sit Amet</p>\",\r\n    \"taxonomyTerms\": [\r\n        {\r\n            \"tagId\": \"sdfsdfsdf\",\r\n            \"facetType\": \"Topics\",\r\n            \"inScheme\": [\r\n                \"http://www.dods.co.uk/taxonomy/instance/Topics\"\r\n            ],\r\n            \"termLabel\": \"Term 4\",\r\n            \"ancestorTerms\": [\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 2\",\r\n                    \"rank\": 1\r\n                },\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 1\",\r\n                    \"rank\": 0\r\n                }\r\n            ],\r\n            \"alternative_labels\": [\r\n                \"Term B\",\r\n                \"Term C\"\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record/f688a257-08c2-4e6f-bcd9-15f33cca6669/document",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record",
+								"f688a257-08c2-4e6f-bcd9-15f33cca6669",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Editorial Record Doument",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record/f688a257-08c2-4e6f-bcd9-15f33cca6669/document",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record",
+								"f688a257-08c2-4e6f-bcd9-15f33cca6669",
+								"document"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "IAM and Security",
+			"item": [
+				{
+					"name": "/dev/changePassword",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"diana.cadena+1@somoglobal.com\",\n    \"password\": \"23GTg&15\",\n    \"newPassword\": \"ju78//SA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/changePassword",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"changePassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/signOut",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"diana.cadena@somoglobal.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/signOut",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"signOut"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/signUp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jeimmy.camacho@somoglobal.com\",\n    \"password\": \"Sakura.9\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/signUp",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"signUp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/resendConfirmationCode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"kenanhancer@hotmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resendConfirmationCode",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"resendConfirmationCode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/confirmRegistration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jeimmy.camacho@somoglobal.com\",\n    \"verificationCode\": \"322869\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/confirmRegistration",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"confirmRegistration"
+							],
+							"query": [
+								{
+									"key": null,
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/resetPassword",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ZGlhbmEuY2FkZW5hKzFAc29tb2dsb2JhbC5jb20\",\n    \"newPassword\": \"ju78//SA\",\n    \"verificationCode\": \"215390\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resetPassword",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"resetPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/forgotPassword",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"diana.cadena+1@somoglobal.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/forgotPassword",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"forgotPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/signIn",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jhonny.lopez+ckramer@somoglobal.com\",\n    \"password\": \"F75Hy/Oa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/signIn",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"signIn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/deleteUser",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"kenanhancer@hotmail.com\",\n    \"password\": \"ADn9tDX3pEE_s\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/deleteUser",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"deleteUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/getUserData",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/getUserData?accessToken=eyJraWQiOiJzWWFOQllHTTBxSWtPVCs0VTBhYWg2YnNRWkw0bVZ1YXdTTGJmN1E4d1JRPSIsImFsZyI6IlJTMjU2In0.eyJvcmlnaW5fanRpIjoiNzQ2N2JlZjYtOGVmZS00ZThjLWFhOWQtZjE5ZWY3ZDA5NzAwIiwic3ViIjoiZTZiM2M5MmQtZWE0MS00MjBmLTkxYTgtNmU2ODFjYTgzOGMwIiwiZXZlbnRfaWQiOiI5ZjMzNWViYS00MDc0LTQ3OWYtOTgzOS1lMTg2MDFmZTA5YjkiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjI5MTMzMTU2LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9WVkJrVFFYVUUiLCJleHAiOjE2MjkxMzY3NTYsImlhdCI6MTYyOTEzMzE1NiwianRpIjoiNDIyNmNkMjctY2I5Zi00MWM4LTg2ZWMtNTUyMWI1MzliNTE5IiwiY2xpZW50X2lkIjoiNm1vNGlmcjd1dXJkNmRpNGpzN2xxNmk5MmwiLCJ1c2VybmFtZSI6ImU2YjNjOTJkLWVhNDEtNDIwZi05MWE4LTZlNjgxY2E4MzhjMCJ9.DCczWNucQtqOz6EDwtHgPZi2KLw5D4oAKWd6hiG7vjmXVGKag6H7h5eyLWzz4F2KTGnQDcX7h28anSzlrDKtoiQ89MU3jF8f8lfQuF6yWwjYN-QOlD0aGYXr14_MkCXyFHV82hHnmhXAIx0ZeyBmfkJho1IJ7erT-URtYSYexPtLTro8NoRNURYjIGoV4NiKYHo4ha47ZJ913y7ux65UI_2tCglf7PzdwWt7SmU6JhG4mSzKs0YN9lQ2KMuZ9G7ig_8ZL5drMNSD5BdBA9ooIhzJQ9r0Riz5exYMQZGuAfaXBKAXJksuDbM0-5DQMcI6ZF2WkoX3L_rZlWlf-H9KYA",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"getUserData"
+							],
+							"query": [
+								{
+									"key": "accessToken",
+									"value": "eyJraWQiOiJzWWFOQllHTTBxSWtPVCs0VTBhYWg2YnNRWkw0bVZ1YXdTTGJmN1E4d1JRPSIsImFsZyI6IlJTMjU2In0.eyJvcmlnaW5fanRpIjoiNzQ2N2JlZjYtOGVmZS00ZThjLWFhOWQtZjE5ZWY3ZDA5NzAwIiwic3ViIjoiZTZiM2M5MmQtZWE0MS00MjBmLTkxYTgtNmU2ODFjYTgzOGMwIiwiZXZlbnRfaWQiOiI5ZjMzNWViYS00MDc0LTQ3OWYtOTgzOS1lMTg2MDFmZTA5YjkiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjI5MTMzMTU2LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9WVkJrVFFYVUUiLCJleHAiOjE2MjkxMzY3NTYsImlhdCI6MTYyOTEzMzE1NiwianRpIjoiNDIyNmNkMjctY2I5Zi00MWM4LTg2ZWMtNTUyMWI1MzliNTE5IiwiY2xpZW50X2lkIjoiNm1vNGlmcjd1dXJkNmRpNGpzN2xxNmk5MmwiLCJ1c2VybmFtZSI6ImU2YjNjOTJkLWVhNDEtNDIwZi05MWE4LTZlNjgxY2E4MzhjMCJ9.DCczWNucQtqOz6EDwtHgPZi2KLw5D4oAKWd6hiG7vjmXVGKag6H7h5eyLWzz4F2KTGnQDcX7h28anSzlrDKtoiQ89MU3jF8f8lfQuF6yWwjYN-QOlD0aGYXr14_MkCXyFHV82hHnmhXAIx0ZeyBmfkJho1IJ7erT-URtYSYexPtLTro8NoRNURYjIGoV4NiKYHo4ha47ZJ913y7ux65UI_2tCglf7PzdwWt7SmU6JhG4mSzKs0YN9lQ2KMuZ9G7ig_8ZL5drMNSD5BdBA9ooIhzJQ9r0Riz5exYMQZGuAfaXBKAXJksuDbM0-5DQMcI6ZF2WkoX3L_rZlWlf-H9KYA"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/disableUser",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"kenanhancer@hotmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/disableUser",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"disableUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/dev/enableUser",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "FirstName",
+								"value": "Kenan",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "LastName",
+								"value": "Hancer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jhonny.lopez+ckramer@somoglobal.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/enableUser",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"enableUser"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Document Services",
+			"item": [
+				{
+					"name": "Get Document",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/documents?arn=arn%3Aaws%3As3%3A%3A%3Ainfrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9%2Fdebates-hoc-uk%2F2021-12-16%2F02c4ada5f3d6eeb10e9bfde72a1e76fd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"documents"
+							],
+							"query": [
+								{
+									"key": "arn",
+									"value": "arn%3Aaws%3As3%3A%3A%3Ainfrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9%2Fdebates-hoc-uk%2F2021-12-16%2F02c4ada5f3d6eeb10e9bfde72a1e76fd"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Document",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"arn\": \"arn:aws:s3:::infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9/debates-hoc-uk/2021-12-16/2c5521533485861ce427b8a1ad84ce45\",\r\n    \"document\": {\r\n        \"documentTitle\": \"National Cyber Strategy 2023\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"documents"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Collection Services",
+			"item": [
+				{
+					"name": "Update Collection",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"FW Collection Updatedw\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/f545f2f1-9fac-4b62-a639-66a600a2ad24",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"f545f2f1-9fac-4b62-a639-66a600a2ad24"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Collection",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientAccountId\": \"b2ff9f25-0ca0-4df4-ba5c-0c872a82f2d6\",\n    \"name\": \"FW Collection\",\n    \"createdById\": \"18a817f8-00cd-4159-a797-6b0321040379\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Alert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"collectionId\": \"86cc34ae-47db-407c-b18d-bccfbd600e11\",\n  \"title\": \"here\",\n  \"alertQueries\": [{\n    \"query\": \"here dods\",\n    \"informationTypes\": \"infoTypes\",\n    \"contentSources\": \"Source\"\n  }\n],\n  \"createdBy\": \"6c16a036-2439-4b78-bf29-8069f4cd6c0b\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Collections",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections?clientAccountId=cd44bad6-8eeb-4870-abb8-72d297ea7a3e&searchTerm=Test&limit=30&offset=0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections"
+							],
+							"query": [
+								{
+									"key": "clientAccountId",
+									"value": "cd44bad6-8eeb-4870-abb8-72d297ea7a3e"
+								},
+								{
+									"key": "searchTerm",
+									"value": "Test"
+								},
+								{
+									"key": "sortBy",
+									"value": "name",
+									"disabled": true
+								},
+								{
+									"key": "sortDirection",
+									"value": "ASC",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Schedule Alert",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"isScheduled\": false,\n  \"hasKeywordHighlight\": false,\n  \"timezone\": \"string\",\n  \"schedule\": \"dss\",\n  \"updatedBy\": \"6340c08f-0a01-41c1-8434-421f1fff3d1e\",\n  \"alertTemplateId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/86cc34ae-47db-407c-b18d-bccfbd600e11/alerts/e5f80c12-65ba-4157-8672-19c7d832e05a/schedule",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"86cc34ae-47db-407c-b18d-bccfbd600e11",
+								"alerts",
+								"e5f80c12-65ba-4157-8672-19c7d832e05a",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Collection Alerts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts?limit=30&offset=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Collection",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/86cc34ae-47db-407c-b18d-bccfbd600e11",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"86cc34ae-47db-407c-b18d-bccfbd600e11"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Collection",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/86cc34ae-47db-407c-b18d-bccfbd600e11",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"86cc34ae-47db-407c-b18d-bccfbd600e11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Email Service",
+			"item": [
+				{
+					"name": "Send Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"to\": [\"my.email@somoglobal.com\"],\n    \"from\": \"test@somoglobal.com\",\n    \"subject\": \"Test from Postman!\",\n    \"mimeType\": \"text/html\",\n    \"content\": \"<h1>This is the way</h1><p>Hello test</p>\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/email",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"email"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev"
+		}
+	]
+}

@@ -129,6 +129,16 @@ functions:
           caching:
             enabled: false
 
+  getCollectionAlerts:
+    handler: src/handlers/getCollectionAlerts/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: collections/{collectionId}/alerts
+          caching:
+            enabled: false
+
   updateCollection:
     handler: src/handlers/updateCollection/index.handle
     description: Triggered when http request comes
@@ -136,5 +146,43 @@ functions:
       - http:
           method: put
           path: collections/{collectionId}
+          caching:
+            enabled: false
+
+  getCollection:
+    handler: src/handlers/getCollection/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: collections/{collectionId}
+          
+  createAlert:
+    handler: src/handlers/createAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: collections/{collectionId}/alerts
+          caching:
+            enabled: false
+
+  deleteCollection:
+    handler: src/handlers/deleteCollection/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: delete
+          path: collections/{collectionId}
+          caching:
+            enabled: false
+
+  setAlertSchedule:
+    handler: src/handlers/setAlertSchedule/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/schedule
           caching:
             enabled: false

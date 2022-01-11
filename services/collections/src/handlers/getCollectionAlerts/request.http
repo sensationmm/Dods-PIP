@@ -1,0 +1,3 @@
+### get Collections by alert V1
+GET {{host}}/collections/76a2c306-15e0-4ec4-a27f-3011f61f890c/alerts?limit=1&offset=1 HTTP/1.1
+

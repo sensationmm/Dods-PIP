@@ -134,6 +134,16 @@ functions:
                   path: editorial-record/{recordId}/document
                 #   caching:
                     #   enabled: false
+
+    getEditorialRecordDocument:
+        handler: src/handlers/getEditorialRecordDocument/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: get
+                  path: editorial-record/{recordId}/document
+                #   caching:
+                    #   enabled: false
     
     getEditorialRecord:
         handler: src/handlers/getEditorialRecord/index.handle

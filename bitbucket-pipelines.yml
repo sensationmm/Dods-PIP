@@ -9,41 +9,16 @@ pipelines:
   pull-requests:
     '**': # Run this step as default for any branch without an specific definition
       - step:
-          name: Test and build changes
+          name: Check changes to trigger builds
           image: gioatsomoglobal/devopstools:0.4.6
           script:
             - tools/on-changes.sh build
-
-  default:
-    - parallel:
-      - step:
-          name: Validate OpenAPI definitions
-          image: openapitools/openapi-generator-cli:v5.2.1
-          condition:
-            changesets:
-              includePaths:
-                - "api/**"
-          script:
-            - cd api
-            - for i in *.yml; do docker-entrypoint.sh validate -i $i; done
-
-      - step:
-          name: Deploy Scrapping Lambdas
-          image: gioatsomoglobal/devopstools:0.4.2
-          condition:
-            changesets:
-              includePaths:
-                - "scrapping/**"
-          script:
-            - cd scrapping
-            - npm install
-            - ./scrapping_deploy.sh
 
   branches:
     master:
       - parallel:
         - step:
-            name: Deploy changes to their environments
+            name: Deploy projects to their envionments
             script:
               - tools/on-changes.sh deploy
           
