@@ -55,4 +55,15 @@ export interface CreateAlertQuery {
 
 }
 
+export interface setAlertScheduleParameters {
+    collectionId: string,
+    alertId: string,
+    isScheduled: boolean,
+    hasKeywordHighlight: boolean,
+    timezone: string,
+    schedule: string,
+    updatedBy: string,
+    alertTemplateId: number
+}
+
 

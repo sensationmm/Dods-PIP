@@ -176,3 +176,13 @@ functions:
           path: collections/{collectionId}
           caching:
             enabled: false
+
+  setAlertSchedule:
+    handler: src/handlers/setAlertSchedule/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/schedule
+          caching:
+            enabled: false
