@@ -3,11 +3,10 @@ import { updateScheduleParameters } from '../../domain';
 import { ScheduleRepository } from '../../repositories/ScheduleRpository';
 
 export const updateSchedule: AsyncLambdaHandler<updateScheduleParameters> = async (data) => {
-    const result = await ScheduleRepository.defaultInstance.updateSchedule(data);
+    await ScheduleRepository.defaultInstance.updateSchedule(data);
 
     return new HttpResponse(HttpStatusCode.OK, {
-        "success": true,
-        "message": "schedule with ID " + data.id + " updated",
-        result
+        success: true,
+        message: "schedule with ID " + data.id + " updated"
     });
 };
