@@ -1,5 +1,5 @@
 import Panel from '@dods-ui/components/_layout/Panel';
-import moment from 'moment';
+import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
@@ -35,11 +35,9 @@ export const DocumentViewer: React.FC = () => {
 
           setApiResponse(response.es_response?.hits.hits[0]._source);
 
-          setFormattedTime(
-            moment(response.es_response?.hits.hits[0]._source.contentDateTime).format(
-              'D MMMM YYYY [at] hh:mm',
-            ),
-          );
+          const date = new Date(response.es_response?.hits.hits[0]._source.contentDateTime);
+
+          setFormattedTime(format(date, "d MMMM yyyy 'at' hh:mm"));
         } catch (error) {
           console.log(error);
         }

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { format } from 'date-fns';
 import Head from 'next/head';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -299,9 +299,8 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
             <Styled.contentWrapper>
               <section>
                 {apiResponse?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
-                  const formattedTime = moment(hit._source.contentDateTime).format(
-                    'Do MMMM YYYY h:mm',
-                  );
+                  const date = new Date(hit._source.contentDateTime);
+                  const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
 
                   return (
                     <Styled.searchResult key={`search-result${i}`}>
