@@ -28,8 +28,6 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const { documentTitle, contentSource, sourceReferenceUri, informationType, documentContent } =
     apiResponse;
 
-  console.log('apiResponse', apiResponse);
-
   const renderDetails = useCallback(() => {
     const { contentLocation, informationType, originator, version } = apiResponse;
     const data = [
@@ -72,12 +70,12 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
       },
       {
         label: 'Content source (URL)',
-        value: sourceReferenceUri && <Link href={sourceReferenceUri}>sourceReferenceUri</Link>,
+        value: sourceReferenceUri && <Link href={sourceReferenceUri}>{sourceReferenceUri}</Link>,
       },
     ];
 
     return (
-      <table>
+      <Styled.detailTable>
         <tbody>
           {data.map(({ label, value }) => {
             return (
@@ -92,7 +90,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             );
           })}
         </tbody>
-      </table>
+      </Styled.detailTable>
     );
   }, [apiResponse]);
 
@@ -107,9 +105,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         documentId={documentId}
       />
       <Styled.body>
-        <Styled.aside>
+        <Styled.tags>
           <Box>tags...</Box>
-        </Styled.aside>
+        </Styled.tags>
         <Styled.main>
           <Styled.tabs>
             <Styled.tab
