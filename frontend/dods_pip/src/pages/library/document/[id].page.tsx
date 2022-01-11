@@ -1,49 +1,22 @@
 import Panel from '@dods-ui/components/_layout/Panel';
 import { format } from 'date-fns';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import fetchJson from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
 import { ESResponse } from '../index.page';
 import Header from './header';
 
-export const DocumentViewer: React.FC = () => {
+interface DocumentViewerProps {
+  apiResponse: ESResponse;
+  formattedTime: string;
+}
+
+export const DocumentViewer: React.FC<DocumentViewerProps> = ({ apiResponse, formattedTime }) => {
   const router = useRouter();
-
-  const [apiResponse, setApiResponse] = useState<ESResponse>({});
   const documentId = router.query.id as string;
-  const [formattedTime, setFormattedTime] = useState('');
-
-  useEffect(() => {
-    const payload = {
-      query: {
-        match: {
-          documentId: documentId,
-        },
-      },
-    };
-
-    const sPayload = JSON.stringify(payload);
-    if (documentId) {
-      (async () => {
-        try {
-          const response = (await fetchJson(`${BASE_URI}${Api.ContentSearchApp}`, {
-            body: JSON.stringify({ query: sPayload }),
-            method: 'POST',
-          })) as ESResponse;
-
-          setApiResponse(response.es_response?.hits.hits[0]._source);
-
-          const date = new Date(response.es_response?.hits.hits[0]._source.contentDateTime);
-
-          setFormattedTime(format(date, "d MMMM yyyy 'at' hh:mm"));
-        } catch (error) {
-          console.log(error);
-        }
-      })();
-    }
-  }, [documentId]);
 
   return (
     <Panel>
@@ -66,6 +39,46 @@ export const DocumentViewer: React.FC = () => {
       )}
     </Panel>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { query, req } = context;
+
+  const documentId = query.id;
+  let response: ESResponse = {};
+
+  try {
+    const payload = {
+      query: {
+        match: {
+          documentId,
+        },
+      },
+    };
+    const sPayload = JSON.stringify(payload);
+    const { host } = req.headers;
+    response = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
+      body: JSON.stringify({ query: sPayload }),
+      method: 'POST',
+    })) as ESResponse;
+  } catch (error) {
+    console.error(error);
+  }
+
+  const data = response.es_response?.hits.hits[0]._source;
+
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const date = new Date(data.contentDateTime);
+  const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
+
+  return {
+    props: { apiResponse: data, formattedTime },
+  };
 };
 
 export default DocumentViewer;
