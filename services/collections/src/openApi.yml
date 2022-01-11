@@ -109,6 +109,23 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+          
+  /collections/{collectionId}/alerts/{alertId}/schedule:
+    put:
+      operationId: setAlertSchedule
+      summary: "Update Alert Schedule"
+      description: "Update Alert Schedule Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/setAlertSchedule"
+      responses:
+        "200":
+          $ref: "#/components/responses/setAlertScheduleResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
 
 components:
@@ -206,6 +223,25 @@ components:
         name:
           type: string
           minLength: 1
+          
+    alertScheduleInput:
+      type: object
+      properties:
+        isSchedule:
+          type: boolean
+        hasKeywordHighlight:
+          type: boolean
+        timezone:
+          type: string
+        schedule:
+          type: string
+        updatedBy:
+          type: string
+          example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        alertTemplateId: 
+          type: number 
+          example: 1
+          
 
     CollectionOutput:
       type: object
@@ -328,6 +364,14 @@ components:
         format: uuid
       required: true
       example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    alertId:
+      in: path
+      name: alertId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
 
   responses:
     NotFound:
@@ -363,6 +407,22 @@ components:
                 type: string
               collection:
                 $ref: "#/components/schemas/CollectionOutput"
+                
+    setAlertScheduleResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert scheduling was set successfully
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+                
     AlertResponse:
       description: "Response with single collection"
       content:
@@ -421,10 +481,16 @@ components:
             required:
             - alertQueries
 
-             
     UpdateCollection:
       description: "Payload to update a collection"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateCollectionInput"
+            
+    setAlertSchedule:
+      description: "Set Alert Schedule"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/alertScheduleInput"
