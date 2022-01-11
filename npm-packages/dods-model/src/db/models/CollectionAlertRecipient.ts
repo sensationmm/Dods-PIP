@@ -12,6 +12,7 @@ import sequelizeConnection from '../config/sequelizeConnection';
 import { User, CollectionAlert } from '.';
 
 interface AlertRecipientAttributes {
+    id: number;
     alertId: number;
     userId: number;
     createdBy: number;
@@ -20,6 +21,7 @@ interface AlertRecipientAttributes {
 export interface AlertRecipientInput
     extends Optional<
     AlertRecipientAttributes,
+    | 'id'
     | 'alertId'
     | 'userId'
     | 'createdBy'
@@ -32,6 +34,7 @@ export class CollectionAlertRecipient
     extends Model<AlertRecipientAttributes, AlertRecipientInput>
     implements AlertRecipientAttributes, AlertRecipientOutput {
 
+    public id!: number;
     public alertId!: number;
     public userId!: number;
     public createdBy!: number;
@@ -60,11 +63,15 @@ export class CollectionAlertRecipient
 
 CollectionAlertRecipient.init(
     {
+        id: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: false,
+            autoIncrement: true,
+            primaryKey: true,
+        },
         alertId: {
             type: DataTypes.INTEGER({ length: 11 }),
             allowNull: false,
-            defaultValue: null,
-            primaryKey: true,
             references: {
                 model: 'dods_collections_alerts',
                 key: 'id'
@@ -75,7 +82,6 @@ CollectionAlertRecipient.init(
         userId: {
             type: DataTypes.INTEGER({ length: 11 }),
             allowNull: false,
-            primaryKey: true,
             references: {
                 model: 'dods_users',
                 key: 'id'

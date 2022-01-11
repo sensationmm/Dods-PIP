@@ -3,10 +3,15 @@ import { DataTypes, QueryInterface, Sequelize } from 'sequelize';
 export = {
   up: (queryInterface: QueryInterface) => {
     return queryInterface.createTable('dods_collections_alerts_recipients', {
+      id: {
+        type: DataTypes.INTEGER({ length: 11 }),
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+      },
       alert_id: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
-        primaryKey: true,
         references: {
           model: 'dods_collections_alerts',
           key: 'id'
@@ -17,7 +22,6 @@ export = {
       user_id: {
         type: DataTypes.INTEGER({ length: 11 }),
         allowNull: false,
-        primaryKey: true,
         references: {
           model: 'dods_users',
           key: 'id'

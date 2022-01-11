@@ -137,7 +137,6 @@ if (process.env.NODE_ENV !== 'test') {
         foreignKey: 'createdBy',
         targetKey: 'id',
     });
-
 }
 
 export * from './models';

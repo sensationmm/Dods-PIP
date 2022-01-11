@@ -17,7 +17,7 @@ export interface AlertAttributes {
   id: number;
   uuid: string;
   collectionId: number | null;
-  templateId?: number | null;
+  templateId: number | null;
   title: string;
   description?: string | null;
   schedule?: string | null;
@@ -83,7 +83,7 @@ export class CollectionAlert
   public setCollection!: BelongsToSetAssociationMixin<Collection, number>;
   public createCollection!: BelongsToCreateAssociationMixin<Collection>;
 
-  public readonly alertTemplate!: CollectionAlertTemplate;
+  public readonly alertTemplate?: CollectionAlertTemplate;
   public getAlertTemplate!: BelongsToGetAssociationMixin<CollectionAlertTemplate>;
   public setAlertTemplate!: BelongsToSetAssociationMixin<CollectionAlertTemplate, number>;
   public createAlertTemplate!: BelongsToCreateAssociationMixin<Collection>;
