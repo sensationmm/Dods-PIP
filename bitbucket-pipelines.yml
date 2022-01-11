@@ -116,6 +116,31 @@ pipelines:
                 npx serverless package
               fi
 
+    build_scrapping:
+      - variables:
+        - name: SERVICE
+          default: debates-hoc-uk
+      - step:
+          name: "Scrapping: Test and Build"
+          image: gioatsomoglobal/devopstools:0.4.2
+          script:
+            - 'echo "Running build for service: ${SERVICE}"'
+            - cd scrapping/$SERVICE
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default scrapping building definitions"
+                if [[ -e 'package.json' ]]; then
+                    npm ci
+                fi
+                if [[ -e 'requirements.txt' ]]; then
+                    pip3 install -r requirements.txt
+                fi
+                sls package
+              fi
+
     deploy_frontend:
       - variables:
         - name: ENVIRONMENT
@@ -184,6 +209,35 @@ pipelines:
                 echo "Running default service deployment definitions"
                 npx serverless deploy --stage ${ENVIRONMENT,,}
               fi 
+
+    deploy_scrapping:
+      - variables:
+        - name: ENVIRONMENT
+          default: "DEV"
+        - name: SERVICE
+          default: debates-hoc-uk
+      - step:
+          name: "Scrapping: Deploy to Environment"
+          image: gioatsomoglobal/devopstools:0.4.2
+          script:
+            - 'echo "Running deployment for scraper: ${SERVICE}"'
+            - cd scrapping/$SERVICE
+    # Set credentials for the target environment
+            - ../../tools/set-deployer.sh && source credentials.txt
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default scrapping building definitions"
+                if [[ -e 'package.json' ]]; then
+                    npm ci
+                fi
+                if [[ -e 'requirements.txt' ]]; then
+                    pip3 install -r requirements.txt
+                fi
+                sls deploy --stage ${ENVIRONMENT,,}
+              fi
 
     storybook-deployment:
       - step:
