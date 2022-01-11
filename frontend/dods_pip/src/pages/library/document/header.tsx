@@ -3,6 +3,7 @@ import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import IconContentSource from '@dods-ui/components/IconContentSource';
 import { IconType as ContentSourceIconType } from '@dods-ui/components/IconContentSource/assets';
+import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
 import Link from 'next/link';
 import React from 'react';
@@ -35,7 +36,11 @@ const Header: React.FC<HeaderProps> = ({
             { href: '/library', label: documentTitle || '' },
           ]}
         />
-        <Styled.heading>{documentTitle}</Styled.heading>
+        <Styled.h1Container>
+          <Text type="h1" color="color.theme.blue">
+            {documentTitle}
+          </Text>
+        </Styled.h1Container>
         <Styled.infoRow>
           <span aria-label="Content source">
             <Styled.infoIcon>

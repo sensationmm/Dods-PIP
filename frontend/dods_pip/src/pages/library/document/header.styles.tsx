@@ -13,12 +13,7 @@ export const actionsSection = styled.section`
   text-align: right;
 `;
 
-export const heading = styled.h1`
-  color: ${color.theme.blue};
-  font-family: 'Libre Baskerville';
-  font-size: 48px;
-  font-weight: 400;
-  line-height: 56px;
+export const h1Container = styled.div`
   margin-top: ${spacing(6)};
   margin-bottom: ${spacing(8)};
 `;
