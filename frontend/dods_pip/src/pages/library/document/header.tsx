@@ -15,7 +15,7 @@ export interface HeaderProps {
   contentSource?: ContentSourceIconType;
   sourceReferenceUri?: string;
   informationType?: string;
-  formattedTime?: string;
+  publishedDateTime?: string;
   documentId?: string;
 }
 
@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({
   contentSource,
   sourceReferenceUri,
   informationType,
-  formattedTime,
+  publishedDateTime,
   documentId,
 }) => {
   return (
@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({
             <Text bold type="label">
               Date:
             </Text>
-            {formattedTime}
+            {publishedDateTime}
           </Styled.infoItem>
         </Styled.infoRow>
       </Styled.mainSection>
