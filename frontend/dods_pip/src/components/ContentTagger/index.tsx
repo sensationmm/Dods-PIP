@@ -154,7 +154,12 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
   };
 
   const handleSaveToHighlight = () => {
-    setTags(addedTags);
+    setCloseWarning(false);
+    setShowTagBrowser(false);
+    setTags(tags.concat(addedTags));
+    setAddedTags([]);
+    setTaxonomySearch('');
+    setTagsSearch(undefined);
   };
 
   const handleAddToHighlight = () => {

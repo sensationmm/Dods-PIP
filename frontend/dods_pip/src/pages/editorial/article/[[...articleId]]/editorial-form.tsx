@@ -38,6 +38,7 @@ type TextSelection = {
   fromIndex: number;
   toIndex: number;
   text: string;
+  occurences: number;
 };
 
 // We need to load this dynamically since it has multiple client side `document` calls
@@ -54,6 +55,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   onTagsChange,
 }) => {
   const [selectedText, setSelectedText] = useState<string>();
+  const [selectedTextOccurences, setSelectedTextOccurences] = useState<number>();
 
   const validateField = (fieldName: keyof EditorialFormFields, value: string | undefined) => {
     const formErrors = JSON.parse(JSON.stringify(errors));
@@ -74,7 +76,14 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   };
 
   const onEditorTextSelection = (params: TextSelection) => {
-    setSelectedText(params.text);
+    const text = params.text.trim();
+    if (text.length > 0) {
+      setSelectedText(params.text);
+      setSelectedTextOccurences(params.occurences);
+      return;
+    }
+    setSelectedText(undefined);
+    setSelectedTextOccurences(undefined);
   };
 
   return (
@@ -161,7 +170,12 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
         </WysiwygEditor>
       </div>
 
-      <ContentTagger highlight={selectedText} tags={tags} setTags={onTagsChange} />
+      <ContentTagger
+        highlight={selectedText}
+        highlightWordCount={selectedTextOccurences}
+        tags={tags}
+        setTags={onTagsChange}
+      />
     </Styled.mainColumns>
   );
 };
