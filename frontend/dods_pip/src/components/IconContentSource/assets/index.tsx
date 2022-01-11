@@ -73,7 +73,7 @@ export const Icons = {
   'EU Agencies and Other Bodies': EuAgencies,
   'EU and Non EU Bodies': EuAndNonEuBodies,
   'Non EU Bodies': NonEuBodies,
-  'Greater London Authority': GreaterLondonAssembly, // Todo: check this is correct
+  'Greater London Assembly': GreaterLondonAssembly,
   'Local Government': UkStakeholder,
 };
 
