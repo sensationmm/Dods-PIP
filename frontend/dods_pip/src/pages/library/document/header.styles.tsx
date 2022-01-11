@@ -6,6 +6,11 @@ import spacing from '../../../globals/spacing';
 export const header = styled.header`
   display: flex;
   justify-content: space-between;
+  gap: ${spacing(5)};
+`;
+
+export const mainSection = styled.section`
+  flex: 1;
 `;
 
 export const actionsSection = styled.section`

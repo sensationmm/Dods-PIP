@@ -1,12 +1,14 @@
+import Box from '@dods-ui/components/_layout/Box';
 import Panel from '@dods-ui/components/_layout/Panel';
 import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 
 import fetchJson from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
 import { ESResponse } from '../index.page';
+import * as Styled from './document.styles';
 import Header from './header';
 
 interface DocumentViewerProps {
@@ -16,6 +18,7 @@ interface DocumentViewerProps {
 
 export const DocumentViewer: React.FC<DocumentViewerProps> = ({ apiResponse, formattedTime }) => {
   const router = useRouter();
+  const [selectedTab, setSelectedTab] = useState<'content' | 'details'>('content');
   const documentId = router.query.id as string;
   const { documentTitle, contentSource, sourceReferenceUri, informationType, documentContent } =
     apiResponse;
@@ -30,11 +33,38 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ apiResponse, for
         formattedTime={formattedTime}
         documentId={documentId}
       />
-      <div
-        dangerouslySetInnerHTML={{
-          __html: documentContent || '',
-        }}
-      />
+      <Styled.body>
+        <Styled.main>
+          <Styled.tabs>
+            <Styled.tab
+              type="button"
+              className={selectedTab === 'content' ? 'selected' : ''}
+              onClick={() => setSelectedTab('content')}
+            >
+              Content
+            </Styled.tab>
+            <Styled.tab
+              type="button"
+              className={selectedTab === 'details' ? 'selected' : ''}
+              onClick={() => setSelectedTab('details')}
+            >
+              Details
+            </Styled.tab>
+          </Styled.tabs>
+          {selectedTab === 'content' ? (
+            <div
+              dangerouslySetInnerHTML={{
+                __html: documentContent || '',
+              }}
+            />
+          ) : (
+            'Details...'
+          )}
+        </Styled.main>
+        <Styled.aside>
+          <Box></Box>
+        </Styled.aside>
+      </Styled.body>
     </Panel>
   );
 };

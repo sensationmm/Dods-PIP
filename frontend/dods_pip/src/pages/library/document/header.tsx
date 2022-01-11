@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <Styled.header>
-      <section>
+      <Styled.mainSection>
         <Breadcrumbs
           history={[
             { href: '/library', label: 'Library' },
@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({
           ]}
         />
         <Styled.h1Container>
-          <Text type="h1" color="color.theme.blue">
+          <Text type="h1" color={color.theme.blue}>
             {documentTitle}
           </Text>
         </Styled.h1Container>
@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({
           <Styled.infoSpacer />
           <span aria-label="Published date">{formattedTime}</span>
         </Styled.infoRow>
-      </section>
+      </Styled.mainSection>
       <Styled.actionsSection>
         {documentId && (
           <Link href={`/editorial/article/${documentId}`} passHref>
