@@ -17,26 +17,24 @@ interface DocumentViewerProps {
 export const DocumentViewer: React.FC<DocumentViewerProps> = ({ apiResponse, formattedTime }) => {
   const router = useRouter();
   const documentId = router.query.id as string;
+  const { documentTitle, contentSource, sourceReferenceUri, informationType, documentContent } =
+    apiResponse;
 
   return (
     <Panel>
-      {apiResponse.documentTitle && (
-        <>
-          <Header
-            documentTitle={apiResponse.documentTitle}
-            contentSource={apiResponse.contentSource}
-            sourceReferenceUri={apiResponse.sourceReferenceUri}
-            informationType={apiResponse.informationType}
-            formattedTime={formattedTime}
-            documentId={documentId}
-          />
-          <div
-            dangerouslySetInnerHTML={{
-              __html: apiResponse?.documentContent || '',
-            }}
-          />
-        </>
-      )}
+      <Header
+        documentTitle={documentTitle}
+        contentSource={contentSource}
+        sourceReferenceUri={sourceReferenceUri}
+        informationType={informationType}
+        formattedTime={formattedTime}
+        documentId={documentId}
+      />
+      <div
+        dangerouslySetInnerHTML={{
+          __html: documentContent || '',
+        }}
+      />
     </Panel>
   );
 };
