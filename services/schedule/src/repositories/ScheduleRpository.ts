@@ -1,6 +1,6 @@
 const { Client } = require('@elastic/elasticsearch')
 
-import {createScheduleParameters} from "../domain";
+import {createScheduleParameters, deleteScheduleParameters} from "../domain";
 import { Schedule } from "./Schedule"
 import elasticsearch from "../elasticsearch"
 
@@ -35,4 +35,8 @@ export class ScheduleRepository implements Schedule {
         const query = ScheduleRepository.createSearchQuery(data);
         return this.elasticsearch.watcher.putWatch(query);
     }
-}
+
+    async deleteSchedule(data: deleteScheduleParameters): Promise<any> {
+        return this.elasticsearch.watcher.deleteWatch(data);
+    }
+}   

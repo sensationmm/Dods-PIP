@@ -26,6 +26,20 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /scheduler/delete:
+    post:
+      operationId: deleteSchedule
+      summary: "Delete schedule for doc publishing"
+      parameters:
+        - $ref: '#/components/parameters/deleteSchedule'
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteSchedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 
 components:
   schemas:
@@ -55,6 +69,15 @@ components:
         cron:
           type: string
           example: "0 0 13 24 DEC ? 2021"
+    DeleteScheduleReturn:
+      type: object
+      properties:
+        success:
+          type: string
+          example: true
+        message:
+          type: string
+          example: schedule with ID 008f811e5ccf44d3a0df5b7f70a8e85d deleted
 
   parameters:
     createSchedule:
@@ -76,6 +99,17 @@ components:
           cron:
             type: string
             example: "0 0 13 24 DEC ? 2021"
+    deleteSchedule:
+      in: query
+      name: DeleteSchedule
+      schema:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            type: string
+            example: 008f811e5ccf44d3a0df5b7f70a8e85d
 
 
   responses:
@@ -105,3 +139,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateScheduleReturn'
+
+    DeleteSchedule:
+      description: "Response from scheduler delete"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeleteScheduleReturn'
+
+    

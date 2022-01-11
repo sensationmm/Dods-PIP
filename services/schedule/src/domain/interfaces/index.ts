@@ -5,3 +5,7 @@ export interface createScheduleParameters {
     scheduleType: Type;
     cron: string;
 }
+
+export interface deleteScheduleParameters {
+    id: string;
+}
