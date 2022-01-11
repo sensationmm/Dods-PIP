@@ -9,22 +9,26 @@ import {
   Model,
   Optional,
 } from 'sequelize';
+import { Collection, CollectionAlertQuery, CollectionAlertTemplate, User } from '.';
+
 import sequelizeConnection from '../config/sequelizeConnection';
 
-import { Collection, CollectionAlertTemplate, CollectionAlertQuery } from '.';
-
-interface AlertAttributes {
+export interface AlertAttributes {
   id: number;
   uuid: string;
-  collectionId: number;
-  templateId: number;
+  collectionId: number | null;
+  templateId?: number | null;
   title: string;
-  description: string;
-  schedule: string;
-  timezone: string;
-  createdBy: number;
-  updatedBy: number;
-  isActive: boolean;
+  description?: string | null;
+  schedule?: string | null;
+  timezone?: string | null;
+  createdBy?: number | null;
+  updatedBy?: number | null;
+  isActive?: boolean;
+  isPublished?: boolean;
+  lastStepCompleted?: number;
+  isScheduled?: boolean;
+  hasKeywordsHighlight?: boolean;
 }
 
 export interface AlertInput
@@ -39,6 +43,13 @@ export interface AlertInput
   | 'templateId'
   | 'schedule'
   | 'timezone'
+  | 'createdBy'
+  | 'updatedBy'
+  | 'isActive'
+  | 'isPublished'
+  | 'lastStepCompleted'
+  | 'isScheduled'
+  | 'hasKeywordsHighlight'
   > { }
 
 
@@ -46,20 +57,25 @@ export interface AlertOutput extends Required<AlertAttributes> { }
 
 export class CollectionAlert
   extends Model<AlertAttributes, AlertInput>
-  implements AlertAttributes, AlertOutput {
+  implements AlertAttributes {
 
   public id!: number;
   public uuid!: string;
-  public collectionId!: number;
-  public templateId!: number;
+  public collectionId!: number | null;
+  public templateId!: number | null;
   public title!: string;
-  public description!: string;
-  public schedule!: string;
-  public timezone!: string;
-  public createdBy!: number;
-  public updatedBy!: number;
+  public description?: string | null;
+  public schedule?: string | null;
+  public timezone?: string | null;
+  public createdBy?: number | null;
+  public updatedBy?: number | null;
 
   public isActive!: boolean;
+  public isPublished!: boolean;
+  public lastStepCompleted!: number;
+  public isScheduled!: boolean;
+  public hasKeywordsHighlight!: boolean;
+
 
   // mixins for association (optional)
   public readonly collection!: Collection;
@@ -76,10 +92,22 @@ export class CollectionAlert
   public getAlertQueries!: BelongsToManyGetAssociationsMixin<CollectionAlertQuery>;
   public AlertQueries?: CollectionAlertQuery[];
 
+  public readonly createdById!: User;
+  public getCreatedBy!: BelongsToGetAssociationMixin<User>;
+  public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
+
+  public readonly updatedById!: User;
+  public getUpdatedById!: BelongsToGetAssociationMixin<User>;
+  public setUpdatedById!: BelongsToSetAssociationMixin<User, number>;
+
+
   public static associations: {
     collection: Association<CollectionAlert, Collection>;
     alertTemplate: Association<CollectionAlert, CollectionAlertTemplate>;
     alertQueries: BelongsToMany<Collection, CollectionAlertQuery>;
+    createdById: Association<CollectionAlert, User>;
+    updatedById: Association<CollectionAlert, User>;
+
   };
 
   // Timestamps
@@ -133,11 +161,11 @@ CollectionAlert.init(
     },
     schedule: {
       type: DataTypes.STRING({ length: 255 }),
-      allowNull: false,
+      allowNull: true,
     },
     timezone: {
       type: DataTypes.STRING({ length: 255 }),
-      allowNull: false,
+      allowNull: true,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
@@ -165,6 +193,26 @@ CollectionAlert.init(
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL'
+    },
+    isPublished: {
+      type: DataTypes.TINYINT({ length: 1 }),
+      allowNull: false,
+      defaultValue: false,
+    },
+    lastStepCompleted: {
+      type: DataTypes.INTEGER({ length: 11 }),
+      allowNull: false,
+      defaultValue: 1
+    },
+    isScheduled: {
+      type: DataTypes.TINYINT({ length: 1 }),
+      allowNull: false,
+      defaultValue: false,
+    },
+    hasKeywordsHighlight: {
+      type: DataTypes.TINYINT({ length: 1 }),
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {

@@ -8,7 +8,7 @@ export const failureCount = styled.span`
   position: absolute;
   top: ${spacing(2)};
   right: ${spacing(2)};
-  padding: 0 ${spacing(2)} ${spacing(1)} ${spacing(2)};
+  padding: ${spacing(1)} ${spacing(2)};
   color: ${color.base.white};
   background: ${color.accent.orange};
   border-radius: ${spacing(1)};

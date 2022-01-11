@@ -98,11 +98,14 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
       }
       setLoading(false);
     } catch (error) {
-      if (error.data.name === 'NotAuthorizedException') {
+      if (
+        error.data.name === 'NotAuthorizedException' ||
+        error.data.name === 'UserNotFoundException'
+      ) {
         if (error.data.isActive === false) {
           setShowInactiveMsg(true);
         } else {
-          setFailureCount(error.data.failedLoginAttemptCount);
+          setFailureCount(failureCount + 1);
         }
       } else {
         setErrors({ form: 'FAIL' });

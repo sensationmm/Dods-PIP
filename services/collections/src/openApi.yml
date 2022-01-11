@@ -50,8 +50,6 @@ paths:
       description: "Update Collection Endpoint"
       parameters:
         - $ref: '#/components/parameters/collectionId'
-      security:
-        - bearerAuth: []
       requestBody:
         $ref: "#/components/requestBodies/UpdateCollection"
       responses:
@@ -59,10 +57,59 @@ paths:
           $ref: "#/components/responses/CollectionResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+    get:
+      operationId: getCollection
+      summary: "Returns collection"
+      description: "Returns collection"
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteCollection
+      summary: "Delete collection"
+      description: "Delete collection"
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}/alerts:
+    get:
+      operationId: getCollectionAlerts
+      summary: "Get the alerts associated to a Collection"
+      description: "Get Alerts Associated to a Collection"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetAlertsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createAlert
+      summary: "Creates an alert associated to a Collection"
+      description: "Create Alert Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAlert"
+      responses:
+        "200":
+          $ref: "#/components/responses/AlertResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
-
-# security:
-#   - bearerAuth: []
 
 components:
   securitySchemes:
@@ -85,6 +132,74 @@ components:
           type: string
           format: uuid
           
+    CreateAlertInput:
+      type: object
+      properties:
+        collectionId:
+          type: string
+          minLength: 1
+          format: uuid
+        title:
+          type: string
+          example: alert title
+        alertQueriess:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AlertQueries"
+        
+            
+    AlertQueries:
+      type: object
+      properties:
+        query:
+          type: string
+          minLength: 1
+        informationType:
+          type: string
+          minLength: 1
+        contentSources:
+          type: string
+          minLength: 1
+          
+    AlertOutput:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        collection: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            title:
+              type: string
+        template:
+          type: object
+        schedule:
+          type: string
+        timezone:
+          type: string 
+        createdAt:
+          type: string 
+        updatedAt:
+          type: string 
+        lastStepCompleted:
+          type: boolean
+        isPublished:
+          type: boolean
+        updatedBy:
+          type: object
+        createdBy:
+          type: object
+             
+              
     UpdateCollectionInput:
       type: object
       properties:
@@ -248,6 +363,43 @@ components:
                 type: string
               collection:
                 $ref: "#/components/schemas/CollectionOutput"
+    AlertResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Alert created successfully in step 1
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+                
+    GetAlertsResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Collection alerts found
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              alerts:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AlertOutput"
 
   requestBodies:
     CreateCollection:
@@ -260,6 +412,15 @@ components:
              - name
              - clientAccountId
              - createdById
+    CreateAlert:
+      description: "Payload to create a new alert"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateAlertInput"
+            required:
+            - alertQueries
+
              
     UpdateCollection:
       description: "Payload to update a collection"
@@ -267,4 +428,3 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateCollectionInput"
-
