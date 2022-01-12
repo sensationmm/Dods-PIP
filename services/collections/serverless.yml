@@ -186,3 +186,23 @@ functions:
           path: /collections/{collectionId}/alerts/{alertId}/schedule
           caching:
             enabled: false
+
+  setAlertRecipients:
+    handler: src/handlers/setAlertRecipients/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: collections/{collectionId}/alerts/{alertId}/recipients
+          caching:
+            enabled: false
+
+  getAlert:
+    handler: src/handlers/getAlert/index.handle
+    description: Get the basic information of an alert
+    events:
+      - http:
+          method: get
+          path: /collections/{collectionId}/alerts/{alertId}
+          caching:
+            enabled: false

@@ -1,10 +1,11 @@
 import { buildLambdaFunction } from '@dodsgroup/dods-lambda';
 import { config } from '../../domain';
-import { getCollectionAlerts } from './getCollectionAlerts';
+import { getAlert } from './getAlert';
 
-export const handle = buildLambdaFunction(getCollectionAlerts, {
+
+export const handle = buildLambdaFunction(getAlert, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
     validateSecurity: false,
 });

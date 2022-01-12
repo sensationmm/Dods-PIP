@@ -1,10 +1,12 @@
-import { Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
+import { AlertAttributesStrecthed, Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
     CollectionAlertsPersister,
     CreateAlertParameters,
     SearchCollectionAlertsParameters,
     getAlertsByCollectionResponse,
-    setAlertScheduleParameters
+    setAlertScheduleParameters,
+    SearchAlertParameters,
+    getAlertById
 } from './domain';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
@@ -32,10 +34,10 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
     ) { }
 
-    mapAlert(model: CollectionAlert): Object {
+    mapAlert(model: CollectionAlert): AlertAttributesStrecthed {
         const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted } = model;
 
-        const collectionAlert = {
+        return {
             id,
             uuid,
             title,
@@ -53,9 +55,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             lastStepCompleted: lastStepCompleted,
             isPublished: isPublished ? true : false
         }
-
-
-        return collectionAlert
     }
 
     async getCollectionAlerts(parameters: SearchCollectionAlertsParameters): Promise<getAlertsByCollectionResponse> {
@@ -226,4 +225,55 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return alert;
     }
 
+
+    async getAlert(parameters: SearchAlertParameters): Promise<getAlertById> {
+        const { collectionId, alertId } = parameters;
+
+        const collection = await this.collectionModel.findOne({
+            where: { uuid: collectionId }
+        })
+
+        if (!collection || !collection.isActive) {
+            throw new CollectionError(
+                `Unable to retrieve Collection with uuid: ${collectionId}`
+            );
+        }
+
+        const alert = await this.alertModel.findOne({
+            where: {
+                uuid: alertId,
+                collectionId: collection.id,
+                isActive: true,
+            },
+            include: ['collection', 'createdById', 'updatedById', 'alertTemplate']
+        })
+
+        if (!alert || !alert.isActive) {
+            throw new CollectionError(
+                `Unable to retrieve Alert with uuid: ${alertId}`
+            );
+        }
+
+
+        const alertQueryResponse = await this.alertQueryModel.findAndCountAll({
+            where: {
+                alertId: alert.id,
+                isActive: true,
+            }
+        });
+
+
+        const alertRecipientResponse = await this.recipientModel.findAndCountAll({
+            where: {
+                alertId: alert.id
+            }
+        });
+
+
+        return {
+            alert: this.mapAlert(alert),
+            searchQueriesCount: alertQueryResponse.count,
+            recipientsCount: alertRecipientResponse.count
+        }
+    }
 }
