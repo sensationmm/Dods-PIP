@@ -1,3 +1,5 @@
+import { AlertAttributesStrecthed } from "@dodsgroup/dods-model";
+
 export interface SearchCollectionAlertsParameters {
     collectionId: string;
     limit: string;
@@ -66,4 +68,13 @@ export interface setAlertScheduleParameters {
     alertTemplateId: number
 }
 
+export interface SearchAlertParameters {
+    collectionId: string;
+    alertId: string;
+}
 
+export interface getAlertById {
+    alert: AlertAttributesStrecthed,
+    searchQueriesCount: number,
+    recipientsCount: number
+}

@@ -196,3 +196,13 @@ functions:
           path: collections/{collectionId}/alerts/{alertId}/recipients
           caching:
             enabled: false
+
+  getAlert:
+    handler: src/handlers/getAlert/index.handle
+    description: Get the basic information of an alert
+    events:
+      - http:
+          method: get
+          path: /collections/{collectionId}/alerts/{alertId}
+          caching:
+            enabled: false
