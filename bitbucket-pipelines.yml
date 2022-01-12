@@ -113,7 +113,9 @@ pipelines:
                 if [[ -e 'requirements.txt' ]]; then
                     pip3 install -r requirements.txt
                 fi
-                sls package
+                if [[ -e 'serverless.yml' ]]; then
+                  sls package
+                fi
               fi
 
     deploy_frontend:
@@ -211,7 +213,9 @@ pipelines:
                 if [[ -e 'requirements.txt' ]]; then
                     pip3 install -r requirements.txt
                 fi
-                sls deploy --stage ${ENVIRONMENT,,}
+                if [[ -e 'serverless.yml' ]]; then
+                  sls deploy --stage ${ENVIRONMENT,,}
+                fi
               fi
 
     storybook-deployment:
