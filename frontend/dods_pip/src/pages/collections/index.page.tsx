@@ -24,6 +24,11 @@ export type Collection = {
   name: string;
   clientAccount: Pick<ClientAccount, 'uuid' | 'name'>;
   createdAt: Date;
+  createdBy: {
+    name: string;
+    uuid: string;
+    isDodsUser: boolean;
+  };
   updatedAt: Date;
   alertsCount: number;
   queriesCount: number;
@@ -168,12 +173,6 @@ export const Collections: React.FC<CollectionsProps> = ({
       setLoading(false);
     }
   };
-
-  // React.useEffect(() => {
-  //   if (addAccount) {
-  //     loadAccounts(addAccount as string);
-  //   }
-  // }, [addAccount]);
 
   React.useEffect(() => {
     if (user?.clientAccountId) {
