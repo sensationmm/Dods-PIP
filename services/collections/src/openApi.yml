@@ -127,6 +127,23 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
 
+  /collections/{collectionId}/alerts/{alertId}/recipients:
+    put:
+      operationId: setAlertRecipients
+      summary: "Set Alert Recipients"
+      description: "Set Alert Recipients"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/SetAlertRecipients"
+      responses:
+        "200":
+          $ref: "#/components/responses/SetAlertRecipientsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   securitySchemes:
@@ -238,6 +255,22 @@ components:
           type: number 
           example: 1
           
+
+    SetAlertRecipientsInput:
+      type: object
+      properties:
+        updatedBy:
+          type: string
+          format: uuid
+          description: User uuid
+        recipients:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+                format: uuid
 
     CollectionOutput:
       type: object
@@ -433,6 +466,104 @@ components:
                 example: Alert created successfully in step 1
               alert:
                 $ref: "#/components/schemas/AlertOutput"
+              
+    SetAlertRecipientsResponse:
+      description: "SetAlertRecipientsResponse"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert recipients were set successfully
+              alert:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  collection:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                  template:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        description: Alert Template id
+                      name:
+                        type: string
+                  schedule:
+                    type: string
+                  timezone:
+                    type: string
+                  searchQueriesCount:
+                    type: number
+                    description: Count of dods_alerts_queries related to the alert
+                  recipientsCount:
+                    type: number
+                    description: Count of dods_alerts_recipients related to the alert
+                  lastStepCompleted:
+                    type: number
+                  isPublished:
+                    type: boolean
+                  createdBy:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      emailAddress:
+                        type: string
+                        format: email
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedBy:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      emailAddress:
+                        type: string
+                        format: email
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  recipients:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                        emailAddress:
+                          type: string
+                          format: email
+
+
+                  
+                      
                 
     GetAlertsResponse:
       description: "Get Alerts Response"
@@ -490,3 +621,10 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/alertScheduleInput"
+
+    SetAlertRecipients:
+      description: "Payload to update a collection"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SetAlertRecipientsInput"
