@@ -6,70 +6,25 @@ import Button from '@dods-ui/components/Button';
 import { PlainTable } from '@dods-ui/components/DataTable';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import IconButton from '@dods-ui/components/IconButton';
-import Pagination from '@dods-ui/components/Pagination';
 import Text from '@dods-ui/components/Text';
-import fetchJson from '@dods-ui/lib/fetchJson';
-import useDebounce from '@dods-ui/lib/useDebounce';
-import { Api, BASE_URI, toQueryString } from '@dods-ui/utils/api';
 import { format } from 'date-fns';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import * as Styled from './collections.styles';
-import { Collections, CollectionsScreenProps, FilterParams } from './index.page';
+import { CollectionsScreenProps } from './index.page';
 
 export const CollectionsUser: React.FC<CollectionsScreenProps> = ({
-  user,
-  setLoading,
   setShowAdd,
+  collectionsList,
+  filters,
+  setFilters,
+  total,
+  PaginationButtons,
+  PaginationStats,
 }) => {
-  const [search, setSearch] = React.useState<string>('');
-  const [total, setTotal] = React.useState<number>(0);
-  const [collectionsList, setCollectionsList] = React.useState<Collections>([]);
-  const debouncedValue = useDebounce<string>(search as string, 850);
   const router = useRouter();
-
-  const { clientAccountId } = user;
-
-  const { activePage, numPerPage, PaginationButtons, PaginationStats } = Pagination(total, '10');
-
-  const getFilterQueryString = () => {
-    const params: FilterParams = {
-      limit: numPerPage,
-      offset: activePage * numPerPage,
-      ...(search && { searchTerm: encodeURI(search) }),
-    };
-
-    return toQueryString(params);
-  };
-
-  const loadCollections = async () => {
-    setLoading(true);
-    const queryString = getFilterQueryString();
-    try {
-      const results = await fetchJson(
-        `${BASE_URI}${Api.Collections}/${clientAccountId}${queryString}`,
-        {
-          method: 'GET',
-        },
-      );
-      const { data = [], filteredRecords } = results;
-      setCollectionsList(data as Collections);
-      setTotal(filteredRecords as number);
-    } catch (e) {
-      setCollectionsList([] as Collections);
-      setTotal(0);
-    }
-
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    (async () => {
-      await loadCollections();
-    })();
-  }, [debouncedValue, numPerPage, activePage]);
 
   return (
     <div data-test="page-collections">
@@ -96,8 +51,8 @@ export const CollectionsUser: React.FC<CollectionsScreenProps> = ({
                 <InputSearch
                   id="collections-search"
                   size="small"
-                  value={search}
-                  onChange={setSearch}
+                  value={filters?.search || ''}
+                  onChange={(value: string) => setFilters({ ...filters, search: value })}
                   placeholder="Search a collection"
                 />
                 <Button
