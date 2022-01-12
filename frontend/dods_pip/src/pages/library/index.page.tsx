@@ -83,6 +83,7 @@ export interface ESResponse {
   contentLocation?: string;
   originator?: string;
   version?: string;
+  aggs_fields?: { [key: string]: string[] };
 }
 
 interface RequestPayload {

@@ -25,8 +25,14 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<'content' | 'details'>('content');
   const documentId = router.query.id as string;
-  const { documentTitle, contentSource, sourceReferenceUri, informationType, documentContent } =
-    apiResponse;
+  const {
+    documentTitle,
+    contentSource,
+    sourceReferenceUri,
+    informationType,
+    documentContent,
+    aggs_fields: tags = {},
+  } = apiResponse;
 
   const renderDetails = useCallback(() => {
     const { contentLocation, informationType, originator, version } = apiResponse;
@@ -94,6 +100,33 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     );
   }, [apiResponse]);
 
+  console.log('apiResponse', apiResponse);
+
+  const renderTags = useCallback(() => {
+    return (
+      <Styled.tags>
+        <Text type="h3" headingStyle="title">
+          Content Tags
+        </Text>
+        {Object.keys(tags).map((key) => {
+          const tagElements = tags[key].map((tag) => {
+            return <Styled.tag key={tag}>{tag}</Styled.tag>;
+          });
+
+          return (
+            <>
+              <Text type="label" headingStyle="titleSmall" key={key} bold>
+                {key}
+              </Text>
+
+              <Styled.tagsContainer>{tagElements}</Styled.tagsContainer>
+            </>
+          );
+        })}
+      </Styled.tags>
+    );
+  }, [tags]);
+
   return (
     <Panel>
       <Header
@@ -105,9 +138,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         documentId={documentId}
       />
       <Styled.body>
-        <Styled.tags>
-          <Box>tags...</Box>
-        </Styled.tags>
+        {renderTags()}
         <Styled.main>
           <Styled.tabs>
             <Styled.tab
