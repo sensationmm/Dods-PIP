@@ -108,7 +108,7 @@ pipelines:
               else
                 echo "Running default scrapping building definitions"
                 if [[ -e 'package.json' ]]; then
-                    npm ci
+                    npm install
                 fi
                 if [[ -e 'requirements.txt' ]]; then
                     pip3 install -r requirements.txt
@@ -206,7 +206,7 @@ pipelines:
               else
                 echo "Running default scrapping building definitions"
                 if [[ -e 'package.json' ]]; then
-                    npm ci
+                    npm install
                 fi
                 if [[ -e 'requirements.txt' ]]; then
                     pip3 install -r requirements.txt
