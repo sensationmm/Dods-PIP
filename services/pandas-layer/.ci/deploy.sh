@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-npm ci
+npm install
 
 cd layers/pandas
 ./build_layer.sh
