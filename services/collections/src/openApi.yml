@@ -152,10 +152,6 @@ components:
     CreateAlertInput:
       type: object
       properties:
-        collectionId:
-          type: string
-          minLength: 1
-          format: uuid
         title:
           type: string
           example: alert title

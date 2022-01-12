@@ -56,7 +56,7 @@ const Alert: React.FC<AlertProps> = ({
         <div>
           <Styled.deliveryTitle>
             <Text type="label" bold>
-              Delivery schedule
+              Delivery Schedule
               {immediateDelivery && ': '}
             </Text>
             {immediateDelivery && <Text color={color.base.greyDark}>&nbsp;Immediate</Text>}

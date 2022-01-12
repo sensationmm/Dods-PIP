@@ -7,6 +7,7 @@ import spacing from '../../globals/spacing';
 export const stats = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
 export const pages = styled.div`
