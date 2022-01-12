@@ -31,11 +31,11 @@ export class GenericOpenApiValidator {
       middlewareHandlers.splice(middlewareHandlers.indexOf(this.responseValidationFunction), 1);
     }
 
-    // const pathParamsMiddlewareIndex = middlewareHandlers.indexOf(middlewareHandlers.find(m => m.name === 'pathParamsMiddleware')!);
+    const pathParamsMiddlewareIndex = middlewareHandlers.indexOf(middlewareHandlers.find(m => m.name === 'pathParamsMiddleware')!);
 
-    // if (pathParamsMiddlewareIndex > -1) {
-    //   middlewareHandlers.splice(pathParamsMiddlewareIndex, 1);
-    // }
+    if (pathParamsMiddlewareIndex > -1) {
+      middlewareHandlers.splice(pathParamsMiddlewareIndex, 1);
+    }
 
     this.metadataIndex = middlewareHandlers.indexOf(middlewareHandlers.find(m => m.name === 'metadataMiddleware')!);
 

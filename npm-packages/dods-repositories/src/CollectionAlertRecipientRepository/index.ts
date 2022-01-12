@@ -1,5 +1,5 @@
 import { CollectionAlertError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
-import { AlertRecipientInput, Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, User } from "@dodsgroup/dods-model";
+import { AlertRecipientInput, Collection, CollectionAlert, CollectionAlertRecipient, User } from "@dodsgroup/dods-model";
 import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput } from "./domain";
 
 export * from './domain';
@@ -23,7 +23,6 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             },
             include: [
                 CollectionAlert.associations.alertTemplate,
-                // CollectionAlert.associations.alertQueries,
                 CollectionAlert.associations.createdById,
                 CollectionAlert.associations.updatedById,
             ]
@@ -55,13 +54,18 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
 
         const alertRecipients: Array<AlertRecipientInput> = users.map(user => ({ alertId: collectionAlert.id, userId: user.id, createdBy: updatedByUser.id }));
 
-        await CollectionAlertRecipient.bulkCreate(alertRecipients);
+        await CollectionAlertRecipient.bulkCreate(alertRecipients, { ignoreDuplicates: true });
 
         await collectionAlert.update({ lastStepCompleted: 2 }, { where: { lastStepCompleted: 1 } });
 
-        await collectionAlert.update({ collectionId: collection.id, updatedBy: updatedByUser.id });
+        await collectionAlert.update({ updatedBy: updatedByUser.id });
 
-        const alertQueriesCount = await CollectionAlertQuery.count({ where: { alertId: collectionAlert.id } });
+        const collectionAlertRecipient = await CollectionAlertRecipient.findAll({
+            where: { alertId: 1 },
+            include: [CollectionAlertRecipient.associations.user],
+        });
+
+        const collectionAlertAllRecipients = collectionAlertRecipient.map(({ user: { uuid, fullName, primaryEmail } }) => ({ userId: uuid, name: fullName, emailAddress: primaryEmail }));
 
         return {
             uuid: collectionAlert.uuid,
@@ -77,7 +81,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             },
             schedule: collectionAlert.schedule || '',
             timezone: collectionAlert.timezone || '',
-            searchQueriesCount: alertQueriesCount || 0,
+            searchQueriesCount: await collectionAlert.countAlertQueries() || 0,
             recipientsCount: alertRecipients.length,
             lastStepCompleted: 2,
             isPublished: false,
@@ -93,7 +97,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
                 emailAddress: collectionAlert.updatedById?.primaryEmail || '',
             },
             updatedAt: collectionAlert.updatedAt,
-            recipients: users.map(user => ({ userId: user.uuid, name: user.fullName, emailAddress: user.primaryEmail }))
+            recipients: collectionAlertAllRecipients//users.map(user => ({ userId: user.uuid, name: user.fullName, emailAddress: user.primaryEmail }))
         };
     }
 }

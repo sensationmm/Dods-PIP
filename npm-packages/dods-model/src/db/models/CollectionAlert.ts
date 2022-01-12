@@ -1,9 +1,9 @@
+import { HasManyAddAssociationMixin, HasManyCreateAssociationMixin, HasManyGetAssociationsMixin, HasManyHasAssociationMixin } from 'sequelize';
+import { HasManyCountAssociationsMixin } from 'sequelize';
 import {
   Association,
   BelongsToCreateAssociationMixin,
   BelongsToGetAssociationMixin,
-  BelongsToMany,
-  BelongsToManyGetAssociationsMixin,
   BelongsToSetAssociationMixin,
   DataTypes,
   Model,
@@ -17,7 +17,7 @@ export interface AlertAttributes {
   id: number;
   uuid: string;
   collectionId: number | null;
-  templateId: number | null;
+  templateId?: number | null;
   title: string;
   description?: string | null;
   schedule?: string | null;
@@ -83,14 +83,10 @@ export class CollectionAlert
   public setCollection!: BelongsToSetAssociationMixin<Collection, number>;
   public createCollection!: BelongsToCreateAssociationMixin<Collection>;
 
-  public readonly alertTemplate?: CollectionAlertTemplate;
+  public readonly alertTemplate!: CollectionAlertTemplate;
   public getAlertTemplate!: BelongsToGetAssociationMixin<CollectionAlertTemplate>;
   public setAlertTemplate!: BelongsToSetAssociationMixin<CollectionAlertTemplate, number>;
   public createAlertTemplate!: BelongsToCreateAssociationMixin<Collection>;
-
-  public readonly alertQueries?: CollectionAlertQuery[];
-  public getAlertQueries!: BelongsToManyGetAssociationsMixin<CollectionAlertQuery>;
-  public AlertQueries?: CollectionAlertQuery[];
 
   public readonly createdById!: User;
   public getCreatedBy!: BelongsToGetAssociationMixin<User>;
@@ -101,13 +97,18 @@ export class CollectionAlert
   public setUpdatedById!: BelongsToSetAssociationMixin<User, number>;
 
 
+  public addAlertQuery!: HasManyAddAssociationMixin<CollectionAlertQuery, number>;
+  public createAlertQuery!: HasManyCreateAssociationMixin<CollectionAlertQuery>;
+  public getAlertQueries!: HasManyGetAssociationsMixin<CollectionAlertQuery>;
+  public hasAlertQuery!: HasManyHasAssociationMixin<CollectionAlertQuery, number>;
+  public countAlertQueries!: HasManyCountAssociationsMixin;
+
+
   public static associations: {
     collection: Association<CollectionAlert, Collection>;
     alertTemplate: Association<CollectionAlert, CollectionAlertTemplate>;
-    alertQueries: BelongsToMany<Collection, CollectionAlertQuery>;
     createdById: Association<CollectionAlert, User>;
     updatedById: Association<CollectionAlert, User>;
-
   };
 
   // Timestamps

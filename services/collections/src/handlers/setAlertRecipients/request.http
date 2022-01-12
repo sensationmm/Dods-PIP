@@ -1,6 +1,6 @@
 ### Set Alert Recipients
-@collectionId = cd44bad6-8eeb-4870-abb8-72d297ea7a11
-@alertId = 454af86a-acf5-47cd-a994-b84122f1b93c
+@collectionId = cd44bad6-8eeb-4870-abb8-72d297ea7a14
+@alertId = c2211873-3076-4a9a-b951-409258b933d9
 PUT {{host}}/collections/{{collectionId}}/alerts/{{alertId}}/recipients HTTP/1.1
 Content-Type: application/json
 
