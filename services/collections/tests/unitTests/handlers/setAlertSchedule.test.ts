@@ -1,5 +1,5 @@
-import { AlertAttributesStrecthed, CollectionAlertQuery, CollectionAlertRecipient } from '@dodsgroup/dods-model';
-import { CollectionAlertsRepository, setAlertScheduleParameters } from '@dodsgroup/dods-repositories';
+import { CollectionAlertQuery, CollectionAlertRecipient } from '@dodsgroup/dods-model';
+import { CollectionAlertsRepository, setAlertScheduleParameters, AlertOutput } from '@dodsgroup/dods-repositories';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { mocked } from 'jest-mock';
@@ -29,7 +29,7 @@ const defaultSheduleCollection: any = {
     updatedAt: new Date('2021-12-29T19:31:38.000Z'),
 };
 
-const answerMock: AlertAttributesStrecthed = {
+const answerMock: AlertOutput = {
     "id": 2,
     "uuid": "59648fe0-534b-4b3b-9214-6bf57b0cdd56",
     "title": "My alert",

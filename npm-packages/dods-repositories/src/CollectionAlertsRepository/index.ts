@@ -1,4 +1,4 @@
-import { AlertAttributesStrecthed, Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
+import { Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
     CollectionAlertsPersister,
     CreateAlertParameters,
@@ -6,7 +6,8 @@ import {
     getAlertsByCollectionResponse,
     setAlertScheduleParameters,
     SearchAlertParameters,
-    getAlertById
+    getAlertById,
+    AlertOutput
 } from './domain';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
@@ -34,7 +35,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
     ) { }
 
-    mapAlert(model: CollectionAlert): AlertAttributesStrecthed {
+    mapAlert(model: CollectionAlert): AlertOutput {
         const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted } = model;
 
         return {
