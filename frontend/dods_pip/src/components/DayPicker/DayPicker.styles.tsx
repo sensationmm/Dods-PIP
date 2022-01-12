@@ -16,14 +16,15 @@ export const wrapper = styled.div<WrapperProps>`
 type DayProps = {
   selected: boolean;
   disabled: boolean;
+  clickable: boolean;
 };
 export const day = styled.div<DayProps>`
-  cursor: ${({ disabled }) => (!disabled ? 'pointer' : 'not-allowed')};
+  cursor: ${({ disabled, clickable }) =>
+    !disabled ? (clickable ? 'pointer' : 'default') : 'not-allowed'};
   padding: ${spacing(2)};
-  color: ${({ selected, disabled }) =>
-    selected && !disabled ? color.base.white : color.base.greyDark};
   background: ${({ selected, disabled }) =>
     selected ? (disabled ? color.base.greyMid : color.theme.blueMid) : 'transparent'};
+  pointer-events: ${({ clickable, disabled }) => (!clickable && !disabled ? 'none' : 'default')};
 
   &:first-of-type {
     border-radius: 8px 0 0 8px;
@@ -34,13 +35,6 @@ export const day = styled.div<DayProps>`
   }
 
   &:hover {
-    background: ${({ selected, disabled }) =>
-      selected
-        ? disabled
-          ? color.base.greyMid
-          : color.theme.blue
-        : disabled
-        ? 'none'
-        : color.base.greyLight};
+    background: ${({ selected }) => (selected ? color.theme.blue : color.base.greyLight)};
   }
 `;

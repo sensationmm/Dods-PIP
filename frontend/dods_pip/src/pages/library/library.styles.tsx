@@ -155,18 +155,3 @@ export const imageContainer = styled.span`
     border-radius: 10px;
   }
 `;
-
-export const documentViewerWrapper = styled.div`
-  margin: 50px;
-
-  h1 {
-    font-family: 'Libre Baskerville';
-    font-size: 48px;
-    font-weight: 200;
-  }
-`;
-
-export const infoRow = styled.div`
-  color: ${color.base.greyDark};
-  margin-bottom: 55px;
-`;

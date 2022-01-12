@@ -191,6 +191,24 @@ pipelines:
             - npm install
             - npm run create:dods-dev
             - SERVERLESS_STAGE=dev npm run test:coverage
+      
+      - step:
+          name: Test Email Service
+          image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
+          services:
+            - docker
+          caches:
+            - node
+          condition:
+            changesets:
+              includePaths:
+                - "services/email-service/**"
+          script:
+            - cd services/email-service
+            - npm install
+            - npm run create:dods-dev
+            - SERVERLESS_STAGE=dev npm run test:coverage
 
 
   branches:
@@ -341,6 +359,26 @@ pipelines:
                   - "services/collections/**"
             script:
               - export THIS='services/collections'
+              - cd $THIS
+              - npm install
+              - npm run create:dods-dev
+              - npm run test:coverage
+              - npx serverless deploy --stage dev
+
+        - step:
+            name: Deploy Email Service
+            image: gioatsomoglobal/devopstools:0.4.5
+            size: 2x
+            services:
+              - docker
+            caches:
+              - node
+            condition:
+              changesets:
+                includePaths:
+                  - "services/email-service/**"
+            script:
+              - export THIS='services/email-service'
               - cd $THIS
               - npm install
               - npm run create:dods-dev
