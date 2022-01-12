@@ -116,3 +116,26 @@ functions:
           cors: true
           caching:
             enabled: false
+
+
+  deleteSchedule:
+    handler: src/handlers/deleteSchedule/index.handle
+    description: Delete schedule
+    events:
+      - http:
+          method: delete
+          path: scheduler/{id}
+          cors: true
+          caching:
+            enabled: false
+
+  updateSchedule:
+    handler: src/handlers/updateSchedule/index.handle
+    description: Update schedule
+    events:
+      - http:
+          method: put
+          path: scheduler/{id}
+          cors: true
+          caching:
+            enabled: false

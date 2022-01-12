@@ -3,7 +3,7 @@ import {
     CollectionPersister,
     CollectionResponse,
     CreateCollectionPersisterParameters,
-    UpdateCollectionParameters
+    UpdateCollectionParameters,
 } from '../domain';
 import { HttpError, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
@@ -105,6 +105,5 @@ export class CollectionRepository implements CollectionPersister {
 
         return collection;
     }
-
 
 }

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { format } from 'date-fns';
 import Head from 'next/head';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
 import Icon, { IconSize } from '../../components/Icon/';
 import { Icons } from '../../components/Icon/assets';
+import { IconType as ContentSourceType } from '../../components/IconContentSource/assets';
 import Tag from '../../components/Tag';
 import Text from '../../components/Text';
 import color from '../../globals/color';
@@ -71,11 +72,12 @@ const aggregations = {
 
 interface LibraryProps extends LoadingHOCProps {}
 export interface ESResponse {
+  sourceReferenceUri?: string;
   es_response?: Record<string, any>;
   hits?: Record<string, any>;
   aggregations?: Record<string, any>;
   documentContent?: string;
-  contentSource?: string;
+  contentSource?: ContentSourceType;
   informationType?: string;
   documentTitle?: string;
 }
@@ -297,9 +299,8 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
             <Styled.contentWrapper>
               <section>
                 {apiResponse?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
-                  const formattedTime = moment(hit._source.contentDateTime).format(
-                    'Do MMMM YYYY h:mm',
-                  );
+                  const date = new Date(hit._source.contentDateTime);
+                  const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
 
                   return (
                     <Styled.searchResult key={`search-result${i}`}>

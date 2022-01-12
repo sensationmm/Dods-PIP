@@ -12,7 +12,7 @@ servers:
   - url: /api
 
 paths:
-  /scheduler/create:
+  /scheduler:
     post:
       operationId: createSchedule
       summary: "Create a watcher schedule for doc publishing"
@@ -36,6 +36,34 @@ paths:
             format: uuid
           required: true
           description: UUID of the Schedule to get
+
+  /scheduler/{id}:
+    delete:
+      operationId: deleteSchedule
+      summary: "Delete schedule for doc publishing"
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteSchedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateSchedule
+      summary: "Update schedule for doc publishing"
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        $ref: "#/components/requestBodies/scheduleUpdateBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateSchedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 
 components:
@@ -66,6 +94,25 @@ components:
         cron:
           type: string
           example: "0 0 13 24 DEC ? 2021"
+    UpdateScheduleReturn:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 008f811e5ccf44d3a0df5b7f70a8e85d
+        cron:
+          type: string
+          example: "0 0 13 24 DEC ? 2021"
+
+    DeleteScheduleReturn:
+      type: object
+      properties:
+        success:
+          type: string
+          example: true
+        message:
+          type: string
+          example: schedule with ID 008f811e5ccf44d3a0df5b7f70a8e85d deleted
 
   parameters:
     createSchedule:
@@ -87,7 +134,25 @@ components:
           cron:
             type: string
             example: "0 0 13 24 DEC ? 2021"
+    id:
+      in: path
+      name: id
+      schema:
+        type: string
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
 
+    deleteSchedule:
+      in: query
+      name: DeleteSchedule
+      schema:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            type: string
+            example: 008f811e5ccf44d3a0df5b7f70a8e85d
 
   responses:
     NotFound:
@@ -116,3 +181,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreateScheduleReturn'
+
+    DeleteSchedule:
+      description: "Response from scheduler deletion"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeleteScheduleReturn'
+    UpdateSchedule:
+      description: "Response from scheduler updation"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateScheduleReturn'
+
+  requestBodies:
+    scheduleUpdateBody:
+      description: "Payload to update a collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - cron
+            properties:
+              cron:
+                type: string
+                example: "0 0 13 24 DEC ? 2021"

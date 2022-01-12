@@ -1,5 +1,4 @@
-const { Client } = require('@elastic/elasticsearch')
-
+import { Client } from '@elastic/elasticsearch';
 import { config } from '../domain';
 
 export default new Client({

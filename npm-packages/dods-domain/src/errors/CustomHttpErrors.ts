@@ -56,3 +56,10 @@ export class CollectionError extends HttpError {
         this.name = CollectionError.name;
     }
 }
+
+export class CollectionAlertError extends HttpError {
+    constructor(message: string | unknown, public error?: Error) {
+        super(message, HttpStatusCode.NOT_FOUND);
+        this.name = CollectionAlertError.name;
+    }
+}

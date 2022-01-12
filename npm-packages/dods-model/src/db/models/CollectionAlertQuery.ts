@@ -1,13 +1,12 @@
 import {
   Association,
-  BelongsToCreateAssociationMixin,
   BelongsToGetAssociationMixin,
   BelongsToSetAssociationMixin,
   DataTypes,
   Model,
   Optional,
 } from 'sequelize';
-import { Collection, User } from '.';
+import { User } from '.';
 
 import sequelizeConnection from '../config/sequelizeConnection';
 
@@ -57,17 +56,12 @@ export class CollectionAlertQuery
   public isActive!: boolean;
 
   // mixins for association (optional)
-  public readonly collection!: Collection;
-  public getCollection!: BelongsToGetAssociationMixin<Collection>;
-  public setCollection!: BelongsToSetAssociationMixin<Collection, number>;
-  public createCollection!: BelongsToCreateAssociationMixin<Collection>;
 
   public readonly createdById!: User;
   public getCreatedBy!: BelongsToGetAssociationMixin<User>;
   public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
 
   public static associations: {
-    collection: Association<CollectionAlertQuery, Collection>;
     createdById: Association<CollectionAlertQuery, User>;
   };
 

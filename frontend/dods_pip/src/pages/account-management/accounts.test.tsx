@@ -274,8 +274,9 @@ describe('Account Management: Clients', () => {
 
     // default value is 3, no need to test (covered in previous cases)
     it.each([
-      [60, 1],
-      [90, 2],
+      [10, 0],
+      [60, 2],
+      [90, 3],
     ])('should request accounts data with paging limit', async (value, index) => {
       await act(async () => {
         $filterOptions[index].click();
