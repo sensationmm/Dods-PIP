@@ -1,6 +1,6 @@
 {
   "name": "@dodsgroup/dods-repositories",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -15,7 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@dodsgroup/dods-domain": "1.0.2",
-    "@dodsgroup/dods-model": "^1.0.41",
+    "@dodsgroup/dods-model": "^1.0.46",
     "sequelize": "^7.0.0-alpha.3"
   },
   "devDependencies": {
