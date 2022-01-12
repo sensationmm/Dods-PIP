@@ -3,12 +3,11 @@ import React from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
 import color from '../../globals/color';
-import { UserResponse } from '../../lib/fetchJson';
 import Avatar from '../Avatar';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import * as Styled from './Header.styles';
-import { Menu } from './index';
+import { Menu, UserResponse } from './index';
 
 export interface NavigationAccountProps {
   user: UserResponse;

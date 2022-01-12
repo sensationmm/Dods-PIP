@@ -1,6 +1,7 @@
+import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool, ISignUpResult } from 'amazon-cognito-identity-js';
+import { UserAttributes, config } from "../domain";
+
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
-import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails, ISignUpResult } from 'amazon-cognito-identity-js';
-import { config, UserAttributes } from "../domain";
 
 export class AwsCognito {
     userPool: CognitoUserPool;
@@ -106,7 +107,7 @@ export class AwsCognito {
         return new Promise((resolve, reject) => {
             cognitoUser.confirmPassword(verificationCode, newPassword, {
                 onSuccess() {
-                    resolve("SUCCESS");
+                    resolve({ success: true, message: "Password successfully updated" });
                 },
                 onFailure(err) {
                     reject(err);

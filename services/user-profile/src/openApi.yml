@@ -399,9 +399,11 @@ components:
           example: Mr
         firstName:
           type: string
+          minLength: 1
           example: Jane
         lastName:
           type: string
+          minLength: 1
           example: Blogs
         secondaryEmail:
           type: string

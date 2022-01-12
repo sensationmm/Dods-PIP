@@ -1,0 +1,492 @@
+openapi: 3.0.0
+info:
+  description: DODS Collections
+  version: 1.0.0
+  title: DODS Collections
+  contact:
+    email: kenanhancer@gmail.com
+  license:
+    name: GPL 3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+servers:
+  - url: /api
+
+paths:
+  /collections:
+    get:
+      operationId: searchCollections
+      summary: "Returns a list of collections"
+      description: "Returns a list of collections"
+      parameters:
+        - $ref: "#/components/parameters/searchTerm"
+        - $ref: "#/components/parameters/clientAccountId"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortBy"
+        - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      operationId: createCollection
+      summary: "Creates a collection associated to a Client Account"
+      description: "Create Collection Endpoint"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateCollection"
+      responses:
+        "200":
+          $ref: "#/components/responses/CollectionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}:
+    put:
+      operationId: updateCollection
+      summary: "Update a collection associated to a Client Account"
+      description: "Update Collection Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateCollection"
+      responses:
+        "200":
+          $ref: "#/components/responses/CollectionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    get:
+      operationId: getCollection
+      summary: "Returns collection"
+      description: "Returns collection"
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteCollection
+      summary: "Delete collection"
+      description: "Delete collection"
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}/alerts:
+    get:
+      operationId: getCollectionAlerts
+      summary: "Get the alerts associated to a Collection"
+      description: "Get Alerts Associated to a Collection"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetAlertsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createAlert
+      summary: "Creates an alert associated to a Collection"
+      description: "Create Alert Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAlert"
+      responses:
+        "200":
+          $ref: "#/components/responses/AlertResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+          
+  /collections/{collectionId}/alerts/{alertId}/schedule:
+    put:
+      operationId: setAlertSchedule
+      summary: "Update Alert Schedule"
+      description: "Update Alert Schedule Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/setAlertSchedule"
+      responses:
+        "200":
+          $ref: "#/components/responses/setAlertScheduleResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    CreateCollectionInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        clientAccountId:
+          type: string
+          format: uuid
+        createdById:
+          type: string
+          format: uuid
+          
+    CreateAlertInput:
+      type: object
+      properties:
+        title:
+          type: string
+          example: alert title
+        alertQueriess:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AlertQueries"
+        
+            
+    AlertQueries:
+      type: object
+      properties:
+        query:
+          type: string
+          minLength: 1
+        informationType:
+          type: string
+          minLength: 1
+        contentSources:
+          type: string
+          minLength: 1
+          
+    AlertOutput:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        collection: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            title:
+              type: string
+        template:
+          type: object
+        schedule:
+          type: string
+        timezone:
+          type: string 
+        createdAt:
+          type: string 
+        updatedAt:
+          type: string 
+        lastStepCompleted:
+          type: boolean
+        isPublished:
+          type: boolean
+        updatedBy:
+          type: object
+        createdBy:
+          type: object
+             
+              
+    UpdateCollectionInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          
+    alertScheduleInput:
+      type: object
+      properties:
+        isSchedule:
+          type: boolean
+        hasKeywordHighlight:
+          type: boolean
+        timezone:
+          type: string
+        schedule:
+          type: string
+        updatedBy:
+          type: string
+          example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        alertTemplateId: 
+          type: number 
+          example: 1
+          
+
+    CollectionOutput:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        isActive:
+          type: boolean
+        clientAccount:
+          $ref: "#/components/schemas/ClientAccount"
+        createdBy:
+          $ref: "#/components/schemas/User"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ClientAccount:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    User:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+
+    Errors:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  parameters:
+    clientAccountId:
+      in: query
+      name: clientAccountId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        format: int32
+        default: 30
+        minimum: 0
+        maximum: 100
+      required: false
+      allowEmptyValue: true
+    offset:
+      in: query
+      name: offset
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+      required: false
+      description: Offset value for pagination
+    sortBy:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: name
+        enum:
+          - name
+          - updatedAt
+      required: false
+      description: sort Collection by name or subscription
+    sortDirection:
+      in: query
+      name: sortDirection
+      schema:
+        type: string
+        default: ASC
+        enum:
+          - ASC
+          - DESC
+      required: false
+      description: direction ASC or DESC
+    searchTerm:
+        in: query
+        name: searchTerm
+        schema:
+            type: string
+        required: false
+        description: Collections by name's filtering using search term
+    collectionId:
+      in: path
+      name: collectionId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    alertId:
+      in: path
+      name: alertId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    BadRequest:
+      description: Bad Request. Input must be valid
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Message"
+              - $ref: "#/components/schemas/Errors"
+    NotAcceptable:
+      description: Not Acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+    CollectionResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              collection:
+                $ref: "#/components/schemas/CollectionOutput"
+                
+    setAlertScheduleResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert scheduling was set successfully
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+                
+    AlertResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Alert created successfully in step 1
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+                
+    GetAlertsResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Collection alerts found
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              alerts:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AlertOutput"
+
+  requestBodies:
+    CreateCollection:
+      description: "Payload to create a new collection"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateCollectionInput"
+            required:
+             - name
+             - clientAccountId
+             - createdById
+    CreateAlert:
+      description: "Payload to create a new alert"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateAlertInput"
+            required:
+            - alertQueries
+
+    UpdateCollection:
+      description: "Payload to update a collection"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateCollectionInput"
+            
+    setAlertSchedule:
+      description: "Set Alert Schedule"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/alertScheduleInput"

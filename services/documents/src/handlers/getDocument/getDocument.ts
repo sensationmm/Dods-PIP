@@ -1,28 +1,23 @@
-// import { AsyncLambdaHandler } from '@dodsgroup/dods-lambda';
-import S3 from 'aws-sdk/clients/s3';
-import { getFromS3 } from '../../utility/aws'
-import { getDocumentParameters } from '../../domain/interfaces'
+import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
-const BUCKET = process.env.CONTENT_BUCKET || ''
+import { DocumentStorageRepository } from '../../repositories';
+import { getDocumentParameters } from '../../domain/interfaces';
 
-export const getDocument = async (data: getDocumentParameters) => {
-    const documentId = data['documentId']
+export const getDocument: AsyncLambdaHandler<getDocumentParameters> = async (params) => {
+    const documentARN = params.arn;
 
-    const params: S3.GetObjectRequest = {
-        Bucket: BUCKET,
-        Key: documentId
-    };
-    const response = await getFromS3(params)
-    
-    var document
+    const { success, payload } = await DocumentStorageRepository.defaultInstance.getDocumentByArn(
+        documentARN
+    );
 
-    if (!!response.Body) {
-        document = JSON.parse(response.Body.toString('utf-8'))
-    } else {
-        throw new Error("Undefined response from storage when trying to get document");
-    }
-    return {
-        success: true,
-        document: document
-    };
+    return success && payload
+        ? new HttpResponse(HttpStatusCode.OK, {
+              success: true,
+              message: 'Document found.',
+              payload: JSON.parse(payload),
+          })
+        : new HttpResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, {
+              success: false,
+              message: 'Error retrieving document.',
+          });
 };

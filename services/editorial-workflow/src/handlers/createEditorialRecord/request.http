@@ -1,0 +1,56 @@
+POST {{host}}/editorial-record HTTP/1.1
+content-type: application/json
+
+{
+    "documentName": "testDocument1",
+    "contentSource": "string",
+    "informationType": "string",
+    "s3Location": "string"
+}
+
+###
+
+POST {{host}}/editorial-record HTTP/1.1
+content-type: application/json
+
+{
+    "documentName": "testDocument2",
+    "contentSource": "string",
+    "informationType": "string",
+    "document": {
+        "jurisdiction": "string",
+        "documentTitle": "string",
+        "createdBy": "string",
+        "internallyCreated": true,
+        "schemaType": "Internal",
+        "contentSource": "string",
+        "informationType": "string",
+        "taxonomyTerms": [
+            {
+                "tagId": "sdfsdfsdf",
+                "facetType": "Topics",
+                "inScheme": [
+                    "http://www.dods.co.uk/taxonomy/instance/Topics"
+                ],
+                "termLabel": "Term 4",
+                "ancestorTerms": [
+                    {
+                        "tagId": "sdfsdfsdf",
+                        "termLabel": "Term 2",
+                        "rank": 1
+                    },
+                    {
+                        "tagId": "sdfsdfsdf",
+                        "termLabel": "Term 1",
+                        "rank": 0
+                    }
+                ],
+                "alternative_labels": [
+                    "Term B",
+                    "Term C"
+                ]
+            }
+        ],
+        "documentContent": "html content of the document"
+    }
+}

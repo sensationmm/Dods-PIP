@@ -20,6 +20,34 @@
         }
       }
     },
+    "contentLocation": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    },
+    "originator": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "analyzer_case_insensitive",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        },
+        "nocase": {
+          "type": "text",
+          "analyzer": "analyzer_case_insensitive"
+        }
+      }
+    },
     "organisationName": {
       "type": "text",
       "fielddata": true,
@@ -130,10 +158,68 @@
             }
           }
         },
+        "alternativeLabels": {
+          "type": "text",
+          "fielddata": true,
+          "analyzer": "analyzer_case_insensitive",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            },
+            "nocase": {
+              "type": "text",
+              "analyzer": "analyzer_case_insensitive"
+            }
+          }
+        },
         "facetType": {
           "type": "keyword"
         },
         "taxonomyType": {
+          "type": "keyword"
+        },
+        "inScheme": {
+          "type": "keyword"
+        },
+        "ancestorTerms": {
+          "type": "nested",
+          "properties": {
+            "tagId": {
+              "type": "keyword"
+            },
+            "termLabel": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "analyzer_case_insensitive",
+              "fields": {
+                "keyword": {
+                  "type": "keyword"
+                },
+                "nocase": {
+                  "type": "text",
+                  "analyzer": "analyzer_case_insensitive"
+                }
+              }
+            },
+            "rank": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "aggs_fields": {
+      "properties": {
+        "topics": {
+          "type": "keyword"
+        },
+        "people": {
+          "type": "keyword"
+        },
+        "organisations": {
+          "type": "keyword"
+        },
+        "geography": {
           "type": "keyword"
         }
       }

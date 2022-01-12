@@ -70,3 +70,12 @@ module "migration-stage-3-s3-output" {
   environment = var.environment
   name        = "migration-stage-3-output"
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+// - Migration stage 3 sqs queue for list content items for auto-tagging
+// --------------------------------------------------------------------------------------------------------------------
+module "migration-stage-3-sqs-queue-content-items" {
+  source      = "./modules/sqs"
+  environment = var.environment
+  queue_name  = "migration-stage-3-content-items-queue"
+}

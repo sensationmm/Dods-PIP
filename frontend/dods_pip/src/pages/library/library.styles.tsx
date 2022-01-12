@@ -24,6 +24,17 @@ export const filtersTag = styled.div`
   }
 `;
 
+export const pagination = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  div span {
+    cursor: pointer;
+    margin-left: 25px;
+  }
+`;
+
 export const searchResult = styled.div`
   width: 100%;
   padding-bottom: 64px;
@@ -143,19 +154,4 @@ export const imageContainer = styled.span`
   img {
     border-radius: 10px;
   }
-`;
-
-export const documentViewerWrapper = styled.div`
-  margin: 50px;
-
-  h1 {
-    font-family: 'Libre Baskerville';
-    font-size: 48px;
-    font-weight: 200;
-  }
-`;
-
-export const infoRow = styled.div`
-  color: ${color.base.greyDark};
-  margin-bottom: 55px;
 `;

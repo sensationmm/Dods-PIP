@@ -6,7 +6,7 @@ import InputText, { InputTextProps } from '../InputText';
 import Dropdown from './Dropdown';
 import * as Styled from './Select.styles';
 
-type SelectItem = {
+export type SelectItem = {
   label: string;
   value: string;
 };
