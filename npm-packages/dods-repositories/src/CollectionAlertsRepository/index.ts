@@ -6,8 +6,9 @@ import {
     getAlertsByCollectionResponse,
     setAlertScheduleParameters,
     SearchAlertParameters,
-    getAlertById,
-    AlertOutput
+    GetAlertById,
+    AlertOutput,
+    CopyAlertParameters
 } from './domain';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
@@ -227,7 +228,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     }
 
 
-    async getAlert(parameters: SearchAlertParameters): Promise<getAlertById> {
+    async getAlert(parameters: SearchAlertParameters): Promise<GetAlertById> {
         const { collectionId, alertId } = parameters;
 
         const collection = await this.collectionModel.findOne({
@@ -276,5 +277,70 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             searchQueriesCount: alertQueryResponse.count,
             recipientsCount: alertRecipientResponse.count
         }
+    }
+
+    async copyAlert(parameters: CopyAlertParameters): Promise<AlertOutput> {
+        const { collectionId, alertId, destinationCollectionId, createdBy } = parameters;
+
+        const collection = await this.collectionModel.findOne({
+            where: { uuid: collectionId, isActive: true }
+        })
+
+        if (!collection || !collection.isActive) {
+            throw new CollectionError(
+                `Unable to retrieve Collection with uuid: ${collectionId}`
+            );
+        }
+
+        const destinationCollection = await this.collectionModel.findOne({
+            where: { uuid: destinationCollectionId, isActive: true }
+        })
+
+        if (!destinationCollection || !destinationCollection.isActive) {
+            throw new CollectionError(
+                `Unable to retrieve Destination Collection with uuid: ${destinationCollectionId}`
+            );
+        }
+
+        const alertCreator = await this.userModel.findOne({
+            where: {
+                uuid: createdBy,
+                isActive: true
+            },
+        });
+
+        if (!alertCreator || !alertCreator.isActive) {
+            throw new CollectionError(
+                `Unable to retrieve user with uuid: ${createdBy}`,
+            );
+        }
+
+        const copyFromAlert = await this.alertModel.findOne({
+            where: {
+                uuid: alertId,
+                collectionId: collection.id,
+                isActive: true,
+            },
+            include: ['collection', 'createdById', 'updatedById', 'alertTemplate']
+        })
+
+        if (!copyFromAlert || !copyFromAlert.isActive) {
+            throw new CollectionError(
+                `Unable to retrieve Alert with uuid: ${alertId}`
+            );
+        }
+
+        const copiedAlertRequest = Object.create(Object.assign({}, copyFromAlert, {
+            collectionId: destinationCollection.id,
+            createdBy: alertCreator.id,
+        }));
+        delete copiedAlertRequest.createdAt;
+        delete copiedAlertRequest.updatedAt;
+        delete copiedAlertRequest.updatedById;
+
+        const alert = await this.alertModel.create(copiedAlertRequest);
+
+        // const { collectionId, createdBy, title, alertQueries } = parameters;
+        return this.mapAlert(alert);
     }
 }
