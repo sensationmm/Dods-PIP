@@ -34,9 +34,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ apiResponse, for
         documentId={documentId}
       />
       <Styled.body>
-        <Styled.aside>
+        <Styled.tags>
           <Box>tags...</Box>
-        </Styled.aside>
+        </Styled.tags>
         <Styled.main>
           <Styled.tabs>
             <Styled.tab
