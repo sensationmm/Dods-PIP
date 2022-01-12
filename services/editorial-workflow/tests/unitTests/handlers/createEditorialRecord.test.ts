@@ -1,16 +1,15 @@
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
+import { EditorialDocument } from '../../../src/domain';
 import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
 import { createEditorialRecord } from '../../../src/handlers/createEditorialRecord/createEditorialRecord';
 import { mocked } from 'ts-jest/utils';
-import { CreateEditorialRecordParametersV2 } from '../../../src/domain';
 
 const defaultContext = createContext();
 
 const basicCreatedRecord: any = {
     uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
     documentName: 'NewDocument',
-    s3Location: 'SomeLocation',
     informationType: 'Random Doc',
     contentSource: 'Manual Injection',
     status: {
@@ -174,46 +173,43 @@ describe(`${FUNCTION_NAME} handler`, () => {
     });
 
     test('Valid input for V2 payload', async () => {
-        const requestParams: CreateEditorialRecordParametersV2 = {
+        const requestParams: EditorialDocument = {
             documentName: "testDocument2",
             contentSource: "string",
             informationType: "string",
-            document: {
-                jurisdiction: "string",
-                documentTitle: "string",
-                createdBy: "string",
-                internallyCreated: true,
-                schemaType: "Internal",
-                contentSource: "string",
-                informationType: "string",
-                taxonomyTerms: [
-                    {
-                        tagId: "sdfsdfsdf",
-                        facetType: "Topics",
-                        inScheme: [
-                            "http://www.dods.co.uk/taxonomy/instance/Topics"
-                        ],
-                        termLabel: "Term 4",
-                        ancestorTerms: [
-                            {
-                                tagId: "sdfsdfsdf",
-                                termLabel: "Term 2",
-                                rank: 1
-                            },
-                            {
-                                tagId: "sdfsdfsdf",
-                                termLabel: "Term 1",
-                                rank: 0
-                            }
-                        ],
-                        alternative_labels: [
-                            "Term B",
-                            "Term C"
-                        ]
-                    }
-                ],
-                documentContent: "html content of the document"
-            }
+            jurisdiction: "string",
+            documentTitle: "string",
+            createdBy: "string",
+            internallyCreated: true,
+            schemaType: "Internal",
+            taxonomyTerms: [
+                {
+                    tagId: "sdfsdfsdf",
+                    facetType: "Topics",
+                    inScheme: [
+                        "http://www.dods.co.uk/taxonomy/instance/Topics"
+                    ],
+                    termLabel: "Term 4",
+                    ancestorTerms: [
+                        {
+                            tagId: "sdfsdfsdf",
+                            termLabel: "Term 2",
+                            rank: 1
+                        },
+                        {
+                            tagId: "sdfsdfsdf",
+                            termLabel: "Term 1",
+                            rank: 0
+                        }
+                    ],
+                    alternative_labels: [
+                        "Term B",
+                        "Term C"
+                    ]
+                }
+            ],
+            documentContent: "html content of the document"
+
         };
         const response = await createEditorialRecord(requestParams, defaultContext);
 
@@ -226,5 +222,30 @@ describe(`${FUNCTION_NAME} handler`, () => {
         expect(response).toEqual(expectedCreatedResponse);
 
         expect(mockedPutObject).toHaveBeenCalledTimes(1);
+    });
+
+    test('Valid input for V3 payload', async () => {
+        const requestParams: EditorialDocument = {
+            documentName: "testDocument2",
+            contentSource: "string",
+            informationType: "string",
+            jurisdiction: "string",
+            documentTitle: "string",
+            createdBy: "string",
+            internallyCreated: true,
+            schemaType: "Internal",
+            documentContent: "html content of the document"
+
+        };
+        const response = await createEditorialRecord(requestParams, defaultContext);
+
+        const expectedCreatedResponse = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'New Editorial Record created.',
+            data: basicCreatedRecord,
+        });
+
+        expect(response).toEqual(expectedCreatedResponse);
+
     });
 });

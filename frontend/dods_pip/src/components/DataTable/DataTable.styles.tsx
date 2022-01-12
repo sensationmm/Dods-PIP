@@ -68,13 +68,10 @@ export const tableCellEmpty = styled.td<TableCellEmptyProps>`
   height: ${({ isFirst }) => (isFirst ? spacing(2) : spacing(4))};
 `;
 
-export const tableCellNoData = styled.td`
-  position: relative;
-  padding: ${spacing(5)} ${spacing(8)};
-  background: ${color.base.white};
-  border: 1px solid ${color.shadow.blue};
-  text-align: center;
-  border-radius: 8px;
+export const tableCellNoData = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const plainTableHeading = styled.th`
@@ -92,12 +89,4 @@ export const plainTableCell = styled.td<TableCellProps>`
   border-bottom: 1px solid ${color.shadow.blue};
   text-align: left;
   vertical-align: center;
-`;
-
-export const plainCellNoData = styled.td`
-  position: relative;
-  padding: ${spacing(5)} ${spacing(8)};
-  background: ${color.base.white};
-  border-bottom: 1px solid ${color.shadow.blue};
-  text-align: center;
 `;

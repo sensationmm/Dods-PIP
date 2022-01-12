@@ -19,6 +19,7 @@ type ButtonProps = {
 };
 
 const base = styled.button<ButtonProps>`
+  white-space: nowrap;
   font-family: 'Open Sans Bold';
   font-size: 16px;
   border-width: 1px;

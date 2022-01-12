@@ -15,15 +15,15 @@ provider:
   runtime: nodejs14.x
   deploymentBucket:
     name: pip-${self:provider.stage}-scrapping-lambdas
-  stage: ${opt:stage, 'local'}
+  stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
 
   #------- This section is only required for Lambdas that need
   #        to connect to the central Dods DB (RDS instance).
   #------- Uncomment this section your functions need to connect to Dods DB
-  # vpc:
-  #   securityGroupIds: ${file(../vpc.${self:provider.stage}.js):securityGroupIds, file(../vpc.local.js):securityGroupIds}
-  #   subnetIds: ${file(../vpc.${self:provider.stage}.js):subnetIds, file(../vpc.local.js):subnetIds}
+  vpc:
+    securityGroupIds: ${file(../env-config.${self:provider.stage}.js):securityGroupIds, file(../env-config.dev.js):securityGroupIds}
+    subnetIds: ${file(../env-config.${self:provider.stage}.js):subnetIds, file(../env-config.dev.js):subnetIds}
 
   stackTags:
     service: ${self:service}
@@ -37,6 +37,11 @@ provider:
     apiGateway: true
     lambda: true
   iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+          - "rds:*"
+      Resource:
+          - "*"
     - Effect: "Allow"
       Action:
         - "xray:PutTraceSegments"
@@ -64,20 +69,8 @@ provider:
     DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
-    SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint, self:custom.endpoints.default.sayTurkishHelloEndpoint}
-    SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint, self:custom.endpoints.default.sayEnglishHelloEndpoint}
-    GET_FULL_NAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getFullNameEndpoint, self:custom.endpoints.default.getFullNameEndpoint}
 
 custom:
-  endpoints:
-    default:
-      sayTurkishHelloEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayTurkishHello
-      sayEnglishHelloEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/sayEnglishHello
-      getFullNameEndpoint: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/getFullName
-    local:
-      sayTurkishHelloEndpoint: http://localhost:1082/sayTurkishHello
-      sayEnglishHelloEndpoint: http://localhost:1081/sayEnglishHello
-      getFullNameEndpoint: http://localhost:1083/getFullName
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -115,55 +108,81 @@ plugins:
   - serverless-api-gateway-caching
 
 functions:
-  health:
-    handler: src/handlers/health/index.handle
+  searchCollections:
+    handler: src/handlers/searchCollections/index.handle
     description: Triggered when http request comes
     events:
       - http:
           method: get
-          path: health
+          path: collections
           cors: true
           caching:
             enabled: false
-    tags:
-      foo: bar
 
-  sayHello:
-    handler: src/handlers/sayHello/index.handle
-    description: Triggered when http request comes
+  createCollection:
+    handler: src/handlers/createCollection/index.handle
+    description: Creates a New Collection
     events:
       - http:
-          method: get
-          path: sayHello
+          method: post
+          path: collections
           caching:
             enabled: false
 
-  sayEnglishHello:
-    handler: src/handlers/sayEnglishHello/index.handle
+  getCollectionAlerts:
+    handler: src/handlers/getCollectionAlerts/index.handle
     description: Triggered when http request comes
     events:
       - http:
           method: get
-          path: sayEnglishHello
+          path: collections/{collectionId}/alerts
           caching:
             enabled: false
 
-  sayTurkishHello:
-    handler: src/handlers/sayTurkishHello/index.handle
+  updateCollection:
+    handler: src/handlers/updateCollection/index.handle
     description: Triggered when http request comes
     events:
       - http:
-          method: get
-          path: sayTurkishHello
+          method: put
+          path: collections/{collectionId}
           caching:
             enabled: false
 
-  getFullName:
-    handler: src/handlers/getFullName/index.handle
+  getCollection:
+    handler: src/handlers/getCollection/index.handle
     description: Triggered when http request comes
     events:
       - http:
           method: get
-          path: getFullName
+          path: collections/{collectionId}
+          
+  createAlert:
+    handler: src/handlers/createAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: collections/{collectionId}/alerts
+          caching:
+            enabled: false
+
+  deleteCollection:
+    handler: src/handlers/deleteCollection/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: delete
+          path: collections/{collectionId}
+          caching:
+            enabled: false
+
+  setAlertSchedule:
+    handler: src/handlers/setAlertSchedule/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/schedule
           caching:
             enabled: false

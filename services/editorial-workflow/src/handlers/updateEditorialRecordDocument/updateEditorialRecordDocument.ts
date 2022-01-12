@@ -12,9 +12,11 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
     const record = await EditorialRecordRepository.defaultInstance.getEditorialRecord(params.recordId);
     const documentARN = record.s3Location;
 
+    let { recordId, ...document } = params;
+
     const updateDocumentsParams = {
         arn: documentARN,
-        document: params.document
+        document: document
     }
     const updatedResponse = await DocumentServiceRepository.defaultInstance.updateDocument(updateDocumentsParams)
 
@@ -30,10 +32,13 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
 
         const updatedEditorialRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams)
 
+        const response: any = { ...updatedEditorialRecord };
+        delete response.s3Location;
+
         return new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Document and editorial Record updated.',
-            data: updatedEditorialRecord
+            data: response
         });
     }
 

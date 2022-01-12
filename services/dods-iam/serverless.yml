@@ -120,9 +120,10 @@ custom:
       ses_source_arn: arn:aws:ses:eu-west-1:072266309162:identity/giovanni.espinosa@somoglobal.com
       cognito_reply_to: donotreply@somoglobal.com
     production:
-      ses_from: donotreply@dodspoliticalintelligence.com
-      ses_source_arn: arn:aws:ses:eu-west-1:186202231680:identity/donotreply@dodspoliticalintelligence.com
-      cognito_reply_to: donotreply@dodspoliticalintelligence.com
+      ses_from: no-reply@dodspoliticalintelligence.com
+      ses_source_arn: arn:aws:ses:eu-west-1:186202231680:identity/no-reply@dodspoliticalintelligence.com
+      cognito_reply_to: no-reply@dodspoliticalintelligence.com
+
   localstack:
     stages:
       # list of stages for which the plugin should be enabled
@@ -368,16 +369,16 @@ resources:
         VerificationMessageTemplate:
           DefaultEmailOption: CONFIRM_WITH_LINK # or CONFIRM_WITH_CODE
           EmailSubject: Your verification code
-          EmailMessage: Your verification code is {####}.
+          EmailMessage: Your verification code is {####}
           EmailSubjectByLink: Dods Public Intelligence Platform - Verify your account
           EmailMessageByLink: <html><head></head><body><p>Hello.</p><p>Welcome to Dods Political intelligence Platform.</p><p>Great to have you on board!</p><hr><h1>Please verify your account</h1><p>To ensure this account is legitimate, please verify your account by clicking the button below.</p><p>Your verification code is {####}.</p><form action="{##Verify Email##}"><input type="submit" value="Begin Free Trial" /></form></body></html>
-          SmsMessage: Your username is {username} and temporary password is {####}.
+          SmsMessage: Your username is {username} and temporary password is {####}
         AdminCreateUserConfig:
           AllowAdminCreateUserOnly: false
           InviteMessageTemplate:
-            EmailMessage: Your username is {username} and temporary password is {####}.
+            EmailMessage: Your username is {username} and temporary password is {####}
             EmailSubject: Your temporary password
-            SMSMessage: Your username is {username} and temporary password is {####}.
+            SMSMessage: Your username is {username} and temporary password is {####}
         UsernameAttributes:
           - email
         # AliasAttributes:

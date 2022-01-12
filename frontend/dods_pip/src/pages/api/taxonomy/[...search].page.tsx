@@ -26,7 +26,10 @@ export default withSession(async (req, res) => {
     const transformedResult: resultTypes = {};
     Array.isArray(result) &&
       result.forEach((result) => {
-        const label = result.taxonomy != 'Grographies' ? result.taxonomy : 'Geographies';
+        const label =
+          result.taxonomy != 'Grographies' && result.taxonomy != 'Geography'
+            ? result.taxonomy
+            : 'Geographies';
         delete result.taxonomy;
 
         transformedResult[label as keyof resultTypes] = result;

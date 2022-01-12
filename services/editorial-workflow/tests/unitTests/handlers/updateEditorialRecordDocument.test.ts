@@ -11,7 +11,6 @@ const defaultContext = createContext();
 const defaultCreatedRecord: any = {
     uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
     documentName: 'NewDocument',
-    s3Location: 'arnDocument',
 };
 
 jest.mock('../../../src/repositories/EditorialRecordRepository');
