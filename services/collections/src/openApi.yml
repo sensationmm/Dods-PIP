@@ -158,6 +158,24 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}/alerts/{alertId}/queries:
+    get:
+      operationId: getAlertQueries
+      summary: "Get the Queries associated to a Alert"
+      description: "Get the Queries associated to a Alert"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetQueriesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
 
 components:
   securitySchemes:
@@ -242,6 +260,35 @@ components:
           type: object
         createdBy:
           type: object
+          
+    QueryOutput:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        informationTypes:
+          type: string
+        contentSources:
+          type: string
+        query:
+          type: string
+        createdBy: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+            emailAddress:
+              type: string
+        createdAt:
+          type: string 
+        updatedAt:
+          type: string 
     
     Alert:
       type: object
@@ -684,6 +731,29 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/AlertOutput"
+                  
+    GetQueriesResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Alert queries found
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              alerts:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QueryOutput"
 
   requestBodies:
     CreateCollection:
