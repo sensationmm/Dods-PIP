@@ -101,6 +101,7 @@ export const tagsContent = styled.div`
 
 export const tagsContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: ${spacing(2)};
   margin-bottom: ${spacing(8)};
 `;
