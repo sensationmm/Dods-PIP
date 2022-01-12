@@ -34,7 +34,7 @@ export const getCollectionAlerts: AsyncLambdaHandler<SearchCollectionAlertsParam
 
     } catch (error) {
         return new HttpResponse(HttpStatusCode.NOT_FOUND, {
-            success: true,
+            success: false,
             message: 'Collection does not exist',
         });
 

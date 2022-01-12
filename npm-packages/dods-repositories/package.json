@@ -1,12 +1,12 @@
 {
   "name": "@dodsgroup/dods-repositories",
-  "version": "1.0.5",
+  "version": "1.1.6",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "webpack",
-    "build:watch": "webpack watch",
+    "build:watch": "npm link && npm link @dodsgroup/dods-domain && npm link @dodsgroup/dods-model && webpack watch",
     "predeploy": "npm run build",
     "deploy": "npm publish"
   },
@@ -14,8 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@dodsgroup/dods-domain": "1.0.0",
-    "@dodsgroup/dods-model": "^1.0.33",
+    "@dodsgroup/dods-domain": "1.0.2",
+    "@dodsgroup/dods-model": "^1.0.46",
     "sequelize": "^7.0.0-alpha.3"
   },
   "devDependencies": {

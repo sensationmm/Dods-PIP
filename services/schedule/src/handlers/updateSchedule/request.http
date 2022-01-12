@@ -1,0 +1,6 @@
+PUT {{host}}/scheduler/54fb8e04-7168-11ec-90d6-0242ac120003 HTTP/1.1
+Content-Type: application/json
+
+{
+  "cron":"0 0 13 24 DEC ? 2026"
+}

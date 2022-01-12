@@ -68,6 +68,17 @@ paths:
           description: OK
         "404":
           $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteCollection
+      summary: "Delete collection"
+      description: "Delete collection"
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
           
   /collections/{collectionId}/alerts:
     get:
@@ -83,7 +94,56 @@ paths:
           $ref: "#/components/responses/GetAlertsResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createAlert
+      summary: "Creates an alert associated to a Collection"
+      description: "Create Alert Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAlert"
+      responses:
+        "200":
+          $ref: "#/components/responses/AlertResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+          
+  /collections/{collectionId}/alerts/{alertId}/schedule:
+    put:
+      operationId: setAlertSchedule
+      summary: "Update Alert Schedule"
+      description: "Update Alert Schedule Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/setAlertSchedule"
+      responses:
+        "200":
+          $ref: "#/components/responses/setAlertScheduleResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
+  /collections/{collectionId}/alerts/{alertId}/recipients:
+    put:
+      operationId: setAlertRecipients
+      summary: "Set Alert Recipients"
+      description: "Set Alert Recipients"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/SetAlertRecipients"
+      responses:
+        "200":
+          $ref: "#/components/responses/SetAlertRecipientsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   securitySchemes:
@@ -106,12 +166,111 @@ components:
           type: string
           format: uuid
           
+    CreateAlertInput:
+      type: object
+      properties:
+        title:
+          type: string
+          example: alert title
+        alertQueriess:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AlertQueries"
+        
+            
+    AlertQueries:
+      type: object
+      properties:
+        query:
+          type: string
+          minLength: 1
+        informationType:
+          type: string
+          minLength: 1
+        contentSources:
+          type: string
+          minLength: 1
+          
+    AlertOutput:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        collection: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            title:
+              type: string
+        template:
+          type: object
+        schedule:
+          type: string
+        timezone:
+          type: string 
+        createdAt:
+          type: string 
+        updatedAt:
+          type: string 
+        lastStepCompleted:
+          type: boolean
+        isPublished:
+          type: boolean
+        updatedBy:
+          type: object
+        createdBy:
+          type: object
+             
+              
     UpdateCollectionInput:
       type: object
       properties:
         name:
           type: string
           minLength: 1
+          
+    alertScheduleInput:
+      type: object
+      properties:
+        isSchedule:
+          type: boolean
+        hasKeywordHighlight:
+          type: boolean
+        timezone:
+          type: string
+        schedule:
+          type: string
+        updatedBy:
+          type: string
+          example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        alertTemplateId: 
+          type: number 
+          example: 1
+          
+
+    SetAlertRecipientsInput:
+      type: object
+      properties:
+        updatedBy:
+          type: string
+          format: uuid
+          description: User uuid
+        recipients:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+                format: uuid
 
     CollectionOutput:
       type: object
@@ -234,6 +393,14 @@ components:
         format: uuid
       required: true
       example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    alertId:
+      in: path
+      name: alertId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
 
   responses:
     NotFound:
@@ -270,6 +437,134 @@ components:
               collection:
                 $ref: "#/components/schemas/CollectionOutput"
                 
+    setAlertScheduleResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert scheduling was set successfully
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+                
+    AlertResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Alert created successfully in step 1
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+              
+    SetAlertRecipientsResponse:
+      description: "SetAlertRecipientsResponse"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert recipients were set successfully
+              alert:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  collection:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                  template:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        description: Alert Template id
+                      name:
+                        type: string
+                  schedule:
+                    type: string
+                  timezone:
+                    type: string
+                  searchQueriesCount:
+                    type: number
+                    description: Count of dods_alerts_queries related to the alert
+                  recipientsCount:
+                    type: number
+                    description: Count of dods_alerts_recipients related to the alert
+                  lastStepCompleted:
+                    type: number
+                  isPublished:
+                    type: boolean
+                  createdBy:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      emailAddress:
+                        type: string
+                        format: email
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedBy:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      emailAddress:
+                        type: string
+                        format: email
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  recipients:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                        emailAddress:
+                          type: string
+                          format: email
+
+
+                  
+                      
+                
     GetAlertsResponse:
       description: "Get Alerts Response"
       content:
@@ -291,7 +586,7 @@ components:
               alerts:
                 type: array
                 items:
-                  type: object
+                  $ref: "#/components/schemas/AlertOutput"
 
   requestBodies:
     CreateCollection:
@@ -304,10 +599,32 @@ components:
              - name
              - clientAccountId
              - createdById
-             
+    CreateAlert:
+      description: "Payload to create a new alert"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateAlertInput"
+            required:
+            - alertQueries
+
     UpdateCollection:
       description: "Payload to update a collection"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateCollectionInput"
+            
+    setAlertSchedule:
+      description: "Set Alert Schedule"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/alertScheduleInput"
+
+    SetAlertRecipients:
+      description: "Payload to update a collection"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SetAlertRecipientsInput"

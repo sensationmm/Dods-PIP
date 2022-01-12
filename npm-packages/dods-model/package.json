@@ -1,6 +1,6 @@
 {
     "name": "@dodsgroup/dods-model",
-    "version": "1.0.33",
+    "version": "1.0.46",
     "description": "",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -10,7 +10,8 @@
         "seed:undo": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:seed:undo",
         "migrate": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:migrate",
         "migrate:undo": "npm run build && cd dist && NODE_ENV=development sequelize-cli db:migrate:undo",
-        "build": "./node_modules/.bin/webpack --config webpack.config.js",
+        "build": "webpack",
+        "build:watch": "npm link && webpack watch",
         "predeploy": "npm run build",
         "deploy": "npm publish"
     },

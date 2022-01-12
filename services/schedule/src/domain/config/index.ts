@@ -20,6 +20,8 @@ const envVarsSchema = Joi.object()
         NODE_ENV: Joi.string().valid(...stages).default('test'),
         SERVERLESS_STAGE: Joi.string().required().default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
+        CORS_ORIGINS: Joi.string().required().default('*'),
+        API_GATEWAY_BASE_URL: Joi.string().required(),
         ES_CLOUD_ID: Joi.string().required(),
         ES_KEY_ID: Joi.string().required(),
         ES_API_KEY: Joi.string().required(),
@@ -38,6 +40,9 @@ export const config = {
         endpoint: `http://localhost:${envVars.SERVERLESS_PORT}/${envVars.SERVERLESS_STAGE}` as string
     },
     dods: {
+        downstreamEndpoints: {
+            apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
+        }
     },
     aws: {},
     elasticsearch: {

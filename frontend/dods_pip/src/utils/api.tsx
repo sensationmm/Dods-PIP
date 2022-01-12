@@ -4,6 +4,7 @@ export enum Api {
   CheckAccountName = '/checkaccountname',
   ClientAccount = '/clientaccount',
   ClientAccounts = '/client-accounts',
+  Collections = '/collections',
   EnableUser = '/enableUser',
   ForgotPassword = '/forgotPassword',
   GetUser = '/get-user',
