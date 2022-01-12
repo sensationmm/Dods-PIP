@@ -1,5 +1,6 @@
-import Box from '@dods-ui/components/_layout/Box';
 import Panel from '@dods-ui/components/_layout/Panel';
+import Icon, { IconSize } from '@dods-ui/components/Icon';
+import { Icons } from '@dods-ui/components/Icon/assets';
 import Text from '@dods-ui/components/Text';
 import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
@@ -9,34 +10,38 @@ import React, { useCallback, useState } from 'react';
 
 import fetchJson from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
-import { ESResponse } from '../index.page';
+import { IResponse, ISourceData } from '../index.page';
 import * as Styled from './document.styles';
 import Header from './header';
 
+interface ITags {
+  [key: string]: {
+    value: string;
+    count: [];
+  }[];
+}
 interface DocumentViewerProps {
-  apiResponse: ESResponse;
+  apiData: ISourceData;
   publishedDateTime: string;
+  tags: ITags;
 }
 
 export const DocumentViewer: React.FC<DocumentViewerProps> = ({
-  apiResponse,
+  apiData,
+  tags,
   publishedDateTime,
 }) => {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<'content' | 'details'>('content');
+  const [expandedTags, setExpandedTags] = useState(false);
   const documentId = router.query.id as string;
-  const {
-    documentTitle,
-    contentSource,
-    sourceReferenceUri,
-    informationType,
-    documentContent,
-    aggs_fields: tags = {},
-  } = apiResponse;
+
+  const { documentTitle, contentSource, sourceReferenceUri, informationType, documentContent } =
+    apiData;
 
   const renderDetails = useCallback(() => {
-    const { contentLocation, informationType, originator, version } = apiResponse;
-    const data = [
+    const { contentLocation, informationType, originator, version } = apiData;
+    const tableData = [
       {
         label: 'Content Source',
         value: contentSource,
@@ -83,7 +88,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     return (
       <Styled.detailTable>
         <tbody>
-          {data.map(({ label, value }) => {
+          {tableData.map(({ label, value }) => {
             return (
               <tr key={label}>
                 <td>
@@ -98,34 +103,42 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         </tbody>
       </Styled.detailTable>
     );
-  }, [apiResponse]);
-
-  console.log('apiResponse', apiResponse);
+  }, [apiData]);
 
   const renderTags = useCallback(() => {
     return (
       <Styled.tags>
-        <Text type="h3" headingStyle="title">
-          Content Tags
-        </Text>
-        {Object.keys(tags).map((key) => {
-          const tagElements = tags[key].map((tag) => {
-            return <Styled.tag key={tag}>{tag}</Styled.tag>;
-          });
+        <Styled.headingButton type="button" onClick={() => setExpandedTags(!expandedTags)}>
+          <span>Content Tags</span>
+          <Icon
+            src={expandedTags ? Icons.ChevronDown : Icons.ChevronLeft}
+            size={IconSize.mediumLarge}
+          />
+        </Styled.headingButton>
+        <Styled.tagsContent className={expandedTags ? 'expanded' : ''}>
+          {Object.keys(tags).map((key) => {
+            const tagElements = tags[key].map(({ value, count }) => {
+              return (
+                <Styled.tag key={value}>
+                  {value} ({count})
+                </Styled.tag>
+              );
+            });
 
-          return (
-            <>
-              <Text type="label" headingStyle="titleSmall" key={key} bold>
-                {key}
-              </Text>
+            return (
+              <div key={key}>
+                <Text type="label" headingStyle="titleSmall" bold>
+                  {key}
+                </Text>
 
-              <Styled.tagsContainer>{tagElements}</Styled.tagsContainer>
-            </>
-          );
-        })}
+                <Styled.tagsContainer>{tagElements}</Styled.tagsContainer>
+              </div>
+            );
+          })}
+        </Styled.tagsContent>
       </Styled.tags>
     );
-  }, [tags]);
+  }, [tags, expandedTags]);
 
   return (
     <Panel>
@@ -175,7 +188,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query, req } = context;
 
   const documentId = query.id;
-  let response: ESResponse = {};
+  let response: IResponse = {};
 
   try {
     const payload = {
@@ -190,24 +203,39 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     response = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
-    })) as ESResponse;
+    })) as IResponse;
   } catch (error) {
     console.error(error);
   }
 
-  const data = response.es_response?.hits.hits[0]._source;
+  const apiData = response.es_response?.hits.hits[0]._source;
 
-  if (!data) {
+  if (!apiData) {
     return {
       notFound: true,
     };
   }
 
-  const date = new Date(data.contentDateTime);
-  const publishedDateTime = format(date, "d MMMM yyyy 'at' hh:mm");
+  const date = apiData.contentDateTime ? new Date(apiData.contentDateTime) : '';
+  const publishedDateTime = date ? format(date, "d MMMM yyyy 'at' hh:mm") : '';
+
+  const tags: ITags = Object.keys(apiData.aggs_fields).reduce((carry, key) => {
+    const values = apiData.aggs_fields[key].map((value) => {
+      const regEx = new RegExp(value, 'g');
+      return {
+        value,
+        count: (apiData.documentContent?.match(regEx) || []).length || 0,
+      };
+    });
+
+    return {
+      ...carry,
+      [key]: values,
+    };
+  }, {});
 
   return {
-    props: { apiResponse: data, publishedDateTime },
+    props: { apiData, tags, publishedDateTime },
   };
 };
 

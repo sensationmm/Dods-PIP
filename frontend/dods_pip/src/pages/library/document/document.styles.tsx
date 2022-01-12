@@ -51,11 +51,52 @@ export const tags = styled.aside`
   }
 
   label {
-    font-size: 18px;
+    font-size: 16px;
     display: block;
     margin-bottom: ${spacing(4)};
     text-transform: capitalize !important;
+
+    ${media.greaterThan(breakpoint)`
+      font-size: 18px;
+    `}
   }
+`;
+
+export const headingButton = styled.button`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  font-size: 18px;
+  padding: 0;
+  font-family: 'Libre Baskerville';
+  cursor: pointer;
+
+  ${media.greaterThan(breakpoint)`
+    font-size: 24px;
+    cursor: default;
+
+    svg {
+      display: none;
+    }
+  `}
+`;
+
+export const tagsContent = styled.div`
+  height: 0;
+  overflow: hidden;
+
+  &.expanded {
+    height: auto;
+    padding-top: ${spacing(4)};
+  }
+
+  ${media.greaterThan(breakpoint)`
+    height: auto !important;
+    padding-top: ${spacing(4)};
+  `}
 `;
 
 export const tagsContainer = styled.div`
@@ -65,11 +106,15 @@ export const tagsContainer = styled.div`
 `;
 
 export const tag = styled.span`
-  font-size: 16px;
+  font-size: 14px;
   background: ${color.base.greyLight};
   color: ${color.theme.blue};
   border-radius: 60px;
   padding: ${spacing(2)} ${spacing(3)};
+
+  ${media.greaterThan(breakpoint)`
+    font-size: 16px;
+  `}
 `;
 
 export const tabs = styled.div`

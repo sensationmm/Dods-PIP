@@ -71,19 +71,51 @@ const aggregations = {
 };
 
 interface LibraryProps extends LoadingHOCProps {}
-export interface ESResponse {
-  sourceReferenceUri?: string;
-  es_response?: Record<string, any>;
-  hits?: Record<string, any>;
-  aggregations?: Record<string, any>;
-  documentContent?: string;
-  contentSource?: ContentSourceType;
-  informationType?: string;
-  documentTitle?: string;
+
+export interface ISourceData {
+  aggs_fields: { [key: string]: string[] };
+  contentDateTime?: string;
   contentLocation?: string;
+  contentSource?: ContentSourceType;
+  documentContent?: string;
+  documentTitle?: string;
+  informationType?: string;
+  sourceReferenceUri?: string;
   originator?: string;
   version?: string;
-  aggs_fields?: { [key: string]: string[] };
+}
+
+export interface IResponse {
+  sourceReferenceUri?: string;
+  es_response?: {
+    hits: {
+      hits: { _source: ISourceData }[];
+      total: { value: number };
+    };
+    aggregations?: {
+      contentSource?: {
+        buckets: [];
+      };
+      informationType?: {
+        buckets: [];
+      };
+      jurisdiction?: {
+        buckets: [];
+      };
+      people?: {
+        buckets: [];
+      };
+      organizations?: {
+        buckets: [];
+      };
+      geography?: {
+        buckets: [];
+      };
+      topics?: {
+        buckets: [];
+      };
+    };
+  };
 }
 
 interface RequestPayload {
@@ -94,7 +126,7 @@ interface RequestPayload {
 }
 
 export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
-  const [apiResponse, setApiResponse] = useState<ESResponse>({});
+  const [apiResponse, setApiResponse] = useState<IResponse>({});
   const [contentSources, setContentSources] = useState([]);
   const [informationTypes, setInformationTypes] = useState([]);
   const [jurisdictions, setJurisdictions] = useState([]);
@@ -229,29 +261,32 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
         const response = (await fetchJson(`${BASE_URI}${Api.ContentSearchApp}`, {
           body: JSON.stringify({ query: sPayload }),
           method: 'POST',
-        })) as ESResponse;
+        })) as IResponse;
 
-        setApiResponse(response.es_response as ESResponse);
+        setApiResponse(response);
 
-        setContentSources(
-          (response.es_response?.aggregations.contentSource?.buckets).filter(checkEmptyAggregation),
-        );
-        setInformationTypes(
-          response.es_response?.aggregations.informationType?.buckets.filter(checkEmptyAggregation),
-        );
-        setJurisdictions(
-          response.es_response?.aggregations.jurisdiction?.buckets.filter(checkEmptyAggregation),
-        );
+        const {
+          contentSource,
+          informationType,
+          jurisdiction,
+          people,
+          organizations,
+          geography,
+          topics,
+        } = response?.es_response?.aggregations || {};
 
-        setPeople(response.es_response?.aggregations.people?.buckets.filter(checkEmptyAggregation));
-        setOrganizations(
-          response.es_response?.aggregations.organizations?.buckets.filter(checkEmptyAggregation),
-        );
+        setContentSources(contentSource?.buckets?.filter?.(checkEmptyAggregation) || []);
 
-        setGeography(
-          response.es_response?.aggregations.geography?.buckets.filter(checkEmptyAggregation),
-        );
-        setTopics(response.es_response?.aggregations.topics?.buckets.filter(checkEmptyAggregation));
+        setInformationTypes(informationType?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+        setJurisdictions(jurisdiction?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+        setPeople(people?.buckets?.filter?.(checkEmptyAggregation) || []);
+        setOrganizations(organizations?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+        setGeography(geography?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+        setTopics(topics?.buckets?.filter?.(checkEmptyAggregation) || []);
       } catch (error) {
         console.log(error);
       }
@@ -292,17 +327,17 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
               onChange={(val) => setSearchText(val)}
             />
             <Spacer size={8} />
-            {apiResponse?.hits?.hits.length !== 0 && (
+            {apiResponse.es_response?.hits?.hits.length !== 0 && (
               <div>
-                Showing {offset + 1} - {apiResponse?.hits?.hits.length + offset} of{' '}
-                {apiResponse?.hits?.total?.value}
+                Showing {offset + 1} - {(apiResponse?.es_response?.hits?.hits.length || 0) + offset}{' '}
+                of {apiResponse.es_response?.hits?.total?.value}
               </div>
             )}
             <Spacer size={8} />
 
             <Styled.contentWrapper>
               <section>
-                {apiResponse?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
+                {apiResponse.es_response?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
                   const date = new Date(hit._source.contentDateTime);
                   const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
 
@@ -371,9 +406,9 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                   );
                 })}
 
-                {apiResponse?.hits?.hits && (
+                {apiResponse.es_response?.hits?.hits && (
                   <Styled.pagination>
-                    <span>Total {apiResponse.hits.total.value} Items</span>
+                    <span>Total {apiResponse.es_response.hits.total.value} Items</span>
                     <div>
                       <span
                         onClick={() => {
@@ -397,7 +432,7 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
               </section>
 
               <section>
-                {apiResponse?.hits?.hits.length !== 0 && (
+                {apiResponse.es_response?.hits?.hits.length !== 0 && (
                   <Styled.filtersContent>
                     {contentSources && (
                       <div>
