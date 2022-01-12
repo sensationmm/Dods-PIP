@@ -1,0 +1,8 @@
+POST {{host}}/collections HTTP/1.1
+Content-Type: application/json
+
+{
+    "clientAccountId": "cd44bad6-8eeb-4870-abb8-72d297ea7a3e",
+    "name": "Collection Name",
+    "createdById": "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
+}

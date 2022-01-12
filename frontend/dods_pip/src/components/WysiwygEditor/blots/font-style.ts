@@ -30,7 +30,7 @@ class StyleBlot extends Quill.import('blots/block') {
   static className = 'font-style';
   static tagName = 'P';
 
-  static create(value: styleWhitelist): HTMLSpanElement {
+  static create(value: styleWhitelist): HTMLParagraphElement {
     const node = super.create(value);
 
     if (!styles.hasOwnProperty(value)) return node;

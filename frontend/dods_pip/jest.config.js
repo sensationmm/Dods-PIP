@@ -6,7 +6,6 @@ module.exports = {
       '<rootDir>/src/mocks/file-mock.js',
     '\\.(css|less)$': '<rootDir>/src/mocks/style-mock.js',
     '@dods-ui/(.*)': '<rootDir>/src/$1',
-    '@dods-services/(.*)': '<rootDir>/../../../services/$1',
   },
   transform: {
     '^.+\\.(ts|tsx|js|jsx)$': 'ts-jest',

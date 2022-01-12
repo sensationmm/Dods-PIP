@@ -23,6 +23,16 @@ this is a sample setting so you can add more environment like `production` or mo
     }
 }
 ```
+
+## 1-) Copy and paste above JSON statement in the Visual Studio Code Settings
 ![Image1](./images/image1.png)
+
+## 2-) Install `Rest Client` Visual Studio Code extension
+![Image4](./images/image4.png)
+
+## 3-) Create or Open request.http file
+
 ![Image2](./images/image2.png)
+
+## 4-) After sending request, response should be seen like this.
 ![Image3](./images/image3.png)

@@ -1,0 +1,18 @@
+### Create alert
+POST {{host}}/collections/86cc34ae-47db-407c-b18d-bccfbd600e11/alerts HTTP/1.1
+
+{
+  "collectionId": "86cc34ae-47db-407c-b18d-bccfbd600e11",
+  "title": "repository",
+  "alertQueries": [{
+    "query": "in dods",
+    "informationTypes": "infoTypes",
+    "contentSources": "Source"
+  },
+  {
+    "query": "Reposs",
+    "informationTypes": "infoTypes",
+    "contentSources": "Source"
+  }],
+  "createdBy": "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
+}

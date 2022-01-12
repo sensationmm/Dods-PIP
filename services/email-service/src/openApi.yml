@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  description: DODS Email Service
+  version: 1.0.0
+  title: DODS Email Service
+  contact:
+    email: kenanhancer@gmail.com
+  license:
+    name: GPL 3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+servers:
+  - url: /api
+
+tags:
+  - name: "email"
+    description: "Email Service"
+    externalDocs:
+      description: "Docs"
+      url: "https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/637403146/Email+Service"
+
+paths:
+  /email:
+    post:
+      tags:
+        - "email"
+      operationId: email
+      summary: "Send Email"
+      description: "Sends an email based on the data in the request payload"
+      requestBody:
+        $ref: "#/components/requestBodies/SendEmail"
+      responses:
+        "200":
+          $ref: "#/components/responses/SendEmail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+components:
+  schemas:
+    BadRequest:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "an error ocurred while parsing the content"
+    SendEmailSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "email sent"
+    SendEmailInput:
+      type: object
+      properties:
+        to:
+          type: array
+          items:
+            type: string
+            format: email
+            minLength: 1
+          example: ["blue@somoglobal.com", "green@somoglobal.com"]
+          description: "The recipient email address"
+          minItems: 1
+          maxItems: 1000
+        from:
+          type: string
+          format: email
+          example: "test@somoglobal.com"
+          description: "The email address the email is from"
+          minLength: 1
+        subject:
+          type: string
+          example: "Welcome to Somo!"
+          description: "The subject for the email"
+          minLength: 1
+        mimeType:
+          type: string
+          example: "text/plain"
+          default: "text/html"
+          enum:
+            - "application/json"
+            - "application/xml"
+            - "application/x-www-form-urlencoded"
+            - "multipart/form-data"
+            - "text/plain"
+            - "text/html"
+            - "application/pdf"
+            - "image/png"
+          description: "The mimeType of the email content"
+          minLength: 1
+        content:
+          type: string
+          example: "Hello. Cheers!"
+          description: "Email content"
+          minLength: 1
+
+  requestBodies:
+    SendEmail:
+      description: "Payload to send emails"
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SendEmailInput"
+
+  responses:
+    SendEmail:
+      description: "Send email"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SendEmailSuccess"
+    BadRequest:
+      description: "Bad Request. Input must be valid"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/BadRequest"

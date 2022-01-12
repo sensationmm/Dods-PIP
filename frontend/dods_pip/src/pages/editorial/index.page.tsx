@@ -13,10 +13,8 @@ import RepositoryTable, { RepositoryTableProps } from '@dods-ui/components/Repos
 import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
-import {
-  getMetadataSelections,
-  MetadataSelection,
-} from '@dods-ui/pages/editorial/editorial.service';
+import { MetadataSelection } from '@dods-ui/pages/editorial/editorial.models';
+import { getMetadataSelections } from '@dods-ui/pages/editorial/editorial.service';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';

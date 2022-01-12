@@ -232,6 +232,26 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+        get:
+            summary: Get document from editorial record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            responses:
+                '200':
+                    $ref: '#/components/responses/getEditorialRecordDocumentResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
 
 components:
     responses:
@@ -314,6 +334,23 @@ components:
                                 type: array
                                 items:
                                     $ref: '#/components/schemas/EditorialRecordStatusResponse'
+                                    
+        getEditorialRecordDocumentResponse:
+            description: Get editorial record document 
+            content:
+                application/json:
+                    schema:
+                        type: 'object'
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            message: 
+                                type: string
+                                example: Document found
+                            document:
+                                type: object
+                                $ref: '#/components/schemas/Document'
 
         BadRequest:
             description: Bad request
@@ -348,8 +385,8 @@ components:
                 application/json:
                     schema:
                         anyOf:
-                            - $ref: '#/components/schemas/CreateEditorialRecordRequest'
                             - $ref: '#/components/schemas/CreateEditorialRecordRequestV2'
+                            - $ref: '#/components/schemas/CreateEditorialRecordRequest'
         UpdateEditorialRecord:
             description: A JSON object containing Editorial Record information
             required: true
@@ -563,18 +600,28 @@ components:
           properties:
             contentSource:
               type: string
-            document:
-              $ref: '#/components/schemas/EditorialDocument'
-            documentName:
-              type: string
-              minLength: 1
             informationType:
               type: string
+            createdBy:
+              type: string
+            documentContent:
+              type: string
+            documentTitle:
+              type: string
+            internallyCreated:
+              type: boolean
+            schemaType:
+              type: string
+            sourceReferenceUri:
+              type: string
+            taxonomyTerms:
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
           required:
-            - documentName
             - contentSource
             - informationType
-            - document
+            - documentTitle
         
         EditorialDocument:
           type: object
@@ -596,19 +643,17 @@ components:
               type: string
             schemaType:
               type: string
+            sourceReferenceUri:
+              type: string
             taxonomyTerms:
               items:
                 $ref: '#/components/schemas/TaxonomyTerm'
               type: array
           required:
-            - jurisdiction
             - documentTitle
             - createdBy
-            - internallyCreated
-            - schemaType
             - contentSource
             - informationType
-            - taxonomyTerms
             - documentContent
         
         TaxonomyTerm:
@@ -712,7 +757,9 @@ components:
               type: string
               example: en
             taxonomyTerms:
-              type: object
+              items:
+                $ref: '#/components/schemas/TaxonomyTerm'
+              type: array
             originalContent:
               type: string
             documentContent:
