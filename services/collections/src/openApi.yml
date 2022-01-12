@@ -18,6 +18,7 @@ paths:
       summary: "Returns a list of collections"
       description: "Returns a list of collections"
       parameters:
+        - $ref: "#/components/parameters/startsWith"
         - $ref: "#/components/parameters/searchTerm"
         - $ref: "#/components/parameters/clientAccountId"
         - $ref: "#/components/parameters/limit"
@@ -468,7 +469,7 @@ components:
       schema:
         type: string
         format: uuid
-      required: true
+      required: false
       example: d290f1ss-6c54-4b01-98e6-d701748f7151
     limit:
       in: query
@@ -519,6 +520,13 @@ components:
             type: string
         required: false
         description: Collections by name's filtering using search term
+    startsWith:
+        in: query
+        name: startsWith
+        schema:
+            type: string
+        required: false
+        description: Collections by name's filtering using coincidences from the beginning
     collectionId:
       in: path
       name: collectionId
