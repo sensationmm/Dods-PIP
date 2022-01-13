@@ -1,6 +1,6 @@
 import { mocked } from 'jest-mock';
 import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { CollectionAlertsRepository, getAlertById, SearchAlertParameters } from '@dodsgroup/dods-repositories';
+import { CollectionAlertsRepository, GetAlertById, SearchAlertParameters } from '@dodsgroup/dods-repositories';
 import { getAlert } from '../../../src/handlers/getAlert/getAlert';
 
 const FUNCTION_NAME = getAlert.name;
@@ -8,7 +8,7 @@ const defaultContext = createContext();
 jest.mock('@dodsgroup/dods-repositories');
 const mockedCollectionAlertsRepository = mocked(CollectionAlertsRepository, true);
 
-const answerMock: getAlertById = {
+const answerMock: GetAlertById = {
     "searchQueriesCount": 1,
     "recipientsCount": 2,
     "alert": {
