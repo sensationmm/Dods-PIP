@@ -15,8 +15,6 @@ import { IconType as ContentSourceType } from '../../components/IconContentSourc
 import Tag from '../../components/Tag';
 import Text from '../../components/Text';
 import color from '../../globals/color';
-// import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as Styled from './library.styles';
@@ -127,7 +125,7 @@ export interface IResponse {
   };
 }
 
-interface LibraryProps extends LoadingHOCProps {
+interface LibraryProps {
   initialResponse: IResponse;
 }
 interface RequestPayload {
@@ -261,7 +259,6 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
 
     (async () => {
       try {
-        // setLoading(true);
         const sPayload = JSON.stringify(requestPayload);
 
         const response = (await fetchJson(`${BASE_URI}${Api.ContentSearchApp}`, {
@@ -273,8 +270,6 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
       } catch (error) {
         console.log(error);
       }
-
-      // setLoading(false);
     })();
   }, [requestPayload]);
 
@@ -675,7 +670,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: { initialResponse: response },
   };
 };
-
-// export default LoadingHOC(Library);
 
 export default Library;
