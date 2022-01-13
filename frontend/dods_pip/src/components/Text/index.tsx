@@ -91,7 +91,7 @@ const Text: React.FC<TextProps> = ({
     htmlFor: htmlFor,
   };
 
-  if (type.length === 2 && type.substr(0, 1) === 'h') {
+  if (type.match(/^h[123456]{1}$/)) {
     return (
       <Styled.heading>
         {React.createElement(
