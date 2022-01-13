@@ -6,385 +6,23 @@ options:
   max-time: 30
 
 pipelines:
-  # pull-requests:
-  #   '**': # Run this step as default for any branch without an specific definition
-  #     - step:
-  #         script:
-  #           - tools/build.sh
-
-  default:
-    - parallel:
+  pull-requests:
+    '**': # Run this step as default for any branch without an specific definition
       - step:
-          name: Test build Frontend
-          image: node:lts-alpine3.14
-          size: 2x
-          services:
-            - docker
-          caches:
-            - docker
-          condition:
-            changesets:
-              includePaths:
-                - "frontend/dods_pip/**"
+          name: Check changes to trigger builds
+          image: gioatsomoglobal/devopstools:0.4.6
           script:
-            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
-            - cd ${FRONTEND_SRC}
-            - yarn install
-            - yarn test
-            - yarn lint
-            - docker build -t ${IMAGE_NAME} .
-
-      - step:
-          name: Deploy Graphologi Webhook
-          image: gioatsomoglobal/devopstools:0.4.2
-          size: 2x
-          services:
-            - docker
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/graphologi-integration/**"
-          script:
-            - cd services/graphologi-integration
-            - npm install
-            - serverless deploy
-
-      - step:
-          name: Deploy Pandas Layer
-          image: gioatsomoglobal/devopstools:0.4.2
-          size: 2x
-          services:
-            - docker
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/pandas-layer/**"
-          script:
-            - cd services/pandas-layer
-            - npm install
-            - cd layers/pandas
-            - ./build_layer.sh
-            - cd ../..
-            - serverless deploy --stage dev
-
-      - step:
-          name: Test Search Service
-          image: gioatsomoglobal/nodejs-builder:0.2
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/search-service/**"
-          script:
-            - cd services/search-service
-            - npm install
-            - export SERVERLESS_PORT=3000
-            - SERVERLESS_STAGE=dev npm run test:coverage
-
-      - step:
-          name: User Profile Service
-          image: gioatsomoglobal/devopstools:0.4.3
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/user-profile/**"
-          script:
-            - cd services/user-profile
-            - npm install
-            - SERVERLESS_STAGE=dev ./setenv.sh
-            - source *.env
-            - NODE_ENV=test npm run test:coverage
-            
-      - step:
-          name: Client Account Service
-          image: gioatsomoglobal/nodejs-builder:0.2
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/client-account/**"
-          script:
-            - cd services/client-account
-            - npm install
-            - SERVERLESS_STAGE=dev npm run test:coverage
-
-      - step:
-          name: Documents Service
-          image: gioatsomoglobal/nodejs-builder:0.2
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/documents/**"
-          script:
-            - cd services/documents
-            - npm install
-            - SERVERLESS_STAGE=dev npm run test:coverage
-
-      - step:
-          name: Editorial Workflow Service
-          image: gioatsomoglobal/nodejs-builder:0.2
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/editorial-workflow/**"
-          script:
-            - cd services/editorial-workflow
-            - npm install
-            - SERVERLESS_STAGE=dev ./setenv.sh
-            - source *.env
-            - npm run test
-
-      - step:
-          name: Validate OpenAPI definitions
-          image: openapitools/openapi-generator-cli:v5.2.1
-          condition:
-            changesets:
-              includePaths:
-                - "api/**"
-          script:
-            - cd api
-            - for i in *.yml; do docker-entrypoint.sh validate -i $i; done
-
-      - step:
-          name: Deploy Scrapping Lambdas
-          image: gioatsomoglobal/devopstools:0.4.2
-          size: 2x
-          services:
-            - docker
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "scrapping/**"
-          script:
-            - cd scrapping
-            - npm install
-            - ./scrapping_deploy.sh
-
-      - step:
-          name: Test Collections Service
-          image: gioatsomoglobal/devopstools:0.4.5
-          size: 2x
-          services:
-            - docker
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/collections/**"
-          script:
-            - cd services/collections
-            - npm install
-            - npm run create:dods-dev
-            - SERVERLESS_STAGE=dev npm run test:coverage
-      
-      - step:
-          name: Test Email Service
-          image: gioatsomoglobal/devopstools:0.4.5
-          size: 2x
-          services:
-            - docker
-          caches:
-            - node
-          condition:
-            changesets:
-              includePaths:
-                - "services/email-service/**"
-          script:
-            - cd services/email-service
-            - npm install
-            - npm run create:dods-dev
-            - SERVERLESS_STAGE=dev npm run test:coverage
-
+            - tools/on-changes.sh build
 
   branches:
     master:
       - parallel:
         - step:
-            name: Auth-Authz Deploy
-            size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
-            condition:
-              changesets:
-                includePaths:
-                  - "services/dods-iam/**"
+            name: Deploy projects to their envionments
+            image: gioatsomoglobal/devopstools:0.4.6
             script:
-              - cd services/dods-iam
-              - npm install
-              - NODE_ENV=test npm run test:coverage 
-              - npx serverless deploy --stage dev
-
-        - step:
-            name: Search Service Deploy
-            size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
-            condition:
-              changesets:
-                includePaths:
-                  - "services/search-service/**"
-            script:
-              - cd services/search-service
-              - npm install
-              - export SERVERLESS_STAGE=dev
-              - export SERVERLESS_PORT=3000
-              - npm run test:coverage 
-              - npx serverless deploy --stage dev
-              
-        - step: 
-            name: User Profile Deploy
-            size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
-            condition:
-              changesets:
-                includePaths:
-                  - "services/user-profile/**"
-            script:
-              - cd services/user-profile
-              - npm install
-              - SERVERLESS_STAGE=dev ./setenv.sh
-              - source *.env
-              # - NODE_ENV=test npm run test:coverage 
-              - npx serverless deploy --stage dev
-
-        - step: 
-            name: Client Account Deploy
-            size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
-            condition:
-              changesets:
-                includePaths:
-                  - "services/client-account/**"
-            script:
-              - cd services/client-account
-              - npm install
-              - export SERVERLESS_STAGE=dev
-              - npm run test:coverage 
-              - npx serverless deploy --stage dev
-
-        - step: 
-            name: Documents Deploy
-            size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
-            condition:
-              changesets:
-                includePaths:
-                  - "services/documents/**"
-            script:
-              - cd services/documents
-              - npm install
-              - export SERVERLESS_STAGE=dev
-              - npm run test:coverage 
-              - npx serverless deploy --stage dev
-
-        - step: 
-            name: Editorial Workflow Deploy
-            size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
-            condition:
-              changesets:
-                includePaths:
-                  - "services/editorial-workflow/**"
-            script:
-              - cd services/editorial-workflow
-              - npm install
-              - SERVERLESS_STAGE=dev ./setenv.sh
-              - source *.env
-              - npm run test
-              - npx serverless deploy --stage dev
-
-        - step:
-            name: Frontend Build and Deploy 
-            size: 2x
-            image: gioatsomoglobal/devopstools:0.4.3
-            deployment: Test 
-            services:
-              - docker
-
-            condition:
-              changesets:
-                includePaths:
-                  - "frontend/dods_pip/**"
-            script:
-              - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
-              - cd ${FRONTEND_SRC}
-              - yarn install
-              - yarn lint
-              - yarn test
-              - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
-              - docker build -t ${IMAGE_NAME} .
-              - docker push ${IMAGE_NAME}
-              - cd ../../tools
-              - ./ecs_deploy.sh ${FARGATE_SERVICE_FRONTEND}
-
-        - step: 
-            name: Taxonomy Service Deploy
-            size: 2x
-            image: gioatsomoglobal/devopstools:0.4.5
-            condition:
-              changesets:
-                includePaths:
-                  - "services/taxonomy-service/**"
-            script:
-              - cd services/taxonomy-service
-              - npm install
-              - export SERVERLESS_STAGE=dev
-              # - npm run test:coverage 
-              - npx serverless deploy --stage dev
-
-        - step:
-            name: Deploy Collections Service
-            image: gioatsomoglobal/devopstools:0.4.5
-            size: 2x
-            services:
-              - docker
-            caches:
-              - node
-            condition:
-              changesets:
-                includePaths:
-                  - "services/collections/**"
-            script:
-              - export THIS='services/collections'
-              - cd $THIS
-              - npm install
-              - npm run create:dods-dev
-              - npm run test:coverage
-              - npx serverless deploy --stage dev
-
-        - step:
-            name: Deploy Email Service
-            image: gioatsomoglobal/devopstools:0.4.5
-            size: 2x
-            services:
-              - docker
-            caches:
-              - node
-            condition:
-              changesets:
-                includePaths:
-                  - "services/email-service/**"
-            script:
-              - export THIS='services/email-service'
-              - cd $THIS
-              - npm install
-              - npm run create:dods-dev
-              - npm run test:coverage
-              - npx serverless deploy --stage dev
-
+              - tools/on-changes.sh deploy
+          
         - step:
             name: Terraform Plan
             size: 2x
@@ -404,6 +42,9 @@ pipelines:
 
   custom:
     build_frontend:
+      - variables:
+        - name: SERVICE
+          default: dods_pip
       - step:
           name: "Frontend: Test and Build"
           image: gioatsomoglobal/devopstools:0.4.5
@@ -413,14 +54,15 @@ pipelines:
           caches:
             - docker
           script:
-            - export THIS='frontend/dods_pip'
+            - 'echo "Running build for service: ${SERVICE}"'
+            - export THIS="frontend/${SERVICE,,}"
             - export HASH=$(echo ${BITBUCKET_COMMIT:0:7})
             - cd $THIS
             - yarn install
             - yarn lint
             - yarn test
             - docker build -t "${HASH}" .
-            - docker save --output "${HASH}"
+            - docker save --output "${HASH}" "${HASH}"
             - aws s3 rm s3://pip-dev-services-lambdas/frontendImages/
             - aws s3 cp ${HASH} s3://pip-dev-services-lambdas/frontendImages/
 
@@ -445,14 +87,44 @@ pipelines:
                 bash .ci/build.sh
               else
                 echo "Running default service building definitions"
-                npm install
+                npm ci
                 SERVERLESS_STAGE=dev npm run test:coverage
+                npx serverless package
+              fi
+
+    build_scrapping:
+      - variables:
+        - name: SERVICE
+          default: debates-hoc-uk
+      - step:
+          name: "Scrapping: Test and Build"
+          image: gioatsomoglobal/devopstools:0.4.2
+          script:
+            - 'echo "Running build for service: ${SERVICE}"'
+            - cd scrapping/$SERVICE
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default scrapping building definitions"
+                if [[ -e 'package.json' ]]; then
+                    npm install
+                fi
+                if [[ -e 'requirements.txt' ]]; then
+                    pip3 install -r requirements.txt
+                fi
+                if [[ -e 'serverless.yml' ]]; then
+                  sls package
+                fi
               fi
 
     deploy_frontend:
       - variables:
         - name: ENVIRONMENT
           default: "DEV"
+        - name: SERVICE
+          default: "dods_pip"
       - step:
           name: "Frontend: Deploy to Environment"
           image: gioatsomoglobal/devopstools:0.4.5
@@ -462,12 +134,15 @@ pipelines:
           caches:
             - docker
           script:
-            - export THIS='frontend/dods_pip'
+            - echo "Running deployment for frontend $SERVICE to environment ${ENVIRONMENT^^}"
+            - export THIS="frontend/${SERVICE,,}"
             - cd $THIS && mkdir dist
             - aws s3 cp s3://pip-dev-services-lambdas/frontendImages/ dist/ --recursive --only-show-errors
             - export TAG=$(ls -t1 dist/ | head -1)
-            - ../../tools/set-deployer.sh 
-            - source credentials.txt
+            - ../../tools/set-deployer.sh && source credentials.txt
+      # AWS_ACCOUNT_ID is exported by set-deployer.sh based on the value received on $ENVIRONMENT var.
+      # The account IDs are kept as repository variables with naming standard as <ENVIRONMENT>_ACCOUNT_ID
+      # Also on the repository variables: AWS_DEFAULT_REGION and FRONTEND_IMAGE
             - export IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${FRONTEND_IMAGE}:${TAG}
             - docker load --input dist/$TAG
             - docker images
@@ -486,41 +161,64 @@ pipelines:
           name: "Backend Service: Deploy to Environment"
           image: gioatsomoglobal/devopstools:0.4.5
           script:
+            - echo "Running deployment for service $SERVICE to environment ${ENVIRONMENT^^}"
             - export THIS="services/$SERVICE"
             - cd $THIS 
+    # Might be overkill, but run tests and an sls package to have an early stoppage
+    #  of faulty deployments (though they were merged to master)
             - |
               if [[ -e .ci/build.sh ]]; then
                 echo "Running special building definitions from services/$SERVICE/.ci/build.sh"
                 bash .ci/build.sh
               else
                 echo "Running default service building definitions"
-                npm install
+                npm ci
                 SERVERLESS_STAGE=dev npm run test:coverage
               fi
-            - ../../tools/set-deployer.sh 
-            - source credentials.txt
-            - npx serverless deploy --stage ${ENVIRONMENT,,}
+    # Set credentials for the target environment
+            - ../../tools/set-deployer.sh && source credentials.txt
 
-    deploy-frontend-production:
+    # Run actual deployment steps giving an option for custom definitions
+            - |
+              if [[ -e .ci/deploy.sh ]]; then
+                echo "Running special deployment definitions from services/$SERVICE/.ci/deploy.sh"
+                bash .ci/deploy.sh
+              else
+                echo "Running default service deployment definitions"
+                npx serverless deploy --stage ${ENVIRONMENT,,}
+              fi 
+
+    deploy_scrapping:
+      - variables:
+        - name: ENVIRONMENT
+          default: "DEV"
+        - name: SERVICE
+          default: debates-hoc-uk
       - step:
-          name: Deploy frontend to production environment
-          image: gioatsomoglobal/devopstools:0.4.5
-          size: 2x
-          services:
-            - docker
-          deployment: production
+          name: "Scrapping: Deploy to Environment"
+          image: gioatsomoglobal/devopstools:0.4.2
           script:
-            - export IMAGE_NAME=${AWS_ECR_NAME}/${FRONTEND_IMAGE}:${BITBUCKET_COMMIT}
-            - cd ${FRONTEND_SRC}
-            - yarn install
-            - yarn lint
-            - yarn test
-            - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ECR_NAME}
-            - docker build -t ${IMAGE_NAME} .
-            - docker push ${IMAGE_NAME}
-            - cd ../../tools
-            - ./ecs_deploy --service-name frontend-service --cluster pip-production-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
-        
+            - 'echo "Running deployment for scraper: ${SERVICE}"'
+            - cd scrapping/$SERVICE
+    # Set credentials for the target environment
+            - ../../tools/set-deployer.sh && source credentials.txt
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default scrapping building definitions"
+                if [[ -e 'package.json' ]]; then
+                    npm install
+                fi
+                if [[ -e 'requirements.txt' ]]; then
+                    pip3 install -r requirements.txt
+                fi
+                if [[ -e 'serverless.yml' ]]; then
+                  sls deploy --stage ${ENVIRONMENT,,}
+                fi
+              fi
+
     storybook-deployment:
       - step:
           name: Storybook deployment (dev)
