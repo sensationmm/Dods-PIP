@@ -37,12 +37,22 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     ) { }
 
     #cloneObject(target: CollectionAlert,
-        replaceProperties: Partial<CollectionAlert>,
+        replaceProperties?: Partial<CollectionAlert>,
         unwantedProperties?: Array<string>) {
 
         const copiedObject = Object.assign({}, target, replaceProperties);
-        (unwantedProperties ? unwantedProperties : []).forEach((key) => Reflect.deleteProperty(copiedObject, key));
+        if (unwantedProperties)
+            unwantedProperties.forEach((key) => Reflect.deleteProperty(copiedObject, key));
         return copiedObject;
+    }
+
+    #cloneArray(target: CollectionAlertQuery[],
+        replaceProperties?: Partial<CollectionAlertQuery>,
+        unwantedProperties?: Array<string>) {
+        const copiedArray = target.slice().map(item => { return { ...item, ...replaceProperties } });
+        if (unwantedProperties)
+            copiedArray.map(item => unwantedProperties.forEach((key) => Reflect.deleteProperty(item, key)));
+        return copiedArray;
     }
 
     mapAlert(model: CollectionAlert): AlertOutput {
@@ -259,7 +269,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             include: ['collection', 'createdById', 'updatedById', 'alertTemplate']
         })
 
-        if (!alert || !alert.isActive) {
+        if (!alert) {
             throw new CollectionError(
                 `Unable to retrieve Alert with uuid: ${alertId}`
             );
@@ -291,38 +301,30 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     async copyAlert(parameters: CopyAlertParameters): Promise<AlertOutput> {
         const { collectionId, alertId, destinationCollectionId, createdBy } = parameters;
 
+        // Retrieve initial data and validate data integrity
         const collection = await this.collectionModel.findOne({
             where: { uuid: collectionId, isActive: true }
         })
 
-        if (!collection || !collection.isActive) {
-            throw new CollectionError(
-                `Unable to retrieve Collection with uuid: ${collectionId}`
-            );
-        }
+        if (!collection)
+            throw new CollectionError(`Unable to retrieve Collection with uuid: ${collectionId}`);
+
 
         const destinationCollection = await this.collectionModel.findOne({
             where: { uuid: destinationCollectionId, isActive: true }
         })
 
-        if (!destinationCollection || !destinationCollection.isActive) {
-            throw new CollectionError(
-                `Unable to retrieve Destination Collection with uuid: ${destinationCollectionId}`
-            );
-        }
+        if (!destinationCollection)
+            throw new CollectionError(`Unable to retrieve Destination Collection with uuid: ${destinationCollectionId}`);
+
 
         const alertCreator = await this.userModel.findOne({
-            where: {
-                uuid: createdBy,
-                isActive: true
-            },
+            where: { uuid: createdBy, isActive: true }
         });
 
-        if (!alertCreator || !alertCreator.isActive) {
-            throw new CollectionError(
-                `Unable to retrieve user with uuid: ${createdBy}`,
-            );
-        }
+        if (!alertCreator)
+            throw new CollectionError(`Unable to retrieve user with uuid: ${createdBy}`);
+
 
         const existingAlert = await this.alertModel.findOne({
             where: {
@@ -334,19 +336,37 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             include: ['collection', 'createdById', 'updatedById', 'alertTemplate']
         })
 
-        if (!existingAlert || !existingAlert.isActive) {
-            throw new CollectionError(
-                `Unable to retrieve Alert with uuid: ${alertId}`
-            );
-        }
+        if (!existingAlert)
+            throw new CollectionError(`Unable to retrieve Alert with uuid: ${alertId}`);
 
-        const copiedAlertRequest: CollectionAlert = this.#cloneObject(existingAlert, {
+
+        // Copy alert
+        const copiedAlert: CollectionAlert = this.#cloneObject(existingAlert, {
             collectionId: destinationCollection.id,
             createdBy: alertCreator.id,
-        }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy', 'CollectionId'])
+        }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy', 'CollectionId']) as CollectionAlert;
 
-        const alert = await this.alertModel.create({ ...copiedAlertRequest });
+        const alert = await this.alertModel.create({ ...copiedAlert });
         await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
+
+        // Copy queries
+        const existingQueries = await this.alertQueryModel.findAll({
+            where: {
+                alertId: existingAlert.id,
+                isActive: true,
+            },
+            raw: true,
+        })
+
+        if (existingQueries && existingQueries.length > 0) {
+            const copiedQueries: CollectionAlertQuery[] = this.#cloneArray(existingQueries, {
+                alertId: alert.id,
+                createdBy: alertCreator.id
+            }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']) as CollectionAlertQuery[]
+
+            await this.alertQueryModel.bulkCreate(copiedQueries);
+        }
+
 
         return this.mapAlert(alert);
     }
