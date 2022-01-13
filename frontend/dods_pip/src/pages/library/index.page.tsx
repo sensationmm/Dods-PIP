@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import esb, { RequestBodySearch } from 'elastic-builder';
 import Head from 'next/head';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -17,6 +18,14 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as Styled from './library.styles';
+
+interface ExtendedRequestBodySearch extends RequestBodySearch {
+  _body: {
+    from?: number;
+    to?: number;
+    query?: unknown;
+  };
+}
 
 const aggregations = {
   topics: {
@@ -119,10 +128,22 @@ export interface IResponse {
 }
 
 interface RequestPayload {
-  query?: Record<string, any>;
-  aggregations: Record<string, any>;
+  query?: unknown;
+  aggregations: unknown;
   size?: number;
   from?: number;
+}
+
+const defaultRequestPayload = {
+  ...(esb.requestBodySearch().query(esb.boolQuery()).size(20).from(0) as ExtendedRequestBodySearch)
+    ._body,
+  aggregations,
+};
+
+enum queryKeys {
+  contentSource = 'contentSource',
+  jurisdiction = 'jurisdiction',
+  informationType = 'informationType',
 }
 
 export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
@@ -137,113 +158,106 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   const [searchText, setSearchText] = useState('');
 
   const [offset, setOffset] = useState(0);
-  const [resultsSize, setResultsSize] = useState(20);
+  const [resultsSize] = useState(20);
 
-  const [requestPayload, setRequestPayload] = useState<RequestPayload>({
-    size: resultsSize,
-    from: offset,
-    aggregations: aggregations,
-  });
+  const [requestPayload, setRequestPayload] = useState<RequestPayload>(defaultRequestPayload);
 
   const setKeyWordQuery = (keyword: string) => {
     setOffset(0);
-    setRequestPayload({
-      from: 0,
-      size: resultsSize,
-      query: {
-        multi_match: {
-          query: keyword,
-          fields: ['documentTitle', 'documentContent'],
-        },
-      },
-      aggregations: aggregations,
-    });
+
+    const payload = {
+      ...(
+        esb
+          .requestBodySearch()
+          .query(
+            esb
+              .boolQuery()
+              .should(esb.matchQuery('documentTitle', keyword))
+              .should(esb.matchQuery('documentContent', keyword)),
+          )
+          .size(resultsSize)
+          .from(0) as ExtendedRequestBodySearch
+      )._body,
+      aggregations,
+    };
+
+    setRequestPayload(payload);
   };
 
   const setTagQuery = (tagId: string) => {
     setOffset(0);
 
-    setRequestPayload({
-      from: 0,
-      size: resultsSize,
-      query: {
-        nested: {
-          path: 'taxonomyTerms',
-          query: {
-            match: { 'taxonomyTerms.tagId': tagId },
-          },
-        },
-      },
-      aggregations: aggregations,
-    });
-  };
+    const payload = {
+      ...(
+        esb
+          .requestBodySearch()
+          .query(
+            esb
+              .nestedQuery()
+              .path('taxonomyTerms')
+              .query(esb.boolQuery().must(esb.matchQuery('taxonomyTerms.tagId', tagId))),
+          )
+          .size(resultsSize)
+          .from(0) as ExtendedRequestBodySearch
+      )._body,
+      aggregations,
+    };
 
-  const setContentSourceQuery = (contentSourceKey: string) => {
-    setOffset(0);
-
-    setRequestPayload({
-      from: 0,
-      size: resultsSize,
-      query: {
-        match: {
-          contentSource: contentSourceKey,
-        },
-      },
-      aggregations: aggregations,
-    });
+    setRequestPayload(payload);
   };
 
   const setTopicQuery = (key: string) => {
     setOffset(0);
 
-    setRequestPayload({
-      from: 0,
-      size: resultsSize,
-      query: {
-        nested: {
-          path: 'taxonomyTerms',
-          query: {
-            match: { 'taxonomyTerms.termLabel': key },
-          },
-        },
-      },
-      aggregations: aggregations,
-    });
+    // setRequestPayload({
+    //   from: 0,
+    //   size: resultsSize,
+    //   query: {
+    //     nested: {
+    //       path: 'taxonomyTerms',
+    //       query: {
+    //         match: { 'taxonomyTerms.termLabel': key },
+    //       },
+    //     },
+    //   },
+    //   aggregations: aggregations,
+    // });
+
+    const payload = {
+      ...(
+        esb
+          .requestBodySearch()
+          .query(
+            esb
+              .nestedQuery()
+              .path('taxonomyTerms')
+              .query(esb.boolQuery().must(esb.matchQuery('taxonomyTerms.termLabel', key))),
+          )
+          .size(resultsSize)
+          .from(0) as ExtendedRequestBodySearch
+      )._body,
+      aggregations,
+    };
+
+    setRequestPayload(payload);
   };
 
-  const setInformationTypeQuery = (informationTypeKey: string) => {
+  const setBasicQuery = ({ key, value }: { key: queryKeys; value: string }) => {
     setOffset(0);
 
-    setRequestPayload({
-      from: 0,
-      size: resultsSize,
-      query: {
-        match: {
-          informationType: informationTypeKey,
-        },
-      },
-      aggregations: aggregations,
-    });
+    const payload = {
+      ...(
+        esb
+          .requestBodySearch()
+          .query(esb.boolQuery().must(esb.matchQuery(key, value)))
+          .size(resultsSize)
+          .from(0) as ExtendedRequestBodySearch
+      )._body,
+      aggregations,
+    };
+
+    setRequestPayload(payload);
   };
-
-  const setJurisdictionQuery = (jurisdictionKey: string) => {
-    setOffset(0);
-
-    setRequestPayload({
-      from: 0,
-      size: resultsSize,
-      query: {
-        match: {
-          jurisdiction: jurisdictionKey,
-        },
-      },
-      aggregations: aggregations,
-    });
-  };
-
-  function checkEmptyAggregation(aggregation: { doc_count: number }) {
-    return aggregation.doc_count !== 0;
-  }
 
   useEffect(() => {
     const newRequestPayload = { ...requestPayload };
@@ -275,6 +289,10 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
           topics,
         } = response?.es_response?.aggregations || {};
 
+        const checkEmptyAggregation = (aggregation: { doc_count: number }) => {
+          return aggregation.doc_count !== 0;
+        };
+
         setContentSources(contentSource?.buckets?.filter?.(checkEmptyAggregation) || []);
 
         setInformationTypes(informationType?.buckets?.filter?.(checkEmptyAggregation) || []);
@@ -300,7 +318,7 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
         setKeyWordQuery(searchText);
       } else {
         {
-          setRequestPayload({ aggregations: aggregations });
+          setRequestPayload(defaultRequestPayload);
         }
       }
     }
@@ -443,7 +461,10 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
-                                    setContentSourceQuery(contentSource.key);
+                                    setBasicQuery({
+                                      key: queryKeys.contentSource,
+                                      value: contentSource.key,
+                                    });
                                   }}
                                   key={`content-source-${i}`}
                                 >
@@ -469,7 +490,10 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
-                                    setInformationTypeQuery(informationType.key);
+                                    setBasicQuery({
+                                      key: queryKeys.informationType,
+                                      value: informationType.key,
+                                    });
                                   }}
                                   key={`content-source-${i}`}
                                 >
@@ -495,7 +519,10 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
-                                    setJurisdictionQuery(jurisdiction.key);
+                                    setBasicQuery({
+                                      key: queryKeys.jurisdiction,
+                                      value: jurisdiction.key,
+                                    });
                                   }}
                                   key={`content-source-${i}`}
                                 >
@@ -594,7 +621,7 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                       <div>
                         <Box size={'extraSmall'}>
                           <div>
-                            <h3>People</h3>
+                            <h3>Geography</h3>
                             {geography.map((topic: Record<string, any>, i) => {
                               return (
                                 <Styled.filtersTag
