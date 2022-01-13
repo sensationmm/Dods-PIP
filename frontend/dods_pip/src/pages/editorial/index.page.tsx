@@ -1,9 +1,6 @@
-import DatePicker from '@dods-ui/components/_form/DatePicker';
-import InputSearch from '@dods-ui/components/_form/InputSearch';
-import SearchDropdown from '@dods-ui/components/_form/SearchDropdown';
-import Box from '@dods-ui/components/_layout/Box';
-import Panel from '@dods-ui/components/_layout/Panel';
-import Spacer from '@dods-ui/components/_layout/Spacer';
+import React, { useEffect, useState } from 'react';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
 import Button from '@dods-ui/components/Button';
 import DataCount from '@dods-ui/components/DataCount';
@@ -11,13 +8,16 @@ import Icon from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import RepositoryTable, { RepositoryTableProps } from '@dods-ui/components/RepositoryTable';
 import Text from '@dods-ui/components/Text';
+import DatePicker from '@dods-ui/components/_form/DatePicker';
+import InputSearch from '@dods-ui/components/_form/InputSearch';
+import SearchDropdown from '@dods-ui/components/_form/SearchDropdown';
+import Box from '@dods-ui/components/_layout/Box';
+import Panel from '@dods-ui/components/_layout/Panel';
+import Spacer from '@dods-ui/components/_layout/Spacer';
 import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import { MetadataSelection } from '@dods-ui/pages/editorial/editorial.models';
 import { getMetadataSelections } from '@dods-ui/pages/editorial/editorial.service';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
 
 import * as Styled from './index.page.styles';
 
@@ -86,7 +86,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
             icon={Icons.Add}
             iconAlignment="left"
             inline
-            onClick={() => router.push('editorial/new')}
+            onClick={() => router.push('editorial/article')}
             width="auto"
             isSmall={true}
             label="Create Content"

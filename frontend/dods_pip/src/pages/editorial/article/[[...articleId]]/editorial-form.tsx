@@ -1,16 +1,17 @@
+import dynamic from 'next/dynamic';
+import React, { useState } from 'react';
+import JsxParser from 'react-jsx-parser';
+import ContentTagger, { TagsData } from '@dods-ui/components/ContentTagger';
+import Icon, { IconSize } from '@dods-ui/components/Icon';
+import { Icons } from '@dods-ui/components/Icon/assets';
+import SectionAccordion from '@dods-ui/components/SectionAccordion';
+import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import InputText from '@dods-ui/components/_form/InputText';
 import SearchDropdown from '@dods-ui/components/_form/SearchDropdown';
 import { SelectItem } from '@dods-ui/components/_form/Select';
 import SectionHeader from '@dods-ui/components/_layout/SectionHeader';
 import Spacer from '@dods-ui/components/_layout/Spacer';
-import ContentTagger, { TagsData } from '@dods-ui/components/ContentTagger';
-import Icon, { IconSize } from '@dods-ui/components/Icon';
-import { Icons } from '@dods-ui/components/Icon/assets';
-import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import * as Validation from '@dods-ui/utils/validation';
-import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
-import JsxParser from 'react-jsx-parser';
 
 import * as Styled from './editorial-from.styles';
 
@@ -89,54 +90,57 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   return (
     <Styled.mainColumns>
       <div>
-        <SectionHeader
-          title="Meta data"
-          icon={<Icon src={Icons.Checklist} size={IconSize.xlarge} />}
-        />
-
-        <Spacer size={7.5} />
-
-        <Styled.inputFields>
-          <SearchDropdown
-            testId="editorial-content-source"
-            size={'medium'}
-            id={'content-source'}
-            placeholder={fieldData.sourceName || 'Content source'}
-            selectedValues={[fieldData.sourceName]}
-            label={'Content source'}
-            values={contentSourceValues}
-            required
-            onChange={(value) => {
-              onFieldChange('sourceName', value);
-              validateField('sourceName', fieldData.sourceName);
-            }}
-            onBlur={() => validateField('sourceName', fieldData.sourceName)}
-          />
-          <SearchDropdown
-            testId="editorial-info-type"
-            size={'medium'}
-            id={'info-type'}
-            selectedValues={[fieldData.informationType]}
-            placeholder={fieldData.informationType || 'Information type'}
-            label={'Information type'}
-            values={infoTypeValues}
-            required
-            onChange={(value) => {
-              onFieldChange('informationType', value);
-              validateField('informationType', fieldData.informationType);
-            }}
-            onBlur={() => validateField('informationType', fieldData.informationType)}
-          />
-          <InputText
-            id="contentSourceUrl"
-            testId={'content-source-url'}
-            value={fieldData.sourceUrl}
-            optional
-            label="Content Source (URL)"
-            placeholder="www.api-link-source.com"
-            onChange={(value) => onFieldChange('sourceUrl', value)}
-          />
-        </Styled.inputFields>
+        <SectionAccordion
+          header={
+            <SectionHeader
+              title="Meta data"
+              icon={<Icon src={Icons.Checklist} size={IconSize.xlarge} />}
+            />
+          }
+          isOpen={true}
+        >
+          <Styled.inputFields>
+            <SearchDropdown
+              testId="editorial-content-source"
+              size={'medium'}
+              id={'content-source'}
+              placeholder={fieldData.sourceName || 'Content source'}
+              selectedValues={[fieldData.sourceName]}
+              label={'Content source'}
+              values={contentSourceValues}
+              required
+              onChange={(value) => {
+                onFieldChange('sourceName', value);
+                validateField('sourceName', fieldData.sourceName);
+              }}
+              onBlur={() => validateField('sourceName', fieldData.sourceName)}
+            />
+            <SearchDropdown
+              testId="editorial-info-type"
+              size={'medium'}
+              id={'info-type'}
+              selectedValues={[fieldData.informationType]}
+              placeholder={fieldData.informationType || 'Information type'}
+              label={'Information type'}
+              values={infoTypeValues}
+              required
+              onChange={(value) => {
+                onFieldChange('informationType', value);
+                validateField('informationType', fieldData.informationType);
+              }}
+              onBlur={() => validateField('informationType', fieldData.informationType)}
+            />
+            <InputText
+              id="contentSourceUrl"
+              testId={'content-source-url'}
+              value={fieldData.sourceUrl}
+              optional
+              label="Content Source (URL)"
+              placeholder="www.api-link-source.com"
+              onChange={(value) => onFieldChange('sourceUrl', value)}
+            />
+          </Styled.inputFields>
+        </SectionAccordion>
 
         <Spacer size={10} />
 
