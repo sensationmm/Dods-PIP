@@ -1,4 +1,4 @@
-import { Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
+import { AlertDocumentInput, AlertInput, AlertQueryInput, Collection, CollectionAlert, CollectionAlertDocument, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
     CollectionAlertsPersister,
     CreateAlertParameters,
@@ -19,16 +19,17 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     static defaultInstance: CollectionAlertsRepository = new CollectionAlertsRepository(
         CollectionAlert,
         Collection,
+        CollectionAlertDocument,
         CollectionAlertQuery,
         CollectionAlertRecipient,
         User,
         CollectionAlert
-
     );
 
     constructor(
         private model: typeof CollectionAlert,
         private collectionModel: typeof Collection,
+        private alertDocumentModel: typeof CollectionAlertDocument,
         private alertQueryModel: typeof CollectionAlertQuery,
         private recipientModel: typeof CollectionAlertRecipient,
         private userModel: typeof User,
@@ -37,7 +38,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     ) { }
 
     #cloneObject(target: CollectionAlert,
-        replaceProperties?: Partial<CollectionAlert>,
+        replaceProperties?: AlertInput,
         unwantedProperties?: Array<string>) {
 
         const copiedObject = Object.assign({}, target, replaceProperties);
@@ -46,8 +47,8 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return copiedObject;
     }
 
-    #cloneArray(target: CollectionAlertQuery[],
-        replaceProperties?: Partial<CollectionAlertQuery>,
+    #cloneArray(target: CollectionAlertQuery[] | CollectionAlertDocument[],
+        replaceProperties?: AlertQueryInput | AlertDocumentInput,
         unwantedProperties?: Array<string>) {
         const copiedArray = target.slice().map(item => { return { ...item, ...replaceProperties } });
         if (unwantedProperties)
@@ -340,7 +341,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Unable to retrieve Alert with uuid: ${alertId}`);
 
 
-        // Copy alert
+        // * Copy alert
         const copiedAlert: CollectionAlert = this.#cloneObject(existingAlert, {
             collectionId: destinationCollection.id,
             createdBy: alertCreator.id,
@@ -349,7 +350,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const alert = await this.alertModel.create({ ...copiedAlert });
         await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
 
-        // Copy queries
+        // * Copy queries
         const existingQueries = await this.alertQueryModel.findAll({
             where: {
                 alertId: existingAlert.id,
@@ -365,6 +366,24 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']) as CollectionAlertQuery[]
 
             await this.alertQueryModel.bulkCreate(copiedQueries);
+        }
+
+        // * Copy collection documents
+        const existingAlertDocuments = await this.alertDocumentModel.findAll({
+            // TODO: is there an "isActive" column in the database for this model? If so, add to where clausule 'isActive: true'
+            where: {
+                alertId: existingAlert.id,
+            },
+            raw: true,
+        });
+
+        if (existingAlertDocuments && existingAlertDocuments.length > 0) {
+            const copiedAlertDocs: CollectionAlertDocument[] = this.#cloneArray(existingAlertDocuments, {
+                alertId: alert.id,
+                createdBy: alertCreator.id
+                // TODO: is there an "updatedBy" column in the database for this model? If so, add 'updatedBy' to the array
+            }, ['createdAt', 'updatedAt', 'deletedAt']) as CollectionAlertDocument[]
+            await this.alertDocumentModel.bulkCreate(copiedAlertDocs);
         }
 
 
