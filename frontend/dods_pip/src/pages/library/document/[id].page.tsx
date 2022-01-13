@@ -1,77 +1,112 @@
-import moment from 'moment';
+import Box from '@dods-ui/components/_layout/Box';
+import Panel from '@dods-ui/components/_layout/Panel';
+import { format } from 'date-fns';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import Box from '../../../components/_layout/Box';
-import Breadcrumbs from '../../../components/Breadcrumbs';
 import fetchJson from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
 import { ESResponse } from '../index.page';
-import * as Styled from '../library.styles';
+import * as Styled from './document.styles';
+import Header from './header';
 
-export const DocumentViewer = () => {
+interface DocumentViewerProps {
+  apiResponse: ESResponse;
+  formattedTime: string;
+}
+
+export const DocumentViewer: React.FC<DocumentViewerProps> = ({ apiResponse, formattedTime }) => {
   const router = useRouter();
+  const [selectedTab, setSelectedTab] = useState<'content' | 'details'>('content');
+  const documentId = router.query.id as string;
+  const { documentTitle, contentSource, sourceReferenceUri, informationType, documentContent } =
+    apiResponse;
 
-  const [apiResponse, setApiResponse] = useState<ESResponse>({});
-  const documentId = router.query.id;
-  const [formattedTime, setFormattedTime] = useState('');
+  return (
+    <Panel>
+      <Header
+        documentTitle={documentTitle}
+        contentSource={contentSource}
+        sourceReferenceUri={sourceReferenceUri}
+        informationType={informationType}
+        formattedTime={formattedTime}
+        documentId={documentId}
+      />
+      <Styled.body>
+        <Styled.tags>
+          <Box>tags...</Box>
+        </Styled.tags>
+        <Styled.main>
+          <Styled.tabs>
+            <Styled.tab
+              type="button"
+              className={selectedTab === 'content' ? 'selected' : ''}
+              onClick={() => setSelectedTab('content')}
+            >
+              Content
+            </Styled.tab>
+            <Styled.tab
+              type="button"
+              className={selectedTab === 'details' ? 'selected' : ''}
+              onClick={() => setSelectedTab('details')}
+            >
+              Details
+            </Styled.tab>
+          </Styled.tabs>
+          {selectedTab === 'content' ? (
+            <div
+              dangerouslySetInnerHTML={{
+                __html: documentContent || '',
+              }}
+            />
+          ) : (
+            'Details...'
+          )}
+        </Styled.main>
+      </Styled.body>
+    </Panel>
+  );
+};
 
-  useEffect(() => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { query, req } = context;
+
+  const documentId = query.id;
+  let response: ESResponse = {};
+
+  try {
     const payload = {
       query: {
         match: {
-          documentId: documentId,
+          documentId,
         },
       },
     };
-
     const sPayload = JSON.stringify(payload);
-    if (documentId) {
-      (async () => {
-        try {
-          const response = (await fetchJson(`${BASE_URI}${Api.ContentSearchApp}`, {
-            body: JSON.stringify({ query: sPayload }),
-            method: 'POST',
-          })) as ESResponse;
+    const { host } = req.headers;
+    response = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
+      body: JSON.stringify({ query: sPayload }),
+      method: 'POST',
+    })) as ESResponse;
+  } catch (error) {
+    console.error(error);
+  }
 
-          setApiResponse(response.es_response?.hits.hits[0]._source);
+  const data = response.es_response?.hits.hits[0]._source;
 
-          setFormattedTime(
-            moment(response.es_response?.hits.hits[0]._source.contentDateTime).format(
-              'Do MMMM YYYY h:mm',
-            ),
-          );
-        } catch (error) {
-          console.log(error);
-        }
-      })();
-    }
-  }, [documentId]);
-  return (
-    <Styled.documentViewerWrapper>
-      {apiResponse && (
-        <Box>
-          <Breadcrumbs
-            history={[
-              { href: '/', label: 'Dods' },
-              { href: '/library', label: 'Library' },
-              { href: '/library', label: apiResponse.documentTitle || '' },
-            ]}
-          />
-          <h1>{apiResponse?.documentTitle}</h1>
-          <Styled.infoRow>
-            {' '}
-            {apiResponse?.contentSource} | {apiResponse.informationType} | {formattedTime}
-          </Styled.infoRow>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: apiResponse?.documentContent || '',
-            }}
-          />
-        </Box>
-      )}
-    </Styled.documentViewerWrapper>
-  );
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const date = new Date(data.contentDateTime);
+  const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
+
+  return {
+    props: { apiResponse: data, formattedTime },
+  };
 };
 
 export default DocumentViewer;

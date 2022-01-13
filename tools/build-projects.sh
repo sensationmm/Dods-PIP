@@ -5,7 +5,7 @@ read -r -d '' USAGE_TEXT << EOM
 Usage:
   build-projects.sh <project>...
 
-  Trigger build for all given projects and wait till all builds are successful.
+  Trigger custom pipeline for a given project, wait until all potential jobs are successful.
   Project is identified with relative path to project's root directory from repository root.
   When one of build fail then exit with error message.
 
@@ -13,7 +13,7 @@ Usage:
       BUILD_MAX_SECONDS - maximum time in seconds to wait for all builds (15 minutes by default)
       BUILD_CHECK_AFTER_SECONDS - delay between checking status of builds again (15 seconds by default)  
   
-  <project>       id of project to build
+  <project>       name of project to build
                   minimally one, can be multiple
 EOM
 
@@ -37,11 +37,13 @@ fi
 # Trigger build for all given projects
 PROJECTS=()
 for PROJECT in $@; do
-    echo "Triggering build for project '$PROJECT'"
-    PROJECT_NAME=$(basename $PROJECT)
-    BUILD_NUM=$(${CI_PLUGIN} build $PROJECT_NAME)    
+    PROJECT_NAME=${PROJECT##*/}  #basename
+    PROJECT_FOLDER=${PROJECT%/*}   #dirname
+    JOB_NAME="build_${PROJECT_FOLDER}"
+    echo "Triggering 'build' job $JOB_NAME with ENV $PROJECT_NAME"
+    BUILD_NUM=$(${CI_PLUGIN} build $JOB_NAME $PROJECT_NAME)    
     if [[ -z ${BUILD_NUM} ]] || [[ ${BUILD_NUM} -eq "null" ]]; then
-        echo "WARN: No build triggered for project '$PROJECT'. Please check if pipeline is defined in your build tool."
+        echo "WARN: No build triggered for project '$PROJECT'. Please check if pipeline $JOB_NAME is defined in your build tool."
     else 
         echo "Build triggered for project '$PROJECT' with number '$BUILD_NUM'"    
         PROJECTS=(${PROJECTS[@]} "$PROJECT,$BUILD_NUM,null")

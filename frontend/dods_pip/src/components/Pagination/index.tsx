@@ -8,13 +8,13 @@ import { Icons } from '../Icon/assets';
 import Text from '../Text';
 import * as Styled from './Pagination.styles';
 
-type NumPerPage = '30' | '60' | '90';
+type NumPerPage = '10' | '30' | '60' | '90';
 
 export type PaginationProps = {
   dataLength: number;
 };
 
-type PaginationType = {
+export type PaginationType = {
   activePage: number;
   numPerPage: number;
   PaginationStats: React.FC;
@@ -22,9 +22,9 @@ type PaginationType = {
   PaginationButtons: React.FC;
 };
 
-const Pagination = (dataLength: number): PaginationType => {
+const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): PaginationType => {
   const [activePage, setActivePage] = React.useState<number>(0);
-  const [numPerPage, setNumPerPage] = React.useState<NumPerPage>('30');
+  const [numPerPage, setNumPerPage] = React.useState<NumPerPage>(numPerPageOverride);
   const numPages = Math.ceil(dataLength / parseInt(numPerPage));
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const Pagination = (dataLength: number): PaginationType => {
     );
   };
 
-  const PaginationStats: React.FC = () => {
+  const PaginationStats: React.FC = ({ children }) => {
     const changeLayout = (num: string) => {
       setNumPerPage(num as NumPerPage);
       setActivePage(0);
@@ -105,6 +105,7 @@ const Pagination = (dataLength: number): PaginationType => {
         <Text type="bodySmall" color={color.base.grey} data-test="item-count">
           Showing {dataLength > 0 ? start + 1 : 0}-{Math.min(dataLength, end)} of {dataLength}
         </Text>
+        {children}
         <Styled.perPage>
           <Text type="bodySmall" color={color.base.grey}>
             Items per page&nbsp;
@@ -115,6 +116,7 @@ const Pagination = (dataLength: number): PaginationType => {
             data-test="set-page-count"
             size="small"
             options={[
+              { value: '10', label: '10' },
               { value: '30', label: '30' },
               { value: '60', label: '60' },
               { value: '90', label: '90' },

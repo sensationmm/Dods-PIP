@@ -1,3 +1,24 @@
+export interface AlertOutput {
+    id: number;
+    uuid: string;
+    collection: { uuid?: string, name?: string } | {}
+    template: { id?: string, name?: string } | {}
+    isSchedule: boolean;
+    title: string;
+    description?: string | null;
+    schedule?: string | null;
+    timezone?: string | null;
+    isActive?: boolean;
+    isPublished?: boolean;
+    lastStepCompleted?: number;
+    isScheduled?: boolean;
+    hasKeywordsHighlight?: boolean;
+    createdBy: { uuid?: string, name?: string, emailAddress?: string } | {}
+    createdAt?: Date;
+    updatedBy: { uuid?: string, name?: string, emailAddress?: string } | {}
+    updatedAt?: Date | null;
+}
+
 export interface SearchCollectionAlertsParameters {
     collectionId: string;
     limit: string;
@@ -32,4 +53,75 @@ export interface getAlertsByCollectionResponse {
 export interface CollectionAlertsPersister {
 
     getCollectionAlerts(parameters: SearchCollectionAlertsParameters): Promise<getAlertsByCollectionResponse>;
+}
+
+export interface CreateAlertParameters {
+    collectionId: string,
+    title: string,
+    alertQueries?: [{
+        query: string,
+        informationTypes: string,
+        contentSources: string
+    }]
+    createdBy: string
+}
+
+export interface CreateAlertQuery {
+
+    alertId: number,
+    query: string,
+    informationTypes: string,
+    contentSources: string,
+    createdBy: number
+
+}
+
+export interface setAlertScheduleParameters {
+    collectionId: string,
+    alertId: string,
+    isScheduled: boolean,
+    hasKeywordHighlight: boolean,
+    timezone: string,
+    schedule: string,
+    updatedBy: string,
+    alertTemplateId: number
+}
+
+export interface SearchAlertParameters {
+    collectionId: string;
+    alertId: string;
+}
+
+export interface getAlertById {
+    alert: AlertOutput,
+    searchQueriesCount: number,
+    recipientsCount: number
+}
+
+
+export interface SearchAlertQueriesParameters {
+    alertId: string;
+    limit?: string;
+    offset?: string;
+    sortDirection?: string;
+}
+
+export interface AlertQueryResponse {
+    uuid: string;
+    name: string,
+    informationTypes: string;
+    contentSources: string;
+    query: string;
+    createdBy?: {
+        uuid: string;
+        name: string;
+        emailAddress: string;
+    } | null,
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface getQueriesResponse {
+    queries: AlertQueryResponse[];
+    count: number;
 }

@@ -1,6 +1,10 @@
 const { Client } = require('@elastic/elasticsearch')
 
-import {createScheduleParameters} from "../domain";
+import {
+    createScheduleParameters, 
+    deleteScheduleParameters,
+    updateScheduleParameters,
+} from "../domain";
 import { Schedule } from "./Schedule"
 import elasticsearch from "../elasticsearch"
 
@@ -10,7 +14,7 @@ export class ScheduleRepository implements Schedule {
 
     static defaultInstance: Schedule = new ScheduleRepository(elasticsearch);
 
-    static createSearchQuery(data: createScheduleParameters): any{
+    static createSearchQuery(data: createScheduleParameters|updateScheduleParameters): any{
         return{
             id: data.id,
             active: true,
@@ -33,6 +37,20 @@ export class ScheduleRepository implements Schedule {
 
     async createSchedule(data: createScheduleParameters): Promise<any> {
         const query = ScheduleRepository.createSearchQuery(data);
-        return this.elasticsearch.watcher.putWatch(query);
+        return await this.elasticsearch.watcher.putWatch(query);
     }
-}
+
+    async deleteSchedule(data: deleteScheduleParameters): Promise<void> {
+        await this.elasticsearch.watcher.deleteWatch(data);
+    }
+
+    async updateSchedule(data: updateScheduleParameters): Promise<void> {
+        const schedule =  await this.elasticsearch.watcher.getWatch({id: data.id});
+        if (schedule.statusCode == 200) {
+            const scheduleType = (schedule.body.watch.actions.webhook.webhook.path.split('/'))[3]
+            data.scheduleType = scheduleType
+            const query = ScheduleRepository.createSearchQuery(data);
+            await this.elasticsearch.watcher.putWatch(query);
+        }
+    }
+}   

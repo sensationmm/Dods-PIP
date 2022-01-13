@@ -156,5 +156,61 @@ functions:
       - http:
           method: get
           path: collections/{collectionId}
+          
+  createAlert:
+    handler: src/handlers/createAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: collections/{collectionId}/alerts
+          caching:
+            enabled: false
+
+  deleteCollection:
+    handler: src/handlers/deleteCollection/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: delete
+          path: collections/{collectionId}
+          caching:
+            enabled: false
+
+  setAlertSchedule:
+    handler: src/handlers/setAlertSchedule/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/schedule
+          caching:
+            enabled: false
+
+  setAlertRecipients:
+    handler: src/handlers/setAlertRecipients/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: collections/{collectionId}/alerts/{alertId}/recipients
+          caching:
+            enabled: false
+
+  getAlert:
+    handler: src/handlers/getAlert/index.handle
+    description: Get the basic information of an alert
+    events:
+      - http:
+          method: get
+          path: /collections/{collectionId}/alerts/{alertId}
+            
+  getAlertQueries:
+    handler: src/handlers/getAlertQueries/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: /collections/{collectionId}/alerts/{alertId}/queries
           caching:
             enabled: false

@@ -18,11 +18,13 @@ export const wrapper = styled.div.attrs(({ size }: { size: boxSizing }) => {
     paddingDesktop,
   };
 })`
-  position: relative;
-  padding: ${spacing(10)};
   background: ${color.base.white};
+  border: 1px solid ${color.base.greyLight};
   border-radius: ${spacing(2)};
-  box-shadow: ${elevation.dropShadow2};
+  box-shadow: ${elevation.dropShadowBoxComponent};
+  box-sizing: border-box;
+  padding: ${spacing(10)};
+  position: relative;
 
   @media (min-width: 1024px) {
     padding: ${(props) => props.paddingDesktop};
