@@ -1,20 +1,31 @@
-import {createScheduleParameters, getScheduleParameters} from "../../../src/domain";
+import {
+    createScheduleParameters,
+    deleteScheduleParameters,
+    getScheduleParameters,
+    updateScheduleParameters
+} from "../../../src/domain";
 import { ScheduleRepository } from "../../../src/repositories/ScheduleRepository";
 
 const mockPutWatch = jest.fn();
 const mockGetWatch = jest.fn();
-mockGetWatch.mockImplementation(() => Promise.resolve({body: {
-    watch: {
-        actions: {webhook: {webhook: {path: "123"}}},
-        trigger: {schedule: {cron: "123"}}
+const mockDeleteWatch = jest.fn();
+
+mockGetWatch.mockImplementation(() => Promise.resolve({
+    body: {
+        watch: {
+            actions: {webhook: {webhook: {path: "123"}}},
+            trigger: {schedule: {cron: "123"}}
+        },
+        status: {state: {active: true}},
     },
-    status: {state: {active: true}}
-}}))
+    statusCode: 200
+}))
 
 jest.mock('../../../src/elasticsearch', () => ({
     watcher: {
         putWatch: () => mockPutWatch(),
         getWatch: () => mockGetWatch(),
+        deleteWatch: () => mockDeleteWatch(),
     }
 }));
 
@@ -65,4 +76,25 @@ describe(`Schedule repository tests`, () => {
 
         expect(mockPutWatch).toHaveBeenCalledTimes(1);
     });
+
+    test(`deleteSchedule calls deleteWatch`, async () => {
+        const deleteScheduleParameters: deleteScheduleParameters = {
+            id: "123"
+        }
+        await ScheduleRepository.defaultInstance.deleteSchedule(deleteScheduleParameters)
+
+        expect(mockDeleteWatch).toHaveBeenCalledTimes(1);
+    });
+
+    test(`updateSchedule updates the schedule`, async () => {
+        const updateScheduleParameters: updateScheduleParameters = {
+            id: "123",
+            cron: "123"
+        }
+        await ScheduleRepository.defaultInstance.updateSchedule(updateScheduleParameters)
+
+        expect(mockGetWatch).toHaveBeenCalled();
+        expect(mockPutWatch).toHaveBeenCalled();
+    });
+
 });

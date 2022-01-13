@@ -38,6 +38,7 @@ export class ScheduleRepository implements Schedule {
 
     async createSchedule(data: createScheduleParameters): Promise<any> {
         const query = ScheduleRepository.createSearchQuery(data);
+
         return await this.elasticsearch.watcher.putWatch(query);
     }
 
