@@ -24,7 +24,6 @@ function fail {
 }
 
 #---- Main -----
-
 require_env_var ENVIRONMENT
 
 Environments=('DEV' 'PRODUCTION' 'QA' 'TEST')

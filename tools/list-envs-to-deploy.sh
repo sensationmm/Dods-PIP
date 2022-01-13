@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+## TODO: fix following description
 ##
 # List all dependencies between projects.
 # Poject is identified with relative path to project's root directory from repository root.
@@ -21,16 +22,23 @@ set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
  
 # Configuration with default values
-: "${CI_DEPENDENCIES_FILE:=.ci/dependencies.txt}"
+: "${CI_DEPLOYMENTS_FILE:=.ci/deployments.txt}"
 
-# Look for dependecies of each project
-for PROJECT in $(${DIR}/list-projects.sh); do   
+# Validate requirements
+if [[ "$#" -eq 0 ]]; then
+    echo "ERROR: No folder project specified. You must provide a project folder as input parameter."
+    exit 1
+fi
 
-    # Look into dependency file where each row is path to other project
-    DEPENDENCIES_FILE="$DIR/../$PROJECT/$CI_DEPENDENCIES_FILE"
-    if [[ -f $DEPENDENCIES_FILE ]]; then
-        for INCLUDE in $(cat $DEPENDENCIES_FILE); do 
-            echo "$PROJECT $INCLUDE"
-        done
-    fi
-done
+PROJECT=$1
+
+# Look into deployments file where each row is an environment to deploy to
+DEPLOYMENTS_FILE="$DIR/../$PROJECT/$CI_DEPLOYMENTS_FILE"
+if [[ -f $DEPLOYMENTS_FILE ]]; then
+    for ENV in $(cat $DEPLOYMENTS_FILE); do 
+        echo "$ENV"
+    done
+else
+    echo "ERROR: Could NOT find list of environments to deploy, should be $DEPLOYMENTS_FILE"
+    exit 1
+fi
