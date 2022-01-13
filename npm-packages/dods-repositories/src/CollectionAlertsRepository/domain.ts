@@ -105,6 +105,13 @@ export interface CopyAlertParameters {
     createdBy: string;
 }
 
+export interface CopyAlertResponse {
+    alert: AlertOutput,
+    documentsCount: number,
+    searchQueriesCount: number,
+    recipientsCount: number
+}
+
 export interface SearchAlertQueriesParameters {
     alertId: string;
     limit?: string;

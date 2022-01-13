@@ -11,7 +11,8 @@ import {
     SearchCollectionAlertsParameters,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters
+    setAlertScheduleParameters,
+    CopyAlertResponse
 } from './domain';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
@@ -302,7 +303,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
     }
 
-    async copyAlert(parameters: CopyAlertParameters): Promise<AlertOutput> {
+    async copyAlert(parameters: CopyAlertParameters): Promise<CopyAlertResponse> {
         const { collectionId, alertId, destinationCollectionId, createdBy } = parameters;
 
         // * Retrieve initial data and validate data integrity
@@ -390,7 +391,12 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
 
 
-        return this.mapAlert(alert);
+        return {
+            alert: this.mapAlert(alert),
+            searchQueriesCount: existingQueries.length,
+            documentsCount: existingAlertDocuments.length,
+            recipientsCount: 0
+        }
     }
 
     async getAlertQueries(parameters: SearchAlertQueriesParameters): Promise<getQueriesResponse> {
