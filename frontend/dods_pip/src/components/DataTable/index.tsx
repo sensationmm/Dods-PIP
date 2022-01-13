@@ -1,6 +1,8 @@
+import color from '@dods-ui/globals/color';
 import trim from 'lodash/trim';
 import React from 'react';
 
+import Text from '../Text';
 import * as Styled from './DataTable.styles';
 
 type DataTableHeadingProps = {
@@ -20,7 +22,10 @@ export type DataTableDataProps = {
   data: Array<DataObject>;
 };
 
-export interface DataTableProps extends DataTableHeadingProps, DataTableRowProps {}
+export interface DataTableProps extends DataTableHeadingProps, DataTableRowProps {
+  emptyMessage?: string;
+  emptyAction?: JSX.Element;
+}
 
 export const DataTableHeading: React.FC<DataTableHeadingProps> = ({ headings, colWidths }) => {
   const totalWidths = colWidths ? colWidths.reduce((prev, curr) => prev + curr, 0) : 0;
@@ -145,7 +150,13 @@ export const DataTableSort = (data: any): any => {
   });
 };
 
-const DataTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => (
+const DataTable: React.FC<DataTableProps> = ({
+  headings,
+  colWidths,
+  rows,
+  emptyMessage,
+  emptyAction,
+}) => (
   <Styled.wrapper data-test="component-data-table" cellSpacing={0}>
     <DataTableHeading headings={headings} colWidths={colWidths} />
     {rows.length > 0 ? (
@@ -156,9 +167,14 @@ const DataTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => (
           <Styled.tableCellEmpty isFirst colSpan={headings.length} />
         </Styled.tableRow>
         <Styled.tableRow>
-          <Styled.tableCellNoData data-test="empty-data-warning" colSpan={headings.length}>
-            No data to show
-          </Styled.tableCellNoData>
+          <Styled.tableCell colSpan={headings.length} isLast>
+            <Styled.tableCellNoData data-test="empty-data-warning">
+              <Text center color={color.base.grey}>
+                {emptyMessage || 'No data to show'}
+              </Text>
+              {emptyAction}
+            </Styled.tableCellNoData>
+          </Styled.tableCell>
         </Styled.tableRow>
       </Styled.tableBody>
     )}
@@ -167,7 +183,13 @@ const DataTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => (
 
 export default DataTable;
 
-export const PlainTable: React.FC<DataTableProps> = ({ headings, colWidths, rows }) => {
+export const PlainTable: React.FC<DataTableProps> = ({
+  headings,
+  colWidths,
+  rows,
+  emptyMessage,
+  emptyAction,
+}) => {
   return (
     <Styled.wrapper data-test="component-data-table" cellSpacing={0}>
       <PlainTableHeading headings={headings} colWidths={colWidths} />
@@ -176,9 +198,14 @@ export const PlainTable: React.FC<DataTableProps> = ({ headings, colWidths, rows
       ) : (
         <Styled.tableBody>
           <Styled.tableRow>
-            <Styled.plainCellNoData data-test="empty-data-warning" colSpan={headings.length}>
-              No data to show
-            </Styled.plainCellNoData>
+            <Styled.tableCell colSpan={headings.length} isLast>
+              <Styled.tableCellNoData data-test="empty-data-warning">
+                <Text center color={color.base.grey}>
+                  {emptyMessage || 'No data to show'}
+                </Text>
+                {emptyAction}
+              </Styled.tableCellNoData>
+            </Styled.tableCell>
           </Styled.tableRow>
         </Styled.tableBody>
       )}

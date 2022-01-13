@@ -1,2 +1,0 @@
-scrapping/lib
-scrapping/templates

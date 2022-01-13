@@ -11,19 +11,12 @@ Requires bitbucket environment variables (additional may be required for specifi
     BITBUCKET_REPO_FULL_NAME
     
 Available commands:  
-    build <job> <project_name>  Starts the build <job> of given project
-                                outputs build number
-                                requires: BITBUCKET_BRANCH
-
-    deploy <job> <project_name> <environment>  Starts the deployment <job> of given project
-                                outputs build number
-                                requires: BITBUCKET_BRANCH
-                       
+    build <project_name>    start build of given project
+                            outputs build number
+                            requires: BITBUCKET_BRANCH
     status <build_number>   get status of build identified by given build number
                             outputs one of: success | failed | null
-
     kill <build_number>     kills running build identified by given build number                            
-
     hash <position>         get revision hash on given positions
                             available positions:
                                 last        hash of last succesfull build commit
@@ -124,83 +117,26 @@ function get {
 # Trigger build in bitbucket
 #
 # Input:
-#   JOB_NAME - custom job to handle type of project build
 #   PROJECT_NAME - name of project to start build for
 #
 # Output:
 #   build number
 ##
 function trigger_build {
-    local JOB_NAME=$1
-    local SERVICE=$2
+    local PROJECT_NAME=$1
     require_env_var BITBUCKET_BRANCH
-    require_not_null "Job name not speficied" ${JOB_NAME} 
-    require_not_null "Service name not speficied" ${SERVICE} 
+    require_not_null "Project name not speficied" ${PROJECT_NAME} 
     BODY="$(cat <<-EOM
     {
         "target": {
             "selector": {
                 "type": "custom",
-                "pattern": "$JOB_NAME"
+                "pattern": "$PROJECT_NAME"
             },
             "type": "pipeline_ref_target",
             "ref_name": "$BITBUCKET_BRANCH",
             "ref_type": "branch"
-        },
-        "variables": [
-            {
-                "key": "SERVICE",
-                "value": "$SERVICE"
-            }
-        ]
-    }   
-EOM
-    )"
-    TRIGGER_RESPONSE=$(post "pipelines/" "${BODY}")
-    echo "$TRIGGER_RESPONSE" | jq -r '.["uuid"]'
-}
-
-##
-# Trigger deployment in bitbucket
-#
-# Input:
-#   JOB_NAME - custom job to handle type of project deployment
-#   PROJECT_NAME - name of project to start deployment for
-#   ENVIRONMENT - AWS environment to deploy project on
-#
-# Output:
-#   build number
-##
-function trigger_deploy {
-    local JOB_NAME=$1
-    local SERVICE=$2
-    local ENVIRONMENT=$3
-    require_env_var BITBUCKET_BRANCH
-    require_not_null "Job name not speficied" ${JOB_NAME} 
-    require_not_null "Service name not speficied" ${SERVICE} 
-    require_not_null "Environment not speficied" ${ENVIRONMENT} 
-
-    BODY="$(cat <<-EOM
-    {
-        "target": {
-            "selector": {
-                "type": "custom",
-                "pattern": "$JOB_NAME"
-            },
-            "type": "pipeline_ref_target",
-            "ref_name": "master",
-            "ref_type": "branch"
-        },
-        "variables": [
-            {
-                "key": "SERVICE",
-                "value": "$SERVICE"
-            },
-            {
-                "key": "ENVIRONMENT",
-                "value": "$ENVIRONMENT"
-            }
-        ]
+        }
     }   
 EOM
     )"
@@ -223,15 +159,15 @@ function get_build_status {
     STATUS_RESPONSE=$(get pipelines/${BUILD_NUM})
     STATUS=$(echo "$STATUS_RESPONSE" | jq -r '.state.result.name')
     case $STATUS in
-      SUCCESSFUL)
-        echo "success"
-        ;;
-      FAILED)
-        echo "failed"
-        ;;
-      *)
-        echo "null"
-        ;;
+        SUCCESSFUL)
+            echo "success"
+            ;;
+        FAILED)
+            echo "failed"
+            ;;
+        *)
+            echo "null"
+            ;;
     esac
 }
 
@@ -285,34 +221,31 @@ require_env_var BITBUCKET_USER
 require_env_var BITBUCKET_PASSWORD
 require_env_var BITBUCKET_REPO_FULL_NAME
 
-# Parse script invocation
+# Parse command
 case $1 in
     build)        
-      trigger_build $2 $3
-      ;;
-    deploy)
-      trigger_deploy $2 $3 $4
-      ;;
+        trigger_build $2
+        ;;
     status)
-      get_build_status $2
-      ;;
+        get_build_status $2
+        ;;
     kill)
-      kill_build $2
-      ;;    
+        kill_build $2
+        ;;    
     hash)
-      case $2 in
-        last)
-          get_last_successful_commit
-          ;;
-        current)
-          get_current_commit
-            ;;
-        *)
-          fail "Unknown hash position $2"             
-          ;;
-      esac
-      ;;        
+        case $2 in
+            last)
+                get_last_successful_commit
+                ;;
+            current)
+                get_current_commit
+                ;;
+            *)
+                fail "Unknown hash position $2"             
+                ;;
+        esac
+        ;;        
     *)
-      fail "Unknown command $1"
-      ;;        
+        fail "Unknown command $1"
+        ;;        
 esac
