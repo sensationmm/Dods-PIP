@@ -17,6 +17,8 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as Styled from './library.styles';
+import Facet from '@dods-ui/components/_form/Facet';
+import Checkbox from "@dods-ui/components/_form/Checkbox";
 
 const aggregations = {
   topics: {
@@ -399,30 +401,24 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                 {apiResponse?.hits?.hits.length !== 0 && (
                   <Styled.filtersContent>
                     {contentSources && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Content Source</h3>
-                            {contentSources.map((contentSource: Record<string, any>, i) => {
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setContentSourceQuery(contentSource.key);
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={contentSource.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet label="Content Source">
+                        {contentSources.map((contentSource: Record<string, any>, i) => {
+                          return (
+                            <Styled.filtersTag
+                              onClick={() => {
+                                setContentSourceQuery(contentSource.key);
+                              }}
+                              key={`content-source-${i}`}
+                            >
+                              <Tag
+                                label={contentSource.key}
+                                width={'fixed'}
+                                bgColor={color.shadow.blue}
+                              />
+                            </Styled.filtersTag>
+                          );
+                        })}
+                      </Facet>
                     )}
                     {informationTypes && (
                       <div>
@@ -477,30 +473,16 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                       </div>
                     )}
                     {topics && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Topics</h3>
-                            {topics.map((topic: Record<string, any>, i) => {
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setTopicQuery(topic.key);
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={topic.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
+                      <Facet
+                        title={'Topics'}
+                        records={topics}
+                        expanded={true}
+                        onChange={(topic) => {
+                          setTopicQuery(topic.key);
+                        }}
+                      >
                         <Spacer size={10} />
-                      </div>
+                      </Facet>
                     )}
                     {organizations && (
                       <div>
