@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import esb, { RequestBodySearch } from 'elastic-builder';
+import esb, { Query, RequestBodySearch } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -23,7 +23,7 @@ interface ExtendedRequestBodySearch extends RequestBodySearch {
   _body: {
     from?: number;
     to?: number;
-    query?: unknown;
+    query?: Query;
   };
 }
 
