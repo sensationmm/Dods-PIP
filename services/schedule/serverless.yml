@@ -53,9 +53,12 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    ES_CLOUD_ID: dods-search:ZXUtd2VzdC0xLmF3cy5mb3VuZC5pbyQ5ZTVjODg3MTM1OWE0ZGZmYTk4ZjBhOTg4NWI4YzA3OCRkMmMwYzI0OWY4MjA0YmRjYjU0MTc3Y2FhOGUzYzM5Mg==
-    ES_KEY_ID: CLhVX3sBIZN5wdwKNwAy
-    ES_API_KEY: qrE4FL__SJOs1BmWKS8ozg
+    CORS_ORIGINS: "*"
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
+    ES_KEY_ID: ${env:ES_KEY_ID}
+    ES_API_KEY: ${env:ES_API_KEY}
 
 custom:
   webpack:
