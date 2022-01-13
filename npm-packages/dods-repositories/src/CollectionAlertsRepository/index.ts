@@ -36,6 +36,15 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
     ) { }
 
+    #cloneObject(target: CollectionAlert,
+        replaceProperties: Partial<CollectionAlert>,
+        unwantedProperties?: Array<string>) {
+
+        const copiedObject = Object.assign({}, target, replaceProperties);
+        (unwantedProperties ? unwantedProperties : []).forEach((key) => Reflect.deleteProperty(copiedObject, key));
+        return copiedObject;
+    }
+
     mapAlert(model: CollectionAlert): AlertOutput {
         const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted } = model;
 
@@ -315,32 +324,30 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             );
         }
 
-        const copyFromAlert = await this.alertModel.findOne({
+        const existingAlert = await this.alertModel.findOne({
             where: {
                 uuid: alertId,
                 collectionId: collection.id,
                 isActive: true,
             },
+            raw: true,
             include: ['collection', 'createdById', 'updatedById', 'alertTemplate']
         })
 
-        if (!copyFromAlert || !copyFromAlert.isActive) {
+        if (!existingAlert || !existingAlert.isActive) {
             throw new CollectionError(
                 `Unable to retrieve Alert with uuid: ${alertId}`
             );
         }
 
-        const copiedAlertRequest = Object.create(Object.assign({}, copyFromAlert, {
+        const copiedAlertRequest: CollectionAlert = this.#cloneObject(existingAlert, {
             collectionId: destinationCollection.id,
             createdBy: alertCreator.id,
-        }));
-        delete copiedAlertRequest.createdAt;
-        delete copiedAlertRequest.updatedAt;
-        delete copiedAlertRequest.updatedById;
+        }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy', 'CollectionId'])
 
-        const alert = await this.alertModel.create(copiedAlertRequest);
+        const alert = await this.alertModel.create({ ...copiedAlertRequest });
+        await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
 
-        // const { collectionId, createdBy, title, alertQueries } = parameters;
         return this.mapAlert(alert);
     }
 }
