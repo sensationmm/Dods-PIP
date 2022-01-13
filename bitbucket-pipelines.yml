@@ -62,7 +62,7 @@ pipelines:
             - yarn lint
             - yarn test
             - docker build -t "${HASH}" .
-            - docker save --output "${HASH}"
+            - docker save --output "${HASH}" "${HASH}"
             - aws s3 rm s3://pip-dev-services-lambdas/frontendImages/
             - aws s3 cp ${HASH} s3://pip-dev-services-lambdas/frontendImages/
 
