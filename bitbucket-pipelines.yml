@@ -19,6 +19,7 @@ pipelines:
       - parallel:
         - step:
             name: Deploy projects to their envionments
+            image: gioatsomoglobal/devopstools:0.4.6
             script:
               - tools/on-changes.sh deploy
           

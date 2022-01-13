@@ -1,14 +1,17 @@
 import { AlertDocumentInput, AlertInput, AlertQueryInput, Collection, CollectionAlert, CollectionAlertDocument, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
+    AlertOutput,
+    AlertQueryResponse,
     CollectionAlertsPersister,
     CreateAlertParameters,
-    SearchCollectionAlertsParameters,
-    getAlertsByCollectionResponse,
-    setAlertScheduleParameters,
     SearchAlertParameters,
     GetAlertById,
-    AlertOutput,
-    CopyAlertParameters
+    CopyAlertParameters,
+    SearchAlertQueriesParameters,
+    SearchCollectionAlertsParameters,
+    getAlertsByCollectionResponse,
+    getQueriesResponse,
+    setAlertScheduleParameters
 } from './domain';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
@@ -302,7 +305,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     async copyAlert(parameters: CopyAlertParameters): Promise<AlertOutput> {
         const { collectionId, alertId, destinationCollectionId, createdBy } = parameters;
 
-        // Retrieve initial data and validate data integrity
+        // * Retrieve initial data and validate data integrity
         const collection = await this.collectionModel.findOne({
             where: { uuid: collectionId, isActive: true }
         })
@@ -388,5 +391,60 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
 
         return this.mapAlert(alert);
+    }
+
+    async getAlertQueries(parameters: SearchAlertQueriesParameters): Promise<getQueriesResponse> {
+
+        let { alertId, limit, offset, sortDirection } = parameters;
+
+        const alert = await CollectionAlert.findOne({
+            where: { uuid: alertId }
+        })
+
+        if (!alert || !alert.isActive) {
+            throw new CollectionError(
+                `Alert not found`
+            );
+        }
+
+        if (sortDirection !== 'DESC' && sortDirection !== 'ASC') {
+            sortDirection = 'ASC';
+        }
+
+        const { rows, count } = await CollectionAlertQuery.findAndCountAll({
+            where: {
+                alertId: alert.id,
+                isActive: true,
+            },
+            include: ['createdById'],
+            order: [['createdAt', sortDirection]],
+            offset: parseInt(offset!),
+            limit: parseInt(limit!),
+        });
+
+        return {
+            queries: rows.map((collectionAlert) => this.mapQuery(collectionAlert)),
+            count: count
+        };
+    }
+
+    mapQuery(model: CollectionAlertQuery): AlertQueryResponse {
+        const { uuid, name, informationTypes, contentSources, query, createdAt, updatedAt, createdById } = model;
+        return {
+            uuid,
+            name,
+            informationTypes,
+            contentSources,
+            query,
+            createdBy: createdById
+                ? {
+                    uuid: createdById.uuid,
+                    name: createdById.fullName,
+                    emailAddress: createdById.primaryEmail
+                }
+                : null,
+            createdAt,
+            updatedAt,
+        };
     }
 }

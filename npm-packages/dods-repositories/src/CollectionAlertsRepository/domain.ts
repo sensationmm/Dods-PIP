@@ -104,3 +104,30 @@ export interface CopyAlertParameters {
     destinationCollectionId: string;
     createdBy: string;
 }
+
+export interface SearchAlertQueriesParameters {
+    alertId: string;
+    limit?: string;
+    offset?: string;
+    sortDirection?: string;
+}
+
+export interface AlertQueryResponse {
+    uuid: string;
+    name: string,
+    informationTypes: string;
+    contentSources: string;
+    query: string;
+    createdBy?: {
+        uuid: string;
+        name: string;
+        emailAddress: string;
+    } | null,
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface getQueriesResponse {
+    queries: AlertQueryResponse[];
+    count: number;
+}

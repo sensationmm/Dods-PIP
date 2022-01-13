@@ -18,6 +18,7 @@ paths:
       summary: "Returns a list of collections"
       description: "Returns a list of collections"
       parameters:
+        - $ref: "#/components/parameters/startsWith"
         - $ref: "#/components/parameters/searchTerm"
         - $ref: "#/components/parameters/clientAccountId"
         - $ref: "#/components/parameters/limit"
@@ -175,6 +176,24 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
 
+  /collections/{collectionId}/alerts/{alertId}/queries:
+    get:
+      operationId: getAlertQueries
+      summary: "Get the Queries associated to a Alert"
+      description: "Get the Queries associated to a Alert"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetQueriesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+
 components:
   securitySchemes:
     bearerAuth:
@@ -258,6 +277,35 @@ components:
           type: object
         createdBy:
           type: object
+          
+    QueryOutput:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        informationTypes:
+          type: string
+        contentSources:
+          type: string
+        query:
+          type: string
+        createdBy: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+            emailAddress:
+              type: string
+        createdAt:
+          type: string 
+        updatedAt:
+          type: string 
     
     Alert:
       type: object
@@ -449,7 +497,7 @@ components:
       schema:
         type: string
         format: uuid
-      required: true
+      required: false
       example: d290f1ss-6c54-4b01-98e6-d701748f7151
     limit:
       in: query
@@ -500,6 +548,13 @@ components:
             type: string
         required: false
         description: Collections by name's filtering using search term
+    startsWith:
+        in: query
+        name: startsWith
+        schema:
+            type: string
+        required: false
+        description: Collections by name's filtering using coincidences from the beginning
     collectionId:
       in: path
       name: collectionId
@@ -727,6 +782,29 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/AlertOutput"
+                  
+    GetQueriesResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Alert queries found
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              alerts:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QueryOutput"
 
   requestBodies:
     CreateCollection:
