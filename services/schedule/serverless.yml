@@ -27,10 +27,11 @@ provider:
   stackTags:
     service: ${self:service}
     env: ${self:provider.stage}
-    version: "1"
+    version: 1
     teamsEmail: kenan.hancer@somoglobal.com
     team: dods
   tracing:
+    apiGateway: true
     lambda: true
   iamRoleStatements:
     - Effect: "Allow"
@@ -52,6 +53,9 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+    CORS_ORIGINS: "*"
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
+    API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     ES_CLOUD_ID: ${env:ES_CLOUD_ID}
     ES_KEY_ID: ${env:ES_KEY_ID}
     ES_API_KEY: ${env:ES_API_KEY}
@@ -104,18 +108,6 @@ functions:
           cors: true
           caching:
             enabled: false
-
-  get_watcher:
-    handler: src/handlers/getSchedule/index.handle
-    description: Triggered when http request comes
-    events:
-      - http:
-          method: get
-          path: scheduler/{scheduleId}
-          cors: true
-          caching:
-            enabled: false
-
 
   deleteSchedule:
     handler: src/handlers/deleteSchedule/index.handle
