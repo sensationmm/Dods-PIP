@@ -1,4 +1,4 @@
-service: schedule-servcice
+service: schedule-service
 
 configValidationMode: warn
 
