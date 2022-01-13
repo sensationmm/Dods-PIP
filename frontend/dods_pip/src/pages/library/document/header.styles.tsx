@@ -1,21 +1,11 @@
 import styled from 'styled-components';
 
 import color from '../../../globals/color';
-import media from '../../../globals/media';
 import spacing from '../../../globals/spacing';
 
-const breakpoint = 'lg';
-
 export const header = styled.header`
-  ${media.greaterThan(breakpoint)`
-    display: flex;
-    justify-content: space-between;
-    gap: ${spacing(5)};
-  `}
-`;
-
-export const mainSection = styled.section`
-  flex: 1;
+  display: flex;
+  justify-content: space-between;
 `;
 
 export const actionsSection = styled.section`
@@ -31,28 +21,7 @@ export const h1Container = styled.div`
 export const infoRow = styled.div`
   color: ${color.base.greyDark};
   font-size: 16px;
-  margin-bottom: ${spacing(8)};
-
-  ${media.greaterThan(breakpoint)`
-    margin-bottom: ${spacing(12)};
-  `}
-`;
-
-export const infoItem = styled.span`
-  display: block;
-
-  label {
-    display: block;
-    margin: ${spacing(4)} 0 ${spacing(2)};
-  }
-
-  ${media.greaterThan(breakpoint)`
-    display: inline; 
-
-    label {
-      display: none;
-    }
-  `}
+  margin-bottom: 55px;
 `;
 
 export const infoIcon = styled.span`
@@ -68,18 +37,14 @@ export const infoSpacer = styled.span`
   height: 16px;
   background: ${color.base.greyDark};
   margin: 0 ${spacing(2)};
-  display: none;
+  display: inline-block;
   vertical-align: middle;
-
-  ${media.greaterThan(breakpoint)`
-    display: inline-block;
-  `}
 `;
 
 export const editLink = styled.a`
-  display: none;
   color: ${color.base.white};
   background: ${color.theme.blueMid};
+  display: inline-flex;
   align-items: center;
   gap: ${spacing(3)};
   border-radius: 8px;
@@ -87,8 +52,4 @@ export const editLink = styled.a`
   text-decoration: none;
   padding: 0 ${spacing(4)};
   height: 40px;
-
-  ${media.greaterThan(breakpoint)`
-    display: inline-flex; 
-  `}
 `;

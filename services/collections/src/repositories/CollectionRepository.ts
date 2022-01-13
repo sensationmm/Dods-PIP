@@ -106,6 +106,4 @@ export class CollectionRepository implements CollectionPersister {
         return collection;
     }
 
-
-
 }

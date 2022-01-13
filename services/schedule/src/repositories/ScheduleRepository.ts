@@ -1,9 +1,10 @@
 const { Client } = require('@elastic/elasticsearch')
 
 import {
-    createScheduleParameters, 
+    createScheduleParameters,
     deleteScheduleParameters,
     updateScheduleParameters,
+    getScheduleParameters,
 } from "../domain";
 import { Schedule } from "./Schedule"
 import elasticsearch from "../elasticsearch"
@@ -37,6 +38,7 @@ export class ScheduleRepository implements Schedule {
 
     async createSchedule(data: createScheduleParameters): Promise<any> {
         const query = ScheduleRepository.createSearchQuery(data);
+
         return await this.elasticsearch.watcher.putWatch(query);
     }
 
@@ -53,4 +55,19 @@ export class ScheduleRepository implements Schedule {
             await this.elasticsearch.watcher.putWatch(query);
         }
     }
-}   
+
+    async getSchedule(data: getScheduleParameters): Promise<any> {
+        const response = await this.elasticsearch.watcher.getWatch({
+            id: data.scheduleId
+        })
+        const hookURL = response.body.watch.actions.webhook.webhook.path.split('/')
+        const scheduleType = hookURL[hookURL.length - 1]
+
+        return {
+            "id": response.body._id,
+            "type": scheduleType,
+            "schedule": response.body.watch.trigger.schedule.cron,
+            "active": response.body.status.state.active,
+        }
+    }
+}

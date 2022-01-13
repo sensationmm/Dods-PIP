@@ -15,7 +15,7 @@ export interface HeaderProps {
   contentSource?: ContentSourceIconType;
   sourceReferenceUri?: string;
   informationType?: string;
-  publishedDateTime?: string;
+  formattedTime?: string;
   documentId?: string;
 }
 
@@ -24,12 +24,12 @@ const Header: React.FC<HeaderProps> = ({
   contentSource,
   sourceReferenceUri,
   informationType,
-  publishedDateTime,
+  formattedTime,
   documentId,
 }) => {
   return (
     <Styled.header>
-      <Styled.mainSection>
+      <section>
         <Breadcrumbs
           history={[
             { href: '/library', label: 'Library' },
@@ -37,15 +37,12 @@ const Header: React.FC<HeaderProps> = ({
           ]}
         />
         <Styled.h1Container>
-          <Text type="h1" color={color.theme.blue}>
+          <Text type="h1" color="color.theme.blue">
             {documentTitle}
           </Text>
         </Styled.h1Container>
         <Styled.infoRow>
-          <Styled.infoItem>
-            <Text bold type="label">
-              Source:
-            </Text>
+          <span aria-label="Content source">
             <Styled.infoIcon>
               <IconContentSource icon={contentSource} />
             </Styled.infoIcon>
@@ -54,26 +51,18 @@ const Header: React.FC<HeaderProps> = ({
                 <a>{contentSource}</a>
               </Link>
             )}
-          </Styled.infoItem>
+          </span>
           <Styled.infoSpacer />
-          <Styled.infoItem>
-            <Text bold type="label">
-              Type:
-            </Text>
+          <span aria-label="Information type">
             <Styled.infoIcon>
               <Icon src={Icons.Document} size={IconSize.mediumLarge} color={color.base.greyDark} />
             </Styled.infoIcon>
             {informationType}
-          </Styled.infoItem>
+          </span>
           <Styled.infoSpacer />
-          <Styled.infoItem>
-            <Text bold type="label">
-              Date:
-            </Text>
-            {publishedDateTime}
-          </Styled.infoItem>
+          <span aria-label="Published date">{formattedTime}</span>
         </Styled.infoRow>
-      </Styled.mainSection>
+      </section>
       <Styled.actionsSection>
         {documentId && (
           <Link href={`/editorial/article/${documentId}`} passHref>

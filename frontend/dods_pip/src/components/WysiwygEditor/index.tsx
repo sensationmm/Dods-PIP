@@ -6,7 +6,7 @@ import './blots/content-tag';
 
 import color from '@dods-ui/globals/color';
 import Quill from 'quill';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import * as Styled from './wysiwyg-editor.styles';
 
@@ -14,7 +14,6 @@ type ContentSelection = {
   fromIndex: number;
   toIndex: number;
   text: string;
-  occurrences: number;
 };
 
 export type ContentTag = {
@@ -63,6 +62,20 @@ const appendCoreStyles = () =>
     document.head.appendChild(link);
   });
 
+const embedTags = (quillInstance: Quill, tags: ContentTag[]) => {
+  tags.forEach((tag) => {
+    if (tag.value?.length) {
+      const matches = quillInstance.getText().matchAll(RegExp(`\\b${tag.value}\\b`, 'igm'));
+      Array.from(matches).forEach((match) => {
+        // replace text with embedded 'content-tag
+        // Known bug here, the index shifts after each new element is added, therefore, the content replacement shifts exponentially -_-
+        quillInstance.deleteText(match.index as number, (tag.value as string).length);
+        quillInstance.insertEmbed(match.index as number, 'content-tag', tag);
+      });
+    }
+  });
+};
+
 const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   id = `wysiwyg-editor_${+new Date()}`,
   placeholder = 'Enter content...',
@@ -73,8 +86,6 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   onSelection,
   tags = [],
 }) => {
-  const [quillInstance, setQuillInstance] = useState<Quill>();
-
   useEffect(() => {
     appendCoreStyles();
 
@@ -93,60 +104,21 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
 
     onSelection &&
       quill.on('selection-change', function (range, oldRange, source) {
-        if (range?.length > 0) {
-          const selectedText = quill.getText(range.index, range.length);
-          const matches = Array.from(quill.getText().matchAll(RegExp(selectedText, 'igm')));
-          onSelection({
-            fromIndex: range.index,
-            toIndex: range.length,
-            text: selectedText,
-            occurrences: matches.length,
-          });
-        }
+        if (range?.length <= 0) return;
+        onSelection({
+          fromIndex: range.index,
+          toIndex: range.length,
+          text: quill.getText(range.index, range.length),
+        });
       });
 
-    setQuillInstance(quill);
+    // add tags markup to content
+    tags.length && embedTags(quill, tags);
   }, []);
-
-  useEffect(() => {
-    if (!tags.length || !quillInstance) return;
-
-    quillInstance.focus();
-
-    tags
-      .sort((a, b) => b.value.length - a.value.length)
-      .forEach((tag) => {
-        if (!tag.value.length) return;
-
-        /** TODO: RTE content tagging */
-        // embed matching tags
-        // const matches = quillInstance.getText().matchAll(RegExp(`${tag.value}`, 'igm'));
-        // Array.from(matches)
-        //   .reverse()
-        //   .forEach((match) => {
-        //     console.info('<><><> match', match);
-        //     if (match && typeof match.index === 'number') {
-        //       const matchedText = quillInstance.getText(match.index, match[0].length);
-        //       quillInstance.deleteText(match.index, match[0].length);
-        //       quillInstance.insertEmbed(match.index, 'content-tag', { ...tag, value: matchedText });
-        //     }
-        //   });
-
-        // embed tag over selected text
-        const selection = quillInstance.getSelection();
-        if (selection !== null && typeof selection.index === 'number' && selection.length) {
-          const selectionIndex = selection.index;
-          const selectionLength = selection.length;
-          const selectedText = quillInstance.getText(selectionIndex, selectionLength);
-          quillInstance.deleteText(selectionIndex, selectionLength);
-          quillInstance.insertEmbed(selectionIndex, 'content-tag', { ...tag, value: selectedText });
-        }
-      });
-  }, [tags.length, quillInstance]);
 
   return (
     <Styled.wrapper data-testid="wysiwyg-editor">
-      <div id={id}>{children}</div>
+      <div {...{ id }}>{children}</div>
     </Styled.wrapper>
   );
 };

@@ -1,23 +1,4 @@
-export interface AlertOutput {
-    id: number;
-    uuid: string;
-    collection: { uuid?: string, name?: string } | {}
-    template: { id?: string, name?: string } | {}
-    isSchedule: boolean;
-    title: string;
-    description?: string | null;
-    schedule?: string | null;
-    timezone?: string | null;
-    isActive?: boolean;
-    isPublished?: boolean;
-    lastStepCompleted?: number;
-    isScheduled?: boolean;
-    hasKeywordsHighlight?: boolean;
-    createdBy: { uuid?: string, name?: string, emailAddress?: string } | {}
-    createdAt?: Date;
-    updatedBy: { uuid?: string, name?: string, emailAddress?: string } | {}
-    updatedAt?: Date | null;
-}
+import { AlertAttributesStrecthed } from "@dodsgroup/dods-model";
 
 export interface SearchCollectionAlertsParameters {
     collectionId: string;
@@ -93,35 +74,7 @@ export interface SearchAlertParameters {
 }
 
 export interface getAlertById {
-    alert: AlertOutput,
+    alert: AlertAttributesStrecthed,
     searchQueriesCount: number,
     recipientsCount: number
-}
-
-
-export interface SearchAlertQueriesParameters {
-    alertId: string;
-    limit?: string;
-    offset?: string;
-    sortDirection?: string;
-}
-
-export interface AlertQueryResponse {
-    uuid: string;
-    name: string,
-    informationTypes: string;
-    contentSources: string;
-    query: string;
-    createdBy?: {
-        uuid: string;
-        name: string;
-        emailAddress: string;
-    } | null,
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-export interface getQueriesResponse {
-    queries: AlertQueryResponse[];
-    count: number;
 }

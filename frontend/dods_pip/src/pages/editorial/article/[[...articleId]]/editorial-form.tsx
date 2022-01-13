@@ -9,7 +9,7 @@ import { Icons } from '@dods-ui/components/Icon/assets';
 import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import * as Validation from '@dods-ui/utils/validation';
 import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
+import React from 'react';
 import JsxParser from 'react-jsx-parser';
 
 import * as Styled from './editorial-from.styles';
@@ -34,13 +34,6 @@ export interface EditorialFormProps {
   isEdit?: boolean;
 }
 
-type TextSelection = {
-  fromIndex: number;
-  toIndex: number;
-  text: string;
-  occurrences: number;
-};
-
 // We need to load this dynamically since it has multiple client side `document` calls
 const WysiwygEditor = dynamic(() => import('@dods-ui/components/WysiwygEditor'), { ssr: false });
 
@@ -54,9 +47,6 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   tags = [],
   onTagsChange,
 }) => {
-  const [selectedText, setSelectedText] = useState<string>();
-  const [selectedTextOccurrences, setSelectedTextOccurrences] = useState<number>();
-
   const validateField = (fieldName: keyof EditorialFormFields, value: string | undefined) => {
     const formErrors = JSON.parse(JSON.stringify(errors));
     !Validation.validateRequired(value as string)
@@ -73,17 +63,6 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
       term: tag.termLabel,
       value: tag.termLabel,
     }));
-  };
-
-  const onEditorTextSelection = (params: TextSelection) => {
-    const text = params.text.trim();
-    if (text.length > 0) {
-      setSelectedText(params.text);
-      setSelectedTextOccurrences(params.occurrences);
-      return;
-    }
-    setSelectedText(undefined);
-    setSelectedTextOccurrences(undefined);
   };
 
   return (
@@ -164,18 +143,12 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
           placeholder={'Type or paste your content here'}
           onTextChange={(value) => onFieldChange('content', value)}
           tags={getContentTags(tags)}
-          onSelection={onEditorTextSelection}
         >
           <JsxParser jsx={fieldData.content.toString()} />
         </WysiwygEditor>
       </div>
 
-      <ContentTagger
-        highlight={selectedText}
-        highlightWordCount={selectedTextOccurrences}
-        tags={tags}
-        setTags={onTagsChange}
-      />
+      <ContentTagger tags={tags} setTags={onTagsChange} />
     </Styled.mainColumns>
   );
 };

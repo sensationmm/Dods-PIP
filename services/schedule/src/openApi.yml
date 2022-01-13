@@ -25,6 +25,17 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+  /scheduler/{scheduleId}:
+    get:
+      operationId: getSchedule
+      parameters:
+        - in: path
+          name: scheduleId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: UUID of the Schedule to get
 
   /scheduler/{id}:
     delete:

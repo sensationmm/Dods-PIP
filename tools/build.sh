@@ -10,20 +10,6 @@
 
 set -e
 
-# Parse script invocation
-case $1 in
-   build)
-     OPTION='build'  
-     ;;
-   deploy)
-     OPTION='deploy'
-     ;;
-   *)
-     echo "ERROR: I only know how to 'build' or 'deploy'."
-     exit 1
-     ;;
-esac
-
 # Find script directory (no support for symlinks)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -56,19 +42,19 @@ if [[ -f $(git rev-parse --git-dir)/shallow ]]; then
     fi
 fi
 
-# Get list of folders for know projects
-PROJECTS_WITH_CHANGES=$($DIR/list-projects-to-build.sh $COMMIT_RANGE)
+# Collect all modified projects
+PROJECTS_TO_BUILD=$($DIR/list-projects-to-build.sh $COMMIT_RANGE)
 
 # If nothing to build inform and exit
-if [[ -z "$PROJECTS_WITH_CHANGES" ]]; then
-    echo "No changes detected on known projects."
+if [[ -z "$PROJECTS_TO_BUILD" ]]; then
+    echo "No projects to build"
     exit 0
 fi
 
-echo "Need to $OPTION following projects"
-echo -e "*** $PROJECTS_WITH_CHANGES ***"
+echo "Following projects need to be build"
+echo -e "$PROJECTS_TO_BUILD"
 
-# Build or deploy all modified projects
-echo -e "$PROJECTS_WITH_CHANGES" | while read PROJECTS; do
-    CI_PLUGIN=${CI_PLUGIN} $DIR/${OPTION}-projects.sh ${PROJECTS}
+# Build all modified projects
+echo -e "$PROJECTS_TO_BUILD" | while read PROJECTS; do
+    CI_PLUGIN=${CI_PLUGIN} $DIR/build-projects.sh ${PROJECTS}
 done;

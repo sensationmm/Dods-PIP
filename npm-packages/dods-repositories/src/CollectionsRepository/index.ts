@@ -1,14 +1,13 @@
-import { ClientAccount, Collection, Sequelize, WhereOptions } from '@dodsgroup/dods-model';
+import { ClientAccount, Collection, Op, Sequelize } from "@dodsgroup/dods-model";
+import { CollectionError } from "@dodsgroup/dods-domain"
 import {
     CollectionsPersister,
-    DeleteCollectionInput,
-    GetCollectionInput,
-    GetCollectionOutput,
     SearchCollectionsInput,
     SearchCollectionsOutput,
-} from './domain';
-
-import { CollectionError } from '@dodsgroup/dods-domain';
+    GetCollectionInput,
+    GetCollectionOutput,
+    DeleteCollectionInput,
+} from "./domain";
 
 export * from './domain';
 
@@ -16,36 +15,43 @@ export class CollectionsRepository implements CollectionsPersister {
     static defaultInstance: CollectionsPersister = new CollectionsRepository();
 
     async list(parameters: SearchCollectionsInput): Promise<SearchCollectionsOutput> {
-        const { clientAccountId, searchTerm, startsWith, limit, offset, sortBy, sortDirection } =
-            parameters;
 
-        let whereClause: WhereOptions = {
-            isActive: true,
-        };
+        const {
+            clientAccountId,
+            searchTerm,
+            limit,
+            offset,
+            sortBy,
+            sortDirection,
+        } = parameters;
 
-        const searchString = startsWith || searchTerm;
-
-        //* Search by document name case insensitive coincidences
-        if (searchString) {
-            const lowerCaseName = searchString.trim().toLocaleLowerCase();
-
-            //* If searchTerm was given then search for coincidences in any part of the name
-            //* If not search only in the beginning
-            whereClause = {
-                ...whereClause,
-                $and: Sequelize.where(
-                    Sequelize.fn('LOWER', Sequelize.col('Collection.name')),
-                    'LIKE',
-                    `${searchTerm ? '%' : ''}${lowerCaseName}%`
-                ),
-            };
+        const clientAccount = await ClientAccount.findOne({
+            where: {
+                uuid: clientAccountId
+            }
+        })
+        if (!clientAccount) {
+            throw new CollectionError('ClientAccount not found');
         }
 
-        let clientAccountWhere = {};
-        if (clientAccountId) {
-            clientAccountWhere = {
-                uuid: clientAccountId,
-            };
+        let whereClause: any = {
+            [Op.and]: [
+                {
+                    clientAccountId: clientAccount.id,
+                    isActive: true,
+                }
+            ]
+        }
+
+        // Search by document name case insensitive coincidences
+        if (searchTerm) {
+            const lowerCaseName = searchTerm.trim().toLocaleLowerCase();
+
+            whereClause[Op.and].push(Sequelize.where(
+                Sequelize.fn('LOWER', Sequelize.col('Collection.name')),
+                'LIKE',
+                `%${lowerCaseName}%`
+            ))
         }
 
         let orderBy: any = [sortBy, sortDirection];
@@ -55,12 +61,7 @@ export class CollectionsRepository implements CollectionsPersister {
         const { count: filteredRecords, rows } = await Collection.findAndCountAll({
             where: whereClause,
             include: [
-                {
-                    model: ClientAccount,
-                    where: clientAccountWhere,
-                    association: Collection.associations.clientAccount,
-                    required: true,
-                },
+                Collection.associations.clientAccount,
                 Collection.associations.alerts,
                 Collection.associations.savedQueries,
                 Collection.associations.documents,
@@ -70,7 +71,7 @@ export class CollectionsRepository implements CollectionsPersister {
             limit,
         });
 
-        const mappedRows = rows.map((row) => ({
+        const mappedRows = rows.map(row => ({
             uuid: row.uuid,
             name: row.name,
             clientAccount: { uuid: row.clientAccount.uuid, name: row.clientAccount.name },
@@ -78,7 +79,7 @@ export class CollectionsRepository implements CollectionsPersister {
             updatedAt: row.updatedAt,
             alertsCount: row.alerts?.length,
             queriesCount: row.savedQueries?.length,
-            documentsCount: row.documents?.length,
+            documentsCount: row.documents?.length
         }));
 
         return {
@@ -91,10 +92,11 @@ export class CollectionsRepository implements CollectionsPersister {
     }
 
     async get(parameters: GetCollectionInput): Promise<GetCollectionOutput> {
+
         const collection = await Collection.findOne({
             where: {
                 uuid: parameters.collectionId,
-                isActive: true,
+                isActive: true
             },
             include: [
                 Collection.associations.clientAccount,
@@ -121,7 +123,7 @@ export class CollectionsRepository implements CollectionsPersister {
                 alertsCount: collection.alerts!.length,
                 queriesCount: collection.savedQueries!.length,
                 documentsCount: collection.documents!.length,
-            },
+            }
         };
     }
 
@@ -131,7 +133,7 @@ export class CollectionsRepository implements CollectionsPersister {
         const collection = await Collection.findOne({
             where: {
                 uuid: collectionId,
-                isActive: true,
+                isActive: true
             },
             include: [Collection.associations.clientAccount, Collection.associations.createdBy],
         });

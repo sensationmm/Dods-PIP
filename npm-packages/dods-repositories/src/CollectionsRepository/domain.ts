@@ -5,11 +5,10 @@ export const NAME_COLUMN = 'name';
 
 /////////// searchCollection ///////////
 export interface SearchCollectionsInput extends Pagination {
-    clientAccountId?: string;
-    searchTerm?: string;
-    startsWith?: string;
-    sortBy?: 'name' | 'updatedAt';
-    sortDirection?: 'ASC' | 'DESC';
+    clientAccountId: string;
+    searchTerm: string;
+    sortBy: 'name' | 'updatedAt';
+    sortDirection: 'ASC' | 'DESC';
 };
 
 export type SearchCollectionsOutput = {

@@ -14,7 +14,7 @@ export type PaginationProps = {
   dataLength: number;
 };
 
-export type PaginationType = {
+type PaginationType = {
   activePage: number;
   numPerPage: number;
   PaginationStats: React.FC;
