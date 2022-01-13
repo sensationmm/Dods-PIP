@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import esb, { RequestBodySearch } from 'elastic-builder';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -14,7 +15,8 @@ import { IconType as ContentSourceType } from '../../components/IconContentSourc
 import Tag from '../../components/Tag';
 import Text from '../../components/Text';
 import color from '../../globals/color';
-import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
+// import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
+import { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as Styled from './library.styles';
@@ -79,8 +81,6 @@ const aggregations = {
   },
 };
 
-interface LibraryProps extends LoadingHOCProps {}
-
 export interface ISourceData {
   aggs_fields: { [key: string]: string[] };
   contentDateTime?: string;
@@ -127,6 +127,9 @@ export interface IResponse {
   };
 }
 
+interface LibraryProps extends LoadingHOCProps {
+  initialResponse: IResponse;
+}
 interface RequestPayload {
   query?: unknown;
   aggregations: unknown;
@@ -146,8 +149,8 @@ enum queryKeys {
   informationType = 'informationType',
 }
 
-export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
-  const [apiResponse, setApiResponse] = useState<IResponse>({});
+export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
+  const [apiResponse, setApiResponse] = useState<IResponse>(initialResponse);
   const [contentSources, setContentSources] = useState([]);
   const [informationTypes, setInformationTypes] = useState([]);
   const [jurisdictions, setJurisdictions] = useState([]);
@@ -160,7 +163,7 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   const [offset, setOffset] = useState(0);
   const [resultsSize] = useState(20);
 
-  const [requestPayload, setRequestPayload] = useState<RequestPayload>(defaultRequestPayload);
+  const [requestPayload, setRequestPayload] = useState<RequestPayload>();
 
   const setKeyWordQuery = (keyword: string) => {
     setOffset(0);
@@ -209,20 +212,6 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   const setTopicQuery = (key: string) => {
     setOffset(0);
 
-    // setRequestPayload({
-    //   from: 0,
-    //   size: resultsSize,
-    //   query: {
-    //     nested: {
-    //       path: 'taxonomyTerms',
-    //       query: {
-    //         match: { 'taxonomyTerms.termLabel': key },
-    //       },
-    //     },
-    //   },
-    //   aggregations: aggregations,
-    // });
-
     const payload = {
       ...(
         esb
@@ -260,17 +249,20 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   };
 
   useEffect(() => {
-    const newRequestPayload = { ...requestPayload };
-    newRequestPayload.from = offset;
-    setRequestPayload(newRequestPayload);
+    if (requestPayload) {
+      const newRequestPayload = { ...requestPayload };
+      newRequestPayload.from = offset;
+      setRequestPayload(newRequestPayload);
+    }
   }, [offset]);
 
   useEffect(() => {
-    const sPayload = JSON.stringify(requestPayload);
+    if (!requestPayload) return;
 
     (async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
+        const sPayload = JSON.stringify(requestPayload);
 
         const response = (await fetchJson(`${BASE_URI}${Api.ContentSearchApp}`, {
           body: JSON.stringify({ query: sPayload }),
@@ -278,39 +270,42 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
         })) as IResponse;
 
         setApiResponse(response);
-
-        const {
-          contentSource,
-          informationType,
-          jurisdiction,
-          people,
-          organizations,
-          geography,
-          topics,
-        } = response?.es_response?.aggregations || {};
-
-        const checkEmptyAggregation = (aggregation: { doc_count: number }) => {
-          return aggregation.doc_count !== 0;
-        };
-
-        setContentSources(contentSource?.buckets?.filter?.(checkEmptyAggregation) || []);
-
-        setInformationTypes(informationType?.buckets?.filter?.(checkEmptyAggregation) || []);
-
-        setJurisdictions(jurisdiction?.buckets?.filter?.(checkEmptyAggregation) || []);
-
-        setPeople(people?.buckets?.filter?.(checkEmptyAggregation) || []);
-        setOrganizations(organizations?.buckets?.filter?.(checkEmptyAggregation) || []);
-
-        setGeography(geography?.buckets?.filter?.(checkEmptyAggregation) || []);
-
-        setTopics(topics?.buckets?.filter?.(checkEmptyAggregation) || []);
       } catch (error) {
         console.log(error);
       }
-      setLoading(false);
+
+      // setLoading(false);
     })();
   }, [requestPayload]);
+
+  useEffect(() => {
+    const {
+      contentSource,
+      informationType,
+      jurisdiction,
+      people,
+      organizations,
+      geography,
+      topics,
+    } = apiResponse?.es_response?.aggregations || {};
+
+    const checkEmptyAggregation = (aggregation: { doc_count: number }) => {
+      return aggregation.doc_count !== 0;
+    };
+
+    setContentSources(contentSource?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+    setInformationTypes(informationType?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+    setJurisdictions(jurisdiction?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+    setPeople(people?.buckets?.filter?.(checkEmptyAggregation) || []);
+    setOrganizations(organizations?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+    setGeography(geography?.buckets?.filter?.(checkEmptyAggregation) || []);
+
+    setTopics(topics?.buckets?.filter?.(checkEmptyAggregation) || []);
+  }, [apiResponse]);
 
   const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -654,4 +649,33 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
   );
 };
 
-export default LoadingHOC(Library);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req } = context;
+
+  let response: IResponse = {};
+
+  try {
+    const sPayload = JSON.stringify(defaultRequestPayload);
+    const { host } = req.headers;
+    response = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
+      body: JSON.stringify({ query: sPayload }),
+      method: 'POST',
+    })) as IResponse;
+  } catch (error) {
+    console.error(error);
+  }
+
+  if (!response) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: { initialResponse: response },
+  };
+};
+
+// export default LoadingHOC(Library);
+
+export default Library;
