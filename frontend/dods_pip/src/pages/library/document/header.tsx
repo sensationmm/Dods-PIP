@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <Styled.header>
-      <section>
+      <Styled.mainSection>
         <Breadcrumbs
           history={[
             { href: '/library', label: 'Library' },
@@ -37,12 +37,15 @@ const Header: React.FC<HeaderProps> = ({
           ]}
         />
         <Styled.h1Container>
-          <Text type="h1" color="color.theme.blue">
+          <Text type="h1" color={color.theme.blue}>
             {documentTitle}
           </Text>
         </Styled.h1Container>
         <Styled.infoRow>
-          <span aria-label="Content source">
+          <Styled.infoItem>
+            <Text bold type="label">
+              Source:
+            </Text>
             <Styled.infoIcon>
               <IconContentSource icon={contentSource} />
             </Styled.infoIcon>
@@ -51,18 +54,26 @@ const Header: React.FC<HeaderProps> = ({
                 <a>{contentSource}</a>
               </Link>
             )}
-          </span>
+          </Styled.infoItem>
           <Styled.infoSpacer />
-          <span aria-label="Information type">
+          <Styled.infoItem>
+            <Text bold type="label">
+              Type:
+            </Text>
             <Styled.infoIcon>
               <Icon src={Icons.Document} size={IconSize.mediumLarge} color={color.base.greyDark} />
             </Styled.infoIcon>
             {informationType}
-          </span>
+          </Styled.infoItem>
           <Styled.infoSpacer />
-          <span aria-label="Published date">{formattedTime}</span>
+          <Styled.infoItem>
+            <Text bold type="label">
+              Date:
+            </Text>
+            {formattedTime}
+          </Styled.infoItem>
         </Styled.infoRow>
-      </section>
+      </Styled.mainSection>
       <Styled.actionsSection>
         {documentId && (
           <Link href={`/editorial/article/${documentId}`} passHref>
