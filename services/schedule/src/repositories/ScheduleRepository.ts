@@ -59,7 +59,6 @@ export class ScheduleRepository implements Schedule {
         const response = await this.elasticsearch.watcher.getWatch({
             id: data.scheduleId
         })
-        console.log(response)
         const hookURL = response.body.watch.actions.webhook.webhook.path.split('/')
         const scheduleType = hookURL[hookURL.length - 1]
 

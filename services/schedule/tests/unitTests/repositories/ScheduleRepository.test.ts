@@ -1,11 +1,20 @@
-import { createScheduleParameters } from "../../../src/domain";
+import {createScheduleParameters, getScheduleParameters} from "../../../src/domain";
 import { ScheduleRepository } from "../../../src/repositories/ScheduleRepository";
 
 const mockPutWatch = jest.fn();
+const mockGetWatch = jest.fn();
+mockGetWatch.mockImplementation(() => Promise.resolve({body: {
+    watch: {
+        actions: {webhook: {webhook: {path: "123"}}},
+        trigger: {schedule: {cron: "123"}}
+    },
+    status: {state: {active: true}}
+}}))
 
 jest.mock('../../../src/elasticsearch', () => ({
     watcher: {
-        putWatch: () => mockPutWatch()
+        putWatch: () => mockPutWatch(),
+        getWatch: () => mockGetWatch(),
     }
 }));
 
@@ -46,5 +55,14 @@ describe(`Schedule repository tests`, () => {
 
         expect(mockPutWatch).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenCalled();
+    });
+
+    test(`getSchedule calls getWatch`, async () => {
+        const getScheduleParameters: getScheduleParameters = {
+            scheduleId: "123"
+        }
+        await ScheduleRepository.defaultInstance.getSchedule(getScheduleParameters)
+
+        expect(mockPutWatch).toHaveBeenCalledTimes(1);
     });
 });
