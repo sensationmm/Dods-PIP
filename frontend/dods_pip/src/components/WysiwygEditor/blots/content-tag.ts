@@ -10,8 +10,7 @@ class ContentTagBlot extends Quill.import('blots/embed') {
   static create(value: ContentTag): HTMLAnchorElement {
     const node = super.create(value);
 
-    node.setAttribute('href', '#');
-    node.innerHTML = `${value.value} <span class="tooltip">${value.type} → ${value.term}</span>`;
+    node.innerHTML = `<a href="#">${value.value}<span class="tooltip">${value.type} → ${value.term}</span></a>`;
 
     return node;
   }
