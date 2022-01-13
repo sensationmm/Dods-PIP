@@ -82,3 +82,18 @@ export const tab = styled.button`
     }
   }
 `;
+
+export const detailTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  td {
+    height: 37px;
+    padding: ${spacing(2)} 0;
+    border-bottom: 1px solid ${color.base.greyLight};
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+`;
