@@ -168,10 +168,18 @@ export const Collections: React.FC<CollectionsProps> = ({
       setShowAdd(false);
       await loadCollections();
       setLoading(false);
+      setAddTitle('');
+      setAddAccount('');
     } catch {
       console.log('FAIL createCollection');
       setLoading(false);
     }
+  };
+
+  const cancelCreateCollection = () => {
+    setShowAdd(false);
+    setAddTitle('');
+    setAddAccount('');
   };
 
   React.useEffect(() => {
@@ -247,9 +255,14 @@ export const Collections: React.FC<CollectionsProps> = ({
               </Text>
             </>
           }
-          onClose={() => setShowAdd(false)}
+          onClose={cancelCreateCollection}
           buttons={[
-            { isSmall: true, type: 'secondary', label: 'Cancel' },
+            {
+              isSmall: true,
+              type: 'secondary',
+              label: 'Cancel',
+              onClick: cancelCreateCollection,
+            },
             {
               isSmall: true,
               type: 'primary',
