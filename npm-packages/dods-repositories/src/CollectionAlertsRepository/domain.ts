@@ -92,7 +92,7 @@ export interface SearchAlertParameters {
     alertId: string;
 }
 
-export interface GetAlertById {
+export interface AlerByIdOutput {
     alert: AlertOutput,
     searchQueriesCount: number,
     recipientsCount: number

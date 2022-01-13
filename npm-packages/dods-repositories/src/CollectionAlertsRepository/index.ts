@@ -5,7 +5,7 @@ import {
     CollectionAlertsPersister,
     CreateAlertParameters,
     SearchAlertParameters,
-    GetAlertById,
+    AlerByIdOutput,
     CopyAlertParameters,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
@@ -252,7 +252,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     }
 
 
-    async getAlert(parameters: SearchAlertParameters): Promise<GetAlertById> {
+    async getAlert(parameters: SearchAlertParameters): Promise<AlerByIdOutput> {
         const { collectionId, alertId } = parameters;
 
         const collection = await this.collectionModel.findOne({
