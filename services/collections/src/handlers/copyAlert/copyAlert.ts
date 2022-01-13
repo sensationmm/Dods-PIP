@@ -4,11 +4,18 @@ import { CollectionAlertsRepository, CopyAlertParameters } from '@dodsgroup/dods
 
 export const copyAlert: AsyncLambdaHandler<CopyAlertParameters> = async (params) => {
 
-    const alert = await CollectionAlertsRepository.defaultInstance.copyAlert(params);
+    const alertCopied = await CollectionAlertsRepository.defaultInstance.copyAlert(params);
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
         message: 'The alert scheduling was copied successfully',
-        alert
+        alert: {
+            ...alertCopied.alert,
+            searchQueriesCount: alertCopied.searchQueriesCount,
+            documentsCount: alertCopied.documentsCount,
+            recipientsCount: alertCopied.recipientsCount
+        }
     });
+
+
 }

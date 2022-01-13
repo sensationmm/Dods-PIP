@@ -3,6 +3,7 @@
 # @name copyAlert
 
 POST {{host}}/collections/350b159c-6e43-11ec-90d6-0242ac120003/alerts/59648fe0-534b-4b3b-9214-6bf57b0cdd56/copyto HTTP/1.1
+
 {
     "destinationCollectionId": "cd44bad6-8eeb-4870-abb8-72d297ea7a3e",
     "createdBy": "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
