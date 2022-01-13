@@ -3,7 +3,8 @@ import esb, { Query, RequestBodySearch } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
 import Box from '../../components/_layout/Box';
@@ -79,7 +80,7 @@ export interface IResponse {
 }
 
 interface LibraryProps {
-  initialResponse: IResponse;
+  apiResponse: IResponse;
 }
 
 enum AggTypes {
@@ -167,8 +168,65 @@ const defaultRequestPayload = {
   aggregations,
 };
 
-export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
-  const [apiResponse, setApiResponse] = useState<IResponse>(initialResponse);
+interface QueryObject {
+  searchTerm?: string;
+  basicFilters?: {
+    key: string;
+    value: string;
+  }[];
+  resultsSize?: number;
+}
+
+type QueryString = string | string[] | undefined;
+
+const getPayload = (query: QueryString = '{}') => {
+  let esbQuery;
+
+  try {
+    const {
+      searchTerm,
+      basicFilters = [],
+      resultsSize = 20,
+    }: QueryObject = typeof query === 'string' ? JSON.parse(query) : {};
+
+    console.log('basicFilters', basicFilters);
+
+    if (searchTerm) {
+      esbQuery = esb
+        .boolQuery()
+        .should(esb.matchQuery('documentTitle', searchTerm))
+        .should(esb.matchQuery('documentContent', searchTerm))
+        .must(basicFilters.map(({ key, value }) => esb.matchQuery(key, value)));
+    } else if (!searchTerm && basicFilters.length) {
+      esbQuery = esb
+        .boolQuery()
+        // term query???
+        .must(basicFilters.map(({ key, value }) => esb.matchQuery(key, value)));
+    }
+
+    if (!esbQuery) {
+      return defaultRequestPayload;
+    }
+
+    return {
+      ...(
+        esb
+          .requestBodySearch()
+          .query(esbQuery)
+          .size(20)
+          .from(resultsSize) as ExtendedRequestBodySearch
+      )._body,
+      aggregations,
+    };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
+  const router = useRouter();
+
+  const [apiResponse2, setApiResponse] = useState<IResponse>({});
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
   const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
@@ -177,32 +235,45 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
   const [organizations, setOrganizations] = useState<BucketType[]>([]);
   const [geography, setGeography] = useState<BucketType[]>([]);
   const [searchText, setSearchText] = useState('');
-
   const [offset, setOffset] = useState(0);
   const [resultsSize] = useState(20);
-
   const [requestPayload, setRequestPayload] = useState<RequestPayload>();
 
-  const setKeyWordQuery = (keyword: string) => {
+  const currentQuery = useMemo(() => {
+    // try / catch ??
+
+    if (typeof router.query.query === 'string') {
+      return JSON.parse(router.query.query || '{}') || {};
+    }
+
+    return {};
+  }, [router.query]);
+
+  const setKeyWordQuery = (searchTerm: string) => {
     setOffset(0);
 
-    const payload = {
-      ...(
-        esb
-          .requestBodySearch()
-          .query(
-            esb
-              .boolQuery()
-              .should(esb.matchQuery('documentTitle', keyword))
-              .should(esb.matchQuery('documentContent', keyword)),
-          )
-          .size(resultsSize)
-          .from(0) as ExtendedRequestBodySearch
-      )._body,
-      aggregations,
-    };
+    router.push({
+      pathname: '/library',
+      query: { query: JSON.stringify({ searchTerm }) },
+    });
 
-    setRequestPayload(payload);
+    // const payload = {
+    //   ...(
+    //     esb
+    //       .requestBodySearch()
+    //       .query(
+    //         esb
+    //           .boolQuery()
+    //           .should(esb.matchQuery('documentTitle', keyword))
+    //           .should(esb.matchQuery('documentContent', keyword)),
+    //       )
+    //       .size(resultsSize)
+    //       .from(0) as ExtendedRequestBodySearch
+    //   )._body,
+    //   aggregations,
+    // };
+
+    // setRequestPayload(payload);
   };
 
   const setTagQuery = (tagId: string) => {
@@ -252,18 +323,30 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
   const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
     setOffset(0);
 
-    const payload = {
-      ...(
-        esb
-          .requestBodySearch()
-          .query(esb.boolQuery().must(esb.matchQuery(key, value)))
-          .size(resultsSize)
-          .from(0) as ExtendedRequestBodySearch
-      )._body,
-      aggregations,
-    };
+    console.log('currentQuery', currentQuery);
 
-    setRequestPayload(payload);
+    const { basicFilters = [] } = currentQuery;
+    const newBasicFilters = [...basicFilters, { key, value }];
+
+    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
+
+    router.push({
+      pathname: '/library',
+      query: { query: JSON.stringify(newQuery) },
+    });
+
+    // const payload = {
+    //   ...(
+    //     esb
+    //       .requestBodySearch()
+    //       .query(esb.boolQuery().must(esb.matchQuery(key, value)))
+    //       .size(resultsSize)
+    //       .from(0) as ExtendedRequestBodySearch
+    //   )._body,
+    //   aggregations,
+    // };
+
+    // setRequestPayload(payload);
   };
 
   useEffect(() => {
@@ -665,14 +748,18 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req } = context;
+  const { query, req } = context;
 
-  let response: IResponse = {};
+  console.log('query', query);
+
+  const payload = getPayload(query.query);
+
+  let apiResponse: IResponse = {};
 
   try {
-    const sPayload = JSON.stringify(defaultRequestPayload);
+    const sPayload = JSON.stringify(payload);
     const { host } = req.headers;
-    response = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
+    apiResponse = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
     })) as IResponse;
@@ -680,14 +767,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     console.error(error);
   }
 
-  if (!response) {
+  if (!apiResponse) {
     return {
       notFound: true,
     };
   }
 
   return {
-    props: { initialResponse: response },
+    props: { apiResponse },
   };
 };
 
