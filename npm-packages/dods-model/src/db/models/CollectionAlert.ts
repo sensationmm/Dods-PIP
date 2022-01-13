@@ -31,20 +31,6 @@ export interface AlertAttributes {
   hasKeywordsHighlight?: boolean;
 }
 
-export interface AlertAttributesStrecthed extends Omit<AlertAttributes,
-  | 'collectionId'
-  | 'templateId'
-  | 'createdBy'
-  | 'updatedBy'> {
-  collection: { uuid?: string, name?: string } | {}
-  template: { id?: string, name?: string } | {}
-  createdBy: { uuid?: string, name?: string, emailAddress?: string } | {}
-  createdAt?: Date;
-  updatedBy: { uuid?: string, name?: string, emailAddress?: string } | {}
-  updatedAt?: Date | null;
-  isSchedule: boolean;
-}
-
 export interface AlertInput
   extends Optional<
   AlertAttributes,

@@ -1,6 +1,11 @@
+import {
+    CollectionsRepository,
+    SearchCollectionsInput,
+    SearchCollectionsOutput,
+} from '@dodsgroup/dods-repositories';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+
 import { mocked } from 'jest-mock';
-import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { CollectionsRepository, SearchCollectionsInput, SearchCollectionsOutput } from '@dodsgroup/dods-repositories';
 import { searchCollections } from '../../../src/handlers/searchCollections/searchCollections';
 
 const mockedCollectionRepository = mocked(CollectionsRepository, true);
@@ -11,16 +16,19 @@ const FUNCTION_NAME = searchCollections.name;
 
 jest.mock('@dodsgroup/dods-repositories');
 
-describe(`${FUNCTION_NAME} handler`, () => {
-    it('Valid input', async () => {
+afterEach(() => {
+    mockedCollectionRepository.defaultInstance.list.mockClear();
+});
 
+describe(`${FUNCTION_NAME} handler`, () => {
+    it('Valid input, searchTerm', async () => {
         const requestParams: SearchCollectionsInput = {
             clientAccountId: '94a57103-3bf0-4a29-bdba-99a4650c1849',
             sortBy: 'name',
             sortDirection: 'ASC',
             limit: 30,
             offset: 0,
-            searchTerm: '',
+            searchTerm: 'some',
         };
 
         const defaultSearchCollectionsRepositoryResponse: SearchCollectionsOutput = {
@@ -31,7 +39,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             data: [],
         };
 
-        mockedCollectionRepository.defaultInstance.list.mockResolvedValue(defaultSearchCollectionsRepositoryResponse);
+        mockedCollectionRepository.defaultInstance.list.mockResolvedValue(
+            defaultSearchCollectionsRepositoryResponse
+        );
 
         const response = await searchCollections(requestParams, defaultContext);
 
@@ -46,5 +56,65 @@ describe(`${FUNCTION_NAME} handler`, () => {
         expect(mockedCollectionRepository.defaultInstance.list).toHaveBeenCalledTimes(1);
 
         expect(mockedCollectionRepository.defaultInstance.list).toHaveBeenCalledWith(requestParams);
+    });
+
+    it('Valid input, startsWith', async () => {
+        const requestParams: SearchCollectionsInput = {
+            clientAccountId: '94a57103-3bf0-4a29-bdba-99a4650c1849',
+            sortBy: 'name',
+            sortDirection: 'ASC',
+            limit: 30,
+            offset: 0,
+            startsWith: 'some',
+        };
+
+        const defaultSearchCollectionsRepositoryResponse: SearchCollectionsOutput = {
+            limit: requestParams.limit,
+            offset: requestParams.offset,
+            totalRecords: 10,
+            filteredRecords: 5,
+            data: [],
+        };
+
+        mockedCollectionRepository.defaultInstance.list.mockResolvedValue(
+            defaultSearchCollectionsRepositoryResponse
+        );
+
+        const response = await searchCollections(requestParams, defaultContext);
+
+        const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'Collection List',
+            ...defaultSearchCollectionsRepositoryResponse,
+        });
+
+        expect(response).toEqual(expectedResponse);
+
+        expect(mockedCollectionRepository.defaultInstance.list).toHaveBeenCalledTimes(1);
+
+        expect(mockedCollectionRepository.defaultInstance.list).toHaveBeenCalledWith(requestParams);
+    });
+
+    it('Invalid input, startsWith and searchTerm', async () => {
+        const requestParams: SearchCollectionsInput = {
+            clientAccountId: '94a57103-3bf0-4a29-bdba-99a4650c1849',
+            sortBy: 'name',
+            sortDirection: 'ASC',
+            limit: 30,
+            offset: 0,
+            startsWith: 'some',
+            searchTerm: 'some',
+        };
+
+        const response = await searchCollections(requestParams, defaultContext);
+
+        const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+            success: false,
+            message: 'Error: searchTerm and startsWith should not be used together.',
+        });
+
+        expect(response).toEqual(expectedResponse);
+
+        expect(mockedCollectionRepository.defaultInstance.list).toHaveBeenCalledTimes(0);
     });
 });

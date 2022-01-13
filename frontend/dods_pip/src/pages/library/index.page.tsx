@@ -80,6 +80,9 @@ export interface ESResponse {
   contentSource?: ContentSourceType;
   informationType?: string;
   documentTitle?: string;
+  contentLocation?: string;
+  originator?: string;
+  version?: string;
 }
 
 interface RequestPayload {
