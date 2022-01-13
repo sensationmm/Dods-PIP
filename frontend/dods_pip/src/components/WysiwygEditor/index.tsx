@@ -14,7 +14,7 @@ type ContentSelection = {
   fromIndex: number;
   toIndex: number;
   text: string;
-  occurences: number;
+  occurrences: number;
 };
 
 export type ContentTag = {
@@ -100,7 +100,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
             fromIndex: range.index,
             toIndex: range.length,
             text: selectedText,
-            occurences: matches.length,
+            occurrences: matches.length,
           });
         }
       });
@@ -116,7 +116,6 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
     tags
       .sort((a, b) => b.value.length - a.value.length)
       .forEach((tag) => {
-        console.info('<><><> tag', tag);
         if (!tag.value.length) return;
 
         /** TODO: RTE content tagging */
@@ -128,14 +127,13 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
         //     console.info('<><><> match', match);
         //     if (match && typeof match.index === 'number') {
         //       const matchedText = quillInstance.getText(match.index, match[0].length);
-        //       quillInstance.deleteText(match.index, tag.value.length);
+        //       quillInstance.deleteText(match.index, match[0].length);
         //       quillInstance.insertEmbed(match.index, 'content-tag', { ...tag, value: matchedText });
         //     }
         //   });
 
         // embed tag over selected text
         const selection = quillInstance.getSelection();
-        console.info('<><><> selection', selection);
         if (selection !== null && typeof selection.index === 'number' && selection.length) {
           const selectionIndex = selection.index;
           const selectionLength = selection.length;

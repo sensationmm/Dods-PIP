@@ -38,7 +38,7 @@ type TextSelection = {
   fromIndex: number;
   toIndex: number;
   text: string;
-  occurences: number;
+  occurrences: number;
 };
 
 // We need to load this dynamically since it has multiple client side `document` calls
@@ -55,7 +55,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   onTagsChange,
 }) => {
   const [selectedText, setSelectedText] = useState<string>();
-  const [selectedTextOccurences, setSelectedTextOccurences] = useState<number>();
+  const [selectedTextOccurrences, setSelectedTextOccurrences] = useState<number>();
 
   const validateField = (fieldName: keyof EditorialFormFields, value: string | undefined) => {
     const formErrors = JSON.parse(JSON.stringify(errors));
@@ -79,11 +79,11 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
     const text = params.text.trim();
     if (text.length > 0) {
       setSelectedText(params.text);
-      setSelectedTextOccurences(params.occurences);
+      setSelectedTextOccurrences(params.occurrences);
       return;
     }
     setSelectedText(undefined);
-    setSelectedTextOccurences(undefined);
+    setSelectedTextOccurrences(undefined);
   };
 
   return (
@@ -172,7 +172,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
 
       <ContentTagger
         highlight={selectedText}
-        highlightWordCount={selectedTextOccurences}
+        highlightWordCount={selectedTextOccurrences}
         tags={tags}
         setTags={onTagsChange}
       />
