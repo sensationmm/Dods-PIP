@@ -27,7 +27,89 @@ interface ExtendedRequestBodySearch extends RequestBodySearch {
   };
 }
 
-const aggregations = {
+export interface ISourceData {
+  aggs_fields: { [key: string]: string[] };
+  contentDateTime?: string;
+  contentLocation?: string;
+  contentSource?: ContentSourceType;
+  documentContent?: string;
+  documentTitle?: string;
+  informationType?: string;
+  sourceReferenceUri?: string;
+  originator?: string;
+  version?: string;
+}
+
+type BucketType = {
+  doc_count: number;
+  key: string;
+};
+
+export interface IResponse {
+  sourceReferenceUri?: string;
+  es_response?: {
+    hits: {
+      hits: { _source: ISourceData }[];
+      total: { value: number };
+    };
+    aggregations?: {
+      contentSource?: {
+        buckets: BucketType[];
+      };
+      informationType?: {
+        buckets: BucketType[];
+      };
+      jurisdiction?: {
+        buckets: BucketType[];
+      };
+      people?: {
+        buckets: BucketType[];
+      };
+      organizations?: {
+        buckets: BucketType[];
+      };
+      geography?: {
+        buckets: BucketType[];
+      };
+      topics?: {
+        buckets: BucketType[];
+      };
+    };
+  };
+}
+
+interface LibraryProps {
+  initialResponse: IResponse;
+}
+
+enum AggTypes {
+  contentSource = 'contentSource',
+  jurisdiction = 'jurisdiction',
+  informationType = 'informationType',
+  topics = 'topics',
+  people = 'people',
+  organizations = 'organizations',
+  geography = 'geography',
+}
+
+type AggregationsType = {
+  [key in AggTypes]: {
+    terms: {
+      field: string;
+      min_doc_count: number;
+      size: number;
+    };
+  };
+};
+
+interface RequestPayload {
+  query?: Query;
+  aggregations: AggregationsType;
+  size?: number;
+  from?: number;
+}
+
+const aggregations: AggregationsType = {
   topics: {
     terms: {
       field: 'aggs_fields.topics',
@@ -79,83 +161,21 @@ const aggregations = {
   },
 };
 
-export interface ISourceData {
-  aggs_fields: { [key: string]: string[] };
-  contentDateTime?: string;
-  contentLocation?: string;
-  contentSource?: ContentSourceType;
-  documentContent?: string;
-  documentTitle?: string;
-  informationType?: string;
-  sourceReferenceUri?: string;
-  originator?: string;
-  version?: string;
-}
-
-export interface IResponse {
-  sourceReferenceUri?: string;
-  es_response?: {
-    hits: {
-      hits: { _source: ISourceData }[];
-      total: { value: number };
-    };
-    aggregations?: {
-      contentSource?: {
-        buckets: [];
-      };
-      informationType?: {
-        buckets: [];
-      };
-      jurisdiction?: {
-        buckets: [];
-      };
-      people?: {
-        buckets: [];
-      };
-      organizations?: {
-        buckets: [];
-      };
-      geography?: {
-        buckets: [];
-      };
-      topics?: {
-        buckets: [];
-      };
-    };
-  };
-}
-
-interface LibraryProps {
-  initialResponse: IResponse;
-}
-interface RequestPayload {
-  query?: unknown;
-  aggregations: unknown;
-  size?: number;
-  from?: number;
-}
-
 const defaultRequestPayload = {
   ...(esb.requestBodySearch().query(esb.boolQuery()).size(20).from(0) as ExtendedRequestBodySearch)
     ._body,
   aggregations,
 };
 
-enum queryKeys {
-  contentSource = 'contentSource',
-  jurisdiction = 'jurisdiction',
-  informationType = 'informationType',
-}
-
 export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
   const [apiResponse, setApiResponse] = useState<IResponse>(initialResponse);
-  const [contentSources, setContentSources] = useState([]);
-  const [informationTypes, setInformationTypes] = useState([]);
-  const [jurisdictions, setJurisdictions] = useState([]);
-  const [topics, setTopics] = useState([]);
-  const [people, setPeople] = useState([]);
-  const [organizations, setOrganizations] = useState([]);
-  const [geography, setGeography] = useState([]);
+  const [contentSources, setContentSources] = useState<BucketType[]>([]);
+  const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
+  const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
+  const [topics, setTopics] = useState<BucketType[]>([]);
+  const [people, setPeople] = useState<BucketType[]>([]);
+  const [organizations, setOrganizations] = useState<BucketType[]>([]);
+  const [geography, setGeography] = useState<BucketType[]>([]);
   const [searchText, setSearchText] = useState('');
 
   const [offset, setOffset] = useState(0);
@@ -229,7 +249,7 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
     setRequestPayload(payload);
   };
 
-  const setBasicQuery = ({ key, value }: { key: queryKeys; value: string }) => {
+  const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
     setOffset(0);
 
     const payload = {
@@ -447,12 +467,12 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>Content Source</h3>
-                            {contentSources.map((contentSource: Record<string, any>, i) => {
+                            {contentSources.map((contentSource, i) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
                                     setBasicQuery({
-                                      key: queryKeys.contentSource,
+                                      key: AggTypes.contentSource,
                                       value: contentSource.key,
                                     });
                                   }}
@@ -476,12 +496,12 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>Information Type</h3>
-                            {informationTypes.map((informationType: Record<string, any>, i) => {
+                            {informationTypes.map((informationType, i) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
                                     setBasicQuery({
-                                      key: queryKeys.informationType,
+                                      key: AggTypes.informationType,
                                       value: informationType.key,
                                     });
                                   }}
@@ -505,12 +525,12 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>Jurisdiction</h3>
-                            {jurisdictions.map((jurisdiction: Record<string, any>, i) => {
+                            {jurisdictions.map((jurisdiction, i) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
                                     setBasicQuery({
-                                      key: queryKeys.jurisdiction,
+                                      key: AggTypes.jurisdiction,
                                       value: jurisdiction.key,
                                     });
                                   }}
@@ -534,7 +554,7 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>Topics</h3>
-                            {topics.map((topic: Record<string, any>, i) => {
+                            {topics.map((topic, i) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
@@ -560,7 +580,7 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>Organizations</h3>
-                            {organizations.map((topic: Record<string, any>, i) => {
+                            {organizations.map((topic, i) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
@@ -586,7 +606,7 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>People</h3>
-                            {people.map((topic: Record<string, any>, i) => {
+                            {people.map((topic, i) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
@@ -612,7 +632,7 @@ export const Library: React.FC<LibraryProps> = ({ initialResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>Geography</h3>
-                            {geography.map((topic: Record<string, any>, i) => {
+                            {geography.map((topic, i) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
