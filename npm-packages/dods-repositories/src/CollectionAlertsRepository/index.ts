@@ -41,7 +41,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
     ) { }
 
-    #cloneObject(target: CollectionAlert,
+    private cloneObject(target: CollectionAlert,
         replaceProperties?: AlertInput,
         unwantedProperties?: Array<string>) {
 
@@ -51,7 +51,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return copiedObject;
     }
 
-    #cloneArray(target: CollectionAlertQuery[] | CollectionAlertDocument[],
+    private cloneArray(target: CollectionAlertQuery[] | CollectionAlertDocument[],
         replaceProperties?: AlertQueryInput | AlertDocumentInput,
         unwantedProperties?: Array<string>) {
         const copiedArray = target.slice().map(item => { return { ...item, ...replaceProperties } });
@@ -346,7 +346,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
 
         // * Copy alert
-        const copiedAlert: CollectionAlert = this.#cloneObject(existingAlert, {
+        const copiedAlert: CollectionAlert = this.cloneObject(existingAlert, {
             collectionId: destinationCollection.id,
             createdBy: alertCreator.id,
         }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy', 'CollectionId']) as CollectionAlert;
@@ -364,7 +364,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         })
 
         if (existingQueries && existingQueries.length > 0) {
-            const copiedQueries: CollectionAlertQuery[] = this.#cloneArray(existingQueries, {
+            const copiedQueries: CollectionAlertQuery[] = this.cloneArray(existingQueries, {
                 alertId: alert.id,
                 createdBy: alertCreator.id
             }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']) as CollectionAlertQuery[]
@@ -382,7 +382,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         if (existingAlertDocuments && existingAlertDocuments.length > 0) {
-            const copiedAlertDocs: CollectionAlertDocument[] = this.#cloneArray(existingAlertDocuments, {
+            const copiedAlertDocs: CollectionAlertDocument[] = this.cloneArray(existingAlertDocuments, {
                 alertId: alert.id,
                 createdBy: alertCreator.id
                 // TODO: is there an "updatedBy" column in the database for this model? If so, add 'updatedBy' to the array
