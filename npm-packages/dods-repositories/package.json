@@ -1,6 +1,6 @@
 {
   "name": "@dodsgroup/dods-repositories",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

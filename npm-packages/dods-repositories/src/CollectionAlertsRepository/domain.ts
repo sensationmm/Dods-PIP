@@ -138,3 +138,8 @@ export interface getQueriesResponse {
     queries: AlertQueryResponse[];
     count: number;
 }
+
+export interface DeleteAlertParameters {
+    collectionId: string;
+    alertId: string;
+}

@@ -12,7 +12,8 @@ import {
     getAlertsByCollectionResponse,
     getQueriesResponse,
     setAlertScheduleParameters,
-    CopyAlertResponse
+    CopyAlertResponse,
+    DeleteAlertParameters
 } from './domain';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
@@ -452,5 +453,34 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             createdAt,
             updatedAt,
         };
+    }
+
+    async deleteAlert(parameters: DeleteAlertParameters): Promise<void> {
+        const { collectionId, alertId } = parameters;
+
+        const collection = await this.collectionModel.findOne({
+            where: { uuid: collectionId, isActive: true }
+        })
+
+        if (!collection)
+            throw new CollectionError(`Unable to retrieve Collection with uuid: ${collectionId}`);
+
+        const alert = await this.alertModel.findOne({
+            where: {
+                uuid: alertId,
+                collectionId: collection.id,
+                isActive: true,
+            }
+        })
+
+        if (!alert) {
+            throw new CollectionError(
+                `Unable to retrieve Alert with uuid: ${alertId}`
+            );
+        }
+        console.log("YEAAAAAH")
+
+        await alert.update({ isActive: false });
+        await alert.destroy();
     }
 }
