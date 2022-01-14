@@ -81,6 +81,7 @@ export interface IResponse {
 
 interface LibraryProps {
   apiResponse: IResponse;
+  parsedQuery: QueryObject;
 }
 
 enum AggTypes {
@@ -184,16 +185,17 @@ interface QueryObject {
 
 type QueryString = string | string[] | undefined;
 
-const getPayload = (query: QueryString = '{}') => {
+const getPayload = (query: QueryString = '{}'): { payload: unknown; parsedQuery: QueryObject } => {
   let esbQuery;
+  let parsedQuery;
+  let resultsSize = 20;
 
   try {
-    const {
-      searchTerm = '',
-      basicFilters = [],
-      nestedFilters = [],
-      resultsSize = 20,
-    }: QueryObject = typeof query === 'string' ? JSON.parse(query) : {};
+    parsedQuery = typeof query === 'string' ? JSON.parse(query) : {};
+
+    const { searchTerm = '', basicFilters = [], nestedFilters = [] }: QueryObject = parsedQuery;
+
+    resultsSize = parsedQuery.resultsSize;
 
     if (searchTerm) {
       esbQuery = esb
@@ -216,12 +218,16 @@ const getPayload = (query: QueryString = '{}') => {
           ),
         );
     }
+  } catch (error) {
+    console.error(error);
+  }
 
-    if (!esbQuery) {
-      return defaultRequestPayload;
-    }
+  if (!esbQuery) {
+    return { payload: defaultRequestPayload, parsedQuery };
+  }
 
-    return {
+  return {
+    payload: {
       ...(
         esb
           .requestBodySearch()
@@ -230,13 +236,12 @@ const getPayload = (query: QueryString = '{}') => {
           .from(resultsSize) as ExtendedRequestBodySearch
       )._body,
       aggregations,
-    };
-  } catch (error) {
-    console.error(error);
-  }
+    },
+    parsedQuery,
+  };
 };
 
-export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
+export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) => {
   const router = useRouter();
 
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
@@ -264,28 +269,14 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
   const setKeyWordQuery = (searchTerm: string) => {
     setOffset(0);
 
-    router.push({
-      pathname: '/library',
-      query: { query: JSON.stringify({ searchTerm }) },
-    });
-
-    // const payload = {
-    //   ...(
-    //     esb
-    //       .requestBodySearch()
-    //       .query(
-    //         esb
-    //           .boolQuery()
-    //           .should(esb.matchQuery('documentTitle', keyword))
-    //           .should(esb.matchQuery('documentContent', keyword)),
-    //       )
-    //       .size(resultsSize)
-    //       .from(0) as ExtendedRequestBodySearch
-    //   )._body,
-    //   aggregations,
-    // };
-
-    // setRequestPayload(payload);
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify({ searchTerm }) },
+      },
+      undefined,
+      { scroll: false },
+    );
   };
 
   const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
@@ -296,10 +287,14 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
 
     const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
 
-    router.push({
-      pathname: '/library',
-      query: { query: JSON.stringify(newQuery) },
-    });
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
   };
 
   const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
@@ -310,10 +305,14 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
 
     const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
 
-    router.push({
-      pathname: '/library',
-      query: { query: JSON.stringify(newQuery) },
-    });
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
   };
 
   useEffect(() => {
@@ -435,23 +434,34 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                             <Styled.tagsWrapper>
                               {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
                               {/* @ts-ignore */}
-                              {hit._source.taxonomyTerms.map((taxonomy: Record<string, any>, i) => {
+                              {hit._source.taxonomyTerms.map((term, i) => {
                                 if (i > 5) {
                                   return;
                                 }
+
+                                const selectedIndex =
+                                  parsedQuery?.nestedFilters?.findIndex(
+                                    ({ value, path }) =>
+                                      path === 'taxonomyTerms' && value === term.tagId,
+                                  ) ?? -1;
+
                                 return (
                                   <div
                                     onClick={() => {
                                       setNestedQuery({
                                         path: 'taxonomyTerms',
                                         key: 'taxonomyTerms.tagId',
-                                        value: taxonomy.tagId,
+                                        value: term.tagId,
                                       });
                                     }}
                                     key={`taxonomy-${i}`}
                                   >
                                     <Tag
-                                      label={taxonomy.termLabel ? taxonomy.termLabel : 'Temp Label'}
+                                      label={
+                                        selectedIndex > -1
+                                          ? `* ${term.termLabel} *`
+                                          : term.termLabel
+                                      }
                                       width={'fixed'}
                                       bgColor={color.shadow.blue}
                                     />
@@ -503,6 +513,12 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                           <div>
                             <h3>Content Source</h3>
                             {contentSources.map((contentSource, i) => {
+                              const selectedIndex =
+                                parsedQuery?.basicFilters?.findIndex(
+                                  ({ value, key }) =>
+                                    key === 'contentSource' && value === contentSource.key,
+                                ) ?? -1;
+
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
@@ -514,7 +530,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                                   key={`content-source-${i}`}
                                 >
                                   <Tag
-                                    label={contentSource.key}
+                                    label={
+                                      selectedIndex > -1
+                                        ? `* ${contentSource.key} *`
+                                        : contentSource.key
+                                    }
                                     width={'fixed'}
                                     bgColor={color.shadow.blue}
                                   />
@@ -532,6 +552,12 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                           <div>
                             <h3>Information Type</h3>
                             {informationTypes.map((informationType, i) => {
+                              const selectedIndex =
+                                parsedQuery?.basicFilters?.findIndex(
+                                  ({ value, key }) =>
+                                    key === 'informationType' && value === informationType.key,
+                                ) ?? -1;
+
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
@@ -543,7 +569,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                                   key={`content-source-${i}`}
                                 >
                                   <Tag
-                                    label={informationType.key}
+                                    label={
+                                      selectedIndex > -1
+                                        ? `* ${informationType.key} *`
+                                        : informationType.key
+                                    }
                                     width={'fixed'}
                                     bgColor={color.shadow.blue}
                                   />
@@ -561,6 +591,12 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                           <div>
                             <h3>Jurisdiction</h3>
                             {jurisdictions.map((jurisdiction, i) => {
+                              const selectedIndex =
+                                parsedQuery?.basicFilters?.findIndex(
+                                  ({ value, key }) =>
+                                    key === 'jurisdiction' && value === jurisdiction.key,
+                                ) ?? -1;
+
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
@@ -572,7 +608,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                                   key={`content-source-${i}`}
                                 >
                                   <Tag
-                                    label={jurisdiction.key}
+                                    label={
+                                      selectedIndex > -1
+                                        ? `* ${jurisdiction.key} *`
+                                        : jurisdiction.key
+                                    }
                                     width={'fixed'}
                                     bgColor={color.shadow.blue}
                                   />
@@ -590,6 +630,12 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                           <div>
                             <h3>Topics</h3>
                             {topics.map((topic, i) => {
+                              const selectedIndex =
+                                parsedQuery?.nestedFilters?.findIndex(
+                                  ({ value, key }) =>
+                                    key === 'taxonomyTerms.termLabel' && value === topic.key,
+                                ) ?? -1;
+
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
@@ -602,7 +648,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                                   key={`content-source-${i}`}
                                 >
                                   <Tag
-                                    label={topic.key}
+                                    label={selectedIndex > -1 ? `* ${topic.key} *` : topic.key}
                                     width={'fixed'}
                                     bgColor={color.shadow.blue}
                                   />
@@ -619,20 +665,30 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>Organizations</h3>
-                            {organizations.map((topic, i) => {
+                            {organizations.map((organization, i) => {
+                              const selectedIndex =
+                                parsedQuery?.nestedFilters?.findIndex(
+                                  ({ value, key }) =>
+                                    key === 'taxonomyTerms.termLabel' && value === organization.key,
+                                ) ?? -1;
+
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
                                     setNestedQuery({
                                       path: 'taxonomyTerms',
                                       key: 'taxonomyTerms.termLabel',
-                                      value: topic.key,
+                                      value: organization.key,
                                     });
                                   }}
                                   key={`content-source-${i}`}
                                 >
                                   <Tag
-                                    label={topic.key}
+                                    label={
+                                      selectedIndex > -1
+                                        ? `* ${organization.key} *`
+                                        : organization.key
+                                    }
                                     width={'fixed'}
                                     bgColor={color.shadow.blue}
                                   />
@@ -649,20 +705,26 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>People</h3>
-                            {people.map((topic, i) => {
+                            {people.map((person, i) => {
+                              const selectedIndex =
+                                parsedQuery?.nestedFilters?.findIndex(
+                                  ({ value, key }) =>
+                                    key === 'taxonomyTerms.termLabel' && value === person.key,
+                                ) ?? -1;
+
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
                                     setNestedQuery({
                                       path: 'taxonomyTerms',
                                       key: 'taxonomyTerms.termLabel',
-                                      value: topic.key,
+                                      value: person.key,
                                     });
                                   }}
                                   key={`content-source-${i}`}
                                 >
                                   <Tag
-                                    label={topic.key}
+                                    label={selectedIndex > -1 ? `* ${person.key} *` : person.key}
                                     width={'fixed'}
                                     bgColor={color.shadow.blue}
                                   />
@@ -679,20 +741,26 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                         <Box size={'extraSmall'}>
                           <div>
                             <h3>Geography</h3>
-                            {geography.map((topic, i) => {
+                            {geography.map((area, i) => {
+                              const selectedIndex =
+                                parsedQuery?.nestedFilters?.findIndex(
+                                  ({ value, key }) =>
+                                    key === 'taxonomyTerms.termLabel' && value === area.key,
+                                ) ?? -1;
+
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
                                     setNestedQuery({
                                       path: 'taxonomyTerms',
                                       key: 'taxonomyTerms.termLabel',
-                                      value: topic.key,
+                                      value: area.key,
                                     });
                                   }}
                                   key={`content-source-${i}`}
                                 >
                                   <Tag
-                                    label={topic.key}
+                                    label={selectedIndex > -1 ? `* ${area.key} *` : area.key}
                                     width={'fixed'}
                                     bgColor={color.shadow.blue}
                                   />
@@ -718,7 +786,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query, req } = context;
 
-  const payload = getPayload(query.query);
+  const { payload, parsedQuery } = getPayload(query.query);
 
   let apiResponse: IResponse = {};
 
@@ -740,7 +808,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { apiResponse },
+    props: { apiResponse, parsedQuery },
   };
 };
 
