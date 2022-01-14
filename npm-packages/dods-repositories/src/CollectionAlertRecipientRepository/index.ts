@@ -61,7 +61,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
         await collectionAlert.update({ updatedBy: updatedByUser.id });
 
         const collectionAlertRecipient = await CollectionAlertRecipient.findAll({
-            where: { alertId: 1 },
+            where: { alertId: collectionAlert.id },
             include: [CollectionAlertRecipient.associations.user],
         });
 
