@@ -108,4 +108,8 @@ export const wrapper = styled.div`
   .ql-editor.ql-blank::before {
     left: ${spacing(6)};
   }
+
+  .ql-editor .tooltip {
+    display: none;
+  }
 `;

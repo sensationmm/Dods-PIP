@@ -204,5 +204,33 @@ functions:
       - http:
           method: get
           path: /collections/{collectionId}/alerts/{alertId}
+            
+  getAlertQueries:
+    handler: src/handlers/getAlertQueries/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: /collections/{collectionId}/alerts/{alertId}/queries
+          caching:
+            enabled: false
+
+  copyAlert:
+    handler: src/handlers/copyAlert/index.handle
+    description: Copy an alert to a different collection
+    events:
+      - http:
+          method: post
+          path: /collections/{collectionId}/alerts/{alertId}/copyto
+          caching:
+            enabled: false
+
+  deleteAlert:
+    handler: src/handlers/deleteAlert/index.handle
+    description: Delete an Alert
+    events:
+      - http:
+          method: delete
+          path: /collections/{collectionId}/alerts/{alertId}
           caching:
             enabled: false

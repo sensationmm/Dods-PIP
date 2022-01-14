@@ -120,6 +120,12 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
     taxonomySearch !== '' && searchTags(taxonomySearch);
   }, [taxonomySearch]);
 
+  useEffect(() => {
+    if (highlight && highlight.length > 0) {
+      setTaxonomySearch(highlight);
+    }
+  }, [highlight]);
+
   const manageAddedTags = (tag: TagsData) => {
     const currentTags = addedTags.slice();
 
@@ -148,7 +154,12 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
   };
 
   const handleSaveToHighlight = () => {
-    setTags(addedTags);
+    setCloseWarning(false);
+    setShowTagBrowser(false);
+    setTags(tags.concat(addedTags));
+    setAddedTags([]);
+    setTaxonomySearch('');
+    setTagsSearch(undefined);
   };
 
   const handleAddToHighlight = () => {

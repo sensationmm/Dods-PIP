@@ -47,7 +47,8 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 
     setSearch(val);
     const res = values.filter(
-      (item) => val !== '' && item.label.toLowerCase().indexOf(val.toLowerCase()) > -1,
+      (item) =>
+        item.label && val !== '' && item.label.toLowerCase().indexOf(val.toLowerCase()) > -1,
     );
     setResults(res.slice(0, 5));
   };
