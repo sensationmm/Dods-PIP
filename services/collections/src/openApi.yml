@@ -124,6 +124,21 @@ paths:
           $ref: "#/components/responses/GetAlertResponse"
         "404":
           $ref: "#/components/responses/NotFound"
+  
+    delete:
+      operationId: deleteAlert
+      summary: "Delete alert"
+      description: "Delete an alert from the database"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteAlertResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "400":
+          $ref: "#/components/responses/BadRequest"
           
           
   /collections/{collectionId}/alerts/{alertId}/schedule:
@@ -192,7 +207,6 @@ paths:
           $ref: "#/components/responses/GetQueriesResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-
 
 components:
   securitySchemes:
@@ -805,6 +819,20 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/QueryOutput"
+    
+    DeleteAlertResponse:
+      description: "Delete Alert Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: Alert was deleted successfully
 
   requestBodies:
     CreateCollection:
