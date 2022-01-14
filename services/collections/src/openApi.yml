@@ -160,6 +160,22 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
           
+  /collections/{collectionId}/alerts/{alertId}/copyto:
+    post:
+      operationId: copyAlert
+      summary: "Copy Existing Alert"
+      description: "Copy existing alert from a collection to another collection"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/CopyAlert"
+      responses:
+        "200":
+          $ref: "#/components/responses/CopyAlertResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
   /collections/{collectionId}/alerts/{alertId}/queries:
     get:
       operationId: getAlertQueries
@@ -402,6 +418,18 @@ components:
               userId:
                 type: string
                 format: uuid
+                
+    CopyAlertInput:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          format: uuid
+          minLength: 1
+        destinationCollectionId:
+          type: string
+          format: uuid
+          minLength: 1
 
     CollectionOutput:
       type: object
@@ -591,6 +619,21 @@ components:
               message:
                 type: string
                 example: The alert scheduling was set successfully
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+    
+    CopyAlertResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert scheduling was copied successfully
               alert:
                 $ref: "#/components/schemas/AlertOutput"
                 
@@ -803,3 +846,10 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/SetAlertRecipientsInput"
+    
+    CopyAlert:
+      description: "Payload to copy an existing alert"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CopyAlertInput"

@@ -214,3 +214,13 @@ functions:
           path: /collections/{collectionId}/alerts/{alertId}/queries
           caching:
             enabled: false
+
+  copyAlert:
+    handler: src/handlers/copyAlert/index.handle
+    description: Copy an alert to a different collection
+    events:
+      - http:
+          method: post
+          path: /collections/{collectionId}/alerts/{alertId}/copyto
+          caching:
+            enabled: false

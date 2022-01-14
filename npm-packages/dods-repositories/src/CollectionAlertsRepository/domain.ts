@@ -92,12 +92,25 @@ export interface SearchAlertParameters {
     alertId: string;
 }
 
-export interface getAlertById {
+export interface AlerByIdOutput {
     alert: AlertOutput,
     searchQueriesCount: number,
     recipientsCount: number
 }
 
+export interface CopyAlertParameters {
+    collectionId: string;
+    alertId: string;
+    destinationCollectionId: string;
+    createdBy: string;
+}
+
+export interface CopyAlertResponse {
+    alert: AlertOutput,
+    documentsCount: number,
+    searchQueriesCount: number,
+    recipientsCount: number
+}
 
 export interface SearchAlertQueriesParameters {
     alertId: string;
