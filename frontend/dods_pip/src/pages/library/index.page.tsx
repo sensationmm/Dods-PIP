@@ -368,13 +368,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
 
   const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      if (searchText) {
-        setKeyWordQuery(searchText);
-      } else {
-        {
-          setRequestPayload(defaultRequestPayload);
-        }
-      }
+      setKeyWordQuery(searchText);
     }
   };
 
@@ -397,6 +391,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
               label="What are you looking for?"
               value={searchText}
               onChange={(val) => setSearchText(val)}
+              onClear={() => setKeyWordQuery('')}
             />
             <Spacer size={8} />
             {apiResponse.es_response?.hits?.hits.length !== 0 && (
