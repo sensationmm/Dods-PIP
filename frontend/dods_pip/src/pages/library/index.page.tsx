@@ -257,7 +257,6 @@ const getPayload = (query: QueryString = '{}'): { payload: unknown; parsedQuery:
 
 export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) => {
   const router = useRouter();
-
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
   const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
@@ -270,9 +269,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   const [resultsSize] = useState(20);
   const [requestPayload, setRequestPayload] = useState<RequestPayload>();
 
-  const currentQuery = useMemo(() => {
-    // try / catch ??
-
+  const currentQuery: QueryObject = useMemo(() => {
     if (typeof router.query.query === 'string') {
       return JSON.parse(router.query.query || '{}') || {};
     }
@@ -280,7 +277,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     return {};
   }, [router.query]);
 
-  const setKeyWordQuery = (searchTerm: string) => {
+  const setKeywordQuery = (searchTerm: string) => {
     setOffset(0);
 
     router.push(
@@ -297,7 +294,18 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     setOffset(0);
 
     const { nestedFilters = [] } = currentQuery;
-    const newNestedFilters = [...nestedFilters, { path, key, value }];
+
+    const selectedIndex = nestedFilters.findIndex(
+      (filter) => filter.key === key && filter.value === value,
+    );
+
+    let newNestedFilters = [...nestedFilters];
+
+    if (selectedIndex > -1) {
+      newNestedFilters.splice(selectedIndex, 1); // remove
+    } else {
+      newNestedFilters = [...nestedFilters, { path, key, value }]; // add
+    }
 
     const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
 
@@ -315,7 +323,17 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     setOffset(0);
 
     const { basicFilters = [] } = currentQuery;
-    const newBasicFilters = [...basicFilters, { key, value }];
+    const selectedIndex = basicFilters.findIndex(
+      (filter) => filter.key === key && filter.value === value,
+    );
+
+    let newBasicFilters = [...basicFilters];
+
+    if (selectedIndex > -1) {
+      newBasicFilters.splice(selectedIndex, 1); // remove
+    } else {
+      newBasicFilters = [...basicFilters, { key, value }]; // add
+    }
 
     const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
 
@@ -368,7 +386,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
 
   const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      setKeyWordQuery(searchText);
+      setKeywordQuery(searchText);
     }
   };
 
@@ -391,7 +409,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
               label="What are you looking for?"
               value={searchText}
               onChange={(val) => setSearchText(val)}
-              onClear={() => setKeyWordQuery('')}
+              onClear={() => setKeywordQuery('')}
             />
             <Spacer size={8} />
             {apiResponse.es_response?.hits?.hits.length !== 0 && (
