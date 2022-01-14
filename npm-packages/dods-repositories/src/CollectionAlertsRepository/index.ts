@@ -1,6 +1,5 @@
 import { AlertDocumentInput, AlertInput, AlertQueryInput, Collection, CollectionAlert, CollectionAlertDocument, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
-    AlertOutput,
     AlertQueryResponse,
     CollectionAlertsPersister,
     CreateAlertParameters,
@@ -17,6 +16,7 @@ import {
 } from './domain';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
+import { cloneArray, cloneObject, mapAlert } from '..';
 
 export * from './domain';
 
@@ -41,48 +41,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         private alertModel: typeof CollectionAlert
 
     ) { }
-
-    private cloneObject(target: CollectionAlert,
-        replaceProperties?: AlertInput,
-        unwantedProperties?: Array<string>) {
-
-        const copiedObject = Object.assign({}, target, replaceProperties);
-        if (unwantedProperties)
-            unwantedProperties.forEach((key) => Reflect.deleteProperty(copiedObject, key));
-        return copiedObject;
-    }
-
-    private cloneArray(target: CollectionAlertQuery[] | CollectionAlertDocument[],
-        replaceProperties?: AlertQueryInput | AlertDocumentInput,
-        unwantedProperties?: Array<string>) {
-        const copiedArray = target.slice().map(item => { return { ...item, ...replaceProperties } });
-        if (unwantedProperties)
-            copiedArray.map(item => unwantedProperties.forEach((key) => Reflect.deleteProperty(item, key)));
-        return copiedArray;
-    }
-
-    mapAlert(model: CollectionAlert): AlertOutput {
-        const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted } = model;
-
-        return {
-            id,
-            uuid,
-            title,
-            description,
-            collection: collection ? { uuid: collection.uuid, name: collection.name } : {},
-            template: alertTemplate ? { id: alertTemplate.id, name: alertTemplate.name } : {},
-            schedule,
-            timezone,
-            createdBy: createdById ? { uuid: createdById.uuid, name: createdById.fullName, emailAddress: createdById.primaryEmail } : {},
-            createdAt,
-            updatedAt,
-            updatedBy: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail } : {},
-            hasKeywordsHighlight: hasKeywordsHighlight ? true : false,
-            isSchedule: isScheduled ? true : false,
-            lastStepCompleted: lastStepCompleted,
-            isPublished: isPublished ? true : false
-        }
-    }
 
     async getCollectionAlerts(parameters: SearchCollectionAlertsParameters): Promise<getAlertsByCollectionResponse> {
 
@@ -110,7 +68,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         return {
-            alerts: rows.map((collectionAlert) => this.mapAlert(collectionAlert)),
+            alerts: rows.map((collectionAlert) => mapAlert(collectionAlert)),
             count: count
         };
     }
@@ -185,8 +143,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     async setAlertSchedule(parameters: setAlertScheduleParameters): Promise<CollectionAlert> {
 
         const { isScheduled, schedule, alertId, hasKeywordHighlight, timezone, updatedBy, alertTemplateId, collectionId } = parameters
-
-        console.log(alertId);
 
         if (isScheduled && !schedule) {
             throw new CollectionError(
@@ -298,7 +254,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
 
         return {
-            alert: this.mapAlert(alert),
+            alert: mapAlert(alert),
             searchQueriesCount: alertQueryResponse.count,
             recipientsCount: alertRecipientResponse.count
         }
@@ -347,10 +303,10 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
 
         // * Copy alert
-        const copiedAlert: CollectionAlert = this.cloneObject(existingAlert, {
+        const copiedAlert = cloneObject<CollectionAlert, AlertInput>(existingAlert, {
             collectionId: destinationCollection.id,
             createdBy: alertCreator.id,
-        }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy', 'CollectionId']) as CollectionAlert;
+        }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy', 'CollectionId']);
 
         const alert = await this.alertModel.create({ ...copiedAlert });
         await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
@@ -365,9 +321,9 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         })
 
         if (existingQueries && existingQueries.length > 0) {
-            const copiedQueries: CollectionAlertQuery[] = this.cloneArray(existingQueries, {
+            const copiedQueries = cloneArray<CollectionAlertQuery, Partial<AlertQueryInput>>(existingQueries, {
                 alertId: alert.id,
-                createdBy: alertCreator.id
+                createdBy: alertCreator.id,
             }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']) as CollectionAlertQuery[]
 
             await this.alertQueryModel.bulkCreate(copiedQueries);
@@ -383,17 +339,16 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         if (existingAlertDocuments && existingAlertDocuments.length > 0) {
-            const copiedAlertDocs: CollectionAlertDocument[] = this.cloneArray(existingAlertDocuments, {
+            const copiedAlertDocs = cloneArray<CollectionAlertDocument, AlertDocumentInput>(existingAlertDocuments, {
                 alertId: alert.id,
                 createdBy: alertCreator.id
                 // TODO: is there an "updatedBy" column in the database for this model? If so, add 'updatedBy' to the array
-            }, ['createdAt', 'updatedAt', 'deletedAt']) as CollectionAlertDocument[]
+            }, ['createdAt', 'updatedAt', 'deletedAt'])
             await this.alertDocumentModel.bulkCreate(copiedAlertDocs);
         }
 
-
         return {
-            alert: this.mapAlert(alert),
+            alert: mapAlert(alert),
             searchQueriesCount: existingQueries.length,
             documentsCount: existingAlertDocuments.length,
             recipientsCount: 0
