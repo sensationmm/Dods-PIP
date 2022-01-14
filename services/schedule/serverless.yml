@@ -109,6 +109,17 @@ functions:
           caching:
             enabled: false
 
+  get_watcher:
+    handler: src/handlers/getSchedule/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: scheduler/{scheduleId}
+          cors: true
+          caching:
+            enabled: false
+
   deleteSchedule:
     handler: src/handlers/deleteSchedule/index.handle
     description: Delete schedule
