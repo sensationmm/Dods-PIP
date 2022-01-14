@@ -83,7 +83,7 @@ module "migration-stage-3-sqs-queue-content-items" {
 // --------------------------------------------------------------------------------------------------------------------
 // - Migration stage 4 sqs queue to pass messages to the processing job
 // --------------------------------------------------------------------------------------------------------------------
-module "migration-stage-3-sqs-queue-content-items" {
+module "migration-stage-4-sqs-queue" {
   source      = "./modules/sqs"
   environment = var.environment
   queue_name  = "migration-stage-4-queue"
