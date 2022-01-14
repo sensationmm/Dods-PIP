@@ -5,8 +5,8 @@ import {
     deleteScheduleParameters,
     updateScheduleParameters,
     activateScheduleParameters,
-    deactivateScheduleParameters
-    // getScheduleParameters,
+    deactivateScheduleParameters,
+    getScheduleParameters,
 } from "../domain";
 import { Schedule } from "./Schedule"
 import elasticsearch from "../elasticsearch"

@@ -10,6 +10,10 @@ export interface createScheduleParameters extends deleteScheduleParameters {
     cron: string;
 }
 
+export interface getScheduleParameters {
+    scheduleId: string;
+}
+
 export interface updateScheduleParameters extends deleteScheduleParameters {
     scheduleType?: String;
     cron: string;
