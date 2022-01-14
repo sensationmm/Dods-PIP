@@ -202,25 +202,33 @@ const getPayload = (query: QueryString = '{}'): { payload: unknown; parsedQuery:
         .boolQuery()
         .should(esb.matchQuery('documentTitle', searchTerm))
         .should(esb.matchQuery('documentContent', searchTerm))
-        .must(basicFilters.map(({ key, value }) => esb.termQuery(`${key}.keyword`, value)))
+        .must(
+          basicFilters.map(({ key, value }) =>
+            esb.termQuery(key === 'jurisdiction' ? key : `${key}.keyword`, value),
+          ),
+        )
         .must(
           nestedFilters.map(({ path, key, value }) =>
             esb
               .nestedQuery()
               .path(path)
-              .query(esb.termQuery(`${key}.keyword`, value)),
+              .query(esb.termQuery(key.includes('termLabel') ? `${key}.keyword` : key, value)),
           ),
         );
     } else if (!searchTerm) {
       esbQuery = esb
         .boolQuery()
-        .must(basicFilters.map(({ key, value }) => esb.termQuery(`${key}.keyword`, value)))
+        .must(
+          basicFilters.map(({ key, value }) =>
+            esb.termQuery(key === 'jurisdiction' ? key : `${key}.keyword`, value),
+          ),
+        )
         .must(
           nestedFilters.map(({ path, key, value }) =>
             esb
               .nestedQuery()
               .path(path)
-              .query(esb.termQuery(`${key}.keyword`, value)),
+              .query(esb.termQuery(key.includes('termLabel') ? `${key}.keyword` : key, value)),
           ),
         );
     }
@@ -257,7 +265,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   const [people, setPeople] = useState<BucketType[]>([]);
   const [organizations, setOrganizations] = useState<BucketType[]>([]);
   const [geography, setGeography] = useState<BucketType[]>([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
   const [offset, setOffset] = useState(0);
   const [resultsSize] = useState(20);
   const [requestPayload, setRequestPayload] = useState<RequestPayload>();
