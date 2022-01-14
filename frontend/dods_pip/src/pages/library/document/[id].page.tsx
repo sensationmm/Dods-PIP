@@ -1,4 +1,5 @@
 import Panel from '@dods-ui/components/_layout/Panel';
+import Chips from '@dods-ui/components/Chips';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Text from '@dods-ui/components/Text';
@@ -118,11 +119,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         <Styled.tagsContent className={expandedTags ? 'expanded' : ''}>
           {Object.keys(tags).map((key) => {
             const tagElements = tags[key].map(({ value, count }) => {
-              return (
-                <Styled.tag key={value}>
-                  {value} ({count})
-                </Styled.tag>
-              );
+              return <Chips key={value} label={`${value} (${count})`} />;
             });
 
             return (

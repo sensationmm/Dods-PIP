@@ -106,18 +106,6 @@ export const tagsContainer = styled.div`
   margin-bottom: ${spacing(8)};
 `;
 
-export const tag = styled.span`
-  font-size: 14px;
-  background: ${color.base.greyLight};
-  color: ${color.theme.blue};
-  border-radius: 60px;
-  padding: ${spacing(2)} ${spacing(3)};
-
-  ${media.greaterThan(breakpoint)`
-    font-size: 16px;
-  `}
-`;
-
 export const tabs = styled.div`
   margin-bottom: ${spacing(5)};
 `;
