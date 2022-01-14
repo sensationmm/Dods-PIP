@@ -53,6 +53,7 @@ provider:
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
     CONTENT_BUCKET: ${file(../../serverless.common.yml):custom.content_bucket}
+    LAMBDA_CONTENT_INDEXER_ARN: arn:aws:lambda:${self:custom.region}:${self:custom.account_id}:function:content-indexer-dev
 
   iamRoleStatements:
     - Effect: Allow
@@ -64,6 +65,11 @@ provider:
       Action:
         - "sqs:*"
       Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-4-queue.fifo"
+
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "arn:aws:lambda:eu-west-1:390773179818:function:content-indexer-dev"
 
 functions:
   migrate:
