@@ -25,13 +25,22 @@ import * as Styled from './ContentTagger.styles';
 import TagPanel from './TagPanel';
 import TagTree from './TagTree';
 
+type AncestorTerms = {
+  tagId: string;
+  termLabel: string;
+  rank: number;
+};
+
 export type TagsData = {
   tagId: string;
   termLabel: string;
   alternative_labels?: Array<string>;
   childTerms?: TagsData[];
-  ancestorTerms?: TagsData[];
+  ancestorTerms?: AncestorTerms[];
   type?: string;
+  facetType: string;
+  inScheme: Array<string>;
+  score: number;
 };
 
 type TagTreeDataType = 'people' | 'organisations' | 'topics' | 'geographies';

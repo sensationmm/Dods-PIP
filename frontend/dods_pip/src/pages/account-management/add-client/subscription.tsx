@@ -16,7 +16,7 @@ import { Icons } from '../../../components/Icon/assets';
 import Text from '../../../components/Text';
 import color from '../../../globals/color';
 import { PushNotificationProps } from '../../../hoc/LoadingHOC';
-import fetchJson from '../../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../../lib/fetchJson';
 import useSubscriptionTypes from '../../../lib/useSubscriptionTypes';
 import { Api, BASE_URI } from '../../../utils/api';
 import * as Styled from './index.styles';
@@ -170,10 +170,13 @@ const Subscription: React.FC<SubscriptionProps> = ({
       subscription: subscriptionType,
     };
 
-    const response = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}/subscription`, {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    });
+    const response = await fetchJson<CustomResponse>(
+      `${BASE_URI}${Api.ClientAccount}/${accountId}/subscription`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      },
+    );
 
     const { message = '', success = false } = response;
 

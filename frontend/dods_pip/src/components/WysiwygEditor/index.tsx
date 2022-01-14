@@ -108,6 +108,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
     setQuillInstance(quill);
   }, []);
 
+  /** TODO: RTE content tagging 
   useEffect(() => {
     if (!tags.length || !quillInstance) return;
 
@@ -118,19 +119,18 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
       .forEach((tag) => {
         if (!tag.value.length) return;
 
-        /** TODO: RTE content tagging */
         // embed matching tags
-        // const matches = quillInstance.getText().matchAll(RegExp(`${tag.value}`, 'igm'));
-        // Array.from(matches)
-        //   .reverse()
-        //   .forEach((match) => {
-        //     console.info('<><><> match', match);
-        //     if (match && typeof match.index === 'number') {
-        //       const matchedText = quillInstance.getText(match.index, match[0].length);
-        //       quillInstance.deleteText(match.index, match[0].length);
-        //       quillInstance.insertEmbed(match.index, 'content-tag', { ...tag, value: matchedText });
-        //     }
-        //   });
+        const matches = quillInstance.getText().matchAll(RegExp(`${tag.value}`, 'igm'));
+        Array.from(matches)
+          .reverse()
+          .forEach((match) => {
+            console.info('<><><> match', match);
+            if (match && typeof match.index === 'number') {
+              const matchedText = quillInstance.getText(match.index, match[0].length);
+              quillInstance.deleteText(match.index, match[0].length);
+              quillInstance.insertEmbed(match.index, 'content-tag', { ...tag, value: matchedText });
+            }
+          });
 
         // embed tag over selected text
         const selection = quillInstance.getSelection();
@@ -143,6 +143,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
         }
       });
   }, [tags.length, quillInstance]);
+  end content tagging */
 
   return (
     <Styled.wrapper data-testid="wysiwyg-editor">

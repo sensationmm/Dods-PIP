@@ -1,5 +1,5 @@
 import { SelectProps } from '@dods-ui/components/_form/Select';
-import fetchJson from '@dods-ui/lib/fetchJson';
+import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 
 import { Collection, Collections } from './index.page';
@@ -15,7 +15,7 @@ const loadCollections = async (
     } else {
       url = `${BASE_URI}${Api.Collections}`;
     }
-    const results = await fetchJson(url, {
+    const results = await fetchJson<CustomResponse>(url, {
       method: 'GET',
     });
     const { data = [] } = results;

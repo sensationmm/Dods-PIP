@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import JsxParser from 'react-jsx-parser';
 
-import * as Styled from './editorial-from.styles';
+import * as Styled from './editorial-form.styles';
 
 export interface EditorialFormFields {
   sourceName: string;
@@ -64,7 +64,6 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
     !Validation.validateRequired(value as string)
       ? (formErrors[fieldName] = 'This field is required')
       : delete formErrors[fieldName];
-
     setErrors(formErrors);
   };
 
@@ -171,7 +170,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
           tags={getContentTags(tags)}
           onSelection={onEditorTextSelection}
         >
-          <JsxParser jsx={fieldData.content.toString()} />
+          <JsxParser jsx={fieldData.content?.toString()} />
         </WysiwygEditor>
       </div>
 

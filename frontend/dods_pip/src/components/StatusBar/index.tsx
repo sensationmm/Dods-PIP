@@ -34,7 +34,7 @@ export interface StatusBarProps {
   onUnschedule?: () => void;
   onPublish?: () => void;
   onUnpublish?: () => void;
-  onSaveAndEdit?: () => void;
+  onSaveAndExit?: () => void;
   onUpdateArticle?: () => void;
 }
 
@@ -57,7 +57,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
   onUnschedule,
   onPublish,
   onUnpublish,
-  onSaveAndEdit,
+  onSaveAndExit,
   onUpdateArticle,
 }) => (
   <Styled.wrapper data-test="statusbar-wrapper">
@@ -90,7 +90,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
             label="Save and Exit"
             type="secondary"
             disabled={saveAndExitDisabled}
-            onClick={onSaveAndEdit}
+            onClick={onSaveAndExit}
             icon={Icons.Exit}
           />
         </Styled.buttonSeparator>

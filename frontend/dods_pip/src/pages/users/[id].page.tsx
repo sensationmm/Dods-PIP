@@ -16,7 +16,7 @@ import Modal from '../../components/Modal';
 import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import useUser, { User } from '../../lib/useUser';
 import { Api, BASE_URI } from '../../utils/api';
 import { getUserName } from '../../utils/string';
@@ -73,7 +73,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     }
 
     // get account info
-    const response = await fetchJson(`${BASE_URI}${Api.GetUser}/${userId}`, {
+    const response = await fetchJson<CustomResponse>(`${BASE_URI}${Api.GetUser}/${userId}`, {
       method: 'GET',
     });
     const { data = {} } = response;
@@ -105,7 +105,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     setShowDelete(false);
 
     try {
-      const response = await fetchJson(
+      const response = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.ClientAccount}/${userData?.clientAccount?.uuid}${Api.TeamMember}`,
         { method: 'DELETE', body: JSON.stringify({ userId: userId }) },
       );
@@ -129,9 +129,12 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   };
 
   const getAssociatedAccounts = async (id: string) => {
-    const response = await fetchJson(`${BASE_URI}${Api.Users}/${id}${Api.ClientAccounts}`, {
-      method: 'GET',
-    });
+    const response = await fetchJson<CustomResponse>(
+      `${BASE_URI}${Api.Users}/${id}${Api.ClientAccounts}`,
+      {
+        method: 'GET',
+      },
+    );
     const { data = [] } = response;
     setAssocAccounts(data as ClientAccount[]);
   };
@@ -205,7 +208,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     };
 
     try {
-      const result = await fetchJson(`${BASE_URI}${Api.Users}/${userId}`, {
+      const result = await fetchJson<CustomResponse>(`${BASE_URI}${Api.Users}/${userId}`, {
         method: 'PUT',
         body: JSON.stringify(data),
       });
@@ -228,7 +231,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     setLoading(true);
 
     try {
-      const result = await fetchJson(`${BASE_URI}${Api.ForgotPassword}`, {
+      const result = await fetchJson<CustomResponse>(`${BASE_URI}${Api.ForgotPassword}`, {
         body: JSON.stringify({ email }),
       });
 

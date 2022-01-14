@@ -7,8 +7,8 @@ export default withSession(async (req, res) => {
     const { method } = req;
     let result;
 
-    if (method === 'GET') result = getEditorial(req);
-    if (method === 'POST') result = postEditorial(req);
+    if (method === 'GET') result = await getEditorial(req);
+    if (method === 'POST') result = await postEditorial(req);
 
     res.json(result);
   } catch (error: any) {

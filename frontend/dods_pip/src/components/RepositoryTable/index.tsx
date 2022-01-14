@@ -7,15 +7,15 @@ import { breakpoints } from '../../globals/media';
 import Button from '../Button';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
-import RepositoryStatus, { RepositoryStatusProps } from '../RepositoryStatus';
+import RepositoryStatus, { RepositoryStatusTypes } from '../RepositoryStatus';
 import Text from '../Text';
 import Tooltip from '../Tooltip';
 import * as Styled from './RepositoryTable.styles';
 
-type RepositoryRowData = {
+export type RepositoryRowData = {
   id: string;
   documentName: string;
-  status: RepositoryStatusProps['type'];
+  status: RepositoryStatusTypes;
   updated: Date;
   assignedEditor?: string;
 };
