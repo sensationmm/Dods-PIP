@@ -244,3 +244,13 @@ functions:
           path: /collections/{collectionId}/alerts/{alertId}
           caching:
             enabled: false
+  
+  createAlertQuery:
+    handler: src/handlers/createAlertQuery/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: /collections/{collectionId}/alerts/{alertId}/queries
+          caching:
+            enabled: false

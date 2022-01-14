@@ -223,6 +223,23 @@ paths:
           $ref: "#/components/responses/GetQueriesResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+          
+    post:
+      operationId: createAlertQuery
+      summary: "Creates a Query associated to a Alert"
+      description: "Create Alert Query Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAlertQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/CreateQueryResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   securitySchemes:
@@ -256,8 +273,20 @@ components:
           minItems: 1
           items:
             $ref: "#/components/schemas/AlertQueries"
-        
             
+    CreateAlertQueryInput:
+      type: object
+      properties:
+        informationTypes:
+          type: string
+        contentSources:
+          type: string
+        query:
+          type: string
+        cretedBy:
+          type: string
+          format: uuid
+         
     AlertQueries:
       type: object
       properties:
@@ -553,6 +582,7 @@ components:
       name: offset
       schema:
         type: integer
+        format: int32
         default: 0
         minimum: 0
       required: false
@@ -809,6 +839,21 @@ components:
                 example: 'The alert was found'
               alert:
                 $ref: "#/components/schemas/Alert"
+    
+    CreateQueryResponse:
+      description: "Create Alert Query Response "
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: 'Alert query created successfully'
+              query:
+                $ref: "#/components/schemas/QueryOutput"
 
     GetAlertsResponse:
       description: "Get Alerts Response"
@@ -889,6 +934,14 @@ components:
             $ref: "#/components/schemas/CreateAlertInput"
             required:
             - alertQueries
+            
+    CreateAlertQuery:
+      description: "Payload to create a new alert query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateAlertQueryInput"
+
 
     UpdateCollection:
       description: "Payload to update a collection"
