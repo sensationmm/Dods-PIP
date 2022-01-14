@@ -205,16 +205,22 @@ const getPayload = (query: QueryString = '{}'): { payload: unknown; parsedQuery:
         .must(basicFilters.map(({ key, value }) => esb.termQuery(`${key}.keyword`, value)))
         .must(
           nestedFilters.map(({ path, key, value }) =>
-            esb.nestedQuery().path(path).query(esb.termQuery(key, value)),
+            esb
+              .nestedQuery()
+              .path(path)
+              .query(esb.termQuery(`${key}.keyword`, value)),
           ),
         );
     } else if (!searchTerm) {
       esbQuery = esb
         .boolQuery()
-        .should(basicFilters.map(({ key, value }) => esb.termQuery(`${key}.keyword`, value)))
+        .must(basicFilters.map(({ key, value }) => esb.termQuery(`${key}.keyword`, value)))
         .must(
           nestedFilters.map(({ path, key, value }) =>
-            esb.nestedQuery().path(path).query(esb.termQuery(key, value)),
+            esb
+              .nestedQuery()
+              .path(path)
+              .query(esb.termQuery(`${key}.keyword`, value)),
           ),
         );
     }
