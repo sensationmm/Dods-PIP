@@ -2,23 +2,22 @@ import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dod
 import { CollectionAlertsRepository, CreateAlertParameters } from '@dodsgroup/dods-repositories';
 
 export const createAlert: AsyncLambdaHandler<CreateAlertParameters> = async (params) => {
-    const { alertQueries } = params;
+    const { alertQueries, createdBy } = params;
 
     const createResponse = await CollectionAlertsRepository.defaultInstance.createAlert(params);
 
-
-    alertQueries?.forEach(async (alertQuery) => {
+    await Promise.all(alertQueries.map((alertQuery) => {
 
         const createAlertQueryParameters = {
-            alertId: createResponse.id,
+            alertId: createResponse.uuid,
             query: alertQuery.query,
             informationTypes: alertQuery.informationTypes,
             contentSources: alertQuery.contentSources,
-            createdBy: createResponse.createdBy
+            createdBy: createdBy
         }
 
-        await CollectionAlertsRepository.defaultInstance.createQuery(createAlertQueryParameters);
-    })
+        return CollectionAlertsRepository.defaultInstance.createQuery(createAlertQueryParameters);
+    }))
 
     const alertReponse: any = CollectionAlertsRepository.defaultInstance.mapAlert(createResponse);
 
