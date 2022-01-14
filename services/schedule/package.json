@@ -1,5 +1,5 @@
 {
-  "name": "dods-nodejs-lambda-boilerplate",
+  "name": "schedule-service",
   "version": "1.0.0",
   "description": "This README would normally document whatever steps are necessary to get your application up and running.",
   "main": "index.js",
