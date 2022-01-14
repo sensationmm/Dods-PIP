@@ -174,6 +174,11 @@ interface QueryObject {
     key: string;
     value: string;
   }[];
+  nestedFilters?: {
+    path: string;
+    key: string;
+    value: string;
+  }[];
   resultsSize?: number;
 }
 
@@ -184,24 +189,32 @@ const getPayload = (query: QueryString = '{}') => {
 
   try {
     const {
-      searchTerm,
+      searchTerm = '',
       basicFilters = [],
+      nestedFilters = [],
       resultsSize = 20,
     }: QueryObject = typeof query === 'string' ? JSON.parse(query) : {};
-
-    console.log('basicFilters', basicFilters);
 
     if (searchTerm) {
       esbQuery = esb
         .boolQuery()
         .should(esb.matchQuery('documentTitle', searchTerm))
         .should(esb.matchQuery('documentContent', searchTerm))
-        .must(basicFilters.map(({ key, value }) => esb.matchQuery(key, value)));
-    } else if (!searchTerm && basicFilters.length) {
+        .must(basicFilters.map(({ key, value }) => esb.termQuery(`${key}.keyword`, value)))
+        .must(
+          nestedFilters.map(({ path, key, value }) =>
+            esb.nestedQuery().path(path).query(esb.termQuery(key, value)),
+          ),
+        );
+    } else if (!searchTerm) {
       esbQuery = esb
         .boolQuery()
-        // term query???
-        .must(basicFilters.map(({ key, value }) => esb.matchQuery(key, value)));
+        .should(basicFilters.map(({ key, value }) => esb.termQuery(`${key}.keyword`, value)))
+        .must(
+          nestedFilters.map(({ path, key, value }) =>
+            esb.nestedQuery().path(path).query(esb.termQuery(key, value)),
+          ),
+        );
     }
 
     if (!esbQuery) {
@@ -226,7 +239,6 @@ const getPayload = (query: QueryString = '{}') => {
 export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
   const router = useRouter();
 
-  const [apiResponse2, setApiResponse] = useState<IResponse>({});
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
   const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
@@ -276,54 +288,22 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
     // setRequestPayload(payload);
   };
 
-  const setTagQuery = (tagId: string) => {
+  const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
     setOffset(0);
 
-    const payload = {
-      ...(
-        esb
-          .requestBodySearch()
-          .query(
-            esb
-              .nestedQuery()
-              .path('taxonomyTerms')
-              .query(esb.boolQuery().must(esb.matchQuery('taxonomyTerms.tagId', tagId))),
-          )
-          .size(resultsSize)
-          .from(0) as ExtendedRequestBodySearch
-      )._body,
-      aggregations,
-    };
+    const { nestedFilters = [] } = currentQuery;
+    const newNestedFilters = [...nestedFilters, { path, key, value }];
 
-    setRequestPayload(payload);
-  };
+    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
 
-  const setTopicQuery = (key: string) => {
-    setOffset(0);
-
-    const payload = {
-      ...(
-        esb
-          .requestBodySearch()
-          .query(
-            esb
-              .nestedQuery()
-              .path('taxonomyTerms')
-              .query(esb.boolQuery().must(esb.matchQuery('taxonomyTerms.termLabel', key))),
-          )
-          .size(resultsSize)
-          .from(0) as ExtendedRequestBodySearch
-      )._body,
-      aggregations,
-    };
-
-    setRequestPayload(payload);
+    router.push({
+      pathname: '/library',
+      query: { query: JSON.stringify(newQuery) },
+    });
   };
 
   const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
     setOffset(0);
-
-    console.log('currentQuery', currentQuery);
 
     const { basicFilters = [] } = currentQuery;
     const newBasicFilters = [...basicFilters, { key, value }];
@@ -334,19 +314,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
       pathname: '/library',
       query: { query: JSON.stringify(newQuery) },
     });
-
-    // const payload = {
-    //   ...(
-    //     esb
-    //       .requestBodySearch()
-    //       .query(esb.boolQuery().must(esb.matchQuery(key, value)))
-    //       .size(resultsSize)
-    //       .from(0) as ExtendedRequestBodySearch
-    //   )._body,
-    //   aggregations,
-    // };
-
-    // setRequestPayload(payload);
   };
 
   useEffect(() => {
@@ -356,25 +323,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
       setRequestPayload(newRequestPayload);
     }
   }, [offset]);
-
-  useEffect(() => {
-    if (!requestPayload) return;
-
-    (async () => {
-      try {
-        const sPayload = JSON.stringify(requestPayload);
-
-        const response = (await fetchJson(`${BASE_URI}${Api.ContentSearchApp}`, {
-          body: JSON.stringify({ query: sPayload }),
-          method: 'POST',
-        })) as IResponse;
-
-        setApiResponse(response);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, [requestPayload]);
 
   useEffect(() => {
     const {
@@ -494,7 +442,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                                 return (
                                   <div
                                     onClick={() => {
-                                      setTagQuery(taxonomy.tagId);
+                                      setNestedQuery({
+                                        path: 'taxonomyTerms',
+                                        key: 'taxonomyTerms.tagId',
+                                        value: taxonomy.tagId,
+                                      });
                                     }}
                                     key={`taxonomy-${i}`}
                                   >
@@ -641,7 +593,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
-                                    setTopicQuery(topic.key);
+                                    setNestedQuery({
+                                      path: 'taxonomyTerms',
+                                      key: 'taxonomyTerms.termLabel',
+                                      value: topic.key,
+                                    });
                                   }}
                                   key={`content-source-${i}`}
                                 >
@@ -667,7 +623,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
-                                    setTopicQuery(topic.key);
+                                    setNestedQuery({
+                                      path: 'taxonomyTerms',
+                                      key: 'taxonomyTerms.termLabel',
+                                      value: topic.key,
+                                    });
                                   }}
                                   key={`content-source-${i}`}
                                 >
@@ -693,7 +653,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
-                                    setTopicQuery(topic.key);
+                                    setNestedQuery({
+                                      path: 'taxonomyTerms',
+                                      key: 'taxonomyTerms.termLabel',
+                                      value: topic.key,
+                                    });
                                   }}
                                   key={`content-source-${i}`}
                                 >
@@ -719,7 +683,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
                               return (
                                 <Styled.filtersTag
                                   onClick={() => {
-                                    setTopicQuery(topic.key);
+                                    setNestedQuery({
+                                      path: 'taxonomyTerms',
+                                      key: 'taxonomyTerms.termLabel',
+                                      value: topic.key,
+                                    });
                                   }}
                                   key={`content-source-${i}`}
                                 >
@@ -749,8 +717,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query, req } = context;
-
-  console.log('query', query);
 
   const payload = getPayload(query.query);
 
