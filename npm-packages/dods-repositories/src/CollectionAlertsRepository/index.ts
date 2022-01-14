@@ -478,7 +478,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                 `Unable to retrieve Alert with uuid: ${alertId}`
             );
         }
-        console.log("YEAAAAAH")
 
         await alert.update({ isActive: false });
         await alert.destroy();
