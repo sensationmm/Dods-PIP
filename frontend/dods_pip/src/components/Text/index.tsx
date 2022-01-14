@@ -61,7 +61,7 @@ const Text: React.FC<TextProps> = ({
   switch (type) {
     case 'body':
     case 'bodySmall':
-      element = Styled.span;
+      element = Styled.p;
       className = type;
       break;
     case 'bodyLarge':

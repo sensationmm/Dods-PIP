@@ -77,13 +77,13 @@ describe('Facet', () => {
     it("Should display with dark icon in light mode", () => {
       const wrapper = shallow(<Facet onChange={jest.fn} id="1" isChecked={true} darkMode={false} />)
       const component = wrapper.find('[data-test="component-icon"]')
-      expect(component.find(Icon).props().color).toEqual(color.base.white)
+      expect(component.find(Icon).first().props().color).toEqual(color.base.greyDark)
     })
 
     it("Should display with light icon in dark mode", () => {
       const wrapper = shallow(<Facet onChange={jest.fn} id="1" isChecked={true} darkMode />)
       const component = wrapper.find('[data-test="component-icon"]')
-      expect(component.find(Icon).props().color).toEqual(color.theme.blueDark)
+      expect(component.find(Icon).first().props().color).toEqual(color.base.white)
     })
 
   })

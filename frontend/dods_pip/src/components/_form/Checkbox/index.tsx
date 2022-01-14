@@ -14,6 +14,7 @@ export interface CheckboxProps extends Omit<LabelProps, 'label'> {
   onChange: (value: boolean) => void;
   isDisabled?: boolean;
   darkMode?: boolean;
+  hint?: string;
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -26,6 +27,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   optional,
   bold,
   darkMode,
+  hint,
 }) => {
   const Component = isChecked ? Styled.checkboxToggleChecked : Styled.checkboxToggle;
 
@@ -70,6 +72,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
               isDisabled={isDisabled}
               noMargin
               bold={bold}
+              parenthetical={hint}
             />
           </Styled.checkboxLabelWrapper>
         )}

@@ -1,25 +1,20 @@
-import Spacer from '@dods-ui/components/_layout/Spacer';
-import Tag from '@dods-ui/components/Tag';
-import classNames from 'classnames';
+import Checkbox from '@dods-ui/components/_form/Checkbox';
 import React from 'react';
 
-import color from '../../../globals/color';
 import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
 import Text from '../../Text';
-import Label, { LabelProps } from '../Label';
 import * as Styled from './Facet.styles';
-import Checkbox from "@dods-ui/components/_form/Checkbox";
+import color from "@dods-ui/globals/color";
 
-
-export interface FacetProps extends Omit<LabelProps, 'label'> {
+export interface FacetProps {
   title: string;
   records: never[];
   clearable?: boolean;
   onClearSelection?: () => void;
   onChange: (topic: Record<string, any>) => void;
-  children: React.ReactNode;
   expanded: boolean;
+  darkMode?: boolean;
 }
 
 const Facet: React.FC<FacetProps> = ({
@@ -29,6 +24,7 @@ const Facet: React.FC<FacetProps> = ({
   children,
   records,
   onChange,
+  darkMode,
 }) => {
   const defaultCount = 5;
   const [expanded, setExpanded] = React.useState<boolean>(true);
@@ -41,18 +37,23 @@ const Facet: React.FC<FacetProps> = ({
     <Styled.facet data-test="component-facet" disabled>
       <Styled.facetLayout data-test="component-facet-layout">
         <Styled.facetHeader>
-          <Styled.facetToggleWrap
+          <div
             onClick={() => {
               setExpanded(!expanded);
             }}
           >
             <Styled.facetToggle>
-              <Icon src={expandedIcon} size={IconSize.medium} data-test="component-icon" />
+              <Icon
+                src={expandedIcon}
+                size={IconSize.medium}
+                data-test="component-icon"
+                color={darkMode ? color.base.white : color.base.greyDark}
+              />
             </Styled.facetToggle>
             <Text type="bodyLarge" bold>
               {title}
             </Text>
-          </Styled.facetToggleWrap>
+          </div>
           <Styled.facetClearBtn onClick={onClearSelection} disabled={!clearable}>
             <Icon src={Icons.Bin} size={IconSize.small} data-test="component-icon" />
             Clear
@@ -61,20 +62,23 @@ const Facet: React.FC<FacetProps> = ({
         {expanded && (
           <Styled.facetCollapsiblePanel>
             {records &&
-              records.slice(0, showCount).map((topic: Record<string, any>, i: number) => {
-                console.log('topic:', topic);
-                return (
-                  <Checkbox
-                    label={topic.key}
-                    id={`content-source-${i}`}
-                    key={`content-source-${i}`}
-                    isChecked={false}
-                    onChange={() => {
-                      onChange(topic);
-                    }}
-                  />
-                );
-              })}
+              records
+                .slice(0, showCount)
+                .sort((a: Record<string, any>, b: Record<string, any>) => b.doc_count - a.doc_count)
+                .map((topic: Record<string, any>, i: number) => {
+                  return (
+                    <Checkbox
+                      label={topic.key}
+                      hint={topic.doc_count}
+                      id={`content-source-${i}`}
+                      key={`content-source-${i}`}
+                      isChecked={false}
+                      onChange={() => {
+                        onChange(topic);
+                      }}
+                    />
+                  );
+                })}
             {records && records.length > 5 && (
               <Styled.facetViewMoreBtn
                 onClick={() => {
@@ -82,7 +86,7 @@ const Facet: React.FC<FacetProps> = ({
                   setViewMore(!viewMore);
                 }}
               >
-                <Icon src={viewMoreIcon} />
+                <Icon src={viewMoreIcon} size={IconSize.xsmall} />
                 View more
               </Styled.facetViewMoreBtn>
             )}

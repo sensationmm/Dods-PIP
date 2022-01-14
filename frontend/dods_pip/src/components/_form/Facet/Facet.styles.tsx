@@ -1,18 +1,21 @@
+import { checkbox, checkboxLabelWrapper } from '@dods-ui/components/_form/Checkbox/Checkbox.styles';
+import { icon } from '@dods-ui/components/Notification/Notification.styles';
+import elevation from '@dods-ui/globals/elevation';
 import styled from 'styled-components';
 
 import color from '../../../globals/color';
-import opacity from '../../../globals/opacity';
 import spacing from '../../../globals/spacing';
-import { hexAToRGBA } from '../../../utils/color';
-import elevation from "@dods-ui/globals/elevation";
 
 type FacetProps = {
   disabled: boolean;
+  darkMode?: boolean;
 };
 
 export const facet = styled.div<FacetProps>`
   display: flex;
-  
+  margin-bottom: 8px;
+  width: 100%;
+
   label {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -42,21 +45,18 @@ export const facetClearBtn = styled.button`
   }
 `;
 
-export const facetToggleWrap = styled.div`
-`;
-
 export const facetToggle = styled.a`
   margin-right: 12px;
   display: flex;
   align-items: center;
   svg {
-    color: ${color.base.greyDark};
     font-weight: bold;
     width: 12px;
   }
 `;
 
 export const facetLayout = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   background: ${color.base.white};
@@ -64,12 +64,9 @@ export const facetLayout = styled.div`
   border-radius: ${spacing(2)};
   box-shadow: ${elevation.dropShadowBoxComponent};
   box-sizing: border-box;
-  width: 350px;
+  max-width: 100%;
+  overflow: hidden;
 `;
-
-type FacetToggleProps = {
-  // darkMode?: boolean;
-};
 
 export const facetHeader = styled.div`
   border-bottom: 1px solid ${color.base.greyLight};
@@ -91,17 +88,38 @@ export const facetCollapsiblePanel = styled.div`
   min-height: 80px;
   padding: 24px;
   transition: min-height 3000ms linear;
+  .facet-checkbox {
+    margin-bottom: 8px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  ${checkbox} {
+    margin-bottom: 8px;
+  }
+  ${checkboxLabelWrapper} {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 `;
 
 export const facetViewMoreBtn = styled.button`
   display: flex;
   justify-content: space-between;
-  width: 82px;
   font-size: 12px;
   border: 0;
-  padding: 0;
+  padding: 5px 0 0 0;
   background-color: transparent;
   cursor: pointer;
-  color: ${color.theme.blue};
+  color: ${color.theme.blueMid};
   font-weight: bold;
+  font-family: 'Open Sans Bold', sans-serif;
+  letter-spacing: 1px;
+  align-items: center;
+  width: 90px;
+  ${icon} {
+    width: 9px;
+    margin-right: 10px;
+  }
 `;

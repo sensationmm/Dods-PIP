@@ -1,3 +1,4 @@
+import Facet from '@dods-ui/components/_form/Facet';
 import { format } from 'date-fns';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -17,8 +18,6 @@ import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as Styled from './library.styles';
-import Facet from '@dods-ui/components/_form/Facet';
-import Checkbox from "@dods-ui/components/_form/Checkbox";
 
 const aggregations = {
   topics: {
@@ -313,7 +312,7 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                         <Styled.boxContent>
                           <Styled.topRow>
                             <span>
-                              <Styled.imageContainer></Styled.imageContainer>
+                              <Styled.imageContainer />
                               <div>
                                 <h2> {hit._source.documentTitle}</h2>
                                 <Styled.contentSource>
@@ -401,76 +400,34 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                 {apiResponse?.hits?.hits.length !== 0 && (
                   <Styled.filtersContent>
                     {contentSources && (
-                      <Facet label="Content Source">
-                        {contentSources.map((contentSource: Record<string, any>, i) => {
-                          return (
-                            <Styled.filtersTag
-                              onClick={() => {
-                                setContentSourceQuery(contentSource.key);
-                              }}
-                              key={`content-source-${i}`}
-                            >
-                              <Tag
-                                label={contentSource.key}
-                                width={'fixed'}
-                                bgColor={color.shadow.blue}
-                              />
-                            </Styled.filtersTag>
-                          );
-                        })}
-                      </Facet>
+                      <Facet
+                        title={'Content Source'}
+                        records={contentSources}
+                        expanded={true}
+                        onChange={(contentSource) => {
+                          setContentSourceQuery(contentSource.key);
+                        }}
+                      />
                     )}
                     {informationTypes && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Information Type</h3>
-                            {informationTypes.map((informationType: Record<string, any>, i) => {
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setInformationTypeQuery(informationType.key);
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={informationType.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Information Type'}
+                        records={informationTypes}
+                        expanded={true}
+                        onChange={(informationType) => {
+                          setInformationTypeQuery(informationType.key);
+                        }}
+                      />
                     )}
                     {jurisdictions && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Jurisdiction</h3>
-                            {jurisdictions.map((jurisdiction: Record<string, any>, i) => {
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setJurisdictionQuery(jurisdiction.key);
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={jurisdiction.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Jurisdictions'}
+                        records={jurisdictions}
+                        expanded={true}
+                        onChange={(jurisdiction) => {
+                          setJurisdictionQuery(jurisdiction.key);
+                        }}
+                      />
                     )}
                     {topics && (
                       <Facet
@@ -480,87 +437,37 @@ export const Library: React.FC<LibraryProps> = ({ setLoading }) => {
                         onChange={(topic) => {
                           setTopicQuery(topic.key);
                         }}
-                      >
-                        <Spacer size={10} />
-                      </Facet>
+                      />
                     )}
                     {organizations && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Organizations</h3>
-                            {organizations.map((topic: Record<string, any>, i) => {
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setTopicQuery(topic.key);
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={topic.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Organizations'}
+                        records={organizations}
+                        expanded={true}
+                        onChange={(organizations) => {
+                          setTopicQuery(organizations.key);
+                        }}
+                      />
                     )}
                     {people && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>People</h3>
-                            {people.map((topic: Record<string, any>, i) => {
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setTopicQuery(topic.key);
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={topic.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'People'}
+                        records={people}
+                        expanded={true}
+                        onChange={(people) => {
+                          setTopicQuery(people.key);
+                        }}
+                      />
                     )}
                     {geography && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>People</h3>
-                            {geography.map((topic: Record<string, any>, i) => {
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setTopicQuery(topic.key);
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={topic.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Geography'}
+                        records={geography}
+                        expanded={true}
+                        onChange={(geography) => {
+                          setTopicQuery(geography.key);
+                        }}
+                      />
                     )}
                   </Styled.filtersContent>
                 )}
