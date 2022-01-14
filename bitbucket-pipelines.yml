@@ -63,7 +63,7 @@ pipelines:
             - yarn test
             - docker build -t "${HASH}" .
             - docker save --output "${HASH}" "${HASH}"
-            - aws s3 rm s3://pip-dev-services-lambdas/frontendImages/
+            - aws s3 rm s3://pip-dev-services-lambdas/frontendImages/ --recursive --quiet
             - aws s3 cp ${HASH} s3://pip-dev-services-lambdas/frontendImages/
 
     build_services:
@@ -164,8 +164,6 @@ pipelines:
             - echo "Running deployment for service $SERVICE to environment ${ENVIRONMENT^^}"
             - export THIS="services/$SERVICE"
             - cd $THIS 
-    # Might be overkill, but run tests and an sls package to have an early stoppage
-    #  of faulty deployments (though they were merged to master)
             - |
               if [[ -e .ci/build.sh ]]; then
                 echo "Running special building definitions from services/$SERVICE/.ci/build.sh"
