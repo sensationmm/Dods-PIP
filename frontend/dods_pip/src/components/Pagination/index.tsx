@@ -103,7 +103,11 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
     return (
       <Styled.stats data-test="component-pagination-stats">
         <Text type="bodySmall" color={color.base.grey} data-test="item-count">
-          Showing {dataLength > 0 ? start + 1 : 0}-{Math.min(dataLength, end)} of {dataLength}
+          Showing{' '}
+          <strong style={{ color: color.theme.blueMid }}>
+            {dataLength > 0 ? start + 1 : 0}-{Math.min(dataLength, end)}
+          </strong>{' '}
+          of <strong style={{ color: color.theme.blueMid }}>{dataLength}</strong>
         </Text>
         {children}
         <Styled.perPage>
