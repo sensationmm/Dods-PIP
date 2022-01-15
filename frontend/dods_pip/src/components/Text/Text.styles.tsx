@@ -174,7 +174,7 @@ export const label = styled.label`
   &.labelSmall {
     font-size: 12px;
     letter-spacing: 1px;
-    line-height: auto;
+    line-height: normal;
   }
 
   &.bold,
