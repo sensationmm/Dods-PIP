@@ -202,3 +202,11 @@ export const span = styled.span`
     font-size: 24px;
   }
 `;
+
+export const a = styled.a`
+  font-family: 'Open Sans Bold', sans-serif;
+`;
+
+export const button = styled.button`
+  background: transparent;
+`;
