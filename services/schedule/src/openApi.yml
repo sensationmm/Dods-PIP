@@ -1,3 +1,4 @@
+
 openapi: 3.0.0
 info:
   description: DODS Schedule Service API
@@ -25,6 +26,17 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+  /scheduler/{scheduleId}:
+    get:
+      operationId: getSchedule
+      parameters:
+        - in: path
+          name: scheduleId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: UUID of the Schedule to get
 
   /scheduler/{id}:
     delete:
@@ -49,6 +61,33 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/UpdateSchedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /scheduler/{id}/activate:
+    put:
+      operationId: activateSchedule
+      summary: "activate schedule"
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        "200":
+          $ref: "#/components/responses/activateSchedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /scheduler/{id}/deactivate:
+    put:
+      operationId: deactivateSchedule
+      summary: "deactivate schedule"
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        "200":
+          $ref: "#/components/responses/deactivateSchedule"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -102,6 +141,26 @@ components:
         message:
           type: string
           example: schedule with ID 008f811e5ccf44d3a0df5b7f70a8e85d deleted
+
+    activateScheduleReturn:
+      type: object
+      properties:
+        success:
+          type: string
+          example: true
+        message:
+          type: string
+          example: schedule with ID 008f811e5ccf44d3a0df5b7f70a8e85d activated
+    
+    deactivateScheduleReturn:
+      type: object
+      properties:
+        success:
+          type: string
+          example: true
+        message:
+          type: string
+          example: schedule with ID 008f811e5ccf44d3a0df5b7f70a8e85d deactivated
 
   parameters:
     createSchedule:
@@ -183,6 +242,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateScheduleReturn'
+    activateSchedule:
+      description: "Response from scheduler activation"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activateScheduleReturn'
+    deactivateSchedule:
+      description: "Response from scheduler deactivation"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/deactivateScheduleReturn'
 
   requestBodies:
     scheduleUpdateBody:

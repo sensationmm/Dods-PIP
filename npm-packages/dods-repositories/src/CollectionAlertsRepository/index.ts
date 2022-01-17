@@ -1,17 +1,20 @@
+import { AlertDocumentInput, AlertInput, AlertQueryInput, Collection, CollectionAlert, CollectionAlertDocument, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
     AlertOutput,
     AlertQueryResponse,
     CollectionAlertsPersister,
     CreateAlertParameters,
     SearchAlertParameters,
+    AlerByIdOutput,
+    CopyAlertParameters,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
-    getAlertById,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters
+    setAlertScheduleParameters,
+    CopyAlertResponse,
+    DeleteAlertParameters
 } from './domain';
-import { Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
 
@@ -21,22 +24,42 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     static defaultInstance: CollectionAlertsRepository = new CollectionAlertsRepository(
         CollectionAlert,
         Collection,
+        CollectionAlertDocument,
         CollectionAlertQuery,
         CollectionAlertRecipient,
         User,
         CollectionAlert
-
     );
 
     constructor(
         private model: typeof CollectionAlert,
         private collectionModel: typeof Collection,
+        private alertDocumentModel: typeof CollectionAlertDocument,
         private alertQueryModel: typeof CollectionAlertQuery,
         private recipientModel: typeof CollectionAlertRecipient,
         private userModel: typeof User,
         private alertModel: typeof CollectionAlert
 
     ) { }
+
+    private cloneObject(target: CollectionAlert,
+        replaceProperties?: AlertInput,
+        unwantedProperties?: Array<string>) {
+
+        const copiedObject = Object.assign({}, target, replaceProperties);
+        if (unwantedProperties)
+            unwantedProperties.forEach((key) => Reflect.deleteProperty(copiedObject, key));
+        return copiedObject;
+    }
+
+    private cloneArray(target: CollectionAlertQuery[] | CollectionAlertDocument[],
+        replaceProperties?: AlertQueryInput | AlertDocumentInput,
+        unwantedProperties?: Array<string>) {
+        const copiedArray = target.slice().map(item => { return { ...item, ...replaceProperties } });
+        if (unwantedProperties)
+            copiedArray.map(item => unwantedProperties.forEach((key) => Reflect.deleteProperty(item, key)));
+        return copiedArray;
+    }
 
     mapAlert(model: CollectionAlert): AlertOutput {
         const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted } = model;
@@ -230,7 +253,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     }
 
 
-    async getAlert(parameters: SearchAlertParameters): Promise<getAlertById> {
+    async getAlert(parameters: SearchAlertParameters): Promise<AlerByIdOutput> {
         const { collectionId, alertId } = parameters;
 
         const collection = await this.collectionModel.findOne({
@@ -252,7 +275,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             include: ['collection', 'createdById', 'updatedById', 'alertTemplate']
         })
 
-        if (!alert || !alert.isActive) {
+        if (!alert) {
             throw new CollectionError(
                 `Unable to retrieve Alert with uuid: ${alertId}`
             );
@@ -278,6 +301,102 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             alert: this.mapAlert(alert),
             searchQueriesCount: alertQueryResponse.count,
             recipientsCount: alertRecipientResponse.count
+        }
+    }
+
+    async copyAlert(parameters: CopyAlertParameters): Promise<CopyAlertResponse> {
+        const { collectionId, alertId, destinationCollectionId, createdBy } = parameters;
+
+        // * Retrieve initial data and validate data integrity
+        const collection = await this.collectionModel.findOne({
+            where: { uuid: collectionId, isActive: true }
+        })
+
+        if (!collection)
+            throw new CollectionError(`Unable to retrieve Collection with uuid: ${collectionId}`);
+
+
+        const destinationCollection = await this.collectionModel.findOne({
+            where: { uuid: destinationCollectionId, isActive: true }
+        })
+
+        if (!destinationCollection)
+            throw new CollectionError(`Unable to retrieve Destination Collection with uuid: ${destinationCollectionId}`);
+
+
+        const alertCreator = await this.userModel.findOne({
+            where: { uuid: createdBy, isActive: true }
+        });
+
+        if (!alertCreator)
+            throw new CollectionError(`Unable to retrieve user with uuid: ${createdBy}`);
+
+
+        const existingAlert = await this.alertModel.findOne({
+            where: {
+                uuid: alertId,
+                collectionId: collection.id,
+                isActive: true,
+            },
+            raw: true,
+            include: ['collection', 'createdById', 'updatedById', 'alertTemplate']
+        })
+
+        if (!existingAlert)
+            throw new CollectionError(`Unable to retrieve Alert with uuid: ${alertId}`);
+
+
+        // * Copy alert
+        const copiedAlert: CollectionAlert = this.cloneObject(existingAlert, {
+            collectionId: destinationCollection.id,
+            createdBy: alertCreator.id,
+        }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy', 'CollectionId']) as CollectionAlert;
+
+        const alert = await this.alertModel.create({ ...copiedAlert });
+        await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
+
+        // * Copy queries
+        const existingQueries = await this.alertQueryModel.findAll({
+            where: {
+                alertId: existingAlert.id,
+                isActive: true,
+            },
+            raw: true,
+        })
+
+        if (existingQueries && existingQueries.length > 0) {
+            const copiedQueries: CollectionAlertQuery[] = this.cloneArray(existingQueries, {
+                alertId: alert.id,
+                createdBy: alertCreator.id
+            }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']) as CollectionAlertQuery[]
+
+            await this.alertQueryModel.bulkCreate(copiedQueries);
+        }
+
+        // * Copy collection documents
+        const existingAlertDocuments = await this.alertDocumentModel.findAll({
+            // TODO: is there an "isActive" column in the database for this model? If so, add to where clausule 'isActive: true'
+            where: {
+                alertId: existingAlert.id,
+            },
+            raw: true,
+        });
+
+        if (existingAlertDocuments && existingAlertDocuments.length > 0) {
+            const copiedAlertDocs: CollectionAlertDocument[] = this.cloneArray(existingAlertDocuments, {
+                alertId: alert.id,
+                createdBy: alertCreator.id
+                // TODO: is there an "updatedBy" column in the database for this model? If so, add 'updatedBy' to the array
+            }, ['createdAt', 'updatedAt', 'deletedAt']) as CollectionAlertDocument[]
+            await this.alertDocumentModel.bulkCreate(copiedAlertDocs);
+        }
+
+
+        return {
+            alert: this.mapAlert(alert),
+            searchQueriesCount: existingQueries.length,
+            documentsCount: existingAlertDocuments.length,
+            recipientsCount: 0
         }
     }
 
@@ -334,5 +453,33 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             createdAt,
             updatedAt,
         };
+    }
+
+    async deleteAlert(parameters: DeleteAlertParameters): Promise<void> {
+        const { collectionId, alertId } = parameters;
+
+        const collection = await this.collectionModel.findOne({
+            where: { uuid: collectionId, isActive: true }
+        })
+
+        if (!collection)
+            throw new CollectionError(`Unable to retrieve Collection with uuid: ${collectionId}`);
+
+        const alert = await this.alertModel.findOne({
+            where: {
+                uuid: alertId,
+                collectionId: collection.id,
+                isActive: true,
+            }
+        })
+
+        if (!alert) {
+            throw new CollectionError(
+                `Unable to retrieve Alert with uuid: ${alertId}`
+            );
+        }
+
+        await alert.update({ isActive: false });
+        await alert.destroy();
     }
 }
