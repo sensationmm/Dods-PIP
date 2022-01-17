@@ -16,8 +16,6 @@ export const Primary = Template.bind({});
 
 Primary.args = {
   title: 'Information Type',
-  clearable: false,
-  expanded: true,
   onClearSelection: () => console.log('selection cleared!'),
 };
 

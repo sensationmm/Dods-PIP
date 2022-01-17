@@ -349,6 +349,46 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     );
   };
 
+  const removeBasicFilters = (queries: BucketType[]) => {
+    const { basicFilters = [] } = parsedQuery;
+
+    const newBasicFilters = basicFilters.filter(({ value }) => {
+      return !queries.find(({ key }) => value === key);
+    });
+
+    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
+  const removeNestedFilters = (queries: BucketType[]) => {
+    const { nestedFilters = [] } = parsedQuery;
+
+    console.log('nestedFilters', nestedFilters);
+
+    const newNestedFilters = nestedFilters.filter(({ value }) => {
+      return !queries.find(({ key }) => value === key);
+    });
+
+    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
   useEffect(() => {
     if (requestPayload) {
       const newRequestPayload = { ...requestPayload };
@@ -563,7 +603,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                       <Facet
                         title={'Content Source'}
                         records={contentSources}
-                        expanded={true}
+                        onClearSelection={() => removeBasicFilters(contentSources)}
                         onChange={(value) => {
                           setBasicQuery({
                             key: AggTypes.contentSource,
@@ -576,7 +616,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                       <Facet
                         title={'Information Type'}
                         records={informationTypes}
-                        expanded={true}
+                        onClearSelection={() => removeBasicFilters(informationTypes)}
                         onChange={(value) => {
                           setBasicQuery({
                             key: AggTypes.informationType,
@@ -589,7 +629,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                       <Facet
                         title={'Jurisdictions'}
                         records={jurisdictions}
-                        expanded={true}
+                        onClearSelection={() => removeBasicFilters(jurisdictions)}
                         onChange={(value) => {
                           setBasicQuery({
                             key: AggTypes.jurisdiction,
@@ -602,7 +642,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                       <Facet
                         title={'Topics'}
                         records={topics}
-                        expanded={true}
+                        onClearSelection={() => removeNestedFilters(topics)}
                         onChange={(value) => {
                           setNestedQuery({
                             path: 'taxonomyTerms',
@@ -616,7 +656,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                       <Facet
                         title={'Organizations'}
                         records={organizations}
-                        expanded={true}
+                        onClearSelection={() => removeNestedFilters(organizations)}
                         onChange={(value) => {
                           setNestedQuery({
                             path: 'taxonomyTerms',
@@ -630,7 +670,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                       <Facet
                         title={'People'}
                         records={people}
-                        expanded={true}
+                        onClearSelection={() => removeNestedFilters(people)}
                         onChange={(value) => {
                           setNestedQuery({
                             path: 'taxonomyTerms',
@@ -644,7 +684,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                       <Facet
                         title={'Geography'}
                         records={geography}
-                        expanded={true}
+                        onClearSelection={() => removeNestedFilters(geography)}
                         onChange={(value) => {
                           setNestedQuery({
                             path: 'taxonomyTerms',
