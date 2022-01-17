@@ -58,7 +58,7 @@ export interface CollectionAlertsPersister {
 export interface CreateAlertParameters {
     collectionId: string,
     title: string,
-    alertQueries?: [{
+    alertQueries: [{
         query: string,
         informationTypes: string,
         contentSources: string
@@ -123,6 +123,10 @@ export interface AlertQueryResponse {
     uuid: string;
     name: string,
     informationTypes: string;
+    alert: {
+        uuid: string,
+        title: string
+    }
     contentSources: string;
     query: string;
     createdBy?: {
@@ -137,4 +141,17 @@ export interface AlertQueryResponse {
 export interface getQueriesResponse {
     queries: AlertQueryResponse[];
     count: number;
+}
+
+export interface DeleteAlertParameters {
+    collectionId: string;
+    alertId: string;
+}
+
+export interface CreateAlertQueryParameters {
+    alertId: string | number;
+    informationTypes: string;
+    contentSources: string;
+    query: string;
+    createdBy: string | number;
 }

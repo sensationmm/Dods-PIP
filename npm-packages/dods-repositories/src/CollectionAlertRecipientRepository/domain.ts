@@ -38,6 +38,13 @@ export interface SetAlertRecipientsOutput {
     recipients: Array<{ userId: string; name: string; emailAddress: string; }>
 }
 
+export interface DeleteAlertRecipientInput {
+    collectionId: string;
+    alertId: string;
+    userId: string;
+}
+
 export interface CollectionAlertRecipientPersister {
     setAlertRecipients(parameters: SetAlertRecipientsInput): Promise<SetAlertRecipientsOutput>;
+    delete(parameters: DeleteAlertRecipientInput): Promise<boolean>;
 }

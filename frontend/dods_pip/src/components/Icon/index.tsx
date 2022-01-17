@@ -5,6 +5,7 @@ import IconLibrary, { Icons } from './assets';
 import * as Styled from './Icon.styles';
 
 export enum IconSize {
+  xsmall = 9,
   small = 10,
   medium = 14,
   mediumLarge = 16,
