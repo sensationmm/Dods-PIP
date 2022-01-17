@@ -92,6 +92,8 @@ class DataModel(Model):
         # TODO
         host = "http://localhost:8000"  # TODO enviorn driven
 
+
+        # scrapping-hashes-dev-table
         # Lifted from the lib/datamodel file here - we want this to
         # write to that like the other scrapers.
         # region = os.environ['REGION']

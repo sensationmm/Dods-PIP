@@ -24,5 +24,5 @@ module "scrapping-dynamodb" {
   source      = "./modules/dynamodb"
   environment = var.environment
   name        = "scrapping-hashes"
-  partition-key = "scrapping-hashes-dev-table"
+  partition-key = "document_hash"
 }
