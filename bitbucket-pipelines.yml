@@ -159,7 +159,7 @@ pipelines:
           default: user-profile
       - step:
           name: "Backend Service: Deploy to Environment"
-          image: gioatsomoglobal/devopstools:0.4.5
+          image: gioatsomoglobal/devopstools:0.4.6
           size: 2x
           services:
             - docker
