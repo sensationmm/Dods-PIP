@@ -160,6 +160,8 @@ pipelines:
       - step:
           name: "Backend Service: Deploy to Environment"
           image: gioatsomoglobal/devopstools:0.4.5
+          services:
+            - docker
           script:
             - echo "Running deployment for service $SERVICE to environment ${ENVIRONMENT^^}"
             - export THIS="services/$SERVICE"
