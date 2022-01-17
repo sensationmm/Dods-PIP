@@ -45,7 +45,7 @@ export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => 
     }
 }
 
-export const mapAlertQuery = async (model: CollectionAlertQuery): Promise<AlertQueryResponse> => {
+export const mapAlertQuery = async (model: CollectionAlertQuery, alertModel: CollectionAlert): Promise<AlertQueryResponse> => {
     const { uuid, name, informationTypes, contentSources, query, createdAt, updatedAt, createdById } = model;
     const role = await createdById?.getRole();
     const isDodsUser = role ? Boolean(role.dodsRole) : undefined
@@ -54,6 +54,10 @@ export const mapAlertQuery = async (model: CollectionAlertQuery): Promise<AlertQ
         uuid,
         name,
         informationTypes,
+        alert: {
+            uuid: alertModel.uuid,
+            title: alertModel.title
+        },
         contentSources,
         query,
         createdBy: createdById

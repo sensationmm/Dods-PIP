@@ -34,8 +34,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Alert queries found',
-            limit: requestParams.limit,
-            offset: requestParams.offset,
+            limit: 30,
+            offset: 0,
             totalRecords: defaultSearchQueriesRepositoryResponse.count,
             queries: defaultSearchQueriesRepositoryResponse.queries
         })
@@ -65,8 +65,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Alert queries found',
-            limit: requestParams.limit,
-            offset: requestParams.offset,
+            limit: 5,
+            offset: 0,
             totalRecords: defaultSearchQueriesRepositoryResponse.count,
             queries: defaultSearchQueriesRepositoryResponse.queries
         })

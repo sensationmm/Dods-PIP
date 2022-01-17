@@ -1,18 +1,19 @@
-import { AlertDocumentInput, AlertInput, AlertQueryInput, Collection, CollectionAlert, CollectionAlertDocument, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
-    CollectionAlertsPersister,
-    CreateAlertParameters,
-    SearchAlertParameters,
     AlerByIdOutput,
+    CollectionAlertsPersister,
     CopyAlertParameters,
+    CopyAlertResponse,
+    CreateAlertParameters,
+    CreateAlertQueryParameters,
+    DeleteAlertParameters,
+    SearchAlertParameters,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters,
-    CopyAlertResponse,
-    DeleteAlertParameters
+    setAlertScheduleParameters
 } from './domain';
+import { AlertDocumentInput, AlertInput, AlertQueryInput, Collection, CollectionAlert, CollectionAlertDocument, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
 import { cloneArray, cloneObject, mapAlert, mapAlertQuery } from '..';
@@ -130,13 +131,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const newAlert = await this.alertModel.create(createObject);
 
         return await newAlert.reload({ include: ['collection', 'createdById'] });
-    }
-
-    async createQuery(parameters: any): Promise<CollectionAlertQuery> {
-
-        const newAlertQuery = await CollectionAlertQuery.create(parameters);
-
-        return await newAlertQuery.reload();
     }
 
     async setAlertSchedule(parameters: setAlertScheduleParameters): Promise<CollectionAlert> {
@@ -354,15 +348,64 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
     }
 
+    async createQuery(parameters: CreateAlertQueryParameters): Promise<Object> {
+
+        const { alertId, createdBy, informationTypes, contentSources, query } = parameters
+
+        const alert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true
+            },
+        });
+
+
+        if (!alert) {
+
+            throw new CollectionError(
+                `Error: could not retrieve Alert with uuid: ${alertId}`,
+            );
+        }
+
+        const alertQueryOwner = await User.findOne({
+            where: {
+                uuid: createdBy,
+            },
+        });
+
+
+        if (!alertQueryOwner) {
+
+            throw new CollectionError(
+                `Error: could not retrieve User with uuid: ${createdBy}`,
+            );
+        }
+
+        const createAlertQuery: any = {
+            alertId: alert.id,
+            informationTypes,
+            contentSources,
+            query,
+            createdBy: alertQueryOwner.id
+        }
+
+        const newAlertQuery = await CollectionAlertQuery.create(createAlertQuery);
+        await newAlertQuery.reload({ include: ['createdById'] })
+        return await mapAlertQuery(newAlertQuery, alert)
+    }
+
     async getAlertQueries(parameters: SearchAlertQueriesParameters): Promise<getQueriesResponse> {
 
         let { alertId, limit, offset, sortDirection } = parameters;
 
         const alert = await CollectionAlert.findOne({
-            where: { uuid: alertId }
+            where: {
+                uuid: alertId,
+                isActive: true
+            }
         })
 
-        if (!alert || !alert.isActive) {
+        if (!alert) {
             throw new CollectionError(
                 `Alert not found`
             );
@@ -372,19 +415,32 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             sortDirection = 'ASC';
         }
 
-        const { rows, count } = await CollectionAlertQuery.findAndCountAll({
+        // const { rows, count } = await CollectionAlertQuery.findAndCountAll({
+        //     where: {
+        //         alertId: alert.id,
+        //         isActive: true,
+        //     },
+
+        // });
+
+        const rows = await alert.getAlertQueries({
             where: {
-                alertId: alert.id,
                 isActive: true,
             },
             include: ['createdById'],
             order: [['createdAt', sortDirection]],
             offset: parseInt(offset!),
             limit: parseInt(limit!),
-        });
+        })
+
+        const count = await alert.countAlertQueries({
+            where: {
+                isActive: true,
+            }
+        })
 
         return {
-            queries: await Promise.all(rows.map((collectionAlert) => mapAlertQuery(collectionAlert))),
+            queries: await Promise.all(rows.map((collectionAlert) => mapAlertQuery(collectionAlert, alert))),
             count: count
         };
     }

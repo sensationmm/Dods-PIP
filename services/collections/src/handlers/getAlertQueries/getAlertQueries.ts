@@ -18,8 +18,8 @@ export const getAlertQueries: AsyncLambdaHandler<SearchAlertQueriesParameters> =
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
         message: 'Alert queries found',
-        limit: parameters.limit,
-        offset: parameters.offset,
+        limit: parseInt(parameters.limit),
+        offset: parseInt(parameters.offset),
         totalRecords: response.count,
         queries: response.queries
 
