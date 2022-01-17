@@ -160,6 +160,7 @@ pipelines:
       - step:
           name: "Backend Service: Deploy to Environment"
           image: gioatsomoglobal/devopstools:0.4.5
+          size: 2x
           services:
             - docker
           script:
