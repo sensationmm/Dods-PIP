@@ -1,6 +1,6 @@
-import { Collection, CollectionAlert } from "@dodsgroup/dods-model";
+import { Collection, CollectionAlert, CollectionAlertQuery } from "@dodsgroup/dods-model";
 import { CollectionOutput } from "..";
-import { AlertOutput } from "./../CollectionAlertsRepository/domain";
+import { AlertOutput, AlertQueryResponse } from "./../CollectionAlertsRepository/domain";
 
 export function cloneObject<T, E>(target: T,
     replaceProperties?: E,
@@ -20,8 +20,10 @@ export function cloneArray<T, E>(target: T[],
     return copiedArray;
 }
 
-export const mapAlert = (model: CollectionAlert): AlertOutput => {
+export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => {
     const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted } = model;
+    const role = await createdById?.getRole();
+    const isDodsUser = role ? Boolean(role.dodsRole) : undefined
 
     return {
         id,
@@ -32,7 +34,7 @@ export const mapAlert = (model: CollectionAlert): AlertOutput => {
         template: alertTemplate ? { id: alertTemplate.id, name: alertTemplate.name } : {},
         schedule,
         timezone,
-        createdBy: createdById ? { uuid: createdById.uuid, name: createdById.fullName, emailAddress: createdById.primaryEmail } : {},
+        createdBy: createdById ? { uuid: createdById.uuid, name: createdById.fullName, emailAddress: createdById.primaryEmail, isDodsUser } : {},
         createdAt,
         updatedAt,
         updatedBy: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail } : {},
@@ -43,16 +45,41 @@ export const mapAlert = (model: CollectionAlert): AlertOutput => {
     }
 }
 
+export const mapAlertQuery = async (model: CollectionAlertQuery): Promise<AlertQueryResponse> => {
+    const { uuid, name, informationTypes, contentSources, query, createdAt, updatedAt, createdById } = model;
+    const role = await createdById?.getRole();
+    const isDodsUser = role ? Boolean(role.dodsRole) : undefined
+
+    return {
+        uuid,
+        name,
+        informationTypes,
+        contentSources,
+        query,
+        createdBy: createdById
+            ? {
+                uuid: createdById.uuid,
+                name: createdById.fullName,
+                emailAddress: createdById.primaryEmail,
+                isDodsUser
+            }
+            : null,
+        createdAt,
+        updatedAt,
+    };
+}
+
 export const mapCollection = async (model: Collection): Promise<CollectionOutput> => {
     const { uuid, name, clientAccount, createdAt, createdBy, updatedAt, alerts, savedQueries, documents } = model;
-    const role = await createdBy.getRole();
+    const role = await createdBy?.getRole();
+    const isDodsUser = role ? Boolean(role.dodsRole) : undefined
 
     return {
         uuid,
         name,
         clientAccount: { uuid: clientAccount.uuid, name: clientAccount.name },
         createdAt: createdAt,
-        createdBy: createdBy ? { uuid: createdBy.uuid, name: createdBy.fullName, emailAddress: createdBy.primaryEmail, isDodsUser: Boolean(role.dodsRole) } : {},
+        createdBy: createdBy ? { uuid: createdBy.uuid, name: createdBy.fullName, emailAddress: createdBy.primaryEmail, isDodsUser } : {},
         updatedAt: updatedAt,
         alertsCount: alerts?.length,
         queriesCount: savedQueries?.length,

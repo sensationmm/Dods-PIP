@@ -1,6 +1,5 @@
 import { AlertDocumentInput, AlertInput, AlertQueryInput, Collection, CollectionAlert, CollectionAlertDocument, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
 import {
-    AlertQueryResponse,
     CollectionAlertsPersister,
     CreateAlertParameters,
     SearchAlertParameters,
@@ -16,7 +15,7 @@ import {
 } from './domain';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
-import { cloneArray, cloneObject, mapAlert } from '..';
+import { cloneArray, cloneObject, mapAlert, mapAlertQuery } from '..';
 
 export * from './domain';
 
@@ -68,7 +67,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         return {
-            alerts: rows.map((collectionAlert) => mapAlert(collectionAlert)),
+            alerts: await Promise.all(rows.map((collectionAlert) => mapAlert(collectionAlert))),
             count: count
         };
     }
@@ -254,7 +253,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
 
         return {
-            alert: mapAlert(alert),
+            alert: await mapAlert(alert),
             searchQueriesCount: alertQueryResponse.count,
             recipientsCount: alertRecipientResponse.count
         }
@@ -348,7 +347,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
 
         return {
-            alert: mapAlert(alert),
+            alert: await mapAlert(alert),
             searchQueriesCount: existingQueries.length,
             documentsCount: existingAlertDocuments.length,
             recipientsCount: 0
@@ -385,28 +384,8 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         return {
-            queries: rows.map((collectionAlert) => this.mapQuery(collectionAlert)),
+            queries: await Promise.all(rows.map((collectionAlert) => mapAlertQuery(collectionAlert))),
             count: count
-        };
-    }
-
-    mapQuery(model: CollectionAlertQuery): AlertQueryResponse {
-        const { uuid, name, informationTypes, contentSources, query, createdAt, updatedAt, createdById } = model;
-        return {
-            uuid,
-            name,
-            informationTypes,
-            contentSources,
-            query,
-            createdBy: createdById
-                ? {
-                    uuid: createdById.uuid,
-                    name: createdById.fullName,
-                    emailAddress: createdById.primaryEmail
-                }
-                : null,
-            createdAt,
-            updatedAt,
         };
     }
 

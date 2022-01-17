@@ -15,7 +15,7 @@ export interface CollectionOutput {
         uuid: string;
         name: string;
         emailAddress: string;
-        isDodsUser: boolean;
+        isDodsUser?: boolean;
     } | {},
     updatedAt: Date;
     alertsCount?: number; //Count of alerts associated to collection

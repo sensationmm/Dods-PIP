@@ -13,7 +13,7 @@ export interface AlertOutput {
     lastStepCompleted?: number;
     isScheduled?: boolean;
     hasKeywordsHighlight?: boolean;
-    createdBy: { uuid?: string, name?: string, emailAddress?: string } | {}
+    createdBy: { uuid?: string, name?: string, emailAddress?: string, isDodsUser?: boolean } | {}
     createdAt?: Date;
     updatedBy: { uuid?: string, name?: string, emailAddress?: string } | {}
     updatedAt?: Date | null;
@@ -129,6 +129,7 @@ export interface AlertQueryResponse {
         uuid: string;
         name: string;
         emailAddress: string;
+        isDodsUser?: boolean;
     } | null,
     createdAt: Date;
     updatedAt: Date;

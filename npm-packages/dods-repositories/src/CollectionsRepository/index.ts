@@ -83,7 +83,7 @@ export class CollectionsRepository implements CollectionsPersister {
             limit,
         });
 
-        const data = await Promise.all(rows.map(async (row) => await mapCollection(row)));
+        const data = await Promise.all(rows.map((row) => mapCollection(row)));
 
         return {
             limit,
