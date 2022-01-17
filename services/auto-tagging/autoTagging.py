@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 
@@ -24,8 +25,8 @@ def handle(event, context):
         'Geography'
     ]
     for taxonomy_type in taxonomy_types:
-        taxonomy_response = es.search(index='taxonomy', query={"bool": {"must": [{"match": {"inScheme": taxonomy_type}}]}}, size=5000)
-
+        taxonomy_response = es.search(index='taxonomy', query={"bool": {"must": [{"match": {"inScheme": taxonomy_type}}]}}, size=10000)
+        logging.info(f"Total Count : {taxonomy_response['hits']['total']['value']}")
         for taxonomy in taxonomy_response['hits']['hits']:
             taxonomy_term = taxonomy['_source']['label']
             safe_taxonomy_term = taxonomy_term.replace('(', '\(').replace(')', '\)').replace('|', '\|')
