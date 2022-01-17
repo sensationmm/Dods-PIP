@@ -1,6 +1,6 @@
-import { CollectionAlertError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
+import { CollectionAlertError, CollectionAlertRecipientError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
 import { AlertRecipientInput, Collection, CollectionAlert, CollectionAlertRecipient, User } from "@dodsgroup/dods-model";
-import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput } from "./domain";
+import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput, DeleteAlertRecipientInput } from "./domain";
 
 export * from './domain';
 
@@ -61,7 +61,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
         await collectionAlert.update({ updatedBy: updatedByUser.id });
 
         const collectionAlertRecipient = await CollectionAlertRecipient.findAll({
-            where: { alertId: 1 },
+            where: { alertId: collectionAlert.id },
             include: [CollectionAlertRecipient.associations.user],
         });
 
@@ -99,5 +99,35 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             updatedAt: collectionAlert.updatedAt,
             recipients: collectionAlertAllRecipients//users.map(user => ({ userId: user.uuid, name: user.fullName, emailAddress: user.primaryEmail }))
         };
+    }
+
+    async delete(parameters: DeleteAlertRecipientInput): Promise<boolean> {
+        const { userId, alertId } = parameters;
+
+        const collectionAlert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId
+            },
+        });
+
+        if (!collectionAlert) {
+            throw new CollectionAlertError('Collection Alert not found');
+        }
+
+        const alertRecipientUser = await User.findOne({ where: { uuid: userId } });
+
+        if (!alertRecipientUser) {
+            throw new UserProfileError('User not found');
+        }
+
+        const alertRecipient = await CollectionAlertRecipient.findOne({ where: { alertId: collectionAlert.id, userId: alertRecipientUser.id } });
+
+        if (!alertRecipient) {
+            throw new CollectionAlertRecipientError('Recipient not found');
+        }
+
+        await alertRecipient.destroy();
+
+        return true;
     }
 }

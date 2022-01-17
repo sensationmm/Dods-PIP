@@ -27,7 +27,7 @@ provider:
   stackTags:
     service: ${self:service}
     env: ${self:provider.stage}
-    version: 1
+    version: "1"
     teamsEmail: kenan.hancer@somoglobal.com
     team: dods
   tracing:
@@ -86,8 +86,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
-  apiGatewayCaching:
-    enabled: true
+  # apiGatewayCaching:
+    # enabled: true
 
 plugins:
   - serverless-webpack
@@ -105,6 +105,17 @@ functions:
       - http:
           method: post
           path: scheduler
+          cors: true
+          caching:
+            enabled: false
+
+  get_watcher:
+    handler: src/handlers/getSchedule/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: scheduler/{scheduleId}
           cors: true
           caching:
             enabled: false
@@ -127,6 +138,28 @@ functions:
       - http:
           method: put
           path: scheduler/{id}
+          cors: true
+          caching:
+            enabled: false
+
+  activateSchedule:
+    handler: src/handlers/activateSchedule/index.handle
+    description: activate schedule
+    events:
+      - http:
+          method: put
+          path: scheduler/{id}/activate
+          cors: true
+          caching:
+            enabled: false
+
+  deactivateSchedule:
+    handler: src/handlers/deactivateSchedule/index.handle
+    description: deactivate schedule
+    events:
+      - http:
+          method: put
+          path: scheduler/{id}/deactivate
           cors: true
           caching:
             enabled: false
