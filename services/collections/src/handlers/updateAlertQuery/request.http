@@ -1,0 +1,15 @@
+### Update alert Query
+
+@collectionId = cd44bad6-8eeb-4870-abb8-72d297ea7a11
+@alertId = 03b06507-6e94-436b-ab9c-d612b08cfc4b
+
+@queryId = 33760313-327c-4bc0-a7d2-b00c692b32c8
+
+PUT {{host}}/collections/{{collectionId}}/alerts/{{alertId}}/queries/{{queryId}} HTTP/1.1
+
+{
+  "contentSources": "test update ",
+  "informationTypes": "test update",
+  "query": "test update",
+  "updatedBy": "6340c08f-0a01-41c1-8434-421f1fff3d1e"
+}

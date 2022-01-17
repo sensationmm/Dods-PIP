@@ -1,5 +1,6 @@
 import {
     AlerByIdOutput,
+    AlertQueryResponse,
     CollectionAlertsPersister,
     CopyAlertParameters,
     CopyAlertResponse,
@@ -9,14 +10,15 @@ import {
     SearchAlertParameters,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
+    UpdateAlertQuery,
     getAlertsByCollectionResponse,
     getQueriesResponse,
     setAlertScheduleParameters
 } from './domain';
 import { AlertDocumentInput, AlertInput, AlertQueryInput, Collection, CollectionAlert, CollectionAlertDocument, CollectionAlertQuery, CollectionAlertRecipient, User } from '@dodsgroup/dods-model';
+import { cloneArray, cloneObject, mapAlert, mapAlertQuery } from '..';
 
 import { CollectionError } from "@dodsgroup/dods-domain"
-import { cloneArray, cloneObject, mapAlert, mapAlertQuery } from '..';
 
 export * from './domain';
 
@@ -415,14 +417,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             sortDirection = 'ASC';
         }
 
-        // const { rows, count } = await CollectionAlertQuery.findAndCountAll({
-        //     where: {
-        //         alertId: alert.id,
-        //         isActive: true,
-        //     },
-
-        // });
-
         const rows = await alert.getAlertQueries({
             where: {
                 isActive: true,
@@ -471,5 +465,81 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         await alert.update({ isActive: false });
         await alert.destroy();
+    }
+
+    async updateAlertQuery(parameters: UpdateAlertQuery): Promise<AlertQueryResponse> {
+
+        const { queryId, contentSources, informationTypes, query, updatedBy, alertId, collectionId } = parameters
+
+        const collection = await this.collectionModel.findOne({
+            where: {
+                uuid: collectionId,
+            },
+        });
+
+        if (!collection) {
+
+            throw new CollectionError(
+                `Error: could not retrieve Collection with uuid: ${collectionId}`,
+            );
+        }
+
+        const alert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true
+            },
+        });
+
+        if (!alert) {
+
+            throw new CollectionError(
+                `Error: could not retrieve alert with uuid: ${alertId}`,
+            );
+        }
+
+        const updateQuery = await CollectionAlertQuery.findOne({
+            where: {
+                uuid: queryId,
+                isActive: true
+            },
+            include: ['createdById', 'updatedById']
+        });
+
+        if (!updateQuery) {
+
+            throw new CollectionError(
+                `Error: could not retrieve alert query with uuid: ${queryId}`,
+            );
+        }
+
+        const alertQueryOwner = await User.findOne({
+            where: {
+                uuid: updatedBy,
+            },
+        });
+
+
+        if (!alertQueryOwner) {
+
+            throw new CollectionError(
+                `Error: could not retrieve User with uuid: ${updatedBy}`,
+            );
+        }
+
+        const queryParameters = {
+            contentSources,
+            informationTypes,
+            query,
+            updatedBy: alertQueryOwner.id
+
+        }
+        await updateQuery.update(queryParameters);
+
+        await updateQuery.reload({
+            include: ['createdById', 'updatedById'],
+        });
+
+        return await mapAlertQuery(updateQuery, alert);
     }
 }

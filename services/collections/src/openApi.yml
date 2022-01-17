@@ -240,6 +240,25 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}:
+    put:
+      operationId: updateAlertQuery
+      summary: "Update an Alert Query "
+      description: "Update an Alert Query "
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: '#/components/parameters/queryId'
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateAlertQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/CreateQueryResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   securitySchemes:
@@ -283,7 +302,20 @@ components:
           type: string
         query:
           type: string
-        cretedBy:
+        createdBy:
+          type: string
+          format: uuid
+          
+    UpdateAlertQueryInput:
+      type: object
+      properties:
+        informationTypes:
+          type: string
+        contentSources:
+          type: string
+        query:
+          type: string
+        updatedBy:
           type: string
           format: uuid
          
@@ -347,6 +379,14 @@ components:
           type: string
         informationTypes:
           type: string
+        alert:
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            title:
+              type: string
         contentSources:
           type: string
         query:
@@ -361,6 +401,20 @@ components:
               type: string
             emailAddress:
               type: string
+            isDODSUser:
+              type: boolean
+        updatedBy: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+            emailAddress:
+              type: string
+            isDODSUser:
+              type: boolean
         createdAt:
           type: string 
         updatedAt:
@@ -639,6 +693,15 @@ components:
         format: uuid
       required: true
       example: d290f1ss-6c54-4b01-98e6-d701748f7151
+      
+    queryId:
+      in: path
+      name: queryId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
 
   responses:
     NotFound:
@@ -854,6 +917,21 @@ components:
                 example: 'Alert query created successfully'
               query:
                 $ref: "#/components/schemas/QueryOutput"
+                
+    UpdateQueryResponse:
+      description: "Update Alert Query Response "
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: 'Alert query was updated successfully'
+              query:
+                $ref: "#/components/schemas/QueryOutput"
 
     GetAlertsResponse:
       description: "Get Alerts Response"
@@ -941,6 +1019,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CreateAlertQueryInput"
+            
+    UpdateAlertQuery:
+      description: "Payload to update a new alert query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateAlertQueryInput"
 
 
     UpdateCollection:

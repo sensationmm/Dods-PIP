@@ -135,6 +135,12 @@ export interface AlertQueryResponse {
         emailAddress: string;
         isDodsUser?: boolean;
     } | null,
+    updatedBy?: {
+        uuid: string;
+        name: string;
+        emailAddress: string;
+        isDodsUser?: boolean;
+    } | null,
     createdAt: Date;
     updatedAt: Date;
 }
@@ -155,4 +161,14 @@ export interface CreateAlertQueryParameters {
     contentSources: string;
     query: string;
     createdBy: string | number;
+}
+
+export interface UpdateAlertQuery {
+    collectionId: string;
+    alertId: string;
+    queryId: string;
+    contentSources: string,
+    informationTypes: string,
+    query: string,
+    updatedBy: string
 }
