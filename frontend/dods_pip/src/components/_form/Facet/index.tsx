@@ -6,14 +6,17 @@ import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
 import Text from '../../Text';
 import * as Styled from './Facet.styles';
-import {next} from "cheerio/lib/api/traversing";
 
 export interface FacetProps {
   title: string;
-  records: never[];
+  records: {
+    key: string;
+    doc_count: number;
+    selected?: boolean;
+  }[];
   clearable?: boolean;
   onClearSelection?: () => void;
-  onChange: (topic: Record<string, any>) => void;
+  onChange: (key: string) => void;
   expanded: boolean;
   darkMode?: boolean;
   checked?: never[];
@@ -34,7 +37,6 @@ const Facet: React.FC<FacetProps> = ({
   const [showCount, setShowCount] = React.useState<number>(defaultCount);
   const expandedIcon = expanded ? Icons.ChevronDownBold : Icons.ChevronRightBold;
   const viewMoreIcon = viewMore ? Icons.ChevronDownBold : Icons.ChevronRightBold;
-  const [checked, setChecked] = React.useState<Record<string, any>>([]);
 
   return (
     <Styled.facet data-test="component-facet" disabled>
@@ -64,34 +66,21 @@ const Facet: React.FC<FacetProps> = ({
         </Styled.facetHeader>
         {expanded && (
           <Styled.facetCollapsiblePanel>
-            {records &&
-              records
-                .slice(0, showCount)
-                .sort((a: Record<string, any>, b: Record<string, any>) => b.doc_count - a.doc_count)
-                .map((item: Record<string, any>, i: number) => {
-                  return (
-                    <Checkbox
-                      label={item.key}
-                      hint={item.doc_count}
-                      id={`content-source-${i}`}
-                      key={`content-source-${i}`}
-                      isChecked={item.isChecked || false}
-                      onChange={() => {
-                        const exists = checked.includes(item);
-                        let nextState;
-                        item.isChecked = !item.isChecked;
-                        if (exists) {
-                          nextState = checked.filter((c: any) => c !== item);
-                          setChecked(nextState);
-                        } else {
-                          nextState = checked.concat([item]);
-                          setChecked(nextState);
-                        }
-                        onChange(nextState);
-                      }}
-                    />
-                  );
-                })}
+            {records
+              ?.slice(0, showCount)
+              .sort((a, b) => b.doc_count - a.doc_count)
+              .map((item, i: number) => {
+                return (
+                  <Checkbox
+                    label={item.key}
+                    hint={item.doc_count}
+                    id={`content-source-${i}`}
+                    key={`content-source-${i}`}
+                    isChecked={item.selected || false}
+                    onChange={() => onChange(item.key)}
+                  />
+                );
+              })}
             {records && records.length > 5 && (
               <Styled.facetViewMoreBtn
                 onClick={() => {

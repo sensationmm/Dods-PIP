@@ -18,7 +18,7 @@ Primary.args = {
   title: 'Information Type',
   clearable: false,
   expanded: true,
-  onClearSelection: () => {console.log('selection cleared!')}
+  onClearSelection: () => console.log('selection cleared!'),
 };
 
 Primary.parameters = {

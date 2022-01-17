@@ -14,7 +14,7 @@ export interface CheckboxProps extends Omit<LabelProps, 'label'> {
   onChange: (value: boolean) => void;
   isDisabled?: boolean;
   darkMode?: boolean;
-  hint?: string;
+  hint?: string | number;
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({

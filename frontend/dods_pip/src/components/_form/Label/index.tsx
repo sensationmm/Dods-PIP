@@ -13,7 +13,7 @@ export interface LabelProps {
   bold?: boolean;
   darkMode?: boolean;
   htmlFor?: string;
-  parenthetical?: string;
+  parenthetical?: string | number;
 }
 
 const Label: React.FC<LabelProps> = ({

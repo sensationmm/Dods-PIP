@@ -45,6 +45,7 @@ export interface ISourceData {
 type BucketType = {
   doc_count: number;
   key: string;
+  selected?: boolean;
 };
 
 export interface IResponse {
@@ -371,19 +372,42 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
       return aggregation.doc_count !== 0;
     };
 
-    setContentSources(contentSource?.buckets?.filter?.(checkEmptyAggregation) || []);
+    const updateWithBasicFilters = (items: BucketType[] = []): BucketType[] => {
+      return (
+        items.filter?.(checkEmptyAggregation)?.map((props) => {
+          const selected = basicFilters.findIndex(({ value }) => value === props.key) > -1;
+          return {
+            ...props,
+            selected,
+          };
+        }) || []
+      );
+    };
 
-    setInformationTypes(informationType?.buckets?.filter?.(checkEmptyAggregation) || []);
+    const { basicFilters = [], nestedFilters = [] } = parsedQuery;
 
-    setJurisdictions(jurisdiction?.buckets?.filter?.(checkEmptyAggregation) || []);
+    setContentSources(updateWithBasicFilters(contentSource?.buckets));
+    setInformationTypes(updateWithBasicFilters(informationType?.buckets));
+    setJurisdictions(updateWithBasicFilters(jurisdiction?.buckets));
 
-    setPeople(people?.buckets?.filter?.(checkEmptyAggregation) || []);
-    setOrganizations(organizations?.buckets?.filter?.(checkEmptyAggregation) || []);
+    const updateWithNestedFilters = (items: BucketType[] = []): BucketType[] => {
+      return items.filter?.(checkEmptyAggregation)?.map((props) => {
+        const selected =
+          nestedFilters.findIndex(
+            ({ value, key }) => key === 'taxonomyTerms.termLabel' && value === props.key,
+          ) > -1;
+        return {
+          ...props,
+          selected,
+        };
+      });
+    };
 
-    setGeography(geography?.buckets?.filter?.(checkEmptyAggregation) || []);
-
-    setTopics(topics?.buckets?.filter?.(checkEmptyAggregation) || []);
-  }, [apiResponse]);
+    setPeople(updateWithNestedFilters(people?.buckets));
+    setOrganizations(updateWithNestedFilters(organizations?.buckets));
+    setGeography(updateWithNestedFilters(geography?.buckets));
+    setTopics(updateWithNestedFilters(topics?.buckets));
+  }, [parsedQuery, apiResponse]);
 
   const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -540,8 +564,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                         title={'Content Source'}
                         records={contentSources}
                         expanded={true}
-                        onChange={(contentSource) => {
-                          // setContentSourceQuery(contentSource.key);
+                        onChange={(value) => {
+                          setBasicQuery({
+                            key: AggTypes.contentSource,
+                            value,
+                          });
                         }}
                       />
                     )}
@@ -550,8 +577,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                         title={'Information Type'}
                         records={informationTypes}
                         expanded={true}
-                        onChange={(informationType) => {
-                          // setInformationTypeQuery(informationType.key);
+                        onChange={(value) => {
+                          setBasicQuery({
+                            key: AggTypes.informationType,
+                            value,
+                          });
                         }}
                       />
                     )}
@@ -560,8 +590,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                         title={'Jurisdictions'}
                         records={jurisdictions}
                         expanded={true}
-                        onChange={(jurisdiction) => {
-                          // setJurisdictionQuery(jurisdiction.key);
+                        onChange={(value) => {
+                          setBasicQuery({
+                            key: AggTypes.jurisdiction,
+                            value,
+                          });
                         }}
                       />
                     )}
@@ -570,8 +603,12 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                         title={'Topics'}
                         records={topics}
                         expanded={true}
-                        onChange={(topic) => {
-                          setTopicQuery(topic.key);
+                        onChange={(value) => {
+                          setNestedQuery({
+                            path: 'taxonomyTerms',
+                            key: 'taxonomyTerms.termLabel',
+                            value,
+                          });
                         }}
                       />
                     )}
@@ -580,8 +617,12 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                         title={'Organizations'}
                         records={organizations}
                         expanded={true}
-                        onChange={(organizations) => {
-                          // setTopicQuery(organizations.key);
+                        onChange={(value) => {
+                          setNestedQuery({
+                            path: 'taxonomyTerms',
+                            key: 'taxonomyTerms.termLabel',
+                            value,
+                          });
                         }}
                       />
                     )}
@@ -590,8 +631,12 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                         title={'People'}
                         records={people}
                         expanded={true}
-                        onChange={(people) => {
-                          // setTopicQuery(people.key);
+                        onChange={(value) => {
+                          setNestedQuery({
+                            path: 'taxonomyTerms',
+                            key: 'taxonomyTerms.termLabel',
+                            value,
+                          });
                         }}
                       />
                     )}
@@ -600,8 +645,12 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                         title={'Geography'}
                         records={geography}
                         expanded={true}
-                        onChange={(geography) => {
-                          // setTopicQuery(geography.key);
+                        onChange={(value) => {
+                          setNestedQuery({
+                            path: 'taxonomyTerms',
+                            key: 'taxonomyTerms.termLabel',
+                            value,
+                          });
                         }}
                       />
                     )}
