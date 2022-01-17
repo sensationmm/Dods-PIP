@@ -1,4 +1,5 @@
-import { CollectionAlert } from "@dodsgroup/dods-model";
+import { Collection, CollectionAlert } from "@dodsgroup/dods-model";
+import { CollectionOutput } from "..";
 import { AlertOutput } from "./../CollectionAlertsRepository/domain";
 
 export function cloneObject<T, E>(target: T,
@@ -39,5 +40,22 @@ export const mapAlert = (model: CollectionAlert): AlertOutput => {
         isSchedule: isScheduled ? true : false,
         lastStepCompleted: lastStepCompleted,
         isPublished: isPublished ? true : false
+    }
+}
+
+export const mapCollection = async (model: Collection): Promise<CollectionOutput> => {
+    const { uuid, name, clientAccount, createdAt, createdBy, updatedAt, alerts, savedQueries, documents } = model;
+    const role = await createdBy.getRole();
+
+    return {
+        uuid,
+        name,
+        clientAccount: { uuid: clientAccount.uuid, name: clientAccount.name },
+        createdAt: createdAt,
+        createdBy: createdBy ? { uuid: createdBy.uuid, name: createdBy.fullName, emailAddress: createdBy.primaryEmail, isDodsUser: Boolean(role.dodsRole) } : {},
+        updatedAt: updatedAt,
+        alertsCount: alerts?.length,
+        queriesCount: savedQueries?.length,
+        documentsCount: documents?.length,
     }
 }

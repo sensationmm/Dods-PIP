@@ -1,4 +1,4 @@
-import { ClientAccount, Collection, Sequelize, WhereOptions } from '@dodsgroup/dods-model';
+import { ClientAccount, Collection, CollectionAlert, CollectionDocument, CollectionSavedQuery, Sequelize, User, WhereOptions } from '@dodsgroup/dods-model';
 import {
     CollectionsPersister,
     DeleteCollectionInput,
@@ -9,6 +9,7 @@ import {
 } from './domain';
 
 import { CollectionError } from '@dodsgroup/dods-domain';
+import { mapCollection } from '..';
 
 export * from './domain';
 
@@ -57,36 +58,39 @@ export class CollectionsRepository implements CollectionsPersister {
             include: [
                 {
                     model: ClientAccount,
+                    as: 'clientAccount',
                     where: clientAccountWhere,
-                    association: Collection.associations.clientAccount,
-                    required: true,
+                    required: true
                 },
-                Collection.associations.alerts,
-                Collection.associations.savedQueries,
-                Collection.associations.documents,
+                {
+                    model: ClientAccount, as: 'clientAccount'
+                },
+                {
+                    model: CollectionAlert, as: 'alerts'
+                },
+                {
+                    model: CollectionSavedQuery, as: 'savedQueries'
+                },
+                {
+                    model: CollectionDocument, as: 'documents'
+                },
+                {
+                    model: User, as: 'createdBy',
+                }
             ],
             order: [orderBy],
             offset,
             limit,
         });
 
-        const mappedRows = rows.map((row) => ({
-            uuid: row.uuid,
-            name: row.name,
-            clientAccount: { uuid: row.clientAccount.uuid, name: row.clientAccount.name },
-            createdAt: row.createdAt,
-            updatedAt: row.updatedAt,
-            alertsCount: row.alerts?.length,
-            queriesCount: row.savedQueries?.length,
-            documentsCount: row.documents?.length,
-        }));
+        const data = await Promise.all(rows.map(async (row) => await mapCollection(row)));
 
         return {
             limit,
             offset,
             totalRecords,
             filteredRecords,
-            data: mappedRows,
+            data,
         };
     }
 
@@ -97,10 +101,21 @@ export class CollectionsRepository implements CollectionsPersister {
                 isActive: true,
             },
             include: [
-                Collection.associations.clientAccount,
-                Collection.associations.alerts,
-                Collection.associations.savedQueries,
-                Collection.associations.documents,
+                {
+                    model: ClientAccount, as: 'clientAccount'
+                },
+                {
+                    model: CollectionAlert, as: 'alerts'
+                },
+                {
+                    model: CollectionSavedQuery, as: 'savedQueries'
+                },
+                {
+                    model: CollectionDocument, as: 'documents'
+                },
+                {
+                    model: User, as: 'createdBy',
+                }
             ],
         });
 
@@ -109,19 +124,7 @@ export class CollectionsRepository implements CollectionsPersister {
         }
 
         return {
-            data: {
-                uuid: collection.uuid,
-                name: collection.name,
-                clientAccount: {
-                    uuid: collection.clientAccount.uuid,
-                    name: collection.clientAccount.name,
-                },
-                createdAt: collection.createdAt,
-                updatedAt: collection.updatedAt,
-                alertsCount: collection.alerts!.length,
-                queriesCount: collection.savedQueries!.length,
-                documentsCount: collection.documents!.length,
-            },
+            data: await mapCollection(collection)
         };
     }
 
