@@ -22,3 +22,7 @@ export interface updateScheduleParameters extends deleteScheduleParameters {
 export interface activateScheduleParameters extends deleteScheduleParameters {}
 
 export interface deactivateScheduleParameters extends deleteScheduleParameters {}
+
+export interface createPercolatorParameters {
+    query: string
+}

@@ -4,7 +4,7 @@ import {
     updateScheduleParameters,
     activateScheduleParameters,
     deactivateScheduleParameters,
-    getScheduleParameters,
+    getScheduleParameters, createPercolatorParameters,
 } from "../domain";
 
 
@@ -15,4 +15,5 @@ export interface Schedule {
     updateSchedule(data: updateScheduleParameters): Promise<void>;
     activateSchedule(data: activateScheduleParameters): Promise<void>;
     deactivateSchedule(data: deactivateScheduleParameters): Promise<void>;
+    createPercolator(data: createPercolatorParameters): Promise<any>;
 }

@@ -163,3 +163,14 @@ functions:
           cors: true
           caching:
             enabled: false
+
+  createPercolator:
+    handler: src/handlers/createPercolator/index.handle
+    description: Create alert percolator
+    events:
+      - http:
+          method: post
+          path: percolator
+          cors: true
+          caching:
+            enabled: false
