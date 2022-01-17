@@ -1,11 +1,12 @@
 import { CollectionAlertQuery, CollectionAlertRecipient } from '@dodsgroup/dods-model';
-import { CollectionAlertsRepository, setAlertScheduleParameters, AlertOutput } from '@dodsgroup/dods-repositories';
+import { CollectionAlertsRepository, setAlertScheduleParameters, AlertOutput, mapAlert } from '@dodsgroup/dods-repositories';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { mocked } from 'jest-mock';
 import { setAlertSchedule } from '../../../src/handlers/setAlertSchedule/setAlertSchedule';
 
 const mockedCollectionAlertsRepository = mocked(CollectionAlertsRepository, true);
+const mockedMapAlert = mocked(mapAlert, true);
 
 const defaultContext = createContext();
 
@@ -75,7 +76,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const querysByAlert: Array<CollectionAlertQuery> = [] as Array<CollectionAlertQuery>;
         const recipientsByAlert = [] as Array<CollectionAlertRecipient>;
-        mockedCollectionAlertsRepository.defaultInstance.mapAlert.mockReturnValue(answerMock)
+        mockedMapAlert.mockReturnValue(new Promise((resolve, _reject) => {
+            resolve(answerMock)
+        }));
         mockedCollectionAlertsRepository.defaultInstance.setAlertSchedule.mockResolvedValue(defaultSheduleCollection);
 
         mockedCollectionAlertsRepository.defaultInstance.getQuerysByAlert.mockResolvedValue(querysByAlert);
