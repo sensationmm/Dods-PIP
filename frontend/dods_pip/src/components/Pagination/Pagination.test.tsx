@@ -97,6 +97,7 @@ describe('Pagination', () => {
   let count = 0;
   const setState = jest.fn();
   const useStateSpy = jest.spyOn(React, 'useState');
+  window.scrollTo = jest.fn();
 
   const defaultState = {
     activePage: 3,
