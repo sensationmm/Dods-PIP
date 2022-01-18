@@ -3,9 +3,11 @@ import { Collection, CollectionAlert, CollectionAlertQuery } from "@dodsgroup/do
 
 import { CollectionOutput } from "..";
 
-export function cloneObject<T, E>(target: T,
-    replaceProperties?: E,
-    unwantedProperties?: string[]): T {
+export function cloneObject<T, E>(
+    target: T,
+    replaceProperties?: Partial<E>,
+    unwantedProperties?: string[]
+): T {
     const copiedObject = Object.assign({}, target, replaceProperties);
     if (unwantedProperties)
         unwantedProperties.forEach((key) => Reflect.deleteProperty(copiedObject, key));

@@ -9,7 +9,9 @@ export const setAlertSchedule: AsyncLambdaHandler<setAlertScheduleParameters> = 
 
     const alertResponse: any = await mapAlert(response)
 
-    const alertQuery = await CollectionAlertsRepository.defaultInstance.getQuerysByAlert(alertResponse.id);
+    const alertQuery = await CollectionAlertsRepository.defaultInstance.getQueriesByAlert(
+        alertResponse.id
+    );
     alertResponse.searchQueriesCount = alertQuery.length;
     const recipientsQuery = await CollectionAlertsRepository.defaultInstance.getRecipientsByAlert(alertResponse.id);
     alertResponse.recipientsCount = recipientsQuery.length;

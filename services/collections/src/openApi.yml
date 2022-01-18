@@ -140,7 +140,6 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
           
-          
   /collections/{collectionId}/alerts/{alertId}/schedule:
     put:
       operationId: setAlertSchedule
@@ -260,6 +259,23 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}/copyto:
+    post:
+      operationId: copyQuery
+      summary: "Copy the specified query to a different alert"
+      description: "Copy the specified query to a different alert"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: "#/components/parameters/alertId"
+        - $ref: "#/components/parameters/queryId"
+      requestBody:
+        $ref: '#/components/requestBodies/CopyQuery'
+      responses:
+        "200":
+          $ref: "#/components/responses/GetAlertResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -287,7 +303,7 @@ components:
         title:
           type: string
           example: alert title
-        alertQueriess:
+        alertQueries:
           type: array
           minItems: 1
           items:
@@ -551,6 +567,21 @@ components:
           type: string
           format: uuid
           minLength: 1
+
+    CopyQueryInput:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          format: uuid
+          minLength: 1
+        destinationAlertId:
+          type: string
+          format: uuid
+          minLength: 1
+      required:
+        - createdBy
+        - destinationAlertId
 
     CollectionOutput:
       type: object
@@ -993,6 +1024,14 @@ components:
                 type: string
                 example: Alert was deleted successfully
 
+    CopyQueryResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/QueryOutput"
+          
+
   requestBodies:
     CreateCollection:
       description: "Payload to create a new collection"
@@ -1062,3 +1101,10 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CopyAlertInput"
+
+    CopyQuery:
+      description: "Payload to copy an existing query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CopyQueryInput"
