@@ -1,5 +1,5 @@
 import Facet from '@dods-ui/components/_form/Facet';
-import DateFacet from '@dods-ui/components/DateFacet';
+import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import { format } from 'date-fns';
 import esb, { Query, RequestBodySearch } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
@@ -184,6 +184,7 @@ interface QueryObject {
     value: string;
   }[];
   resultsSize?: number;
+  dateRange?: IDateRange;
 }
 
 type QueryString = string | string[] | undefined;
@@ -287,6 +288,28 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
       {
         pathname: '/library',
         query: { query: JSON.stringify({ searchTerm }) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
+  const setDateFilter = ({ min, max }: IDateRange) => {
+    setOffset(0);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { dateRange, ...rest } = currentQuery; // Remove dateRage
+
+    let newQuery: QueryObject = rest;
+
+    if (min && max) {
+      newQuery = { ...newQuery, dateRange: { min, max } };
+    }
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -598,7 +621,13 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
               <section>
                 {apiResponse.es_response?.hits?.hits.length !== 0 && (
                   <Styled.filtersContent>
-                    <DateFacet />
+                    <DateFacet
+                      onChange={setDateFilter}
+                      values={{
+                        min: parsedQuery?.dateRange?.min,
+                        max: parsedQuery?.dateRange?.max,
+                      }}
+                    />
                     {contentSources && (
                       <Facet
                         title={'Content Source'}

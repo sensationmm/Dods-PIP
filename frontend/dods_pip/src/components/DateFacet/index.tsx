@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import sub from 'date-fns/sub';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import DatePicker from '../_form/DatePicker';
 import { IRadioItem } from '../_form/Radio';
@@ -8,22 +8,22 @@ import RadioGroup from '../_form/RadioGroup';
 import FacetContainer from '../FacetContainer';
 import * as Styled from './DateFacet.styles';
 
+export interface IDateRange {
+  min?: string;
+  max?: string;
+}
+export interface IDateOption extends IRadioItem, IDateRange {}
+
 interface DateFacetProps {
-  onClearSelection?: () => void;
+  onChange: (value: IDateRange) => void;
+  values: IDateRange;
 }
 
-interface IOption extends IRadioItem {
-  min: string;
-  max: string;
-}
-
-const DateFacet: React.FC<DateFacetProps> = ({ onClearSelection }) => {
-  const [selectedOption, setSelectedOption] = useState('');
-  const [dateValues, setDateValues] = useState({ min: '', max: '' });
+const DateFacet: React.FC<DateFacetProps> = ({ onChange, values }) => {
   const dateNow = new Date();
   const formatStr = 'yyyy-MM-dd';
 
-  const options: IOption[] = useMemo(() => {
+  const options: IDateOption[] = useMemo(() => {
     return [
       {
         label: 'Past 24 hours',
@@ -56,65 +56,73 @@ const DateFacet: React.FC<DateFacetProps> = ({ onClearSelection }) => {
         max: format(dateNow, formatStr),
       },
       {
-        label: 'Pick a range',
-        value: 'pick-a-range',
+        label: 'Custom range',
+        value: 'custom-range',
         min: '',
         max: '',
       },
     ];
   }, []);
 
-  const { minValue, maxValue } = useMemo(() => {
-    return {
-      minValue: dateValues.min || '',
-      maxValue: dateValues.max || '',
-    };
-  }, [dateValues]);
+  const selectedOption = useMemo(() => {
+    const presetValue = options.find(
+      ({ min, max }) => values.min === min && values.max === max,
+    )?.value;
+
+    if (presetValue) {
+      return presetValue;
+    }
+
+    if (values.min && values.max) {
+      return 'custom-range';
+    }
+
+    return '';
+  }, [values]);
 
   const updateSelectedValue = useCallback(
     (selectedValue) => {
-      setSelectedOption(selectedValue);
-      const option = options.find(({ value }) => value === selectedValue) as IOption | undefined;
+      const option = options.find(({ value }) => value === selectedValue) as
+        | IDateOption
+        | undefined;
 
       if (option?.min && option?.max) {
-        setDateValues(option);
+        onChange(option);
       }
     },
     [options],
   );
 
   return (
-    <FacetContainer heading="Date" onClearSelection={onClearSelection}>
+    <FacetContainer heading="Date" onClearSelection={() => onChange({ min: '', max: '' })}>
       <>
         <RadioGroup items={options} onChange={updateSelectedValue} selectedValue={selectedOption} />
         <Styled.dateInputs>
           <DatePicker
             id="min-date"
-            maxDate={maxValue || format(dateNow, formatStr)}
+            maxDate={values.max || format(dateNow, formatStr)}
             onChange={(min) => {
-              setDateValues({
-                ...dateValues,
+              onChange({
+                ...values,
                 min,
               });
             }}
-            value={minValue}
+            value={values.min || ''}
             placeholder="dd/mm/yyyy"
-            isDisabled={selectedOption !== 'pick-a-range'}
           />
           <span>-</span>
           <DatePicker
             id="max-date"
-            minDate={dateValues.min}
+            minDate={values.min}
             maxDate={format(dateNow, formatStr)}
             onChange={(max) => {
-              setDateValues({
-                ...dateValues,
+              onChange({
+                ...values,
                 max,
               });
             }}
-            value={maxValue}
+            value={values.max || ''}
             placeholder="dd/mm/yyyy"
-            isDisabled={selectedOption !== 'pick-a-range'}
           />
         </Styled.dateInputs>
       </>

@@ -7,7 +7,7 @@ import * as Styled from './FacetContainer.styles';
 
 interface FacetContainerProps {
   heading: string;
-  onClearSelection?: () => void;
+  onClearSelection: () => void;
   children: JSX.Element;
 }
 
