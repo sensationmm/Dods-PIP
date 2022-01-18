@@ -1,6 +1,7 @@
-import { Collection, CollectionAlert, CollectionAlertQuery } from "@dodsgroup/dods-model";
-import { CollectionOutput } from "..";
 import { AlertOutput, AlertQueryResponse } from "./../CollectionAlertsRepository/domain";
+import { Collection, CollectionAlert, CollectionAlertQuery } from "@dodsgroup/dods-model";
+
+import { CollectionOutput } from "..";
 
 export function cloneObject<T, E>(target: T,
     replaceProperties?: E,
@@ -46,7 +47,7 @@ export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => 
 }
 
 export const mapAlertQuery = async (model: CollectionAlertQuery, alertModel: CollectionAlert): Promise<AlertQueryResponse> => {
-    const { uuid, name, informationTypes, contentSources, query, createdAt, updatedAt, createdById } = model;
+    const { uuid, name, informationTypes, contentSources, query, createdAt, updatedAt, createdById, updatedById } = model;
     const role = await createdById?.getRole();
     const isDodsUser = role ? Boolean(role.dodsRole) : undefined
 
@@ -65,6 +66,15 @@ export const mapAlertQuery = async (model: CollectionAlertQuery, alertModel: Col
                 uuid: createdById.uuid,
                 name: createdById.fullName,
                 emailAddress: createdById.primaryEmail,
+                isDodsUser
+            }
+            : null,
+
+        updatedBy: updatedById
+            ? {
+                uuid: updatedById.uuid,
+                name: updatedById.fullName,
+                emailAddress: updatedById.primaryEmail,
                 isDodsUser
             }
             : null,
