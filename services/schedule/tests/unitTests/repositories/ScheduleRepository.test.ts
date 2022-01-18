@@ -1,14 +1,18 @@
 import {
-    createScheduleParameters,
+    activateScheduleParameters, createPercolatorParameters,
+    createScheduleParameters, deactivateScheduleParameters,
     deleteScheduleParameters,
     getScheduleParameters,
     updateScheduleParameters
 } from "../../../src/domain";
-import { ScheduleRepository } from "../../../src/repositories/ScheduleRepository";
+import { ScheduleRepository } from "../../../src/repositories";
 
 const mockPutWatch = jest.fn();
 const mockGetWatch = jest.fn();
 const mockDeleteWatch = jest.fn();
+const mockActivateWatch = jest.fn();
+const mockDeactivateWatch = jest.fn();
+const mockSearch = jest.fn().mockReturnValue({body: ''});
 
 mockGetWatch.mockImplementation(() => Promise.resolve({
     body: {
@@ -26,7 +30,10 @@ jest.mock('../../../src/elasticsearch', () => ({
         putWatch: () => mockPutWatch(),
         getWatch: () => mockGetWatch(),
         deleteWatch: () => mockDeleteWatch(),
-    }
+        activateWatch: () => mockActivateWatch(),
+        deactivateWatch: () => mockDeactivateWatch(),
+    },
+    search: () => mockSearch(),
 }));
 
 const CREATE_SCHEDULE_INPUT: createScheduleParameters = {
@@ -97,4 +104,33 @@ describe(`Schedule repository tests`, () => {
         expect(mockPutWatch).toHaveBeenCalled();
     });
 
+    test(`activateSchedule activates the schedule`, async () => {
+        const activateScheduleParameters: activateScheduleParameters = {
+            id: "123",
+        }
+        await ScheduleRepository.defaultInstance.activateSchedule(activateScheduleParameters)
+
+        expect(mockActivateWatch).toHaveBeenCalled();
+    });
+
+    test(`deactivateSchedule deactivates the schedule`, async () => {
+        const deactivateScheduleParameters: deactivateScheduleParameters = {
+            id: "123",
+        }
+        await ScheduleRepository.defaultInstance.deactivateSchedule(deactivateScheduleParameters)
+
+        expect(mockDeactivateWatch).toHaveBeenCalled();
+    });
+
+});
+
+describe(`Schedule repository percolator tests`, () => {
+    test(`createPercolator creates a percolator`, async () => {
+        const createPercolatorParameters: createPercolatorParameters = {
+            query: "123",
+        }
+        await ScheduleRepository.defaultInstance.createPercolator(createPercolatorParameters)
+
+        expect(mockDeactivateWatch).toHaveBeenCalled();
+    });
 });

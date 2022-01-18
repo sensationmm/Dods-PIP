@@ -10,6 +10,5 @@ export const createPercolator = async (requestPayload: createPercolatorParameter
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
         message: es_response,
-        response: es_response,
     });
 };

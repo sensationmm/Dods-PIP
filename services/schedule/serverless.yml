@@ -31,7 +31,6 @@ provider:
     teamsEmail: kenan.hancer@somoglobal.com
     team: dods
   tracing:
-    apiGateway: true
     lambda: true
   iamRoleStatements:
     - Effect: "Allow"
