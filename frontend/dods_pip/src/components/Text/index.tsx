@@ -91,7 +91,8 @@ const Text: React.FC<TextProps> = ({
     htmlFor: htmlFor,
   };
 
-  if (type.match(/^h[123456]{1}$/)) {
+  // equivalent: if ([h1,h2,h3,h4,h5,h6].includes(type)) {}
+  if (type.match(/^h[123456]$/)) {
     return (
       <Styled.heading>
         {React.createElement(
