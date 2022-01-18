@@ -64,6 +64,7 @@ type Errors = {
 
 type Filters = {
   search?: string;
+  aToZ?: string;
 };
 
 export const Collections: React.FC<CollectionsProps> = ({
@@ -91,13 +92,12 @@ export const Collections: React.FC<CollectionsProps> = ({
     addNotification,
   };
 
-  const { activePage, numPerPage, PaginationButtons, PaginationStats } = Pagination(total, '10');
-
   const getFilterQueryString = () => {
     const params: FilterParams = {
       limit: numPerPage,
       offset: activePage * numPerPage,
       ...(filters?.search && { searchTerm: encodeURI(filters?.search) }),
+      ...(filters.aToZ && { startsWith: filters.aToZ }),
     };
 
     return toQueryString(params);
@@ -107,12 +107,15 @@ export const Collections: React.FC<CollectionsProps> = ({
     setLoading(true);
     const queryString = getFilterQueryString();
     try {
-      const results = await fetchJson(
-        `${BASE_URI}${Api.Collections}/${user.clientAccountId}${queryString}`,
-        {
-          method: 'GET',
-        },
-      );
+      let url;
+      if (user.isDodsUser) {
+        url = `${BASE_URI}${Api.Collections}${queryString}`;
+      } else {
+        url = `${BASE_URI}${Api.Collections}/${user.clientAccountId}${queryString}`;
+      }
+      const results = await fetchJson(url, {
+        method: 'GET',
+      });
       const { data = [], filteredRecords } = results;
       setCollectionsList(data as Collections);
       setTotal(filteredRecords as number);
@@ -123,6 +126,8 @@ export const Collections: React.FC<CollectionsProps> = ({
 
     setLoading(false);
   };
+
+  const { activePage, numPerPage, PaginationButtons, PaginationStats } = Pagination(total);
 
   const createCollection = async () => {
     setLoading(true);
@@ -181,6 +186,10 @@ export const Collections: React.FC<CollectionsProps> = ({
     }
     setErrors(formErrors);
   };
+
+  if (!user) {
+    return <Loader data-test="loader" inline />;
+  }
 
   return (
     <>

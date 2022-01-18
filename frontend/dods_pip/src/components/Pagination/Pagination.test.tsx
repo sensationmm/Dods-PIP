@@ -145,14 +145,18 @@ describe('Pagination', () => {
       const { PaginationStats } = Pagination(data.length);
       const wrapper = shallow(<PaginationStats />);
       const itemCount = wrapper.find('[data-test="item-count"]');
-      expect(itemCount.props().children.join('')).toEqual('Showing 16-20 of 59');
+      const itemTotal = wrapper.find('[data-test="item-total"]');
+      expect(itemCount.text()).toEqual('16-20');
+      expect(itemTotal.text()).toEqual('59');
     });
 
     it('handles empty data', () => {
       const { PaginationStats } = Pagination(0);
       const wrapper = shallow(<PaginationStats />);
       const itemCount = wrapper.find('[data-test="item-count"]');
-      expect(itemCount.props().children.join('')).toEqual('Showing 0-0 of 0');
+      const itemTotal = wrapper.find('[data-test="item-total"]');
+      expect(itemCount.text()).toEqual('0-0');
+      expect(itemTotal.text()).toEqual('0');
     });
 
     it('changes items per page', () => {

@@ -11,6 +11,10 @@ export const label = styled.div<LabelProps>`
   display: flex;
   align-items: baseline;
   margin-bottom: ${({ noMargin }) => (noMargin ? spacing(0) : spacing(3))};
+  span {
+    padding-left: 5px;
+    color: ${color.base.grey};
+  }
 `;
 
 export const requiredStar = styled.span`
@@ -26,7 +30,7 @@ export const requiredLabel = styled.span`
   color: ${color.base.grey};
   font-size: 12px;
   margin-left: ${spacing(2)};
-  font-family: Open Sans;
+  font-family: 'Open Sans', sans-serif;
   line-height: 16px;
   margin-bottom: -${spacing(1)};
 `;

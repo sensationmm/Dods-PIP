@@ -1,0 +1,1 @@
+PUT {{host}}/scheduler/54fb8e04-7168-11ec-90d6-0242ac120003/activate HTTP/1.1

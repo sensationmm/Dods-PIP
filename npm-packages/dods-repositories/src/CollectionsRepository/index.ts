@@ -1,13 +1,15 @@
-import { ClientAccount, Collection, Op, Sequelize } from "@dodsgroup/dods-model";
-import { CollectionError } from "@dodsgroup/dods-domain"
+import { ClientAccount, Collection, CollectionAlert, CollectionDocument, CollectionSavedQuery, Sequelize, User, WhereOptions } from '@dodsgroup/dods-model';
 import {
     CollectionsPersister,
-    SearchCollectionsInput,
-    SearchCollectionsOutput,
+    DeleteCollectionInput,
     GetCollectionInput,
     GetCollectionOutput,
-    DeleteCollectionInput,
-} from "./domain";
+    SearchCollectionsInput,
+    SearchCollectionsOutput,
+} from './domain';
+
+import { CollectionError } from '@dodsgroup/dods-domain';
+import { mapCollection } from '..';
 
 export * from './domain';
 
@@ -15,43 +17,36 @@ export class CollectionsRepository implements CollectionsPersister {
     static defaultInstance: CollectionsPersister = new CollectionsRepository();
 
     async list(parameters: SearchCollectionsInput): Promise<SearchCollectionsOutput> {
+        const { clientAccountId, searchTerm, startsWith, limit, offset, sortBy, sortDirection } =
+            parameters;
 
-        const {
-            clientAccountId,
-            searchTerm,
-            limit,
-            offset,
-            sortBy,
-            sortDirection,
-        } = parameters;
+        let whereClause: WhereOptions = {
+            isActive: true,
+        };
 
-        const clientAccount = await ClientAccount.findOne({
-            where: {
-                uuid: clientAccountId
-            }
-        })
-        if (!clientAccount) {
-            throw new CollectionError('ClientAccount not found');
+        const searchString = startsWith || searchTerm;
+
+        //* Search by document name case insensitive coincidences
+        if (searchString) {
+            const lowerCaseName = searchString.trim().toLocaleLowerCase();
+
+            //* If searchTerm was given then search for coincidences in any part of the name
+            //* If not search only in the beginning
+            whereClause = {
+                ...whereClause,
+                $and: Sequelize.where(
+                    Sequelize.fn('LOWER', Sequelize.col('Collection.name')),
+                    'LIKE',
+                    `${searchTerm ? '%' : ''}${lowerCaseName}%`
+                ),
+            };
         }
 
-        let whereClause: any = {
-            [Op.and]: [
-                {
-                    clientAccountId: clientAccount.id,
-                    isActive: true,
-                }
-            ]
-        }
-
-        // Search by document name case insensitive coincidences
-        if (searchTerm) {
-            const lowerCaseName = searchTerm.trim().toLocaleLowerCase();
-
-            whereClause[Op.and].push(Sequelize.where(
-                Sequelize.fn('LOWER', Sequelize.col('Collection.name')),
-                'LIKE',
-                `%${lowerCaseName}%`
-            ))
+        let clientAccountWhere = {};
+        if (clientAccountId) {
+            clientAccountWhere = {
+                uuid: clientAccountId,
+            };
         }
 
         let orderBy: any = [sortBy, sortDirection];
@@ -61,48 +56,66 @@ export class CollectionsRepository implements CollectionsPersister {
         const { count: filteredRecords, rows } = await Collection.findAndCountAll({
             where: whereClause,
             include: [
-                Collection.associations.clientAccount,
-                Collection.associations.alerts,
-                Collection.associations.savedQueries,
-                Collection.associations.documents,
+                {
+                    model: ClientAccount,
+                    as: 'clientAccount',
+                    where: clientAccountWhere,
+                    required: true
+                },
+                {
+                    model: ClientAccount, as: 'clientAccount'
+                },
+                {
+                    model: CollectionAlert, as: 'alerts'
+                },
+                {
+                    model: CollectionSavedQuery, as: 'savedQueries'
+                },
+                {
+                    model: CollectionDocument, as: 'documents'
+                },
+                {
+                    model: User, as: 'createdBy',
+                }
             ],
             order: [orderBy],
             offset,
             limit,
         });
 
-        const mappedRows = rows.map(row => ({
-            uuid: row.uuid,
-            name: row.name,
-            clientAccount: { uuid: row.clientAccount.uuid, name: row.clientAccount.name },
-            createdAt: row.createdAt,
-            updatedAt: row.updatedAt,
-            alertsCount: row.alerts?.length,
-            queriesCount: row.savedQueries?.length,
-            documentsCount: row.documents?.length
-        }));
+        const data = await Promise.all(rows.map((row) => mapCollection(row)));
 
         return {
             limit,
             offset,
             totalRecords,
             filteredRecords,
-            data: mappedRows,
+            data,
         };
     }
 
     async get(parameters: GetCollectionInput): Promise<GetCollectionOutput> {
-
         const collection = await Collection.findOne({
             where: {
                 uuid: parameters.collectionId,
-                isActive: true
+                isActive: true,
             },
             include: [
-                Collection.associations.clientAccount,
-                Collection.associations.alerts,
-                Collection.associations.savedQueries,
-                Collection.associations.documents,
+                {
+                    model: ClientAccount, as: 'clientAccount'
+                },
+                {
+                    model: CollectionAlert, as: 'alerts'
+                },
+                {
+                    model: CollectionSavedQuery, as: 'savedQueries'
+                },
+                {
+                    model: CollectionDocument, as: 'documents'
+                },
+                {
+                    model: User, as: 'createdBy',
+                }
             ],
         });
 
@@ -111,19 +124,7 @@ export class CollectionsRepository implements CollectionsPersister {
         }
 
         return {
-            data: {
-                uuid: collection.uuid,
-                name: collection.name,
-                clientAccount: {
-                    uuid: collection.clientAccount.uuid,
-                    name: collection.clientAccount.name,
-                },
-                createdAt: collection.createdAt,
-                updatedAt: collection.updatedAt,
-                alertsCount: collection.alerts!.length,
-                queriesCount: collection.savedQueries!.length,
-                documentsCount: collection.documents!.length,
-            }
+            data: await mapCollection(collection)
         };
     }
 
@@ -133,7 +134,7 @@ export class CollectionsRepository implements CollectionsPersister {
         const collection = await Collection.findOne({
             where: {
                 uuid: collectionId,
-                isActive: true
+                isActive: true,
             },
             include: [Collection.associations.clientAccount, Collection.associations.createdBy],
         });

@@ -22,7 +22,7 @@ export default withSession(async (req, res) => {
       }
     } else if (method === 'POST') {
       try {
-        const response = await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}/`, {
+        const response = await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
           method,
           body: JSON.stringify(req.body),
         });

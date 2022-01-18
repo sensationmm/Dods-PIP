@@ -1,29 +1,29 @@
 {
-  "name": "@dodsgroup/dods-repositories",
-  "version": "1.1.6",
-  "description": "",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "scripts": {
-    "build": "webpack",
-    "build:watch": "npm link && npm link @dodsgroup/dods-domain && npm link @dodsgroup/dods-model && webpack watch",
-    "predeploy": "npm run build",
-    "deploy": "npm publish"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@dodsgroup/dods-domain": "1.0.2",
-    "@dodsgroup/dods-model": "^1.0.46",
-    "sequelize": "^7.0.0-alpha.3"
-  },
-  "devDependencies": {
-    "@types/node": "^16.11.12",
-    "ts-loader": "^9.2.6",
-    "typescript": "^4.5.3",
-    "webpack": "^5.65.0",
-    "webpack-cli": "^4.9.1",
-    "webpack-node-externals": "^3.0.0"
-  }
+    "name": "@dodsgroup/dods-repositories",
+    "version": "1.4.1",
+    "description": "",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "build": "webpack",
+        "build:watch": "npm link && npm link @dodsgroup/dods-domain && npm link @dodsgroup/dods-model && webpack watch",
+        "predeploy": "npm run build",
+        "deploy": "npm publish"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@dodsgroup/dods-domain": "1.0.3",
+        "@dodsgroup/dods-model": "^1.1.2",
+        "sequelize": "^7.0.0-alpha.3"
+    },
+    "devDependencies": {
+        "@types/node": "^16.11.12",
+        "ts-loader": "^9.2.6",
+        "typescript": "^4.5.3",
+        "webpack": "^5.65.0",
+        "webpack-cli": "^4.9.1",
+        "webpack-node-externals": "^3.0.0"
+    }
 }

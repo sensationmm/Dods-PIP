@@ -6,8 +6,8 @@ import {
     Collection,
     CollectionAlert,
     CollectionAlertQuery,
-    CollectionAlertTemplate,
     CollectionAlertRecipient,
+    CollectionAlertTemplate,
     CollectionDocument,
     CollectionSavedQuery,
     EditorialRecord,
@@ -66,6 +66,7 @@ if (process.env.NODE_ENV !== 'test') {
     CollectionAlert.hasMany(CollectionAlertQuery, { as: 'alertQueries', foreignKey: 'alertId' });
 
     CollectionAlertQuery.belongsTo(User, { as: 'createdById', foreignKey: 'createdBy', targetKey: 'id' });
+    CollectionAlertQuery.belongsTo(User, { as: 'updatedById', foreignKey: 'updatedBy', targetKey: 'id' });
 
     CollectionAlertRecipient.belongsTo(User, { as: 'user', foreignKey: 'userId', targetKey: 'id' });
     CollectionAlertRecipient.belongsTo(CollectionAlert, { as: 'alert', foreignKey: 'alertId', targetKey: 'id' });
