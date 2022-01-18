@@ -6,12 +6,7 @@ import styled from 'styled-components';
 import color from '../../../globals/color';
 import spacing from '../../../globals/spacing';
 
-type FacetProps = {
-  disabled: boolean;
-  darkMode?: boolean;
-};
-
-export const facet = styled.div<FacetProps>`
+export const facet = styled.div`
   display: flex;
   margin-bottom: 8px;
   width: 100%;
