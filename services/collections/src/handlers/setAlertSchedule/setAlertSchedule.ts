@@ -1,5 +1,5 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { CollectionAlertsRepository, setAlertScheduleParameters } from '@dodsgroup/dods-repositories';
+import { CollectionAlertsRepository, mapAlert, setAlertScheduleParameters } from '@dodsgroup/dods-repositories';
 
 export const setAlertSchedule: AsyncLambdaHandler<setAlertScheduleParameters> = async (
     parameters
@@ -7,9 +7,11 @@ export const setAlertSchedule: AsyncLambdaHandler<setAlertScheduleParameters> = 
 
     const response = await CollectionAlertsRepository.defaultInstance.setAlertSchedule(parameters)
 
-    const alertResponse: any = CollectionAlertsRepository.defaultInstance.mapAlert(response)
+    const alertResponse: any = await mapAlert(response)
 
-    const alertQuery = await CollectionAlertsRepository.defaultInstance.getQuerysByAlert(alertResponse.id);
+    const alertQuery = await CollectionAlertsRepository.defaultInstance.getQueriesByAlert(
+        alertResponse.id
+    );
     alertResponse.searchQueriesCount = alertQuery.length;
     const recipientsQuery = await CollectionAlertsRepository.defaultInstance.getRecipientsByAlert(alertResponse.id);
     alertResponse.recipientsCount = recipientsQuery.length;
