@@ -1,18 +1,21 @@
 import React from 'react';
 
 import Spacer from '../../_layout/Spacer';
-import Label, { LabelProps } from '../Label';
+import Label from '../Label';
 import Radio, { IRadioItem, radioTheme } from '../Radio';
 import * as Styled from './RadioGroup.styles';
 
-export interface IRadioGroupProps extends LabelProps {
+export interface IRadioGroupProps {
   items: IRadioItem[];
+  label?: string | JSX.Element;
   groupName?: string;
   onChange: (val: string) => void;
   theme?: radioTheme;
   selectedValue?: string;
   isDisabled?: boolean;
   stackItems?: boolean;
+  required?: boolean;
+  optional?: boolean;
 }
 
 const RadioGroup: React.FC<IRadioGroupProps> = ({

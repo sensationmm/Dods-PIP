@@ -1,4 +1,5 @@
 import Facet from '@dods-ui/components/_form/Facet';
+import DateFacet from '@dods-ui/components/DateFacet';
 import { format } from 'date-fns';
 import esb, { Query, RequestBodySearch } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
@@ -371,8 +372,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   const removeNestedFilters = (queries: BucketType[]) => {
     const { nestedFilters = [] } = parsedQuery;
 
-    console.log('nestedFilters', nestedFilters);
-
     const newNestedFilters = nestedFilters.filter(({ value }) => {
       return !queries.find(({ key }) => value === key);
     });
@@ -599,6 +598,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
               <section>
                 {apiResponse.es_response?.hits?.hits.length !== 0 && (
                   <Styled.filtersContent>
+                    <DateFacet />
                     {contentSources && (
                       <Facet
                         title={'Content Source'}

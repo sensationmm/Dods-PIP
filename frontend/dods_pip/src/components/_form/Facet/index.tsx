@@ -55,7 +55,7 @@ const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], on
   }, [viewMore, sortedRecords]);
 
   return (
-    <Styled.facet data-test="component-facet" disabled>
+    <Styled.facet data-test="component-facet">
       <Styled.facetLayout data-test="component-facet-layout">
         <Styled.facetHeader>
           <div
