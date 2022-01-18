@@ -23,6 +23,12 @@ from pynamodb.exceptions import TableDoesNotExist
 from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
 
 
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lex_rank import LexRankSummarizer
+from sumy.nlp.stemmers import Stemmer
+
+
 logger = logging.getLogger(__file__)
 
 BASE_URL = "https://oralquestionsandmotions-api.parliament.uk/EarlyDayMotions/list?parameters.tabledStartDate={start_date}&parameters.tabledEndDate={end_date}&parameters.orderBy={ordering}&parameters.take={per_page}"
@@ -160,6 +166,18 @@ def import_document(summary: dict, date) -> str:
     return mapped_document["documentId"]
 
 
+def summarize(content: str, count=1) -> str:
+    LANGUAGE = "english"
+
+    parser = PlaintextParser.from_string(content, Tokenizer(LANGUAGE))
+    stemmer = Stemmer(LANGUAGE)
+    summarizer = LexRankSummarizer(stemmer)
+    sentences = summarizer(parser.document, count)
+    summary = "\n".join([str(sentence) for sentence in sentences])
+
+    return summary
+
+
 def map_document(document: dict) -> dict:
 
     title = document["Title"]
@@ -175,6 +193,10 @@ def map_document(document: dict) -> dict:
     mapped_document["contentDateTime"] = document["DateTabled"]
     mapped_document["createdDateTime"] = datetime.now().isoformat()
     mapped_document["documentContent"] = get_document_content(document)
+
+    summary = summarize(document["MotionText"])
+    mapped_document["summary"] = summary
+    logger.info(f"{summary=}")
 
     return mapped_document
 
