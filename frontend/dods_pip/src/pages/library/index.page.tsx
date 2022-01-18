@@ -1,3 +1,4 @@
+import Facet from '@dods-ui/components/_form/Facet';
 import { format } from 'date-fns';
 import esb, { Query, RequestBodySearch } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
@@ -44,6 +45,7 @@ export interface ISourceData {
 type BucketType = {
   doc_count: number;
   key: string;
+  selected?: boolean;
 };
 
 export interface IResponse {
@@ -347,6 +349,46 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     );
   };
 
+  const removeBasicFilters = (queries: BucketType[]) => {
+    const { basicFilters = [] } = parsedQuery;
+
+    const newBasicFilters = basicFilters.filter(({ value }) => {
+      return !queries.find(({ key }) => value === key);
+    });
+
+    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
+  const removeNestedFilters = (queries: BucketType[]) => {
+    const { nestedFilters = [] } = parsedQuery;
+
+    console.log('nestedFilters', nestedFilters);
+
+    const newNestedFilters = nestedFilters.filter(({ value }) => {
+      return !queries.find(({ key }) => value === key);
+    });
+
+    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
   useEffect(() => {
     if (requestPayload) {
       const newRequestPayload = { ...requestPayload };
@@ -370,19 +412,42 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
       return aggregation.doc_count !== 0;
     };
 
-    setContentSources(contentSource?.buckets?.filter?.(checkEmptyAggregation) || []);
+    const updateWithBasicFilters = (items: BucketType[] = []): BucketType[] => {
+      return (
+        items.filter?.(checkEmptyAggregation)?.map((props) => {
+          const selected = basicFilters.findIndex(({ value }) => value === props.key) > -1;
+          return {
+            ...props,
+            selected,
+          };
+        }) || []
+      );
+    };
 
-    setInformationTypes(informationType?.buckets?.filter?.(checkEmptyAggregation) || []);
+    const { basicFilters = [], nestedFilters = [] } = parsedQuery;
 
-    setJurisdictions(jurisdiction?.buckets?.filter?.(checkEmptyAggregation) || []);
+    setContentSources(updateWithBasicFilters(contentSource?.buckets));
+    setInformationTypes(updateWithBasicFilters(informationType?.buckets));
+    setJurisdictions(updateWithBasicFilters(jurisdiction?.buckets));
 
-    setPeople(people?.buckets?.filter?.(checkEmptyAggregation) || []);
-    setOrganizations(organizations?.buckets?.filter?.(checkEmptyAggregation) || []);
+    const updateWithNestedFilters = (items: BucketType[] = []): BucketType[] => {
+      return items.filter?.(checkEmptyAggregation)?.map((props) => {
+        const selected =
+          nestedFilters.findIndex(
+            ({ value, key }) => key === 'taxonomyTerms.termLabel' && value === props.key,
+          ) > -1;
+        return {
+          ...props,
+          selected,
+        };
+      });
+    };
 
-    setGeography(geography?.buckets?.filter?.(checkEmptyAggregation) || []);
-
-    setTopics(topics?.buckets?.filter?.(checkEmptyAggregation) || []);
-  }, [apiResponse]);
+    setPeople(updateWithNestedFilters(people?.buckets));
+    setOrganizations(updateWithNestedFilters(organizations?.buckets));
+    setGeography(updateWithNestedFilters(geography?.buckets));
+    setTopics(updateWithNestedFilters(topics?.buckets));
+  }, [parsedQuery, apiResponse]);
 
   const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -432,7 +497,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                         <Styled.boxContent>
                           <Styled.topRow>
                             <span>
-                              <Styled.imageContainer></Styled.imageContainer>
+                              <Styled.imageContainer />
                               <div>
                                 <h2> {hit._source.documentTitle}</h2>
                                 <Styled.contentSource>
@@ -535,269 +600,99 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                 {apiResponse.es_response?.hits?.hits.length !== 0 && (
                   <Styled.filtersContent>
                     {contentSources && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Content Source</h3>
-                            {contentSources.map((contentSource, i) => {
-                              const selectedIndex =
-                                parsedQuery?.basicFilters?.findIndex(
-                                  ({ value, key }) =>
-                                    key === 'contentSource' && value === contentSource.key,
-                                ) ?? -1;
-
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setBasicQuery({
-                                      key: AggTypes.contentSource,
-                                      value: contentSource.key,
-                                    });
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={
-                                      selectedIndex > -1
-                                        ? `* ${contentSource.key} *`
-                                        : contentSource.key
-                                    }
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Content Source'}
+                        records={contentSources}
+                        onClearSelection={() => removeBasicFilters(contentSources)}
+                        onChange={(value) => {
+                          setBasicQuery({
+                            key: AggTypes.contentSource,
+                            value,
+                          });
+                        }}
+                      />
                     )}
                     {informationTypes && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Information Type</h3>
-                            {informationTypes.map((informationType, i) => {
-                              const selectedIndex =
-                                parsedQuery?.basicFilters?.findIndex(
-                                  ({ value, key }) =>
-                                    key === 'informationType' && value === informationType.key,
-                                ) ?? -1;
-
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setBasicQuery({
-                                      key: AggTypes.informationType,
-                                      value: informationType.key,
-                                    });
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={
-                                      selectedIndex > -1
-                                        ? `* ${informationType.key} *`
-                                        : informationType.key
-                                    }
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Information Type'}
+                        records={informationTypes}
+                        onClearSelection={() => removeBasicFilters(informationTypes)}
+                        onChange={(value) => {
+                          setBasicQuery({
+                            key: AggTypes.informationType,
+                            value,
+                          });
+                        }}
+                      />
                     )}
                     {jurisdictions && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Jurisdiction</h3>
-                            {jurisdictions.map((jurisdiction, i) => {
-                              const selectedIndex =
-                                parsedQuery?.basicFilters?.findIndex(
-                                  ({ value, key }) =>
-                                    key === 'jurisdiction' && value === jurisdiction.key,
-                                ) ?? -1;
-
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setBasicQuery({
-                                      key: AggTypes.jurisdiction,
-                                      value: jurisdiction.key,
-                                    });
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={
-                                      selectedIndex > -1
-                                        ? `* ${jurisdiction.key} *`
-                                        : jurisdiction.key
-                                    }
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Jurisdictions'}
+                        records={jurisdictions}
+                        onClearSelection={() => removeBasicFilters(jurisdictions)}
+                        onChange={(value) => {
+                          setBasicQuery({
+                            key: AggTypes.jurisdiction,
+                            value,
+                          });
+                        }}
+                      />
                     )}
                     {topics && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Topics</h3>
-                            {topics.map((topic, i) => {
-                              const selectedIndex =
-                                parsedQuery?.nestedFilters?.findIndex(
-                                  ({ value, key }) =>
-                                    key === 'taxonomyTerms.termLabel' && value === topic.key,
-                                ) ?? -1;
-
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setNestedQuery({
-                                      path: 'taxonomyTerms',
-                                      key: 'taxonomyTerms.termLabel',
-                                      value: topic.key,
-                                    });
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={selectedIndex > -1 ? `* ${topic.key} *` : topic.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Topics'}
+                        records={topics}
+                        onClearSelection={() => removeNestedFilters(topics)}
+                        onChange={(value) => {
+                          setNestedQuery({
+                            path: 'taxonomyTerms',
+                            key: 'taxonomyTerms.termLabel',
+                            value,
+                          });
+                        }}
+                      />
                     )}
                     {organizations && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Organizations</h3>
-                            {organizations.map((organization, i) => {
-                              const selectedIndex =
-                                parsedQuery?.nestedFilters?.findIndex(
-                                  ({ value, key }) =>
-                                    key === 'taxonomyTerms.termLabel' && value === organization.key,
-                                ) ?? -1;
-
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setNestedQuery({
-                                      path: 'taxonomyTerms',
-                                      key: 'taxonomyTerms.termLabel',
-                                      value: organization.key,
-                                    });
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={
-                                      selectedIndex > -1
-                                        ? `* ${organization.key} *`
-                                        : organization.key
-                                    }
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Organizations'}
+                        records={organizations}
+                        onClearSelection={() => removeNestedFilters(organizations)}
+                        onChange={(value) => {
+                          setNestedQuery({
+                            path: 'taxonomyTerms',
+                            key: 'taxonomyTerms.termLabel',
+                            value,
+                          });
+                        }}
+                      />
                     )}
                     {people && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>People</h3>
-                            {people.map((person, i) => {
-                              const selectedIndex =
-                                parsedQuery?.nestedFilters?.findIndex(
-                                  ({ value, key }) =>
-                                    key === 'taxonomyTerms.termLabel' && value === person.key,
-                                ) ?? -1;
-
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setNestedQuery({
-                                      path: 'taxonomyTerms',
-                                      key: 'taxonomyTerms.termLabel',
-                                      value: person.key,
-                                    });
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={selectedIndex > -1 ? `* ${person.key} *` : person.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'People'}
+                        records={people}
+                        onClearSelection={() => removeNestedFilters(people)}
+                        onChange={(value) => {
+                          setNestedQuery({
+                            path: 'taxonomyTerms',
+                            key: 'taxonomyTerms.termLabel',
+                            value,
+                          });
+                        }}
+                      />
                     )}
                     {geography && (
-                      <div>
-                        <Box size={'extraSmall'}>
-                          <div>
-                            <h3>Geography</h3>
-                            {geography.map((area, i) => {
-                              const selectedIndex =
-                                parsedQuery?.nestedFilters?.findIndex(
-                                  ({ value, key }) =>
-                                    key === 'taxonomyTerms.termLabel' && value === area.key,
-                                ) ?? -1;
-
-                              return (
-                                <Styled.filtersTag
-                                  onClick={() => {
-                                    setNestedQuery({
-                                      path: 'taxonomyTerms',
-                                      key: 'taxonomyTerms.termLabel',
-                                      value: area.key,
-                                    });
-                                  }}
-                                  key={`content-source-${i}`}
-                                >
-                                  <Tag
-                                    label={selectedIndex > -1 ? `* ${area.key} *` : area.key}
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </Styled.filtersTag>
-                              );
-                            })}
-                          </div>
-                        </Box>
-                        <Spacer size={10} />
-                      </div>
+                      <Facet
+                        title={'Geography'}
+                        records={geography}
+                        onClearSelection={() => removeNestedFilters(geography)}
+                        onChange={(value) => {
+                          setNestedQuery({
+                            path: 'taxonomyTerms',
+                            key: 'taxonomyTerms.termLabel',
+                            value,
+                          });
+                        }}
+                      />
                     )}
                   </Styled.filtersContent>
                 )}

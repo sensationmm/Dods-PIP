@@ -15,7 +15,9 @@ export type CoreTextStyles =
   | 'p'
   | 'label'
   | 'span'
-  | 'li';
+  | 'li'
+  | 'button'
+  | 'a';
 export type TextStyles =
   | CoreTextStyles
   | 'body'
@@ -59,6 +61,9 @@ const Text: React.FC<TextProps> = ({
   switch (type) {
     case 'body':
     case 'bodySmall':
+      element = Styled.p;
+      className = type;
+      break;
     case 'bodyLarge':
       element = Styled.p;
       className = type;

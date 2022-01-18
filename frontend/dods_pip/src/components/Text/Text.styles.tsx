@@ -174,7 +174,7 @@ export const label = styled.label`
   &.labelSmall {
     font-size: 12px;
     letter-spacing: 1px;
-    line-height: auto;
+    line-height: normal;
   }
 
   &.bold,
@@ -201,4 +201,12 @@ export const span = styled.span`
     font-family: 'Libre Baskerville';
     font-size: 24px;
   }
+`;
+
+export const a = styled.a`
+  font-family: 'Open Sans Bold', sans-serif;
+`;
+
+export const button = styled.button`
+  background: transparent;
 `;
