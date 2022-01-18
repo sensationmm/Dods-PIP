@@ -1,17 +1,17 @@
-import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
-import JsxParser from 'react-jsx-parser';
-import ContentTagger, { TagsData } from '@dods-ui/components/ContentTagger';
-import Icon, { IconSize } from '@dods-ui/components/Icon';
-import { Icons } from '@dods-ui/components/Icon/assets';
-import SectionAccordion from '@dods-ui/components/SectionAccordion';
-import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import InputText from '@dods-ui/components/_form/InputText';
 import SearchDropdown from '@dods-ui/components/_form/SearchDropdown';
 import { SelectItem } from '@dods-ui/components/_form/Select';
 import SectionHeader from '@dods-ui/components/_layout/SectionHeader';
 import Spacer from '@dods-ui/components/_layout/Spacer';
+import ContentTagger, { TagsData } from '@dods-ui/components/ContentTagger';
+import Icon, { IconSize } from '@dods-ui/components/Icon';
+import { Icons } from '@dods-ui/components/Icon/assets';
+import SectionAccordion from '@dods-ui/components/SectionAccordion';
+import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import * as Validation from '@dods-ui/utils/validation';
+import dynamic from 'next/dynamic';
+import React, { useState } from 'react';
+import JsxParser from 'react-jsx-parser';
 
 import * as Styled from './editorial-from.styles';
 
