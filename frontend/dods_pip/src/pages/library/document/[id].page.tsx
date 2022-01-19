@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 
 import fetchJson from '../../../lib/fetchJson';
-import { Api, BASE_URI } from '../../../utils/api';
+import { Api } from '../../../utils/api';
 import { IResponse, ISourceData } from '../index.page';
 import * as Styled from './document.styles';
 import Header from './header';
@@ -182,7 +182,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query, req } = context;
+  const { query } = context;
 
   const documentId = query.id;
   let response: IResponse = {};
@@ -196,8 +196,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
     const sPayload = JSON.stringify(payload);
-    const { host } = req.headers;
-    response = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
+    response = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
     })) as IResponse;
