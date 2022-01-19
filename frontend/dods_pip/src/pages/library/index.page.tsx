@@ -19,7 +19,7 @@ import Tag from '../../components/Tag';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import fetchJson from '../../lib/fetchJson';
-import { Api, BASE_URI } from '../../utils/api';
+import { Api } from '../../utils/api';
 import * as Styled from './library.styles';
 
 interface ExtendedRequestBodySearch extends RequestBodySearch {
@@ -735,7 +735,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query, req } = context;
+  const { query } = context;
 
   const { payload, parsedQuery } = getPayload(query.query);
 
@@ -743,8 +743,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   try {
     const sPayload = JSON.stringify(payload);
-    const { host } = req.headers;
-    apiResponse = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
+    apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
     })) as IResponse;
