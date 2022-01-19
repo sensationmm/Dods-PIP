@@ -95,7 +95,7 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
-  - serverless-api-gateway-caching
+  # - serverless-api-gateway-caching
 
 functions:
   schedule_watcher:
@@ -117,8 +117,8 @@ functions:
           method: get
           path: scheduler/{scheduleId}
           cors: true
-          caching:
-            enabled: false
+          # caching:
+          #   enabled: false
 
   deleteSchedule:
     handler: src/handlers/deleteSchedule/index.handle
@@ -126,10 +126,10 @@ functions:
     events:
       - http:
           method: delete
-          path: scheduler/{id}
+          path: scheduler/{scheduleId}
           cors: true
-          caching:
-            enabled: false
+  #         caching:
+  #           enabled: false
 
   updateSchedule:
     handler: src/handlers/updateSchedule/index.handle
@@ -137,10 +137,10 @@ functions:
     events:
       - http:
           method: put
-          path: scheduler/{id}
+          path: scheduler/{scheduleId}
           cors: true
-          caching:
-            enabled: false
+  #         caching:
+  #           enabled: false
 
   activateSchedule:
     handler: src/handlers/activateSchedule/index.handle
@@ -148,10 +148,10 @@ functions:
     events:
       - http:
           method: put
-          path: scheduler/{id}/activate
+          path: scheduler/{scheduleId}/activate
           cors: true
-          caching:
-            enabled: false
+  #         caching:
+  #           enabled: false
 
   deactivateSchedule:
     handler: src/handlers/deactivateSchedule/index.handle
@@ -159,7 +159,7 @@ functions:
     events:
       - http:
           method: put
-          path: scheduler/{id}/deactivate
+          path: scheduler/{scheduleId}/deactivate
           cors: true
-          caching:
-            enabled: false
+  #         caching:
+  #           enabled: false
