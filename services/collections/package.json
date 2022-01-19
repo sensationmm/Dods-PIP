@@ -70,7 +70,7 @@
   "dependencies": {
     "@dodsgroup/dods-lambda": "^1.4.6",
     "@dodsgroup/dods-model": "^1.1.3",
-    "@dodsgroup/dods-repositories": "^1.4.4",
+    "@dodsgroup/dods-repositories": "^1.4.5",
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1046.0",
     "axios": "^0.21.4",

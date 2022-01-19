@@ -7,3 +7,10 @@ export const dateInputs = styled.div`
   gap: ${spacing(2)};
   align-items: center;
 `;
+
+export const radioItemsContainer = styled.div`
+  fieldset {
+    flex-direction: column;
+    text-align: left;
+  }
+`;

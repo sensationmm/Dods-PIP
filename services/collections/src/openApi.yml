@@ -189,6 +189,25 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+    get:
+      operationId: searchAlertRecipients
+      summary: "Search Alert Recipients"
+      description: "Search Alert Recipients"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: "#/components/parameters/searchTerm"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortByForSearchAlertRecipient"
+        - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          $ref: "#/components/responses/SearchAlertRecipientsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /collections/{collectionId}/alerts/{alertId}/copyto:
     post:
@@ -691,6 +710,18 @@ components:
           - updatedAt
       required: false
       description: sort Collection by name or subscription
+    sortByForSearchAlertRecipient:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: firstName
+        enum:
+          - firstName
+          - clientAccountName
+          - isActive
+      required: false
+      description: sort Collection by name or subscription
     sortDirection:
       in: query
       name: sortDirection
@@ -915,6 +946,7 @@ components:
                         emailAddress:
                           type: string
                           format: email
+
     DeleteAlertRecipientsResponse:
       description: "Get Alert Response"
       content:
@@ -927,6 +959,53 @@ components:
               message:
                 type: string
                 example: 'Recipient was removed successfully'
+                
+    SearchAlertRecipientsResponse:
+      description: "SearchAlertRecipientsResponse"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert recipients were set successfully
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              filteredRecords:
+                type: number
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      format: uuid
+                    name:
+                      type: string
+                    emailAddress:
+                      type: string
+                      format: email
+                    clientAccount:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                    isDODSUser:
+                      type: boolean
+                    isActive:
+                      type: boolean
+
     GetAlertResponse:
       description: "Get Alert Response"
       content:
