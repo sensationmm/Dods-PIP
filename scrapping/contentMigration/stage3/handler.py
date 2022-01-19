@@ -79,7 +79,7 @@ def consumer(event, context):
                         response = lambda_client.invoke(
                             FunctionName=LAMBDA_AUTO_TAGGING_ARN,
                             InvocationType='RequestResponse',
-                            Payload=json.dumps({"body": content})
+                            Payload=json.dumps({"body": {"content": content}})
                         )
                         """
                         Auto tagging lambda servise will return;
@@ -97,6 +97,7 @@ def consumer(event, context):
                     if 'taxonomyTerms' in auto_tagging_response and len(auto_tagging_response['taxonomyTerms']) > 0:
                         document['taxonomyTerms'] = auto_tagging_response['taxonomyTerms']
 
+                    logger.info('Auto tagging response: %s', auto_tagging_response)
                     document['documentContent'] = auto_tagging_response['content']
 
                     logger.info('Auto tagging process has been finished for this: %s', message['file_path_content_document'])
