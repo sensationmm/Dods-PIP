@@ -96,7 +96,13 @@ const DateFacet: React.FC<DateFacetProps> = ({ onChange, values }) => {
   return (
     <FacetContainer heading="Date" onClearSelection={() => onChange({ min: '', max: '' })}>
       <>
-        <RadioGroup items={options} onChange={updateSelectedValue} selectedValue={selectedOption} />
+        <Styled.radioItemsContainer>
+          <RadioGroup
+            items={options}
+            onChange={updateSelectedValue}
+            selectedValue={selectedOption}
+          />
+        </Styled.radioItemsContainer>
         <Styled.dateInputs>
           <DatePicker
             id="min-date"
