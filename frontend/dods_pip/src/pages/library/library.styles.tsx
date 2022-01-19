@@ -5,12 +5,14 @@ import spacing from '../../globals/spacing';
 
 export const contentWrapper = styled.div`
   display: flex;
-  flex-basis: 0;
 `;
 
-export const filtersContent = styled.div`
-  width: 250px;
-  height: 500px;
+export const resultsContent = styled.section`
+  flex: 1;
+`;
+
+export const filtersContent = styled.section`
+  width: 350px;
   margin-left: 30px;
   text-align: center;
 `;
