@@ -1,0 +1,20 @@
+### set alert queries
+
+@collectionId = dd82043d-e39e-447d-9143-0ebe42c3709b
+@alertId = c8afe73a-957c-4c13-b088-48708b6e528c
+
+PUT {{host}}/collections/{{collectionId}}/alerts/{{alertId}}/queries HTTP/1.1
+
+{
+  "alertQueries": [{
+    "query": "3rd query",
+    "informationTypes": "string",
+    "contentSources": "string"
+  },
+  {
+    "query": "3rd query",
+    "informationTypes": "string",
+    "contentSources": "string"
+  }],
+  "updatedBy": "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
+}

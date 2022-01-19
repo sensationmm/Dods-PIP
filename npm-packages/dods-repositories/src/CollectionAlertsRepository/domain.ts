@@ -3,7 +3,6 @@ export interface AlertOutput {
     uuid: string;
     collection: { uuid?: string, name?: string } | {}
     template: { id?: string, name?: string } | {}
-    isSchedule: boolean;
     title: string;
     description?: string | null;
     schedule?: string | null;
@@ -60,16 +59,8 @@ export interface CollectionAlertsPersister {
 export interface CreateAlertParameters {
     collectionId: string;
     title: string;
-    alertQueries: [
-        {
-            query: string;
-            informationTypes: string;
-            contentSources: string;
-        }
-    ];
     createdBy: string;
 }
-
 export interface CreateAlertQuery {
     alertId: number;
     query: string;
@@ -179,4 +170,17 @@ export interface UpdateAlertQuery {
     informationTypes: string,
     query: string,
     updatedBy: string
+}
+
+export interface SetAlertQueriesParameters {
+    collectionId: string;
+    alertId: string;
+    updatedBy: string;
+    alertQueries: [
+        {
+            query: string;
+            informationTypes: string;
+            contentSources: string;
+        }
+    ];
 }

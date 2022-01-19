@@ -42,7 +42,7 @@ export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => 
         updatedAt,
         updatedBy: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail, isDodsUser } : {},
         hasKeywordsHighlight: hasKeywordsHighlight ? true : false,
-        isSchedule: isScheduled ? true : false,
+        isScheduled: isScheduled ? true : false,
         lastStepCompleted: lastStepCompleted,
         isPublished: isPublished ? true : false
     }
