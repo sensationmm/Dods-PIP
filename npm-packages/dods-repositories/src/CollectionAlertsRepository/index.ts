@@ -357,14 +357,10 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         if (existingQueries && existingQueries.length > 0) {
-            const copiedQueries = cloneArray<CollectionAlertQuery, Partial<AlertQueryInput>>(
-                existingQueries,
-                {
-                    alertId: alert.id,
-                    createdBy: alertCreator.id,
-                },
-                ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']
-            ) as CollectionAlertQuery[];
+            const copiedQueries = cloneArray<CollectionAlertQuery, Partial<AlertQueryInput>>(existingQueries, {
+                alertId: alert.id,
+                createdBy: alertCreator.id,
+            }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']);
 
             await this.alertQueryModel.bulkCreate(copiedQueries);
         }

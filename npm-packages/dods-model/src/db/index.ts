@@ -55,6 +55,7 @@ if (process.env.NODE_ENV !== 'test') {
 
     Collection.belongsTo(ClientAccount, { as: 'clientAccount', foreignKey: 'clientAccountId', targetKey: 'id' });
     Collection.belongsTo(User, { as: 'createdBy', foreignKey: 'createdById', targetKey: 'id' });
+    Collection.belongsTo(User, { as: 'updatedBy', foreignKey: 'updatedById', targetKey: 'id' });
     Collection.hasMany(CollectionAlert, { as: 'alerts' });
     Collection.hasMany(CollectionSavedQuery, { as: 'savedQueries' });
     Collection.hasMany(CollectionDocument, { as: 'documents' });

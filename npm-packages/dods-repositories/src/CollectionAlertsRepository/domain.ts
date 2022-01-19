@@ -15,7 +15,7 @@ export interface AlertOutput {
     hasKeywordsHighlight?: boolean;
     createdBy: { uuid?: string, name?: string, emailAddress?: string, isDodsUser?: boolean } | {}
     createdAt?: Date;
-    updatedBy: { uuid?: string, name?: string, emailAddress?: string } | {}
+    updatedBy: { uuid?: string, name?: string, emailAddress?: string, isDodsUser?: boolean } | {}
     updatedAt?: Date | null;
 }
 

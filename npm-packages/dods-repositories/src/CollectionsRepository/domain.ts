@@ -17,6 +17,12 @@ export interface CollectionOutput {
         emailAddress: string;
         isDodsUser?: boolean;
     } | {},
+    updatedBy?: {
+        uuid: string;
+        name: string;
+        emailAddress: string;
+        isDodsUser?: boolean;
+    } | {},
     updatedAt: Date;
     alertsCount?: number; //Count of alerts associated to collection
     queriesCount?: number; //Count of saved queries associated to collection
@@ -49,9 +55,6 @@ export interface GetCollectionInput {
     collectionId: string;
 }
 
-export interface GetCollectionOutput {
-
-}
 /////////// getCollection ///////////
 
 
@@ -63,4 +66,11 @@ export interface CollectionsPersister {
     list(parameters: SearchCollectionsInput): Promise<SearchCollectionsOutput>;
     get(parameters: GetCollectionInput): Promise<GetCollectionOutput>;
     delete(parameters: DeleteCollectionInput): Promise<boolean>;
+    update(parameters: UpdateCollectionParameters): Promise<CollectionOutput>;
+}
+
+export interface UpdateCollectionParameters {
+    collectionId: string;
+    name: string;
+    updatedBy: string;
 }
