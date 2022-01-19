@@ -65,19 +65,21 @@ const InputSearch: React.FC<InputSearchProps> = ({
         />
         {children}
 
-        <Styled.clear
-          data-test="input-clear"
-          onClick={() => {
-            onChange('');
-            onClear?.();
-          }}
-        >
-          <Icon
-            src={Icons.Cross}
-            size={IconSize.medium}
-            color={isFilled ? color.theme.blue : 'transparent'}
-          />
-        </Styled.clear>
+        {!isDisabled && (
+          <Styled.clear
+            data-test="input-clear"
+            onClick={() => {
+              onChange('');
+              onClear?.();
+            }}
+          >
+            <Icon
+              src={Icons.Cross}
+              size={IconSize.medium}
+              color={isFilled ? color.theme.blue : 'transparent'}
+            />
+          </Styled.clear>
+        )}
       </Input>
     </Styled.wrapper>
   );
