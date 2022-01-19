@@ -15,9 +15,10 @@ s3_client = session.client('s3')
 es = Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=(ES_KEY_ID, ES_API_KEY))
 
 def handle(event, context):
-    body = event['Records'][0]['body']
-    content = json.loads(body)['content']
-
+    if 'Records' in event:
+        content = event['Records'][0]['body']['content']
+    else:
+        content = event['body']['content']
     content_tags = []
     taxonomy_types = [
         'People',
