@@ -319,14 +319,14 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             const copiedQueries = cloneArray<CollectionAlertQuery, Partial<AlertQueryInput>>(existingQueries, {
                 alertId: alert.id,
                 createdBy: alertCreator.id,
-            }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']) as CollectionAlertQuery[]
+            }, ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy']);
 
             await this.alertQueryModel.bulkCreate(copiedQueries);
         }
 
         // * Copy collection documents
         const existingAlertDocuments = await this.alertDocumentModel.findAll({
-            // TODO: is there an "isActive" column in the database for this model? If so, add to where clausule 'isActive: true'
+            // TODO: is there an "isActive" column in the database for this model? If so, add to where clause 'isActive: true'
             where: {
                 alertId: existingAlert.id,
             },
