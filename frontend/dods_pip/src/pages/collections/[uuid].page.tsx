@@ -201,7 +201,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
       {showEdit && (
         <Modal
           size="large"
-          title="Create New Collection"
+          title="Edit Collection"
           titleAside={
             collection?.createdBy && (
               <>
