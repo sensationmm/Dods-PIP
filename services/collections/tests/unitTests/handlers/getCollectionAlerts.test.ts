@@ -15,7 +15,6 @@ jest.mock('@dodsgroup/dods-repositories');
 
 describe(`${FUNCTION_NAME} handler`, () => {
     it('Valid input', async () => {
-
         const requestParams: SearchCollectionAlertsParameters = {
             collectionId: '94a57103-3bf0-4a29-bdba-99a4650c1849',
             limit: '30',
@@ -24,14 +23,21 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const defaultSearchCollectionsRepositoryResponse: getAlertsByCollectionResponse = {
             count: 0,
-            alerts: []
+            alerts: [],
         };
         const querysByAlert: Array<CollectionAlertQuery> = [] as Array<CollectionAlertQuery>;
         const recipientsByAlert = [] as Array<CollectionAlertRecipient>;
 
-        mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts.mockResolvedValue({ count: 0, alerts: [] });
-        mockedCollectionAlertsRepository.defaultInstance.getQuerysByAlert.mockResolvedValue(querysByAlert);
-        mockedCollectionAlertsRepository.defaultInstance.getRecipientsByAlert.mockResolvedValue(recipientsByAlert);
+        mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts.mockResolvedValue({
+            count: 0,
+            alerts: [],
+        });
+        mockedCollectionAlertsRepository.defaultInstance.getQueriesByAlert.mockResolvedValue(
+            querysByAlert
+        );
+        mockedCollectionAlertsRepository.defaultInstance.getRecipientsByAlert.mockResolvedValue(
+            recipientsByAlert
+        );
 
         const response = await getCollectionAlerts(requestParams, defaultContext);
 
@@ -41,18 +47,21 @@ describe(`${FUNCTION_NAME} handler`, () => {
             limit: requestParams.limit,
             offset: requestParams.offset,
             totalRecords: 0,
-            alerts: defaultSearchCollectionsRepositoryResponse.alerts
+            alerts: defaultSearchCollectionsRepositoryResponse.alerts,
         });
 
         expect(response).toEqual(expectedResponse);
 
-        expect(mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts).toHaveBeenCalledTimes(1);
+        expect(
+            mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts
+        ).toHaveBeenCalledTimes(1);
 
-        expect(mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts).toHaveBeenCalledWith(requestParams);
+        expect(
+            mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts
+        ).toHaveBeenCalledWith(requestParams);
     });
 
     it('Valid input extra values', async () => {
-
         const requestParams: SearchCollectionAlertsParameters = {
             collectionId: '94a57103-3bf0-4a29-bdba-99a4650c1849',
             limit: '30',
@@ -61,14 +70,27 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const defaultSearchCollectionsRepositoryResponse: getAlertsByCollectionResponse = {
             count: 0,
-            alerts: [{ searchQueriesCount: 2, recipientsCount: 2 }]
+            alerts: [{ searchQueriesCount: 2, recipientsCount: 2 }],
         };
-        const querysByAlert = [{ name: 'query1', alertId: 1 }, { name: 'query2', alertId: 1 }] as Array<CollectionAlertQuery>;
-        const recipientsByAlert = [{ alertId: 1 }, { alertId: 1 }] as Array<CollectionAlertRecipient>;
+        const querysByAlert = [
+            { name: 'query1', alertId: 1 },
+            { name: 'query2', alertId: 1 },
+        ] as Array<CollectionAlertQuery>;
+        const recipientsByAlert = [
+            { alertId: 1 },
+            { alertId: 1 },
+        ] as Array<CollectionAlertRecipient>;
 
-        mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts.mockResolvedValue({ count: 0, alerts: [{ id: 1 }] });
-        mockedCollectionAlertsRepository.defaultInstance.getQuerysByAlert.mockResolvedValue(querysByAlert);
-        mockedCollectionAlertsRepository.defaultInstance.getRecipientsByAlert.mockResolvedValue(recipientsByAlert);
+        mockedCollectionAlertsRepository.defaultInstance.getCollectionAlerts.mockResolvedValue({
+            count: 0,
+            alerts: [{ id: 1 }],
+        });
+        mockedCollectionAlertsRepository.defaultInstance.getQueriesByAlert.mockResolvedValue(
+            querysByAlert
+        );
+        mockedCollectionAlertsRepository.defaultInstance.getRecipientsByAlert.mockResolvedValue(
+            recipientsByAlert
+        );
 
         const response = await getCollectionAlerts(requestParams, defaultContext);
 
@@ -78,11 +100,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
             limit: requestParams.limit,
             offset: requestParams.offset,
             totalRecords: 0,
-            alerts: defaultSearchCollectionsRepositoryResponse.alerts
+            alerts: defaultSearchCollectionsRepositoryResponse.alerts,
         });
 
         expect(response).toEqual(expectedResponse);
-
     });
 
     it('Invalid collection Id', async () => {

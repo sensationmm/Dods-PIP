@@ -12,6 +12,7 @@ type modalButtonAlignment = 'center' | 'right';
 export interface ModalProps {
   onClose?: () => void;
   title?: string;
+  titleIcon?: Icons;
   titleAside?: JSX.Element;
   size?: modalSize;
   buttons?: ButtonProps[];
@@ -25,6 +26,7 @@ const Modal: FC<ModalProps> = ({
   size = 'medium',
   onClose,
   title = '',
+  titleIcon,
   titleAside,
   buttons = [],
   buttonAlignment = 'center',
@@ -68,9 +70,12 @@ const Modal: FC<ModalProps> = ({
     <Styled.veil {...{ ...(isDismissible && { onClick: onVeilClose }) }} data-test="modal-veil">
       <Styled.modal {...{ size }} data-test="modal">
         <Styled.modalHeader>
-          <Text type="h2" headingStyle="title">
-            {title}
-          </Text>
+          <Styled.modalHeaderTitle>
+            {titleIcon && <Icon src={titleIcon} size={IconSize.xlarge} />}
+            <Text type="h2" headingStyle="titleLarge">
+              {title}
+            </Text>
+          </Styled.modalHeaderTitle>
           {titleAside && <Styled.titleAside>{titleAside}</Styled.titleAside>}
         </Styled.modalHeader>
 

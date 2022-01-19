@@ -262,5 +262,13 @@ functions:
       - http:
           method: put
           path:  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}
+
+  copyAlertQuery:
+    handler: src/handlers/copyAlertQuery/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: /collections/{collectionId}/alerts/{alertId}/queries/{queryId}/copyto
           caching:
             enabled: false

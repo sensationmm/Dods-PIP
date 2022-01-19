@@ -42,12 +42,11 @@ export const deliveryTitle = styled.div`
 `;
 
 export const times = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   align-items: center;
-
-  > div {
-    margin-right: ${spacing(1)};
-  }
+  grid-row-gap: ${spacing(2)};
+  grid-column-gap: ${spacing(1)};
 `;
 
 export const time = styled.div`
@@ -57,7 +56,8 @@ export const time = styled.div`
 `;
 
 export const timeAdded = styled.div`
-  padding-left: ${spacing(2)};
+  padding: ${spacing(3)} ${spacing(2)};
+  display: block;
 `;
 
 export const actions = styled.div`
