@@ -1,5 +1,6 @@
 import {
     AlertByIdOutput,
+    AlertOutput,
     AlertQueryResponse,
     CollectionAlertsPersister,
     CopyAlertParameters,
@@ -11,10 +12,11 @@ import {
     SearchAlertParameters,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
+    SetAlertQueriesParameters,
     UpdateAlertQuery,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters,
+    setAlertScheduleParameters
 } from './domain';
 import {
     AlertDocumentInput,
@@ -52,7 +54,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         private recipientModel: typeof CollectionAlertRecipient,
         private userModel: typeof User,
         private alertModel: typeof CollectionAlert
-    ) {}
+    ) { }
 
     async getCollectionAlerts(
         parameters: SearchCollectionAlertsParameters
@@ -103,25 +105,20 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         return recipients;
     }
-
-    async createAlert(parameters: CreateAlertParameters): Promise<CollectionAlert> {
-        const { collectionId, createdBy, title, alertQueries } = parameters;
-
-        if (!alertQueries?.length) {
-            throw new CollectionError(`Error: AlertQueries shouldn't be empty`);
-        }
+    async createAlert(parameters: CreateAlertParameters): Promise<AlertOutput> {
+        const { collectionId, createdBy, title } = parameters;
 
         const alertOwner = await this.collectionModel.findOne({
             where: {
                 uuid: collectionId,
             },
         });
-
         if (!alertOwner) {
             throw new CollectionError(
                 `Error: Collection with uuid: ${collectionId} does not exist`
             );
         }
+
         const alertCreator = await this.userModel.findOne({
             where: {
                 uuid: createdBy,
@@ -130,14 +127,16 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         if (!alertCreator) {
             throw new CollectionError(`Error: User with uuid: ${createdBy} does not exist`);
         }
+
         const createObject: any = {
             collectionId: alertOwner.id,
             title: title,
             createdBy: alertCreator.id,
         };
-        const newAlert = await this.alertModel.create(createObject);
+        const newAlert = await CollectionAlert.create(createObject);
+        await newAlert.reload({ include: ['collection', 'createdById'] });
 
-        return await newAlert.reload({ include: ['collection', 'createdById'] });
+        return await mapAlert(newAlert)
     }
 
     async setAlertSchedule(parameters: setAlertScheduleParameters): Promise<CollectionAlert> {
@@ -454,7 +453,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             where: {
                 isActive: true,
             },
-            include: ['createdById'],
+            include: ['createdById', 'updatedById'],
             order: [['createdAt', sortDirection]],
             offset: parseInt(offset!),
             limit: parseInt(limit!),
@@ -575,4 +574,62 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         return await mapAlertQuery(updateQuery, alert);
     }
+
+    async setAlertQueries(parameters: SetAlertQueriesParameters): Promise<AlertOutput> {
+        const { collectionId, updatedBy, alertId, alertQueries } = parameters;
+
+        const alertOwner = await this.collectionModel.findOne({
+            where: {
+                uuid: collectionId,
+                isActive: true
+            },
+        });
+        if (!alertOwner) {
+            throw new CollectionError(
+                `Error: Collection with uuid: ${collectionId} does not exist`
+            );
+        }
+
+        const alertUpdater = await this.userModel.findOne({
+            where: {
+                uuid: updatedBy,
+            },
+        });
+        if (!alertUpdater) {
+            throw new CollectionError(`Error: User with uuid: ${updatedBy} does not exist`);
+        }
+
+        const updatedAlert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+            },
+            include: ['collection', 'createdById', 'updatedById']
+        });
+        if (!updatedAlert) {
+            throw new CollectionError(`Error: Alert with uuid: ${alertId} does not exist`);
+        }
+
+        await updatedAlert.update({
+            updatedBy: alertUpdater.id
+        });
+
+        await updatedAlert.reload({ include: ['collection', 'createdById', 'updatedById'] });
+
+        await Promise.all(alertQueries.map((alertQuery) => {
+
+            const createAlertQueryParameters = {
+                alertId: updatedAlert.uuid,
+                query: alertQuery.query,
+                informationTypes: alertQuery.informationTypes,
+                contentSources: alertQuery.contentSources,
+                createdBy: updatedBy
+            }
+            return CollectionAlertsRepository.defaultInstance.createQuery(createAlertQueryParameters);
+        }))
+
+
+        return await mapAlert(updatedAlert)
+    }
+
+
 }
