@@ -1,11 +1,10 @@
 import Panel from '@dods-ui/components/_layout/Panel';
 import Spacer from '@dods-ui/components/_layout/Spacer';
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
-import { TagsData } from '@dods-ui/components/ContentTagger';
+import { TagsData } from '@dods-ui/components/ContentTagger/TagBrowser';
 import StatusBar from '@dods-ui/components/StatusBar';
 import TeleportOnScroll from '@dods-ui/components/TeleportOnScroll';
 import Text from '@dods-ui/components/Text';
-import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import { MetadataSelection } from '@dods-ui/pages/editorial/editorial.models';
