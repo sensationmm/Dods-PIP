@@ -1,0 +1,5 @@
+### Search Alert Recipients
+@collectionId = cd44bad6-8eeb-4870-abb8-72d297ea7a14
+@alertId = c2211873-3076-4a9a-b951-409258b933d9
+
+GET {{host}}/collections/{{collectionId}}/alerts/{{alertId}}/recipients?sortBy=clientAccountName&sortDirection=DESC&searchTerm=jo HTTP/1.1

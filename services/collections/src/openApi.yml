@@ -140,7 +140,6 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
           
-          
   /collections/{collectionId}/alerts/{alertId}/schedule:
     put:
       operationId: setAlertSchedule
@@ -186,6 +185,25 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/DeleteAlertRecipientsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      operationId: searchAlertRecipients
+      summary: "Search Alert Recipients"
+      description: "Search Alert Recipients"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: "#/components/parameters/searchTerm"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortByForSearchAlertRecipient"
+        - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          $ref: "#/components/responses/SearchAlertRecipientsResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -240,6 +258,42 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}:
+    put:
+      operationId: updateAlertQuery
+      summary: "Update an Alert Query "
+      description: "Update an Alert Query "
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: '#/components/parameters/queryId'
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateAlertQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/CreateQueryResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}/copyto:
+    post:
+      operationId: copyQuery
+      summary: "Copy the specified query to a different alert"
+      description: "Copy the specified query to a different alert"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: "#/components/parameters/alertId"
+        - $ref: "#/components/parameters/queryId"
+      requestBody:
+        $ref: '#/components/requestBodies/CopyQuery'
+      responses:
+        "200":
+          $ref: "#/components/responses/GetAlertResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   securitySchemes:
@@ -268,7 +322,7 @@ components:
         title:
           type: string
           example: alert title
-        alertQueriess:
+        alertQueries:
           type: array
           minItems: 1
           items:
@@ -283,7 +337,20 @@ components:
           type: string
         query:
           type: string
-        cretedBy:
+        createdBy:
+          type: string
+          format: uuid
+          
+    UpdateAlertQueryInput:
+      type: object
+      properties:
+        informationTypes:
+          type: string
+        contentSources:
+          type: string
+        query:
+          type: string
+        updatedBy:
           type: string
           format: uuid
          
@@ -347,6 +414,14 @@ components:
           type: string
         informationTypes:
           type: string
+        alert:
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            title:
+              type: string
         contentSources:
           type: string
         query:
@@ -361,6 +436,20 @@ components:
               type: string
             emailAddress:
               type: string
+            isDODSUser:
+              type: boolean
+        updatedBy: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+            emailAddress:
+              type: string
+            isDODSUser:
+              type: boolean
         createdAt:
           type: string 
         updatedAt:
@@ -498,6 +587,21 @@ components:
           format: uuid
           minLength: 1
 
+    CopyQueryInput:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          format: uuid
+          minLength: 1
+        destinationAlertId:
+          type: string
+          format: uuid
+          minLength: 1
+      required:
+        - createdBy
+        - destinationAlertId
+
     CollectionOutput:
       type: object
       properties:
@@ -598,6 +702,18 @@ components:
           - updatedAt
       required: false
       description: sort Collection by name or subscription
+    sortByForSearchAlertRecipient:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: firstName
+        enum:
+          - firstName
+          - clientAccountName
+          - isActive
+      required: false
+      description: sort Collection by name or subscription
     sortDirection:
       in: query
       name: sortDirection
@@ -634,6 +750,15 @@ components:
     alertId:
       in: path
       name: alertId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+      
+    queryId:
+      in: path
+      name: queryId
       schema:
         type: string
         format: uuid
@@ -813,6 +938,7 @@ components:
                         emailAddress:
                           type: string
                           format: email
+
     DeleteAlertRecipientsResponse:
       description: "Get Alert Response"
       content:
@@ -825,6 +951,53 @@ components:
               message:
                 type: string
                 example: 'Recipient was removed successfully'
+                
+    SearchAlertRecipientsResponse:
+      description: "SearchAlertRecipientsResponse"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert recipients were set successfully
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              filteredRecords:
+                type: number
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      format: uuid
+                    name:
+                      type: string
+                    emailAddress:
+                      type: string
+                      format: email
+                    clientAccount:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                    isDODSUser:
+                      type: boolean
+                    isActive:
+                      type: boolean
+
     GetAlertResponse:
       description: "Get Alert Response"
       content:
@@ -852,6 +1025,21 @@ components:
               message:
                 type: string
                 example: 'Alert query created successfully'
+              query:
+                $ref: "#/components/schemas/QueryOutput"
+                
+    UpdateQueryResponse:
+      description: "Update Alert Query Response "
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: 'Alert query was updated successfully'
               query:
                 $ref: "#/components/schemas/QueryOutput"
 
@@ -915,6 +1103,14 @@ components:
                 type: string
                 example: Alert was deleted successfully
 
+    CopyQueryResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/QueryOutput"
+          
+
   requestBodies:
     CreateCollection:
       description: "Payload to create a new collection"
@@ -941,6 +1137,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CreateAlertQueryInput"
+            
+    UpdateAlertQuery:
+      description: "Payload to update a new alert query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateAlertQueryInput"
 
 
     UpdateCollection:
@@ -977,3 +1180,10 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CopyAlertInput"
+
+    CopyQuery:
+      description: "Payload to copy an existing query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CopyQueryInput"
