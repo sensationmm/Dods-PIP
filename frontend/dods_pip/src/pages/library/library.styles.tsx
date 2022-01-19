@@ -1,19 +1,34 @@
 import styled from 'styled-components';
-
 import color from '../../globals/color';
 import spacing from '../../globals/spacing';
+import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
+
+export const filtersContent = styled.div`
+  width: 350px;
+  margin-left: 30px;
+  text-align: center;
+`;
 
 export const contentWrapper = styled.div`
   display: flex;
   flex-basis: 0;
+  @media (max-width: 599px) {
+    flex-direction: column-reverse;
+    width: 100%;
+    ${filtersContent} {
+      margin: 0 0 24px;
+      width: 100%;
+    }
+  }
+  aside {
+    width: 372px;
+    @media (max-width: 599px) {
+      width: 100%;
+      padding: 0;
+    }
+  }
 `;
 
-export const filtersContent = styled.div`
-  width: 250px;
-  height: 500px;
-  margin-left: 30px;
-  text-align: center;
-`;
 
 export const filtersTag = styled.div`
   display: flex;
@@ -149,9 +164,36 @@ export const topRow = styled.div`
 export const imageContainer = styled.span`
   width: 75px !important;
   height: 55px;
-  margin-top 20px;
+  margin-top: 20px;
 
   img {
     border-radius: 10px;
+  }
+`;
+
+export const librarySearchWrapper = styled.div`
+  display: flex;
+  padding-bottom: 16px;
+  border-bottom: 1px solid ${color.base.greyLight};
+  ${input} {
+    width: 629px;
+    @media (max-width: 599px) {
+      width: 100%;
+    }
+  }
+  section {
+    width: 908px;
+    @media (max-width: 599px) {
+      width: 100%;
+    }
+  }
+  aside {
+    width: 350px;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 24px;
+    @media (max-width: 599px) {
+      display: none;
+    }
   }
 `;

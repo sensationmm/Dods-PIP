@@ -21,6 +21,7 @@ import color from '../../globals/color';
 import fetchJson from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as Styled from './library.styles';
+import Toggle from '@dods-ui/components/_form/Toggle';
 
 interface ExtendedRequestBodySearch extends RequestBodySearch {
   _body: {
@@ -272,6 +273,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   const [offset, setOffset] = useState(0);
   const [resultsSize] = useState(20);
   const [requestPayload, setRequestPayload] = useState<RequestPayload>();
+  const [filtersVisible, setFiltersVisible] = useState<boolean>(true);
 
   const currentQuery: QueryObject = useMemo(() => {
     if (typeof router.query.query === 'string') {
@@ -485,19 +487,30 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
 
       {apiResponse && (
         <main>
-          <Panel>
+          <Panel bgColor={color.base.ivory}>
             <Text type={'h1'} headingStyle="heroExtraLarge">
               Library
             </Text>
             <Spacer size={12} />
-            <InputSearch
-              onKeyDown={onSearch}
-              id="search-library"
-              label="What are you looking for?"
-              value={searchText}
-              onChange={(val) => setSearchText(val)}
-              onClear={() => setKeywordQuery('')}
-            />
+            <Styled.librarySearchWrapper>
+              <section>
+                <InputSearch
+                  onKeyDown={onSearch}
+                  id="search-library"
+                  label="What are you looking for?"
+                  value={searchText}
+                  onChange={(val) => setSearchText(val)}
+                  onClear={() => setKeywordQuery('')}
+                />
+              </section>
+              <aside>
+                <Toggle
+                  isActive={filtersVisible}
+                  labelOn={'Filters'}
+                  onChange={(state) => setFiltersVisible(!filtersVisible)}
+                />
+              </aside>
+            </Styled.librarySearchWrapper>
             <Spacer size={8} />
             {apiResponse.es_response?.hits?.hits.length !== 0 && (
               <div>
@@ -618,114 +631,116 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                 )}
               </section>
 
-              <section>
-                {apiResponse.es_response?.hits?.hits.length !== 0 && (
-                  <Styled.filtersContent>
-                    <DateFacet
-                      onChange={setDateFilter}
-                      values={{
-                        min: parsedQuery?.dateRange?.min,
-                        max: parsedQuery?.dateRange?.max,
-                      }}
-                    />
-                    {contentSources && (
-                      <Facet
-                        title={'Content Source'}
-                        records={contentSources}
-                        onClearSelection={() => removeBasicFilters(contentSources)}
-                        onChange={(value) => {
-                          setBasicQuery({
-                            key: AggTypes.contentSource,
-                            value,
-                          });
+              {filtersVisible && (
+                <aside>
+                  {apiResponse.es_response?.hits?.hits.length !== 0 && (
+                    <Styled.filtersContent>
+                      <DateFacet
+                        onChange={setDateFilter}
+                        values={{
+                          min: parsedQuery?.dateRange?.min,
+                          max: parsedQuery?.dateRange?.max,
                         }}
                       />
-                    )}
-                    {informationTypes && (
-                      <Facet
-                        title={'Information Type'}
-                        records={informationTypes}
-                        onClearSelection={() => removeBasicFilters(informationTypes)}
-                        onChange={(value) => {
-                          setBasicQuery({
-                            key: AggTypes.informationType,
-                            value,
-                          });
-                        }}
-                      />
-                    )}
-                    {jurisdictions && (
-                      <Facet
-                        title={'Jurisdictions'}
-                        records={jurisdictions}
-                        onClearSelection={() => removeBasicFilters(jurisdictions)}
-                        onChange={(value) => {
-                          setBasicQuery({
-                            key: AggTypes.jurisdiction,
-                            value,
-                          });
-                        }}
-                      />
-                    )}
-                    {topics && (
-                      <Facet
-                        title={'Topics'}
-                        records={topics}
-                        onClearSelection={() => removeNestedFilters(topics)}
-                        onChange={(value) => {
-                          setNestedQuery({
-                            path: 'taxonomyTerms',
-                            key: 'taxonomyTerms.termLabel',
-                            value,
-                          });
-                        }}
-                      />
-                    )}
-                    {organizations && (
-                      <Facet
-                        title={'Organizations'}
-                        records={organizations}
-                        onClearSelection={() => removeNestedFilters(organizations)}
-                        onChange={(value) => {
-                          setNestedQuery({
-                            path: 'taxonomyTerms',
-                            key: 'taxonomyTerms.termLabel',
-                            value,
-                          });
-                        }}
-                      />
-                    )}
-                    {people && (
-                      <Facet
-                        title={'People'}
-                        records={people}
-                        onClearSelection={() => removeNestedFilters(people)}
-                        onChange={(value) => {
-                          setNestedQuery({
-                            path: 'taxonomyTerms',
-                            key: 'taxonomyTerms.termLabel',
-                            value,
-                          });
-                        }}
-                      />
-                    )}
-                    {geography && (
-                      <Facet
-                        title={'Geography'}
-                        records={geography}
-                        onClearSelection={() => removeNestedFilters(geography)}
-                        onChange={(value) => {
-                          setNestedQuery({
-                            path: 'taxonomyTerms',
-                            key: 'taxonomyTerms.termLabel',
-                            value,
-                          });
-                        }}
-                      />
-                    )}
-                  </Styled.filtersContent>
-                )}
-              </section>
+                      {contentSources && (
+                        <Facet
+                          title={'Content Source'}
+                          records={contentSources}
+                          onClearSelection={() => removeBasicFilters(contentSources)}
+                          onChange={(value) => {
+                            setBasicQuery({
+                              key: AggTypes.contentSource,
+                              value,
+                            });
+                          }}
+                        />
+                      )}
+                      {informationTypes && (
+                        <Facet
+                          title={'Information Type'}
+                          records={informationTypes}
+                          onClearSelection={() => removeBasicFilters(informationTypes)}
+                          onChange={(value) => {
+                            setBasicQuery({
+                              key: AggTypes.informationType,
+                              value,
+                            });
+                          }}
+                        />
+                      )}
+                      {jurisdictions && (
+                        <Facet
+                          title={'Jurisdictions'}
+                          records={jurisdictions}
+                          onClearSelection={() => removeBasicFilters(jurisdictions)}
+                          onChange={(value) => {
+                            setBasicQuery({
+                              key: AggTypes.jurisdiction,
+                              value,
+                            });
+                          }}
+                        />
+                      )}
+                      {topics && (
+                        <Facet
+                          title={'Topics'}
+                          records={topics}
+                          onClearSelection={() => removeNestedFilters(topics)}
+                          onChange={(value) => {
+                            setNestedQuery({
+                              path: 'taxonomyTerms',
+                              key: 'taxonomyTerms.termLabel',
+                              value,
+                            });
+                          }}
+                        />
+                      )}
+                      {organizations && (
+                        <Facet
+                          title={'Organizations'}
+                          records={organizations}
+                          onClearSelection={() => removeNestedFilters(organizations)}
+                          onChange={(value) => {
+                            setNestedQuery({
+                              path: 'taxonomyTerms',
+                              key: 'taxonomyTerms.termLabel',
+                              value,
+                            });
+                          }}
+                        />
+                      )}
+                      {people && (
+                        <Facet
+                          title={'People'}
+                          records={people}
+                          onClearSelection={() => removeNestedFilters(people)}
+                          onChange={(value) => {
+                            setNestedQuery({
+                              path: 'taxonomyTerms',
+                              key: 'taxonomyTerms.termLabel',
+                              value,
+                            });
+                          }}
+                        />
+                      )}
+                      {geography && (
+                        <Facet
+                          title={'Geography'}
+                          records={geography}
+                          onClearSelection={() => removeNestedFilters(geography)}
+                          onChange={(value) => {
+                            setNestedQuery({
+                              path: 'taxonomyTerms',
+                              key: 'taxonomyTerms.termLabel',
+                              value,
+                            });
+                          }}
+                        />
+                      )}
+                    </Styled.filtersContent>
+                  )}
+                </aside>
+              )}
             </Styled.contentWrapper>
           </Panel>
         </main>
