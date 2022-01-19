@@ -12,6 +12,7 @@ const mockGetWatch = jest.fn();
 const mockDeleteWatch = jest.fn();
 const mockActivateWatch = jest.fn();
 const mockDeactivateWatch = jest.fn();
+const mockIndex = jest.fn().mockReturnValue({body: ''});
 const mockSearch = jest.fn().mockReturnValue({body: ''});
 
 mockGetWatch.mockImplementation(() => Promise.resolve({
@@ -33,6 +34,7 @@ jest.mock('../../../src/elasticsearch', () => ({
         activateWatch: () => mockActivateWatch(),
         deactivateWatch: () => mockDeactivateWatch(),
     },
+    index: () => mockIndex(),
     search: () => mockSearch(),
 }));
 
@@ -131,6 +133,6 @@ describe(`Schedule repository percolator tests`, () => {
         }
         await ScheduleRepository.defaultInstance.createPercolator(createPercolatorParameters)
 
-        expect(mockDeactivateWatch).toHaveBeenCalled();
+        expect(mockIndex).toHaveBeenCalled();
     });
 });

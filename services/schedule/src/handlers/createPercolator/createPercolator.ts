@@ -4,8 +4,9 @@ import { createPercolatorParameters } from '../../domain';
 import { ScheduleRepository } from '../../repositories';
 
 export const createPercolator = async (requestPayload: createPercolatorParameters): Promise<APIGatewayProxyResultV2> => {
-    let es_response = await ScheduleRepository.defaultInstance.createPercolator(requestPayload);
-
+    console.log(requestPayload)
+    const percolatorQuery: createPercolatorParameters = {query: requestPayload.query}
+    let es_response = await ScheduleRepository.defaultInstance.createPercolator(percolatorQuery);
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,

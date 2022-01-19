@@ -82,7 +82,7 @@ export class ScheduleRepository implements Schedule {
     }
 
     async createPercolator(data: createPercolatorParameters): Promise<any> {
-         const response = await this.elasticsearch.search(data)
+         const response = await this.elasticsearch.index({index: 'alerts', body: data.query})
 
         return response['body']
     }
