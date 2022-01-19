@@ -401,7 +401,7 @@ components:
               type: string
             emailAddress:
               type: string
-            isDODSUser:
+            isDodsUser:
               type: boolean
         updatedBy: 
           type: object
@@ -413,7 +413,7 @@ components:
               type: string
             emailAddress:
               type: string
-            isDODSUser:
+            isDodsUser:
               type: boolean
         createdAt:
           type: string 
@@ -470,6 +470,8 @@ components:
             emailAddress:
               type: string
               format: email
+            isDodsUser:
+              type: boolean
         createdAt:
           type: string
         updatedBy: 
@@ -483,6 +485,8 @@ components:
             emailAddress:
               type: string
               format: email
+            isDodsUser:
+              type: boolean
         updatedAt:
           type: string
         lastStepCompleted:
@@ -495,6 +499,10 @@ components:
       properties:
         name:
           type: string
+          minLength: 1
+        updatedBy:
+          type: string
+          format: uuid
           minLength: 1
           
     alertScheduleInput:
@@ -1026,7 +1034,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateAlertQueryInput"
-
 
     UpdateCollection:
       description: "Payload to update a collection"
