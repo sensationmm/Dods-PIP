@@ -256,8 +256,8 @@ const getPayload = (
               esbQuery.filter(
                 esb
                   .rangeQuery('contentDateTime')
-                  // Fallback to beginning of time to now
-                  .gte(dateRange.min || format(new Date(1970, 1, 1), 'yyyy-MM-dd'))
+                  // Fallback to beginning of JS time to now
+                  .gte(dateRange.min || format(new Date(0), 'yyyy-MM-dd'))
                   .lte(dateRange.max || format(new Date(), 'yyyy-MM-dd')),
               ),
             )
