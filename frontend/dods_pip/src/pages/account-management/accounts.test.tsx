@@ -14,6 +14,7 @@ jest.mock('next/router', () => ({
 }));
 
 jest.mock('../../lib/fetchJson', () => jest.fn());
+window.scrollTo = jest.fn();
 
 const useRouterMock = useRouter as jest.Mock;
 const fetchJsonMock = fetchJson as jest.Mock;
@@ -274,8 +275,10 @@ describe('Account Management: Clients', () => {
 
     // default value is 3, no need to test (covered in previous cases)
     it.each([
-      [60, 1],
-      [90, 2],
+      [5, 0],
+      [10, 1],
+      [60, 3],
+      [90, 4],
     ])('should request accounts data with paging limit', async (value, index) => {
       await act(async () => {
         $filterOptions[index].click();

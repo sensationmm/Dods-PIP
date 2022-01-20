@@ -4,15 +4,18 @@ import os
 from lib.configs import Config
 from lib.validation import Validator
 from json import loads, dumps
-import re
+import json
 
 INPUT_BUCKET = os.environ['INPUT_BUCKET']
 OUTPUT_BUCKET = os.environ['OUTPUT_BUCKET']
+LAMBDA_AUTO_TAGGING_ARN = os.environ['LAMBDA_AUTO_TAGGING_ARN']
 SQS_QUEUE = os.environ['SQS_QUEUE']
 PREFIX = os.environ['KEY_PREFIX']
 s3_client = boto3.client('s3')
 sqs_client = boto3.client('sqs')
 config = Config().config_read(("config.ini"))
+
+lambda_client = boto3.client('lambda')
 
 
 def s3_list_folders(prefix: str):
@@ -57,18 +60,55 @@ def consumer(event, context):
             }
             if required_paths.keys() <= message.keys():
                 logger.info(f'File path: {message["file_path_content_document"]}')
-                content_document = s3_client.get_object(
+                s3_object = s3_client.get_object(
                     Bucket=INPUT_BUCKET,
                     Key=message['file_path_content_document']
                 )
-                content_document = dumps(loads(content_document['Body'].read()))
+                auto_tagging_response = ""
+                document = loads(s3_object['Body'].read().decode('utf8'))
+                if 'documentContent' in document:
+                    content = str(document["documentContent"]).translate(str.maketrans(
+                        {
+                            "\"": r"\"",
+                            "\n": r"",
+                            "\r": r"",
+                            "'": r"\'"
+                        }
+                    ))
+                    try:
+                        response = lambda_client.invoke(
+                            FunctionName=LAMBDA_AUTO_TAGGING_ARN,
+                            InvocationType='RequestResponse',
+                            Payload=json.dumps({"body": {"content": content}})
+                        )
+                        """
+                        Auto tagging lambda servise will return;
+                            {
+                                "content": {{content}}, - String
+                                "taxonomyTerms": {{taxonomyTerms}} - List
+                            }
+                        taxonomyTerms could be empty list []
+                        """
+                        auto_tagging_response = json.load(response['Payload'])
+                    except Exception as e:
+                        logger.exception(e)
+                        return False
 
-                s3_response = s3_client.put_object(
-                    Body=content_document,
-                    Bucket=OUTPUT_BUCKET,
-                    Key=(message['file_path_content_document'])
-                )
-                logger.info('Object upload respondend with: %s', s3_response)
+                    if 'taxonomyTerms' in auto_tagging_response and len(auto_tagging_response['taxonomyTerms']) > 0:
+                        document['taxonomyTerms'] = auto_tagging_response['taxonomyTerms']
+
+                    logger.info('Auto tagging response: %s', auto_tagging_response)
+                    document['documentContent'] = auto_tagging_response['content']
+
+                    logger.info('Auto tagging process has been finished for this: %s', message['file_path_content_document'])
+                    s3_response = s3_client.put_object(
+                        Body=dumps(document),
+                        Bucket=OUTPUT_BUCKET,
+                        Key=(message['file_path_content_document'])
+                    )
+                    logger.info('Object upload respondend with: %s', s3_response)
+                else:
+                    logger.exception(f"Content is not valid from here: {message['file_path_content_document']}")
             else:
                 logger.exception('Missing file path in the body!')
                 return False

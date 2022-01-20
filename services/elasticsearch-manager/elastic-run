@@ -10,11 +10,11 @@ from click import Context
 
 load_dotenv()
 
-es_host = os.getenv("ES_HOST")
-es_user = os.getenv("ES_USER")
-es_pass = os.getenv("ES_PASSWORD")
+ES_CLOUD_ID = os.environ['ES_CLOUD_ID']
+ES_KEY_ID = os.environ['ES_KEY_ID']
+ES_API_KEY = os.environ['ES_API_KEY']
 
-client = Elasticsearch(hosts=[es_host], http_auth=(es_user, es_pass))
+es_client = Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=(ES_KEY_ID, ES_API_KEY))
 
 
 @click.command(
@@ -46,7 +46,7 @@ def create_index(index_name: str):
     settings = get_file_content(os.path.abspath(os.curdir) + '/models/' + index_name + '/settings.json')
     mappings = get_file_content(os.path.abspath(os.curdir) + '/models/' + index_name + '/mappings.json')
     try:
-        res = client.indices.create(
+        res = es_client.indices.create(
             index=index_name,
             settings=settings,
             mappings=mappings
@@ -57,7 +57,7 @@ def create_index(index_name: str):
 
 def delete_index(index_name: str):
     try:
-        client.indices.delete(
+        es_client.indices.delete(
             index=[index_name]
         )
     except Exception as e:
@@ -66,7 +66,7 @@ def delete_index(index_name: str):
 
 def delete_data(index_name: str):
     try:
-        client.delete_by_query(
+        es_client.delete_by_query(
             index=[index_name],
             body={
                 "query": {

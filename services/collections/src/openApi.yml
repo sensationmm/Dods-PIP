@@ -18,6 +18,7 @@ paths:
       summary: "Returns a list of collections"
       description: "Returns a list of collections"
       parameters:
+        - $ref: "#/components/parameters/startsWith"
         - $ref: "#/components/parameters/searchTerm"
         - $ref: "#/components/parameters/clientAccountId"
         - $ref: "#/components/parameters/limit"
@@ -109,7 +110,208 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+  
+  /collections/{collectionId}/alerts/{alertId}:
+    get:
+      operationId: getAlert
+      summary: "Retrieve basic information of the alert"
+      description: "Retrieve basic information of the alert"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: "#/components/parameters/alertId"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetAlertResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  
+    delete:
+      operationId: deleteAlert
+      summary: "Delete alert"
+      description: "Delete an alert from the database"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteResourceResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+          
+          
+  /collections/{collectionId}/alerts/{alertId}/schedule:
+    put:
+      operationId: setAlertSchedule
+      summary: "Update Alert Schedule"
+      description: "Update Alert Schedule Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/setAlertSchedule"
+      responses:
+        "200":
+          $ref: "#/components/responses/setAlertScheduleResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
+  /collections/{collectionId}/alerts/{alertId}/recipients:
+    put:
+      operationId: setAlertRecipients
+      summary: "Set Alert Recipients"
+      description: "Set Alert Recipients"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/SetAlertRecipients"
+      responses:
+        "200":
+          $ref: "#/components/responses/SetAlertRecipientsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteAlertRecipient
+      summary: "Delete Alert Recipients"
+      description: "Delete Alert Recipients"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+          $ref: '#/components/requestBodies/DeleteAlertRecipient'
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteAlertRecipientsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      operationId: searchAlertRecipients
+      summary: "Search Alert Recipients"
+      description: "Search Alert Recipients"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: "#/components/parameters/searchTerm"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortByForSearchAlertRecipient"
+        - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          $ref: "#/components/responses/SearchAlertRecipientsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /collections/{collectionId}/alerts/{alertId}/copyto:
+    post:
+      operationId: copyAlert
+      summary: "Copy Existing Alert"
+      description: "Copy existing alert from a collection to another collection"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/CopyAlert"
+      responses:
+        "200":
+          $ref: "#/components/responses/CopyAlertResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /collections/{collectionId}/alerts/{alertId}/queries:
+    get:
+      operationId: getAlertQueries
+      summary: "Get the Queries associated to a Alert"
+      description: "Get the Queries associated to a Alert"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/sortDirection"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetQueriesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+          
+    post:
+      operationId: createAlertQuery
+      summary: "Creates a Query associated to a Alert"
+      description: "Create Alert Query Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAlertQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/CreateQueryResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+    put:
+      operationId: setAlertQueries
+      summary: "Set multiple Queries associated to a Alert"
+      description: "Set Alert Queries Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/setAlertQueries"
+      responses:
+        "200":
+          $ref: "#/components/responses/setAlertResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+      
+          
+  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}:
+    put:
+      operationId: updateAlertQuery
+      summary: "Update an Alert Query "
+      description: "Update an Alert Query "
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: '#/components/parameters/queryId'
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateAlertQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/CreateQueryResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteAlertQuery
+      summary: "Delete an Alert Query"
+      description: "Delete an Alert Query"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: '#/components/parameters/queryId'
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteResourceResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   securitySchemes:
@@ -135,20 +337,39 @@ components:
     CreateAlertInput:
       type: object
       properties:
-        collectionId:
-          type: string
-          minLength: 1
-          format: uuid
         title:
           type: string
           example: alert title
-        alertQueriess:
-          type: array
-          minItems: 1
-          items:
-            $ref: "#/components/schemas/AlertQueries"
-        
+        createdBy:
+          type: string
+          format: uuid
             
+    CreateAlertQueryInput:
+      type: object
+      properties:
+        informationTypes:
+          type: string
+        contentSources:
+          type: string
+        query:
+          type: string
+        createdBy:
+          type: string
+          format: uuid
+          
+    UpdateAlertQueryInput:
+      type: object
+      properties:
+        informationTypes:
+          type: string
+        contentSources:
+          type: string
+        query:
+          type: string
+        updatedBy:
+          type: string
+          format: uuid
+         
     AlertQueries:
       type: object
       properties:
@@ -198,7 +419,131 @@ components:
           type: object
         createdBy:
           type: object
-             
+          
+    QueryOutput:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        informationTypes:
+          type: string
+        alert:
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            title:
+              type: string
+        contentSources:
+          type: string
+        query:
+          type: string
+        createdBy: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+            emailAddress:
+              type: string
+            isDodsUser:
+              type: boolean
+        updatedBy: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+            emailAddress:
+              type: string
+            isDodsUser:
+              type: boolean
+        createdAt:
+          type: string 
+        updatedAt:
+          type: string 
+    
+    Alert:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid 
+        title:
+          type: string 
+        description:
+          type: string
+        collection: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+        template: 
+          type: object
+          properties:
+            id:
+              type: number
+            name:
+              type: string
+        isScheduled:
+          type: boolean
+        hasKeywordsHighlight:
+          type: boolean
+        schedule:
+          type: string
+        timezone:
+          type: string
+        searchQueriesCount:
+          type: number
+          description: Count of dods_alerts_queries related to the alert
+        recipientsCount:
+          type: number
+          description: Count of dods_alerts_recipients related to the alert
+        createdBy: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+            emailAddress:
+              type: string
+              format: email
+            isDodsUser:
+              type: boolean
+        createdAt:
+          type: string
+        updatedBy: 
+          type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+            emailAddress:
+              type: string
+              format: email
+            isDodsUser:
+              type: boolean
+        updatedAt:
+          type: string
+        lastStepCompleted:
+          type: number
+        isPublished:
+          type: boolean
               
     UpdateCollectionInput:
       type: object
@@ -206,6 +551,80 @@ components:
         name:
           type: string
           minLength: 1
+        updatedBy:
+          type: string
+          format: uuid
+          minLength: 1
+          
+    alertScheduleInput:
+      type: object
+      properties:
+        isSchedule:
+          type: boolean
+        hasKeywordHighlight:
+          type: boolean
+        timezone:
+          type: string
+        schedule:
+          type: string
+        updatedBy:
+          type: string
+          example: d290f1ss-6c54-4b01-98e6-d701748f7151
+        alertTemplateId: 
+          type: number 
+          example: 1
+          
+
+    SetAlertRecipientsInput:
+      type: object
+      properties:
+        updatedBy:
+          type: string
+          format: uuid
+          description: User uuid
+        recipients:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+                format: uuid
+
+    DeleteAlertRecipientInput:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+          description: User uuid
+                
+    CopyAlertInput:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          format: uuid
+          minLength: 1
+        destinationCollectionId:
+          type: string
+          format: uuid
+          minLength: 1
+
+    CopyQueryInput:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          format: uuid
+          minLength: 1
+        destinationAlertId:
+          type: string
+          format: uuid
+          minLength: 1
+      required:
+        - createdBy
+        - destinationAlertId
 
     CollectionOutput:
       type: object
@@ -227,6 +646,18 @@ components:
         updatedAt:
           type: string
           format: date-time
+          
+    SetAlertQueriesInput:
+      type: object
+      properties:
+        alertQueries:
+          type: array
+          items:
+            $ref: "#/components/schemas/AlertQueries"
+        updatedBy:
+          type: string
+          format: uuid
+
 
     ClientAccount:
       type: object
@@ -249,8 +680,12 @@ components:
     Message:
       type: object
       properties:
+        success:
+          type: boolean
+          example: false
         message:
           type: string
+          example: Error message
 
     Errors:
       type: object
@@ -269,7 +704,7 @@ components:
       schema:
         type: string
         format: uuid
-      required: true
+      required: false
       example: d290f1ss-6c54-4b01-98e6-d701748f7151
     limit:
       in: query
@@ -287,6 +722,7 @@ components:
       name: offset
       schema:
         type: integer
+        format: int32
         default: 0
         minimum: 0
       required: false
@@ -300,6 +736,18 @@ components:
         enum:
           - name
           - updatedAt
+      required: false
+      description: sort Collection by name or subscription
+    sortByForSearchAlertRecipient:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        default: firstName
+        enum:
+          - firstName
+          - clientAccountName
+          - isActive
       required: false
       description: sort Collection by name or subscription
     sortDirection:
@@ -320,9 +768,33 @@ components:
             type: string
         required: false
         description: Collections by name's filtering using search term
+    startsWith:
+        in: query
+        name: startsWith
+        schema:
+            type: string
+        required: false
+        description: Collections by name's filtering using coincidences from the beginning
     collectionId:
       in: path
       name: collectionId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    alertId:
+      in: path
+      name: alertId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+      
+    queryId:
+      in: path
+      name: queryId
       schema:
         type: string
         format: uuid
@@ -363,6 +835,37 @@ components:
                 type: string
               collection:
                 $ref: "#/components/schemas/CollectionOutput"
+                
+    setAlertScheduleResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert scheduling was set successfully
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+    
+    CopyAlertResponse:
+      description: "Response with single collection"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert scheduling was copied successfully
+              alert:
+                $ref: "#/components/schemas/AlertOutput"
+                
     AlertResponse:
       description: "Response with single collection"
       content:
@@ -377,7 +880,204 @@ components:
                 example: Alert created successfully in step 1
               alert:
                 $ref: "#/components/schemas/AlertOutput"
+              
+    SetAlertRecipientsResponse:
+      description: "SetAlertRecipientsResponse"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert recipients were set successfully
+              alert:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  collection:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                  template:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        description: Alert Template id
+                      name:
+                        type: string
+                  schedule:
+                    type: string
+                  timezone:
+                    type: string
+                  searchQueriesCount:
+                    type: number
+                    description: Count of dods_alerts_queries related to the alert
+                  recipientsCount:
+                    type: number
+                    description: Count of dods_alerts_recipients related to the alert
+                  lastStepCompleted:
+                    type: number
+                  isPublished:
+                    type: boolean
+                  createdBy:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      emailAddress:
+                        type: string
+                        format: email
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedBy:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      emailAddress:
+                        type: string
+                        format: email
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  recipients:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                        emailAddress:
+                          type: string
+                          format: email
+    DeleteAlertRecipientsResponse:
+      description: "Get Alert Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: 'Recipient was removed successfully'
+
+    SearchAlertRecipientsResponse:
+      description: "SearchAlertRecipientsResponse"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: The alert recipients were set successfully
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              filteredRecords:
+                type: number
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      format: uuid
+                    name:
+                      type: string
+                    emailAddress:
+                      type: string
+                      format: email
+                    clientAccount:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                    isDODSUser:
+                      type: boolean
+                    isActive:
+                      type: boolean
+
+    GetAlertResponse:
+      description: "Get Alert Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: 'The alert was found'
+              alert:
+                $ref: "#/components/schemas/Alert"
+    
+    CreateQueryResponse:
+      description: "Create Alert Query Response "
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: 'Alert query created successfully'
+              query:
+                $ref: "#/components/schemas/QueryOutput"
                 
+    UpdateQueryResponse:
+      description: "Update Alert Query Response "
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: 'Alert query was updated successfully'
+              query:
+                $ref: "#/components/schemas/QueryOutput"
+
     GetAlertsResponse:
       description: "Get Alerts Response"
       content:
@@ -400,6 +1100,66 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/AlertOutput"
+                  
+    setAlertResponse:
+      description: "Set Alert Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Alert updated successfully in step 1
+              alert:
+                  $ref: "#/components/schemas/AlertOutput"
+      
+                  
+    GetQueriesResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Alert queries found
+              limit:
+                type: number
+              offset:
+                type: number
+              totalRecords:
+                type: number
+              alerts:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QueryOutput"
+    
+    DeleteResourceResponse:
+      description: "Delete Resource Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: Resource was deleted successfully
+    
+    CopyQueryResponse:
+      description: "Get Alerts Response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/QueryOutput"
 
   requestBodies:
     CreateCollection:
@@ -418,13 +1178,66 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CreateAlertInput"
-            required:
-            - alertQueries
+            
+    CreateAlertQuery:
+      description: "Payload to create a new alert query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateAlertQueryInput"
+            
+    setAlertQueries:
+      description: "Payload to set new alert query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SetAlertQueriesInput"
+            
+    UpdateAlertQuery:
+      description: "Payload to update a new alert query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateAlertQueryInput"
 
-             
     UpdateCollection:
       description: "Payload to update a collection"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateCollectionInput"
+            
+    setAlertSchedule:
+      description: "Set Alert Schedule"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/alertScheduleInput"
+
+    SetAlertRecipients:
+      description: "Payload to update a collection"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SetAlertRecipientsInput"
+
+    DeleteAlertRecipient:
+      description: "Payload to delete a alert recipient"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DeleteAlertRecipientInput"
+
+    CopyAlert:
+      description: "Payload to copy an existing alert"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CopyAlertInput"
+
+    CopyQuery:
+      description: "Payload to copy an existing query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CopyQueryInput"

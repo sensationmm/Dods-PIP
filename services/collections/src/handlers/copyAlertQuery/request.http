@@ -1,0 +1,13 @@
+@contentType = application/json
+
+# @name copyAlert
+@collectionId = 350b159c-6e43-11ec-90d6-0242ac120003
+@alertId = c785ae95-8fa1-4e6b-9f55-86c39dbd9d5a
+@queryId = 0151d116-7151-4061-9ba9-ea04af1d661d
+
+POST {{host}}/collections/{{collectionId}}/alerts/{{alertId}}/queries/{{queryId}}/copyto HTTP/1.1
+
+{
+    "destinationAlertId": "dc06cbc0-be31-40d1-990b-1dbb56b3030e",
+    "createdBy": "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
+}

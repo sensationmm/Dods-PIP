@@ -10,7 +10,6 @@ export const heading = styled.span`
   h5,
   h6 {
     font-family: 'Libre Baskerville';
-    font-weight: 400;
     padding: 0;
     margin: 0;
     font-weight: 300;
@@ -175,7 +174,7 @@ export const label = styled.label`
   &.labelSmall {
     font-size: 12px;
     letter-spacing: 1px;
-    line-height: auto;
+    line-height: normal;
   }
 
   &.bold,
@@ -202,4 +201,12 @@ export const span = styled.span`
     font-family: 'Libre Baskerville';
     font-size: 24px;
   }
+`;
+
+export const a = styled.a`
+  font-family: 'Open Sans Bold', sans-serif;
+`;
+
+export const button = styled.button`
+  background: transparent;
 `;

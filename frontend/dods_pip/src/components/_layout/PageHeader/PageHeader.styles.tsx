@@ -11,6 +11,7 @@ export const wrapper = styled.header`
   padding-top: ${spacing(1)};
   position: relative;
   z-index: 2;
+  background: ${color.base.white};
 `;
 
 type ContainerProps = {
