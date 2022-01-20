@@ -5,12 +5,14 @@ import spacing from '../../globals/spacing';
 
 export const contentWrapper = styled.div`
   display: flex;
-  flex-basis: 0;
 `;
 
-export const filtersContent = styled.div`
-  width: 250px;
-  height: 500px;
+export const resultsContent = styled.section`
+  flex: 1;
+`;
+
+export const filtersContent = styled.section`
+  width: 350px;
   margin-left: 30px;
   text-align: center;
 `;
@@ -154,19 +156,4 @@ export const imageContainer = styled.span`
   img {
     border-radius: 10px;
   }
-`;
-
-export const documentViewerWrapper = styled.div`
-  margin: 50px;
-
-  h1 {
-    font-family: 'Libre Baskerville';
-    font-size: 48px;
-    font-weight: 200;
-  }
-`;
-
-export const infoRow = styled.div`
-  color: ${color.base.greyDark};
-  margin-bottom: 55px;
 `;

@@ -5,8 +5,8 @@ import Checkbox from '../_form/Checkbox';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import Text from '../Text';
-import { TagsData } from './';
 import * as Styled from './ContentTagger.styles';
+import { TagsData } from './TagBrowser';
 
 type TagTreeProps = {
   tag: TagsData;

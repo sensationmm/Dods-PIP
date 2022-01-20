@@ -2,8 +2,7 @@ import { ClientAccount, Collection, User } from '@dodsgroup/dods-model';
 import {
     CollectionPersister,
     CollectionResponse,
-    CreateCollectionPersisterParameters,
-    UpdateCollectionParameters
+    CreateCollectionPersisterParameters
 } from '../domain';
 import { HttpError, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
@@ -76,35 +75,4 @@ export class CollectionRepository implements CollectionPersister {
             updatedAt,
         };
     }
-
-    async updateCollection(parameters: UpdateCollectionParameters): Promise<Collection> {
-
-        const { name, collectionId } = parameters
-        const collection = await this.model.findOne({
-            where: {
-                uuid: collectionId,
-            },
-            include: ['clientAccount', 'createdBy'],
-        });
-
-
-        if (!collection) {
-
-            throw new Error(
-                `Error: could not retrieve Collection with uuid: ${collectionId}`,
-            );
-        }
-
-        await collection.update({
-            name: name,
-        });
-
-        await collection.reload({
-            include: ['clientAccount', 'createdBy'],
-        });
-
-        return collection;
-    }
-
-
 }

@@ -35,9 +35,6 @@ const defaultCreatedAlert: any = {
     updatedById: {}
 };
 
-const defaultCreatedQuery: any = {
-
-};
 
 describe(`${FUNCTION_NAME} handler`, () => {
     it('Valid input', async () => {
@@ -45,19 +42,11 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const requestParams: CreateAlertParameters = {
             collectionId: '94a57103-3bf0-4a29-bdba-99a4650c1849',
             title: "repository",
-            alertQueries: [{
-                query: "in dods",
-                informationTypes: "infoTypes",
-                contentSources: "Source"
-            },
-            ],
             createdBy: "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
-
         };
 
 
         mockedCollectionAlertsRepository.defaultInstance.createAlert.mockResolvedValue(defaultCreatedAlert);
-        mockedCollectionAlertsRepository.defaultInstance.createQuery.mockResolvedValue(defaultCreatedQuery);
 
 
         const response = await createAlert(requestParams, defaultContext);
@@ -65,6 +54,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Alert created successfully in step 1',
+            alert: defaultCreatedAlert
         });
 
         expect(response).toEqual(expectedResponse);

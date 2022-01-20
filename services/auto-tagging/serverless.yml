@@ -5,6 +5,7 @@ configValidationMode: warn
 frameworkVersion: ^2.54.0
 
 variablesResolutionMode: 20210326
+useDotenv: true
 
 projectDir: ../
 
@@ -55,9 +56,9 @@ provider:
 plugins:
   - serverless-offline
   - serverless-python-requirements
-custom:
-  pythonRequirements:
-    dockerizePip: true
+# custom:
+#   pythonRequirements:
+#     dockerizePip: true
 functions:
   auto-tagging:
     handler: autoTagging.handle

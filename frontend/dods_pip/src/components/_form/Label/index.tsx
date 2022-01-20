@@ -13,6 +13,7 @@ export interface LabelProps {
   bold?: boolean;
   darkMode?: boolean;
   htmlFor?: string;
+  parenthetical?: string | number;
 }
 
 const Label: React.FC<LabelProps> = ({
@@ -24,6 +25,7 @@ const Label: React.FC<LabelProps> = ({
   bold,
   darkMode,
   htmlFor,
+  parenthetical,
 }) => {
   return (
     <Styled.label data-test="component-label" noMargin={noMargin}>
@@ -36,6 +38,7 @@ const Label: React.FC<LabelProps> = ({
         data-test="text-component"
       >
         {label}
+        {parenthetical && <span>({parenthetical})</span>}
       </Text>
       {required && (
         <Styled.requiredLabel data-test="label-required">(Required)</Styled.requiredLabel>

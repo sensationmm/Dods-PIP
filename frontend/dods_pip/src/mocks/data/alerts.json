@@ -1,0 +1,24 @@
+{
+  "alerts": [
+    {"uuid":"68822193154589324525719478640706", "collectionId":"asdasd","title":"Desmond Schuppe","searchQueries":7,"recipients":32,"deliveryDays":["sat","sun"],"deliveryTimes":["17:00","14:00","15:00","18:00","16:00","11:00"],"immediateDelivery":null},
+    {"uuid":"57446894940683023141735588877537", "collectionId":"asdasd","title":"Deshawn Ritchie","searchQueries":9,"recipients":27,"deliveryDays":["sun"],"deliveryTimes":["18:00","17:00","16:00","12:00"],"immediateDelivery":null},
+    {"uuid":"78338259081048424878171337913502", "collectionId":"asdasd","title":"John Hoeger","searchQueries":14,"recipients":100,"deliveryDays":["sun","sun","sun","sat","thu","sun"],"deliveryTimes":["16:00","18:00","17:00"],"immediateDelivery":null},
+    {"uuid":"18767164257609733600677299413432", "collectionId":"asdasd","title":"Lynn Doyle","searchQueries":8,"recipients":79,"deliveryDays":["sun","sat","sun","sun","fri","sun"],"deliveryTimes":["18:00","15:00","14:00","17:00"],"immediateDelivery":false},
+    {"uuid":"09680561966994442069588503429524", "collectionId":"asdasd","title":"Janee Green","searchQueries":8,"recipients":62,"deliveryDays":["sun","sun"],"deliveryTimes":["12:00","18:00","13:00","16:00","18:00"],"immediateDelivery":null},
+    {"uuid":"90785918254297660492484105466656", "collectionId":"asdasd","title":"Thomasine Kreiger","searchQueries":16,"recipients":3,"deliveryDays":["sun","sun","sat","sun","sat","sun"],"deliveryTimes":["15:00","17:00","18:00"],"immediateDelivery":false},
+    {"uuid":"04869485485914255569467109166245", "collectionId":"asdasd","title":"Tod Zboncak","searchQueries":20,"recipients":58,"deliveryDays":["sat","sat"],"deliveryTimes":["18:00","15:00","17:00"],"immediateDelivery":false},
+    {"uuid":"87698409642389427351985055776504", "collectionId":"asdasd","title":"Keely Cassin","searchQueries":8,"recipients":99,"deliveryDays":["sat","sat","sun","mon","sat"],"deliveryTimes":["16:00","18:00","17:00"],"immediateDelivery":false},
+    {"uuid":"59437483254357457072828438623599", "collectionId":"asdasd","title":"Mikel Steuber","searchQueries":20,"recipients":56,"deliveryDays":["mon"],"deliveryTimes":["17:00","18:00","13:00","16:00","15:00","14:00","11:00"],"immediateDelivery":false},
+    {"uuid":"10929637000380900604459355423665", "collectionId":"asdasd","title":"Dean Howell","searchQueries":2,"recipients":60,"deliveryDays":["sat"],"deliveryTimes":["18:00","15:00","14:00","17:00"],"immediateDelivery":null},
+    {"uuid":"83953325779239938885085769855747", "collectionId":"asdasd","title":"Merrie Dare","searchQueries":15,"recipients":47,"deliveryDays":["sun","fri","wed","fri","fri","sat","mon"],"deliveryTimes":["18:00"],"immediateDelivery":true},
+    {"uuid":"37335632579779148961564157151105", "collectionId":"asdasd","title":"Elmo Koch","searchQueries":5,"recipients":44,"deliveryDays":["sun","sun","sat","sat","thu","sun"],"deliveryTimes":["18:00","14:00","17:00","16:00"],"immediateDelivery":true},
+    {"uuid":"05154002199525027049166245035176", "collectionId":"asdasd","title":"Winston McLaughlin","searchQueries":3,"recipients":89,"deliveryDays":["sun","fri","sun"],"deliveryTimes":["17:00","15:00","14:00","12:00"],"immediateDelivery":null},
+    {"uuid":"38896154804801584872841848002587", "collectionId":"asdasd","title":"Mariela Huel","searchQueries":14,"recipients":93,"deliveryDays":["sun","sun","sun"],"deliveryTimes":["17:00","18:00"],"immediateDelivery":false},
+    {"uuid":"61036769980889704981270078482912", "collectionId":"asdasd","title":"Kareem Zboncak","searchQueries":16,"recipients":94,"deliveryDays":["sun","sat","sun","sun","sun","fri"],"deliveryTimes":["18:00","14:00","17:00","16:00","13:00"],"immediateDelivery":null},
+    {"uuid":"72539436841508497323764562922523", "collectionId":"asdasd","title":"Wayne Schuppe","searchQueries":12,"recipients":1,"deliveryDays":["sat","sun","sun","sat","sun"],"deliveryTimes":["17:00","18:00","16:00"],"immediateDelivery":false},
+    {"uuid":"92716424475757586997008795357154", "collectionId":"asdasd","title":"Londa Olson","searchQueries":15,"recipients":13,"deliveryDays":["sun"],"deliveryTimes":["18:00","15:00","17:00","16:00","14:00"],"immediateDelivery":false},
+    {"uuid":"13321184674636137621894887964010", "collectionId":"asdasd","title":"Sally Prosacco","searchQueries":5,"recipients":80,"deliveryDays":["sat","sun","wed","sun","sat","sat"],"deliveryTimes":["18:00","17:00"],"immediateDelivery":null},
+    {"uuid":"87172929022751807937575427636228", "collectionId":"asdasd","title":"Lyndon Boyer","searchQueries":8,"recipients":10,"deliveryDays":["thu","sun","sat"],"deliveryTimes":["17:00","18:00","16:00","10:00"],"immediateDelivery":null},
+    {"uuid":"61702010158127991359000477804958", "collectionId":"asdasd","title":"Marietta Pacocha","searchQueries":3,"recipients":11,"deliveryDays":["fri","sun","thu"],"deliveryTimes":["17:00","18:00","15:00"],"immediateDelivery":null}
+  ]
+}

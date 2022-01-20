@@ -15,7 +15,9 @@ export const getCollectionAlerts: AsyncLambdaHandler<SearchCollectionAlertsParam
         const count = response.count;
 
         for (let item in alerts) {
-            const alertsQuery = await CollectionAlertsRepository.defaultInstance.getQuerysByAlert(alerts[item].id);
+            const alertsQuery = await CollectionAlertsRepository.defaultInstance.getQueriesByAlert(
+                alerts[item].id
+            );
             alerts[item].searchQueriesCount = alertsQuery.length;
             const recipientsQuery = await CollectionAlertsRepository.defaultInstance.getRecipientsByAlert(alerts[item].id);
             alerts[item].recipientsCount = recipientsQuery.length;

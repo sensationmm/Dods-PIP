@@ -6,7 +6,9 @@ import { Icons } from '../../Icon/assets';
 import Input, { InputBaseProps } from '../InputBase';
 import * as Styled from './InputSearch.styles';
 
-export interface InputSearchProps extends Omit<InputBaseProps, 'type'> {}
+export interface InputSearchProps extends Omit<InputBaseProps, 'type'> {
+  onClear?: () => void;
+}
 
 const InputSearch: React.FC<InputSearchProps> = ({
   id,
@@ -25,6 +27,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
   placeholder = 'Search...',
   children,
   testId,
+  onClear,
 }) => {
   const isFilled = value.length > 0;
   return (
@@ -62,7 +65,13 @@ const InputSearch: React.FC<InputSearchProps> = ({
         />
         {children}
 
-        <Styled.clear data-test="input-clear" onClick={() => onChange('')}>
+        <Styled.clear
+          data-test="input-clear"
+          onClick={() => {
+            onChange('');
+            onClear?.();
+          }}
+        >
           <Icon
             src={Icons.Cross}
             size={IconSize.medium}

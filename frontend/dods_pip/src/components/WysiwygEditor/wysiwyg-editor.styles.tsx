@@ -104,8 +104,17 @@ export const wrapper = styled.div`
     min-height: 500px;
     padding: ${spacing(6)};
   }
+  .ql-editor * {
+    font-family: 'Open Sans';
+    font-size: 12px;
+    line-height: 1.25;
+  }
 
   .ql-editor.ql-blank::before {
     left: ${spacing(6)};
+  }
+
+  .ql-editor .tooltip {
+    display: none;
   }
 `;

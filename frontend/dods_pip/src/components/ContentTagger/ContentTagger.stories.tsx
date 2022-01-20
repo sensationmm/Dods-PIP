@@ -13,4 +13,13 @@ const Template: Story<ContentTaggerProps> = (args) => <ContentTagger {...args} /
 
 export const Primary = Template.bind({});
 
-Primary.args = {};
+Primary.args = {
+  tags: [
+    {
+      tagId: 'http://www.dods.co.uk/taxonomy/instance/Topics/ba68835e-6584-4c14-ab83-29fcae407cda',
+      termLabel: 'radiation and nuclear waste',
+      type: 'Topics',
+      instances: 3,
+    },
+  ],
+};
