@@ -539,7 +539,6 @@ def create_document(document: dict) -> str:
         pass
 
     output_path = os.path.join(path, filename)
-#TODO define s3 bucket
 
     s3_client = boto3.client('s3')
 
@@ -550,8 +549,9 @@ def create_document(document: dict) -> str:
             response = s3_client.upload_file(filename, bucket, object_name)
         except ClientError as e:
             logging.error(e)
-            return false
-        return true
+            return False
+
+        return True
 
     logger.info(f"Wrote {document['model']['external_id']} to filesystem")
 
