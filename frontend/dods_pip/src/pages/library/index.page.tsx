@@ -166,12 +166,6 @@ const aggregations: AggregationsType = {
   },
 };
 
-const defaultRequestPayload = {
-  ...(esb.requestBodySearch().query(esb.boolQuery()).size(20).from(0) as ExtendedRequestBodySearch)
-    ._body,
-  aggregations,
-};
-
 interface QueryObject {
   searchTerm?: string;
   basicFilters?: {
@@ -192,7 +186,7 @@ type QueryString = string | string[] | undefined;
 const getPayload = (
   query: QueryString = '{}',
 ): { payload?: unknown; parsedQuery?: QueryObject } => {
-  let esbQuery;
+  let esbQuery = esb.boolQuery();
   let parsedQuery;
   let resultsSize = 20;
 
@@ -208,44 +202,36 @@ const getPayload = (
 
     resultsSize = parsedQuery.resultsSize;
 
+    const phrases = searchTerm.match(/"(.*?)"/g) || []; // Anything in double quotes, e.g "I am a phrase"
+    const regex = new RegExp(`${phrases.join('|')}`, 'g');
+    const words = searchTerm.replace(regex, ''); // remove all phrases and we're left with the words
+
     if (searchTerm) {
-      esbQuery = esb
-        .boolQuery()
-        .should(esb.matchQuery('documentTitle', searchTerm))
-        .should(esb.matchQuery('documentContent', searchTerm))
-        .must(
-          basicFilters.map(({ key, value }) =>
-            esb.termQuery(key === 'jurisdiction' ? key : `${key}.keyword`, value),
-          ),
-        )
-        .must(
-          nestedFilters.map(({ path, key, value }) =>
-            esb
-              .nestedQuery()
-              .path(path)
-              .query(esb.termQuery(key.includes('termLabel') ? `${key}.keyword` : key, value)),
-          ),
-        );
-    } else if (!searchTerm) {
-      esbQuery = esb
-        .boolQuery()
-        .must(
-          basicFilters.map(({ key, value }) =>
-            esb.termQuery(key === 'jurisdiction' ? key : `${key}.keyword`, value),
-          ),
-        )
-        .must(
-          nestedFilters.map(({ path, key, value }) =>
-            esb
-              .nestedQuery()
-              .path(path)
-              .query(esb.termQuery(key.includes('termLabel') ? `${key}.keyword` : key, value)),
-          ),
-        );
+      esbQuery = esbQuery.must(
+        esb
+          .boolQuery()
+          .should(phrases.map((phrase) => esb.matchPhraseQuery('documentContent', phrase)))
+          .should(phrases.map((phrase) => esb.matchPhraseQuery('documentTitle', phrase)))
+          .should(words ? esb.matchQuery('documentContent', words) : [])
+          .should(words ? esb.matchQuery('documentTitle', words) : []),
+      );
     }
-    if (!esbQuery) {
-      return { payload: defaultRequestPayload, parsedQuery };
-    }
+
+    // Facets
+    esbQuery = esbQuery
+      .must(
+        basicFilters.map(({ key, value }) =>
+          esb.termQuery(key === 'jurisdiction' ? key : `${key}.keyword`, value),
+        ),
+      )
+      .must(
+        nestedFilters.map(({ path, key, value }) =>
+          esb
+            .nestedQuery()
+            .path(path)
+            .query(esb.termQuery(key.includes('termLabel') ? `${key}.keyword` : key, value)),
+        ),
+      );
 
     return {
       payload: {
@@ -274,7 +260,7 @@ const getPayload = (
 
   return {
     payload: {},
-    parsedQuery: {},
+    parsedQuery,
   };
 };
 
@@ -322,7 +308,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     let newQuery: QueryObject = rest;
 
     if (min && max) {
-      newQuery = { ...newQuery, dateRange: { min, max } };
+      newQuery = { ...rest, dateRange: { min, max } };
     }
 
     router.push(
@@ -347,9 +333,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     let newNestedFilters = [...nestedFilters];
 
     if (selectedIndex > -1) {
-      newNestedFilters.splice(selectedIndex, 1); // remove
+      // remove
+      newNestedFilters.splice(selectedIndex, 1);
     } else {
-      newNestedFilters = [...nestedFilters, { path, key, value }]; // add
+      // add
+      newNestedFilters = [...nestedFilters, { path, key, value }];
     }
 
     const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
@@ -429,14 +417,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
       { scroll: false },
     );
   };
-
-  useEffect(() => {
-    if (requestPayload) {
-      const newRequestPayload = { ...requestPayload };
-      newRequestPayload.from = offset;
-      setRequestPayload(newRequestPayload);
-    }
-  }, [offset]);
 
   useEffect(() => {
     const {
