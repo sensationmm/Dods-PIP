@@ -1,13 +1,13 @@
-import { ClientAccount, Collection, CollectionAlert, CollectionDocument, CollectionSavedQuery, Sequelize, User, WhereOptions } from '@dodsgroup/dods-model';
+import { ClientAccount, Collection, CollectionAlert, CollectionDocument, CollectionSavedQuery, Op, Sequelize, User, WhereOptions } from '@dodsgroup/dods-model';
 import {
+    CollectionOutput,
     CollectionsPersister,
     DeleteCollectionInput,
     GetCollectionInput,
     GetCollectionOutput,
     SearchCollectionsInput,
     SearchCollectionsOutput,
-    UpdateCollectionParameters,
-    CollectionOutput
+    UpdateCollectionParameters
 } from './domain';
 
 import { CollectionError } from '@dodsgroup/dods-domain';
@@ -35,22 +35,37 @@ export class CollectionsRepository implements CollectionsPersister {
             isActive: true,
         };
 
-        const searchString = startsWith || searchTerm;
 
-        //* Search by document name case insensitive coincidences
-        if (searchString) {
-            const lowerCaseName = searchString.trim().toLocaleLowerCase();
+        if (startsWith && searchTerm) {
+            const lowerCaseStarts = startsWith.trim().toLocaleLowerCase();
+            const lowerCaseSearch = searchTerm.trim().toLocaleLowerCase();
 
-            //* If searchTerm was given then search for coincidences in any part of the name
-            //* If not search only in the beginning
             whereClause = {
                 ...whereClause,
-                $and: Sequelize.where(
-                    Sequelize.fn('LOWER', Sequelize.col('Collection.name')),
-                    'LIKE',
-                    `${searchTerm ? '%' : ''}${lowerCaseName}%`
-                ),
+                'name': {
+                    [Op.and]: [{ [Op.like]: `${lowerCaseStarts}%` }, { [Op.like]: `%${lowerCaseSearch}%` }],
+                }
             };
+        }
+
+        else {
+            const searchString = startsWith || searchTerm;
+
+            //* Search by document name case insensitive coincidences
+            if (searchString) {
+                const lowerCaseName = searchString.trim().toLocaleLowerCase();
+
+                //* If searchTerm was given then search for coincidences in any part of the name
+                //* If not search only in the beginning
+                whereClause = {
+                    ...whereClause,
+                    $and: Sequelize.where(
+                        Sequelize.fn('LOWER', Sequelize.col('Collection.name')),
+                        'LIKE',
+                        `${searchTerm ? '%' : ''}${lowerCaseName}%`
+                    ),
+                };
+            }
         }
 
         let clientAccountWhere = {};
@@ -95,6 +110,7 @@ export class CollectionsRepository implements CollectionsPersister {
             order: [orderBy],
             offset,
             limit,
+            distinct: true,
         });
 
         const data = await Promise.all(rows.map((row) => mapCollection(row)));
