@@ -15,14 +15,3 @@ module "scraped-content" {
   environment = var.environment
   name        = "content-extraction"
 }
-
-
-// --------------------------------------------------------------------------------------------------------------------
-// - scrapped hashes e.g. for hansard / EDM
-// --------------------------------------------------------------------------------------------------------------------
-module "scrapping-dynamodb" {
-  source      = "./modules/dynamodb"
-  environment = var.environment
-  name        = "scrapping-hashes"
-  partition-key = "document_hash"
-}
