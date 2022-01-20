@@ -13,6 +13,7 @@ import json
 import sys
 import os
 import uuid
+import boto3
 
 from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
@@ -20,6 +21,7 @@ from hashlib import sha256
 from pynamodb.models import Model
 from pynamodb.exceptions import TableDoesNotExist
 from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
+from botocore.exceptions import ClientError
 
 from lib.common import Common
 
@@ -31,7 +33,6 @@ HOUSE_URLS = {
     "DAILY_SECTIONS": "{base}overview/sectionsforday.json?date={date}&house={house}",
     "SECTION_TREES": "{base}overview/sectiontrees.json?section={section}&date={date}&house={house}",
 }
-
 CURRENTLY_PROCESSING_URL = f"{BASE}overview/currentlyprocessing.json"
 DOCUMENT_URL = f"{BASE}debates/debate/" + "{external_id}.json"
 
@@ -87,18 +88,15 @@ class DataModel(Model):
     """
 
     class Meta:
-        table_name = "hansard-api"
+        table_name = "scrapping-hashes-dev-table"
 
-        # TODO
-        host = "http://localhost:8000"  # TODO enviorn driven
+        host = os.environ.get("DYNAMODB_HOST")
 
 
         # scrapping-hashes-dev-table
-        # Lifted from the lib/datamodel file here - we want this to
-        # write to that like the other scrapers.
         # region = os.environ['REGION']
         # host = os.environ['DYNAMODB_HOST']
-        # # 'https://dynamodb.us-east-1.amazonaws.com'
+        # 'https://dynamodb.us-east-1.amazonaws.com'
 
 
     external_id = UnicodeAttribute(hash_key=True)
@@ -541,13 +539,19 @@ def create_document(document: dict) -> str:
         pass
 
     output_path = os.path.join(path, filename)
+#TODO define s3 bucket
 
-    # TODO - this should write the output to the relevant S3 bucket driven
-    # by the environement variables
-    # with s3 = boto3.client('s3') etc
+    s3_client = boto3.client('s3')
 
     with open(output_path, "w") as output:
-        output.write(json.dumps(document["mapped"], indent=2))
+        if object_name is None:
+            object_name = os.path.basename(filename)
+        try:
+            response = s3_client.upload_file(filename, bucket, object_name)
+        except ClientError as e:
+            logging.error(e)
+            return false
+        return true
 
     logger.info(f"Wrote {document['model']['external_id']} to filesystem")
 
