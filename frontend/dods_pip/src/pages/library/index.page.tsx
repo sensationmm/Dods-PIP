@@ -537,40 +537,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
             </div>
           )}
           <Spacer size={8} />
-      {apiResponse && (
-        <main>
-          <Panel bgColor={color.base.ivory}>
-            <Text type={'h1'} headingStyle="heroExtraLarge">
-              Library
-            </Text>
-            <Spacer size={12} />
-            <Styled.librarySearchWrapper>
-              <section>
-                <InputSearch
-                  onKeyDown={onSearch}
-                  id="search-library"
-                  label="What are you looking for?"
-                  value={searchText}
-                  onChange={(val) => setSearchText(val)}
-                  onClear={() => setKeywordQuery('')}
-                />
-              </section>
-              <aside>
-                <Toggle
-                  isActive={filtersVisible}
-                  labelOn={'Filters'}
-                  onChange={(state) => setFiltersVisible(!filtersVisible)}
-                />
-              </aside>
-            </Styled.librarySearchWrapper>
-            <Spacer size={8} />
-            {apiResponse.es_response?.hits?.hits.length !== 0 && (
-              <div>
-                Showing {offset + 1} - {(apiResponse?.es_response?.hits?.hits.length || 0) + offset}{' '}
-                of {apiResponse.es_response?.hits?.total?.value}
-              </div>
-            )}
-            <Spacer size={8} />
 
           <Styled.contentWrapper>
             <Styled.resultsContent>
