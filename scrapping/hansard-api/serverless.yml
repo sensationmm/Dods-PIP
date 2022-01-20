@@ -8,9 +8,6 @@ configValidationMode: error
 plugins:
   - serverless-python-requirements
   - serverless-offline
-
-# There are variables setup for DynamoDB deployment
-# un-comment the resource section if you need a DynamoDB for this lambda
 custom:
   resource_prefix: hansard-api
   default_stage: dev
@@ -18,7 +15,7 @@ custom:
   stack_name: ${self:custom.resource_prefix}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  dynamodb_table: ${self:custom.stack_name}
+  dynamodb_table: scrapping-hashes-${self:custom.stage}-table
   dynamodb_arn: arn:aws:dynamodb:${self:custom.region}:*:table/${self:custom.dynamodb_table}
   dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
   s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
@@ -41,7 +38,7 @@ provider:
   lambdaHashingVersion: 20201221
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
-    deploymentBucket:
+  deploymentBucket:
       name: scrapping
 
   environment:
@@ -56,20 +53,20 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - s3:*        
+        - s3:*
       Resource: "arn:aws:s3:::*"
 
-    # - Effect: Allow
-    #   Action:
-    #     - dynamodb:Query
-    #     - dynamodb:Scan
-    #     - dynamodb:GetItem
-    #     - dynamodb:PutItem
-    #     - dynamodb:UpdateItem
-    #     - dynamodb:DeleteItem
-    #     - dynamodb:DescribeTable
-    #   Resource:
-    #     - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource:
+        - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
 
 functions:
   scrape:
