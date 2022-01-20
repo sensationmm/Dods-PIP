@@ -118,3 +118,8 @@ export const facetViewMoreBtn = styled.button`
     margin-right: 10px;
   }
 `;
+
+export const facetChipsWrapper = styled.div`
+  display: flex;
+  padding: 24px;
+`;

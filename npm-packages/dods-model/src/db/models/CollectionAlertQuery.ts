@@ -77,79 +77,78 @@ export class CollectionAlertQuery
 }
 
 CollectionAlertQuery.init(
-  {
-    id: {
-      type: DataTypes.INTEGER({ length: 11 }),
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
+    {
+        id: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: false,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        uuid: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            allowNull: false,
+        },
+        alertId: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: false,
+            references: {
+                model: 'dods_collections_alerts',
+                key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
+        },
+        name: {
+            type: DataTypes.STRING({ length: 255 }),
+            allowNull: true,
+        },
+        query: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            defaultValue: null,
+        },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 1,
+            allowNull: true,
+        },
+        createdBy: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: true,
+            defaultValue: null,
+            references: {
+                model: 'dods_users',
+                key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL',
+        },
+        updatedBy: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: true,
+            defaultValue: null,
+            references: {
+                model: 'dods_users',
+                key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL',
+        },
+        informationTypes: {
+            type: DataTypes.STRING({ length: 255 }),
+            allowNull: true,
+        },
+        contentSources: {
+            type: DataTypes.STRING({ length: 255 }),
+            allowNull: true,
+        },
     },
-    uuid: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      allowNull: false,
-    },
-    alertId: {
-      type: DataTypes.INTEGER({ length: 11 }),
-      allowNull: false,
-      references: {
-        model: 'dods_collections_alerts',
-        key: 'id'
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
-    },
-    name: {
-      type: DataTypes.STRING({ length: 255 }),
-      allowNull: true,
-    },
-    query: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-      defaultValue: null
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: 1,
-      allowNull: true,
-    },
-    createdBy: {
-      type: DataTypes.INTEGER({ length: 11 }),
-      allowNull: true,
-      defaultValue: null,
-      references: {
-        model: 'dods_users',
-        key: 'id'
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'SET NULL'
-    },
-    updatedBy: {
-      type: DataTypes.INTEGER({ length: 11 }),
-      allowNull: true,
-      defaultValue: null,
-      references: {
-        model: 'dods_users',
-        key: 'id'
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'SET NULL'
-    },
-    informationTypes: {
-      type: DataTypes.STRING({ length: 255 }),
-      allowNull: true,
-    },
-    contentSources: {
-      type: DataTypes.STRING({ length: 255 }),
-      allowNull: true,
-    },
-
-  },
-  {
-    tableName: 'dods_collections_alerts_queries',
-    underscored: true,
-    timestamps: true,
-    sequelize: sequelizeConnection,
-    // paranoid: true
-  }
+    {
+        tableName: 'dods_collections_alerts_queries',
+        underscored: true,
+        timestamps: true,
+        sequelize: sequelizeConnection,
+        paranoid: true,
+    }
 );

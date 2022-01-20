@@ -4,10 +4,17 @@ import spacing from '@dods-ui/globals/spacing';
 import styled from 'styled-components';
 
 export const alertsHeader = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const alertsHeaderTitle = styled.div`
   display: flex;
   align-items: center;
 
-  ${Icon} {
+  > ${Icon} {
     margin-right: ${spacing(4)};
   }
 

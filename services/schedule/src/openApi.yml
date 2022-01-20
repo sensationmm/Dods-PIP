@@ -93,7 +93,6 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-
 components:
   schemas:
     Message:
@@ -254,6 +253,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/deactivateScheduleReturn'
+
 
   requestBodies:
     scheduleUpdateBody:

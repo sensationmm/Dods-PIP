@@ -155,6 +155,12 @@ export interface DeleteAlertParameters {
     alertId: string;
 }
 
+export interface DeleteAlertQueryParameters {
+    collectionId: string;
+    alertId: string;
+    queryId: string;
+}
+
 export interface CreateAlertQueryParameters {
     alertId: string | number;
     informationTypes: string;

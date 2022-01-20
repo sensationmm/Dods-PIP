@@ -1,0 +1,6 @@
+@contentType = application/json
+@queryId = 207ac2d0-922a-44d4-8bdc-f2169e9e868b
+
+# @name deleteAlertQuery
+
+DELETE {{host}}/collections/350b159c-6e43-11ec-90d6-0242ac120003/alerts/59648fe0-534b-4b3b-9214-6bf57b0cdd56/queries/{{queryId}} HTTP/1.1

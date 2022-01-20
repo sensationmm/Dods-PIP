@@ -43,7 +43,7 @@ const InputBase: React.FC<InputBaseProps> = ({
   required = false,
   optional = false,
   helperText,
-  onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  onKeyDown = () => {
     return false;
   },
   onChange,

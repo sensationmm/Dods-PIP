@@ -3,14 +3,27 @@ import withSession from '../../../lib/session';
 import { Api, toQueryString } from '../../../utils/api';
 
 export default withSession(async (req, res) => {
+  const { query, method, body } = req;
   try {
-    const result = await fetchJson(
-      `${process.env.APP_API_URL}${Api.Collections}${toQueryString(req.query)}`,
-      {
-        method: 'GET',
-      },
-      req,
-    );
+    let result;
+    if (method === 'GET' || method === 'DELETE') {
+      result = await fetchJson(
+        `${process.env.APP_API_URL}${Api.Collections}${toQueryString(query)}`,
+        {
+          method,
+        },
+        req,
+      );
+    } else {
+      result = await fetchJson(
+        `${process.env.APP_API_URL}${Api.Collections}${toQueryString(query)}`,
+        {
+          method,
+          body: JSON.stringify(body),
+        },
+        req,
+      );
+    }
     res.json(result);
   } catch (error) {
     const { response: fetchResponse } = error;

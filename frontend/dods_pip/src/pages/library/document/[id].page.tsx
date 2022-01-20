@@ -112,7 +112,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         <Styled.headingButton type="button" onClick={() => setExpandedTags(!expandedTags)}>
           <span>Content Tags</span>
           <Icon
-            src={expandedTags ? Icons.ChevronDown : Icons.ChevronLeft}
+            src={expandedTags ? Icons.ChevronUp : Icons.ChevronDown}
             size={IconSize.mediumLarge}
           />
         </Styled.headingButton>
