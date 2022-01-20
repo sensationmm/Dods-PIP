@@ -1,14 +1,14 @@
-import { CollectionAlertsRepository, CreateAlertParameters } from '@dodsgroup/dods-repositories';
+import { CollectionAlertsRepository, SetAlertQueriesParameters } from '@dodsgroup/dods-repositories';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
-import { createAlert } from '../../../src/handlers/createAlert/createAlert';
 import { mocked } from 'jest-mock';
+import { setAlertQueries } from '../../../src/handlers/setAlertQueries/setAlertQueries';
 
 const mockedCollectionAlertsRepository = mocked(CollectionAlertsRepository, true);
 
 const defaultContext = createContext();
 
-const FUNCTION_NAME = createAlert.name;
+const FUNCTION_NAME = setAlertQueries.name;
 
 jest.mock('@dodsgroup/dods-repositories');
 
@@ -39,21 +39,27 @@ const defaultCreatedAlert: any = {
 describe(`${FUNCTION_NAME} handler`, () => {
     it('Valid input', async () => {
 
-        const requestParams: CreateAlertParameters = {
-            collectionId: '94a57103-3bf0-4a29-bdba-99a4650c1849',
-            title: "repository",
-            createdBy: "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
+        const requestParams: SetAlertQueriesParameters = {
+            collectionId: "collection-uuid",
+            alertId: "alert-uuid",
+            alertQueries: [{
+                query: "2ndo time",
+                informationTypes: "string",
+                contentSources: "string",
+            },
+            ],
+            updatedBy: "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
         };
 
 
-        mockedCollectionAlertsRepository.defaultInstance.createAlert.mockResolvedValue(defaultCreatedAlert);
+        mockedCollectionAlertsRepository.defaultInstance.setAlertQueries.mockResolvedValue(defaultCreatedAlert);
 
 
-        const response = await createAlert(requestParams, defaultContext);
+        const response = await setAlertQueries(requestParams, defaultContext);
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
-            message: 'Alert created successfully in step 1',
+            message: 'Alert updated successfully in step 1',
             alert: defaultCreatedAlert
         });
 

@@ -40,9 +40,9 @@ export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => 
         createdBy: createdById ? { uuid: createdById.uuid, name: createdById.fullName, emailAddress: createdById.primaryEmail, isDodsUser } : {},
         createdAt,
         updatedAt,
-        updatedBy: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail } : {},
+        updatedBy: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail, isDodsUser } : {},
         hasKeywordsHighlight: hasKeywordsHighlight ? true : false,
-        isSchedule: isScheduled ? true : false,
+        isScheduled: isScheduled ? true : false,
         lastStepCompleted: lastStepCompleted,
         isPublished: isPublished ? true : false
     }
@@ -86,7 +86,7 @@ export const mapAlertQuery = async (model: CollectionAlertQuery, alertModel: Col
 }
 
 export const mapCollection = async (model: Collection): Promise<CollectionOutput> => {
-    const { uuid, name, clientAccount, createdAt, createdBy, updatedAt, alerts, savedQueries, documents } = model;
+    const { uuid, name, clientAccount, createdAt, createdBy, updatedAt, updatedBy, alerts, savedQueries, documents } = model;
     const role = await createdBy?.getRole();
     const isDodsUser = role ? Boolean(role.dodsRole) : undefined
 
@@ -97,6 +97,7 @@ export const mapCollection = async (model: Collection): Promise<CollectionOutput
         createdAt: createdAt,
         createdBy: createdBy ? { uuid: createdBy.uuid, name: createdBy.fullName, emailAddress: createdBy.primaryEmail, isDodsUser } : {},
         updatedAt: updatedAt,
+        updatedBy: updatedBy ? { uuid: updatedBy.uuid, name: updatedBy.fullName, emailAddress: updatedBy.primaryEmail, isDodsUser } : {},
         alertsCount: alerts?.length,
         queriesCount: savedQueries?.length,
         documentsCount: documents?.length,
