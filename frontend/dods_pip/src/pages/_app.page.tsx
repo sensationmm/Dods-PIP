@@ -6,14 +6,16 @@ import { ucFirst } from '@dods-ui/utils/string';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import * as Styled from './_app.styles';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
-  const router = useRouter();
-  const pagePath = router.pathname?.match(/[\w\d-]*$/);
-  const rootPage = ucFirst((pagePath && pagePath[0].replace(/-/g, ' ')) || '');
+  const { pathname } = useRouter();
+  const rootPage = useMemo(() => {
+    const pagePaths = pathname.split('/').filter((path) => !!path);
+    return ucFirst(pagePaths[0]);
+  }, [pathname]);
 
   return (
     <div data-test={'page-app'}>
