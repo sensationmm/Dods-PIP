@@ -107,13 +107,6 @@ type AggregationsType = {
   };
 };
 
-interface RequestPayload {
-  query?: Query;
-  aggregations: AggregationsType;
-  size?: number;
-  from?: number;
-}
-
 const aggregations: AggregationsType = {
   topics: {
     terms: {
@@ -276,7 +269,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
   const [offset, setOffset] = useState(0);
   const [resultsSize] = useState(20);
-  const [requestPayload, setRequestPayload] = useState<RequestPayload>();
 
   const currentQuery: QueryObject = useMemo(() => {
     if (typeof router.query.query === 'string') {

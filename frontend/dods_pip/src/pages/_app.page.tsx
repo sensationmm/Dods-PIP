@@ -13,7 +13,7 @@ import * as Styled from './_app.styles';
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const { pathname } = useRouter();
   const rootPage = useMemo(() => {
-    const pagePaths = pathname.split('/').filter((path) => !!path);
+    const pagePaths = pathname?.split('/').filter((path) => !!path) || [];
     return ucFirst(pagePaths[0]);
   }, [pathname]);
 
