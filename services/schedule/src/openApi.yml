@@ -92,19 +92,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-  /percolator:
-    post:
-      operationId: createPercolator
-      summary: "Create percolator"
-      parameters:
-        - $ref: '#/components/parameters/percolatorQuery'
-      responses:
-        "200":
-          - $ref: "#/components/responses/createPercolate"
-        "400":
-          - $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
 
 components:
   schemas:
@@ -173,16 +160,6 @@ components:
         message:
           type: string
           example: schedule with ID 008f811e5ccf44d3a0df5b7f70a8e85d deactivated
-    createPercolateReturn:
-      type: object
-      properties:
-        success:
-          type: string
-          example: true
-        message:
-          type: string
-        response:
-          type: object
 
   parameters:
     createSchedule:
@@ -223,13 +200,6 @@ components:
           id:
             type: string
             example: 008f811e5ccf44d3a0df5b7f70a8e85d
-    percolatorQuery:
-      in: body
-      name: percolator
-      schema:
-        type: string
-      required: true
-      description: Percolator query
 
   responses:
     NotFound:
@@ -283,12 +253,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/deactivateScheduleReturn'
-    createPercolate:
-      description: "Response from Percolate Creation, very loose as it depends on the query"
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/createPercolateReturn'
+
 
   requestBodies:
     scheduleUpdateBody:

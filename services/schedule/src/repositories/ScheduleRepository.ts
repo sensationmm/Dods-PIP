@@ -2,7 +2,6 @@ const { Client } = require('@elastic/elasticsearch')
 
 import {
     activateScheduleParameters,
-    createPercolatorParameters,
     createScheduleParameters,
     deactivateScheduleParameters,
     deleteScheduleParameters,
@@ -79,11 +78,5 @@ export class ScheduleRepository implements Schedule {
             "schedule": response.body.watch.trigger.schedule.cron,
             "active": response.body.status.state.active,
         }
-    }
-
-    async createPercolator(data: createPercolatorParameters): Promise<any> {
-         const response = await this.elasticsearch.index({index: 'alerts', body: data.query})
-
-        return response['body']
     }
 }

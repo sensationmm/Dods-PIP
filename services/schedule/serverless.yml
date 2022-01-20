@@ -149,12 +149,3 @@ functions:
           method: put
           path: scheduler/{scheduleId}/deactivate
           cors: true
-
-  createPercolator:
-    handler: src/handlers/createPercolator/index.handle
-    description: Create alert percolator
-    events:
-      - http:
-          method: post
-          path: percolator
-          cors: true
