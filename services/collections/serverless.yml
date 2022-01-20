@@ -207,6 +207,16 @@ functions:
           caching:
             enabled: false
 
+  searchAlertRecipients:
+    handler: src/handlers/searchAlertRecipients/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: collections/{collectionId}/alerts/{alertId}/recipients
+          caching:
+            enabled: false
+
   getAlert:
     handler: src/handlers/getAlert/index.handle
     description: Get the basic information of an alert
@@ -270,5 +280,15 @@ functions:
       - http:
           method: post
           path: /collections/{collectionId}/alerts/{alertId}/queries/{queryId}/copyto
+          caching:
+            enabled: false
+
+  setAlertQueries:
+    handler: src/handlers/setAlertQueries/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/queries
           caching:
             enabled: false

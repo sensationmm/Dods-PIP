@@ -7,6 +7,7 @@ import {
     BelongsToSetAssociationMixin,
     DataTypes,
     Model,
+    Optional,
 } from 'sequelize';
 import { ClientAccount, CollectionAlert, CollectionDocument, CollectionSavedQuery, User } from '.';
 
@@ -17,12 +18,22 @@ interface CollectionAttributes {
     uuid: string;
     name: string;
     isActive: boolean;
+    clientAccountId: number;
+    createdById?: number | null;
+    updatedById?: number | null;
 }
 
-export interface CollectionInput extends Omit<CollectionAttributes, 'id' | 'uuid'> {
-    clientAccountId: number;
-    createdById: number;
-}
+export interface CollectionInput
+    extends Optional<
+    CollectionAttributes,
+    | 'id'
+    | 'uuid'
+    | 'name'
+    | 'isActive'
+    | 'clientAccountId'
+    | 'createdById'
+    | 'updatedById'
+    > { }
 
 export interface CollectionOutput extends Required<CollectionAttributes> { }
 
@@ -32,6 +43,9 @@ export class Collection
     public id!: number;
     public uuid!: string;
     public name!: string;
+    public clientAccountId!: number;
+    public createdById!: number | null;
+    public updatedById!: number | null;
 
     public isActive!: boolean;
 
@@ -44,6 +58,10 @@ export class Collection
     public readonly createdBy!: User;
     public getCreatedBy!: BelongsToGetAssociationMixin<User>;
     public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
+
+    public readonly updatedBy!: User;
+    public getUpdatedBy!: BelongsToGetAssociationMixin<User>;
+    public setUpdatedBy!: BelongsToSetAssociationMixin<User, number>;
 
     public readonly savedQueries?: CollectionSavedQuery[];
     public getSavedQueries!: BelongsToManyGetAssociationsMixin<CollectionSavedQuery>;
@@ -60,6 +78,7 @@ export class Collection
     public static associations: {
         clientAccount: Association<Collection, ClientAccount>;
         createdBy: Association<Collection, User>;
+        updatedBy: Association<Collection, User>;
         savedQueries: BelongsToMany<Collection, CollectionSavedQuery>;
         alerts: BelongsToMany<Collection, CollectionAlert>;
         documents: BelongsToMany<Collection, CollectionDocument>;
@@ -92,6 +111,38 @@ Collection.init(
             type: DataTypes.BOOLEAN,
             defaultValue: true,
             allowNull: true,
+        },
+        clientAccountId: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: false,
+            references: {
+                model: 'dods_client_accounts',
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE'
+        },
+        createdById: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: true,
+            defaultValue: null,
+            references: {
+                model: 'dods_users',
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
+        },
+        updatedById: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: true,
+            defaultValue: null,
+            references: {
+                model: 'dods_users',
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
         },
     },
     {

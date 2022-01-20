@@ -54,7 +54,7 @@ const answerMock: AlertOutput = {
     "updatedAt": null,
     "updatedBy": {},
     "hasKeywordsHighlight": true,
-    "isSchedule": true,
+    "isScheduled": true,
     "lastStepCompleted": 1,
     "isPublished": true,
 };

@@ -29,6 +29,9 @@ export const contentWrapper = styled.div`
   }
 `;
 
+export const resultsContent = styled.section`
+  flex: 1;
+`;
 
 export const filtersTag = styled.div`
   display: flex;

@@ -140,6 +140,7 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
           
+          
   /collections/{collectionId}/alerts/{alertId}/schedule:
     put:
       operationId: setAlertSchedule
@@ -240,6 +241,25 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
           
+    put:
+      operationId: setAlertQueries
+      summary: "Set multiple Queries associated to a Alert"
+      description: "Set Alert Queries Endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      requestBody:
+        $ref: "#/components/requestBodies/setAlertQueries"
+      responses:
+        "200":
+          $ref: "#/components/responses/setAlertResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+      
+          
   /collections/{collectionId}/alerts/{alertId}/queries/{queryId}:
     put:
       operationId: updateAlertQuery
@@ -256,23 +276,6 @@ paths:
           $ref: "#/components/responses/CreateQueryResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
-  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}/copyto:
-    post:
-      operationId: copyQuery
-      summary: "Copy the specified query to a different alert"
-      description: "Copy the specified query to a different alert"
-      parameters:
-        - $ref: '#/components/parameters/collectionId'
-        - $ref: "#/components/parameters/alertId"
-        - $ref: "#/components/parameters/queryId"
-      requestBody:
-        $ref: '#/components/requestBodies/CopyQuery'
-      responses:
-        "200":
-          $ref: "#/components/responses/GetAlertResponse"
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -303,11 +306,9 @@ components:
         title:
           type: string
           example: alert title
-        alertQueries:
-          type: array
-          minItems: 1
-          items:
-            $ref: "#/components/schemas/AlertQueries"
+        createdBy:
+          type: string
+          format: uuid
             
     CreateAlertQueryInput:
       type: object
@@ -417,7 +418,7 @@ components:
               type: string
             emailAddress:
               type: string
-            isDODSUser:
+            isDodsUser:
               type: boolean
         updatedBy: 
           type: object
@@ -429,7 +430,7 @@ components:
               type: string
             emailAddress:
               type: string
-            isDODSUser:
+            isDodsUser:
               type: boolean
         createdAt:
           type: string 
@@ -486,6 +487,8 @@ components:
             emailAddress:
               type: string
               format: email
+            isDodsUser:
+              type: boolean
         createdAt:
           type: string
         updatedBy: 
@@ -499,6 +502,8 @@ components:
             emailAddress:
               type: string
               format: email
+            isDodsUser:
+              type: boolean
         updatedAt:
           type: string
         lastStepCompleted:
@@ -511,6 +516,10 @@ components:
       properties:
         name:
           type: string
+          minLength: 1
+        updatedBy:
+          type: string
+          format: uuid
           minLength: 1
           
     alertScheduleInput:
@@ -568,21 +577,6 @@ components:
           format: uuid
           minLength: 1
 
-    CopyQueryInput:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          format: uuid
-          minLength: 1
-        destinationAlertId:
-          type: string
-          format: uuid
-          minLength: 1
-      required:
-        - createdBy
-        - destinationAlertId
-
     CollectionOutput:
       type: object
       properties:
@@ -603,6 +597,18 @@ components:
         updatedAt:
           type: string
           format: date-time
+          
+    SetAlertQueriesInput:
+      type: object
+      properties:
+        alertQueries:
+          type: array
+          items:
+            $ref: "#/components/schemas/AlertQueries"
+        updatedBy:
+          type: string
+          format: uuid
+
 
     ClientAccount:
       type: object
@@ -987,6 +993,22 @@ components:
                 items:
                   $ref: "#/components/schemas/AlertOutput"
                   
+    setAlertResponse:
+      description: "Set Alert Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Alert updated successfully in step 1
+              alert:
+                  $ref: "#/components/schemas/AlertOutput"
+      
+                  
     GetQueriesResponse:
       description: "Get Alerts Response"
       content:
@@ -1024,14 +1046,6 @@ components:
                 type: string
                 example: Alert was deleted successfully
 
-    CopyQueryResponse:
-      description: "Get Alerts Response"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/QueryOutput"
-          
-
   requestBodies:
     CreateCollection:
       description: "Payload to create a new collection"
@@ -1049,8 +1063,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CreateAlertInput"
-            required:
-            - alertQueries
             
     CreateAlertQuery:
       description: "Payload to create a new alert query"
@@ -1059,13 +1071,19 @@ components:
           schema:
             $ref: "#/components/schemas/CreateAlertQueryInput"
             
+    setAlertQueries:
+      description: "Payload to set new alert query"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SetAlertQueriesInput"
+            
     UpdateAlertQuery:
       description: "Payload to update a new alert query"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateAlertQueryInput"
-
 
     UpdateCollection:
       description: "Payload to update a collection"
@@ -1101,10 +1119,3 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CopyAlertInput"
-
-    CopyQuery:
-      description: "Payload to copy an existing query"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/CopyQueryInput"

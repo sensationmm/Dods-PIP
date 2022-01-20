@@ -19,7 +19,7 @@ import Tag from '../../components/Tag';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import fetchJson from '../../lib/fetchJson';
-import { Api, BASE_URI } from '../../utils/api';
+import { Api } from '../../utils/api';
 import * as Styled from './library.styles';
 import Toggle from '@dods-ui/components/_form/Toggle';
 
@@ -190,7 +190,9 @@ interface QueryObject {
 
 type QueryString = string | string[] | undefined;
 
-const getPayload = (query: QueryString = '{}'): { payload: unknown; parsedQuery: QueryObject } => {
+const getPayload = (
+  query: QueryString = '{}',
+): { payload?: unknown; parsedQuery?: QueryObject } => {
   let esbQuery;
   let parsedQuery;
   let resultsSize = 20;
@@ -198,7 +200,12 @@ const getPayload = (query: QueryString = '{}'): { payload: unknown; parsedQuery:
   try {
     parsedQuery = typeof query === 'string' ? JSON.parse(query) : {};
 
-    const { searchTerm = '', basicFilters = [], nestedFilters = [] }: QueryObject = parsedQuery;
+    const {
+      searchTerm = '',
+      basicFilters = [],
+      nestedFilters = [],
+      dateRange = {},
+    }: QueryObject = parsedQuery;
 
     resultsSize = parsedQuery.resultsSize;
 
@@ -237,26 +244,38 @@ const getPayload = (query: QueryString = '{}'): { payload: unknown; parsedQuery:
           ),
         );
     }
+    if (!esbQuery) {
+      return { payload: defaultRequestPayload, parsedQuery };
+    }
+
+    return {
+      payload: {
+        ...(
+          esb
+            .requestBodySearch()
+            .query(
+              esbQuery.filter(
+                esb
+                  .rangeQuery('contentDateTime')
+                  // Fallback to beginning of JS time to now
+                  .gte(dateRange.min || format(new Date(0), 'yyyy-MM-dd'))
+                  .lte(dateRange.max || format(new Date(), 'yyyy-MM-dd')),
+              ),
+            )
+            .size(20)
+            .from(resultsSize) as ExtendedRequestBodySearch
+        )._body,
+        aggregations,
+      },
+      parsedQuery,
+    };
   } catch (error) {
     console.error(error);
   }
 
-  if (!esbQuery) {
-    return { payload: defaultRequestPayload, parsedQuery };
-  }
-
   return {
-    payload: {
-      ...(
-        esb
-          .requestBodySearch()
-          .query(esbQuery)
-          .size(20)
-          .from(resultsSize) as ExtendedRequestBodySearch
-      )._body,
-      aggregations,
-    },
-    parsedQuery,
+    payload: {},
+    parsedQuery: {},
   };
 };
 
@@ -485,6 +504,39 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
         <title>Dods PIP | Library</title>
       </Head>
 
+      <main>
+        <Panel bgColor={color.base.ivory}>
+          <Text type={'h1'} headingStyle="heroExtraLarge">
+            Library
+          </Text>
+          <Spacer size={12} />
+          <Styled.librarySearchWrapper>
+            <section>
+              <InputSearch
+                onKeyDown={onSearch}
+                id="search-library"
+                label="What are you looking for?"
+                value={searchText}
+                onChange={(val) => setSearchText(val)}
+                onClear={() => setKeywordQuery('')}
+              />
+            </section>
+            <aside>
+              <Toggle
+                isActive={filtersVisible}
+                labelOn={'Filters'}
+                onChange={(state) => setFiltersVisible(!filtersVisible)}
+              />
+            </aside>
+          </Styled.librarySearchWrapper>
+          <Spacer size={8} />
+          {apiResponse.es_response?.hits?.hits.length !== 0 && (
+            <div>
+              Showing {offset + 1} - {(apiResponse?.es_response?.hits?.hits.length || 0) + offset}{' '}
+              of {apiResponse.es_response?.hits?.total?.value}
+            </div>
+          )}
+          <Spacer size={8} />
       {apiResponse && (
         <main>
           <Panel bgColor={color.base.ivory}>
@@ -520,117 +572,208 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
             )}
             <Spacer size={8} />
 
-            <Styled.contentWrapper>
-              <section>
-                {apiResponse.es_response?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
-                  const date = new Date(hit._source.contentDateTime);
-                  const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
+          <Styled.contentWrapper>
+            <Styled.resultsContent>
+              {apiResponse.es_response?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
+                const date = new Date(hit._source.contentDateTime);
+                const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
 
-                  return (
-                    <Styled.searchResult key={`search-result${i}`}>
-                      <Box size={'extraSmall'}>
-                        <Styled.boxContent>
-                          <Styled.topRow>
-                            <span>
-                              <Styled.imageContainer />
-                              <div>
-                                <h2> {hit._source.documentTitle}</h2>
-                                <Styled.contentSource>
-                                  <Icon
-                                    src={Icons.Calendar}
-                                    size={IconSize.small}
-                                    color={color.theme.blue}
+                return (
+                  <Styled.searchResult key={`search-result${i}`}>
+                    <Box size={'extraSmall'}>
+                      <Styled.boxContent>
+                        <Styled.topRow>
+                          <span>
+                            <Styled.imageContainer />
+                            <div>
+                              <h2> {hit._source.documentTitle}</h2>
+                              <Styled.contentSource>
+                                <Icon
+                                  src={Icons.Calendar}
+                                  size={IconSize.small}
+                                  color={color.theme.blue}
+                                />
+                                <Styled.contentSourceText>
+                                  {hit._source.informationType} / {hit._source.organisationName}
+                                </Styled.contentSourceText>
+                              </Styled.contentSource>
+                            </div>
+                            <p>{formattedTime}</p>
+                          </span>
+                        </Styled.topRow>
+                        {hit._source?.documentContent && (
+                          <Styled.contentPreview>
+                            <div
+                              dangerouslySetInnerHTML={{ __html: hit._source?.documentContent }}
+                            />
+                            <Styled.fade />
+                          </Styled.contentPreview>
+                        )}
+                        <Styled.bottomRow>
+                          <Styled.tagsWrapper>
+                            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
+                            {/* @ts-ignore */}
+                            {hit._source.taxonomyTerms.map((term, i) => {
+                              if (i > 5) {
+                                return;
+                              }
+
+                              const selectedIndex =
+                                parsedQuery?.nestedFilters?.findIndex(
+                                  ({ value, path }) =>
+                                    path === 'taxonomyTerms' && value === term.tagId,
+                                ) ?? -1;
+
+                              return (
+                                <div
+                                  onClick={() => {
+                                    setNestedQuery({
+                                      path: 'taxonomyTerms',
+                                      key: 'taxonomyTerms.tagId',
+                                      value: term.tagId,
+                                    });
+                                  }}
+                                  key={`taxonomy-${i}`}
+                                >
+                                  <Tag
+                                    label={
+                                      selectedIndex > -1 ? `* ${term.termLabel} *` : term.termLabel
+                                    }
+                                    width={'fixed'}
+                                    bgColor={color.shadow.blue}
                                   />
-                                  <Styled.contentSourceText>
-                                    {hit._source.informationType} / {hit._source.organisationName}
-                                  </Styled.contentSourceText>
-                                </Styled.contentSource>
-                              </div>
-                              <p>{formattedTime}</p>
-                            </span>
-                          </Styled.topRow>
-                          {hit._source?.documentContent && (
-                            <Styled.contentPreview>
-                              <div
-                                dangerouslySetInnerHTML={{ __html: hit._source?.documentContent }}
-                              />
-                              <Styled.fade />
-                            </Styled.contentPreview>
-                          )}
-                          <Styled.bottomRow>
-                            <Styled.tagsWrapper>
-                              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
-                              {/* @ts-ignore */}
-                              {hit._source.taxonomyTerms.map((term, i) => {
-                                if (i > 5) {
-                                  return;
-                                }
+                                </div>
+                              );
+                            })}
+                          </Styled.tagsWrapper>
+                          <Link href={`/library/document/${hit._source.documentId}`}>
+                            Read more
+                          </Link>
+                        </Styled.bottomRow>
+                      </Styled.boxContent>
+                    </Box>
+                  </Styled.searchResult>
+                );
+              })}
 
-                                const selectedIndex =
-                                  parsedQuery?.nestedFilters?.findIndex(
-                                    ({ value, path }) =>
-                                      path === 'taxonomyTerms' && value === term.tagId,
-                                  ) ?? -1;
+              {apiResponse.es_response?.hits?.hits && (
+                <Styled.pagination>
+                  <span>Total {apiResponse.es_response.hits.total.value} Items</span>
+                  <div>
+                    <span
+                      onClick={() => {
+                        if (offset !== 0) {
+                          setOffset(offset - resultsSize);
+                        }
+                      }}
+                    >
+                      previous
+                    </span>
+                    <span
+                      onClick={() => {
+                        setOffset(offset + resultsSize);
+                      }}
+                    >
+                      next
+                    </span>
+                  </div>
+                </Styled.pagination>
+              )}
+            </Styled.resultsContent>
 
-                                return (
-                                  <div
-                                    onClick={() => {
-                                      setNestedQuery({
-                                        path: 'taxonomyTerms',
-                                        key: 'taxonomyTerms.tagId',
-                                        value: term.tagId,
-                                      });
-                                    }}
-                                    key={`taxonomy-${i}`}
-                                  >
-                                    <Tag
-                                      label={
-                                        selectedIndex > -1
-                                          ? `* ${term.termLabel} *`
-                                          : term.termLabel
-                                      }
-                                      width={'fixed'}
-                                      bgColor={color.shadow.blue}
-                                    />
-                                  </div>
-                                );
-                              })}
-                            </Styled.tagsWrapper>
-                            <Link href={`/library/document/${hit._source.documentId}`}>
-                              Read more
-                            </Link>
-                          </Styled.bottomRow>
-                        </Styled.boxContent>
-                      </Box>
-                    </Styled.searchResult>
-                  );
-                })}
-
-                {apiResponse.es_response?.hits?.hits && (
-                  <Styled.pagination>
-                    <span>Total {apiResponse.es_response.hits.total.value} Items</span>
-                    <div>
-                      <span
-                        onClick={() => {
-                          if (offset !== 0) {
-                            setOffset(offset - resultsSize);
-                          }
-                        }}
-                      >
-                        previous
-                      </span>
-                      <span
-                        onClick={() => {
-                          setOffset(offset + resultsSize);
-                        }}
-                      >
-                        next
-                      </span>
-                    </div>
-                  </Styled.pagination>
-                )}
-              </section>
-
+            <Styled.filtersContent>
+              <DateFacet
+                onChange={setDateFilter}
+                values={{
+                  min: parsedQuery?.dateRange?.min,
+                  max: parsedQuery?.dateRange?.max,
+                }}
+              />
+              <Facet
+                title={'Content Source'}
+                records={contentSources}
+                onClearSelection={() => removeBasicFilters(contentSources)}
+                onChange={(value) => {
+                  setBasicQuery({
+                    key: AggTypes.contentSource,
+                    value,
+                  });
+                }}
+              />
+              <Facet
+                title={'Information Type'}
+                records={informationTypes}
+                onClearSelection={() => removeBasicFilters(informationTypes)}
+                onChange={(value) => {
+                  setBasicQuery({
+                    key: AggTypes.informationType,
+                    value,
+                  });
+                }}
+              />
+              <Facet
+                title={'Jurisdictions'}
+                records={jurisdictions}
+                onClearSelection={() => removeBasicFilters(jurisdictions)}
+                onChange={(value) => {
+                  setBasicQuery({
+                    key: AggTypes.jurisdiction,
+                    value,
+                  });
+                }}
+              />
+              <Facet
+                title={'Topics'}
+                records={topics}
+                onClearSelection={() => removeNestedFilters(topics)}
+                onChange={(value) => {
+                  setNestedQuery({
+                    path: 'taxonomyTerms',
+                    key: 'taxonomyTerms.termLabel',
+                    value,
+                  });
+                }}
+              />
+              <Facet
+                title={'Organizations'}
+                records={organizations}
+                onClearSelection={() => removeNestedFilters(organizations)}
+                onChange={(value) => {
+                  setNestedQuery({
+                    path: 'taxonomyTerms',
+                    key: 'taxonomyTerms.termLabel',
+                    value,
+                  });
+                }}
+              />
+              <Facet
+                title={'People'}
+                records={people}
+                onClearSelection={() => removeNestedFilters(people)}
+                onChange={(value) => {
+                  setNestedQuery({
+                    path: 'taxonomyTerms',
+                    key: 'taxonomyTerms.termLabel',
+                    value,
+                  });
+                }}
+              />
+              <Facet
+                title={'Geography'}
+                records={geography}
+                onClearSelection={() => removeNestedFilters(geography)}
+                onChange={(value) => {
+                  setNestedQuery({
+                    path: 'taxonomyTerms',
+                    key: 'taxonomyTerms.termLabel',
+                    value,
+                  });
+                }}
+              />
+            </Styled.filtersContent>
+          </Styled.contentWrapper>
+        </Panel>
+      </main>
               {filtersVisible && (
                 <aside>
                   {apiResponse.es_response?.hits?.hits.length !== 0 && (
@@ -750,7 +893,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query, req } = context;
+  const { query } = context;
 
   const { payload, parsedQuery } = getPayload(query.query);
 
@@ -758,8 +901,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   try {
     const sPayload = JSON.stringify(payload);
-    const { host } = req.headers;
-    apiResponse = (await fetchJson(`http://${host}${BASE_URI}${Api.ContentSearchApp}`, {
+    apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
     })) as IResponse;
