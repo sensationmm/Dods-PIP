@@ -18,7 +18,7 @@ terraform {
 module "dev" {
   source      = "./environments/deployment"
   environment = "dev"
-  app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:91cdd6481dcb04178447d792aa8d2fa924ef22e3"
+  app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:83d2d90"
   account_id  = "390773179818"
   db_password = var.db_password
   providers = {
@@ -46,7 +46,7 @@ module "production" {
 module "qa" {
   source      = "./environments/deployment"
   environment = "qa"
-  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:91cdd6481dcb04178447d792aa8d2fa924ef22e3"
+  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:83d2d90"
   account_id  = "817206606893"
   db_password = var.db_password
   providers = {
