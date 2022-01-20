@@ -419,14 +419,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   };
 
   useEffect(() => {
-    if (requestPayload) {
-      const newRequestPayload = { ...requestPayload };
-      newRequestPayload.from = offset;
-      setRequestPayload(newRequestPayload);
-    }
-  }, [offset]);
-
-  useEffect(() => {
     const {
       contentSource,
       informationType,
