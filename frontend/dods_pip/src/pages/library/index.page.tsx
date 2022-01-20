@@ -308,7 +308,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     let newQuery: QueryObject = rest;
 
     if (min && max) {
-      newQuery = { ...newQuery, dateRange: { min, max } };
+      newQuery = { ...rest, dateRange: { min, max } };
     }
 
     router.push(
@@ -333,9 +333,11 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     let newNestedFilters = [...nestedFilters];
 
     if (selectedIndex > -1) {
-      newNestedFilters.splice(selectedIndex, 1); // remove
+      // remove
+      newNestedFilters.splice(selectedIndex, 1);
     } else {
-      newNestedFilters = [...nestedFilters, { path, key, value }]; // add
+      // add
+      newNestedFilters = [...nestedFilters, { path, key, value }];
     }
 
     const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
