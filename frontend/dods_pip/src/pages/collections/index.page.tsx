@@ -171,7 +171,7 @@ export const Collections: React.FC<CollectionsProps> = ({
     (async () => {
       await loadCollections();
     })();
-  }, [debouncedValue, numPerPage, activePage, user]);
+  }, [debouncedValue, numPerPage, activePage, user, filters.aToZ]);
 
   if (!user) {
     return <Loader data-test="loader" inline />;

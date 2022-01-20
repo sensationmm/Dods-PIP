@@ -5,8 +5,9 @@ import Chips from '../Chips';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
 import Text from '../Text';
-import { ContentTaggerProps, TagsData } from './';
+import { ContentTaggerProps } from './';
 import * as Styled from './ContentTagger.styles';
+import { TagsData } from './TagBrowser';
 
 type TagPanelProps = {
   title: string;

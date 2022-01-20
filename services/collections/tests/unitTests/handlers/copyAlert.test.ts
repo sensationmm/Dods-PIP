@@ -1,7 +1,8 @@
-import { mocked } from 'jest-mock';
-import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { CopyAlertResponse, CollectionAlertsRepository, CopyAlertParameters } from '@dodsgroup/dods-repositories';
+import { CollectionAlertsRepository, CopyAlertParameters, CopyAlertResponse } from '@dodsgroup/dods-repositories';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+
 import { copyAlert } from '../../../src/handlers/copyAlert/copyAlert';
+import { mocked } from 'jest-mock';
 
 const FUNCTION_NAME = copyAlert.name;
 const defaultContext = createContext();
@@ -36,7 +37,7 @@ const answerMock: CopyAlertResponse = {
         "updatedAt": null,
         "updatedBy": {},
         "hasKeywordsHighlight": true,
-        "isSchedule": true,
+        "isScheduled": true,
         "lastStepCompleted": 1,
         "isPublished": true,
     }

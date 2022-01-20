@@ -40,7 +40,7 @@ const answerMock: AlertByIdOutput = {
         updatedAt: null,
         updatedBy: {},
         hasKeywordsHighlight: true,
-        isSchedule: true,
+        isScheduled: true,
         lastStepCompleted: 1,
         isPublished: true,
     },
