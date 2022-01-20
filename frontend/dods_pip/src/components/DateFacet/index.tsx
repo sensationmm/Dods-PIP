@@ -56,7 +56,7 @@ const DateFacet: React.FC<DateFacetProps> = ({ onChange, values }) => {
         max: format(dateNow, formatStr),
       },
       {
-        label: 'Custom range',
+        label: 'Pick a range',
         value: 'custom-range',
         min: '',
         max: '',
