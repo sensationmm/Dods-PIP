@@ -1,4 +1,5 @@
 import Checkbox from '@dods-ui/components/_form/Checkbox';
+import Chips from '@dods-ui/components/Chips';
 import color from '@dods-ui/globals/color';
 import React, { useMemo } from 'react';
 
@@ -27,7 +28,12 @@ const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], on
   const expandedIcon = expanded ? Icons.ChevronDownBold : Icons.ChevronRightBold;
   const viewMoreIcon = viewMore ? Icons.ChevronRightBold : Icons.ChevronDownBold;
 
-  const sortedRecords = useMemo(() => records.sort((a, b) => b.doc_count - a.doc_count), [records]);
+  const selectedRecords = useMemo(() => records.filter((record) => record.selected), [records]);
+
+  const sortedRecords = useMemo(
+    () => records.filter((record) => !record.selected).sort((a, b) => b.doc_count - a.doc_count),
+    [records],
+  );
 
   const recordsToShow = useMemo(() => {
     if (viewMore) {
@@ -80,17 +86,26 @@ const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], on
             Clear
           </Styled.facetClearBtn>
         </Styled.facetHeader>
-        {expanded && (
+        {selectedRecords.length > 0 && (
+          <Styled.facetChipsWrapper>
+            {selectedRecords.map(({ key }, i: number) => {
+              return (
+                <Chips label={key} key={`${key}-chip-${i}`} onCloseClick={() => onChange(key)} />
+              );
+            })}
+          </Styled.facetChipsWrapper>
+        )}
+        {expanded && recordsToShow.length > 0 && (
           <Styled.facetCollapsiblePanel>
-            {recordsToShow.map((item, i: number) => {
+            {recordsToShow.map(({ key, doc_count, selected}, i: number) => {
               return (
                 <Checkbox
-                  label={item.key}
-                  hint={item.doc_count}
+                  label={key}
+                  hint={doc_count}
                   id={`content-source-${i}`}
                   key={`content-source-${i}`}
-                  isChecked={item.selected || false}
-                  onChange={() => onChange(item.key)}
+                  isChecked={selected || false}
+                  onChange={() => onChange(key)}
                 />
               );
             })}
