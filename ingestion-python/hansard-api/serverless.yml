@@ -34,20 +34,20 @@ package:
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.9
   lambdaHashingVersion: 20201221
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
-      name: scrapping
+      name: pip-dev-scrapping-lambdas
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     KEY_PREFIX: ${self:custom.resource_prefix}
     DYNAMODB_TABLE: ${self:custom.dynamodb_table}
     DYNAMODB_HOST: ${self:custom.dynamodb_host}
-    REGION: ${file(../serverless.common.yml):custom.region}
-    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
+    REGION: eu-west-1
+    CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
@@ -79,21 +79,21 @@ functions:
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 
-# resources:
-#   Resources:
-#     assetDynamoDbTable:
-#       Type: 'AWS::DynamoDB::Table'
-#       DeletionPolicy: ${self:custom.deletion_policy}
-#       Properties:
-#         AttributeDefinitions:
-#           -
-#             AttributeName: document_hash
-#             AttributeType: S
-#         KeySchema:
-#           -
-#             AttributeName: document_hash
-#             KeyType: HASH
-#         ProvisionedThroughput:
-#           ReadCapacityUnits: 5
-#           WriteCapacityUnits: 5
-#         TableName: ${self:custom.dynamodb_table}
+resources:
+   Resources:
+     assetDynamoDbTable:
+       Type: 'AWS::DynamoDB::Table'
+       DeletionPolicy: ${self:custom.deletion_policy}
+       Properties:
+         AttributeDefinitions:
+           -
+             AttributeName: document_hash
+             AttributeType: S
+         KeySchema:
+           -
+             AttributeName: document_hash
+             KeyType: HASH
+         ProvisionedThroughput:
+           ReadCapacityUnits: 5
+           WriteCapacityUnits: 5
+         TableName: ${self:custom.dynamodb_table}
