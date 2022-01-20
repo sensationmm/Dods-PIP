@@ -87,12 +87,12 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
       theme: 'snow',
     });
 
-    quill.on('text-change', function (delta, oldDelta, source) {
+    quill.on('text-change', function () {
       onTextChange(document.querySelector('.ql-editor')?.innerHTML || '');
     });
 
     onSelection &&
-      quill.on('selection-change', function (range, oldRange, source) {
+      quill.on('selection-change', function (range) {
         if (range?.length > 0) {
           const selectedText = quill.getText(range.index, range.length);
           const matches = Array.from(quill.getText().matchAll(RegExp(selectedText, 'igm')));
