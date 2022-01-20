@@ -97,7 +97,7 @@ const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], on
         )}
         {expanded && recordsToShow.length > 0 && (
           <Styled.facetCollapsiblePanel>
-            {recordsToShow.map(({ key, doc_count, selected}, i: number) => {
+            {recordsToShow.map(({ key, doc_count, selected }, i: number) => {
               return (
                 <Checkbox
                   label={key}
