@@ -21,11 +21,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 }) => {
   return (
     <Styled.wrapper data-test="component-page-header">
-      <Panel data-test="component-header" isPadded={false}>
+      <Panel data-test="component-header" isPadded>
         {breadcrumbs && (
           <>
-            <Spacer size={12} />
             {breadcrumbs}
+            <Spacer size={6} />
           </>
         )}
         <Styled.container flexDirection={flexDirection}>
