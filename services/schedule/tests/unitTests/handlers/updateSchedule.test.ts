@@ -14,13 +14,13 @@ const mockedScheduleRepository = mocked(ScheduleRepository, true)
 describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input - response should be valid', async () => {
         const data: updateScheduleParameters = {
-            id: "1",
+            scheduleId: "1",
             cron: "123"
         }
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             "success": true,
-            "message": "schedule with ID " + data.id + " updated"
+            "message": "schedule with ID " + data.scheduleId + " updated"
         });
 
         mockedScheduleRepository.defaultInstance.updateSchedule.mockResolvedValue()
