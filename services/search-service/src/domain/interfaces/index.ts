@@ -9,3 +9,7 @@ export interface RawQueryParameters {
 export interface createPercolatorParameters {
     query: string;
 }
+
+export interface updatePercolatorParameters extends createPercolatorParameters{
+    percolatorId: string
+}

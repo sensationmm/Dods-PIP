@@ -117,3 +117,12 @@ functions:
           method: post
           path: percolator
           cors: true
+
+  updatePercolator:
+    handler: src/handlers/updatePercolator/index.handle
+    description: Update alert percolator
+    events:
+      - http:
+          method: put
+          path: percolator/{percolatorId}
+          cors: true

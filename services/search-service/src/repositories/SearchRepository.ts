@@ -1,6 +1,10 @@
 const { Client } = require('@elastic/elasticsearch')
 
-import {createPercolatorParameters, GetContentParameters} from "../domain";
+import { createPercolatorParameters,
+    GetContentParameters,
+    updatePercolatorParameters,
+} from "../domain";
+
 import {Search} from "./Search"
 import elasticsearch from "../elasticsearch"
 
@@ -41,6 +45,13 @@ export class SearchRepository implements Search {
 
     async createPercolator(data: createPercolatorParameters): Promise<any> {
         const response = await this.elasticsearch.index({index: 'alerts', body: data.query})
+
+        return response['body']
+    }
+
+    async updatePercolator(data: updatePercolatorParameters): Promise<any> {
+        console.log({index: 'alerts', id: data.percolatorId, body: data.query})
+        const response = await this.elasticsearch.update({index: 'alerts', id: data.percolatorId, body: {doc: JSON.parse(data.query)}})
 
         return response['body']
     }
