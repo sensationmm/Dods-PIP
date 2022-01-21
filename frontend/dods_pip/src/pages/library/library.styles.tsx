@@ -1,4 +1,5 @@
 import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
+import media from '@dods-ui/globals/media';
 import styled from 'styled-components';
 
 import {
@@ -11,40 +12,40 @@ import spacing from '../../globals/spacing';
 
 export const filtersContent = styled.div`
   width: 350px;
-  margin-left: 30px;
+  margin-left: ${spacing(8)};
   text-align: center;
 `;
 
 export const contentWrapper = styled.div`
   display: flex;
   flex-basis: 0;
-  @media (max-width: 599px) {
+  ${media.lessThan('sm')`
     flex-direction: column-reverse;
     width: 100%;
     ${filtersContent} {
-      margin: 0 0 24px;
+      margin: 0 0 ${spacing(6)};
       width: 100%;
     }
     ${facetContainer} {
-      margin-bottom: 16px;
+      margin-bottom: ${spacing(4)};
     }
     & > ${facetContainer} {
       & > ${facetContainerHeader} {
         border-bottom: 0;
       }
       & > ${childrenContainer} {
-        padding: 0 16px 16px;
+        padding: 0 ${spacing(4)} ${spacing(4)};
       }
     }
-  }
+  `};
   ${filtersContent} {
     width: 372px;
-    @media (max-width: 599px) {
+    ${media.lessThan('sm')`
       width: 100%;
       padding: 0;
-    }
+    `};
   }
-  @media (min-width: 600px) {
+  ${media.greaterThan('sm')`
     & > ${facetContainer} {
       background: transparent;
       width: auto;
@@ -57,7 +58,7 @@ export const contentWrapper = styled.div`
         padding: 0;
       }
     }
-  }
+  `};
 `;
 
 export const resultsContent = styled.section`
@@ -80,31 +81,31 @@ export const pagination = styled.div`
 
   div span {
     cursor: pointer;
-    margin-left: 25px;
+    margin-left: ${spacing(6)};
   }
 `;
 
 export const searchResult = styled.div`
   width: 100%;
-  padding-bottom: 64px;
+  padding-bottom: ${spacing(16)};
 
 }
 
   h2 {
     color: ${color.theme.blue};
-    margin-bottom: 10px;
+    margin-bottom: ${spacing(3)};
     font-weight: 700;
-    margin-left: 15px;
+    margin-left: ${spacing(4)};
   }
 
   Box {
-    padding: 20px;
+    padding: ${spacing(5)};
   }
 `;
 
 export const fade = styled.div`
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
 
   display: block;
 
@@ -122,7 +123,7 @@ export const contentSource = styled.div`
   display: flex;
   align-items: center;
   color: ${color.theme.blue};
-  padding-bottom: 15px;
+  padding-bottom: ${spacing(4)};
 `;
 
 export const contentPreview = styled.div`
@@ -207,27 +208,27 @@ export const imageContainer = styled.span`
 
 export const librarySearchWrapper = styled.div`
   display: flex;
-  padding-bottom: 16px;
+  padding-bottom: ${spacing(4)};
   border-bottom: 1px solid ${color.base.greyLight};
   ${input} {
     width: 629px;
-    @media (max-width: 599px) {
+    ${media.lessThan('sm')`
       width: 100%;
-    }
+    `};
   }
   section {
     width: 908px;
-    @media (max-width: 599px) {
+    ${media.lessThan('sm')`
       width: 100%;
-    }
+    `};
   }
   aside {
     width: 350px;
     display: flex;
     justify-content: flex-end;
-    padding-top: 24px;
-    @media (max-width: 599px) {
+    padding-top: ${spacing(6)};
+    ${media.lessThan('sm')`
       display: none;
-    }
+    `};
   }
 `;

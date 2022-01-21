@@ -7,6 +7,6 @@ export const createSchedule: AsyncLambdaHandler<createScheduleParameters> = asyn
 
     return new HttpResponse(HttpStatusCode.OK, {
         "success": true,
-        "message": "schedule created with ID " + data.id
+        "message": "schedule created with ID " + data.scheduleId
     });
 };

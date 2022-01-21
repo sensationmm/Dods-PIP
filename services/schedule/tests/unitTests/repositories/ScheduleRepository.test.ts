@@ -37,7 +37,7 @@ jest.mock('../../../src/elasticsearch', () => ({
 }));
 
 const CREATE_SCHEDULE_INPUT: createScheduleParameters = {
-    "id": "123",
+    "scheduleId": "123",
     "scheduleType": "publishing",
     "cron": "0 0 13 24 DEC ? 2021"
 }
@@ -46,7 +46,7 @@ describe(`Schedule repository tests`, () => {
 
     test(`createSearchQuery returns correct query`, async () => {
         const expectedQuery = {
-            id: CREATE_SCHEDULE_INPUT.id,
+            id: CREATE_SCHEDULE_INPUT.scheduleId,
             active: true,
             body: {
                 trigger: { schedule: { "cron": CREATE_SCHEDULE_INPUT.cron } },
@@ -54,7 +54,7 @@ describe(`Schedule repository tests`, () => {
                     webhook: {
                         webhook: {
                             method: "GET",
-                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + CREATE_SCHEDULE_INPUT.id + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
+                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + CREATE_SCHEDULE_INPUT.scheduleId + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
                         }
                     }
                 }
@@ -86,7 +86,7 @@ describe(`Schedule repository tests`, () => {
 
     test(`deleteSchedule calls deleteWatch`, async () => {
         const deleteScheduleParameters: deleteScheduleParameters = {
-            id: "123"
+            scheduleId: "123"
         }
         await ScheduleRepository.defaultInstance.deleteSchedule(deleteScheduleParameters)
 
@@ -95,7 +95,7 @@ describe(`Schedule repository tests`, () => {
 
     test(`updateSchedule updates the schedule`, async () => {
         const updateScheduleParameters: updateScheduleParameters = {
-            id: "123",
+            scheduleId: "123",
             cron: "123"
         }
         await ScheduleRepository.defaultInstance.updateSchedule(updateScheduleParameters)
@@ -106,7 +106,7 @@ describe(`Schedule repository tests`, () => {
 
     test(`activateSchedule activates the schedule`, async () => {
         const activateScheduleParameters: activateScheduleParameters = {
-            id: "123",
+            scheduleId: "123",
         }
         await ScheduleRepository.defaultInstance.activateSchedule(activateScheduleParameters)
 
@@ -115,7 +115,7 @@ describe(`Schedule repository tests`, () => {
 
     test(`deactivateSchedule deactivates the schedule`, async () => {
         const deactivateScheduleParameters: deactivateScheduleParameters = {
-            id: "123",
+            scheduleId: "123",
         }
         await ScheduleRepository.defaultInstance.deactivateSchedule(deactivateScheduleParameters)
 
