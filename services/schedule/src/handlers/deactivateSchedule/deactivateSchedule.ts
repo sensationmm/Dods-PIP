@@ -7,6 +7,6 @@ export const deactivateSchedule: AsyncLambdaHandler<deactivateScheduleParameters
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
-        message: "schedule with ID " + data.id + " deactivated"
+        message: "schedule with ID " + data.scheduleId + " deactivated"
     });
 };
