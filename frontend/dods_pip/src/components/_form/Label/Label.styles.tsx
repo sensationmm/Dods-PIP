@@ -11,10 +11,6 @@ export const label = styled.div<LabelProps>`
   display: flex;
   align-items: baseline;
   margin-bottom: ${({ noMargin }) => (noMargin ? spacing(0) : spacing(3))};
-  span {
-    padding-left: 5px;
-    color: ${color.base.grey};
-  }
 `;
 
 export const requiredStar = styled.span`
@@ -33,4 +29,9 @@ export const requiredLabel = styled.span`
   font-family: 'Open Sans', sans-serif;
   line-height: 16px;
   margin-bottom: -${spacing(1)};
+`;
+
+export const parenthetical = styled.span`
+  padding-left: 5px;
+  color: ${color.base.grey};
 `;
