@@ -14,12 +14,12 @@ const mockedScheduleRepository = mocked(ScheduleRepository, true)
 describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input - response should be valid', async () => {
         const data: deactivateScheduleParameters = {
-            "id": "1"
+            "scheduleId": "1"
         }
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             "success": true,
-            "message": "schedule with ID " + data.id + " deactivated"
+            "message": "schedule with ID " + data.scheduleId + " deactivated"
         });
 
         mockedScheduleRepository.defaultInstance.deleteSchedule.mockResolvedValue()

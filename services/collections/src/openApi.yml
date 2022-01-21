@@ -139,6 +139,21 @@ paths:
           $ref: "#/components/responses/NotFound"
         "400":
           $ref: "#/components/responses/BadRequest"
+    
+    put:
+      operationId: updateAlert
+      summary: "Rename Alert"
+      description: "Update Alert Title"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateAlertResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "400":
+          $ref: "#/components/responses/BadRequest"
           
           
   /collections/{collectionId}/alerts/{alertId}/schedule:
@@ -1047,7 +1062,22 @@ components:
                 example: 'The alert was found'
               alert:
                 $ref: "#/components/schemas/Alert"
-    
+                
+    UpdateAlertResponse:
+      description: "Update Alert Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: 'Alert renamed successfully'
+              alert:
+                $ref: "#/components/schemas/Alert"
+  
     CreateQueryResponse:
       description: "Create Alert Query Response "
       content:

@@ -1,4 +1,3 @@
-
 openapi: 3.0.0
 info:
   description: DODS Schedule Service API
@@ -17,8 +16,17 @@ paths:
     post:
       operationId: createSchedule
       summary: "Create a watcher schedule for doc publishing"
-      parameters:
-        - $ref: '#/components/parameters/createSchedule'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientAccount
+              properties:
+                clientAccount:
+                  $ref: '#/components/schemas/createScheduleParameters'
       responses:
         "200":
           $ref: "#/components/responses/CreateSchedule"
@@ -37,13 +45,18 @@ paths:
             format: uuid
           required: true
           description: UUID of the Schedule to get
-
-  /scheduler/{id}:
+      responses:
+        "200":
+          $ref: "#/components/responses/GetSchedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
     delete:
       operationId: deleteSchedule
       summary: "Delete schedule for doc publishing"
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/scheduleId'
       responses:
         "200":
           $ref: "#/components/responses/DeleteSchedule"
@@ -55,7 +68,7 @@ paths:
       operationId: updateSchedule
       summary: "Update schedule for doc publishing"
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/scheduleId'
       requestBody:
         $ref: "#/components/requestBodies/scheduleUpdateBody"
       responses:
@@ -66,12 +79,12 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /scheduler/{id}/activate:
+  /scheduler/{scheduleId}/activate:
     put:
       operationId: activateSchedule
       summary: "activate schedule"
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/scheduleId'
       responses:
         "200":
           $ref: "#/components/responses/activateSchedule"
@@ -79,12 +92,12 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-  /scheduler/{id}/deactivate:
+  /scheduler/{scheduleId}/deactivate:
     put:
       operationId: deactivateSchedule
       summary: "deactivate schedule"
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/scheduleId'
       responses:
         "200":
           $ref: "#/components/responses/deactivateSchedule"
@@ -109,10 +122,10 @@ components:
             type: array
             items:
               type: string
-    CreateScheduleReturn:
+    FullSchedule:
       type: object
       properties:
-        id:
+        scheduleId:
           type: string
           example: 008f811e5ccf44d3a0df5b7f70a8e85d
         scheduleType:
@@ -124,7 +137,7 @@ components:
     UpdateScheduleReturn:
       type: object
       properties:
-        id:
+        scheduleId:
           type: string
           example: 008f811e5ccf44d3a0df5b7f70a8e85d
         cron:
@@ -150,7 +163,7 @@ components:
         message:
           type: string
           example: schedule with ID 008f811e5ccf44d3a0df5b7f70a8e85d activated
-    
+
     deactivateScheduleReturn:
       type: object
       properties:
@@ -161,29 +174,27 @@ components:
           type: string
           example: schedule with ID 008f811e5ccf44d3a0df5b7f70a8e85d deactivated
 
+    createScheduleParameters:
+      type: object
+      required:
+        - scheduleId
+        - scheduleType
+        - cron
+      properties:
+        scheduleId:
+          type: string
+          example: 008f811e5ccf44d3a0df5b7f70a8e85d
+        scheduleType:
+          type: string
+          example: publishing
+        cron:
+          type: string
+          example: "0 0 13 24 DEC ? 2021"
+
   parameters:
-    createSchedule:
-      in: body
-      name: Schedule
-      schema:
-        type: object
-        required:
-          - id
-          - scheduleType
-          - cron
-        properties:
-          id:
-            type: string
-            example: 008f811e5ccf44d3a0df5b7f70a8e85d
-          scheduleType:
-            type: string
-            example: publishing
-          cron:
-            type: string
-            example: "0 0 13 24 DEC ? 2021"
-    id:
+    scheduleId:
       in: path
-      name: id
+      name: scheduleId
       schema:
         type: string
       required: true
@@ -195,9 +206,9 @@ components:
       schema:
         type: object
         required:
-          - id
+          - scheduleId
         properties:
-          id:
+          scheduleId:
             type: string
             example: 008f811e5ccf44d3a0df5b7f70a8e85d
 
@@ -222,12 +233,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Message"
+    GetSchedule:
+      description: "Response from scheduler get"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FullSchedule'
     CreateSchedule:
       description: "Response from scheduler creation"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/CreateScheduleReturn'
+            $ref: '#/components/schemas/FullSchedule'
 
     DeleteSchedule:
       description: "Response from scheduler deletion"

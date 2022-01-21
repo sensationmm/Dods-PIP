@@ -2,7 +2,7 @@ export type Type = "publishing" | "altering";
 
 
 export interface deleteScheduleParameters {
-    id: string;
+    scheduleId: string;
 }
 
 export interface createScheduleParameters extends deleteScheduleParameters {

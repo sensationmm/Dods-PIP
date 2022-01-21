@@ -54,6 +54,7 @@ export interface CollectionAlertsPersister {
     getCollectionAlerts(
         parameters: SearchCollectionAlertsParameters
     ): Promise<getAlertsByCollectionResponse>;
+    updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput>;
 }
 
 export interface CreateAlertParameters {
@@ -189,4 +190,11 @@ export interface SetAlertQueriesParameters {
             contentSources: string;
         }
     ];
+}
+
+export interface UpdateAlertParameters {
+    collectionId: string;
+    alertId: string;
+    updatedBy: string;
+    title: string;
 }

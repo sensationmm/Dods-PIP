@@ -7,6 +7,6 @@ export const activateSchedule: AsyncLambdaHandler<activateScheduleParameters> = 
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
-        message: "schedule with ID " + data.id + " activated"
+        message: "schedule with ID " + data.scheduleId + " activated"
     });
 };

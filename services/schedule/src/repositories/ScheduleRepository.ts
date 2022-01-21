@@ -19,7 +19,7 @@ export class ScheduleRepository implements Schedule {
 
     static createSearchQuery(data: createScheduleParameters|updateScheduleParameters): any{
         return{
-            id: data.id,
+            id: data.scheduleId,
             active: true,
             body: {
                 trigger: {
@@ -29,7 +29,7 @@ export class ScheduleRepository implements Schedule {
                     webhook: {
                         webhook: {
                             method: "GET",
-                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + data.id + "/" + data.scheduleType,
+                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + data.scheduleId + "/" + data.scheduleType,
                         }
                     }
                 }
@@ -45,11 +45,11 @@ export class ScheduleRepository implements Schedule {
     }
 
     async deleteSchedule(data: deleteScheduleParameters): Promise<void> {
-        await this.elasticsearch.watcher.deleteWatch(data);
+        await this.elasticsearch.watcher.deleteWatch({id: data.scheduleId});
     }
 
     async updateSchedule(data: updateScheduleParameters): Promise<void> {
-        const schedule =  await this.elasticsearch.watcher.getWatch({id: data.id});
+        const schedule =  await this.elasticsearch.watcher.getWatch({id: data.scheduleId});
         if (schedule.statusCode == 200) {
             data.scheduleType = (schedule.body.watch.actions.webhook.webhook.path.split('/'))[3]
             const query = ScheduleRepository.createSearchQuery(data);
@@ -58,11 +58,11 @@ export class ScheduleRepository implements Schedule {
     }
 
     async activateSchedule(data: activateScheduleParameters): Promise<void> {
-        await this.elasticsearch.watcher.activateWatch({watch_id: data.id});
+        await this.elasticsearch.watcher.activateWatch({watch_id: data.scheduleId});
     }
 
     async deactivateSchedule(data: deactivateScheduleParameters): Promise<void> {
-        await this.elasticsearch.watcher.deactivateWatch({watch_id: data.id});
+        await this.elasticsearch.watcher.deactivateWatch({watch_id: data.scheduleId});
     }
 
     async getSchedule(data: getScheduleParameters): Promise<any> {
