@@ -59,22 +59,18 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         label: 'Published',
         value: publishedDateTime,
       },
-      // TBD
-      // {
-      //   label: 'Last edit',
-      //   value: '??',
-      // },
-      // {
-      //   label: 'Last editor',
-      //   value: contentSource,
-      // },
       {
         label: 'Originator',
         value: originator,
       },
       {
         label: 'Status',
-        value: contentSource,
+        value: (
+          <div>
+            <Icon src={Icons.TickBold} size={IconSize.mediumLarge} />
+            <span>Published</span>
+          </div>
+        ),
       },
       {
         label: 'Version',
