@@ -1,19 +1,20 @@
-import InputSearch from '@dods-ui/components/_form/InputSearch';
-import InputText from '@dods-ui/components/_form/InputText';
 import PageHeader from '@dods-ui/components/_layout/PageHeader';
 import Panel from '@dods-ui/components/_layout/Panel';
 import Spacer from '@dods-ui/components/_layout/Spacer';
+import { AlertQueryProps } from '@dods-ui/components/AlertQuery';
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
 import Button from '@dods-ui/components/Button';
-import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import ProgressTracker from '@dods-ui/components/ProgressTracker';
-import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
 import { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import React from 'react';
 
 import * as Styled from './alert-setup.styles';
+import AlertStep1 from './step1';
+import AlertStep2 from './step2';
+import AlertStep3 from './step3';
+import AlertStep4 from './step4';
 
 export type Alert = {
   uuid?: string;
@@ -36,6 +37,11 @@ export interface AlertSetupProps {
   alert: AlertSetupType;
   setAlert: (alert: AlertSetupType) => void;
 }
+
+export type AlertStepProps = {
+  alert: AlertSetupProps['alert'];
+  setAlert: AlertSetupProps['setAlert'];
+};
 
 const AlertSetup: React.FC<AlertSetupProps> = ({
   alert,
@@ -78,50 +84,10 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
         }
       />
       <Panel bgColor={color.base.greyLighter}>
-        {activeStep === 1 && (
-          <>
-            <Styled.sectionHeader>
-              <Icon src={Icons.Checklist} size={IconSize.large} />
-              <Text type="h2" headingStyle="title">
-                Alert settings
-              </Text>
-            </Styled.sectionHeader>
-
-            <Spacer size={8} />
-
-            <InputText
-              id="title"
-              titleField
-              label="Alert name"
-              placeholder="Type a title for this content"
-              required
-              value={alert.title}
-              onChange={(val) => setAlert({ ...alert, title: val })}
-            />
-
-            <Spacer size={6} />
-
-            <Styled.grid>
-              <InputSearch
-                id="accountId"
-                label="Account"
-                required
-                value={alert.accountName}
-                isDisabled
-                onChange={(val) => setAlert({ ...alert, accountId: val })}
-              />
-
-              <InputSearch
-                id="collectionId"
-                label="Collection"
-                required
-                value={alert.collectionName}
-                isDisabled
-                onChange={(val) => setAlert({ ...alert, collectionId: val })}
-              />
-            </Styled.grid>
-          </>
-        )}
+        {activeStep === 1 && <AlertStep1 alert={alert} setAlert={setAlert} />}
+        {activeStep === 2 && <AlertStep2 alert={alert} setAlert={setAlert} />}
+        {activeStep === 3 && <AlertStep3 alert={alert} setAlert={setAlert} />}
+        {activeStep === 4 && <AlertStep4 alert={alert} setAlert={setAlert} />}
 
         <Spacer size={15} />
 

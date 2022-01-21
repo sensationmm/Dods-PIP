@@ -1,3 +1,4 @@
+import { wrapper as Select } from '@dods-ui/components/_form/Select/Select.styles';
 import styled from 'styled-components';
 
 import color from '../../globals/color';
@@ -23,6 +24,7 @@ export const wrapper = styled.div<WrapperProps>`
 
 type BoxProps = {
   tags: boolean;
+  operator?: boolean;
 };
 
 export const box = styled.div<BoxProps>`
@@ -33,7 +35,7 @@ export const box = styled.div<BoxProps>`
   width: 100%;
   padding: 0;
   height: ${({ tags }) => (tags ? 'calc(70vh - 92px)' : 'auto')};
-  overflow: ${({ tags }) => (tags ? 'scroll' : 'auto')}; ;
+  overflow: ${({ operator = false, tags }) => (operator ? 'visible' : tags ? 'scroll' : 'auto')}; ;
 `;
 
 export const collapsed = styled.div`
@@ -73,8 +75,12 @@ export const contentPadded = styled.div`
   padding: ${spacing(4)} ${spacing(6)};
 `;
 
-export const content = styled(contentPadded)`
-  height: calc(80vh - 120px);
+type ContentProps = {
+  hasOperator?: boolean;
+};
+export const content = styled(contentPadded)<ContentProps>`
+  height: ${({ hasOperator = false }) =>
+    hasOperator ? 'calc(80vh - 160px)' : 'calc(80vh - 120px)'};
   overflow: auto;
 `;
 
@@ -205,6 +211,23 @@ export const browser = styled.div<BrowserProps>`
 
 export const browserActions = styled.div`
   padding: ${spacing(4)} ${spacing(6)};
+`;
+
+export const operator = styled.div`
+  background: ${color.base.greyLighter};
+  border: 1px solid ${color.base.greyLight};
+  border-radius: 8px;
+  padding: ${spacing(1)};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: ${spacing(1)};
+  white-space: nowrap;
+
+  ${Select} {
+    width: 80px;
+    margin-left: ${spacing(3)};
+  }
 `;
 
 export const toggle = styled.div`
