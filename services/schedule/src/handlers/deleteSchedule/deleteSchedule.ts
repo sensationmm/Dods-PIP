@@ -7,6 +7,6 @@ export const deleteSchedule: AsyncLambdaHandler<deleteScheduleParameters> = asyn
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
-        message: "schedule with ID " + data.id + " deleted"
+        message: "schedule with ID " + data.scheduleId + " deleted"
     });
 };
