@@ -146,6 +146,32 @@ export const tab = styled.button`
   }
 `;
 
+export const status = styled.div`
+  height: 32px;
+  border-radius: 60px;
+  background: ${color.base.white};
+  border: 1px solid ${color.base.greyLight};
+  display: inline-block;
+  padding: 0 ${spacing(10)};
+  line-height: 32px;
+  position: relative;
+  font-size: 14px;
+  font-weight: 700;
+`;
+
+export const statusIcon = styled.div`
+  position: absolute;
+  left: 3px;
+  top: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 60px;
+  background: ${color.accent.green};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const detailTable = styled.table`
   width: 100%;
   border-collapse: collapse;
