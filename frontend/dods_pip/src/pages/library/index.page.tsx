@@ -1,5 +1,7 @@
 import Facet from '@dods-ui/components/_form/Facet';
+import Toggle from '@dods-ui/components/_form/Toggle';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
+import FacetContainer from '@dods-ui/components/FacetContainer';
 import { format } from 'date-fns';
 import esb, { Query, RequestBodySearch } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
@@ -21,7 +23,6 @@ import color from '../../globals/color';
 import fetchJson from '../../lib/fetchJson';
 import { Api } from '../../utils/api';
 import * as Styled from './library.styles';
-import Toggle from '@dods-ui/components/_form/Toggle';
 
 interface ExtendedRequestBodySearch extends RequestBodySearch {
   _body: {
@@ -646,214 +647,103 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                 </Styled.pagination>
               )}
             </Styled.resultsContent>
-
-            <Styled.filtersContent>
-              <DateFacet
-                onChange={setDateFilter}
-                values={{
-                  min: parsedQuery?.dateRange?.min,
-                  max: parsedQuery?.dateRange?.max,
-                }}
-              />
-              <Facet
-                title={'Content Source'}
-                records={contentSources}
-                onClearSelection={() => removeBasicFilters(contentSources)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.contentSource,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Information Type'}
-                records={informationTypes}
-                onClearSelection={() => removeBasicFilters(informationTypes)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.informationType,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Jurisdictions'}
-                records={jurisdictions}
-                onClearSelection={() => removeBasicFilters(jurisdictions)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.jurisdiction,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Topics'}
-                records={topics}
-                onClearSelection={() => removeNestedFilters(topics)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Organizations'}
-                records={organizations}
-                onClearSelection={() => removeNestedFilters(organizations)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'People'}
-                records={people}
-                onClearSelection={() => removeNestedFilters(people)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Geography'}
-                records={geography}
-                onClearSelection={() => removeNestedFilters(geography)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-            </Styled.filtersContent>
+            {filtersVisible && (
+              <FacetContainer heading={'Filters'}>
+                <Styled.filtersContent>
+                  <DateFacet
+                    onChange={setDateFilter}
+                    values={{
+                      min: parsedQuery?.dateRange?.min,
+                      max: parsedQuery?.dateRange?.max,
+                    }}
+                  />
+                  <Facet
+                    title={'Content Source'}
+                    records={contentSources}
+                    onClearSelection={() => removeBasicFilters(contentSources)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.contentSource,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Information Type'}
+                    records={informationTypes}
+                    onClearSelection={() => removeBasicFilters(informationTypes)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.informationType,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Jurisdictions'}
+                    records={jurisdictions}
+                    onClearSelection={() => removeBasicFilters(jurisdictions)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.jurisdiction,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Topics'}
+                    records={topics}
+                    onClearSelection={() => removeNestedFilters(topics)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Organizations'}
+                    records={organizations}
+                    onClearSelection={() => removeNestedFilters(organizations)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'People'}
+                    records={people}
+                    onClearSelection={() => removeNestedFilters(people)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Geography'}
+                    records={geography}
+                    onClearSelection={() => removeNestedFilters(geography)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                </Styled.filtersContent>
+              </FacetContainer>
+            )}
           </Styled.contentWrapper>
         </Panel>
       </main>
-              {filtersVisible && (
-                <aside>
-                  {apiResponse.es_response?.hits?.hits.length !== 0 && (
-                    <Styled.filtersContent>
-                      <DateFacet
-                        onChange={setDateFilter}
-                        values={{
-                          min: parsedQuery?.dateRange?.min,
-                          max: parsedQuery?.dateRange?.max,
-                        }}
-                      />
-                      {contentSources && (
-                        <Facet
-                          title={'Content Source'}
-                          records={contentSources}
-                          onClearSelection={() => removeBasicFilters(contentSources)}
-                          onChange={(value) => {
-                            setBasicQuery({
-                              key: AggTypes.contentSource,
-                              value,
-                            });
-                          }}
-                        />
-                      )}
-                      {informationTypes && (
-                        <Facet
-                          title={'Information Type'}
-                          records={informationTypes}
-                          onClearSelection={() => removeBasicFilters(informationTypes)}
-                          onChange={(value) => {
-                            setBasicQuery({
-                              key: AggTypes.informationType,
-                              value,
-                            });
-                          }}
-                        />
-                      )}
-                      {jurisdictions && (
-                        <Facet
-                          title={'Jurisdictions'}
-                          records={jurisdictions}
-                          onClearSelection={() => removeBasicFilters(jurisdictions)}
-                          onChange={(value) => {
-                            setBasicQuery({
-                              key: AggTypes.jurisdiction,
-                              value,
-                            });
-                          }}
-                        />
-                      )}
-                      {topics && (
-                        <Facet
-                          title={'Topics'}
-                          records={topics}
-                          onClearSelection={() => removeNestedFilters(topics)}
-                          onChange={(value) => {
-                            setNestedQuery({
-                              path: 'taxonomyTerms',
-                              key: 'taxonomyTerms.termLabel',
-                              value,
-                            });
-                          }}
-                        />
-                      )}
-                      {organizations && (
-                        <Facet
-                          title={'Organizations'}
-                          records={organizations}
-                          onClearSelection={() => removeNestedFilters(organizations)}
-                          onChange={(value) => {
-                            setNestedQuery({
-                              path: 'taxonomyTerms',
-                              key: 'taxonomyTerms.termLabel',
-                              value,
-                            });
-                          }}
-                        />
-                      )}
-                      {people && (
-                        <Facet
-                          title={'People'}
-                          records={people}
-                          onClearSelection={() => removeNestedFilters(people)}
-                          onChange={(value) => {
-                            setNestedQuery({
-                              path: 'taxonomyTerms',
-                              key: 'taxonomyTerms.termLabel',
-                              value,
-                            });
-                          }}
-                        />
-                      )}
-                      {geography && (
-                        <Facet
-                          title={'Geography'}
-                          records={geography}
-                          onClearSelection={() => removeNestedFilters(geography)}
-                          onChange={(value) => {
-                            setNestedQuery({
-                              path: 'taxonomyTerms',
-                              key: 'taxonomyTerms.termLabel',
-                              value,
-                            });
-                          }}
-                        />
-                      )}
-                    </Styled.filtersContent>
-                  )}
-                </aside>
-              )}
-            </Styled.contentWrapper>
-          </Panel>
-        </main>
-      )}
     </div>
   );
 };

@@ -1,7 +1,13 @@
+import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
 import styled from 'styled-components';
+
+import {
+  childrenContainer,
+  container as facetContainer,
+  header as facetContainerHeader,
+} from '../../components/FacetContainer/FacetContainer.styles';
 import color from '../../globals/color';
 import spacing from '../../globals/spacing';
-import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
 
 export const filtersContent = styled.div`
   width: 350px;
@@ -19,12 +25,37 @@ export const contentWrapper = styled.div`
       margin: 0 0 24px;
       width: 100%;
     }
+    ${facetContainer} {
+      margin-bottom: 16px;
+    }
+    & > ${facetContainer} {
+      & > ${facetContainerHeader} {
+        border-bottom: 0;
+      }
+      & > ${childrenContainer} {
+        padding: 0 16px 16px;
+      }
+    }
   }
-  aside {
+  ${filtersContent} {
     width: 372px;
     @media (max-width: 599px) {
       width: 100%;
       padding: 0;
+    }
+  }
+  @media (min-width: 600px) {
+    & > ${facetContainer} {
+      background: transparent;
+      width: auto;
+      box-shadow: none;
+      border: 0;
+      & > ${facetContainerHeader} {
+        display: none;
+      }
+      & > ${childrenContainer} {
+        padding: 0;
+      }
     }
   }
 `;
