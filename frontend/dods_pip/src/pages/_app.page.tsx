@@ -14,7 +14,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const { pathname } = useRouter();
   const rootPage = useMemo(() => {
     const pagePaths = pathname?.split('/').filter((path) => !!path) || [];
-    return ucFirst(pagePaths[0]);
+    return ucFirst(pagePaths[0]?.replace(/-/g, ' '));
   }, [pathname]);
 
   return (
