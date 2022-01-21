@@ -1,7 +1,6 @@
 import PageHeader from '@dods-ui/components/_layout/PageHeader';
 import Panel from '@dods-ui/components/_layout/Panel';
 import Spacer from '@dods-ui/components/_layout/Spacer';
-import { AlertQueryProps } from '@dods-ui/components/AlertQuery';
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
 import Button from '@dods-ui/components/Button';
 import { Icons } from '@dods-ui/components/Icon/assets';
