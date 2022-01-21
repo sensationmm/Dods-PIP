@@ -14,7 +14,7 @@ provider:
   profile: dods-dev
   runtime: nodejs14.x
   deploymentBucket:
-    name: pip-${self:provider.stage}-scrapping-lambdas
+    name: pip-${self:provider.stage}-services-lambdas
   stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
 
