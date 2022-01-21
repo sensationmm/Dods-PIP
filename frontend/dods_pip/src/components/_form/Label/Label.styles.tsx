@@ -32,6 +32,6 @@ export const requiredLabel = styled.span`
 `;
 
 export const parenthetical = styled.span`
-  padding-left: 5px;
+  padding-left: ${spacing(1)};
   color: ${color.base.grey};
 `;
