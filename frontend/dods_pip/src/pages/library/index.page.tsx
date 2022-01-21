@@ -1,4 +1,5 @@
 import Facet from '@dods-ui/components/_form/Facet';
+import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import { format } from 'date-fns';
 import esb, { Query, RequestBodySearch } from 'elastic-builder';
@@ -15,7 +16,6 @@ import Spacer from '../../components/_layout/Spacer';
 import Icon, { IconSize } from '../../components/Icon/';
 import { Icons } from '../../components/Icon/assets';
 import { IconType as ContentSourceType } from '../../components/IconContentSource/assets';
-import Tag from '../../components/Tag';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import fetchJson from '../../lib/fetchJson';
@@ -477,7 +477,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   };
 
   return (
-    <div data-test="page-library">
+    <Styled.pageLibrary data-test="page-library">
       <Head>
         <title>Dods PIP | Library</title>
       </Head>
@@ -516,30 +516,30 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                     <Box size={'extraSmall'}>
                       <Styled.boxContent>
                         <Styled.topRow>
-                          <span>
-                            <Styled.imageContainer />
-                            <div>
-                              <h2> {hit._source.documentTitle}</h2>
+                          <Styled.imageContainer />
+                          <Styled.searchResultHeader>
+                            <Styled.searchResultHeading>
+                              <h2>{hit._source.documentTitle}</h2>
+                              <Styled.date className={'mobileOnly'}>{formattedTime}</Styled.date>
                               <Styled.contentSource>
                                 <Icon
-                                  src={Icons.Calendar}
-                                  size={IconSize.small}
+                                  src={Icons.Document}
+                                  size={IconSize.medium}
                                   color={color.theme.blue}
                                 />
                                 <Styled.contentSourceText>
                                   {hit._source.informationType} / {hit._source.organisationName}
                                 </Styled.contentSourceText>
                               </Styled.contentSource>
-                            </div>
-                            <p>{formattedTime}</p>
-                          </span>
+                            </Styled.searchResultHeading>
+                          </Styled.searchResultHeader>
+                          <Styled.date>{formattedTime}</Styled.date>
                         </Styled.topRow>
                         {hit._source?.documentContent && (
                           <Styled.contentPreview>
                             <div
                               dangerouslySetInnerHTML={{ __html: hit._source?.documentContent }}
                             />
-                            <Styled.fade />
                           </Styled.contentPreview>
                         )}
                         <Styled.bottomRow>
@@ -568,20 +568,29 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                                   }}
                                   key={`taxonomy-${i}`}
                                 >
-                                  <Tag
+                                  <Chips
                                     label={
                                       selectedIndex > -1 ? `* ${term.termLabel} *` : term.termLabel
                                     }
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
+                                    chipsSize={'dense'}
+                                    bold={false}
                                   />
                                 </div>
                               );
                             })}
                           </Styled.tagsWrapper>
-                          <Link href={`/library/document/${hit._source.documentId}`}>
-                            Read more
-                          </Link>
+                          <Styled.readMore>
+                            <Link href={`/library/document/${hit._source.documentId}`}>
+                              <div>
+                                <span>Read more</span>
+                                <Icon
+                                  src={Icons.ChevronRightBold}
+                                  size={IconSize.small}
+                                  color={color.theme.blue}
+                                />
+                              </div>
+                            </Link>
+                          </Styled.readMore>
                         </Styled.bottomRow>
                       </Styled.boxContent>
                     </Box>
@@ -707,7 +716,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
           </Styled.contentWrapper>
         </Panel>
       </main>
-    </div>
+    </Styled.pageLibrary>
   );
 };
 
