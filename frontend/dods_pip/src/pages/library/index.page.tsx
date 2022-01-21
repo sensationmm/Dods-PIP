@@ -276,7 +276,6 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
   const [offset, setOffset] = useState(0);
   const [resultsSize] = useState(20);
-  const [requestPayload, setRequestPayload] = useState<RequestPayload>();
 
   const currentQuery: QueryObject = useMemo(() => {
     if (typeof router.query.query === 'string') {
