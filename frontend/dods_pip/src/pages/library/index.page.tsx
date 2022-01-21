@@ -107,13 +107,6 @@ type AggregationsType = {
   };
 };
 
-interface RequestPayload {
-  query?: Query;
-  aggregations: AggregationsType;
-  size?: number;
-  from?: number;
-}
-
 const aggregations: AggregationsType = {
   topics: {
     terms: {

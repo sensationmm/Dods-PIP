@@ -328,6 +328,23 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}/copyto:
+    post:
+      operationId: copyQuery
+      summary: "Copy the specified query to a different alert"
+      description: "Copy the specified query to a different alert"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: "#/components/parameters/alertId"
+        - $ref: "#/components/parameters/queryId"
+      requestBody:
+        $ref: '#/components/requestBodies/CopyQuery'
+      responses:
+        "200":
+          $ref: "#/components/responses/GetAlertResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
   securitySchemes:
     bearerAuth:
