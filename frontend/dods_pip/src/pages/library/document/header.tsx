@@ -76,16 +76,16 @@ const Header: React.FC<HeaderProps> = ({
           </Styled.infoItem>
         </Styled.infoRow>
       </Styled.mainSection>
-      <Styled.actionsSection>
-        {documentId && user?.isDodsUser && (
+      {documentId && user?.isDodsUser && (
+        <Styled.actionsSection>
           <Link href={`/editorial/article/${documentId}`} passHref>
             <Styled.editLink>
               <Icon src={Icons.Pencil} color={color.base.white} size={IconSize.mediumLarge} />
               <span>Edit</span>
             </Styled.editLink>
           </Link>
-        )}
-      </Styled.actionsSection>
+        </Styled.actionsSection>
+      )}
     </Styled.header>
   );
 };
