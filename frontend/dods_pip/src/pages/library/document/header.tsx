@@ -8,6 +8,7 @@ import color from '@dods-ui/globals/color';
 import Link from 'next/link';
 import React from 'react';
 
+import useUser from '../../../lib/useUser';
 import * as Styled from './header.styles';
 
 export interface HeaderProps {
@@ -27,6 +28,7 @@ const Header: React.FC<HeaderProps> = ({
   publishedDateTime,
   documentId,
 }) => {
+  const { user } = useUser();
   return (
     <Styled.header>
       <Styled.mainSection>
@@ -75,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({
         </Styled.infoRow>
       </Styled.mainSection>
       <Styled.actionsSection>
-        {documentId && (
+        {documentId && user?.isDodsUser && (
           <Link href={`/editorial/article/${documentId}`} passHref>
             <Styled.editLink>
               <Icon src={Icons.Pencil} color={color.base.white} size={IconSize.mediumLarge} />
