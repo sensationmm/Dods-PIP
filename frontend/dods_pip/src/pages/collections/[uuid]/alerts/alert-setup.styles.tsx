@@ -1,3 +1,5 @@
+import { wrapper as InputSearch } from '@dods-ui/components/_form/InputSearch/InputSearch.styles';
+import { wrapper as Avatar } from '@dods-ui/components/Avatar/Avatar.styles';
 import { wrapper as Badge } from '@dods-ui/components/Badge/Badge.styles';
 import { Icon } from '@dods-ui/components/Icon/Icon.styles';
 import { popoverWrapper as Popover } from '@dods-ui/components/Popover/Popover.styles';
@@ -9,7 +11,7 @@ export const sectionHeader = styled.div`
   display: flex;
   align-items: center;
 
-  > ${Icon}, > ${Popover} {
+  > ${Icon}, > ${Popover}, > ${InputSearch}, > ${Avatar} {
     margin-right: ${spacing(4)};
   }
 
