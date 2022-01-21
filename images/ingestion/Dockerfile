@@ -171,7 +171,6 @@ RUN set -ex; \
    apt-get install -y --no-install-recommends \
    bash \
    jq \
-   gcc \
    git \
    gzip \
    tar \
@@ -183,7 +182,7 @@ RUN set -ex; \
    npm install npm@latest -g
 
 # Scrapers will be deployed to AWS Lambdas using the Serverless framework
-# plus some Serverless plugins, so makes to keep them on the image and avoid
+# plus some Serverless plugins, so makes sense to keep them on the image and avoid
 # installing these on every build/deploy
 
 COPY package.json .
@@ -195,6 +194,7 @@ RUN set -ex; \
    savedAptMark="$(apt-mark showmanual)"; \
    apt-get update; \
    apt-get install -y --no-install-recommends \
+   gcc \
    libc6-dev \
    linux-libc-dev\
    ; \
