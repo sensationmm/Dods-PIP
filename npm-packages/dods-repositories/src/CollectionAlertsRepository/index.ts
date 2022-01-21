@@ -9,6 +9,7 @@ import {
     CreateAlertParameters,
     CreateAlertQueryParameters,
     DeleteAlertParameters,
+    DeleteAlertQueryParameters,
     SearchAlertParameters,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
@@ -16,7 +17,8 @@ import {
     UpdateAlertQuery,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters
+    setAlertScheduleParameters,
+    UpdateAlertParameters
 } from './domain';
 import {
     AlertDocumentInput,
@@ -42,9 +44,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         CollectionAlertDocument,
         CollectionAlertQuery,
         CollectionAlertRecipient,
-        User,
-        CollectionAlert
-    );
+        User);
 
     constructor(
         private model: typeof CollectionAlert,
@@ -52,8 +52,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         private alertDocumentModel: typeof CollectionAlertDocument,
         private alertQueryModel: typeof CollectionAlertQuery,
         private recipientModel: typeof CollectionAlertRecipient,
-        private userModel: typeof User,
-        private alertModel: typeof CollectionAlert
+        private userModel: typeof User
     ) { }
 
     async getCollectionAlerts(
@@ -155,7 +154,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Must provide a schedule `);
         }
 
-        const alert = await this.alertModel.findOne({
+        const alert = await this.model.findOne({
             where: {
                 uuid: alertId,
             },
@@ -212,7 +211,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Unable to retrieve Collection with uuid: ${collectionId}`);
         }
 
-        const alert = await this.alertModel.findOne({
+        const alert = await this.model.findOne({
             where: {
                 uuid: alertId,
                 collectionId: collection.id,
@@ -249,7 +248,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const { queryId, destinationAlertId, createdBy } = parameters;
 
         // * Retrieve initial data and validate data integrity
-        const destinationAlert = await this.alertModel.findOne({
+        const destinationAlert = await this.model.findOne({
             where: { uuid: destinationAlertId, isActive: true },
         });
 
@@ -318,7 +317,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         if (!alertCreator)
             throw new CollectionError(`Unable to retrieve user with uuid: ${createdBy}`);
 
-        const existingAlert = await this.alertModel.findOne({
+        const existingAlert = await this.model.findOne({
             where: {
                 uuid: alertId,
                 collectionId: collection.id,
@@ -341,7 +340,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             ['id', 'uuid', 'createdAt', 'updatedAt', 'updatedBy', 'CollectionId']
         );
 
-        const alert = await this.alertModel.create({ ...copiedAlert });
+        const alert = await this.model.create({ ...copiedAlert });
         await alert.reload({
             include: ['collection', 'createdById', 'updatedById', 'alertTemplate'],
         });
@@ -483,7 +482,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         if (!collection)
             throw new CollectionError(`Unable to retrieve Collection with uuid: ${collectionId}`);
 
-        const alert = await this.alertModel.findOne({
+        const alert = await this.model.findOne({
             where: {
                 uuid: alertId,
                 collectionId: collection.id,
@@ -499,9 +498,29 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         await alert.destroy();
     }
 
-    async updateAlertQuery(parameters: UpdateAlertQuery): Promise<AlertQueryResponse> {
+    async deleteAlertQuery(parameters: DeleteAlertQueryParameters): Promise<void> {
+        const { queryId } = parameters;
 
-        const { queryId, contentSources, informationTypes, query, updatedBy, alertId, collectionId } = parameters
+        const query = await this.alertQueryModel.findOne({
+            where: { uuid: queryId, isActive: true },
+        });
+
+        if (!query) throw new CollectionError(`Unable to retrieve Query with uuid: ${queryId}`);
+
+        await query.update({ isActive: false });
+        await query.destroy();
+    }
+
+    async updateAlertQuery(parameters: UpdateAlertQuery): Promise<AlertQueryResponse> {
+        const {
+            queryId,
+            contentSources,
+            informationTypes,
+            query,
+            updatedBy,
+            alertId,
+            collectionId,
+        } = parameters;
 
         const collection = await this.collectionModel.findOne({
             where: {
@@ -510,38 +529,33 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         });
 
         if (!collection) {
-
             throw new CollectionError(
-                `Error: could not retrieve Collection with uuid: ${collectionId}`,
+                `Error: could not retrieve Collection with uuid: ${collectionId}`
             );
         }
 
         const alert = await CollectionAlert.findOne({
             where: {
                 uuid: alertId,
-                isActive: true
+                isActive: true,
             },
         });
 
         if (!alert) {
-
-            throw new CollectionError(
-                `Error: could not retrieve alert with uuid: ${alertId}`,
-            );
+            throw new CollectionError(`Error: could not retrieve alert with uuid: ${alertId}`);
         }
 
         const updateQuery = await CollectionAlertQuery.findOne({
             where: {
                 uuid: queryId,
-                isActive: true
+                isActive: true,
             },
-            include: ['createdById', 'updatedById']
+            include: ['createdById', 'updatedById'],
         });
 
         if (!updateQuery) {
-
             throw new CollectionError(
-                `Error: could not retrieve alert query with uuid: ${queryId}`,
+                `Error: could not retrieve alert query with uuid: ${queryId}`
             );
         }
 
@@ -551,21 +565,16 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             },
         });
 
-
         if (!alertQueryOwner) {
-
-            throw new CollectionError(
-                `Error: could not retrieve User with uuid: ${updatedBy}`,
-            );
+            throw new CollectionError(`Error: could not retrieve User with uuid: ${updatedBy}`);
         }
 
         const queryParameters = {
             contentSources,
             informationTypes,
             query,
-            updatedBy: alertQueryOwner.id
-
-        }
+            updatedBy: alertQueryOwner.id,
+        };
         await updateQuery.update(queryParameters);
 
         await updateQuery.reload({
@@ -631,5 +640,53 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return await mapAlert(updatedAlert)
     }
 
+    async updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput> {
+
+        const { collectionId, alertId, updatedBy, title } = parameters;
+
+        const collection = await this.collectionModel.findOne({
+            where: {
+                uuid: collectionId,
+                isActive: true
+            },
+        });
+
+        if (!collection) {
+            throw new CollectionError(
+                `Unable to retrieve Collection with uuid: ${collectionId}`
+            );
+        }
+
+        const alert = await this.model.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true
+            }
+        });
+        if (!alert) {
+            throw new CollectionError(
+                `Unable to retrieve Alert with uuid: ${alertId}`
+            );
+        }
+
+        const updater = await this.userModel.findOne({
+            where: {
+                uuid: updatedBy,
+                isActive: true
+            },
+        });
+        if (!updater) {
+            throw new CollectionError(`Unable to retrieve User with uuid: ${updatedBy}`);
+        }
+
+        await alert.update({
+            title,
+            updatedBy: updater.id
+        })
+
+        await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
+
+        return mapAlert(alert);
+    }
 
 }

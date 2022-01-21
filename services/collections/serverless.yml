@@ -272,6 +272,16 @@ functions:
       - http:
           method: put
           path:  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}
+  
+  deleteAlertQuery:
+    handler: src/handlers/deleteAlertQuery/index.handle
+    description: Delete a Query
+    events:
+      - http:
+          method: delete
+          path: /collections/{collectionId}/alerts/{alertId}/queries/{queryId}
+          caching:
+            enabled: false
 
   copyAlertQuery:
     handler: src/handlers/copyAlertQuery/index.handle
@@ -290,5 +300,15 @@ functions:
       - http:
           method: put
           path: /collections/{collectionId}/alerts/{alertId}/queries
+          caching:
+            enabled: false
+
+  updateAlert:
+    handler: src/handlers/updateAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}
           caching:
             enabled: false

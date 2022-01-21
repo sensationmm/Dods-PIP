@@ -30,7 +30,7 @@ export const step = styled.div<ProgressProps>`
   }
 
   ${({ condensed }) => media.greaterThan('md')`
-  margin-right: ${condensed ? spacing(10) : spacing(12)};
+  margin-left: ${condensed ? spacing(10) : spacing(12)};
 
     .label {
       display: block;

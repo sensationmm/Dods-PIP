@@ -168,11 +168,24 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
             <SectionAccordion
               header={
                 <Styled.alertsHeader>
-                  <Icon src={Icons.Alert} size={IconSize.xlarge} />
-                  <Text type="h2" headingStyle="titleLarge">
-                    Alerts
-                  </Text>
-                  <Badge number={alerts.length} label="Alerts" size="small" />
+                  <Styled.alertsHeaderTitle>
+                    <Icon src={Icons.Alert} size={IconSize.xlarge} />
+                    <Text type="h2" headingStyle="titleLarge">
+                      Alerts
+                    </Text>
+                    <Badge number={alerts.length} label="Alerts" size="small" />
+                  </Styled.alertsHeaderTitle>
+                  <Button
+                    isSmall
+                    type="secondary"
+                    label="Add Alert"
+                    icon={Icons.Add}
+                    iconAlignment="right"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/collections/${collectionId}/add-alert`);
+                    }}
+                  />
                 </Styled.alertsHeader>
               }
               isOpen

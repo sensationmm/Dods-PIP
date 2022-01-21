@@ -1,14 +1,14 @@
 const { Client } = require('@elastic/elasticsearch')
 
 import {
-    createScheduleParameters,
-    deleteScheduleParameters,
-    updateScheduleParameters,
     activateScheduleParameters,
+    createScheduleParameters,
     deactivateScheduleParameters,
+    deleteScheduleParameters,
     getScheduleParameters,
+    updateScheduleParameters,
 } from "../domain";
-import { Schedule } from "./Schedule"
+import {Schedule} from "./Schedule"
 import elasticsearch from "../elasticsearch"
 
 export class ScheduleRepository implements Schedule {
@@ -51,8 +51,7 @@ export class ScheduleRepository implements Schedule {
     async updateSchedule(data: updateScheduleParameters): Promise<void> {
         const schedule =  await this.elasticsearch.watcher.getWatch({id: data.id});
         if (schedule.statusCode == 200) {
-            const scheduleType = (schedule.body.watch.actions.webhook.webhook.path.split('/'))[3]
-            data.scheduleType = scheduleType
+            data.scheduleType = (schedule.body.watch.actions.webhook.webhook.path.split('/'))[3]
             const query = ScheduleRepository.createSearchQuery(data);
             await this.elasticsearch.watcher.putWatch(query);
         }

@@ -54,6 +54,7 @@ export interface CollectionAlertsPersister {
     getCollectionAlerts(
         parameters: SearchCollectionAlertsParameters
     ): Promise<getAlertsByCollectionResponse>;
+    updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput>;
 }
 
 export interface CreateAlertParameters {
@@ -154,6 +155,12 @@ export interface DeleteAlertParameters {
     alertId: string;
 }
 
+export interface DeleteAlertQueryParameters {
+    collectionId: string;
+    alertId: string;
+    queryId: string;
+}
+
 export interface CreateAlertQueryParameters {
     alertId: string | number;
     informationTypes: string;
@@ -183,4 +190,11 @@ export interface SetAlertQueriesParameters {
             contentSources: string;
         }
     ];
+}
+
+export interface UpdateAlertParameters {
+    collectionId: string;
+    alertId: string;
+    updatedBy: string;
+    title: string;
 }

@@ -4,7 +4,7 @@ import { Api, BASE_URI } from '@dods-ui/utils/api';
 
 import { Collection, Collections } from './index.page';
 
-const loadAccounts = async (
+const loadCollections = async (
   setCollections: (collections: SelectProps['options']) => void,
   accountId?: string,
 ): Promise<void> => {
@@ -30,4 +30,4 @@ const loadAccounts = async (
   }
 };
 
-export default loadAccounts;
+export default loadCollections;
