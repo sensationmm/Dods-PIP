@@ -1,4 +1,4 @@
-service: scraper-hansard-api
+service: ingestion-python-hansard-api
 
 frameworkVersion: '2'
 projectDir: ../
@@ -70,8 +70,8 @@ provider:
 
 functions:
   scrape:
-    name: scraper-hansard-api-${sls:stage}
-    # description: 
+    name: ingestion-python-hansard-api-${sls:stage}
+    # description:
     handler: handler.run
     events:
       ## Invoke Lambda function on Mon-Fri at 15:05

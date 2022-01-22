@@ -1,9 +1,9 @@
 {
-  "name": "scraper-hansard-api",
+  "name": "ingestion-python-hansard-api",
   "version": "1.0.0",
-  "description": "Example of creating a function that runs as a cron job using the serverless `schedule` event",
+  "description": "Hansard House of Commons and House of Lords ingestion.",
   "author": "",
-  "license": "MIT",
+  "license": "",
   "devDependencies": {
     "serverless-offline": "^8.3.1",
     "serverless-python-requirements": "^5.3.0"

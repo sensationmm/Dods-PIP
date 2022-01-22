@@ -15,7 +15,6 @@ import os
 import uuid
 import boto3
 
-from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
 from hashlib import sha256
 from pynamodb.models import Model
@@ -23,7 +22,6 @@ from pynamodb.exceptions import TableDoesNotExist
 from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
 from botocore.exceptions import ClientError
 
-from lib.common import Common
 
 logger = logging.getLogger(__file__)
 
@@ -80,6 +78,10 @@ class MalformedDocumentException(Exception):
     pass
 
 
+class CreateDocumentException(Exception):
+    pass
+
+
 class DataModel(Model):
     """
     DataModel for duplication tracking of Hansard API content.
@@ -88,16 +90,8 @@ class DataModel(Model):
     """
 
     class Meta:
-        table_name = "scrapping-hashes-dev-table"
-
-        host = os.environ.get("DYNAMODB_HOST")
-
-
-        # scrapping-hashes-dev-table
-        # region = os.environ['REGION']
-        # host = os.environ['DYNAMODB_HOST']
-        # 'https://dynamodb.us-east-1.amazonaws.com'
-
+        table_name = os.environ.get("dynamodb_table", "hansard-api")
+        host = os.environ.get("DYNAMODB_HOST", "http://localhost:4566")
 
     external_id = UnicodeAttribute(hash_key=True)
     document_id = UnicodeAttribute()
@@ -178,7 +172,7 @@ def get_mapped_external_document(external_id: dict, date: date, house: str) -> d
         "source_hash": get_document_hash(source_document),
     }
 
-    logger.debug(f"{model=}")
+    logger.debug(f"model={model}")
 
     document = {
         "house": house,
@@ -220,11 +214,11 @@ def store_document(document: dict):
 
         model.document_id = document["model"]["document_id"]
         model.source_hash = document["model"]["source_hash"]
-        logger.info(f"Updated {model.document_id=} {model.source_hash=}")
+        logger.info(f"Updated document_id={model.document_id} source_hash={model.source_hash}")
 
         model.save()
 
-    logger.info(f"{should_create_new_document=}")
+    logger.info(f"should_create_new_document={should_create_new_document}")
 
     if should_create_new_document:
         create_document(document)
@@ -252,7 +246,7 @@ def get_house_was_sitting(date: date, house: str) -> bool:
     yesterday = date - timedelta(1)
     url = get_house_url("SITTING", date=yesterday, house=house)
 
-    logger.debug(f"SITTING {url=}")
+    logger.debug(f"SITTING url={url}")
     response = requests.get(url)
     data = response.json()
 
@@ -267,7 +261,7 @@ def get_house_was_sitting(date: date, house: str) -> bool:
     ).date()
     was_sitting = next_sitting_date == date
 
-    logger.info(f"House Was Sitting? {date=!s} {was_sitting=}")
+    logger.info(f"House Was Sitting? date={date!s} was_sitting={was_sitting}")
 
     if was_sitting:
         return True
@@ -282,7 +276,7 @@ def check_processing_complete() -> bool:
     response = requests.get(CURRENTLY_PROCESSING_URL)
 
     finished_processing = response.json() == ""
-    logger.info(f"{finished_processing=}")
+    logger.info(f"finished_processing={finished_processing}")
 
     return finished_processing
 
@@ -290,12 +284,12 @@ def check_processing_complete() -> bool:
 def get_sections(date: date, house: str) -> list:
 
     url = get_house_url("DAILY_SECTIONS", date=date, house=house)
-    logger.info(f"Getting available sections {date=!s} {url=}")
+    logger.info(f"Getting available sections date={date!s} url={url}")
 
     response = requests.get(url)
     sections = response.json()
 
-    logger.info(f"Found {sections=}")
+    logger.info(f"Found sections={sections}")
 
     return sections
 
@@ -310,7 +304,7 @@ def filter_documents(documents: list) -> list:
     """
 
     parent_ids = {x["ParentId"] for x in documents}
-    logger.debug(f"{parent_ids=}")
+    logger.debug(f"parent_ids={parent_ids}")
 
     filtered_documents = [doc for doc in documents if doc["Id"] not in parent_ids]
 
@@ -320,7 +314,7 @@ def filter_documents(documents: list) -> list:
 def get_documents(date: date, house: str, section: str) -> list:
 
     url = get_house_url("SECTION_TREES", date=date, house=house, section=section)
-    logger.info(f"Getting documents {section=} {date=!s} {url=}")
+    logger.info(f"Getting documents section={section} date={date} url={url}")
 
     response = requests.get(url)
     data = response.json()
@@ -330,7 +324,7 @@ def get_documents(date: date, house: str, section: str) -> list:
 
     documents = data[0]["SectionTreeItems"]
     filtered_documents = filter_documents(documents)
-    logger.info(f"{len(documents)=} {len(filtered_documents)=}")
+    logger.info(f"total={len(documents)} filtered={len(filtered_documents)}")
 
     return documents
 
@@ -339,7 +333,7 @@ def get_document(external_id: str) -> dict:
 
     url = DOCUMENT_URL.format(external_id=external_id)
 
-    logger.info(f"Getting document {url=}")
+    logger.info(f"Getting document url={url}")
 
     response = requests.get(url)
     document = response.json()
@@ -350,7 +344,7 @@ def get_document(external_id: str) -> dict:
         logger.error("Malformed data returned, no overview...")
         raise MalformedDocumentException(url)
 
-    logger.info(f"Returning data for {title=}")
+    logger.info(f"Returning data for title={title}")
 
     return document
 
@@ -359,7 +353,7 @@ def map_document(document: dict, date: date, house: str) -> dict:
     title = document["Overview"]["Title"]
     document_id = str(uuid.uuid4()).upper()
 
-    logger.info(f"Mapping document {title=} {document_id=}")
+    logger.info(f"Mapping document title={title} document_id={document_id}")
 
     mapped_document = DOCUMENT_TEMPLATE.copy()
     mapped_document["documentId"] = document_id
@@ -399,7 +393,7 @@ def get_document_information_type(navigator_titles: set) -> str:
     else:
         information_type = "Debates"
 
-    logger.info(f"Determined {information_type=}")
+    logger.info(f"Determined information_type={information_type}")
 
     return information_type
 
@@ -418,7 +412,7 @@ def get_document_content_location(navigator_titles: set) -> str:
     else:
         content_location = "UNKNOWN"
 
-    logger.info(f"Determined {content_location=}")
+    logger.info(f"Determined content_location={content_location}")
 
     return content_location
 
@@ -444,9 +438,9 @@ def get_document_originator(document: dict, is_written_statement: bool) -> str:
 
     else:
         originator = "UKNOWN"
-        logger.error(f"Unexpected {location=} for {document['Overview']['ExtId']=}")
+        logger.error(f"Unexpected location={location} for ExtId={document['Overview']['ExtId']}")
 
-    logger.info(f"Determined {originator=}")
+    logger.info(f"Determined originator={originator}")
 
     return originator
 
@@ -458,11 +452,11 @@ def get_written_statement_title(document: dict) -> str:
     written_statements = [child for child in document["ChildDebates"] if child["Overview"]["Title"].upper() == "WRITTEN STATEMENTS"]
 
     if not written_statements:
-        logger.error(f"No written statement found for {document['Overview']['ExtId']=}")
+        logger.error(f"No written statement found for ExtId={document['Overview']['ExtId']}")
         return "UNKNOWN"
 
     elif len(written_statements) > 1:
-        logger.warning(f"Multiple ({len(written_statements)=}) for {document['Overview']['ExtId']=}")
+        logger.warning(f"Multiple (total={len(written_statements)}) for ExtId={document['Overview']['ExtId']}")
     #import ipdb; ipdb.set_trace()
 
     # TODO - sort this out
@@ -480,7 +474,7 @@ def get_written_statement_title(document: dict) -> str:
     titles = [x["Title"] for x in written_statements[0]["Navigator"]]
 
     if len(titles) > 1:
-        logger.warning(f"Multiple {titles=}")
+        logger.warning(f"Multiple titles={titles}")
 
     return titles[0]
 
@@ -521,41 +515,39 @@ def get_document_content(document: dict) -> str:
 
     output += "</div>"
 
-    # Tidy up
-    output = BeautifulSoup(output, features="html.parser").prettify()
-
-    logger.info(f"Extracted {output=}")
+    logger.info(f"Extracted output={output}")
     return output
 
 
 def create_document(document: dict) -> str:
+    """Create document in S3 bucket."""
 
-    logger.info(f"Creating {document['model']=}")
+    logger.info(f"Creating model={document['model']}")
     path, filename = get_document_path(document)
+    key = os.path.join(path, filename)
+
+    # TODO: localstack testing
+    # awslocal s3api create-bucket --bucket infrastackdev-dodscontentextraction
+    # awslocal s3 ls s3://infrastackdev-dodscontentextraction --recursive
+
+    s3 = boto3.client('s3', endpoint_url="http://localhost:4566")
+    bucket = os.environ.get("BUCKET_NAME", "infrastackdev-dodscontentextraction")
+    content = json.dumps(document["mapped"], indent=2)
 
     try:
-        os.makedirs(path)
-    except FileExistsError:
-        pass
+        s3.put_object(Bucket=bucket, Key=key, Body=content)
 
-    output_path = os.path.join(path, filename)
+    except ClientError as exc:
+        logging.exception("Client Error when putting to S3")
+        raise CreateDocumentException from exc
 
-    s3_client = boto3.client('s3')
+    except Exception as exc:
+        logging.exception("Unknown error during storing to S3")
+        raise CreateDocumentException from exc
 
-    with open(output_path, "w") as output:
-        if object_name is None:
-            object_name = os.path.basename(filename)
-        try:
-            response = s3_client.upload_file(filename, bucket, object_name)
-        except ClientError as e:
-            logging.error(e)
-            return False
+    logger.info(f"Wrote {document['model']['external_id']} to bucket={bucket} key={key}")
 
-        return True
-
-    logger.info(f"Wrote {document['model']['external_id']} to filesystem")
-
-    return output_path
+    return key
 
 
 def get_document_path(document: dict) -> str:
@@ -564,7 +556,7 @@ def get_document_path(document: dict) -> str:
     path = f"hansard-{document['house']}/{document['date']}"
     filename = f"{document['mapped']['documentId']}.json"
 
-    logger.debug(f"{path=} {filename=}")
+    logger.debug(f"path={path} filename={filename}")
     return path, filename
 
 
@@ -572,7 +564,7 @@ def get_document_hash(document: dict) -> str:
     """Return an identifier for deduplication purposes."""
 
     hash_code = sha256(json.dumps(document).encode("utf-8")).hexdigest()
-    logger.debug(f"{hash_code=}")
+    logger.debug(f"hash_code={hash_code}")
 
     return hash_code
 
