@@ -1,4 +1,4 @@
-import { ClientAccount, Collection, CollectionAlert, CollectionDocument, CollectionSavedQuery, Op, Sequelize, User, WhereOptions } from '@dodsgroup/dods-model';
+import { ClientAccount, Collection, CollectionAlert, CollectionDocument, CollectionSavedQuery, Op, User, WhereOptions } from '@dodsgroup/dods-model';
 import {
     CollectionOutput,
     CollectionsPersister,
@@ -42,12 +42,16 @@ export class CollectionsRepository implements CollectionsPersister {
 
             whereClause = {
                 ...whereClause,
-                'name': {
-                    [Op.and]: [{ [Op.like]: `${lowerCaseStarts}%` }, { [Op.like]: `%${lowerCaseSearch}%` }],
-                }
+                [Op.or]: [
+                    {
+                        'name': { [Op.and]: [{ [Op.like]: `${lowerCaseStarts}%` }, { [Op.like]: `%${lowerCaseSearch}%` }] }
+                    },
+                    {
+                        '$clientAccount.name$': { [Op.and]: [{ [Op.like]: `${lowerCaseStarts}%` }, { [Op.like]: `%${lowerCaseSearch}%` }] }
+                    }
+                ]
             };
         }
-
         else {
             const searchString = startsWith || searchTerm;
 
@@ -59,16 +63,19 @@ export class CollectionsRepository implements CollectionsPersister {
                 //* If not search only in the beginning
                 whereClause = {
                     ...whereClause,
-                    $and: Sequelize.where(
-                        Sequelize.fn('LOWER', Sequelize.col('Collection.name')),
-                        'LIKE',
-                        `${searchTerm ? '%' : ''}${lowerCaseName}%`
-                    ),
+                    [Op.or]: [
+                        {
+                            'name': { [Op.like]: `${searchTerm ? '%' : ''}${lowerCaseName}%` }
+                        },
+                        {
+                            '$clientAccount.name$': { [Op.like]: `${searchTerm ? '%' : ''}${lowerCaseName}%` }
+                        }
+                    ],
                 };
             }
         }
 
-        let clientAccountWhere = {};
+        let clientAccountWhere: WhereOptions = {};
         if (clientAccountId) {
             clientAccountWhere = {
                 uuid: clientAccountId,
@@ -87,9 +94,6 @@ export class CollectionsRepository implements CollectionsPersister {
                     as: 'clientAccount',
                     where: clientAccountWhere,
                     required: true
-                },
-                {
-                    model: ClientAccount, as: 'clientAccount'
                 },
                 {
                     model: CollectionAlert, as: 'alerts'
