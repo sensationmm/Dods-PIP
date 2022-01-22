@@ -167,7 +167,7 @@ def map_document(document: dict, answered_state: str) -> dict:
     mapped_document["contentDateTime"] = document["dateTabled"]
     mapped_document["createdDateTime"] = datetime.now().isoformat()
     mapped_document["documentContent"] = get_document_content(document)
-    mapped_document["informationType"] = "Written Answers" if answered_state == "answered" else "Written Questions"
+    mapped_document["informationType"] = "Written Answers" if answered_state.upper() == "ANSWERED" else "Written Questions"
 
     return mapped_document
 
@@ -238,7 +238,7 @@ def create_document(document: dict) -> str:
 def get_document_path(document: dict) -> str:
     """Construct filesystem-like (S3) path & filename for the document."""
 
-    folder = "answers" if document["answered_state"] == "answered" else "questions"
+    folder = "answers" if document["answered_state"].upper() == "ANSWERED" else "questions"
 
     path = f"uk-parliament-written-{folder}/{document['date']}"
     filename = f"{document['mapped']['documentId']}.json"
