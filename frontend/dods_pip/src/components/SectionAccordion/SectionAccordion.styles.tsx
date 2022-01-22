@@ -19,6 +19,7 @@ type HeaderContentProps = {
 };
 
 export const headerContent = styled.div<HeaderContentProps>`
+  width: calc(100% - 35px - ${spacing(2)});
   opacity: ${({ closed }) => (closed ? 0.4 : 1)};
 `;
 

@@ -1,11 +1,6 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 import { CollectionAlertsRepository, SearchAlertQueriesParameters } from '@dodsgroup/dods-repositories';
 
-//import { CollectionRepository } from '../../repositories';
-
-//import { SearchAlertQueriesParameters } from '../../domain';
-
-
 export const getAlertQueries: AsyncLambdaHandler<SearchAlertQueriesParameters> = async (
     parameters
 ) => {
@@ -18,8 +13,8 @@ export const getAlertQueries: AsyncLambdaHandler<SearchAlertQueriesParameters> =
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
         message: 'Alert queries found',
-        limit: parameters.limit,
-        offset: parameters.offset,
+        limit: parseInt(parameters.limit),
+        offset: parseInt(parameters.offset),
         totalRecords: response.count,
         queries: response.queries
 

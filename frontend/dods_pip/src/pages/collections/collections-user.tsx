@@ -26,6 +26,8 @@ export const CollectionsUser: React.FC<CollectionsScreenProps> = ({
 }) => {
   const router = useRouter();
 
+  const hasFilters = Object.keys(filters).length > 0;
+
   return (
     <div data-test="page-collections">
       <Head>
@@ -69,16 +71,20 @@ export const CollectionsUser: React.FC<CollectionsScreenProps> = ({
             <PlainTable
               colWidths={[15, 4, 2, 1]}
               headings={['Name', 'Last edit', 'Items', '']}
-              emptyMessage="No collection has been added"
+              emptyMessage={`No collection${
+                hasFilters ? 's matching those criteria' : ' has been added'
+              }`}
               emptyAction={
-                <Button
-                  isSmall
-                  type="text"
-                  label="Add Collection"
-                  icon={Icons.Add}
-                  iconAlignment="right"
-                  onClick={() => setShowAdd(true)}
-                />
+                !hasFilters ? (
+                  <Button
+                    isSmall
+                    type="text"
+                    label="Add Collection"
+                    icon={Icons.Add}
+                    iconAlignment="right"
+                    onClick={() => setShowAdd(true)}
+                  />
+                ) : undefined
               }
               rows={collectionsList.map(({ uuid, name, updatedAt, alertsCount }) => [
                 uuid,

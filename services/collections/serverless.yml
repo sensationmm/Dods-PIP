@@ -14,7 +14,7 @@ provider:
   profile: dods-dev
   runtime: nodejs14.x
   deploymentBucket:
-    name: pip-${self:provider.stage}-scrapping-lambdas
+    name: pip-${self:provider.stage}-services-lambdas
   stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
 
@@ -197,6 +197,26 @@ functions:
           caching:
             enabled: false
 
+  deleteAlertRecipient:
+    handler: src/handlers/deleteAlertRecipient/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: delete
+          path: collections/{collectionId}/alerts/{alertId}/recipients
+          caching:
+            enabled: false
+
+  searchAlertRecipients:
+    handler: src/handlers/searchAlertRecipients/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: get
+          path: collections/{collectionId}/alerts/{alertId}/recipients
+          caching:
+            enabled: false
+
   getAlert:
     handler: src/handlers/getAlert/index.handle
     description: Get the basic information of an alert
@@ -222,5 +242,73 @@ functions:
       - http:
           method: post
           path: /collections/{collectionId}/alerts/{alertId}/copyto
+          caching:
+            enabled: false
+
+  deleteAlert:
+    handler: src/handlers/deleteAlert/index.handle
+    description: Delete an Alert
+    events:
+      - http:
+          method: delete
+          path: /collections/{collectionId}/alerts/{alertId}
+          caching:
+            enabled: false
+  
+  createAlertQuery:
+    handler: src/handlers/createAlertQuery/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: /collections/{collectionId}/alerts/{alertId}/queries
+          caching:
+            enabled: false
+
+  updateAlertQuery:
+    handler: src/handlers/updateAlertQuery/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path:  /collections/{collectionId}/alerts/{alertId}/queries/{queryId}
+  
+  deleteAlertQuery:
+    handler: src/handlers/deleteAlertQuery/index.handle
+    description: Delete a Query
+    events:
+      - http:
+          method: delete
+          path: /collections/{collectionId}/alerts/{alertId}/queries/{queryId}
+          caching:
+            enabled: false
+
+  copyAlertQuery:
+    handler: src/handlers/copyAlertQuery/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: /collections/{collectionId}/alerts/{alertId}/queries/{queryId}/copyto
+          caching:
+            enabled: false
+
+  setAlertQueries:
+    handler: src/handlers/setAlertQueries/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/queries
+          caching:
+            enabled: false
+
+  updateAlert:
+    handler: src/handlers/updateAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}
           caching:
             enabled: false

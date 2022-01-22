@@ -1,13 +1,6 @@
-import { CollectionInput } from '@dodsgroup/dods-model';
-
-export interface CreateCollectionParameters
-    extends Omit<CollectionInput, 'isActive' | 'clientAccountId' | 'createdById'> {
+export interface CreateCollectionParameters {
     clientAccountId: string;
     createdById: string;
-}
-
-export interface UpdateCollectionParameters {
-    collectionId: string;
     name: string;
 }
 

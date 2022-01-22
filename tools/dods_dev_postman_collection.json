@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ec121851-1ed4-48ae-b640-7954a937135f",
+		"_postman_id": "a536af7a-b05f-41f0-9927-e86eec369f78",
 		"name": "DODS Dev",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1741,6 +1741,26 @@
 								"alerts",
 								"9ed7d965-2847-440e-8afc-87b2851871f5",
 								"copyto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Alert",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/86cc34ae-47db-407c-b18d-bccfbd600e11/alerts/e5f80c12-65ba-4157-8672-19c7d832e05a",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"86cc34ae-47db-407c-b18d-bccfbd600e11",
+								"alerts",
+								"e5f80c12-65ba-4157-8672-19c7d832e05a"
 							]
 						}
 					},

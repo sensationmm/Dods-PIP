@@ -10,11 +10,12 @@ import Text from '@dods-ui/components/Text';
 import fetchJson from '@dods-ui/lib/fetchJson';
 import useDebounce from '@dods-ui/lib/useDebounce';
 import useUser, { User } from '@dods-ui/lib/useUser';
+import loadAccounts from '@dods-ui/pages/accounts/load-accounts';
 import { Api, BASE_URI, toQueryString } from '@dods-ui/utils/api';
 import React from 'react';
 
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import { ClientAccount, ClientAccounts } from '../account-management/accounts.page';
+import { ClientAccount } from '../account-management/accounts.page';
 import * as Styled from './collections.styles';
 import CollectionsAdmin from './collections-admin';
 import CollectionsUser from './collections-user';
@@ -63,6 +64,7 @@ type Errors = {
 
 type Filters = {
   search?: string;
+  aToZ?: string;
 };
 
 export const Collections: React.FC<CollectionsProps> = ({
@@ -90,13 +92,12 @@ export const Collections: React.FC<CollectionsProps> = ({
     addNotification,
   };
 
-  const { activePage, numPerPage, PaginationButtons, PaginationStats } = Pagination(total, '10');
-
   const getFilterQueryString = () => {
     const params: FilterParams = {
       limit: numPerPage,
       offset: activePage * numPerPage,
       ...(filters?.search && { searchTerm: encodeURI(filters?.search) }),
+      ...(filters.aToZ && { startsWith: filters.aToZ }),
     };
 
     return toQueryString(params);
@@ -106,12 +107,15 @@ export const Collections: React.FC<CollectionsProps> = ({
     setLoading(true);
     const queryString = getFilterQueryString();
     try {
-      const results = await fetchJson(
-        `${BASE_URI}${Api.Collections}/${user.clientAccountId}${queryString}`,
-        {
-          method: 'GET',
-        },
-      );
+      let url;
+      if (user.isDodsUser) {
+        url = `${BASE_URI}${Api.Collections}${queryString}`;
+      } else {
+        url = `${BASE_URI}${Api.Collections}/${user.clientAccountId}${queryString}`;
+      }
+      const results = await fetchJson(url, {
+        method: 'GET',
+      });
       const { data = [], filteredRecords } = results;
       setCollectionsList(data as Collections);
       setTotal(filteredRecords as number);
@@ -123,36 +127,7 @@ export const Collections: React.FC<CollectionsProps> = ({
     setLoading(false);
   };
 
-  const loadAccounts = async (accountSearch?: string) => {
-    try {
-      let url;
-      if (accountSearch) {
-        url = `${BASE_URI}${Api.ClientAccount}?startsWith=${accountSearch}`;
-      } else {
-        url = `${BASE_URI}${Api.ClientAccount}`;
-      }
-      const results = await fetchJson(url, {
-        method: 'GET',
-      });
-      const { data = [] } = results;
-      if (accountSearch) {
-        const result = (data as ClientAccounts).map((item: ClientAccount) => ({
-          value: item.uuid,
-          label: item.name,
-        }));
-
-        setAccounts(result);
-      } else {
-        const result = {
-          value: (data as ClientAccount).uuid,
-          label: (data as ClientAccount).name,
-        };
-        setAccounts([result]);
-      }
-    } catch (e) {
-      setAccounts([]);
-    }
-  };
+  const { activePage, numPerPage, PaginationButtons, PaginationStats } = Pagination(total);
 
   const createCollection = async () => {
     setLoading(true);
@@ -185,7 +160,7 @@ export const Collections: React.FC<CollectionsProps> = ({
   React.useEffect(() => {
     if (user?.clientAccountId) {
       if (user?.isDodsUser) {
-        loadAccounts();
+        loadAccounts(setAccounts);
       } else {
         setAddAccount(user.clientAccountId);
       }
@@ -196,7 +171,7 @@ export const Collections: React.FC<CollectionsProps> = ({
     (async () => {
       await loadCollections();
     })();
-  }, [debouncedValue, numPerPage, activePage, user]);
+  }, [debouncedValue, numPerPage, activePage, user, filters.aToZ]);
 
   if (!user) {
     return <Loader data-test="loader" inline />;
@@ -211,6 +186,10 @@ export const Collections: React.FC<CollectionsProps> = ({
     }
     setErrors(formErrors);
   };
+
+  if (!user) {
+    return <Loader data-test="loader" inline />;
+  }
 
   return (
     <>
@@ -303,7 +282,7 @@ export const Collections: React.FC<CollectionsProps> = ({
                 label="Account"
                 error={errors.account}
                 onBlur={() => validateField('account', 'Account', addAccount)}
-                onKeyPress={(val, search?: string) => loadAccounts(search)}
+                onKeyPress={(val, search?: string) => loadAccounts(setAccounts, search)}
                 onKeyPressHasSearch
               />
             )}

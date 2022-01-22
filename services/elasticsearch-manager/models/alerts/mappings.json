@@ -1,0 +1,291 @@
+{
+  "mappings" : {
+    "properties" : {
+      "query" : {
+        "type" : "percolator"
+      },
+      "alertId": {
+        "type": "keyword"
+      },
+      "aggs_fields" : {
+        "properties" : {
+          "geography" : {
+            "type" : "keyword"
+          },
+          "organisations" : {
+            "type" : "keyword"
+          },
+          "organizations" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "people" : {
+            "type" : "keyword"
+          },
+          "topics" : {
+            "type" : "keyword"
+          }
+        }
+      },
+      "contentDateTime" : {
+        "type" : "date"
+      },
+      "contentLocation" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "contentSource" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "countryOfOrigin" : {
+        "type" : "keyword"
+      },
+      "createdBy" : {
+        "type" : "text",
+        "analyzer" : "email_analyzer"
+      },
+      "createdDateTime" : {
+        "type" : "date"
+      },
+      "documentContent" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "documentId" : {
+        "type" : "keyword"
+      },
+      "documentTitle" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "feedFormat" : {
+        "type" : "keyword"
+      },
+      "informationType" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "ingestedDateTime" : {
+        "type" : "date"
+      },
+      "internallyCreated" : {
+        "type" : "boolean"
+      },
+      "jurisdiction" : {
+        "type" : "keyword"
+      },
+      "language" : {
+        "type" : "keyword"
+      },
+      "organisationName" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "originalContent" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "originator" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "schemaType" : {
+        "type" : "keyword"
+      },
+      "sourceReferenceFormat" : {
+        "type" : "keyword"
+      },
+      "sourceReferenceUri" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          },
+          "nocase" : {
+            "type" : "text",
+            "analyzer" : "analyzer_case_insensitive"
+          }
+        },
+        "analyzer" : "analyzer_case_insensitive",
+        "fielddata" : true
+      },
+      "taxonomyTerms" : {
+        "type" : "nested",
+        "properties" : {
+          "alternativeLabels" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword"
+              },
+              "nocase" : {
+                "type" : "text",
+                "analyzer" : "analyzer_case_insensitive"
+              }
+            },
+            "analyzer" : "analyzer_case_insensitive",
+            "fielddata" : true
+          },
+          "alternative_labels" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "ancestorTerms" : {
+            "type" : "nested",
+            "properties" : {
+              "rank" : {
+                "type" : "integer"
+              },
+              "tagId" : {
+                "type" : "keyword"
+              },
+              "termLabel" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword"
+                  },
+                  "nocase" : {
+                    "type" : "text",
+                    "analyzer" : "analyzer_case_insensitive"
+                  }
+                },
+                "analyzer" : "analyzer_case_insensitive",
+                "fielddata" : true
+              }
+            }
+          },
+          "facetType" : {
+            "type" : "keyword"
+          },
+          "hierarchy" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "inScheme" : {
+            "type" : "keyword"
+          },
+          "tagId" : {
+            "type" : "keyword"
+          },
+          "taxonomyType" : {
+            "type" : "keyword"
+          },
+          "termLabel" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword"
+              },
+              "nocase" : {
+                "type" : "text",
+                "analyzer" : "analyzer_case_insensitive"
+              }
+            },
+            "analyzer" : "analyzer_case_insensitive",
+            "fielddata" : true
+          }
+        }
+      },
+      "version" : {
+        "type" : "keyword"
+      }
+    }
+  }
+}

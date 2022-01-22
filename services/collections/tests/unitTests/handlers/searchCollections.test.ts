@@ -95,26 +95,4 @@ describe(`${FUNCTION_NAME} handler`, () => {
         expect(mockedCollectionRepository.defaultInstance.list).toHaveBeenCalledWith(requestParams);
     });
 
-    it('Invalid input, startsWith and searchTerm', async () => {
-        const requestParams: SearchCollectionsInput = {
-            clientAccountId: '94a57103-3bf0-4a29-bdba-99a4650c1849',
-            sortBy: 'name',
-            sortDirection: 'ASC',
-            limit: 30,
-            offset: 0,
-            startsWith: 'some',
-            searchTerm: 'some',
-        };
-
-        const response = await searchCollections(requestParams, defaultContext);
-
-        const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
-            success: false,
-            message: 'Error: searchTerm and startsWith should not be used together.',
-        });
-
-        expect(response).toEqual(expectedResponse);
-
-        expect(mockedCollectionRepository.defaultInstance.list).toHaveBeenCalledTimes(0);
-    });
 });

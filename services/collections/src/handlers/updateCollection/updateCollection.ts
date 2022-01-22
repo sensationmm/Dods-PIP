@@ -1,30 +1,14 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
-import { CollectionRepository } from '../../repositories';
-import { UpdateCollectionParameters } from '../../domain';
+import { CollectionsRepository, UpdateCollectionParameters } from '@dodsgroup/dods-repositories';
 
-export const updateCollection: AsyncLambdaHandler<UpdateCollectionParameters> = async (
-    params
-) => {
+export const updateCollection: AsyncLambdaHandler<UpdateCollectionParameters> = async (params) => {
 
-    try {
-        const updatedRecord = await CollectionRepository.defaultInstance.updateCollection(
-            params
-        );
+    const updatedRecord = await CollectionsRepository.defaultInstance.update(params);
 
-        const updatedResponse = CollectionRepository.defaultInstance.mapCollection(updatedRecord)
-
-        return new HttpResponse(HttpStatusCode.OK, {
-            success: true,
-            message: 'Collection updated successfully',
-            data: updatedResponse,
-        });
-    } catch (error: any) {
-
-        return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
-            success: false,
-            message: error.message,
-        });
-
-    }
+    return new HttpResponse(HttpStatusCode.OK, {
+        success: true,
+        message: 'Collection updated successfully',
+        data: updatedRecord,
+    });
 };

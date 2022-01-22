@@ -8,14 +8,18 @@ import { Icons } from '../Icon/assets';
 import Text from '../Text';
 import * as Styled from './Alert.styles';
 
-export interface AlertProps {
+export type AlertData = {
+  uuid: string;
+  collectionId: string;
   title: string;
   searchQueries: number;
   recipients: number;
-  immediateDelivery: boolean;
-  deliveryDay?: DayType;
+  immediateDelivery?: boolean;
+  deliveryDays?: DayType[];
   deliveryTimes?: Array<string>;
-  isConsultant: boolean;
+};
+export interface AlertProps extends AlertData {
+  isConsultant?: boolean;
   onDelete: () => void;
   onCopy: () => void;
   onViewSettings: () => void;
@@ -27,9 +31,9 @@ const Alert: React.FC<AlertProps> = ({
   searchQueries,
   recipients,
   immediateDelivery = false,
-  deliveryDay,
+  deliveryDays,
   deliveryTimes,
-  isConsultant,
+  isConsultant = false,
   onDelete,
   onCopy,
   onViewSettings,
@@ -63,7 +67,7 @@ const Alert: React.FC<AlertProps> = ({
           </Styled.deliveryTitle>
           <Spacer size={3} />
           <DayPicker
-            selected={!immediateDelivery ? deliveryDay : undefined}
+            selected={!immediateDelivery ? deliveryDays : undefined}
             disabled={immediateDelivery}
           />
           {!immediateDelivery && deliveryTimes && (

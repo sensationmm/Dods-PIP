@@ -37,10 +37,73 @@ export const main = styled.main`
 export const tags = styled.aside`
   width: 100%;
   margin-bottom: ${spacing(6)};
+  background: ${color.base.white};
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgb(18 32 53 / 16%);
+  padding: ${spacing(6)};
 
   ${media.greaterThan(breakpoint)`
     width: 350px;
   `}
+
+  h3 {
+    margin-bottom: ${spacing(6)};
+  }
+
+  label {
+    font-size: 16px;
+    display: block;
+    margin-bottom: ${spacing(4)};
+    text-transform: capitalize !important;
+
+    ${media.greaterThan(breakpoint)`
+      font-size: 18px;
+    `}
+  }
+`;
+
+export const headingButton = styled.button`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  font-size: 18px;
+  padding: 0;
+  font-family: 'Libre Baskerville';
+  cursor: pointer;
+
+  ${media.greaterThan(breakpoint)`
+    font-size: 24px;
+    cursor: default;
+
+    svg {
+      display: none;
+    }
+  `}
+`;
+
+export const tagsContent = styled.div`
+  height: 0;
+  overflow: hidden;
+
+  &.expanded {
+    height: auto;
+    padding-top: ${spacing(4)};
+  }
+
+  ${media.greaterThan(breakpoint)`
+    height: auto !important;
+    padding-top: ${spacing(4)};
+  `}
+`;
+
+export const tagsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${spacing(2)};
+  margin-bottom: ${spacing(8)};
 `;
 
 export const tabs = styled.div`
@@ -81,6 +144,32 @@ export const tab = styled.button`
       background: ${color.theme.blueLight};
     }
   }
+`;
+
+export const status = styled.div`
+  height: 32px;
+  border-radius: 60px;
+  background: ${color.base.white};
+  border: 1px solid ${color.base.greyLight};
+  display: inline-block;
+  padding: 0 ${spacing(10)};
+  line-height: 32px;
+  position: relative;
+  font-size: 14px;
+  font-weight: 700;
+`;
+
+export const statusIcon = styled.div`
+  position: absolute;
+  left: 3px;
+  top: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 60px;
+  background: ${color.accent.green};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const detailTable = styled.table`

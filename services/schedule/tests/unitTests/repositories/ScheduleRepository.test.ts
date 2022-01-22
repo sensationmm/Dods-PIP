@@ -1,14 +1,18 @@
 import {
-    createScheduleParameters,
+    activateScheduleParameters,
+    createScheduleParameters, deactivateScheduleParameters,
     deleteScheduleParameters,
     getScheduleParameters,
     updateScheduleParameters
 } from "../../../src/domain";
-import { ScheduleRepository } from "../../../src/repositories/ScheduleRepository";
+import { ScheduleRepository } from "../../../src/repositories";
 
 const mockPutWatch = jest.fn();
 const mockGetWatch = jest.fn();
 const mockDeleteWatch = jest.fn();
+const mockActivateWatch = jest.fn();
+const mockDeactivateWatch = jest.fn();
+const mockSearch = jest.fn().mockReturnValue({body: ''});
 
 mockGetWatch.mockImplementation(() => Promise.resolve({
     body: {
@@ -26,11 +30,14 @@ jest.mock('../../../src/elasticsearch', () => ({
         putWatch: () => mockPutWatch(),
         getWatch: () => mockGetWatch(),
         deleteWatch: () => mockDeleteWatch(),
-    }
+        activateWatch: () => mockActivateWatch(),
+        deactivateWatch: () => mockDeactivateWatch(),
+    },
+    search: () => mockSearch(),
 }));
 
 const CREATE_SCHEDULE_INPUT: createScheduleParameters = {
-    "id": "123",
+    "scheduleId": "123",
     "scheduleType": "publishing",
     "cron": "0 0 13 24 DEC ? 2021"
 }
@@ -39,7 +46,7 @@ describe(`Schedule repository tests`, () => {
 
     test(`createSearchQuery returns correct query`, async () => {
         const expectedQuery = {
-            id: CREATE_SCHEDULE_INPUT.id,
+            id: CREATE_SCHEDULE_INPUT.scheduleId,
             active: true,
             body: {
                 trigger: { schedule: { "cron": CREATE_SCHEDULE_INPUT.cron } },
@@ -47,7 +54,7 @@ describe(`Schedule repository tests`, () => {
                     webhook: {
                         webhook: {
                             method: "GET",
-                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + CREATE_SCHEDULE_INPUT.id + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
+                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + CREATE_SCHEDULE_INPUT.scheduleId + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
                         }
                     }
                 }
@@ -79,7 +86,7 @@ describe(`Schedule repository tests`, () => {
 
     test(`deleteSchedule calls deleteWatch`, async () => {
         const deleteScheduleParameters: deleteScheduleParameters = {
-            id: "123"
+            scheduleId: "123"
         }
         await ScheduleRepository.defaultInstance.deleteSchedule(deleteScheduleParameters)
 
@@ -88,13 +95,31 @@ describe(`Schedule repository tests`, () => {
 
     test(`updateSchedule updates the schedule`, async () => {
         const updateScheduleParameters: updateScheduleParameters = {
-            id: "123",
+            scheduleId: "123",
             cron: "123"
         }
         await ScheduleRepository.defaultInstance.updateSchedule(updateScheduleParameters)
 
         expect(mockGetWatch).toHaveBeenCalled();
         expect(mockPutWatch).toHaveBeenCalled();
+    });
+
+    test(`activateSchedule activates the schedule`, async () => {
+        const activateScheduleParameters: activateScheduleParameters = {
+            scheduleId: "123",
+        }
+        await ScheduleRepository.defaultInstance.activateSchedule(activateScheduleParameters)
+
+        expect(mockActivateWatch).toHaveBeenCalled();
+    });
+
+    test(`deactivateSchedule deactivates the schedule`, async () => {
+        const deactivateScheduleParameters: deactivateScheduleParameters = {
+            scheduleId: "123",
+        }
+        await ScheduleRepository.defaultInstance.deactivateSchedule(deactivateScheduleParameters)
+
+        expect(mockDeactivateWatch).toHaveBeenCalled();
     });
 
 });
