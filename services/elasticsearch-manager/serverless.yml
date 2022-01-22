@@ -37,15 +37,15 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
-    name: pip-${self:provider.stage}-scrapping-lambdas
+    name: pip-${self:provider.stage}-services-lambdas
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     KEY_PREFIX: ${self:custom.resource_prefix}
     REGION: eu-west-1
-    ES_HOST: ${env:ES_HOST}
-    ES_USER: ${env:ES_USER}
-    ES_PASSWORD: ${env:ES_PASSWORD}
+    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
+    ES_KEY_ID: ${env:ES_KEY_ID}
+    ES_API_KEY: ${env:ES_API_KEY}
 
 functions:
   elastic-run:

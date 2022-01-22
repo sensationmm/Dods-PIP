@@ -1,7 +1,7 @@
 import { getContent } from '../../../src/handlers/getContent/getContent';
 import {GetContentParameters} from "../../../src/domain";
 import {SearchRepository} from "../../../src/repositories/SearchRepository";
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 jest.mock('../../../src/repositories/SearchRepository');
 

@@ -14,7 +14,7 @@ const Template: Story<DayPickerProps> = (args) => <DayPicker {...args} />;
 export const Primary = Template.bind({});
 
 Primary.args = {
-  selected: 'mon',
+  selected: ['mon', 'thu'],
   disabled: false,
   onClick: undefined,
 };

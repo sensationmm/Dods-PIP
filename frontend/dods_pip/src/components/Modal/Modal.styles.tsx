@@ -1,3 +1,4 @@
+import { Icon } from '@dods-ui/components/Icon/Icon.styles';
 import styled, { keyframes } from 'styled-components';
 
 import color from '../../globals/color';
@@ -88,6 +89,16 @@ export const modalHeader = styled.div`
   ${media.greaterThan('md')`
     padding: ${spacing(10)} ${spacing(8)};
   `};
+
+  > ${Icon} {
+    margin-right: ${spacing(4)};
+  }
+`;
+
+export const modalHeaderTitle = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 export const titleAside = styled.div`

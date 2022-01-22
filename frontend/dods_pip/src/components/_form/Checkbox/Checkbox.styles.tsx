@@ -29,6 +29,7 @@ export const checkboxToggle = styled.div<CheckboxToggleProps>`
   border-radius: 4px;
   width: 24px;
   height: 24px;
+  min-width: 24px;
   margin-right: ${spacing(3)};
   background: ${color.base.transparent};
   display: flex;

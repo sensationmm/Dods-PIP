@@ -1,0 +1,10 @@
+@contentType = application/json
+
+# @name updateCollection
+
+PUT {{host}}/collections/350b159c-6e43-11ec-90d6-0242ac120003 HTTP/1.1
+
+{
+    "name": "Test - updated",
+    "updatedBy": "6c16a036-2439-4b78-bf29-8069f4cd6c0b"
+}

@@ -56,3 +56,9 @@ export const header = styled.div`
   align-items: center;
   min-height: 48px;
 `;
+
+export const searchFilter = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 340px;
+`;

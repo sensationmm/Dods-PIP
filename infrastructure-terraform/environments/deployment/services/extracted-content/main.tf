@@ -15,4 +15,3 @@ module "scraped-content" {
   environment = var.environment
   name        = "content-extraction"
 }
-
