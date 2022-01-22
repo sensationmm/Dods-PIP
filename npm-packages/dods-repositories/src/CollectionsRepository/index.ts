@@ -47,7 +47,7 @@ export class CollectionsRepository implements CollectionsPersister {
                         'name': { [Op.and]: [{ [Op.like]: `${lowerCaseStarts}%` }, { [Op.like]: `%${lowerCaseSearch}%` }] }
                     },
                     {
-                        '$ClientAccount.name$': { [Op.and]: [{ [Op.like]: `${lowerCaseStarts}%` }, { [Op.like]: `%${lowerCaseSearch}%` }] }
+                        '$clientAccount.name$': { [Op.and]: [{ [Op.like]: `${lowerCaseStarts}%` }, { [Op.like]: `%${lowerCaseSearch}%` }] }
                     }
                 ]
             };
@@ -68,7 +68,7 @@ export class CollectionsRepository implements CollectionsPersister {
                             'name': { [Op.like]: `${searchTerm ? '%' : ''}${lowerCaseName}%` }
                         },
                         {
-                            '$ClientAccount.name$': { [Op.like]: `${searchTerm ? '%' : ''}${lowerCaseName}%` }
+                            '$clientAccount.name$': { [Op.like]: `${searchTerm ? '%' : ''}${lowerCaseName}%` }
                         }
                     ],
                 };
