@@ -8,11 +8,13 @@ import json
 
 INPUT_BUCKET = os.environ['INPUT_BUCKET']
 OUTPUT_BUCKET = os.environ['OUTPUT_BUCKET']
+LAMBDA_CONTENT_INDEXER_ARN = os.environ['LAMBDA_CONTENT_INDEXER_ARN']
 SQS_QUEUE = os.environ['SQS_QUEUE']
 PREFIX = os.environ['KEY_PREFIX']
 s3_client = boto3.client('s3')
 sqs_client = boto3.client('sqs')
 config = Config().config_read(("config.ini"))
+lambda_client = boto3.client('lambda')
 
 def s3_list_folders(prefix: str):
     result = s3_client.list_objects(Bucket=INPUT_BUCKET, Prefix=prefix, Delimiter='/')
@@ -49,6 +51,35 @@ def run(event, context):
 
 def consumer(event, context):
     if 'Records' in event:
-        logger.info('TODO: Message will consuming here')
+        for record in event['Records']:
+            message = loads(record["body"])
+            required_paths = {
+                'file_path_content_document': ''
+            }
+            if required_paths.keys() <= message.keys():
+                logger.info(f'File path: {message["file_path_content_document"]}')
+                s3_object = s3_client.get_object(
+                    Bucket=INPUT_BUCKET,
+                    Key=message['file_path_content_document']
+                )
+
+                document = loads(s3_object['Body'].read().decode('utf8'))
+                try:
+                    response = lambda_client.invoke(
+                        FunctionName=LAMBDA_CONTENT_INDEXER_ARN,
+                        InvocationType='RequestResponse',
+                        Payload=json.dumps({"data": document})
+                    )
+                    if response['Payload'].read():
+                        logger.exception('Document has been indexed.')
+                    else:
+                        logger.exception('Document hasn\'t been indexed.')
+                except Exception as e:
+                    logger.exception(e)
+                    return False
+
+            else:
+                logger.exception('Missing file path in the body!')
+                return False
     else:
         logger.info(f'{SQS_QUEUE} is empty')
