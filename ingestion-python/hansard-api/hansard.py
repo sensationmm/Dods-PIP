@@ -530,7 +530,7 @@ def create_document(document: dict) -> str:
     # awslocal s3api create-bucket --bucket infrastackdev-dodscontentextraction
     # awslocal s3 ls s3://infrastackdev-dodscontentextraction --recursive
 
-    s3 = boto3.client('s3', endpoint_url="http://localhost:4566")
+    s3 = boto3.client('s3', endpoint_url=os.environ.get("ENDPOINT_URL", "http://localhost:4566"))
     bucket = os.environ.get("BUCKET_NAME", "infrastackdev-dodscontentextraction")
     content = json.dumps(document["mapped"], indent=2)
 

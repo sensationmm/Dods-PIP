@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d435593738de6dbd8b4d06c80891a90f598f91050c7f13703b5407657c1a455d"
+            "sha256": "58aab5145c1dc377afccc39db5e66f1be0c8edcf29aa206ffbaf74f5ff98eb3a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -141,7 +141,7 @@
                 "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330",
                 "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version >= '3.5'",
             "version": "==5.1.1"
         },
         "ipdb": {
@@ -156,7 +156,7 @@
                 "sha256:55df3e0bd0f94e715abd968bedd89d4e8a7bce4bf498fb123fed4f5398fea874",
                 "sha256:b5548ec5329a4bcf054a5deed5099b0f9622eb9ea51aaa7104d215fece201d8c"
             ],
-            "markers": "python_version >= '3.7'",
+            "index": "pypi",
             "version": "==7.31.1"
         },
         "jedi": {
