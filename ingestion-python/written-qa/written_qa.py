@@ -133,6 +133,7 @@ def import_document(summary: dict, date, answered_state: str) -> str:
 
     return mapped_document["documentId"]
 
+
 def get_document_title(document: dict) -> str:
 
     MAX_TITLE_LENGTH = 65
