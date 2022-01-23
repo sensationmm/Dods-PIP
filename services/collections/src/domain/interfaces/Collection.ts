@@ -19,3 +19,8 @@ export interface CollectionResponse {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface ProcessAlertParameters {
+    collectionId: string;
+    alertId: string;
+}

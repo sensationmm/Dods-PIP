@@ -99,6 +99,10 @@ custom:
   apiGatewayCaching:
     enabled: true
 
+  apiKeys:
+    - name: webhook-api-key
+      value: ${file(../env-config.${self:provider.stage}.js):apiKeys, file(../env-config.dev.js):apiKeys}
+
 plugins:
   - serverless-webpack
   - serverless-prune-plugin
@@ -106,6 +110,7 @@ plugins:
   - serverless-dependson-plugin
   - serverless-offline
   - serverless-api-gateway-caching
+  - serverless-add-api-key
 
 functions:
   searchCollections:
@@ -312,7 +317,17 @@ functions:
           path: /collections/{collectionId}/alerts/{alertId}
           caching:
             enabled: false
-  
+
+  processAlert:
+    handler: src/handlers/processAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/process
+          private: true
+          caching:
+            enabled: false
   updateRecipient:
     handler: src/handlers/updateRecipient/index.handle
     description: Triggered when http request comes
