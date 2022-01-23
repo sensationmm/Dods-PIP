@@ -1,0 +1,11 @@
+{
+  "name": "ingestion-python-hansard-api",
+  "version": "1.0.0",
+  "description": "Hansard House of Commons and House of Lords ingestion.",
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "serverless-offline": "^8.3.1",
+    "serverless-python-requirements": "^5.3.0"
+  }
+}

@@ -1,6 +1,5 @@
-#!/usr/bin/env python
 """
-CLI for Written Questions & Answers API.
+Written Questions & Answers ingestion.
 
 * https://dods-support.atlassian.net/browse/DOD-1409
 * https://dods-support.atlassian.net/browse/DOD-1410
@@ -16,12 +15,14 @@ import sys
 import os
 import uuid
 
-from datetime import datetime, date, timedelta
-from dateutil.parser import parse as parse_date
+from datetime import datetime
 from hashlib import sha256
-from pynamodb.models import Model
-from pynamodb.exceptions import TableDoesNotExist
-from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
+
+from common import (
+    get_document_hash,
+    parse_date,
+    store_document,
+)
 
 
 logger = logging.getLogger(__file__)
@@ -61,33 +62,23 @@ DOCUMENT_TEMPLATE = {
 }
 
 
-class DataModel(Model):
-    """DataModel for duplication tracking of EDM API content."""
-
-    class Meta:
-        table_name = "written-qa"
-
-        # TODO
-        host = "http://localhost:8000"
-
-    external_id = UnicodeAttribute(hash_key=True)
-    document_id = UnicodeAttribute()
-    title = UnicodeAttribute()  # Range key?
-    source_hash = UnicodeAttribute()
-
-
 def import_content(date: str, answered_state: str) -> int:
     """Import available content for the given `date`."""
 
     logger.info(f"Importing {date} {answered_state}...")
     date = parse_date(date).date()
 
+    answered_state_mapping = {
+        "questions": "unanswered",
+        "answers": "answered",
+    }
+
     total = 0
 
     url = BASE_URL.format(
         start_date=date,
         end_date=date,
-        answered_state=answered_state,
+        answered_state=answered_state_mapping[answered_state],
 
     )
 
@@ -122,9 +113,11 @@ def import_document(summary: dict, date, answered_state: str) -> str:
 
     raw_document = response.json()
     mapped_document = map_document(raw_document["value"], answered_state)
+    prefix = f"uk-parliament-written-{answered_state}"
 
     document = {
         "date": date,
+        "prefix": prefix,
         "answered_state": answered_state,
         "mapped": mapped_document,
         "raw": raw_document,
@@ -176,98 +169,15 @@ def get_document_content(document: dict) -> str:
     return ""
 
 
-def store_document(document: dict):
-    """Process the document for storage to the filesystem and database."""
-
-    response_id = document["model"]["external_id"]
-    should_create_new_document = False
-
-    try:
-        model = DataModel.get(response_id)
-    except DataModel.DoesNotExist:
-
-        DataModel(**document["model"]).save()
-        should_create_new_document = True
-
-    except TableDoesNotExist:
-        logger.error("Data Model table not found, creating and exiting...")
-        DataModel.create_table(read_capacity_units=1, write_capacity_units=1)
-        sys.exit(30)
-
-    else:
-        should_create_new_document = (
-            document["model"]["source_hash"] != model.source_hash
-        )
-
-        model.document_id = document["model"]["document_id"]
-        model.source_hash = document["model"]["source_hash"]
-        logger.info(f"Updated {model.document_id=} {model.source_hash=}")
-
-        model.save()
-
-    logger.info(f"{should_create_new_document=}")
-
-    if should_create_new_document:
-        create_document(document)
-
-
-def create_document(document: dict) -> str:
-
-    logger.info(f"Creating {document['model']=}")
-    path, filename = get_document_path(document)
-
-    try:
-        os.makedirs(path)
-    except FileExistsError:
-        pass
-
-    output_path = os.path.join(path, filename)
-
-    # TODO - this should write the output to the relevant S3 bucket driven
-    # by the environement variables
-    # with s3 = boto3.client('s3') etc
-
-    with open(output_path, "w") as output:
-        output.write(json.dumps(document["mapped"], indent=2))
-
-    logger.info(f"Wrote {document['model']['external_id']} to filesystem")
-
-    return output_path
-
-
-def get_document_path(document: dict) -> str:
-    """Construct filesystem-like (S3) path & filename for the document."""
-
-    folder = "answers" if document["answered_state"].upper() == "ANSWERED" else "questions"
-
-    path = f"uk-parliament-written-{folder}/{document['date']}"
-    filename = f"{document['mapped']['documentId']}.json"
-
-    logger.debug(f"{path=} {filename=}")
-    return path, filename
-
-
-def get_document_hash(document: dict) -> str:
-    """Return an identifier for deduplication purposes."""
-
-    hash_code = sha256(json.dumps(document).encode("utf-8")).hexdigest()
-    logger.debug(f"{hash_code=}")
-
-    return hash_code
-
-
-def cli():
+def get_context_from_cli():
     """Parse arguments from command line."""
-
-    LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
-    logging.basicConfig(level=LOGLEVEL)
 
     parser = argparse.ArgumentParser(description="Consume data from Written Questions & Answers API")
     parser.add_argument("date", type=str, help="Date to import")
-    parser.add_argument("answered_state", type=str, help="Questions (Unanswered) or Answers (Answered)")
+    parser.add_argument("answered_state", type=str, choices=["questions", "answers"], help="Questions (Unanswered) or Answers (Answered)")
     args = parser.parse_args()
-    import_content(args.date, args.answered_state)
 
-
-if __name__ == "__main__":
-    cli()
+    return {
+        "date": args.date,
+        "answered_state": args.answered_state,
+    }

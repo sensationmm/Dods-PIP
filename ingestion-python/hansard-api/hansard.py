@@ -6,6 +6,7 @@ Hansard HoC & HoL data ingestion.
 """
 
 import argparse
+import logging
 import os
 import requests
 import sys
@@ -13,9 +14,6 @@ import uuid
 
 from datetime import datetime, date, timedelta
 from common import (
-    CreateDocumentException,
-    DataModel,
-    DOCUMENT_TEMPLATE,
     get_document_hash,
     InvalidDate,
     MalformedDocumentException,
@@ -23,7 +21,6 @@ from common import (
     store_document,
 )
 
-import logging
 logger = logging.getLogger(__name__)
 
 
@@ -35,6 +32,39 @@ HOUSE_URLS = {
 }
 CURRENTLY_PROCESSING_URL = f"{BASE}overview/currentlyprocessing.json"
 DOCUMENT_URL = f"{BASE}debates/debate/" + "{external_id}.json"
+
+
+# https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/675184641/Hansard+Content+Feeds#Appendix-A---Document-Template
+DOCUMENT_TEMPLATE = {
+    # To be filled in by mapping JSON
+    "documentId": "",
+    "documentTitle": "",
+    "organisationName": "",
+    "sourceReferenceUri": "",
+    "contentSource": "",
+    "contentLocation": "",
+    "originator": "",
+    "informationType": "",
+    "contentDateTime": "",
+    "createdDateTime": "",
+    "documentContent": "",
+
+    # Fixed values for now
+    "version": "1.0",
+    "jurisdiction": "UK",
+    "countryOfOrigin": "GBR",
+    "sourceReferenceFormat": "text/html",
+    "feedFormat": "application/json",
+    "language": "en",
+    "internallyCreated": False,
+    "schemaType": "external",
+
+    # To be left blank here
+    "taxonomyTerms": [],
+    "createdBy": None,
+    "ingestedDateTime": None,
+    "originalContent": None,
+}
 
 
 def get_house_url(key: str, house: str = "commons", **kwargs) -> str:
@@ -118,6 +148,7 @@ def get_mapped_external_document(external_id: dict, date: date, house: str) -> d
 
     document = {
         "house": house,
+        "prefix": f"hansard-{house}",
         "date": date,
         "model": model,
         "source": source_document,

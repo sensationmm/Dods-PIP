@@ -14,39 +14,6 @@ from pynamodb.models import Model
 logger = logging.getLogger(__name__)
 
 
-# https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/675184641/Hansard+Content+Feeds#Appendix-A---Document-Template
-DOCUMENT_TEMPLATE = {
-    # To be filled in by mapping JSON
-    "documentId": "",
-    "documentTitle": "",
-    "organisationName": "",
-    "sourceReferenceUri": "",
-    "contentSource": "",
-    "contentLocation": "",
-    "originator": "",
-    "informationType": "",
-    "contentDateTime": "",
-    "createdDateTime": "",
-    "documentContent": "",
-
-    # Fixed values for now
-    "version": "1.0",
-    "jurisdiction": "UK",
-    "countryOfOrigin": "GBR",
-    "sourceReferenceFormat": "text/html",
-    "feedFormat": "application/json",
-    "language": "en",
-    "internallyCreated": False,
-    "schemaType": "external",
-
-    # To be left blank here
-    "taxonomyTerms": [],
-    "createdBy": None,
-    "ingestedDateTime": None,
-    "originalContent": None,
-}
-
-
 class InvalidDate(Exception):
     pass
 
@@ -123,8 +90,8 @@ def parse_date(date: str) -> datetime.date:
 
     try:
         date = datetime.strptime(date, "%Y-%m-%d")
-    except ValueError:
-        raise InvalidDate()
+    except ValueError as exc:
+        raise InvalidDate from exc
     else:
         return date
 
@@ -167,7 +134,7 @@ def create_document(document: dict) -> str:
 def get_document_path(document: dict) -> str:
     """Construct filesystem-like (S3) path & filename for the document."""
 
-    path = f"hansard-{document['house']}/{document['date']}"
+    path = f"{document['prefix']}/{document['date']}"
     filename = f"{document['mapped']['documentId']}.json"
 
     logger.debug(f"path={path} filename={filename}")
