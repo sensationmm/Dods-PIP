@@ -22,6 +22,7 @@ from common import (
     get_document_hash,
     parse_date,
     store_document,
+    format_raw_date_for_content,
 )
 
 
@@ -60,6 +61,14 @@ DOCUMENT_TEMPLATE = {
     "ingestedDateTime": None,
     "originalContent": None,
 }
+
+
+class UnknownContentSourceException(Exception):
+    pass
+
+
+class UnknownOriginatorException(Exception):
+    pass
 
 
 def import_content(date: str, answered_state: str) -> int:
@@ -104,7 +113,7 @@ def import_content(date: str, answered_state: str) -> int:
 def import_document(summary: dict, date, answered_state: str) -> str:
     """Import new EDM documents."""
 
-    logger.info(f"Importing {summary=}")
+    logger.debug(f"Importing {summary=}")
 
     url = f"https://writtenquestions-api.parliament.uk/api/writtenquestions/questions/{summary['value']['id']}?expandMember=true"
     response = requests.get(url, headers=DEFAULT_HEADERS)
@@ -161,13 +170,76 @@ def map_document(document: dict, answered_state: str) -> dict:
     mapped_document["contentDateTime"] = document["dateTabled"]
     mapped_document["createdDateTime"] = datetime.now().isoformat()
     mapped_document["documentContent"] = get_document_content(document)
+
+    try:
+        mapped_document["contentSource"] = get_content_source(document)
+    except UnknownContentSourceException:
+        mapped_document["contentSource"] = ""
+        import ipdb; ipdb.set_trace()
+        logger.error(f"Undetermined content source for written {answered_state} question with id {document['id']} and documentId {document_id}")
+
+    try:
+        mapped_document["originator"] = get_document_originator(document, answered_state)
+    except UnknownOriginatorException:
+        mapped_document["originator"] = ""
+        logger.error(f"Undetermined originator for written {answered_state} with id {document['id']} and documentId {document_id}")
+
     mapped_document["informationType"] = "Written Answers" if answered_state.upper() == "ANSWERED" else "Written Questions"
 
     return mapped_document
 
 
 def get_document_content(document: dict) -> str:
-    return ""
+
+    title = ""
+    tabled_on = format_raw_date_for_content(document["dateTabled"])
+    question_content = "TODO"
+
+    answered_on = "TODO"
+    answer_content = ""
+
+    output = f"""<div>
+        <h1>{title}</h1>
+        <h2>Tabled on: {tabled_on}</h2>
+        {answered_on}
+        {question_content}
+        {answer_content}
+    </div>
+    """
+
+    raise Exception("TODO - dog walk")
+
+    return output
+
+
+def get_content_source(document: dict, document_id: str = "") -> str:
+
+    house = document.get("house", "").upper()
+
+    if house == "COMMONS":
+        content_souce = "House of Commons"
+    elif house == "LORDS":
+        content_souce = "House of Lords"
+    else:
+        raise UnknownContentSourceException
+
+    return content_souce
+
+
+def get_document_originator(document: dict, answered_state) -> str:
+
+    answering_body = document.get("answeringBodyName")
+
+    if answered_state.upper() == "ANSWERS" and answering_body:
+        originator = answering_body
+
+    else:
+        try:
+            originator = get_content_source(document)
+        except UnknownContentSourceException:
+            raise UnknownOriginatorException
+
+    return originator
 
 
 def get_context_from_cli():

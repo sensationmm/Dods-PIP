@@ -16,18 +16,12 @@ import uuid
 from datetime import datetime
 from common import (
     get_document_hash,
-    InvalidDate,
-    MalformedDocumentException,
     parse_date,
     store_document,
+    format_raw_date_for_content,
 )
 
-
-import logging
 logger = logging.getLogger(__name__)
-
-
-logger = logging.getLogger(__file__)
 
 BASE_URL = "https://oralquestionsandmotions-api.parliament.uk/EarlyDayMotions/list?parameters.tabledStartDate={start_date}&parameters.tabledEndDate={end_date}&parameters.orderBy={ordering}&parameters.take={per_page}"
 DEFAULT_HEADERS = {"Accept": "application/json"}
@@ -190,13 +184,7 @@ def get_document_content(document: dict) -> str:
     for sponsor in sponsors:
         member = sponsor["Member"]
 
-        try:
-            created_when_raw = sponsors[0]["CreatedWhen"]
-            date_signed = parse_date(created_when_raw[:10]).strftime("%-d %B %Y")
-
-        except InvalidDate:
-            logger.exception(f"Unable to parse {created_when_raw=}")
-            date_signed = None
+        date_signed = format_raw_date_for_content(sponsors[0]["CreatedWhen"])
 
         sponsors_content += sponsor_row.format(
             name=member["Name"],
@@ -205,13 +193,7 @@ def get_document_content(document: dict) -> str:
             date_signed=date_signed,
         )
 
-    try:
-        date_tabled_raw = document["DateTabled"]
-        tabled_date = parse_date(date_tabled_raw[:10]).strftime("%A %-d %B %Y")
-
-    except InvalidDate:
-        logger.exception(f"Unable to parse {date_tabled_raw=}")
-        tabled_date = None
+    tabled_date = format_raw_date_for_content(document["DateTabled"])
 
     output = f"""<div>
         <h1>{document["Title"]}</h1>

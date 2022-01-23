@@ -5,6 +5,7 @@ import os
 
 from datetime import datetime
 from hashlib import sha256
+from typing import Optional
 
 from botocore.exceptions import ClientError
 from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
@@ -81,7 +82,7 @@ def store_document(document: dict):
 
     logger.info(f"should_create_new_document={should_create_new_document}")
 
-    if should_create_new_document:
+    if os.environ.get("FORCE_DOCUMENT_CREATE") or should_create_new_document:
         create_document(document)
 
 
@@ -94,6 +95,19 @@ def parse_date(date: str) -> datetime.date:
         raise InvalidDate from exc
     else:
         return date
+
+
+def format_raw_date_for_content(raw_date: str) -> Optional[str]:
+    """Returns a formatted date converted from the given `date` ISO format-like str."""
+
+    try:
+        formatted_date = parse_date(raw_date[:10]).strftime("%A %-d %B %Y")
+
+    except InvalidDate:
+        logger.exception(f"Unable to parse {raw_date=}")
+        formatted_date = None
+
+    return formatted_date
 
 
 def create_document(document: dict) -> str:
