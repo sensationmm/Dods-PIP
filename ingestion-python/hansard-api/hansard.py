@@ -1,29 +1,31 @@
-#!/usr/bin/env python
 """
-CLI for Hansard preview API.
+Hansard HoC & HoL data ingestion.
 
 * https://dods-support.atlassian.net/browse/DOD-1255
 * https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/675184641/Hansard+Content+Feeds
 """
 
 import argparse
-import logging
-import requests
-import json
-import sys
 import os
+import requests
+import sys
 import uuid
-import boto3
 
 from datetime import datetime, date, timedelta
-from hashlib import sha256
-from pynamodb.models import Model
-from pynamodb.exceptions import TableDoesNotExist
-from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
-from botocore.exceptions import ClientError
+from common import (
+    CreateDocumentException,
+    DataModel,
+    DOCUMENT_TEMPLATE,
+    get_document_hash,
+    InvalidDate,
+    MalformedDocumentException,
+    parse_date,
+    store_document,
+)
 
+import logging
+logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__file__)
 
 BASE = "https://hansard-api.parliament.uk/"
 HOUSE_URLS = {
@@ -37,66 +39,6 @@ DOCUMENT_URL = f"{BASE}debates/debate/" + "{external_id}.json"
 
 def get_house_url(key: str, house: str = "commons", **kwargs) -> str:
     return HOUSE_URLS.get(key).format(base=BASE, house=house, **kwargs)
-
-
-# https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/675184641/Hansard+Content+Feeds#Appendix-A---Document-Template
-DOCUMENT_TEMPLATE = {
-    # To be filled in by mapping JSON
-    "documentId": "",
-    "documentTitle": "",
-    "organisationName": "",
-    "sourceReferenceUri": "",
-    "contentSource": "",
-    "contentLocation": "",
-    "originator": "",
-    "informationType": "",
-    "contentDateTime": "",
-    "createdDateTime": "",
-    "documentContent": "",
-    # Fixed values for now
-    "version": "1.0",
-    "jurisdiction": "UK",
-    "countryOfOrigin": "GBR",
-    "sourceReferenceFormat": "text/html",
-    "feedFormat": "application/json",
-    "language": "en",
-    "internallyCreated": False,
-    "schemaType": "external",
-    # To be left blank here
-    "taxonomyTerms": [],
-    "createdBy": None,
-    "ingestedDateTime": None,
-    "originalContent": None,
-}
-
-
-class InvalidDate(Exception):
-    pass
-
-
-class MalformedDocumentException(Exception):
-    pass
-
-
-class CreateDocumentException(Exception):
-    pass
-
-
-class DataModel(Model):
-    """
-    DataModel for duplication tracking of Hansard API content.
-
-    Based on the criteria outlined on DOD-1255.
-    """
-
-    class Meta:
-        table_name = os.environ.get("dynamodb_table", "hansard-api")
-        host = os.environ.get("DYNAMODB_HOST", "http://localhost:4566")
-
-    external_id = UnicodeAttribute(hash_key=True)
-    document_id = UnicodeAttribute()
-    title = UnicodeAttribute()  # Range key?
-    source_hash = UnicodeAttribute()
 
 
 def import_content(date: str, house: str = "commons"):
@@ -183,56 +125,6 @@ def get_mapped_external_document(external_id: dict, date: date, house: str) -> d
     }
 
     return document
-
-
-def store_document(document: dict):
-    """Process the document for storage to the filesystem and database."""
-
-    # aws dynamodb list-tables --endpoint-url http://localhost:8000
-    # aws dynamodb delete-table --table-name=hansard-api --endpoint-url http://localhost:8000
-
-    external_id = document["model"]["external_id"]
-    should_create_new_document = False
-
-    try:
-        model = DataModel.get(external_id)
-    except DataModel.DoesNotExist:
-
-        DataModel(**document["model"]).save()
-        should_create_new_document = True
-
-    except TableDoesNotExist:
-        # Expected only in local dev in certain situations
-        logger.error("Data Model table not found, creating and exiting...")
-        DataModel.create_table(read_capacity_units=1, write_capacity_units=1)
-        sys.exit(30)
-
-    else:
-        should_create_new_document = (
-            document["model"]["source_hash"] != model.source_hash
-        )
-
-        model.document_id = document["model"]["document_id"]
-        model.source_hash = document["model"]["source_hash"]
-        logger.info(f"Updated document_id={model.document_id} source_hash={model.source_hash}")
-
-        model.save()
-
-    logger.info(f"should_create_new_document={should_create_new_document}")
-
-    if should_create_new_document:
-        create_document(document)
-
-
-def parse_date(date: str) -> datetime.date:
-    """Parse a `date` into a `datetime.date` instance."""
-
-    try:
-        date = datetime.strptime(date, "%Y-%m-%d")
-    except ValueError:
-        raise InvalidDate()
-    else:
-        return date
 
 
 def get_house_was_sitting(date: date, house: str) -> bool:
@@ -438,7 +330,9 @@ def get_document_originator(document: dict, is_written_statement: bool) -> str:
 
     else:
         originator = "UKNOWN"
-        logger.error(f"Unexpected location={location} for ExtId={document['Overview']['ExtId']}")
+        logger.error(
+            f"Unexpected location={location} for ExtId={document['Overview']['ExtId']}"
+        )
 
     logger.info(f"Determined originator={originator}")
 
@@ -449,15 +343,23 @@ def get_written_statement_title(document: dict) -> str:
 
     """Return the corresponding title from the child items."""
 
-    written_statements = [child for child in document["ChildDebates"] if child["Overview"]["Title"].upper() == "WRITTEN STATEMENTS"]
+    written_statements = [
+        child
+        for child in document["ChildDebates"]
+        if child["Overview"]["Title"].upper() == "WRITTEN STATEMENTS"
+    ]
 
     if not written_statements:
-        logger.error(f"No written statement found for ExtId={document['Overview']['ExtId']}")
+        logger.error(
+            f"No written statement found for ExtId={document['Overview']['ExtId']}"
+        )
         return "UNKNOWN"
 
     elif len(written_statements) > 1:
-        logger.warning(f"Multiple (total={len(written_statements)}) for ExtId={document['Overview']['ExtId']}")
-    #import ipdb; ipdb.set_trace()
+        logger.warning(
+            f"Multiple (total={len(written_statements)}) for ExtId={document['Overview']['ExtId']}"
+        )
+    # import ipdb; ipdb.set_trace()
 
     # TODO - sort this out
     """
@@ -519,74 +421,16 @@ def get_document_content(document: dict) -> str:
     return output
 
 
-def create_document(document: dict) -> str:
-    """Create document in S3 bucket."""
-
-    logger.info(f"Creating model={document['model']}")
-    path, filename = get_document_path(document)
-    key = os.path.join(path, filename)
-
-    # TODO: localstack testing
-    # awslocal s3api create-bucket --bucket infrastackdev-dodscontentextraction
-    # awslocal s3 ls s3://infrastackdev-dodscontentextraction --recursive
-
-    s3 = boto3.client('s3', endpoint_url=os.environ.get("ENDPOINT_URL", "http://localhost:4566"))
-    bucket = os.environ.get("BUCKET_NAME", "infrastackdev-dodscontentextraction")
-    content = json.dumps(document["mapped"], indent=2)
-
-    try:
-        s3.put_object(Bucket=bucket, Key=key, Body=content)
-
-    except ClientError as exc:
-        logging.exception("Client Error when putting to S3")
-        raise CreateDocumentException from exc
-
-    except Exception as exc:
-        logging.exception("Unknown error during storing to S3")
-        raise CreateDocumentException from exc
-
-    logger.info(f"Wrote {document['model']['external_id']} to bucket={bucket} key={key}")
-
-    return key
-
-
-def get_document_path(document: dict) -> str:
-    """Construct filesystem-like (S3) path & filename for the document."""
-
-    path = f"hansard-{document['house']}/{document['date']}"
-    filename = f"{document['mapped']['documentId']}.json"
-
-    logger.debug(f"path={path} filename={filename}")
-    return path, filename
-
-
-def get_document_hash(document: dict) -> str:
-    """Return an identifier for deduplication purposes."""
-
-    hash_code = sha256(json.dumps(document).encode("utf-8")).hexdigest()
-    logger.debug(f"hash_code={hash_code}")
-
-    return hash_code
-
-
-def cli():
-    """Parse arguments from command line."""
+def get_context_from_cli() -> dict:
+    """Parse arguments from command."""
 
     parser = argparse.ArgumentParser(description="Consume data from Hansard")
     parser.add_argument("date", type=str, help="Date to import")
-    parser.add_argument("--log-level", type=str, default="INFO")
     parser.add_argument("--house", type=str, default="commons")
+
     args = parser.parse_args()
 
-    try:
-        log_level = getattr(logging, args.log_level.upper())
-    except AttributeError:
-        sys.exit("Unknown log level")
-    else:
-        logging.basicConfig(level=log_level)
-
-    import_content(args.date, args.house)
-
-
-if __name__ == "__main__":
-    cli()
+    return {
+        "house": args.house,
+        "date": args.date,
+    }
