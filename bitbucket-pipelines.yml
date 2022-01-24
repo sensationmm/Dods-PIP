@@ -125,10 +125,7 @@ pipelines:
           image: public.ecr.aws/a6i2o1l2/ingestion:1.0.0
           script:
             - 'echo "Running build for ingestion: ${SERVICE}"'
-            - |
-              if [[ -d $SERVICE ]]; then
-                cd ingestion-python/$SERVICE
-              fi
+            - cd ingestion-python/$SERVICE
             - |
               if [[ -e .ci/build.sh ]]; then
                 echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
@@ -255,10 +252,7 @@ pipelines:
           image: public.ecr.aws/a6i2o1l2/ingestion:1.0.0
           script:
             - 'echo "Running deployment for ingestion: ${SERVICE}"'
-            - |
-              if [[ -d $SERVICE ]]; then
-                cd ingestion-python/$SERVICE
-              fi
+            - cd ingestion-python/$SERVICE
     # Set credentials for the target environment
             - ../../tools/set-deployer.sh && source credentials.txt
             - |
