@@ -642,7 +642,6 @@ components:
               type: string
             jurisdiction:
               type: string
-              enum: [UK, EU]
               example: UK
             createdBy:
               type: string
@@ -731,10 +730,6 @@ components:
               type: string
             termLabel:
               type: string
-          required:
-            - tagId
-            - termLabel
-            - rank
             
         Document:
           type: object
