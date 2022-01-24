@@ -1,4 +1,4 @@
-service: scraper-motions-edm-uk
+service: ingestion-motions-edm-uk
 
 frameworkVersion: '2'
 projectDir: ../
@@ -8,17 +8,14 @@ configValidationMode: error
 plugins:
   - serverless-python-requirements
   - serverless-offline
-
-# There are variables setup for DynamoDB deployment
-# un-comment the resource section if you need a DynamoDB for this lambda
 custom:
-  resource_prefix: motions-edm-uk
+  resource_prefix: hansard-api
   default_stage: dev
   stage: ${opt:stage, self:custom.default_stage}
   stack_name: ${self:custom.resource_prefix}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  dynamodb_table: ${self:custom.stack_name}
+  dynamodb_table: scrapping-hashes-${self:custom.stage}-table
   dynamodb_arn: arn:aws:dynamodb:${self:custom.region}:*:table/${self:custom.dynamodb_table}
   dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
   s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
@@ -37,66 +34,66 @@ package:
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.9
   lambdaHashingVersion: 20201221
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   deploymentBucket:
-    name: pip-${self:provider.stage}-scrapping-lambdas
+      name: pip-dev-scrapping-lambdas
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     KEY_PREFIX: ${self:custom.resource_prefix}
     DYNAMODB_TABLE: ${self:custom.dynamodb_table}
     DYNAMODB_HOST: ${self:custom.dynamodb_host}
-    REGION: ${file(../serverless.common.yml):custom.region}
-    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
+    REGION: eu-west-1
+    CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - s3:*        
+        - s3:*
       Resource: "arn:aws:s3:::*"
 
-    # - Effect: Allow
-    #   Action:
-    #     - dynamodb:Query
-    #     - dynamodb:Scan
-    #     - dynamodb:GetItem
-    #     - dynamodb:PutItem
-    #     - dynamodb:UpdateItem
-    #     - dynamodb:DeleteItem
-    #     - dynamodb:DescribeTable
-    #   Resource:
-    #     - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource:
+        - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
 
 functions:
   scrape:
-    name: scraper-motions-edm-uk-${sls:stage}
-    # description: 
+    name: ${self:service}-${sls:stage}
+    # description:
     handler: handler.run
     events:
       ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(10 01 ? * MON-FRI *)
+      - schedule: cron(00 10 ? * MON-FRI *)
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 
-# resources:
-#   Resources:
-#     assetDynamoDbTable:
-#       Type: 'AWS::DynamoDB::Table'
-#       DeletionPolicy: ${self:custom.deletion_policy}
-#       Properties:
-#         AttributeDefinitions:
-#           -
-#             AttributeName: document_hash
-#             AttributeType: S
-#         KeySchema:
-#           -
-#             AttributeName: document_hash
-#             KeyType: HASH
-#         ProvisionedThroughput:
-#           ReadCapacityUnits: 5
-#           WriteCapacityUnits: 5
-#         TableName: ${self:custom.dynamodb_table}
+resources:
+   Resources:
+     assetDynamoDbTable:
+       Type: 'AWS::DynamoDB::Table'
+       DeletionPolicy: ${self:custom.deletion_policy}
+       Properties:
+         AttributeDefinitions:
+           -
+             AttributeName: document_hash
+             AttributeType: S
+         KeySchema:
+           -
+             AttributeName: document_hash
+             KeyType: HASH
+         ProvisionedThroughput:
+           ReadCapacityUnits: 5
+           WriteCapacityUnits: 5
+         TableName: ${self:custom.dynamodb_table}

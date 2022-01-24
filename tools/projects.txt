@@ -1,3 +1,4 @@
 frontend/*
+ingestion-python/*
 scrapping/*
 services/*
