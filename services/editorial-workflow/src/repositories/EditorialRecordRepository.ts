@@ -5,6 +5,7 @@ import {
     EditorialRecordOutput,
     EditorialRecordPersister,
     LockEditorialRecordParameters,
+    ScheduleEditorialRecordParamateres,
     SearchEditorialRecordParameters,
     UpdateEditorialRecordParameters,
     config,
@@ -22,13 +23,15 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
     constructor(
         private editorialRecordModel: typeof EditorialRecord,
         private editorialRecordStatusModel: typeof EditorialRecordStatus,
-        private userModel: typeof User
+        private userModel: typeof User,
+
     ) { }
 
     static defaultInstance = new EditorialRecordRepository(
         EditorialRecord,
         EditorialRecordStatus,
-        User
+        User,
+
     );
 
     private mapRecordOutput(model: EditorialRecord): EditorialRecordOutput {
@@ -209,6 +212,38 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         return this.mapRecordOutput(record);
     }
 
+    async scheduleEditorialRecord(parameters: ScheduleEditorialRecordParamateres): Promise<EditorialRecordOutput> {
+        const { recordId } = parameters;
+
+        const record = await this.editorialRecordModel.findOne({
+            where: {
+                uuid: recordId,
+            },
+            include: ['status'],
+        });
+
+        if (!record) {
+            throw new BadParameterError(
+                `Error: could not retrieve Editorial Record with uuid: ${recordId}`
+            );
+        }
+
+        if (config.dods.recordStatuses.scheduled == record.status?.uuid) {
+            throw new BadParameterError(
+                `Error: Editorial Record with uuid: ${recordId} is already scheduled`
+            );
+        }
+
+        await this.setStatusToRecord(record, config.dods.recordStatuses.scheduled)
+
+        await record.reload({
+            include: ['status', 'assignedEditor'],
+        });
+
+        return this.mapRecordOutput(record);
+
+    }
+
     async lockEditorialRecord(
         parameters: LockEditorialRecordParameters
     ): Promise<EditorialRecordOutput> {
@@ -281,7 +316,6 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         await record?.update({ 'assignedEditorId': null })
 
     }
-
 
     async listEditorialRecords(
         params: SearchEditorialRecordParameters
@@ -366,4 +400,5 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             results: rows.map(this.mapRecordOutput),
         };
     }
+
 }
