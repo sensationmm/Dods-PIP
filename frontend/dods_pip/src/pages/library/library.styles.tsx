@@ -200,6 +200,9 @@ export const topRow = styled.div`
   color: ${color.theme.blue};
   width: 100%;
   display: flex;
+  .mobileOnly {
+    display: none;
+  }
   @media (max-width: 599px) {
     flex-direction: column;
     ${date} {
