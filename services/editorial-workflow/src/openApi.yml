@@ -602,6 +602,10 @@ components:
               type: string
             informationType:
               type: string
+            jurisdiction:
+              type: string
+              enum: [UK, EU]
+              example: UK
             createdBy:
               type: string
             documentContent:
@@ -678,13 +682,6 @@ components:
               type: string
             termLabel:
               type: string
-          required:
-            - tagId
-            - facetType
-            - inScheme
-            - termLabel
-            - ancestorTerms
-            - alternative_labels
 
         AncestorTerm:
           type: object

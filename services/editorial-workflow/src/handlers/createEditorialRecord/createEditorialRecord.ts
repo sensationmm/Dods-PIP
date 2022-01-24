@@ -56,7 +56,7 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
 
     params = {
         ...params,
-        jurisdiction: 'UK',
+        jurisdiction: params.jurisdiction ?? 'UK',
         sourceReferenceFormat: 'text/html',
         internallyCreated: true,
         schemaType: 'Internal',
