@@ -255,7 +255,10 @@ pipelines:
           image: public.ecr.aws/a6i2o1l2/ingestion:1.0.0
           script:
             - 'echo "Running deployment for ingestion: ${SERVICE}"'
-            - cd ingestion-python/$SERVICE
+            - |
+              if [[ -d $SERVICE ]]; then
+                cd ingestion-python/$SERVICE
+              fi
     # Set credentials for the target environment
             - ../../tools/set-deployer.sh && source credentials.txt
             - |
