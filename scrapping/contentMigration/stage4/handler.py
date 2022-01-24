@@ -71,7 +71,7 @@ def consumer(event, context):
                         Payload=json.dumps({"data": document})
                     )
                     if response['Payload'].read():
-                        logger.exception('Document has been indexed.')
+                        logger.info('Document has been indexed.')
                     else:
                         logger.exception('Document hasn\'t been indexed.')
                 except Exception as e:

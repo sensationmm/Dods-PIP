@@ -14,15 +14,15 @@ ES_API_KEY = os.environ['ES_API_KEY']
 es_client = Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=(ES_KEY_ID, ES_API_KEY))
 
 def run(event, context):
-    if ('data' not in event):
+    if 'body' not in event:
         raise ValueError(f'Data object is empty!')
-    content = event['data']
+    content = event['body']
     mappings = get_file_content(os.path.abspath(os.curdir) + '/models/content/mappings.json')
     if Validator().data_validator(mappings, content):
         content = set_aggs_fields_content(content)
         try:
             res = es_client.index(index="content", document=content)
-            logger.info(res['result'])
+            logger.info(f"ES response with documentId is {loads(content)['documentId']} : {res['result']}")
             return True
         except Exception as e:
             logger.exception(e)
