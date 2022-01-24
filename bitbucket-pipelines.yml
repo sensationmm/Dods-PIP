@@ -136,7 +136,7 @@ pipelines:
                     npm install
                 fi
                 if [[ -e 'serverless.yml' ]]; then
-                  sls package
+                  npx serverless package
                 fi
               fi
 
@@ -265,7 +265,7 @@ pipelines:
                     npm install
                 fi
                 if [[ -e 'serverless.yml' ]]; then
-                  sls deploy --stage ${ENVIRONMENT,,}
+                  npx serverless deploy --stage ${ENVIRONMENT,,}
                 fi
               fi
 
