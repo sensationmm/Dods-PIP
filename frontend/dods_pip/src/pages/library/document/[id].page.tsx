@@ -137,20 +137,25 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   }, [tags, expandedTags]);
 
   const taggedContent = useMemo(() => {
-    const wordsToTag = ['me', 'bacon', 'short', 'doner'];
+    interface ITag {
+      key: string;
+      value: string;
+    }
 
-    const tagged = wordsToTag.reduce((carry = '', value) => {
+    const wordsToTag: ITag[] = Object.keys(tags).reduce((carry: ITag[], key) => {
+      return [...carry, ...tags[key].map(({ value }) => ({ value, key }))];
+    }, []);
+
+    const tagged = wordsToTag.reduce((carry = '', { key, value }) => {
       const regex = new RegExp(value, 'g');
       return carry?.replace(
         regex,
-        `<span class="tag" style="background-image: url('/tag-icons/icon-person.svg')">${value}</span>`,
+        `<span class="tag" style="background-image: url('/tag-icons/icon-${key}.svg')">${value}</span>`,
       );
     }, documentContent);
 
-    return (
-      <Styled.inlinedTags dangerouslySetInnerHTML={{ __html: tagged || '' }}></Styled.inlinedTags>
-    );
-  }, [documentContent]);
+    return <Styled.inlinedTags dangerouslySetInnerHTML={{ __html: tagged || '' }} />;
+  }, [documentContent, tags]);
 
   return (
     <Panel>

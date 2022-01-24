@@ -103,7 +103,7 @@ export const inlinedTags = styled.div`
   .tag {
     font-weight: bold;
     background-repeat: no-repeat;
-    background-position: 0 1px;
+    background-position: 0 50%;
     padding-left: 18px;
     margin-left: 2px;
     cursor: help;
