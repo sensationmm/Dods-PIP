@@ -99,6 +99,17 @@ export const tagsContent = styled.div`
   `}
 `;
 
+export const inlinedTags = styled.div`
+  .tag {
+    font-weight: bold;
+    background-repeat: no-repeat;
+    background-position: 0 1px;
+    padding-left: 18px;
+    margin-left: 2px;
+    cursor: help;
+  }
+`;
+
 export const tagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
