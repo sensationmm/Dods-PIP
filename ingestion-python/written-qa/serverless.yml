@@ -75,7 +75,7 @@ functions:
     handler: handler.run
     events:
       ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(00 10 ? * MON-FRI *)
+      - schedule: cron(00 20 ? * MON-FRI *)
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 
