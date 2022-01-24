@@ -80,4 +80,6 @@ functions:
     handler: handler.consumer
     timeout: 30
     events:
-      - sqs: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-2-queue.fifo
+      - sqs:
+          arn: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-2-queue.fifo
+          batchSize: 1
