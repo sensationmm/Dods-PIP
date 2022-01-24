@@ -40,7 +40,8 @@ export class SearchRepository implements Search {
     }
 
     async createPercolator(data: createPercolatorParameters): Promise<any> {
-        const response = await this.elasticsearch.index({index: 'alerts', body: data.query})
+        console.log({index: 'alerts', id: data.alertId, body: data.query})
+        const response = await this.elasticsearch.index({index: 'alerts', id: data.alertId, body: data.query})
 
         return response['body']
     }
