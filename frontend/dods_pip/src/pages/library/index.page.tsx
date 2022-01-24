@@ -51,6 +51,36 @@ type BucketType = {
   selected?: boolean;
 };
 
+interface IAggregations {
+  contentSource?: {
+    buckets: BucketType[];
+  };
+  informationType?: {
+    buckets: BucketType[];
+  };
+  jurisdiction?: {
+    buckets: BucketType[];
+  };
+  originator?: {
+    buckets: BucketType[];
+  };
+  group?: {
+    buckets: BucketType[];
+  };
+  people?: {
+    buckets: BucketType[];
+  };
+  organizations?: {
+    buckets: BucketType[];
+  };
+  geography?: {
+    buckets: BucketType[];
+  };
+  topics?: {
+    buckets: BucketType[];
+  };
+}
+
 export interface IResponse {
   sourceReferenceUri?: string;
   es_response?: {
@@ -58,29 +88,7 @@ export interface IResponse {
       hits: { _source: ISourceData }[];
       total: { value: number };
     };
-    aggregations?: {
-      contentSource?: {
-        buckets: BucketType[];
-      };
-      informationType?: {
-        buckets: BucketType[];
-      };
-      jurisdiction?: {
-        buckets: BucketType[];
-      };
-      people?: {
-        buckets: BucketType[];
-      };
-      organizations?: {
-        buckets: BucketType[];
-      };
-      geography?: {
-        buckets: BucketType[];
-      };
-      topics?: {
-        buckets: BucketType[];
-      };
-    };
+    aggregations?: IAggregations;
   };
 }
 
@@ -97,6 +105,8 @@ enum AggTypes {
   people = 'people',
   organizations = 'organizations',
   geography = 'geography',
+  originator = 'originator',
+  organisationName = 'organisationName',
 }
 
 type AggregationsType = {
@@ -134,6 +144,20 @@ const aggregations: AggregationsType = {
   geography: {
     terms: {
       field: 'aggs_fields.geography',
+      min_doc_count: 0,
+      size: 500,
+    },
+  },
+  group: {
+    terms: {
+      field: 'organisationName.keyword',
+      min_doc_count: 0,
+      size: 500,
+    },
+  },
+  originator: {
+    terms: {
+      field: 'originator.keyword',
       min_doc_count: 0,
       size: 500,
     },
@@ -264,6 +288,8 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
   const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
+  const [originators, setOriginators] = useState<BucketType[]>([]);
+  const [groups, setGroups] = useState<BucketType[]>([]);
   const [topics, setTopics] = useState<BucketType[]>([]);
   const [people, setPeople] = useState<BucketType[]>([]);
   const [organizations, setOrganizations] = useState<BucketType[]>([]);
@@ -422,6 +448,8 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
       organizations,
       geography,
       topics,
+      originator,
+      group,
     } = apiResponse?.es_response?.aggregations || {};
 
     const checkEmptyAggregation = (aggregation: { doc_count: number }) => {
@@ -445,6 +473,8 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     setContentSources(updateWithBasicFilters(contentSource?.buckets));
     setInformationTypes(updateWithBasicFilters(informationType?.buckets));
     setJurisdictions(updateWithBasicFilters(jurisdiction?.buckets));
+    setOriginators(updateWithBasicFilters(originator?.buckets));
+    setGroups(updateWithBasicFilters(group?.buckets));
 
     const updateWithNestedFilters = (items: BucketType[] = []): BucketType[] => {
       return items.filter?.(checkEmptyAggregation)?.map((props) => {
@@ -498,7 +528,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
               <Toggle
                 isActive={filtersVisible}
                 labelOn={'Filters'}
-                onChange={(state) => setFiltersVisible(!filtersVisible)}
+                onChange={() => setFiltersVisible(!filtersVisible)}
               />
             </aside>
           </Styled.librarySearchWrapper>
@@ -658,6 +688,28 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                     onChange={(value) => {
                       setBasicQuery({
                         key: AggTypes.jurisdiction,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Group'}
+                    records={groups}
+                    onClearSelection={() => removeBasicFilters(groups)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.organisationName,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Originator'}
+                    records={originators}
+                    onClearSelection={() => removeBasicFilters(originators)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.originator,
                         value,
                       });
                     }}
