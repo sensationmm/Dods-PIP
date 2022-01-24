@@ -15,7 +15,7 @@ custom:
   stack_name: ${self:custom.resource_prefix}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  dynamodb_table: scrapping-hashes-${self:custom.stage}-table
+  dynamodb_table: ${self:service}-${self:custom.stage}-table
   dynamodb_arn: arn:aws:dynamodb:${self:custom.region}:*:table/${self:custom.dynamodb_table}
   dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
   s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
