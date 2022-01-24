@@ -1,4 +1,4 @@
-service: ingestion-hansard-api
+service: ingestion-written-qa
 
 frameworkVersion: '2'
 projectDir: ../
