@@ -114,10 +114,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     test('searchTaxonomiesRepository creates the correct query object', async () => {
         const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}, {"bool": {"should": [
-            {"wildcard": {"label": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
-            {"wildcard": {"altLabel.en": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
-            {"wildcard": {"altLabel.de": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
-            {"wildcard": {"altLabel.fr": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}}
+            {"wildcard": {"label.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
+            {"wildcard": {"altLabel.en.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
+            {"wildcard": {"altLabel.de.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
+            {"wildcard": {"altLabel.fr.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}}
         ]}}]}}}, "size": 500}
 
         const taxonomy_query = await TaxonomyRepository.createSearchQuery(TAXONOMY_PARAMETERS)
@@ -128,10 +128,10 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test('searchTaxonomiesRepository with a limit creates the correct query object', async () => {
         const data: TaxonomiesParameters = { tags: 'unemployment', taxonomy: 'Topics', limit: 1 };
         const correct_es_query = {index: 'taxonomy', body: {query: {"bool": {"must": [{"match": {"inScheme": TAXONOMY_PARAMETERS.taxonomy}}, {"bool": {"should": [
-            {"wildcard": {"label": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
-            {"wildcard": {"altLabel.en": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
-            {"wildcard": {"altLabel.de": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
-            {"wildcard": {"altLabel.fr": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}}
+            {"wildcard": {"label.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
+            {"wildcard": {"altLabel.en.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
+            {"wildcard": {"altLabel.de.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
+            {"wildcard": {"altLabel.fr.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}}
         ]}}]}}}, "size": data.limit}
 
             const taxonomy_query = await TaxonomyRepository.createSearchQuery(data)
