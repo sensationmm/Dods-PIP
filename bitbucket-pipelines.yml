@@ -125,7 +125,10 @@ pipelines:
           image: public.ecr.aws/a6i2o1l2/ingestion:1.0.0
           script:
             - 'echo "Running build for ingestion: ${SERVICE}"'
-            - cd ingestion-python/$SERVICE
+            - |
+              if [[ -d $SERVICE ]]; then
+                cd ingestion-python/$SERVICE
+              fi
             - |
               if [[ -e .ci/build.sh ]]; then
                 echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
