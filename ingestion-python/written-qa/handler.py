@@ -8,7 +8,7 @@ Serverless task handler for the Hansard API.
 
 import logging
 import logging.config
-from hansard import import_content
+from written_qa import import_content
 
 
 logging.config.fileConfig('logging.ini', disable_existing_loggers=False)
@@ -17,13 +17,13 @@ logger = logging.getLogger(__name__)
 
 def run(event, context):
     try:
-        import_content(context["date"], context["house"])
+        import_content(context["date"], context["answered_state"])
     except Exception:  # no-qa
         logger.exception("Unexpected exception during task run")
 
 
 if __name__ == "__main__":
-    from hansard import get_context_from_cli
+    from written_qa import get_context_from_cli
 
     context = get_context_from_cli()
     run(None, context)
