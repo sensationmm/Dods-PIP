@@ -1,1 +1,1 @@
-../requirements.txt
+../common/requirements.txt
