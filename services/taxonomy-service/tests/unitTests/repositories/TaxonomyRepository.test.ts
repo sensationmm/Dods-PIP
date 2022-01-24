@@ -10,7 +10,35 @@ const FUNCTION_NAME = "TaxonomyRepository";
 afterEach(() => {
     // jest.clearAllMocks();
 });
-
+const MOCK_ES_RESPONSE_WO_ALT_ARRAY = {body: {"hits": {"total": {"value": 1, "relation" : "eq"}, "max_score" : 1.0, "hits" : [{
+                "_index" : "taxonomy",
+                "_type" : "_doc",
+                "_id" : "http://eurovoc.europa.eu/5974",
+                "_score" : 1.0,
+                "_source" : {
+                    "id" : "http://eurovoc.europa.eu/5974",
+                    "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"],
+                    "type" : "Concept",
+                    "identifier" : "5974",
+                    "legacyID" : "\"5974\"",
+                    "xlPrefLabel": ["http://eurovoc.europa.eu/231836","http://eurovoc.europa.eu/173862","http://eurovoc.europa.eu/217102"],
+                    "broader": [],
+                    "xlAltLabel": ["http://eurovoc.europa.eu/231839","http://eurovoc.europa.eu/173863",
+                        "http://eurovoc.europa.eu/217104","http://eurovoc.europa.eu/231838",
+                        "http://eurovoc.europa.eu/173864","http://eurovoc.europa.eu/217103",
+                        "http://eurovoc.europa.eu/231837"],
+                    "narrower": ["http://eurovoc.europa.eu/3515","http://eurovoc.europa.eu/5978",
+                        "http://eurovoc.europa.eu/1648","http://www.dods.co.uk/taxonomy/instance/concept/81de5cd4-36e1-41ee-932a-6acdb709d63f",
+                        "http://eurovoc.europa.eu/6236","http://eurovoc.europa.eu/5976",
+                        "http://www.dods.co.uk/taxonomy/instance/Topics/85ec7f4b-e93c-4958-959d-08a2300602b4",
+                        "http://eurovoc.europa.eu/3626","http://eurovoc.europa.eu/5979",
+                        "http://www.dods.co.uk/taxonomy/instance/concept/3623",
+                        "http://www.dods.co.uk/taxonomy/instance/concept/1646","http://eurovoc.europa.eu/4332"
+                    ],
+                    "label": "unemployment"
+                }
+            }]}
+    }}
 //@ts-ignore
 const MOCK_ES_RESPONSE = {body: {"hits": {"total": {"value": 1, "relation" : "eq"}, "max_score" : 1.0, "hits" : [{
             "_index" : "taxonomy",
@@ -25,6 +53,9 @@ const MOCK_ES_RESPONSE = {body: {"hits": {"total": {"value": 1, "relation" : "eq
                 "legacyID" : "\"5974\"",
                 "xlPrefLabel": ["http://eurovoc.europa.eu/231836","http://eurovoc.europa.eu/173862","http://eurovoc.europa.eu/217102"],
                 "broader": [],
+                "altLabel.en": "",
+                "altLabel.de": "",
+                "altLabel.fr": "",
                 "xlAltLabel": ["http://eurovoc.europa.eu/231839","http://eurovoc.europa.eu/173863",
                     "http://eurovoc.europa.eu/217104","http://eurovoc.europa.eu/231838",
                     "http://eurovoc.europa.eu/173864","http://eurovoc.europa.eu/217103",
@@ -41,6 +72,38 @@ const MOCK_ES_RESPONSE = {body: {"hits": {"total": {"value": 1, "relation" : "eq
             }
         }]}
 }}
+const MOCK_ES_RESPONSE_ALT_ARRAY = {body: {"hits": {"total": {"value": 1, "relation" : "eq"}, "max_score" : 1.0, "hits" : [{
+                "_index" : "taxonomy",
+                "_type" : "_doc",
+                "_id" : "http://eurovoc.europa.eu/5974",
+                "_score" : 1.0,
+                "_source" : {
+                    "id" : "http://eurovoc.europa.eu/5974",
+                    "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"],
+                    "type" : "Concept",
+                    "identifier" : "5974",
+                    "legacyID" : "\"5974\"",
+                    "xlPrefLabel": ["http://eurovoc.europa.eu/231836","http://eurovoc.europa.eu/173862","http://eurovoc.europa.eu/217102"],
+                    "broader": [],
+                    "altLabel.en": [""],
+                    "altLabel.de": [""],
+                    "altLabel.fr": [""],
+                    "xlAltLabel": ["http://eurovoc.europa.eu/231839","http://eurovoc.europa.eu/173863",
+                        "http://eurovoc.europa.eu/217104","http://eurovoc.europa.eu/231838",
+                        "http://eurovoc.europa.eu/173864","http://eurovoc.europa.eu/217103",
+                        "http://eurovoc.europa.eu/231837"],
+                    "narrower": ["http://eurovoc.europa.eu/3515","http://eurovoc.europa.eu/5978",
+                        "http://eurovoc.europa.eu/1648","http://www.dods.co.uk/taxonomy/instance/concept/81de5cd4-36e1-41ee-932a-6acdb709d63f",
+                        "http://eurovoc.europa.eu/6236","http://eurovoc.europa.eu/5976",
+                        "http://www.dods.co.uk/taxonomy/instance/Topics/85ec7f4b-e93c-4958-959d-08a2300602b4",
+                        "http://eurovoc.europa.eu/3626","http://eurovoc.europa.eu/5979",
+                        "http://www.dods.co.uk/taxonomy/instance/concept/3623",
+                        "http://www.dods.co.uk/taxonomy/instance/concept/1646","http://eurovoc.europa.eu/4332"
+                    ],
+                    "label": "unemployment"
+                }
+            }]}
+    }}
 //@ts-ignore
 const MOCK_ES_RESPONSE_SHORT = {body: {"hits": {"total": {"value": 1, "relation" : "eq"}, "max_score" : 1.0, "hits" : [{
             "_index" : "taxonomy",
@@ -86,9 +149,31 @@ describe(`${FUNCTION_NAME} handler`, () => {
     // });
 
     test('searchTaxonomies valid output on query', async () => {
-        const expectedTags: TaxonomySearchResponse = {"hitCount": 1, "results": [{"tagId": "http://eurovoc.europa.eu/5974", "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"], "score": 1, "termLabel": "unemployment", "alternative_labels": [], ancestorTerms: undefined, facetType: "Topics", hierarchy: undefined }], "taxonomy": "Topics"};
+        const expectedTags: TaxonomySearchResponse = {"hitCount": 1, "results": [{"tagId": "http://eurovoc.europa.eu/5974", "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"], "score": 1, "termLabel": "unemployment", "alternative_labels": ["", "", ""], ancestorTerms: undefined, facetType: "Topics", hierarchy: undefined }], "taxonomy": "Topics"};
 
         elasticsearch.search.mockResolvedValue(MOCK_ES_RESPONSE)
+
+        const response = await TaxonomyRepository.defaultInstance.searchTaxonomies(TAXONOMY_PARAMETERS)
+
+        expect(response).toEqual(expectedTags);
+
+    })
+
+    test('searchTaxonomies valid alt array output on query', async () => {
+        const expectedTags: TaxonomySearchResponse = {"hitCount": 1, "results": [{"tagId": "http://eurovoc.europa.eu/5974", "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"], "score": 1, "termLabel": "unemployment", "alternative_labels": ["", "", ""], ancestorTerms: undefined, facetType: "Topics", hierarchy: undefined }], "taxonomy": "Topics"};
+
+        elasticsearch.search.mockResolvedValue(MOCK_ES_RESPONSE_ALT_ARRAY)
+
+        const response = await TaxonomyRepository.defaultInstance.searchTaxonomies(TAXONOMY_PARAMETERS)
+
+        expect(response).toEqual(expectedTags);
+
+    })
+
+    test('searchTaxonomies without alt array output on query', async () => {
+        const expectedTags: TaxonomySearchResponse = {"hitCount": 1, "results": [{"tagId": "http://eurovoc.europa.eu/5974", "inScheme": ["http://www.dods.co.uk/taxonomy/instance/Topics"], "score": 1, "termLabel": "unemployment", "alternative_labels": [], ancestorTerms: undefined, facetType: "Topics", hierarchy: undefined }], "taxonomy": "Topics"};
+
+        elasticsearch.search.mockResolvedValue(MOCK_ES_RESPONSE_WO_ALT_ARRAY)
 
         const response = await TaxonomyRepository.defaultInstance.searchTaxonomies(TAXONOMY_PARAMETERS)
 
