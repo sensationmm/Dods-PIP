@@ -4,7 +4,6 @@ import { updatePercolatorParameters } from '../../domain';
 import { SearchRepository } from "../../repositories/SearchRepository";
 
 export const updatePercolator = async (requestPayload: updatePercolatorParameters): Promise<APIGatewayProxyResultV2> => {
-    console.log(requestPayload)
     const percolatorQuery: updatePercolatorParameters = {alertId: requestPayload.alertId, query: requestPayload.query}
     let es_response = await SearchRepository.defaultInstance.updatePercolator(percolatorQuery);
 
