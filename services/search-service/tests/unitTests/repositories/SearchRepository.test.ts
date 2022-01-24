@@ -1,4 +1,9 @@
-import {createPercolatorParameters, GetContentParameters, updatePercolatorParameters} from '../../../src/domain';
+import {
+    createPercolatorParameters,
+    deletePercolatorParameters,
+    GetContentParameters,
+    updatePercolatorParameters
+} from '../../../src/domain';
 import { SearchRepository } from '../../../src/repositories/SearchRepository';
 
 const mockIndex = jest.fn().mockReturnValue({body: ''});
@@ -58,12 +63,14 @@ const MOCK_SEARCH_RESPONSE = {
                 }
             }]}}}
 const mockSearch = jest.fn().mockReturnValue(MOCK_SEARCH_RESPONSE);
-const mockUpdate = jest.fn().mockReturnValue(true)
+const mockUpdate = jest.fn().mockReturnValue(true);
+const mockDelete = jest.fn().mockReturnValue(true);
 
 jest.mock('../../../src/elasticsearch', () => ({
     index: () => mockIndex(),
     search: () => mockSearch(),
     update: () => mockUpdate(),
+    delete: () => mockDelete(),
 }));
 
 afterEach(() => {
@@ -108,6 +115,15 @@ describe(`Schedule repository percolator tests`, () => {
         await SearchRepository.defaultInstance.updatePercolator(data)
 
         expect(mockUpdate).toHaveBeenCalled();
+    });
+
+    test(`deletePercolator deletes a percolator`, async () => {
+        const data: deletePercolatorParameters = {
+            "alertId": "123",
+        }
+        await SearchRepository.defaultInstance.deletePercolator(data)
+
+        expect(mockDelete).toHaveBeenCalled();
     });
 });
 

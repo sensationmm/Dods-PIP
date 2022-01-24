@@ -3,6 +3,7 @@ const { Client } = require('@elastic/elasticsearch')
 import { createPercolatorParameters,
     GetContentParameters,
     updatePercolatorParameters,
+    deletePercolatorParameters,
 } from "../domain";
 
 import {Search} from "./Search"
@@ -51,6 +52,12 @@ export class SearchRepository implements Search {
 
     async updatePercolator(data: updatePercolatorParameters): Promise<any> {
         const response = await this.elasticsearch.update({index: 'alerts', id: data.alertId, body: {doc: JSON.parse(data.query)}})
+
+        return response['body']
+    }
+
+    async deletePercolator(data: deletePercolatorParameters): Promise<any> {
+        const response = await this.elasticsearch.delete({index: 'alerts', id: data.alertId})
 
         return response['body']
     }

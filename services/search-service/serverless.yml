@@ -126,3 +126,12 @@ functions:
           method: put
           path: percolator/{alertId}
           cors: true
+
+  deletePercolator:
+    handler: src/handlers/deletePercolator/index.handle
+    description: Delete alert percolator
+    events:
+      - http:
+          method: delete
+          path: percolator/{alertId}
+          cors: true
