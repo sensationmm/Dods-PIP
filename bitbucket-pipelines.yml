@@ -62,9 +62,6 @@ pipelines:
             - yarn lint
             - yarn test
             - docker build -t "${HASH}" .
-            - docker save --output "${HASH}" "${HASH}"
-            - aws s3 rm s3://pip-dev-services-lambdas/frontendImages/ --recursive --quiet
-            - aws s3 cp ${HASH} s3://pip-dev-services-lambdas/frontendImages/
 
     build_services:
       - variables:
@@ -126,7 +123,7 @@ pipelines:
         - name: SERVICE
           default: "dods_pip"
       - step:
-          name: "Frontend: Deploy to Environment"
+          name: "Frontend: Build & Publish Container Image"
           image: gioatsomoglobal/devopstools:0.4.5
           size: 2x
           services:
@@ -136,17 +133,17 @@ pipelines:
           script:
             - echo "Running deployment for frontend $SERVICE to environment ${ENVIRONMENT^^}"
             - export THIS="frontend/${SERVICE,,}"
-            - cd $THIS && mkdir dist
-            - aws s3 cp s3://pip-dev-services-lambdas/frontendImages/ dist/ --recursive --only-show-errors
-            - export TAG=$(ls -t1 dist/ | head -1)
+            - export HASH=$(echo ${BITBUCKET_COMMIT:0:7})
+            - cd $THIS
+            - yarn install
+            - yarn lint
+            - yarn test
             - ../../tools/set-deployer.sh && source credentials.txt
       # AWS_ACCOUNT_ID is exported by set-deployer.sh based on the value received on $ENVIRONMENT var.
       # The account IDs are kept as repository variables with naming standard as <ENVIRONMENT>_ACCOUNT_ID
       # Also on the repository variables: AWS_DEFAULT_REGION and FRONTEND_IMAGE
-            - export IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${FRONTEND_IMAGE}:${TAG}
-            - docker load --input dist/$TAG
-            - docker images
-            - docker tag ${TAG} ${IMAGE_NAME}
+            - export IMAGE_NAME=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${FRONTEND_IMAGE}:${HASH}
+            - docker build -t "${IMAGE_NAME}" .
             - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
             - docker push ${IMAGE_NAME}
             - ../../tools/ecs_deploy --service-name frontend-service --cluster pip-${ENVIRONMENT,,}-fargate-cluster --image $IMAGE_NAME --skip-deployments-check

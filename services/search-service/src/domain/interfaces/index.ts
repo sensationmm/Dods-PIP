@@ -8,8 +8,8 @@ export interface RawQueryParameters {
 
 export interface createPercolatorParameters {
     query: string;
+    alertId: string;
 }
 
 export interface updatePercolatorParameters extends createPercolatorParameters{
-    percolatorId: string
 }

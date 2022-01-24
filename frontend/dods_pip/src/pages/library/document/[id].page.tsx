@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 
+import color from '../../../globals/color';
 import fetchJson from '../../../lib/fetchJson';
 import { Api } from '../../../utils/api';
 import { IResponse, ISourceData } from '../index.page';
@@ -59,22 +60,20 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         label: 'Published',
         value: publishedDateTime,
       },
-      // TBD
-      // {
-      //   label: 'Last edit',
-      //   value: '??',
-      // },
-      // {
-      //   label: 'Last editor',
-      //   value: contentSource,
-      // },
       {
         label: 'Originator',
         value: originator,
       },
       {
         label: 'Status',
-        value: contentSource,
+        value: (
+          <Styled.status>
+            <Styled.statusIcon>
+              <Icon src={Icons.TickBold} size={IconSize.mediumLarge} color={color.base.white} />
+            </Styled.statusIcon>
+            <span>Published</span>
+          </Styled.status>
+        ),
       },
       {
         label: 'Version',

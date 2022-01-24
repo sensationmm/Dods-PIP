@@ -92,6 +92,7 @@ describe(`SearchRepository Requests`, () => {
 describe(`Schedule repository percolator tests`, () => {
     test(`createPercolator creates a percolator`, async () => {
         const createPercolatorParameters: createPercolatorParameters = {
+            alertId: "123",
             query: "123",
         }
         await SearchRepository.defaultInstance.createPercolator(createPercolatorParameters)
@@ -101,7 +102,7 @@ describe(`Schedule repository percolator tests`, () => {
 
     test(`createPercolator updates a percolator`, async () => {
         const data: updatePercolatorParameters = {
-            "percolatorId": "123",
+            "alertId": "123",
             "query": "1"
         }
         await SearchRepository.defaultInstance.updatePercolator(data)
