@@ -1,4 +1,4 @@
-service: ingestion-python-hansard-api
+service: ingestion-written-qa
 
 frameworkVersion: '2'
 projectDir: ../
@@ -70,7 +70,7 @@ provider:
 
 functions:
   scrape:
-    name: ingestion-python-hansard-api-${sls:stage}
+    name: ${self:service}-${sls:stage}
     # description:
     handler: handler.run
     events:
