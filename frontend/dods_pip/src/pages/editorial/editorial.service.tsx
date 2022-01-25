@@ -1,5 +1,6 @@
 import fetchJson from '@dods-ui/lib/fetchJson';
 import {
+  CreateEditorialRecordResponse,
   EditorialContentSourcesResponse,
   EditorialInformationTypesResponse,
   EditorialRecord,
@@ -22,13 +23,18 @@ export const getRecords = async (): Promise<EditorialRecordListResponse | undefi
   }
 };
 
-export const createRecord = async (payload: EditorialRecord): Promise<EditorialRecordResponse> => {
-  const response = await fetchJson<EditorialRecordResponse>(`${BASE_URI}${Api.EditorialRecords}`, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+export const createRecord = async (
+  payload: EditorialRecord,
+): Promise<CreateEditorialRecordResponse> => {
+  const response = await fetchJson<CreateEditorialRecordResponse>(
+    `${BASE_URI}${Api.EditorialRecords}`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+  );
 
-  return response as EditorialRecordResponse;
+  return response as CreateEditorialRecordResponse;
 };
 
 export const getEditorialPreview = async (documentID: string): Promise<EditorialRecordResponse> => {

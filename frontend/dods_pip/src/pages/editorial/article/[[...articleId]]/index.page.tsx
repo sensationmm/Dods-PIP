@@ -29,7 +29,6 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   const router = useRouter();
   const { articleId = [] } = router.query;
   const { user } = useUser();
-  const [documentId, setDocumentId] = useState<string>();
   const [metadataSelectionValues, setMetadataSelectionValues] = useState<MetadataSelection>({
     contentSources: [],
     informationTypes: [],
@@ -87,7 +86,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     })();
   }, []);
 
-  const onSave = async () => {
+  const onSave = async (publish = false) => {
     const { title, sourceName, sourceUrl, informationType, content } = fieldData;
     if (title?.length && sourceName?.length && informationType?.length && content?.length) {
       setLoading(true);
@@ -116,7 +115,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           }),
         ),
       }).then((response) => {
-        setDocumentId(response.uuid);
+        if (publish) {
+          onPublish(response.data.uuid);
+        }
       });
 
       global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
@@ -127,32 +128,27 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     }
   };
 
-  const onSaveAndExit = async () => {
-    await onSave().then(() => {
+  const onSaveAndExit = async (publish = false) => {
+    await onSave(publish).then(() => {
       router.push('/editorial');
     });
   };
 
-  const onPublish = async () => {
-    if (documentId) {
-      setLoading(true);
-      await setEditorialPublishState(documentId)
-        .then(() => {
-          addNotification({ title: 'Document successfully published', type: 'confirm' });
-        })
-        .then(() => {
-          router.push('/editorial');
-        });
-      setLoading(false);
-    }
+  const onPublish = async (documentId: string) => {
+    if (!documentId) return;
+    setLoading(true);
+    await setEditorialPublishState(documentId)
+      .then(() => {
+        addNotification({ title: 'Document successfully published', type: 'confirm' });
+      })
+      .then(() => {
+        router.push('/editorial');
+      });
+    setLoading(false);
   };
 
   const onSaveAndPublish = async () => {
-    if (!documentId) {
-      await onSave().then(onPublish);
-    } else {
-      await onPublish();
-    }
+    await onSaveAndExit(true);
   };
 
   const onSchedule = async () => {
@@ -214,7 +210,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             onUnschedule={() => onSchedule()}
             onUpdateArticle={() => onSave()}
             onPreview={() => router.push('/editorial/preview')} // Preview active local content or from server??
-            onUnpublish={() => onPublish()}
+            onUnpublish={() => {
+              console.info('<><><> Not supported');
+            }}
             schedule={isEditMode}
           />
         </TeleportOnScroll>

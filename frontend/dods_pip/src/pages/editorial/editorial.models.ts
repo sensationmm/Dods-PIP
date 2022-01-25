@@ -48,6 +48,25 @@ export type EditorialRecordStatuses = {
   status: EditorialRecordStatus[];
 };
 
+export type CreateEditorialRecordResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    uuid: string;
+    documentName: string;
+    informationType: string;
+    contentSource: string;
+    status: {
+      uuid: string;
+      status: 'Created' | string; // TODO: define properly
+    };
+    isPublished: boolean;
+    isArchived: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+};
+
 export type EditorialRecordResponse = {
   uuid: string;
   documentName: string;
