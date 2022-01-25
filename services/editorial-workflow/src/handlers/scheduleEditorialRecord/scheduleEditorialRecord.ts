@@ -14,16 +14,18 @@ export const scheduleEditorialRecord: AsyncLambdaHandler<ScheduleEditorialRecord
 
         const schedulePublishingResponse: any = await documentRepository.scheduleWebhook(params);
 
-        let editorialRecord = {}
+        let editorialRecord: any = {}
 
         if (schedulePublishingResponse.response.data.success) {
 
             editorialRecord = await EditorialRecordRepository.defaultInstance.scheduleEditorialRecord(params);
 
+            let { s3Location, ...recordResponse } = editorialRecord;
+
             return new HttpResponse(HttpStatusCode.OK, {
                 success: true,
                 message: 'The Document publishing was scheduled successfully',
-                editorialRecord: editorialRecord
+                editorialRecord: recordResponse
             });
         }
         else {

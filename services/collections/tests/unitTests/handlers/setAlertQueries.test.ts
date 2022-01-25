@@ -35,6 +35,12 @@ const defaultCreatedAlert: any = {
     updatedById: {}
 };
 
+const defaultObjResponse: any = {
+    alert: defaultCreatedAlert,
+    queries: [{}, {}]
+
+}
+
 
 describe(`${FUNCTION_NAME} handler`, () => {
     it('Valid input', async () => {
@@ -52,7 +58,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         };
 
 
-        mockedCollectionAlertsRepository.defaultInstance.setAlertQueries.mockResolvedValue(defaultCreatedAlert);
+        mockedCollectionAlertsRepository.defaultInstance.setAlertQueries.mockResolvedValue(defaultObjResponse);
 
 
         const response = await setAlertQueries(requestParams, defaultContext);
@@ -60,7 +66,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Alert updated successfully in step 1',
-            alert: defaultCreatedAlert
+            alert: { ...defaultCreatedAlert, queries: [{}, {}] }
         });
 
         expect(response).toEqual(expectedResponse);
