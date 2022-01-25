@@ -70,3 +70,17 @@ export class CollectionAlertRecipientError extends HttpError {
         this.name = CollectionAlertRecipientError.name;
     }
 }
+
+export class EditorialRecordError extends HttpError {
+    constructor(message: string | unknown, public data?: any, public error?: Error) {
+        super(message, HttpStatusCode.NOT_FOUND);
+        this.name = EditorialRecordError.name;
+    }
+}
+
+export class EditorialRecordStatusError extends HttpError {
+    constructor(message: string | unknown, public data?: any, public error?: Error) {
+        super(message, HttpStatusCode.NOT_FOUND);
+        this.name = EditorialRecordStatusError.name;
+    }
+}

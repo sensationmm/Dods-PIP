@@ -1,13 +1,14 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { UpdateEditorialRecordDocumentParameter, UpdateEditorialRecordParameters } from '../../domain';
 
-import { DocumentServiceRepository } from '../../repositories/DocumentServiceRepository';
-import { EditorialRecordRepository } from '../../repositories/EditorialRecordRepository';
-import { config } from '../../domain'
+import { DocumentRepository, EditorialRecordRepository, UpdateEditorialRecordParameters, UpdateEditorialRecordDocumentParameter } from '@dodsgroup/dods-repositories';
 
-export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRecordDocumentParameter> = async (
-    params
-) => {
+import { config } from '../../domain';
+
+const { dods: { downstreamEndpoints: { userProfile } } } = config;
+
+const documentRepository = new DocumentRepository(userProfile);
+
+export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRecordDocumentParameter> = async (params) => {
 
     const record = await EditorialRecordRepository.defaultInstance.getEditorialRecord(params.recordId);
     const documentARN = record.s3Location;
@@ -17,20 +18,21 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
     const updateDocumentsParams = {
         arn: documentARN,
         document: document
-    }
-    const updatedResponse = await DocumentServiceRepository.defaultInstance.updateDocument(updateDocumentsParams)
+    };
+
+    const updatedResponse = await documentRepository.updateDocument(updateDocumentsParams);
 
     if (updatedResponse) {
-        await EditorialRecordRepository.defaultInstance.unassignEditorToRecord(params.recordId)
+        await EditorialRecordRepository.defaultInstance.unassignEditorToRecord(params.recordId);
 
         const statusId = config.dods.recordStatuses.draft;
 
         const updateParams: UpdateEditorialRecordParameters = {
             recordId: params.recordId,
             statusId: statusId,
-        }
+        };
 
-        const updatedEditorialRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams)
+        const updatedEditorialRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams);
 
         const response: any = { ...updatedEditorialRecord };
         delete response.s3Location;
@@ -41,12 +43,10 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
             data: response
         });
     }
-
     else {
         return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
             success: false,
             message: 'Imposible to update',
         });
     }
-
 };

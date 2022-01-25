@@ -1,10 +1,10 @@
 import { buildLambdaFunction } from '@dodsgroup/dods-lambda';
 import { config } from '../../domain';
-import { getEditorialRecordStatusList } from './getEditorialRecordStatusList';
+import { archiveEditorialRecord } from './archiveEditorialRecord';
 
-export const handle = buildLambdaFunction(getEditorialRecordStatusList, {
+export const handle = buildLambdaFunction(archiveEditorialRecord, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
     validateSecurity: false,
 });

@@ -1,15 +1,12 @@
-/* istanbul ignore file */
-
-import {
-    ContentSourceOutput,
-    DistinctItem,
-    InformationTypeOutput
-} from '../domain';
 import { EditorialRecord, QueryTypes } from '@dodsgroup/dods-model';
-export class EditorialWorkflowFiltersProvisionalRepository {
-    constructor(private editorialRecordModel: typeof EditorialRecord) { }
+import { ContentSourceOutput, DistinctItem, EditorialWorkflowFiltersProvisionalPersister, InformationTypeOutput } from './domain';
 
-    static defaultInstance = new EditorialWorkflowFiltersProvisionalRepository(EditorialRecord);
+export * from './domain';
+
+export class EditorialWorkflowFiltersProvisionalRepository implements EditorialWorkflowFiltersProvisionalPersister {
+    static defaultInstance: EditorialWorkflowFiltersProvisionalPersister = new EditorialWorkflowFiltersProvisionalRepository(EditorialRecord);
+    
+    constructor(private editorialRecordModel: typeof EditorialRecord) { }
 
     static parseContentSourcesFromModel(modelList: any): ContentSourceOutput[] {
 
@@ -35,7 +32,6 @@ export class EditorialWorkflowFiltersProvisionalRepository {
         return response;
     }
 
-    /* istanbul ignore next */
     async getContentSourcesList(): Promise<ContentSourceOutput[]> {
 
         const contentSources = await this.editorialRecordModel?.sequelize?.query('SELECT DISTINCT(`content_source`) AS `item` FROM `dods_editorial_records` AS `EditorialRecord` where `content_source` is not null order by `item`', {
@@ -53,7 +49,6 @@ export class EditorialWorkflowFiltersProvisionalRepository {
             type: QueryTypes.SELECT,
         });
 
-        /* istanbul ignore next */
         return EditorialWorkflowFiltersProvisionalRepository.parseContentSourcesFromModel(informationTypes);
     }
 }
