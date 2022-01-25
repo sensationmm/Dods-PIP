@@ -58,6 +58,7 @@ provider:
     ES_CLOUD_ID: ${env:ES_CLOUD_ID}
     ES_KEY_ID: ${env:ES_KEY_ID}
     ES_API_KEY: ${env:ES_API_KEY}
+    ALERT_API_KEY: ${file(../env-config.${self:provider.stage}.js):apiKeys, file(../env-config.dev.js):apiKeys}
 
 custom:
   webpack:
@@ -103,6 +104,15 @@ functions:
       - http:
           method: post
           path: scheduler
+          cors: true
+
+  createAlertSchedule:
+    handler: src/handlers/createAlertSchedule/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: scheduler/alert
           cors: true
 
   get_watcher:
