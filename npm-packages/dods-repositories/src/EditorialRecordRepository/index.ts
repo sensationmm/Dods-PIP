@@ -1,38 +1,31 @@
+import { EditorialRecordError, EditorialRecordStatusError, UserProfileError } from '@dodsgroup/dods-domain';
+import { EditorialRecord, EditorialRecordStatus, Op, Sequelize, User, WhereOptions, } from '@dodsgroup/dods-model';
+
 import {
-    BadParameterError,
+    ArchiveEditorialRecordParameters,
     CreateEditorialRecordParameters,
     EditorialRecordListOutput,
     EditorialRecordOutput,
     EditorialRecordPersister,
     LockEditorialRecordParameters,
-    ScheduleEditorialRecordParamateres,
+    RecordStatuses,
     SearchEditorialRecordParameters,
     UpdateEditorialRecordParameters,
-    config,
-} from '../domain';
-import {
-    EditorialRecord,
-    EditorialRecordStatus,
-    Op,
-    Sequelize,
-    User,
-    WhereOptions,
-} from '@dodsgroup/dods-model';
+    ScheduleEditorialRecordParamateres,
+} from './domain';
+
+export * from './domain';
 
 export class EditorialRecordRepository implements EditorialRecordPersister {
+    static defaultInstance: EditorialRecordPersister = new EditorialRecordRepository(EditorialRecord, EditorialRecordStatus, User);
+
     constructor(
         private editorialRecordModel: typeof EditorialRecord,
         private editorialRecordStatusModel: typeof EditorialRecordStatus,
         private userModel: typeof User,
-
+        private recordStatuses = RecordStatuses
     ) { }
 
-    static defaultInstance = new EditorialRecordRepository(
-        EditorialRecord,
-        EditorialRecordStatus,
-        User,
-
-    );
 
     private mapRecordOutput(model: EditorialRecord): EditorialRecordOutput {
         const {
@@ -82,17 +75,12 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         });
 
         if (!status) {
-            throw new BadParameterError(
-                `Unable to retrieve Editorial Record Status with uuid: ${statusId}`
-            );
+            throw new EditorialRecordStatusError(`Unable to retrieve Editorial Record Status with uuid: ${statusId}`);
         }
         await record.setStatus(status);
     }
 
-    private async setAssignedEditorToRecord(
-        record: EditorialRecord,
-        assignedEditorId: string
-    ): Promise<void> {
+    private async setAssignedEditorToRecord(record: EditorialRecord, assignedEditorId: string): Promise<void> {
         const editor = await this.userModel.findOne({
             where: {
                 uuid: assignedEditorId,
@@ -100,7 +88,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         });
 
         if (!editor) {
-            throw new BadParameterError(`Unable to retrieve User with uuid: ${assignedEditorId}`);
+            throw new UserProfileError(`Unable to retrieve User with uuid: ${assignedEditorId}`);
         }
         await record.setAssignedEditor(editor);
     }
@@ -114,9 +102,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         return !!user;
     }
 
-    async createEditorialRecord(
-        params: CreateEditorialRecordParameters
-    ): Promise<EditorialRecordOutput> {
+    async createEditorialRecord(parameters: CreateEditorialRecordParameters): Promise<EditorialRecordOutput> {
         const {
             documentName,
             s3Location,
@@ -124,7 +110,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             contentSource,
             assignedEditorId,
             statusId,
-        } = params;
+        } = parameters;
 
         const newRecord = await this.editorialRecordModel.create(
             {
@@ -153,9 +139,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         return this.mapRecordOutput(newRecord);
     }
 
-    async updateEditorialRecord(
-        parameters: UpdateEditorialRecordParameters
-    ): Promise<EditorialRecordOutput> {
+    async updateEditorialRecord(parameters: UpdateEditorialRecordParameters): Promise<EditorialRecordOutput> {
         const {
             recordId,
             documentName,
@@ -175,9 +159,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         });
 
         if (!record) {
-            throw new BadParameterError(
-                `Error: could not retrieve Editorial Record with uuid: ${recordId}`
-            );
+            throw new EditorialRecordError(`Error: could not retrieve Editorial Record with uuid: ${recordId}`);
         }
 
         await record.update({
@@ -196,11 +178,9 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             if (
                 !record.assignedEditor &&
                 !assignedEditorId &&
-                statusId === config.dods.recordStatuses.inProgress
+                statusId === this.recordStatuses.inProgress
             ) {
-                throw new BadParameterError(
-                    'Can not set state In-progress to a record without Assigned Editor.'
-                );
+                throw new EditorialRecordStatusError('Can not set state In-progress to a record without Assigned Editor.');
             }
             await this.setStatusToRecord(record, statusId);
         }
@@ -223,18 +203,18 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         });
 
         if (!record) {
-            throw new BadParameterError(
+            throw new EditorialRecordError(
                 `Error: could not retrieve Editorial Record with uuid: ${recordId}`
             );
         }
 
-        if (config.dods.recordStatuses.scheduled == record.status?.uuid) {
-            throw new BadParameterError(
+        if (this.recordStatuses.scheduled == record.status?.uuid) {
+            throw new EditorialRecordError(
                 `Error: Editorial Record with uuid: ${recordId} is already scheduled`
             );
         }
 
-        await this.setStatusToRecord(record, config.dods.recordStatuses.scheduled)
+        await this.setStatusToRecord(record, this.recordStatuses.scheduled)
 
         await record.reload({
             include: ['status', 'assignedEditor'],
@@ -244,9 +224,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
 
     }
 
-    async lockEditorialRecord(
-        parameters: LockEditorialRecordParameters
-    ): Promise<EditorialRecordOutput> {
+    async lockEditorialRecord(parameters: LockEditorialRecordParameters): Promise<EditorialRecordOutput> {
         const { recordId, assignedEditorId } = parameters;
 
         const record = await this.editorialRecordModel.findOne({
@@ -257,20 +235,18 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         });
 
         if (!record) {
-            throw new BadParameterError(
-                `Error: could not retrieve Editorial Record with uuid: ${recordId}`
-            );
+            throw new EditorialRecordError(`Error: could not retrieve Editorial Record with uuid: ${recordId}`);
         }
 
         if (record.assignedEditor) {
-            throw new BadParameterError(
+            throw new EditorialRecordError(
                 `Error: Editorial Record is already locked by ${record.assignedEditor.fullName} with uuid: ${record.assignedEditor.uuid}`,
                 this.mapRecordOutput(record)
             );
         }
 
-        if (record.status && record.status.uuid === config.dods.recordStatuses.inProgress) {
-            throw new BadParameterError(
+        if (record.status && record.status.uuid === this.recordStatuses.inProgress) {
+            throw new EditorialRecordError(
                 'Error: Editorial Record is already In Progress',
                 this.mapRecordOutput(record)
             );
@@ -278,7 +254,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
 
         await this.setAssignedEditorToRecord(record, assignedEditorId);
 
-        await this.setStatusToRecord(record, config.dods.recordStatuses.inProgress);
+        await this.setStatusToRecord(record, this.recordStatuses.inProgress);
 
         await record.reload({
             include: ['status', 'assignedEditor'],
@@ -291,21 +267,19 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         const record = await this.editorialRecordModel.findOne({
             where: {
                 uuid: recordId,
+                isArchived: false
             },
             include: ['status', 'assignedEditor'],
         });
 
         if (!record) {
-            throw new BadParameterError(
-                `Unable to retrieve Editorial Record with uuid: ${recordId}`
-            );
+            throw new EditorialRecordError(`Unable to retrieve Editorial Record with uuid: ${recordId}`);
         }
 
         return this.mapRecordOutput(record);
     }
 
-    async unassignEditorToRecord(recordId: string
-    ): Promise<void> {
+    async unassignEditorToRecord(recordId: string): Promise<void> {
 
         const record = await this.editorialRecordModel.findOne({
             where: {
@@ -317,9 +291,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
 
     }
 
-    async listEditorialRecords(
-        params: SearchEditorialRecordParameters
-    ): Promise<EditorialRecordListOutput> {
+    async listEditorialRecords(parameters: SearchEditorialRecordParameters): Promise<EditorialRecordListOutput> {
         const {
             searchTerm,
             informationType,
@@ -331,9 +303,9 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             offset,
             sortBy,
             sortDirection,
-        } = params;
+        } = parameters;
 
-        const whereRecord: WhereOptions = {};
+        const whereRecord: WhereOptions = { isArchived: false };
 
         // Search by document name case insensitive coincidences
         if (searchTerm) {
@@ -401,4 +373,15 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         };
     }
 
+    async archiveEditorialRecord(parameters: ArchiveEditorialRecordParameters): Promise<void> {
+        const editorialRecord = await EditorialRecord.findOne({ where: { uuid: parameters.recordId } });
+
+        if (!editorialRecord) {
+            throw new EditorialRecordError('Editorial Record not found');
+        }
+
+        await editorialRecord.update({ isArchived: true });
+
+        await editorialRecord.destroy();
+    }
 }

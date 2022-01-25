@@ -6,7 +6,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "webpack",
-    "build:watch": "npm link && npm link @dodsgroup/dods-domain && npm link @dodsgroup/dods-model && webpack watch",
+    "build:watch": "npm link && npm link @dodsgroup/dods-domain @dodsgroup/dods-model && webpack watch",
     "predeploy": "npm run build",
     "deploy": "npm publish",
     "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
@@ -16,11 +16,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@dodsgroup/dods-domain": "1.0.3",
+    "@aws-sdk/client-lambda": "^3.48.0",
+    "@aws-sdk/client-s3": "^3.48.0",
+    "@dodsgroup/dods-domain": "1.0.4",
     "@dodsgroup/dods-model": "^1.1.7",
+    "axios": "^0.25.0",
     "sequelize": "^7.0.0-alpha.3"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
     "jest": "^27.4.4",

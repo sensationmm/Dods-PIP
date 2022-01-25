@@ -1,11 +1,10 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+
+import { EditorialRecordRepository } from '@dodsgroup/dods-repositories';
+
 import { BadParameterError, UpdateEditorialRecordParameters } from '../../domain';
 
-import { EditorialRecordRepository } from '../../repositories/EditorialRecordRepository';
-
-export const updateEditorialRecord: AsyncLambdaHandler<UpdateEditorialRecordParameters> = async (
-    params
-) => {
+export const updateEditorialRecord: AsyncLambdaHandler<UpdateEditorialRecordParameters> = async (params) => {
     try {
         const updatedRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(
             params

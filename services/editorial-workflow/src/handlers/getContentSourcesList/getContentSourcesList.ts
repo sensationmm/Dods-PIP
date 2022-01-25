@@ -2,7 +2,7 @@
 
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
-import { EditorialWorkflowFiltersProvisionalRepository } from '../../repositories/EditorialWorkflowFiltersProvisionalRepository';
+import { EditorialWorkflowFiltersProvisionalRepository } from '@dodsgroup/dods-repositories';
 
 export const getContentSourcesList: AsyncLambdaHandler = async () => {
     const contentSources = await EditorialWorkflowFiltersProvisionalRepository.defaultInstance.getContentSourcesList();

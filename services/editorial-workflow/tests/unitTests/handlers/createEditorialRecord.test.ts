@@ -1,7 +1,7 @@
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { EditorialDocument } from '../../../src/domain';
-import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
+import { EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { createEditorialRecord } from '../../../src/handlers/createEditorialRecord/createEditorialRecord';
 import { mocked } from 'ts-jest/utils';
 
@@ -27,17 +27,7 @@ const basicCreatedRecord: any = {
     setStatus: () => { },
 };
 
-jest.mock('../../../src/repositories/EditorialRecordRepository');
-
-const mockedPutObject = jest.fn();
-
-jest.mock('@aws-sdk/client-s3', () => {
-    return {
-        S3: jest.fn(() => ({
-            putObject: () => mockedPutObject()
-        }))
-    }
-});
+jest.mock('@dodsgroup/dods-repositories');
 
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
 
@@ -221,7 +211,6 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         expect(response).toEqual(expectedCreatedResponse);
 
-        expect(mockedPutObject).toHaveBeenCalledTimes(1);
     });
 
     test('Valid input for V3 payload', async () => {

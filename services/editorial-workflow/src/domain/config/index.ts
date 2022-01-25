@@ -19,12 +19,11 @@ const stages = ['production', 'development', 'test'];
 
 const envVarsSchema = Joi.object()
     .keys({
-        NODE_ENV: Joi.string()
-            .valid(...stages)
-            .default('development'),
+        NODE_ENV: Joi.string().valid(...stages).default('development'),
         SERVERLESS_REGION: Joi.string().required(),
-        SERVERLESS_STAGE: Joi.string().required().default('test'),
+        SERVERLESS_STAGE: Joi.string().required().default('dev'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
+        CORS_ORIGINS: Joi.string().required().default('*'),
         DB_DRIVER: Joi.string().required().valid('mysql', 'postgres', 'sqlite', 'mariadb', 'mssql'),
         DB_HOST: Joi.string().required(),
         DB_NAME: Joi.string().required(),
