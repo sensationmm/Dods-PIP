@@ -624,7 +624,7 @@ export const Library: React.FC<LibraryProps> = ({
                               const selectedIndex =
                                 parsedQuery?.nestedFilters?.findIndex(
                                   ({ value, path }) =>
-                                    path === 'taxonomyTerms' && value === term.tagId,
+                                    path === 'taxonomyTerms' && value === term.termLabel,
                                 ) ?? -1;
 
                               return (
@@ -632,8 +632,8 @@ export const Library: React.FC<LibraryProps> = ({
                                   onClick={() => {
                                     setNestedQuery({
                                       path: 'taxonomyTerms',
-                                      key: 'taxonomyTerms.tagId',
-                                      value: term.tagId,
+                                      key: 'taxonomyTerms.termLabel',
+                                      value: term.termLabel,
                                     });
                                   }}
                                   key={`taxonomy-${i}`}
