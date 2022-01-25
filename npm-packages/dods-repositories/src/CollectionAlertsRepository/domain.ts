@@ -199,3 +199,8 @@ export interface UpdateAlertParameters {
     updatedBy: string;
     title: string;
 }
+
+export interface AlertWithQueriesOutput {
+    alert: AlertOutput,
+    queries: AlertQueryResponse[]
+}
