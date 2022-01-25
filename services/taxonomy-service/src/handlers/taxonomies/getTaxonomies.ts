@@ -11,6 +11,7 @@ const AVAILABLE_TAXONOMIES = [
 ]
 
 export const getTaxonomies = async (requestPayload: TaxonomiesParameters): Promise<APIGatewayProxyResultV2> => {
+    console.log(requestPayload)
     // Not the best way of doing it but on the swagger search and get by ID are the same endpoint
     if ('tags' in requestPayload) {
         if (!('taxonomy' in requestPayload)){

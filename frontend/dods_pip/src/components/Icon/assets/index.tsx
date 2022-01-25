@@ -22,6 +22,7 @@ import Cross from './icon-cross.svg';
 import CrossBold from './icon-crossBold.svg';
 import Disk from './icon-disk.svg';
 import Document from './icon-document.svg';
+import Duplicate from './icon-duplicate.svg';
 import Edit from './icon-edit.svg';
 import Exit from './icon-exit.svg';
 import Grid from './icon-grid.svg';
@@ -48,6 +49,7 @@ import Tag from './icon-tag.svg';
 import Tick from './icon-tick.svg';
 import TickBold from './icon-tickBold.svg';
 import Users from './icon-users.svg';
+import Validate from './icon-validate.svg';
 
 type TypeIconLibrary = {
   [key in Icons]: string;
@@ -78,6 +80,7 @@ export enum Icons {
   CrossBold = 'CrossBold',
   Disk = 'Disk',
   Document = 'Document',
+  Duplicate = 'Duplicate',
   Edit = 'Edit',
   Exit = 'Exit',
   Grid = 'Grid',
@@ -104,6 +107,7 @@ export enum Icons {
   Tick = 'Tick',
   TickBold = 'TickBold',
   Users = 'Users',
+  Validate = 'Validate',
 }
 
 export type IconType = keyof typeof Icons;
@@ -133,6 +137,7 @@ const IconLibrary = {
   CrossBold,
   Disk,
   Document,
+  Duplicate,
   Edit,
   Exit,
   Grid,
@@ -159,6 +164,7 @@ const IconLibrary = {
   Tick,
   TickBold,
   Users,
+  Validate,
 } as TypeIconLibrary;
 
 export default IconLibrary;

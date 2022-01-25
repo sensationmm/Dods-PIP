@@ -13,7 +13,7 @@ export interface TooltipProps {
   alignment?: alignmentType;
   colorType?: colorMode;
   title?: string;
-  body: string;
+  body: string | JSX.Element;
   icon?: Icons;
   trigger: JSX.Element;
   classShow?: boolean;

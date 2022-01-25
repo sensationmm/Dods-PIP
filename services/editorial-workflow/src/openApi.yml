@@ -252,6 +252,30 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+                    
+    /editorial-record/{recordId}/schedule:
+        post:
+            summary: Schedule Publish Editorial Record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            requestBody:
+                $ref: '#/components/requestBodies/ScheduleEditorialRecord'
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
 
 components:
     responses:
@@ -387,6 +411,20 @@ components:
                         anyOf:
                             - $ref: '#/components/schemas/CreateEditorialRecordRequestV2'
                             - $ref: '#/components/schemas/CreateEditorialRecordRequest'
+                            
+        ScheduleEditorialRecord:
+            description: A JSON object containing Cron Expression 
+            required: true
+            content:
+                application/json:
+                    schema:
+                      type: object
+                      required:
+                        - cron
+                      properties:
+                        cron: 
+                          type: string
+                          
         UpdateEditorialRecord:
             description: A JSON object containing Editorial Record information
             required: true
@@ -602,6 +640,9 @@ components:
               type: string
             informationType:
               type: string
+            jurisdiction:
+              type: string
+              example: UK
             createdBy:
               type: string
             documentContent:
@@ -678,13 +719,6 @@ components:
               type: string
             termLabel:
               type: string
-          required:
-            - tagId
-            - facetType
-            - inScheme
-            - termLabel
-            - ancestorTerms
-            - alternative_labels
 
         AncestorTerm:
           type: object
@@ -696,10 +730,6 @@ components:
               type: string
             termLabel:
               type: string
-          required:
-            - tagId
-            - termLabel
-            - rank
             
         Document:
           type: object

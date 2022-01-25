@@ -1,9 +1,9 @@
-import { createSchedule } from '../../../src/handlers/createSchedule/createSchedule';
-import {createScheduleParameters} from "../../../src/domain";
-import {ScheduleRepository} from "../../../src/repositories/ScheduleRepository";
-import { mocked } from 'jest-mock';
-
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+
+import { ScheduleRepository } from "../../../src/repositories/ScheduleRepository";
+import { createSchedule } from '../../../src/handlers/createSchedule/createSchedule';
+import { createScheduleParameters } from "../../../src/domain";
+import { mocked } from 'jest-mock';
 
 const FUNCTION_NAME = createSchedule.name;
 const defaultContext = createContext();
@@ -15,7 +15,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input - response should be valid', async () => {
         const data: createScheduleParameters = {
             "scheduleId": "1",
-            "scheduleType": "publishing",
+            "scheduleType": "publish",
             "cron": "0 0 13 24 DEC ? 2021"
         }
 
