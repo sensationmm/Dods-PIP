@@ -1,15 +1,12 @@
-import {
-    EditorRecordStatusOutput
-} from '../domain';
-
-import {EditorialRecordStatusPersister} from '../domain/interfaces/EditorialRecordStatusPersister';
-
 import { EditorialRecordStatus } from '@dodsgroup/dods-model';
+import { EditorRecordStatusOutput, EditorialRecordStatusPersister } from './domain';
+
+export * from './domain';
 
 export class EditorialRecordStatusesRepository implements EditorialRecordStatusPersister {
-    constructor(private editorialRecordStatusModel: typeof EditorialRecordStatus) {}
+    static defaultInstance: EditorialRecordStatusPersister = new EditorialRecordStatusesRepository(EditorialRecordStatus);
 
-    static defaultInstance = new EditorialRecordStatusesRepository(EditorialRecordStatus);
+    constructor(private editorialRecordStatusModel: typeof EditorialRecordStatus) { }
 
     static parseEditorialRecordStatusesResponseFromModel(modelList: EditorialRecordStatus[]): EditorRecordStatusOutput[] {
         const response: EditorRecordStatusOutput[] = modelList?.map(model => {
@@ -18,16 +15,13 @@ export class EditorialRecordStatusesRepository implements EditorialRecordStatusP
                 name: model.status,
             };
         });
-    
+
         return response;
     }
 
-    async getEditorialRecordStatuses(
-    ): Promise<Array<EditorRecordStatusOutput>> {
+    async getEditorialRecordStatuses(): Promise<Array<EditorRecordStatusOutput>> {
         const records = await this.editorialRecordStatusModel.findAll();
-        
+
         return EditorialRecordStatusesRepository.parseEditorialRecordStatusesResponseFromModel(records);
     }
 }
-
-
