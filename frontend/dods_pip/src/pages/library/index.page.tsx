@@ -637,7 +637,12 @@ export const Library: React.FC<LibraryProps> = ({
                               );
                             })}
                           </Styled.tagsWrapper>
-                          <Link href={`/library/document/${documentId}`}>Read more</Link>
+                          <Link href={`/library/document/${documentId}`} passHref>
+                            <Styled.readMoreLink>
+                              <span>Read more</span>
+                              <Icon src={Icons.ChevronRightBold} />
+                            </Styled.readMoreLink>
+                          </Link>
                         </Styled.bottomRow>
                       </Styled.boxContent>
                     </Box>
