@@ -9,8 +9,10 @@ import Checkbox from '../_form/Checkbox';
 import InputSearch from '../_form/InputSearch';
 import Label from '../_form/Label';
 import RadioGroup from '../_form/RadioGroup';
+import Select from '../_form/Select';
 import Toggle from '../_form/Toggle';
 import Spacer from '../_layout/Spacer';
+import { Operators } from '../AlertQuery/index';
 import Button from '../Button';
 import Chips from '../Chips';
 import Icon, { IconSize } from '../Icon';
@@ -71,7 +73,9 @@ export interface TagBrowserProps {
   setAddedTagsToSave: (tags: TagsData[]) => void;
   highlight?: ContentTaggerProps['highlight'];
   highlightWordCount?: ContentTaggerProps['highlightWordCount'];
-  showHighlight: (isWarning?: boolean) => JSX.Element;
+  showHighlight?: (isWarning?: boolean) => JSX.Element;
+  operator?: Operators;
+  setOperator?: (op: Operators) => void;
 }
 
 const TagBrowser: React.FC<TagBrowserProps> = ({
@@ -86,6 +90,8 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   highlight,
   highlightWordCount,
   showHighlight,
+  operator,
+  setOperator,
 }) => {
   const [fetchingTagsData, setFetchingTagsData] = React.useState<boolean>(false);
   const [searchingTagsData, setSearchingTagsData] = React.useState<boolean>(false);
@@ -175,12 +181,6 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
     }
   };
 
-  // const handleOnClear = () => {
-  //   setAddedTags([]);
-  //   setTags([]);
-  //   setClearWarning(false);
-  // };
-
   const handleSave = () => {
     setCloseWarning(false);
     setActive(false);
@@ -189,14 +189,6 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
     setTaxonomySearch('');
     setTagsSearch(undefined);
   };
-
-  // const deleteTag = (tag: TagsData) => {
-  //   const current = tags.slice();
-
-  //   current.splice(current.indexOf(tag), 1);
-
-  //   setTags(current);
-  // };
 
   const flatten = (tags: TagsData[]): Array<string> => {
     const flat: Array<string> = [];
@@ -257,7 +249,9 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
 
   const controls = (
     <Styled.controls>
-      <IconButton type="secondary" isSmall icon={Icons.Minus} onClick={() => setActive(false)} />
+      {operator === undefined && (
+        <IconButton type="secondary" isSmall icon={Icons.Minus} onClick={() => setActive(false)} />
+      )}
       <IconButton type="secondary" isSmall icon={Icons.CrossBold} onClick={handleClose} />
     </Styled.controls>
   );
@@ -511,7 +505,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
         </Styled.box>
 
         {!highlight && (
-          <Styled.box tags={false}>
+          <Styled.box tags={false} operator>
             <Styled.header>
               <Styled.headerText>
                 <Icon src={Icons.Checklist} size={IconSize.xlarge} />
@@ -520,7 +514,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
                 </Text>
               </Styled.headerText>
             </Styled.header>
-            <Styled.content>
+            <Styled.content hasOperator={operator !== undefined && setOperator !== undefined}>
               {addedTagsToSave.length > 0 ? (
                 tagTypes
                   .filter(
@@ -564,6 +558,24 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
             </Styled.content>
             {addedTagsToSave.length > 0 && (
               <Styled.browserActions>
+                {operator && setOperator && (
+                  <Styled.operator>
+                    <Text type="span" color={color.base.greyDark}>
+                      Selected tags separator
+                    </Text>{' '}
+                    <Select
+                      id="operator"
+                      inline
+                      value={operator}
+                      options={[
+                        { value: 'OR', label: 'OR' },
+                        { value: 'NOT', label: 'NOT' },
+                        { value: 'AND', label: 'AND' },
+                      ]}
+                      onChange={(val) => setOperator(val as Operators)}
+                    />
+                  </Styled.operator>
+                )}
                 <Button
                   isSmall
                   icon={Icons.TickBold}
@@ -685,7 +697,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
                 <Text>We have detected the highlighted text multiple times in the content.</Text>
                 <Spacer size={4} />
                 <Styled.multipleWarningInfo>
-                  {showHighlight(true)}
+                  {showHighlight !== undefined && showHighlight(true)}
                   <Spacer size={2} />
                   <Styled.highlight>
                     <Text color={color.base.greyDark}>Selected tag:</Text>

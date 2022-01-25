@@ -10,6 +10,7 @@ type WrapperProps = {
   isDisabled: boolean;
   isFullWidth: boolean;
   isFilter: boolean;
+  inline: boolean;
 };
 
 export const wrapper = styled.div<WrapperProps>`
@@ -23,10 +24,17 @@ export const wrapper = styled.div<WrapperProps>`
   }
 
   ${Input} {
-    background: ${({ hasError, isFilter }) =>
-      hasError ? color.shadow.red : isFilter ? color.base.white : color.shadow.blue};
-    border: 1px solid ${color.shadow.blue} !important;
+    background: ${({ inline, hasError, isFilter }) =>
+      inline
+        ? 'transparent'
+        : hasError
+        ? color.shadow.red
+        : isFilter
+        ? color.base.white
+        : color.shadow.blue};
+    border: ${({ inline }) => (!inline ? `1px solid ${color.shadow.blue} !important` : 'none')};
     margin-bottom: 1px;
+    ${({ inline }) => inline && 'padding: 0'};
   }
 
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
@@ -37,6 +45,7 @@ export const wrapper = styled.div<WrapperProps>`
       border-bottom: 1px solid
         ${({ hasError }) => (hasError ? color.alert.red : color.theme.blueMid)} !important;
       border-radius: 8px 8px 0 0;
+      ${({ inline }) => inline && 'border-bottom: 0 !important;'}
     }
   }
 `;
@@ -59,12 +68,13 @@ type DropdownProps = {
   hasHelper: boolean;
   hasError: boolean;
   isFilter: boolean;
+  inline: boolean;
 };
 
 export const dropdown = styled.div<DropdownProps>`
   display: ${(p) => (p.open ? 'block' : 'none')};
   position: absolute;
-  margin-top: ${(p) => (p.hasHelper || p.hasError ? '-35px' : '-8px')};
+  margin-top: ${(p) => (p.inline ? '0px' : p.hasHelper || p.hasError ? '-35px' : '-8px')};
   padding-top: 8px;
   width: 100%;
   max-height: 180px;
@@ -76,7 +86,7 @@ export const dropdown = styled.div<DropdownProps>`
   z-index: 100;
 
   &:before {
-    content: '';
+    content: ${({ inline }) => (!inline ? '' : null)};
     position: absolute;
     top: 8px;
     width: 100%;

@@ -1,10 +1,12 @@
 import {
     activateScheduleParameters,
-    createScheduleParameters, deactivateScheduleParameters,
+    createScheduleParameters,
+    deactivateScheduleParameters,
     deleteScheduleParameters,
     getScheduleParameters,
     updateScheduleParameters
 } from "../../../src/domain";
+
 import { ScheduleRepository } from "../../../src/repositories";
 
 const mockPutWatch = jest.fn();
@@ -12,15 +14,15 @@ const mockGetWatch = jest.fn();
 const mockDeleteWatch = jest.fn();
 const mockActivateWatch = jest.fn();
 const mockDeactivateWatch = jest.fn();
-const mockSearch = jest.fn().mockReturnValue({body: ''});
+const mockSearch = jest.fn().mockReturnValue({ body: '' });
 
 mockGetWatch.mockImplementation(() => Promise.resolve({
     body: {
         watch: {
-            actions: {webhook: {webhook: {path: "123"}}},
-            trigger: {schedule: {cron: "123"}}
+            actions: { webhook: { webhook: { path: "123" } } },
+            trigger: { schedule: { cron: "123" } }
         },
-        status: {state: {active: true}},
+        status: { state: { active: true } },
     },
     statusCode: 200
 }))
@@ -38,8 +40,9 @@ jest.mock('../../../src/elasticsearch', () => ({
 
 const CREATE_SCHEDULE_INPUT: createScheduleParameters = {
     "scheduleId": "123",
-    "scheduleType": "publishing",
-    "cron": "0 0 13 24 DEC ? 2021"
+    "scheduleType": "publish",
+    "cron": "0 0 13 24 DEC ? 2021",
+    "baseURL": "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document"
 }
 
 describe(`Schedule repository tests`, () => {
@@ -53,8 +56,8 @@ describe(`Schedule repository tests`, () => {
                 actions: {
                     webhook: {
                         webhook: {
-                            method: "GET",
-                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + CREATE_SCHEDULE_INPUT.scheduleId + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
+                            method: "POST",
+                            url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/editorial-record/" + CREATE_SCHEDULE_INPUT.scheduleId + "/" + CREATE_SCHEDULE_INPUT.scheduleType,
                         }
                     }
                 }

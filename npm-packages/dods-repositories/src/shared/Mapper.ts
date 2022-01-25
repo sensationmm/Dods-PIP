@@ -24,7 +24,7 @@ export function cloneArray<T, E>(target: T[],
 }
 
 export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => {
-    const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted } = model;
+    const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted, lastExecutedAt } = model;
     const role = await createdById?.getRole();
     const isDodsUser = role ? Boolean(role.dodsRole) : undefined
 
@@ -44,7 +44,8 @@ export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => 
         hasKeywordsHighlight: hasKeywordsHighlight ? true : false,
         isScheduled: isScheduled ? true : false,
         lastStepCompleted: lastStepCompleted,
-        isPublished: isPublished ? true : false
+        isPublished: isPublished ? true : false,
+        lastExecutedAt
     }
 }
 

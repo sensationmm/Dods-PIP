@@ -31,6 +31,7 @@ export const textarea = styled.textarea<TextAreaProps>`
   font-family: 'Open Sans';
   font-size: 16px;
   resize: none;
+  min-height: 140px;
 
   &:hover {
     margin-bottom: 1px;
