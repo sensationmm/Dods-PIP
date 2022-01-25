@@ -107,10 +107,11 @@ enum AggTypes {
   geography = 'geography',
   originator = 'originator',
   organisationName = 'organisationName',
+  group = 'group',
 }
 
 type AggregationsType = {
-  [key in AggTypes]: {
+  [key in AggTypes]?: {
     terms: {
       field: string;
       min_doc_count: number;
