@@ -81,7 +81,7 @@ const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], on
               {title}
             </Text>
           </div>
-          <Styled.facetClearBtn onClick={onClearSelection} disabled={false}>
+          <Styled.facetClearBtn onClick={onClearSelection} disabled={selectedRecords.length === 0}>
             <Icon src={Icons.Bin} size={IconSize.small} data-test="component-icon" />
             Clear
           </Styled.facetClearBtn>
@@ -93,8 +93,8 @@ const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], on
                 <Chips
                   label={key}
                   key={`${key}-chip-${i}`}
-                  theme="dark"
                   onCloseClick={() => onChange(key)}
+                  theme={'dark'}
                 />
               );
             })}
