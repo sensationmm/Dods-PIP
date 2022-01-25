@@ -49,13 +49,13 @@ export interface DeleteAlertRecipientInput {
 export interface AlertRecipientsOutput {
     uuid: string;
     name: string;
-    emailAddress: string;
-    clientAccount: {
+    emailAddress?: string;
+    clientAccount?: {
         uuid: string;
         name: string;
     };
-    isDODSUser: boolean;
     isActive: boolean;
+    isDodsUser?: boolean;
 }
 
 export interface SearchAlertRecipientsInput extends Pagination {
@@ -74,8 +74,17 @@ export type SearchAlertRecipientsOutput = {
     data: Array<AlertRecipientsOutput>;
 };
 
+export interface UpdateRecipientParameters {
+    collectionId: string;
+    alertId: string;
+    userId: string;
+    isActive: boolean;
+    updatedBy: string;
+}
+
 export interface CollectionAlertRecipientPersister {
     list(parameters: SearchAlertRecipientsInput): Promise<SearchAlertRecipientsOutput>;
     setAlertRecipients(parameters: SetAlertRecipientsInput): Promise<SetAlertRecipientsOutput>;
     delete(parameters: DeleteAlertRecipientInput): Promise<boolean>;
+    update(parameters: UpdateRecipientParameters): Promise<AlertRecipientsOutput>
 }
