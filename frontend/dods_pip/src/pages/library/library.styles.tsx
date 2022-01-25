@@ -1,4 +1,7 @@
+import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
+import { dropdownItem, select } from '@dods-ui/components/_form/Select/Select.styles';
 import { panel } from '@dods-ui/components/_layout/Panel/Panel.styles';
+import { Icon } from '@dods-ui/components/Icon/Icon.styles';
 import styled from 'styled-components';
 
 import { contentWrapper as chipsWrapper } from '../../components/Chips/Chips.styles';
@@ -34,17 +37,6 @@ export const filtersTag = styled.div`
 
   div {
     margin: 5px 0;
-  }
-`;
-
-export const pagination = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  div span {
-    cursor: pointer;
-    margin-left: 25px;
   }
 `;
 
@@ -257,5 +249,79 @@ export const readMore = styled.div`
     letter-spacing: 1px;
     color: ${color.theme.blue};
     text-decoration: none;
+  }
+`;
+
+export const pagination = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Open Sans', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: ${spacing(3)};
+  line-height: ${spacing(4)};
+  color: ${color.base.grey};
+
+  .pageCount {
+    margin-left: ${spacing(4)};
+  }
+
+  b {
+    color: ${color.theme.blueMid};
+  }
+
+  ${select} {
+    width: auto;
+    margin-left: ${spacing(3)};
+
+    ${input} {
+      display: block;
+      font-family: 'Open Sans Bold', sans-serif;
+      font-weight: normal;
+      width: ${spacing(20)};
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    ${dropdownItem} {
+      font-size: 12px;
+    }
+
+    ${Icon} {
+      width: 12px;
+    }
+    svg {
+      width: 12px;
+    }
+  }
+`;
+
+export const totalRecords = styled.span`
+  margin-left: ${spacing(7)};
+`;
+
+export const perPageSelect = styled.div`
+  display: flex;
+  align-items: center;
+  ${select} {
+    #itemPerPage {
+      width: 75px;
+      padding-right: ${spacing(8)};
+    }
+  }
+`;
+
+export const paginationControls = styled.div`
+  display: flex;
+  align-items: center;
+  .pageArrow {
+    margin-right: ${spacing(7)};
+  }
+  ${select} {
+    margin: 0 ${spacing(2)};
+  }
+  b {
+    margin: 0 ${spacing(7)} 0 ${spacing(2)};
   }
 `;

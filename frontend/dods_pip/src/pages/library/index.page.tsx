@@ -1,4 +1,5 @@
 import Facet from '@dods-ui/components/_form/Facet';
+import Select from '@dods-ui/components/_form/Select';
 import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import { format } from 'date-fns';
@@ -275,8 +276,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
   const [geography, setGeography] = useState<BucketType[]>([]);
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
   const [offset, setOffset] = useState(0);
-  const [resultsSize] = useState(20);
-  const [requestPayload, setRequestPayload] = useState<RequestPayload>();
+  const [resultsSize, setResultsSize] = useState<number>(20);
 
   const currentQuery: QueryObject = useMemo(() => {
     if (typeof router.query.query === 'string') {
@@ -476,6 +476,14 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     }
   };
 
+  const recordsPerPage = [
+    { label: '10', value: '10' },
+    { label: '20', value: '20' },
+    { label: '30', value: '30' },
+    { label: '40', value: '40' },
+    { label: '50', value: '50' },
+  ];
+
   return (
     <Styled.pageLibrary data-test="page-library">
       <Head>
@@ -498,10 +506,34 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
           />
           <Spacer size={8} />
           {apiResponse.es_response?.hits?.hits.length !== 0 && (
-            <div>
-              Showing {offset + 1} - {(apiResponse?.es_response?.hits?.hits.length || 0) + offset}{' '}
-              of {apiResponse.es_response?.hits?.total?.value}
-            </div>
+            <Styled.pagination>
+              <div>
+                Showing
+                <span className={'pageCount'}>
+                  {offset + 1} - {(apiResponse?.es_response?.hits?.hits.length || 0) + offset}{' '}
+                </span>
+                <Styled.totalRecords>
+                  Total{' '}
+                  <b className={'total'}>
+                    {apiResponse.es_response?.hits?.total?.value.toLocaleString('en-US')}
+                  </b>{' '}
+                  Items
+                </Styled.totalRecords>
+              </div>
+              <Styled.perPageSelect>
+                <span>Items per page</span>
+                <Select
+                  id={'itemPerPage'}
+                  value={resultsSize.toString()}
+                  size={'small'}
+                  isFilter={true}
+                  onChange={(value) => {
+                    setResultsSize(parseInt(value));
+                  }}
+                  options={recordsPerPage}
+                />
+              </Styled.perPageSelect>
+            </Styled.pagination>
           )}
           <Spacer size={8} />
 
@@ -510,6 +542,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
               {apiResponse.es_response?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
                 const date = new Date(hit._source.contentDateTime);
                 const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
+                console.log('apiResponse', apiResponse);
 
                 return (
                   <Styled.searchResult key={`search-result${i}`}>
@@ -600,25 +633,50 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
 
               {apiResponse.es_response?.hits?.hits && (
                 <Styled.pagination>
-                  <span>Total {apiResponse.es_response.hits.total.value} Items</span>
-                  <div>
-                    <span
-                      onClick={() => {
-                        if (offset !== 0) {
-                          setOffset(offset - resultsSize);
-                        }
-                      }}
-                    >
-                      previous
+                  <Styled.totalRecords>
+                    Total <b>{apiResponse.es_response.hits.total.value.toLocaleString('en-US')}</b>{' '}
+                    Items
+                  </Styled.totalRecords>
+                  <Styled.paginationControls>
+                    <span className={'pageArrow'}>
+                      <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
                     </span>
-                    <span
-                      onClick={() => {
-                        setOffset(offset + resultsSize);
+                    <span>Viewing page</span>
+                    <Select
+                      id={'itemPerPage'}
+                      value={resultsSize.toString()}
+                      size={'small'}
+                      isFilter={true}
+                      onChange={(value) => {
+                        setResultsSize(parseInt(value));
                       }}
-                    >
-                      next
+                      options={[
+                        { label: '10', value: '10' },
+                        { label: '20', value: '20' },
+                        { label: '30', value: '30' },
+                        { label: '40', value: '40' },
+                        { label: '50', value: '50' },
+                      ]}
+                    />
+                    <span>
+                      of
+                      <b>{Math.round(apiResponse.es_response.hits.total.value / resultsSize)}</b>
                     </span>
-                  </div>
+                    <Icon src={Icons.ChevronRightBold} />
+                  </Styled.paginationControls>
+                  <Styled.perPageSelect>
+                    <span>Items per page</span>
+                    <Select
+                      id={'itemPerPage'}
+                      value={resultsSize.toString()}
+                      size={'small'}
+                      isFilter={true}
+                      onChange={(value) => {
+                        setResultsSize(parseInt(value));
+                      }}
+                      options={recordsPerPage}
+                    />
+                  </Styled.perPageSelect>
                 </Styled.pagination>
               )}
             </Styled.resultsContent>
