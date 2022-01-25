@@ -6,7 +6,7 @@ export interface IRadioProps extends IRadioItem {
   name: string;
   isChecked?: boolean;
   isDisabled?: boolean;
-  theme: radioTheme;
+  theme?: radioTheme;
   onChange: (val: string) => void;
 }
 

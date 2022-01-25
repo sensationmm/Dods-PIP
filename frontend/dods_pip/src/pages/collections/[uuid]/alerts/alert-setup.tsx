@@ -101,10 +101,10 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
           />
           <Button
             inline
-            label="Next"
+            label={activeStep < 4 ? 'Next' : 'Publish Alert'}
             icon={Icons.ChevronRightBold}
             iconAlignment="right"
-            onClick={() => setActiveStep(activeStep + 1)}
+            onClick={() => activeStep < 4 && setActiveStep(activeStep + 1)}
           />
         </Styled.actions>
       </Panel>
