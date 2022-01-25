@@ -130,18 +130,16 @@ const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onEdit, onDelet
           </Text>
         </Styled.tableHeadingStatus>
       </Styled.header>
-      {data.map((item, count) => {
-        return (
-          <RepositoryRow
-            key={`repository-row-${count}`}
-            keyString={`repository-row-${count}`}
-            data-test={`repository-row-${count}`}
-            data={item}
-            onEdit={() => onEdit(item.id)}
-            onDelete={() => onDelete(item.id)}
-          />
-        );
-      })}
+      {data.map((item, count) => (
+        <RepositoryRow
+          key={`repository-row-${count}`}
+          keyString={`repository-row-${count}`}
+          data-test={`repository-row-${count}`}
+          data={item}
+          onEdit={() => onEdit(item.id)}
+          onDelete={() => onDelete(item.id)}
+        />
+      ))}
     </Styled.wrapper>
   );
 };

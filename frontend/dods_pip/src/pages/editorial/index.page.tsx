@@ -20,7 +20,7 @@ import {
 import { getMetadataSelections, getRecords } from '@dods-ui/pages/editorial/editorial.service';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import * as Styled from './index.page.styles';
 
@@ -69,6 +69,14 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
       setEditorialData(data);
     }
   }, [editorialRecords]);
+
+  const navigateToEditDocument = useCallback((uuid) => {
+    router.push(`/editorial/article/${uuid}`);
+  }, []);
+
+  const onDeleteDocument = useCallback((uuid) => {
+    // TODO: Archive the Editorial Record
+  }, []);
 
   const addFilters = (newFilters: Filters) => setFilters({ ...filters, ...newFilters });
   const removeFilter = (filterKey: keyof Filters) => {
@@ -205,7 +213,11 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
               </Styled.dateFilter>
             </Styled.row>
             <Spacer size={7} />
-            <RepositoryTable data={editorialData} onDelete={console.log} onEdit={console.log} />
+            <RepositoryTable
+              data={editorialData}
+              onDelete={onDeleteDocument}
+              onEdit={navigateToEditDocument}
+            />
           </Box>
         </main>
       </Panel>
