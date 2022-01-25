@@ -183,7 +183,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
                     iconAlignment="right"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/collections/${collectionId}/add-alert`);
+                      router.push(`/collections/${collectionId}/alerts/create`);
                     }}
                   />
                 </Styled.alertsHeader>

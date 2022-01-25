@@ -1,4 +1,4 @@
-service: scraper-hansard-api
+service: ingestion-hansard-api
 
 frameworkVersion: '2'
 projectDir: ../
@@ -15,7 +15,7 @@ custom:
   stack_name: ${self:custom.resource_prefix}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  dynamodb_table: scrapping-hashes-${self:custom.stage}-table
+  dynamodb_table: ${self:service}-${self:custom.stage}-table
   dynamodb_arn: arn:aws:dynamodb:${self:custom.region}:*:table/${self:custom.dynamodb_table}
   dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
   s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
@@ -70,12 +70,12 @@ provider:
 
 functions:
   scrape:
-    name: scraper-hansard-api-${sls:stage}
-    # description: 
+    name: ${self:service}-${sls:stage}
+    # description:
     handler: handler.run
     events:
       ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(00 10 ? * MON-FRI *)
+      - schedule: cron(00 05 ? * MON-FRI *)
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 

@@ -33,7 +33,7 @@ interface ExtendedRequestBodySearch extends RequestBodySearch {
 }
 
 export interface ISourceData {
-  aggs_fields: { [key: string]: string[] };
+  aggs_fields?: { [key: string]: string[] };
   contentDateTime?: string;
   contentLocation?: string;
   contentSource?: ContentSourceType;
@@ -43,6 +43,9 @@ export interface ISourceData {
   sourceReferenceUri?: string;
   originator?: string;
   version?: string;
+  documentId?: string;
+  organisationName?: string;
+  taxonomyTerms?: { tagId: string; termLabel: string }[];
 }
 
 type BucketType = {
@@ -51,6 +54,36 @@ type BucketType = {
   selected?: boolean;
 };
 
+interface IAggregations {
+  contentSource?: {
+    buckets: BucketType[];
+  };
+  informationType?: {
+    buckets: BucketType[];
+  };
+  jurisdiction?: {
+    buckets: BucketType[];
+  };
+  originator?: {
+    buckets: BucketType[];
+  };
+  group?: {
+    buckets: BucketType[];
+  };
+  people?: {
+    buckets: BucketType[];
+  };
+  organizations?: {
+    buckets: BucketType[];
+  };
+  geography?: {
+    buckets: BucketType[];
+  };
+  topics?: {
+    buckets: BucketType[];
+  };
+}
+
 export interface IResponse {
   sourceReferenceUri?: string;
   es_response?: {
@@ -58,35 +91,8 @@ export interface IResponse {
       hits: { _source: ISourceData }[];
       total: { value: number };
     };
-    aggregations?: {
-      contentSource?: {
-        buckets: BucketType[];
-      };
-      informationType?: {
-        buckets: BucketType[];
-      };
-      jurisdiction?: {
-        buckets: BucketType[];
-      };
-      people?: {
-        buckets: BucketType[];
-      };
-      organizations?: {
-        buckets: BucketType[];
-      };
-      geography?: {
-        buckets: BucketType[];
-      };
-      topics?: {
-        buckets: BucketType[];
-      };
-    };
+    aggregations?: IAggregations;
   };
-}
-
-interface LibraryProps {
-  apiResponse: IResponse;
-  parsedQuery: QueryObject;
 }
 
 enum AggTypes {
@@ -97,10 +103,13 @@ enum AggTypes {
   people = 'people',
   organizations = 'organizations',
   geography = 'geography',
+  originator = 'originator',
+  organisationName = 'organisationName',
+  group = 'group',
 }
 
 type AggregationsType = {
-  [key in AggTypes]: {
+  [key in AggTypes]?: {
     terms: {
       field: string;
       min_doc_count: number;
@@ -134,6 +143,20 @@ const aggregations: AggregationsType = {
   geography: {
     terms: {
       field: 'aggs_fields.geography',
+      min_doc_count: 0,
+      size: 500,
+    },
+  },
+  group: {
+    terms: {
+      field: 'organisationName.keyword',
+      min_doc_count: 0,
+      size: 500,
+    },
+  },
+  originator: {
+    terms: {
+      field: 'originator.keyword',
       min_doc_count: 0,
       size: 500,
     },
@@ -259,11 +282,20 @@ const getPayload = (
   };
 };
 
-export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) => {
+interface LibraryProps {
+  parsedQuery: QueryObject;
+  results: { _source: ISourceData }[];
+  total: number;
+  aggregations: IAggregations;
+}
+
+export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, parsedQuery }) => {
   const router = useRouter();
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
   const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
+  const [originators, setOriginators] = useState<BucketType[]>([]);
+  const [groups, setGroups] = useState<BucketType[]>([]);
   const [topics, setTopics] = useState<BucketType[]>([]);
   const [people, setPeople] = useState<BucketType[]>([]);
   const [organizations, setOrganizations] = useState<BucketType[]>([]);
@@ -422,7 +454,9 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
       organizations,
       geography,
       topics,
-    } = apiResponse?.es_response?.aggregations || {};
+      originator,
+      group,
+    } = aggregations || {};
 
     const checkEmptyAggregation = (aggregation: { doc_count: number }) => {
       return aggregation.doc_count !== 0;
@@ -445,6 +479,8 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     setContentSources(updateWithBasicFilters(contentSource?.buckets));
     setInformationTypes(updateWithBasicFilters(informationType?.buckets));
     setJurisdictions(updateWithBasicFilters(jurisdiction?.buckets));
+    setOriginators(updateWithBasicFilters(originator?.buckets));
+    setGroups(updateWithBasicFilters(group?.buckets));
 
     const updateWithNestedFilters = (items: BucketType[] = []): BucketType[] => {
       return items.filter?.(checkEmptyAggregation)?.map((props) => {
@@ -463,7 +499,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     setOrganizations(updateWithNestedFilters(organizations?.buckets));
     setGeography(updateWithNestedFilters(geography?.buckets));
     setTopics(updateWithNestedFilters(topics?.buckets));
-  }, [parsedQuery, apiResponse]);
+  }, [parsedQuery, aggregations]);
 
   const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -498,24 +534,32 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
               <Toggle
                 isActive={filtersVisible}
                 labelOn={'Filters'}
-                onChange={(state) => setFiltersVisible(!filtersVisible)}
+                onChange={() => setFiltersVisible(!filtersVisible)}
               />
             </aside>
           </Styled.librarySearchWrapper>
           <Spacer size={8} />
-          {apiResponse.es_response?.hits?.hits.length !== 0 && (
+          {results.length !== 0 && (
             <div>
-              Showing {offset + 1} - {(apiResponse?.es_response?.hits?.hits.length || 0) + offset}{' '}
-              of {apiResponse.es_response?.hits?.total?.value}
+              Showing {offset + 1} - {(results.length || 0) + offset} of {total}
             </div>
           )}
           <Spacer size={8} />
 
           <Styled.contentWrapper>
             <Styled.resultsContent>
-              {apiResponse.es_response?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
-                const date = new Date(hit._source.contentDateTime);
-                const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
+              {results?.map((item: { _source: ISourceData }, i: number) => {
+                const {
+                  documentTitle,
+                  documentContent,
+                  contentDateTime,
+                  organisationName,
+                  informationType,
+                  taxonomyTerms,
+                  documentId,
+                } = item._source;
+                const formattedTime =
+                  contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' hh:mm");
 
                 return (
                   <Styled.searchResult key={`search-result${i}`}>
@@ -525,7 +569,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                           <span>
                             <Styled.imageContainer />
                             <div>
-                              <h2> {hit._source.documentTitle}</h2>
+                              <h2>{documentTitle}</h2>
                               <Styled.contentSource>
                                 <Icon
                                   src={Icons.Calendar}
@@ -533,26 +577,22 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                                   color={color.theme.blue}
                                 />
                                 <Styled.contentSourceText>
-                                  {hit._source.informationType} / {hit._source.organisationName}
+                                  {informationType} / {organisationName}
                                 </Styled.contentSourceText>
                               </Styled.contentSource>
                             </div>
                             <p>{formattedTime}</p>
                           </span>
                         </Styled.topRow>
-                        {hit._source?.documentContent && (
+                        {documentContent && (
                           <Styled.contentPreview>
-                            <div
-                              dangerouslySetInnerHTML={{ __html: hit._source?.documentContent }}
-                            />
+                            <div dangerouslySetInnerHTML={{ __html: documentContent }} />
                             <Styled.fade />
                           </Styled.contentPreview>
                         )}
                         <Styled.bottomRow>
                           <Styled.tagsWrapper>
-                            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
-                            {/* @ts-ignore */}
-                            {hit._source.taxonomyTerms.map((term, i) => {
+                            {taxonomyTerms?.map((term, i) => {
                               if (i > 5) {
                                 return;
                               }
@@ -585,9 +625,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                               );
                             })}
                           </Styled.tagsWrapper>
-                          <Link href={`/library/document/${hit._source.documentId}`}>
-                            Read more
-                          </Link>
+                          <Link href={`/library/document/${documentId}`}>Read more</Link>
                         </Styled.bottomRow>
                       </Styled.boxContent>
                     </Box>
@@ -595,9 +633,9 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                 );
               })}
 
-              {apiResponse.es_response?.hits?.hits && (
+              {results && (
                 <Styled.pagination>
-                  <span>Total {apiResponse.es_response.hits.total.value} Items</span>
+                  <span>Total {total} Items</span>
                   <div>
                     <span
                       onClick={() => {
@@ -658,6 +696,28 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                     onChange={(value) => {
                       setBasicQuery({
                         key: AggTypes.jurisdiction,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Group'}
+                    records={groups}
+                    onClearSelection={() => removeBasicFilters(groups)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.organisationName,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Originator'}
+                    records={originators}
+                    onClearSelection={() => removeBasicFilters(originators)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.originator,
                         value,
                       });
                     }}
@@ -744,7 +804,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { apiResponse, parsedQuery },
+    props: {
+      results: apiResponse?.es_response?.hits?.hits || [],
+      total: apiResponse?.es_response?.hits?.total?.value || 0,
+      aggregations: apiResponse?.es_response?.aggregations || {},
+      parsedQuery,
+    },
   };
 };
 

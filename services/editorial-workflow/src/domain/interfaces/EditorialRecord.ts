@@ -150,3 +150,12 @@ export interface UpdateLambdaDocumentsParams {
     document: DocumentParameters
 }
 
+export interface ScheduleEditorialRecordParamateres {
+    recordId: string;
+    cron: string;
+}
+
+export interface ScheduleWebhookParameters extends DocumentParameters {
+    scheduleType: string;
+    scheduleId: string;
+}

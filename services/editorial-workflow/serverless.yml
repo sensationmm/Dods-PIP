@@ -214,3 +214,13 @@ functions:
                   path: /editorial-record/{recordId}/publish
                 #   caching:
                     #   enabled: false
+
+    scheduleEditorialRecord:
+        handler: src/handlers/scheduleEditorialRecord/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: post        
+                  path: /editorial-record/{recordId}/schedule
+                #   caching:
+                    #   enabled: false
