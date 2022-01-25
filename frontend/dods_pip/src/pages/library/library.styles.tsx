@@ -186,6 +186,7 @@ export const tag = styled.span`
 
   &.selectedTag {
     background: ${color.shadow.blue};
+    font-weight: bold;
   }
 `;
 

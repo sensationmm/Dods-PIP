@@ -90,7 +90,12 @@ const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], on
           <Styled.facetChipsWrapper>
             {selectedRecords.map(({ key }, i: number) => {
               return (
-                <Chips label={key} key={`${key}-chip-${i}`} onCloseClick={() => onChange(key)} />
+                <Chips
+                  label={key}
+                  key={`${key}-chip-${i}`}
+                  theme="dark"
+                  onCloseClick={() => onChange(key)}
+                />
               );
             })}
           </Styled.facetChipsWrapper>
