@@ -241,7 +241,7 @@ const getPayload = ({
       );
     }
 
-    let jurisdictionFilter: TermQuery[] = [];
+    let jurisdictionFilter: TermQuery[] = []; // if both isEU and isUK then no need to filter
 
     if (isEU && !isUK) {
       jurisdictionFilter = [esb.termQuery('jurisdiction', 'EU')];
@@ -331,9 +331,9 @@ export const Library: React.FC<LibraryProps> = ({
     }
   }, [apiErrorMessage]);
 
-  const currentQuery: QueryObject = useMemo(() => {
-    if (typeof router.query.query === 'string') {
-      return JSON.parse(router.query.query || '{}') || {};
+  const currentSearch: QueryObject = useMemo(() => {
+    if (typeof router.query.search === 'string') {
+      return JSON.parse(router.query.search || '{}') || {};
     }
 
     return {};
@@ -345,7 +345,7 @@ export const Library: React.FC<LibraryProps> = ({
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify({ searchTerm }) },
+        query: { search: JSON.stringify({ searchTerm }) },
       },
       undefined,
       { scroll: false },
@@ -356,7 +356,7 @@ export const Library: React.FC<LibraryProps> = ({
     setOffset(0);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { dateRange, ...rest } = currentQuery; // Remove dateRage
+    const { dateRange, ...rest } = currentSearch; // Remove dateRage
 
     let newQuery: QueryObject = rest;
 
@@ -367,7 +367,7 @@ export const Library: React.FC<LibraryProps> = ({
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -377,7 +377,7 @@ export const Library: React.FC<LibraryProps> = ({
   const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
     setOffset(0);
 
-    const { nestedFilters = [] } = currentQuery;
+    const { nestedFilters = [] } = currentSearch;
 
     const selectedIndex = nestedFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
@@ -393,12 +393,12 @@ export const Library: React.FC<LibraryProps> = ({
       newNestedFilters = [...nestedFilters, { path, key, value }];
     }
 
-    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
+    const newQuery = { ...currentSearch, nestedFilters: newNestedFilters };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -408,7 +408,7 @@ export const Library: React.FC<LibraryProps> = ({
   const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
     setOffset(0);
 
-    const { basicFilters = [] } = currentQuery;
+    const { basicFilters = [] } = currentSearch;
     const selectedIndex = basicFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
     );
@@ -421,12 +421,12 @@ export const Library: React.FC<LibraryProps> = ({
       newBasicFilters = [...basicFilters, { key, value }]; // add
     }
 
-    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
+    const newQuery = { ...currentSearch, basicFilters: newBasicFilters };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -440,12 +440,12 @@ export const Library: React.FC<LibraryProps> = ({
       return !queries.find(({ key }) => value === key);
     });
 
-    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
+    const newQuery = { ...currentSearch, basicFilters: newBasicFilters };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -459,12 +459,12 @@ export const Library: React.FC<LibraryProps> = ({
       return !queries.find(({ key }) => value === key);
     });
 
-    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
+    const newQuery = { ...currentSearch, nestedFilters: newNestedFilters };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -812,7 +812,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { data = {} } = response;
     const { isEU, isUK } = data;
 
-    const payload = getPayload({ search: query.query, isEU, isUK });
+    const payload = getPayload({ search: query.search, isEU, isUK });
     parsedQuery = payload.parsedQuery;
 
     const sPayload = JSON.stringify(payload.payload);
