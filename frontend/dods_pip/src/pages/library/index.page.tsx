@@ -287,9 +287,16 @@ interface LibraryProps {
   results: { _source: ISourceData }[];
   total: number;
   aggregations: IAggregations;
+  apiErrorMessage?: string;
 }
 
-export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, parsedQuery }) => {
+export const Library: React.FC<LibraryProps> = ({
+  results,
+  total,
+  aggregations,
+  parsedQuery,
+  apiErrorMessage,
+}) => {
   const router = useRouter();
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
@@ -304,6 +311,12 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
   const [offset, setOffset] = useState(0);
   const [resultsSize] = useState(20);
   const [filtersVisible, setFiltersVisible] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (apiErrorMessage) {
+      console.error(apiErrorMessage);
+    }
+  }, [apiErrorMessage]);
 
   const currentQuery: QueryObject = useMemo(() => {
     if (typeof router.query.query === 'string') {
@@ -805,9 +818,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })) as IResponse;
   } catch (error) {
     console.error(error);
+
+    if (!error.data.success) {
+      return {
+        props: {
+          apiErrorMessage: error.data.message,
+          parsedQuery: {},
+          results: [],
+          total: 0,
+          aggregations: [],
+        },
+      };
+    }
   }
 
-  if (!apiResponse) {
+  if (!apiResponse || !accountId) {
     return {
       notFound: true,
     };
