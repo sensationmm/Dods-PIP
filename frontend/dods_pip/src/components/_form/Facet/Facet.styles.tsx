@@ -119,7 +119,19 @@ export const facetViewMoreBtn = styled.button`
   }
 `;
 
+const leftRightPadding = spacing(6);
 export const facetChipsWrapper = styled.div`
   display: flex;
-  padding: 24px;
+  padding: ${spacing(4)} ${leftRightPadding};
+  position: relative;
+
+  &:after {
+    content: '';
+    width: calc(100% - (${leftRightPadding} * 2));
+    height: 1px;
+    background: ${color.base.greyLight};
+    position: absolute;
+    bottom: 0;
+    left: ${leftRightPadding};
+  }
 `;
