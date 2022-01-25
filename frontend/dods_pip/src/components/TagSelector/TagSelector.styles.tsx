@@ -10,7 +10,7 @@ export const wrapper = styled.div``;
 export const containerHeader = styled.div`
   display: flex;
   align-items: flex-start;
-  min-height: 45px;
+  min-height: 35px;
 
   > * {
     margin-right: ${spacing(4)};
@@ -19,6 +19,7 @@ export const containerHeader = styled.div`
 
 type ContainerProps = {
   focused: boolean;
+  isQuery: boolean;
 };
 
 export const container = styled.div<ContainerProps>`
@@ -28,11 +29,15 @@ export const container = styled.div<ContainerProps>`
   background: ${color.base.white};
   box-shadow: ${({ focused }) => (focused ? elevation.dropShadow2 : 'none')};
 
-  ${media.greaterThan('md')`
+  ${({ isQuery }) =>
+    !isQuery &&
+    media.greaterThan('md')`
   > div {
     width: 50%;
   }
   `}
+
+  ${({ isQuery }) => isQuery && 'padding: 0; border: 0;'}
 `;
 
 export const containerHeaderTitle = styled.div`
@@ -43,7 +48,7 @@ export const containerHeaderTitle = styled.div`
 `;
 
 export const containerHeaderEmpty = styled.div`
-  min-height: 26px;
+  min-height: 24px;
   display: flex;
   align-items: flex-end;
 `;
