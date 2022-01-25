@@ -3,7 +3,7 @@ import Toggle from '@dods-ui/components/_form/Toggle';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
 import { format } from 'date-fns';
-import esb, { Query, RequestBodySearch } from 'elastic-builder';
+import esb, { Query, RequestBodySearch, TermQuery } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -201,15 +201,21 @@ interface QueryObject {
 
 type QueryString = string | string[] | undefined;
 
-const getPayload = (
-  query: QueryString = '{}',
-): { payload?: unknown; parsedQuery?: QueryObject } => {
+const getPayload = ({
+  search = '{}',
+  isEU,
+  isUK,
+}: {
+  search: QueryString;
+  isEU?: boolean | unknown;
+  isUK?: boolean | unknown;
+}): { payload?: unknown; parsedQuery?: QueryObject } => {
   let esbQuery = esb.boolQuery();
   let parsedQuery;
   let resultsSize = 20;
 
   try {
-    parsedQuery = typeof query === 'string' ? JSON.parse(query) : {};
+    parsedQuery = typeof search === 'string' ? JSON.parse(search) : {};
 
     const {
       searchTerm = '',
@@ -235,12 +241,20 @@ const getPayload = (
       );
     }
 
+    let jurisdictionFilter: TermQuery[] = [];
+
+    if (isEU && !isUK) {
+      jurisdictionFilter = [esb.termQuery('jurisdiction', 'EU')];
+    } else if (!isEU && isUK) {
+      jurisdictionFilter = [esb.termQuery('jurisdiction', 'UK')];
+    }
+
     // Facets
     esbQuery = esbQuery
       .must(
-        basicFilters.map(({ key, value }) =>
-          esb.termQuery(key === 'jurisdiction' ? key : `${key}.keyword`, value),
-        ),
+        basicFilters
+          .map(({ key, value }) => esb.termQuery(`${key}.keyword`, value))
+          .concat(jurisdictionFilter),
       )
       .must(
         nestedFilters.map(({ path, key, value }) =>
@@ -300,7 +314,6 @@ export const Library: React.FC<LibraryProps> = ({
   const router = useRouter();
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
-  const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
   const [originators, setOriginators] = useState<BucketType[]>([]);
   const [groups, setGroups] = useState<BucketType[]>([]);
   const [topics, setTopics] = useState<BucketType[]>([]);
@@ -462,7 +475,6 @@ export const Library: React.FC<LibraryProps> = ({
     const {
       contentSource,
       informationType,
-      jurisdiction,
       people,
       organizations,
       geography,
@@ -491,7 +503,6 @@ export const Library: React.FC<LibraryProps> = ({
 
     setContentSources(updateWithBasicFilters(contentSource?.buckets));
     setInformationTypes(updateWithBasicFilters(informationType?.buckets));
-    setJurisdictions(updateWithBasicFilters(jurisdiction?.buckets));
     setOriginators(updateWithBasicFilters(originator?.buckets));
     setGroups(updateWithBasicFilters(group?.buckets));
 
@@ -703,17 +714,6 @@ export const Library: React.FC<LibraryProps> = ({
                     }}
                   />
                   <Facet
-                    title={'Jurisdictions'}
-                    records={jurisdictions}
-                    onClearSelection={() => removeBasicFilters(jurisdictions)}
-                    onChange={(value) => {
-                      setBasicQuery({
-                        key: AggTypes.jurisdiction,
-                        value,
-                      });
-                    }}
-                  />
-                  <Facet
                     title={'Group'}
                     records={groups}
                     onClearSelection={() => removeBasicFilters(groups)}
@@ -796,22 +796,26 @@ export const Library: React.FC<LibraryProps> = ({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
 
-  const { payload, parsedQuery } = getPayload(query.query);
-
   let apiResponse: IResponse = {};
 
   const accountId = context.req.cookies['account-id'];
+  let parsedQuery;
 
   try {
     const response = await fetchJson(
-      `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}23`,
+      `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}`,
       {
         method: 'GET',
       },
     );
-    const { data = {} } = response;
 
-    const sPayload = JSON.stringify(payload);
+    const { data = {} } = response;
+    const { isEU, isUK } = data;
+
+    const payload = getPayload({ search: query.query, isEU, isUK });
+    parsedQuery = payload.parsedQuery;
+
+    const sPayload = JSON.stringify(payload.payload);
     apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
