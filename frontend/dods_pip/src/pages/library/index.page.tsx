@@ -787,7 +787,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let apiResponse: IResponse = {};
 
+  const accountId = context.req.cookies['account-id'];
+
   try {
+    const response = await fetchJson(
+      `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}23`,
+      {
+        method: 'GET',
+      },
+    );
+    const { data = {} } = response;
+
     const sPayload = JSON.stringify(payload);
     apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
