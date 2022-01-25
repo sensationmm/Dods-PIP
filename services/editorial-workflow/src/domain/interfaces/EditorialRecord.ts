@@ -20,11 +20,6 @@ export interface LockEditorialRecordParameters {
     assignedEditorId: string;
 }
 
-export interface GenericListingRecord {
-    id: string;
-    name: string;
-}
-
 export interface EditorialRecordOutput extends EditorialRecordBase {
     uuid: string;
     assignedEditor?: {
@@ -52,27 +47,6 @@ export interface SearchEditorialRecordParameters {
     endDate?: string;
     sortBy?: string;
     sortDirection?: string;
-}
-
-export interface EditorialRecordListOutput {
-    totalRecords: number;
-    filteredRecords: number;
-    results: Array<EditorialRecordOutput>;
-}
-
-export interface ContentSourceOutput extends GenericListingRecord { }
-
-export interface InformationTypeOutput extends GenericListingRecord { }
-
-export interface EditorRecordStatusOutput {
-    uuid: string;
-    name: string;
-}
-
-export interface DownstreamEndpoints { }
-
-export interface DistinctItem {
-    item: string;
 }
 
 export interface AncestorTerm {
@@ -109,53 +83,4 @@ export interface EditorialDocument {
     contentDateTime?: Date;
     ingestedDateTime?: Date;
     originalContent?: string;
-
-}
-
-export interface CreateEditorialRecordParametersV2 {
-    documentName: string;
-    contentSource: string;
-    informationType: string;
-    document: EditorialDocument;
-}
-export interface DocumentParameters {
-    jurisdiction?: string
-    documentTitle?: string
-    organisationName?: string
-    sourceReferenceFormat?: string
-    sourceReferenceUri?: string
-    createdBy?: string
-    internallyCreated?: boolean
-    schemaType?: string
-    contentSource?: string
-    informationType?: string
-    contentDateTime?: string
-    createdDateTime?: string
-    ingestedDateTime?: string
-    version?: string
-    countryOfOrigin?: string
-    feedFormat?: string
-    language?: string
-    taxonomyTerms?: object[]
-    originalContent?: string
-    documentContent?: string
-}
-
-export interface UpdateEditorialRecordDocumentParameter extends DocumentParameters {
-    recordId: string;
-}
-
-export interface UpdateLambdaDocumentsParams {
-    arn: string,
-    document: DocumentParameters
-}
-
-export interface ScheduleEditorialRecordParamateres {
-    recordId: string;
-    cron: string;
-}
-
-export interface ScheduleWebhookParameters extends DocumentParameters {
-    scheduleType: string;
-    scheduleId: string;
 }

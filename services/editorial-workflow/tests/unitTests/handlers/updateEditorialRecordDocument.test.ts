@@ -1,8 +1,7 @@
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { BadParameterError } from '../../../src/domain';
-import { DocumentServiceRepository } from '../../../src/repositories/DocumentServiceRepository';
-import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
+import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { mocked } from 'ts-jest/utils';
 import { updateEditorialRecordDocument } from '../../../src/handlers/updateEditorialRecordDocument/updateEditorialRecordDocument';
 
@@ -13,11 +12,10 @@ const defaultCreatedRecord: any = {
     documentName: 'NewDocument',
 };
 
-jest.mock('../../../src/repositories/EditorialRecordRepository');
-jest.mock('../../../src/repositories/DocumentServiceRepository');
+jest.mock('@dodsgroup/dods-repositories');
 
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
-const mockedDocumentServiceRepository = mocked(DocumentServiceRepository, true);
+const mockedDocumentServiceRepository = mocked(DocumentRepository, true);
 
 mockedEditorialRecordRepository.defaultInstance.updateEditorialRecord.mockImplementation(
     (params) => {
