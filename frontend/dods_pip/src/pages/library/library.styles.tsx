@@ -162,12 +162,30 @@ export const tagsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: ${spacing(1)};
   margin-top: ${spacing(6)};
   color: ${color.theme.blue};
   max-width: 80%;
 
   div {
     margin: 1px;
+  }
+`;
+
+export const tag = styled.span`
+  line-height: 32px;
+  padding: 0 ${spacing(4)};
+  color: ${color.theme.blue};
+  background: ${color.base.white};
+  border: 1px solid ${color.base.greyLight};
+  border-radius: 60px;
+  white-space: nowrap;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.selectedTag {
+    background: ${color.shadow.blue};
   }
 `;
 

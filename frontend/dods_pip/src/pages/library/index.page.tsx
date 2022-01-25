@@ -628,24 +628,13 @@ export const Library: React.FC<LibraryProps> = ({
                                 ) ?? -1;
 
                               return (
-                                <div
-                                  onClick={() => {
-                                    setNestedQuery({
-                                      path: 'taxonomyTerms',
-                                      key: 'taxonomyTerms.termLabel',
-                                      value: term.termLabel,
-                                    });
-                                  }}
+                                <Styled.tag
+                                  className={selectedIndex > -1 ? 'selectedTag' : ''}
                                   key={`taxonomy-${i}`}
+                                  title={term.termLabel}
                                 >
-                                  <Tag
-                                    label={
-                                      selectedIndex > -1 ? `* ${term.termLabel} *` : term.termLabel
-                                    }
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </div>
+                                  {term.termLabel}
+                                </Styled.tag>
                               );
                             })}
                           </Styled.tagsWrapper>
