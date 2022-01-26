@@ -2,6 +2,7 @@ import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
 import { dropdownItem, select } from '@dods-ui/components/_form/Select/Select.styles';
 import { panel } from '@dods-ui/components/_layout/Panel/Panel.styles';
 import { Icon } from '@dods-ui/components/Icon/Icon.styles';
+import { heading } from '@dods-ui/components/Text/Text.styles';
 import media from '@dods-ui/globals/media';
 import styled from 'styled-components';
 
@@ -405,23 +406,31 @@ export const noResults = styled.div`
   text-overflow: ellipsis;
   ${Icon} {
     margin-left: 0;
+    min-width: 30px;
+    min-height: 32px;
   }
   div {
     margin-left: ${spacing(6)};
     max-width: 100%;
+    overflow: hidden;
   }
-  h2 {
-    font-family: 'Libre Baskerville', Georgia, 'Times New Roman', Times, serif;
-    font-style: normal;
-    font-weight: normal;
+  ${heading} {
     font-size: ${spacing(8)};
     line-height: ${spacing(10)};
     margin: 0;
     color: ${color.base.greyDark};
+    max-width: 100%;
     overflow: hidden;
-    text-overflow: ellipsis;
-    span {
-      color: ${color.theme.blue};
+    h2 {
+      display: flex;
+      flex: 1;
+      min-width: 0;
+      h2 {
+        margin-left: ${spacing(2)};
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
   p {

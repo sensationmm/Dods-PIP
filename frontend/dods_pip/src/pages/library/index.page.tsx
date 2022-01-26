@@ -4,6 +4,7 @@ import Toggle from '@dods-ui/components/_form/Toggle';
 import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
+import { span } from '@dods-ui/components/Text/Text.styles';
 import { format } from 'date-fns';
 import esb, { Query, RequestBodySearch, TermQuery } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
@@ -639,13 +640,16 @@ export const Library: React.FC<LibraryProps> = ({
           <Spacer size={8} />
 
           <Styled.contentWrapper>
-            {results.length === 0 && (
+            {!results.length && (
               <Styled.noResults>
                 <Icon src={Icons.Search} size={IconSize.xxlarge} color={color.base.greyDark} />
                 <div>
-                  <h2>
-                    No results for <span>{searchText}</span>
-                  </h2>
+                  <Text color={color.base.greyDark} type={'h2'} headingStyle={'titleLarge'}>
+                    No results for{' '}
+                    <Text type={'h2'} color={color.theme.blue} headingStyle={'titleLarge'}>
+                      {searchText}
+                    </Text>
+                  </Text>
                   <p>Try checking your spelling or adjusting the filters</p>
                 </div>
               </Styled.noResults>
@@ -734,7 +738,7 @@ export const Library: React.FC<LibraryProps> = ({
                     </Styled.searchResult>
                   );
                 })}
-                {results.length !== 0 && (
+                {results.length > 0 && (
                   <Styled.pagination>
                     <span>
                       Total <b>{total.toLocaleString('en-US')}</b> Items
