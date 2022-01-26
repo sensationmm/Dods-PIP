@@ -67,8 +67,8 @@ provider:
     DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
     DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
     DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
-    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
 
 custom:
   webpack:
