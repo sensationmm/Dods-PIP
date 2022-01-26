@@ -25,10 +25,10 @@ import * as Styled from './ContentTagger.styles';
 import TagPanel from './TagPanel';
 import TagTree from './TagTree';
 
-type AncestorTerms = {
+type AncestorTerm = {
   tagId: string;
   termLabel: string;
-  rank: number;
+  rank?: number;
 };
 
 export type TagsData = {
@@ -36,11 +36,11 @@ export type TagsData = {
   termLabel: string;
   alternative_labels?: Array<string>;
   childTerms?: TagsData[];
-  ancestorTerms?: AncestorTerms[];
+  ancestorTerms?: AncestorTerm[];
   type?: string;
   facetType: string;
   inScheme: Array<string>;
-  score: number;
+  score?: number;
 };
 
 type TagTreeDataType = 'people' | 'organisations' | 'topics' | 'geographies';
@@ -131,6 +131,12 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   }, 500);
 
   const searchTags = useMemo(() => debounceSearchTags, []);
+
+  useEffect(() => {
+    if (tags.length) {
+      setTags(tags);
+    }
+  }, [tags.length]);
 
   useEffect(() => {
     active && isBrowsing && !fetchingTagsData && !hasTagTree && loadTree();

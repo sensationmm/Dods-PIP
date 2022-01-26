@@ -48,6 +48,26 @@ export type EditorialRecordStatuses = {
   status: EditorialRecordStatus[];
 };
 
+export type EditorialRecordPreviewResponse = {
+  success: boolean;
+  message: string;
+  document: {
+    jurisdiction: string;
+    documentTitle: string;
+    createdBy: string;
+    internallyCreated: string;
+    schemaType: string;
+    contentSource: string;
+    sourceReferenceUri?: string;
+    informationType: string;
+    taxonomyTerms: TaxonomyTerm[];
+    documentContent: string;
+    createdDateTime: Date;
+    version: string;
+    documentId: string;
+  };
+};
+
 export type CreateEditorialRecordResponse = {
   success: boolean;
   message: string;
@@ -58,7 +78,7 @@ export type CreateEditorialRecordResponse = {
     contentSource: string;
     status: {
       uuid: string;
-      status: 'Created' | string; // TODO: define properly
+      status: 'Created' | 'Draft' | string; // TODO: define properly
     };
     isPublished: boolean;
     isArchived: boolean;
@@ -66,6 +86,15 @@ export type CreateEditorialRecordResponse = {
     updatedAt: Date;
   };
 };
+
+export type UpdateEditorialRecordResponse = CreateEditorialRecordResponse;
+
+export type PublishEditorialRecordResponse = {
+  success: boolean;
+  message: string;
+};
+
+export type DeleteEditorialRecordResponse = PublishEditorialRecordResponse;
 
 export type EditorialRecordResponse = {
   uuid: string;

@@ -17,14 +17,15 @@ export default withSession(async (req, res) => {
   }
 });
 
-const getEditorial = async (req: NextIronRequest) =>
-  await fetchJson(
-    `${process.env.APP_API_URL}${Api.EditorialRecords}`,
+const getEditorial = async (req: NextIronRequest) => {
+  return await fetchJson(
+    `${process.env.APP_API_URL}${Api.EditorialRecords}?sortBy=creationDate&sortDirection=desc&limit=1000`,
     {
       method: 'GET',
     },
     req,
   );
+};
 
 const postEditorial = async (req: NextIronRequest) =>
   await fetchJson(

@@ -11,10 +11,16 @@ import useUser from '@dods-ui/lib/useUser';
 import { MetadataSelection } from '@dods-ui/pages/editorial/editorial.models';
 import {
   createRecord,
+  deleteEditorialRecord,
+  getEditorialPreview,
   getMetadataSelections,
   scheduleEditorial,
   setEditorialPublishState,
+  updateRecord,
 } from '@dods-ui/pages/editorial/editorial.service';
+import getContentSources from '@dods-ui/utils/getContentSources';
+import getInformationTypes from '@dods-ui/utils/getInformationTypes';
+import getJurisdiction from '@dods-ui/utils/getJurisdiction';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -45,6 +51,11 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   });
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
+  const [savedDocumentContent, setSavedDocumentContent] = useState<string | undefined>();
+  const [savedDocumentTags, setSavedDocumentTags] = useState<TagsData[] | undefined>();
+  const [jurisdiction, setJurisdiction] = useState<string>();
+  const [validContentSources, setValidContentSources] = useState<string[] | undefined>();
+  const [validInfoTypes, setValidInfoTypes] = useState<string[] | undefined>();
 
   const setFieldValue = (field: keyof EditorialFormFields, value: string) => {
     const savedFieldData = JSON.parse(global.localStorage.getItem(EDITORIAL_STORAGE_KEY) || '{}');
@@ -53,6 +64,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     global.localStorage.setItem(EDITORIAL_STORAGE_KEY, JSON.stringify(updatedData));
 
     const { title, sourceName, informationType, content } = updatedData;
+    setJurisdiction(getJurisdiction({ contentSource: sourceName }));
+    setValidInfoTypes(getInformationTypes({ contentSource: sourceName, informationType }));
+
     const errors = {};
     if (!title) {
       Object.assign(errors, { title });
@@ -78,20 +92,65 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   }, [router.query]);
 
   useEffect(() => {
+    const getDocData = async (uuid: string) => {
+      setLoading(true);
+      await getEditorialPreview(uuid)
+        .then((response) => {
+          if (response.success) {
+            const {
+              documentTitle,
+              documentContent,
+              informationType,
+              contentSource,
+              sourceReferenceUri,
+              taxonomyTerms,
+            } = response.document;
+            const fieldData = {
+              title: documentTitle,
+              content: documentContent,
+              informationType,
+              sourceName: contentSource,
+              sourceUrl: sourceReferenceUri || '',
+            };
+            setSavedDocumentContent(documentContent);
+            setSavedDocumentTags(taxonomyTerms);
+            setJurisdiction(getJurisdiction({ contentSource }));
+            setValidInfoTypes(getInformationTypes({ contentSource, informationType }));
+            setFieldData(fieldData);
+            global.localStorage.setItem(EDITORIAL_STORAGE_KEY, JSON.stringify(fieldData));
+          } else {
+            addNotification({
+              type: 'warn',
+              title: 'Error - Failed to load document',
+              text: response.message,
+            });
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+    if (isEditMode && articleId.length) {
+      getDocData(articleId[0]);
+    }
+  }, [isEditMode, articleId]);
+
+  useEffect(() => {
     (async () => {
       setLoading(true);
       const selections = await getMetadataSelections();
       setMetadataSelectionValues(selections);
+      setValidContentSources(getContentSources());
       setLoading(false);
     })();
   }, []);
 
-  const onSave = async (publish = false) => {
+  const onSave = async (publish = false, preview = false) => {
     const { title, sourceName, sourceUrl, informationType, content } = fieldData;
     if (title?.length && sourceName?.length && informationType?.length && content?.length) {
       setLoading(true);
       await createRecord({
-        jurisdiction: 'uk', // TODO: update this based on contentSource (awaiting mapping)
+        jurisdiction: jurisdiction || '',
         contentSource: sourceName,
         informationType,
         documentTitle: title,
@@ -114,22 +173,86 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             alternative_labels: alternative_labels || [],
           }),
         ),
-      }).then((response) => {
-        if (publish) {
-          onPublish(response.data.uuid);
-        }
-      });
+      })
+        .then((response) => {
+          global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
+          addNotification({ title: 'Record added successfully', type: 'confirm' });
+          if (publish) {
+            onPublish(response.data.uuid);
+          }
+          if (preview) {
+            router.push(`/library/document/${response.data.uuid}?preview=true`);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
 
-      global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
-      setLoading(false);
-      addNotification({ title: 'Record added successfully', type: 'confirm' });
-      setLoading(false);
       return;
     }
   };
 
   const onSaveAndExit = async (publish = false) => {
     await onSave(publish).then(() => {
+      router.push('/editorial');
+    });
+  };
+
+  const onUpdate = async (publish = false, preview = false) => {
+    const { title, sourceName, sourceUrl, informationType, content } = fieldData;
+    if (
+      articleId?.length &&
+      title?.length &&
+      sourceName?.length &&
+      informationType?.length &&
+      content?.length
+    ) {
+      setLoading(true);
+      await updateRecord(articleId[0], {
+        jurisdiction: jurisdiction || '',
+        contentSource: sourceName,
+        informationType,
+        documentTitle: title,
+        sourceReferenceUri: sourceUrl || '',
+        createdBy: user.displayName || user.emailAddress || '',
+        internallyCreated: true,
+        documentContent: content,
+        taxonomyTerms: tags.map(
+          ({ tagId, facetType, inScheme, termLabel, ancestorTerms, alternative_labels }) => ({
+            tagId,
+            facetType,
+            inScheme: inScheme || [],
+            termLabel,
+            ancestorTerms:
+              ancestorTerms?.map(({ tagId, termLabel, rank }) => ({
+                tagId,
+                termLabel,
+                ...(rank ? { rank } : {}),
+              })) || [],
+            alternative_labels: alternative_labels || [],
+          }),
+        ),
+      })
+        .then((response) => {
+          global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
+          addNotification({ title: 'Record updated successfully', type: 'confirm' });
+          if (publish) {
+            onPublish(response.data.uuid);
+          }
+          if (preview) {
+            router.push(`/library/document/${response.data.uuid}?preview=true`);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+
+      return;
+    }
+  };
+
+  const onUpdateAndExit = async (publish = false) => {
+    await onUpdate(publish).then(() => {
       router.push('/editorial');
     });
   };
@@ -151,6 +274,37 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     await onSaveAndExit(true);
   };
 
+  const onUpdateAndPublish = async () => {
+    await onUpdateAndExit(true);
+  };
+
+  const onPreview = async () => {
+    await onSave(false, true);
+  };
+
+  const onPreviewUpdate = async () => {
+    await onUpdate(false, true);
+  };
+
+  const onDelete = async () => {
+    if (!isEditMode) return;
+    if (articleId.length) {
+      setLoading(true);
+      await deleteEditorialRecord(articleId[0])
+        .then((response) => {
+          if (response.success) {
+            addNotification({ title: `Document successfully deleted`, type: 'confirm' });
+            setTimeout(() => {
+              router.push('/editorial');
+            }, 600);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
+
   const onSchedule = async () => {
     const date = new Date().toISOString();
     setLoading(true);
@@ -158,18 +312,6 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     await scheduleEditorial({ date, documentId: 'guid-here' });
     setLoading(false);
     addNotification({ title: `Document successfully scheduled for ${date}`, type: 'confirm' });
-  };
-
-  const onDelete = async () => {
-    const date = new Date().toISOString();
-    setLoading(true);
-    // TODO: populate with data once back end is correct
-    await scheduleEditorial({ date, documentId: 'guid-here' });
-    setLoading(false);
-    addNotification({ title: `Document successfully deleted`, type: 'confirm' });
-    setTimeout(() => {
-      router.push('/editorial');
-    }, 600);
   };
 
   return (
@@ -200,20 +342,22 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           <StatusBar
             saveAndExit
             publish
+            schedule
+            showDeleteButton={isEditMode}
             publishDisabled={!isValidForm}
             scheduleDisabled={!isValidForm}
             saveAndExitDisabled={!isValidForm}
-            onSaveAndExit={() => onSaveAndExit()}
-            onPublish={() => onSaveAndPublish()}
+            onSaveAndExit={isEditMode ? onUpdateAndExit : onSaveAndExit}
+            onPublish={isEditMode ? onUpdateAndPublish : onSaveAndPublish}
+            onPreview={isEditMode ? onPreviewUpdate : onPreview}
             onDelete={onDelete}
-            onSchedule={() => onSchedule()}
-            onUnschedule={() => onSchedule()}
-            onUpdateArticle={() => onSave()}
-            onPreview={() => router.push('/editorial/preview')} // Preview active local content or from server??
+            onSchedule={onSchedule}
+            onUnschedule={() => {
+              console.info('<><><> Not supported');
+            }}
             onUnpublish={() => {
               console.info('<><><> Not supported');
             }}
-            schedule={isEditMode}
           />
         </TeleportOnScroll>
       </Panel>
@@ -221,14 +365,23 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       <Panel bgColor={color.base.ivory}>
         <main>
           <EditorialForm
-            contentSourceValues={metadataSelectionValues.contentSources}
-            infoTypeValues={metadataSelectionValues.informationTypes}
+            contentSourceValues={
+              validContentSources?.map((val) => ({ label: val, value: val })) ||
+              metadataSelectionValues.contentSources
+            }
+            infoTypeValues={
+              validInfoTypes?.map((val) => ({ label: val, value: val })) ||
+              metadataSelectionValues.informationTypes
+            }
             fieldData={fieldData}
             errors={errors}
             setErrors={setErrors}
             onFieldChange={setFieldValue}
             onTagsChange={setTags}
             tags={tags}
+            articleId={articleId.length ? articleId[0] : undefined}
+            savedContent={savedDocumentContent}
+            savedDocumentTags={savedDocumentTags}
           />
         </main>
       </Panel>

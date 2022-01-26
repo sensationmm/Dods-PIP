@@ -17,7 +17,11 @@ import {
   EditorialRecordListResponse,
   MetadataSelection,
 } from '@dods-ui/pages/editorial/editorial.models';
-import { getMetadataSelections, getRecords } from '@dods-ui/pages/editorial/editorial.service';
+import {
+  deleteEditorialRecord,
+  getMetadataSelections,
+  getRecords,
+} from '@dods-ui/pages/editorial/editorial.service';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -34,7 +38,7 @@ interface Filters {
   itemsPerPage?: number;
 }
 
-export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
+export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotification }) => {
   const [isActiveFilter, setIsActiveFilter] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({});
   const [editorialRecords, setEditorialRecords] = useState<EditorialRecordListResponse>();
@@ -48,9 +52,14 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
 
   useEffect(() => {
     const getEditorialRecords = async () => {
-      await getRecords().then((response) => {
-        setEditorialRecords(response);
-      });
+      setLoading(true);
+      await getRecords()
+        .then((response) => {
+          setEditorialRecords(response);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     };
     getEditorialRecords();
   }, []);
@@ -71,15 +80,22 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
   }, [editorialRecords]);
 
   const navigateToViewDocument = useCallback((uuid) => {
-    router.push(`/library/document/${uuid}`);
+    router.push(`/library/document/${uuid}?preview=true`);
   }, []);
 
   const navigateToEditDocument = useCallback((uuid) => {
     router.push(`/editorial/article/${uuid}`);
   }, []);
 
-  const onDeleteDocument = useCallback((uuid) => {
-    // TODO: Archive the Editorial Record
+  const onDeleteDocument = useCallback(async (uuid) => {
+    setLoading(true);
+    await deleteEditorialRecord(uuid)
+      .then(() => {
+        addNotification({ title: 'Record deleted', type: 'confirm' });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const addFilters = (newFilters: Filters) => setFilters({ ...filters, ...newFilters });

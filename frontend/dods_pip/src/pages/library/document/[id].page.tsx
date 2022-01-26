@@ -242,7 +242,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     console.error(error);
   }
 
-  if (!Object.keys(apiData).length) {
+  if (!Object.keys(apiData || {}).length) {
     return {
       notFound: true,
     };

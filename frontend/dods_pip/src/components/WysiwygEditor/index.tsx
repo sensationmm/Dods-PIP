@@ -30,6 +30,7 @@ export interface WysiwygEditorProps {
   toolbarConfig?: [];
   onTextChange: (value: string) => void;
   onSelection?: (selection: ContentSelection) => void;
+  savedContent?: string;
   tags?: ContentTag[];
 }
 
@@ -71,6 +72,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   children,
   onTextChange,
   onSelection,
+  savedContent,
   tags = [],
 }) => {
   const [quillInstance, setQuillInstance] = useState<Quill>();
@@ -108,12 +110,18 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
     setQuillInstance(quill);
   }, []);
 
+  useEffect(() => {
+    if (savedContent && quillInstance) {
+      quillInstance.clipboard.dangerouslyPasteHTML(savedContent);
+    }
+  }, [savedContent, quillInstance]);
+
   /** TODO: RTE content tagging 
   useEffect(() => {
-    if (!tags.length || !quillInstance) return;
-
+    if (!quillInstance) return;
     quillInstance.focus();
 
+    if (!tags.length) return;
     tags
       .sort((a, b) => b.value.length - a.value.length)
       .forEach((tag) => {

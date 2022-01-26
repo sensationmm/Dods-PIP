@@ -27,6 +27,7 @@ export interface StatusBarProps {
   unschedule?: boolean;
   unpublish?: boolean;
   updateArticle?: boolean;
+  showDeleteButton?: boolean;
 
   onPreview?: () => void;
   onDelete?: () => void;
@@ -50,6 +51,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
   unschedule,
   unpublish,
   updateArticle,
+  showDeleteButton,
 
   onPreview,
   onDelete,
@@ -74,7 +76,9 @@ export const MainContent: React.FC<StatusBarProps> = ({
         />
       </Styled.tagWrapper>
       <Button type="text" icon={Icons.Show} onClick={onPreview} label="Preview" />
-      <Button type="text" icon={Icons.Bin} onClick={onDelete} label="Delete" />
+      {showDeleteButton && (
+        <Button type="text" icon={Icons.Bin} onClick={onDelete} label="Delete" />
+      )}
     </Styled.group>
 
     <Styled.group>

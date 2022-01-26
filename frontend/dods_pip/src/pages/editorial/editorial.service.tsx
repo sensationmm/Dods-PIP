@@ -1,13 +1,17 @@
 import fetchJson from '@dods-ui/lib/fetchJson';
 import {
   CreateEditorialRecordResponse,
+  DeleteEditorialRecordResponse,
   EditorialContentSourcesResponse,
   EditorialInformationTypesResponse,
   EditorialRecord,
   EditorialRecordListResponse,
+  EditorialRecordPreviewResponse,
   EditorialRecordResponse,
   EditorialRecordStatuses,
   MetadataSelection,
+  PublishEditorialRecordResponse,
+  UpdateEditorialRecordResponse,
 } from '@dods-ui/pages/editorial/editorial.models';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 
@@ -37,39 +41,59 @@ export const createRecord = async (
   return response as CreateEditorialRecordResponse;
 };
 
-export const getEditorialPreview = async (documentID: string): Promise<EditorialRecordResponse> => {
-  // not sure if this should come from the local data or server
-  const response = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
-    method: 'GET',
-    body: documentID,
-  });
+export const updateRecord = async (
+  documentID: string,
+  payload: EditorialRecord,
+): Promise<UpdateEditorialRecordResponse> => {
+  const response = await fetchJson<UpdateEditorialRecordResponse>(
+    `${BASE_URI}${Api.EditorialRecords}/${documentID}/document`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    },
+  );
 
-  return response as unknown as EditorialRecordResponse;
+  return response as UpdateEditorialRecordResponse;
 };
 
-export const deleteEditorialRecord = async (
+export const getEditorialPreview = async (
   documentID: string,
-): Promise<EditorialRecordResponse> => {
-  const response = await fetchJson(`${BASE_URI}${Api.EditorialRecords}/${documentID}`, {
-    method: 'DELETE',
-  });
-
-  return response as unknown as EditorialRecordResponse;
+): Promise<EditorialRecordPreviewResponse> => {
+  const response = await fetchJson<EditorialRecordPreviewResponse>(
+    `${BASE_URI}${Api.EditorialRecords}/${documentID}/document`,
+    {
+      method: 'GET',
+    },
+  );
+  return response as EditorialRecordPreviewResponse;
 };
 
 export const setEditorialPublishState = async (
   documentId: string,
-): Promise<EditorialRecordResponse> => {
-  // TODO: call publish API
-  const response = await fetchJson(`${BASE_URI}${Api.EditorialRecords}/${documentId}`, {
-    method: 'POST',
-  });
+): Promise<PublishEditorialRecordResponse> => {
+  const response = await fetchJson<PublishEditorialRecordResponse>(
+    `${BASE_URI}${Api.EditorialRecords}/${documentId}/publish`,
+    {
+      method: 'POST',
+    },
+  );
+  return response as PublishEditorialRecordResponse;
+};
 
-  return response as unknown as EditorialRecordResponse; // No idea what the response is yet
+export const deleteEditorialRecord = async (
+  documentID: string,
+): Promise<DeleteEditorialRecordResponse> => {
+  const response = await fetchJson<DeleteEditorialRecordResponse>(
+    `${BASE_URI}${Api.EditorialRecords}/${documentID}`,
+    {
+      method: 'DELETE',
+    },
+  );
+  return response as DeleteEditorialRecordResponse;
 };
 
 export const scheduleEditorial = async (payload: {
-  // Payload contract not confirmed
+  // TODO: Payload contract not confirmed
   date: string;
   documentId: string;
 }): Promise<EditorialRecordResponse> => {
