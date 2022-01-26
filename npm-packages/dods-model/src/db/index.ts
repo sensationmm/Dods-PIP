@@ -6,8 +6,8 @@ import {
     Collection,
     CollectionAlert,
     CollectionAlertQuery,
-    CollectionAlertTemplate,
     CollectionAlertRecipient,
+    CollectionAlertTemplate,
     CollectionDocument,
     CollectionSavedQuery,
     EditorialRecord,
@@ -55,6 +55,7 @@ if (process.env.NODE_ENV !== 'test') {
 
     Collection.belongsTo(ClientAccount, { as: 'clientAccount', foreignKey: 'clientAccountId', targetKey: 'id' });
     Collection.belongsTo(User, { as: 'createdBy', foreignKey: 'createdById', targetKey: 'id' });
+    Collection.belongsTo(User, { as: 'updatedBy', foreignKey: 'updatedById', targetKey: 'id' });
     Collection.hasMany(CollectionAlert, { as: 'alerts' });
     Collection.hasMany(CollectionSavedQuery, { as: 'savedQueries' });
     Collection.hasMany(CollectionDocument, { as: 'documents' });
@@ -66,9 +67,12 @@ if (process.env.NODE_ENV !== 'test') {
     CollectionAlert.hasMany(CollectionAlertQuery, { as: 'alertQueries', foreignKey: 'alertId' });
 
     CollectionAlertQuery.belongsTo(User, { as: 'createdById', foreignKey: 'createdBy', targetKey: 'id' });
+    CollectionAlertQuery.belongsTo(User, { as: 'updatedById', foreignKey: 'updatedBy', targetKey: 'id' });
 
     CollectionAlertRecipient.belongsTo(User, { as: 'user', foreignKey: 'userId', targetKey: 'id' });
     CollectionAlertRecipient.belongsTo(CollectionAlert, { as: 'alert', foreignKey: 'alertId', targetKey: 'id' });
+    CollectionAlertRecipient.belongsTo(User, { as: 'updatedById', foreignKey: 'updatedBy', targetKey: 'id' });
+    CollectionAlertRecipient.belongsTo(User, { as: 'createdById', foreignKey: 'createdBy', targetKey: 'id' });
 }
 
 export * from './models';

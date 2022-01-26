@@ -10,8 +10,9 @@ export const wrapper = styled.header`
   border-bottom: 1px solid ${color.base.greyLight};
   padding-top: ${spacing(1)};
   position: relative;
-  z-index: 2;
+  z-index: 1;
   background: ${color.base.white};
+  min-height: 180px;
 `;
 
 type ContainerProps = {
@@ -22,8 +23,6 @@ export const container = styled.div<ContainerProps>`
   flex-direction: ${({ flexDirection }) => flexDirection};
   justify-content: space-between;
   align-items: ${({ flexDirection }) => (flexDirection === 'row' ? 'center' : 'flex-start')};
-  min-height: 180px;
-  padding: ${spacing(12)} 0;
 
   > div {
     display: inline-block;

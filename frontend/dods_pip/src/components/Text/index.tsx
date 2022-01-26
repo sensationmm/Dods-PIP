@@ -15,7 +15,9 @@ export type CoreTextStyles =
   | 'p'
   | 'label'
   | 'span'
-  | 'li';
+  | 'li'
+  | 'button'
+  | 'a';
 export type TextStyles =
   | CoreTextStyles
   | 'body'
@@ -59,6 +61,9 @@ const Text: React.FC<TextProps> = ({
   switch (type) {
     case 'body':
     case 'bodySmall':
+      element = Styled.p;
+      className = type;
+      break;
     case 'bodyLarge':
       element = Styled.p;
       className = type;
@@ -86,7 +91,8 @@ const Text: React.FC<TextProps> = ({
     htmlFor: htmlFor,
   };
 
-  if (type.length === 2 && type.substr(0, 1) === 'h') {
+  // equivalent: if ([h1,h2,h3,h4,h5,h6].includes(type)) {}
+  if (type.match(/^h[123456]$/)) {
     return (
       <Styled.heading>
         {React.createElement(

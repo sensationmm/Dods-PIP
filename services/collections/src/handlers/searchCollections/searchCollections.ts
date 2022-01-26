@@ -1,5 +1,5 @@
-import { AsyncLambdaHandler, HttpStatusCode, HttpResponse } from '@dodsgroup/dods-lambda';
-import { SearchCollectionsInput, CollectionsRepository } from '@dodsgroup/dods-repositories';
+import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
+import { CollectionsRepository, SearchCollectionsInput } from '@dodsgroup/dods-repositories';
 
 export const searchCollections: AsyncLambdaHandler<SearchCollectionsInput> = async (parameters) => {
 

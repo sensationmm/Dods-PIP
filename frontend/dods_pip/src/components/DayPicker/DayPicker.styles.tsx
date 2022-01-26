@@ -6,7 +6,8 @@ type WrapperProps = {
   disabled: boolean;
 };
 export const wrapper = styled.div<WrapperProps>`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   border: 1px solid ${color.base.greyLight};
   border-radius: 10px;
   padding: ${spacing(1)};
@@ -25,6 +26,10 @@ export const day = styled.div<DayProps>`
   background: ${({ selected, disabled }) =>
     selected ? (disabled ? color.base.greyMid : color.theme.blueMid) : 'transparent'};
   pointer-events: ${({ clickable, disabled }) => (!clickable && !disabled ? 'none' : 'default')};
+  display: flex;
+  justify-content: center;
+
+  ${({ disabled }) => disabled && 'pointer-events: none;'}
 
   &:first-of-type {
     border-radius: 8px 0 0 8px;

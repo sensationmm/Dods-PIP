@@ -1,0 +1,2 @@
+### get queries by alert V1
+GET {{host}}/collections/e25228d2-ba54-4e5b-8f69-1213f2148718/alerts/e25228d2-ba54-4e5b-8f69-1213f2148718/queries HTTP/1.1

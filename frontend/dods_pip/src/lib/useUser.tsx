@@ -1,6 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 // mutateUser return type is Promise<any>
 
+import Cookies from 'js-cookie';
 import Router from 'next/router';
 import { useEffect } from 'react';
 import useSWR from 'swr';
@@ -41,9 +42,17 @@ export default function useUser({ redirectTo = '', redirectIfFound = false } = {
   const { data: user, mutate: mutateUser } = useSWR(`${BASE_URI}${Api.User}`);
 
   useEffect(() => {
-    // if no redirect needed, just return (example: already on /dashboard)
     // if user data not yet there (fetch in progress, logged in or not) then don't do anything yet
-    if (!redirectTo || !user) return;
+    if (!user) {
+      // Add / remove this cookie as the library page depends on it in order to determine the Jurisdiction
+      Cookies.remove('account-id');
+      return;
+    } else {
+      Cookies.set('account-id', user.clientAccountId);
+    }
+
+    // if no redirect needed, just return (example: already on /dashboard)
+    if (!redirectTo) return;
 
     if (
       // If redirectTo is set, redirect if the user was not found.

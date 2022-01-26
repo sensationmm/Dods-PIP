@@ -40,3 +40,25 @@ export const allCollectionsFilter = styled.div`
 export const allCollectionsFooter = styled.div`
   padding: 0 ${spacing(8)};
 `;
+
+type AddCollectionContentProps = {
+  stacked: boolean;
+};
+export const addCollectionContent = styled.div<AddCollectionContentProps>`
+  display: ${({ stacked }) => (stacked ? 'block' : 'grid')};
+  grid-template-columns: 1fr 1fr;
+  column-gap: ${spacing(10)};
+`;
+
+export const header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 48px;
+`;
+
+export const searchFilter = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 340px;
+`;

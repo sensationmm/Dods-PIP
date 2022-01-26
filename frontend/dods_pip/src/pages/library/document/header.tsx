@@ -8,6 +8,7 @@ import color from '@dods-ui/globals/color';
 import Link from 'next/link';
 import React from 'react';
 
+import useUser from '../../../lib/useUser';
 import * as Styled from './header.styles';
 
 export interface HeaderProps {
@@ -15,7 +16,7 @@ export interface HeaderProps {
   contentSource?: ContentSourceIconType;
   sourceReferenceUri?: string;
   informationType?: string;
-  formattedTime?: string;
+  publishedDateTime?: string;
   documentId?: string;
 }
 
@@ -24,12 +25,13 @@ const Header: React.FC<HeaderProps> = ({
   contentSource,
   sourceReferenceUri,
   informationType,
-  formattedTime,
+  publishedDateTime,
   documentId,
 }) => {
+  const { user } = useUser();
   return (
     <Styled.header>
-      <section>
+      <Styled.mainSection>
         <Breadcrumbs
           history={[
             { href: '/library', label: 'Library' },
@@ -37,12 +39,15 @@ const Header: React.FC<HeaderProps> = ({
           ]}
         />
         <Styled.h1Container>
-          <Text type="h1" color="color.theme.blue">
+          <Text type="h1" color={color.theme.blue}>
             {documentTitle}
           </Text>
         </Styled.h1Container>
         <Styled.infoRow>
-          <span aria-label="Content source">
+          <Styled.infoItem>
+            <Text bold type="label">
+              Source:
+            </Text>
             <Styled.infoIcon>
               <IconContentSource icon={contentSource} />
             </Styled.infoIcon>
@@ -51,28 +56,36 @@ const Header: React.FC<HeaderProps> = ({
                 <a>{contentSource}</a>
               </Link>
             )}
-          </span>
+          </Styled.infoItem>
           <Styled.infoSpacer />
-          <span aria-label="Information type">
+          <Styled.infoItem>
+            <Text bold type="label">
+              Type:
+            </Text>
             <Styled.infoIcon>
               <Icon src={Icons.Document} size={IconSize.mediumLarge} color={color.base.greyDark} />
             </Styled.infoIcon>
             {informationType}
-          </span>
+          </Styled.infoItem>
           <Styled.infoSpacer />
-          <span aria-label="Published date">{formattedTime}</span>
+          <Styled.infoItem>
+            <Text bold type="label">
+              Date:
+            </Text>
+            {publishedDateTime}
+          </Styled.infoItem>
         </Styled.infoRow>
-      </section>
-      <Styled.actionsSection>
-        {documentId && (
+      </Styled.mainSection>
+      {documentId && user?.isDodsUser && (
+        <Styled.actionsSection>
           <Link href={`/editorial/article/${documentId}`} passHref>
             <Styled.editLink>
               <Icon src={Icons.Pencil} color={color.base.white} size={IconSize.mediumLarge} />
               <span>Edit</span>
             </Styled.editLink>
           </Link>
-        )}
-      </Styled.actionsSection>
+        </Styled.actionsSection>
+      )}
     </Styled.header>
   );
 };

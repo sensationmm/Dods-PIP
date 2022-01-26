@@ -1,3 +1,4 @@
+import { Icon } from '@dods-ui/components/Icon/Icon.styles';
 import styled, { keyframes } from 'styled-components';
 
 import color from '../../globals/color';
@@ -36,6 +37,13 @@ export const closeButton = styled.button`
   padding: 0;
   margin: 0;
   cursor: pointer;
+  position: absolute;
+  top: ${spacing(8)};
+  right: ${spacing(8)};
+
+  ${media.greaterThan('md')`
+    top: ${spacing(10)};
+  `};
 `;
 
 export const veil = styled.div`
@@ -70,21 +78,47 @@ export const modal = styled.div.attrs(({ size, hasButtons }: ModalStyleProps) =>
   background: ${color.base.white};
   border-radius: 8px;
   box-shadow: ${elevation.notification};
-  padding-bottom: ${({ hasButtons }) => (!hasButtons ? spacing(10) : 0)};
 `;
 
 export const modalHeader = styled.div`
   display: flex;
+  width: calc(100% - 40px);
   justify-content: space-between;
   padding: ${spacing(4)};
 
   ${media.greaterThan('md')`
     padding: ${spacing(10)} ${spacing(8)};
   `};
+
+  > ${Icon} {
+    margin-right: ${spacing(4)};
+  }
 `;
 
-export const modalBody = styled.div`
-  overflow-y: scroll;
+export const modalHeaderTitle = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  > ${Icon} {
+    margin-right: ${spacing(5)};
+  }
+`;
+
+export const titleAside = styled.div`
+  display: flex;
+  align-items: center;
+
+  > * {
+    margin-left: ${spacing(2)};
+  }
+`;
+
+type ModalBodyProps = {
+  canOverflow: boolean;
+};
+export const modalBody = styled.div<ModalBodyProps>`
+  overflow-y: ${({ canOverflow }) => (canOverflow ? 'visible' : 'scroll')};
   padding: 0 ${spacing(4)};
   height: 100%;
 

@@ -15,6 +15,8 @@ interface AlertRecipientAttributes {
     alertId: number;
     userId: number;
     createdBy: number;
+    isActive: boolean;
+    updatedBy?: number;
 }
 
 export interface AlertRecipientInput
@@ -23,6 +25,8 @@ export interface AlertRecipientInput
     | 'alertId'
     | 'userId'
     | 'createdBy'
+    | 'isActive'
+    | 'updatedBy'
     > { }
 
 
@@ -35,6 +39,8 @@ export class CollectionAlertRecipient
     public alertId!: number;
     public userId!: number;
     public createdBy!: number;
+    public isActive!: boolean;
+    public updatedBy!: number;
 
     // mixins for association (optional)
     public readonly alert!: CollectionAlert;
@@ -47,9 +53,19 @@ export class CollectionAlertRecipient
     public setUser!: BelongsToSetAssociationMixin<User, number>;
     public createUser!: BelongsToCreateAssociationMixin<User>;
 
+    public readonly createdById!: User;
+    public getCreatedId!: BelongsToGetAssociationMixin<User>;
+    public setCreatedId!: BelongsToSetAssociationMixin<User, number>;
+
+    public readonly updatedId!: User;
+    public getUpdatedById!: BelongsToGetAssociationMixin<User>;
+    public setUpdatedById!: BelongsToSetAssociationMixin<User, number>;
+
     public static associations: {
         alert: Association<CollectionAlertRecipient, CollectionAlert>;
         user: Association<CollectionAlertRecipient, User>;
+        createdById: Association<CollectionAlertRecipient, User>;
+        updatedById: Association<CollectionAlertRecipient, User>;
     };
 
     // Timestamps
@@ -83,6 +99,11 @@ CollectionAlertRecipient.init(
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'
         },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 1,
+            allowNull: true,
+        },
         createdBy: {
             type: DataTypes.INTEGER({ length: 11 }),
             allowNull: true,
@@ -94,6 +115,17 @@ CollectionAlertRecipient.init(
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'
         },
+        updatedBy: {
+            type: DataTypes.INTEGER({ length: 11 }),
+            allowNull: true,
+            defaultValue: null,
+            references: {
+                model: 'dods_users',
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE'
+        }
     },
     {
         tableName: 'dods_collections_alerts_recipients',

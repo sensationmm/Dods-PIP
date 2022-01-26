@@ -7,22 +7,22 @@ from validator import Validator
 
 load_dotenv()
 
-es_host = os.getenv("ES_HOST")
-es_user = os.getenv("ES_USER")
-es_pass = os.getenv("ES_PASSWORD")
+ES_CLOUD_ID = os.environ['ES_CLOUD_ID']
+ES_KEY_ID = os.environ['ES_KEY_ID']
+ES_API_KEY = os.environ['ES_API_KEY']
 
-client = Elasticsearch(hosts=[es_host], http_auth=(es_user, es_pass))
+es_client = Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=(ES_KEY_ID, ES_API_KEY))
 
 def run(event, context):
-    if ('data' not in event):
+    if 'body' not in event:
         raise ValueError(f'Data object is empty!')
-    content = event['data']
+    content = event['body']
     mappings = get_file_content(os.path.abspath(os.curdir) + '/models/content/mappings.json')
     if Validator().data_validator(mappings, content):
         content = set_aggs_fields_content(content)
         try:
-            res = client.index(index="content", document=content)
-            logger.info(res['result'])
+            res = es_client.index(index="content", document=content)
+            logger.info(f"ES response with documentId is {loads(content)['documentId']} : {res['result']}")
             return True
         except Exception as e:
             logger.exception(e)

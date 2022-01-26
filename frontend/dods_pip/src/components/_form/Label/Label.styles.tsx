@@ -26,7 +26,12 @@ export const requiredLabel = styled.span`
   color: ${color.base.grey};
   font-size: 12px;
   margin-left: ${spacing(2)};
-  font-family: Open Sans;
+  font-family: 'Open Sans', sans-serif;
   line-height: 16px;
   margin-bottom: -${spacing(1)};
+`;
+
+export const parenthetical = styled.span`
+  padding-left: ${spacing(1)};
+  color: ${color.base.grey};
 `;

@@ -5,3 +5,11 @@ export interface GetContentParameters {
 export interface RawQueryParameters {
     query: string;
 }
+
+export interface createPercolatorParameters {
+    query: string;
+    alertId: string;
+}
+
+export interface updatePercolatorParameters extends createPercolatorParameters{
+}

@@ -1,0 +1,6 @@
+### ArchiveEditorialRecord
+
+# @name archiveEditorialRecord
+@recordId = 350b159c-6e43-11ec-90d6-0242ac120003
+
+DELETE {{host}}/editorial-record/{{recordId}} HTTP/1.1

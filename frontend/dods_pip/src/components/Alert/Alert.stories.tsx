@@ -18,7 +18,7 @@ Primary.args = {
   searchQueries: 9,
   recipients: 18,
   immediateDelivery: false,
-  deliveryDay: 'wed',
+  deliveryDays: ['wed', 'fri'],
   deliveryTimes: ['11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
   isConsultant: true,
 };

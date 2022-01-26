@@ -1,5 +1,4 @@
 frontend/*
-infrastructure-terraform/*
-scraping/*
+ingestion-python/*
+scrapping/*
 services/*
-tools/*

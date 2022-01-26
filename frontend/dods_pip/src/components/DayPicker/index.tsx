@@ -12,13 +12,13 @@ type DayConfig = {
 };
 
 export interface DayPickerProps {
-  selected?: DayType;
+  selected?: DayType[];
   disabled?: boolean;
-  onClick?: (val: DayType) => void;
+  onClick?: (vals: DayType[]) => void;
 }
 
 const DayPicker: React.FC<DayPickerProps> = ({
-  selected = undefined,
+  selected = [],
   disabled = false,
   onClick = undefined,
 }) => {
@@ -32,24 +32,37 @@ const DayPicker: React.FC<DayPickerProps> = ({
     { label: 'Sun', value: 'sun' },
   ] as DayConfig[];
 
+  const handleClick = (clicked: DayType) => {
+    const existing = selected.slice();
+
+    if (existing.findIndex((day) => day === clicked) < 0) {
+      existing.push(clicked);
+    } else {
+      existing.splice(existing.indexOf(clicked), 1);
+    }
+
+    onClick && onClick(existing);
+  };
+
   return (
     <Styled.wrapper data-test="component-day-picker" disabled={disabled}>
-      {days.map((day) => (
-        <Styled.day
-          data-test={`day-${day.value}`}
-          key={`day-${day.value}`}
-          selected={selected === day.value}
-          disabled={disabled}
-          clickable={onClick !== undefined}
-          onClick={() => onClick && onClick(day.value)}
-        >
-          <Text
-            color={selected === day.value && !disabled ? color.base.white : color.base.greyDark}
+      {days.map((day) => {
+        const dayIsSelected = selected.find((el) => el === day.value) !== undefined;
+        return (
+          <Styled.day
+            data-test={`day-${day.value}`}
+            key={`day-${day.value}`}
+            selected={dayIsSelected}
+            disabled={disabled}
+            clickable={onClick !== undefined}
+            onClick={() => onClick && !disabled && handleClick(day.value)}
           >
-            {day.label}
-          </Text>
-        </Styled.day>
-      ))}
+            <Text color={dayIsSelected && !disabled ? color.base.white : color.base.greyDark}>
+              {day.label}
+            </Text>
+          </Styled.day>
+        );
+      })}
     </Styled.wrapper>
   );
 };

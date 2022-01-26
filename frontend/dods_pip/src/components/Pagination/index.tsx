@@ -8,13 +8,13 @@ import { Icons } from '../Icon/assets';
 import Text from '../Text';
 import * as Styled from './Pagination.styles';
 
-type NumPerPage = '10' | '30' | '60' | '90';
+type NumPerPage = '5' | '10' | '30' | '60' | '90';
 
 export type PaginationProps = {
   dataLength: number;
 };
 
-type PaginationType = {
+export type PaginationType = {
   activePage: number;
   numPerPage: number;
   PaginationStats: React.FC;
@@ -41,7 +41,10 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
             key={`button-${i}`}
             data-test={`page-button-${i}`}
             className={classNames({ active: activePage === i })}
-            onClick={() => setActivePage(i)}
+            onClick={() => {
+              setActivePage(i);
+              window.scrollTo(0, 0);
+            }}
           >
             {i + 1}
           </Styled.button>,
@@ -75,6 +78,7 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
           options={inlinePages}
           onChange={(e) => {
             setActivePage(parseInt(e) - 1);
+            window.scrollTo(0, 0);
           }}
           placeholder=""
           value={(activePage + 1).toString()}
@@ -95,6 +99,7 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
     const changeLayout = (num: string) => {
       setNumPerPage(num as NumPerPage);
       setActivePage(0);
+      window.scrollTo(0, 0);
     };
 
     const start = activePage * parseInt(numPerPage);
@@ -102,8 +107,15 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
 
     return (
       <Styled.stats data-test="component-pagination-stats">
-        <Text type="bodySmall" color={color.base.grey} data-test="item-count">
-          Showing {dataLength > 0 ? start + 1 : 0}-{Math.min(dataLength, end)} of {dataLength}
+        <Text type="bodySmall" color={color.base.grey}>
+          Showing{' '}
+          <strong style={{ color: color.theme.blueMid }} data-test="item-count">
+            {dataLength > 0 ? start + 1 : 0}-{Math.min(dataLength, end)}
+          </strong>{' '}
+          of{' '}
+          <strong style={{ color: color.theme.blueMid }} data-test="item-total">
+            {dataLength}
+          </strong>
         </Text>
         {children}
         <Styled.perPage>
@@ -116,6 +128,7 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
             data-test="set-page-count"
             size="small"
             options={[
+              { value: '5', label: '5' },
               { value: '10', label: '10' },
               { value: '30', label: '30' },
               { value: '60', label: '60' },
@@ -149,7 +162,10 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
           <Styled.pageChanger
             data-test="buttons-prev-arrow"
             className={classNames({ disabled: !hasPrev })}
-            onClick={() => setActivePage(activePage - 1)}
+            onClick={() => {
+              setActivePage(activePage - 1);
+              window.scrollTo(0, 0);
+            }}
           >
             <Icon
               size={IconSize.medium}
@@ -163,7 +179,10 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
           <Styled.pageChanger
             data-test="buttons-next-arrow"
             className={classNames({ disabled: !hasNext })}
-            onClick={() => setActivePage(activePage + 1)}
+            onClick={() => {
+              setActivePage(activePage + 1);
+              window.scrollTo(0, 0);
+            }}
           >
             <Icon
               size={IconSize.medium}

@@ -12,22 +12,28 @@ type modalButtonAlignment = 'center' | 'right';
 export interface ModalProps {
   onClose?: () => void;
   title?: string;
+  titleIcon?: Icons;
+  titleAside?: JSX.Element;
   size?: modalSize;
   buttons?: ButtonProps[];
   buttonAlignment?: modalButtonAlignment;
   isDismissible?: boolean;
   portalContainerId?: string;
+  bodyOverflow?: boolean;
 }
 
 const Modal: FC<ModalProps> = ({
   size = 'medium',
   onClose,
   title = '',
+  titleIcon,
+  titleAside,
   buttons = [],
   buttonAlignment = 'center',
   children,
   isDismissible = true,
   portalContainerId = '__next',
+  bodyOverflow = false,
 }) => {
   const closeOnEscapeKeyDown = (e: KeyboardEvent) => {
     /^Escape$/i.test(e.key) && closeModal();
@@ -64,16 +70,21 @@ const Modal: FC<ModalProps> = ({
     <Styled.veil {...{ ...(isDismissible && { onClick: onVeilClose }) }} data-test="modal-veil">
       <Styled.modal {...{ size }} data-test="modal">
         <Styled.modalHeader>
-          <Text type="h2" headingStyle="title">
-            {title}
-          </Text>
-          {isDismissible && (
-            <Styled.closeButton {...{ onClick: closeModal }} data-test="modal-close">
-              <Icon src={Icons.Cross} size={IconSize.large} />
-            </Styled.closeButton>
-          )}
+          <Styled.modalHeaderTitle>
+            {titleIcon && <Icon src={titleIcon} size={IconSize.xxlarge} />}
+            <Text type="h2" headingStyle="titleLarge">
+              {title}
+            </Text>
+          </Styled.modalHeaderTitle>
+          {titleAside && <Styled.titleAside>{titleAside}</Styled.titleAside>}
         </Styled.modalHeader>
-        <Styled.modalBody>{children}</Styled.modalBody>
+
+        {isDismissible && (
+          <Styled.closeButton {...{ onClick: closeModal }} data-test="modal-close">
+            <Icon src={Icons.Cross} size={IconSize.large} />
+          </Styled.closeButton>
+        )}
+        <Styled.modalBody canOverflow={bodyOverflow}>{children}</Styled.modalBody>
         {buttons.length > 0 && (
           <Styled.modalFooter data-test="modal-footer" alignment={buttonAlignment}>
             {buttons.map((buttonProps, index) => (

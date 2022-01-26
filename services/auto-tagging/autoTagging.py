@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 
@@ -14,9 +15,10 @@ s3_client = session.client('s3')
 es = Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=(ES_KEY_ID, ES_API_KEY))
 
 def handle(event, context):
-    body = event['Records'][0]['body']
-    content = json.loads(body)['content']
-
+    if 'Records' in event:
+        content = event['Records'][0]['body']['content']
+    else:
+        content = event['body']['content']
     content_tags = []
     taxonomy_types = [
         'People',
@@ -24,8 +26,8 @@ def handle(event, context):
         'Geography'
     ]
     for taxonomy_type in taxonomy_types:
-        taxonomy_response = es.search(index='taxonomy', query={"bool": {"must": [{"match": {"inScheme": taxonomy_type}}]}}, size=5000)
-
+        taxonomy_response = es.search(index='taxonomy', query={"bool": {"must": [{"match": {"inScheme": taxonomy_type}}]}}, size=10000)
+        logging.info(f"Total Count : {taxonomy_response['hits']['total']['value']}")
         for taxonomy in taxonomy_response['hits']['hits']:
             taxonomy_term = taxonomy['_source']['label']
             safe_taxonomy_term = taxonomy_term.replace('(', '\(').replace(')', '\)').replace('|', '\|')

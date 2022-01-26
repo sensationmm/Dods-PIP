@@ -27,7 +27,6 @@ provider:
     teamsEmail: dods.project@somoglobal.com
     team: dods
   tracing:
-    apiGateway: true
     lambda: true
   iamRoleStatements:
     - Effect: "Allow"
@@ -89,7 +88,6 @@ plugins:
   - serverless-localstack
   - serverless-dependson-plugin
   - serverless-offline
-  # - serverless-api-gateway-caching
 package:
   include:
     - node_modules/**
@@ -110,5 +108,21 @@ functions:
       - http:
           method: post
           path: search/contents/query
-                  # caching:
-                    # enabled: false
+
+  createPercolator:
+    handler: src/handlers/createPercolator/index.handle
+    description: Create alert percolator
+    events:
+      - http:
+          method: post
+          path: percolator
+          cors: true
+
+  updatePercolator:
+    handler: src/handlers/updatePercolator/index.handle
+    description: Update alert percolator
+    events:
+      - http:
+          method: put
+          path: percolator/{alertId}
+          cors: true

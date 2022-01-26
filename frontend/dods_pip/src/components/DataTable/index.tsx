@@ -198,14 +198,14 @@ export const PlainTable: React.FC<DataTableProps> = ({
       ) : (
         <Styled.tableBody>
           <Styled.tableRow>
-            <Styled.tableCell colSpan={headings.length} isLast>
+            <Styled.plainTableCell colSpan={headings.length} isLast>
               <Styled.tableCellNoData data-test="empty-data-warning">
                 <Text center color={color.base.grey}>
                   {emptyMessage || 'No data to show'}
                 </Text>
                 {emptyAction}
               </Styled.tableCellNoData>
-            </Styled.tableCell>
+            </Styled.plainTableCell>
           </Styled.tableRow>
         </Styled.tableBody>
       )}

@@ -1,13 +1,14 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
-import { DocumentPublishRepository } from '../../repositories/DocumentPublishRepository';
-import { DocumentStorageRepository } from '../../repositories/DocumentStorageRepository';
-import { EditorialRecordRepository } from '../../repositories/EditorialRecordRepository';
+import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
+
 import { config } from '../../domain';
 
-export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = async ({
-    recordId,
-}) => {
+const { dods: { downstreamEndpoints: { userProfile } } } = config;
+
+const documentRepository = new DocumentRepository(userProfile);
+
+export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = async ({ recordId }) => {
 
     const editorialRecord = await EditorialRecordRepository.defaultInstance.getEditorialRecord(recordId);
 
@@ -16,24 +17,24 @@ export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = 
             success: false,
             message: 'Record is already published',
 
-        })
+        });
     }
 
     const documentARN = editorialRecord.s3Location;
 
     let lambdaReponse = false;
 
-    const bucketResponse = await DocumentStorageRepository.defaultInstance.getDocumentByArn(documentARN);
+    const bucketResponse = await documentRepository.getDocumentByArn(documentARN);
 
     if (bucketResponse.payload) {
 
-        const dataPayload = { data: JSON.parse(bucketResponse.payload) }
-        lambdaReponse = await DocumentPublishRepository.defaultInstance.publishDocument(config.aws.lambdas.contentIndexer, JSON.stringify(dataPayload))
+        const dataPayload = { data: bucketResponse.payload };
+        lambdaReponse = await documentRepository.publishDocument(config.aws.lambdas.contentIndexer, JSON.stringify(dataPayload));
     }
 
     if (bucketResponse.success && lambdaReponse) {
 
-        const updateParams = { recordId, isPublished: true }
+        const updateParams = { recordId, isPublished: true };
         const updatedRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams);
 
         return new HttpResponse(HttpStatusCode.OK, {
@@ -42,15 +43,11 @@ export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = 
             data: updatedRecord,
         });
     }
-
     else {
-
         return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
             success: false,
             message: bucketResponse.payload,
 
         });
-
     }
-
 };

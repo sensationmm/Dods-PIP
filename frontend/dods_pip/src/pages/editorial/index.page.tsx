@@ -86,7 +86,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
             icon={Icons.Add}
             iconAlignment="left"
             inline
-            onClick={() => router.push('editorial/new')}
+            onClick={() => router.push('editorial/article')}
             width="auto"
             isSmall={true}
             label="Create Content"
