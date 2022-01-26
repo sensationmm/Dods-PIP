@@ -294,31 +294,18 @@ export const librarySearchWrapper = styled.div`
   }
 `;
 
-export const readMore = styled.div`
+export const readMore = styled.a`
   display: flex;
-  margin: auto 0 auto auto;
-  @media (max-width: 599px) {
-    margin: ${spacing(4)} 0 0 ${spacing(2)};
-  }
-  div {
-    display: flex;
-    align-items: center;
-    width: 93px;
-    justify-content: space-between;
-  }
-  span {
-    font-family: 'Open Sans Bold', sans-serif;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 12px;
-    line-height: ${spacing(3)};
-    display: flex;
-    align-items: center;
-    text-align: center;
-    letter-spacing: 1px;
-    color: ${color.theme.blue};
-    text-decoration: none;
-  }
+  font-family: 'Open Sans Bold', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 1px;
+  color: ${color.theme.blue};
+  text-decoration: none;
+  gap: ${spacing(2)};
 `;
 
 export const pagination = styled.div`
