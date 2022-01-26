@@ -1,7 +1,6 @@
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
-import { EditorialRecordListOutput } from '../../../src/domain';
-import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
+import { EditorialRecordRepository, EditorialRecordListOutput } from '@dodsgroup/dods-repositories';
 import { mocked } from 'ts-jest/utils';
 import { searchEditorialRecords } from '../../../src/handlers/searchEditorialRecords/searchEditorialRecords';
 
@@ -21,13 +20,11 @@ const defaultFoundRecords: EditorialRecordListOutput = {
     ],
 };
 
-jest.mock('../../../src/repositories/EditorialRecordRepository');
+jest.mock('@dodsgroup/dods-repositories');
 
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
 
-mockedEditorialRecordRepository.defaultInstance.listEditorialRecords.mockResolvedValue(
-    defaultFoundRecords
-);
+mockedEditorialRecordRepository.defaultInstance.listEditorialRecords.mockResolvedValue(defaultFoundRecords);
 
 const FUNCTION_NAME = searchEditorialRecords.name;
 

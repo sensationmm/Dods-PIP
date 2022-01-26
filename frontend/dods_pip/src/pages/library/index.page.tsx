@@ -5,7 +5,7 @@ import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
 import { format } from 'date-fns';
-import esb, { Query, RequestBodySearch } from 'elastic-builder';
+import esb, { Query, RequestBodySearch, TermQuery } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -203,14 +203,20 @@ interface QueryObject {
 
 type QueryString = string | string[] | undefined;
 
-const getPayload = (
-  query: QueryString = '{}',
-): { payload?: unknown; parsedQuery?: QueryObject } => {
+const getPayload = ({
+  search = '{}',
+  isEU,
+  isUK,
+}: {
+  search: QueryString;
+  isEU?: boolean | unknown;
+  isUK?: boolean | unknown;
+}): { payload?: unknown; parsedQuery?: QueryObject } => {
   let esbQuery = esb.boolQuery();
   let parsedQuery;
 
   try {
-    parsedQuery = typeof query === 'string' ? JSON.parse(query) : {};
+    parsedQuery = typeof search === 'string' ? JSON.parse(search) : {};
 
     const {
       searchTerm = '',
@@ -236,12 +242,20 @@ const getPayload = (
       );
     }
 
+    let jurisdictionFilter: TermQuery[] = []; // if both isEU and isUK then no need to filter
+
+    if (isEU && !isUK) {
+      jurisdictionFilter = [esb.termQuery('jurisdiction', 'EU')];
+    } else if (!isEU && isUK) {
+      jurisdictionFilter = [esb.termQuery('jurisdiction', 'UK')];
+    }
+
     // Facets
     esbQuery = esbQuery
       .must(
-        basicFilters.map(({ key, value }) =>
-          esb.termQuery(key === 'jurisdiction' ? key : `${key}.keyword`, value),
-        ),
+        basicFilters
+          .map(({ key, value }) => esb.termQuery(`${key}.keyword`, value))
+          .concat(jurisdictionFilter),
       )
       .must(
         nestedFilters.map(({ path, key, value }) =>
@@ -288,13 +302,19 @@ interface LibraryProps {
   results: { _source: ISourceData }[];
   total: number;
   aggregations: IAggregations;
+  apiErrorMessage?: string;
 }
 
-export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, parsedQuery }) => {
+export const Library: React.FC<LibraryProps> = ({
+  results,
+  total,
+  aggregations,
+  parsedQuery,
+  apiErrorMessage,
+}) => {
   const router = useRouter();
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
-  const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
   const [originators, setOriginators] = useState<BucketType[]>([]);
   const [groups, setGroups] = useState<BucketType[]>([]);
   const [topics, setTopics] = useState<BucketType[]>([]);
@@ -310,9 +330,15 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
   const prevPageDisabled: boolean = offset === 0;
   const nextPageDisabled: boolean = offset + resultsSize > total;
 
-  const currentQuery: QueryObject = useMemo(() => {
-    if (typeof router.query.query === 'string') {
-      return JSON.parse(router.query.query || '{}') || {};
+  useEffect(() => {
+    if (apiErrorMessage) {
+      console.error(apiErrorMessage);
+    }
+  }, [apiErrorMessage]);
+
+  const currentSearch: QueryObject = useMemo(() => {
+    if (typeof router.query.search === 'string') {
+      return JSON.parse(router.query.search || '{}') || {};
     }
 
     return {};
@@ -335,7 +361,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify({ searchTerm }) },
+        query: { search: JSON.stringify({ searchTerm }) },
       },
       undefined,
       { scroll: false },
@@ -346,7 +372,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
     setOffset(0);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { dateRange, ...rest } = currentQuery; // Remove dateRage
+    const { dateRange, ...rest } = currentSearch; // Remove dateRage
 
     let newQuery: QueryObject = rest;
 
@@ -357,7 +383,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -367,7 +393,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
   const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
     setOffset(0);
 
-    const { nestedFilters = [] } = currentQuery;
+    const { nestedFilters = [] } = currentSearch;
 
     const selectedIndex = nestedFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
@@ -383,12 +409,12 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
       newNestedFilters = [...nestedFilters, { path, key, value }];
     }
 
-    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
+    const newQuery = { ...currentSearch, nestedFilters: newNestedFilters };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -398,7 +424,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
   const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
     setOffset(0);
 
-    const { basicFilters = [] } = currentQuery;
+    const { basicFilters = [] } = currentSearch;
     const selectedIndex = basicFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
     );
@@ -411,12 +437,12 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
       newBasicFilters = [...basicFilters, { key, value }]; // add
     }
 
-    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
+    const newQuery = { ...currentSearch, basicFilters: newBasicFilters };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -430,12 +456,12 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
       return !queries.find(({ key }) => value === key);
     });
 
-    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
+    const newQuery = { ...currentSearch, basicFilters: newBasicFilters };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -449,12 +475,12 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
       return !queries.find(({ key }) => value === key);
     });
 
-    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
+    const newQuery = { ...currentSearch, nestedFilters: newNestedFilters };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -462,7 +488,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
   };
 
   const setPerPageCount = (resultsSize: number) => {
-    const newQuery = { ...currentQuery, resultsSize };
+    const newQuery = { ...currentSearch, resultsSize };
 
     router.push(
       {
@@ -475,7 +501,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
   };
 
   const setOffsetQuery = (offset: number) => {
-    const newQuery = { ...currentQuery, offset };
+    const newQuery = { ...currentSearch, offset };
 
     router.push(
       {
@@ -491,7 +517,6 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
     const {
       contentSource,
       informationType,
-      jurisdiction,
       people,
       organizations,
       geography,
@@ -520,7 +545,6 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
 
     setContentSources(updateWithBasicFilters(contentSource?.buckets));
     setInformationTypes(updateWithBasicFilters(informationType?.buckets));
-    setJurisdictions(updateWithBasicFilters(jurisdiction?.buckets));
     setOriginators(updateWithBasicFilters(originator?.buckets));
     setGroups(updateWithBasicFilters(group?.buckets));
 
@@ -675,33 +699,23 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
                               const selectedIndex =
                                 parsedQuery?.nestedFilters?.findIndex(
                                   ({ value, path }) =>
-                                    path === 'taxonomyTerms' && value === term.tagId,
+                                    path === 'taxonomyTerms' && value === term.termLabel,
                                 ) ?? -1;
 
                               return (
-                                <div
-                                  onClick={() => {
-                                    setNestedQuery({
-                                      path: 'taxonomyTerms',
-                                      key: 'taxonomyTerms.tagId',
-                                      value: term.tagId,
-                                    });
-                                  }}
-                                  key={`taxonomy-${i}`}
-                                >
-                                  <Chips
-                                    label={
-                                      selectedIndex > -1 ? `* ${term.termLabel} *` : term.termLabel
-                                    }
-                                    chipsSize={'dense'}
-                                    bold={false}
-                                  />
-                                </div>
+                                <Chips
+                                  key={`chip-${i}-${term.termLabel}`}
+                                  label={
+                                    selectedIndex > -1 ? `* ${term.termLabel} *` : term.termLabel
+                                  }
+                                  chipsSize={'dense'}
+                                  bold={false}
+                                />
                               );
                             })}
                           </Styled.tagsWrapper>
                           <Styled.readMore>
-                            <Link href={`/library/document/${documentId}`}>
+                            <Link href={`/library/document/${documentId}`} passHref>
                               <div>
                                 <span>Read more</span>
                                 <Icon
@@ -818,17 +832,6 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
                     }}
                   />
                   <Facet
-                    title={'Jurisdictions'}
-                    records={jurisdictions}
-                    onClearSelection={() => removeBasicFilters(jurisdictions)}
-                    onChange={(value) => {
-                      setBasicQuery({
-                        key: AggTypes.jurisdiction,
-                        value,
-                      });
-                    }}
-                  />
-                  <Facet
                     title={'Group'}
                     records={groups}
                     onClearSelection={() => removeBasicFilters(groups)}
@@ -911,21 +914,47 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
 
-  const { payload, parsedQuery } = getPayload(query.query);
-
   let apiResponse: IResponse = {};
 
+  const accountId = context.req.cookies['account-id'];
+  let parsedQuery;
+
   try {
-    const sPayload = JSON.stringify(payload);
+    const response = await fetchJson(
+      `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}`,
+      {
+        method: 'GET',
+      },
+    );
+
+    const { data = {} } = response;
+    const { isEU, isUK } = data;
+
+    const payload = getPayload({ search: query.search, isEU, isUK });
+    parsedQuery = payload.parsedQuery;
+
+    const sPayload = JSON.stringify(payload.payload);
     apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
     })) as IResponse;
   } catch (error) {
     console.error(error);
+
+    if (!error.data.success) {
+      return {
+        props: {
+          apiErrorMessage: error.data.message,
+          parsedQuery: {},
+          results: [],
+          total: 0,
+          aggregations: [],
+        },
+      };
+    }
   }
 
-  if (!apiResponse) {
+  if (!apiResponse || !accountId) {
     return {
       notFound: true,
     };

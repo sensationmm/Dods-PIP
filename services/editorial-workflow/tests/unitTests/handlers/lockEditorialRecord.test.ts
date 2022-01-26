@@ -1,7 +1,7 @@
 import { BadParameterError, config } from '../../../src/domain';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
-import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
+import { EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { lockEditorialRecord } from '../../../src/handlers/lockEditorialRecord/lockEditorialRecord';
 import { mocked } from 'ts-jest/utils';
 
@@ -23,7 +23,7 @@ const defaultLockedRecord: any = {
     updatedAt: '2021-11-08T16:20:58.000Z',
 };
 
-jest.mock('../../../src/repositories/EditorialRecordRepository');
+jest.mock('@dodsgroup/dods-repositories');
 
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
 

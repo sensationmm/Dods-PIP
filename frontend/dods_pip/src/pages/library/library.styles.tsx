@@ -31,7 +31,6 @@ export const filtersContent = styled.div`
 
 export const contentWrapper = styled.div`
   display: flex;
-  flex-basis: 0;
   ${media.lessThan('sm')`
     flex-direction: column-reverse;
     width: 100%;
@@ -206,6 +205,7 @@ export const tagsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: ${spacing(1)};
   color: ${color.theme.blue};
   max-width: 446px;
   width: 75%;
@@ -218,6 +218,24 @@ export const tagsWrapper = styled.div`
 
   div {
     margin: 1px;
+  }
+`;
+
+export const tag = styled.span`
+  line-height: 32px;
+  padding: 0 ${spacing(4)};
+  color: ${color.theme.blue};
+  background: ${color.base.white};
+  border: 1px solid ${color.base.greyLight};
+  border-radius: 60px;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.selectedTag {
+    background: ${color.shadow.blue};
+    font-weight: bold;
   }
 `;
 
