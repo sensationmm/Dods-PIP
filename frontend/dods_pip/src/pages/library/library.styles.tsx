@@ -24,9 +24,7 @@ export const pageLibrary = styled.div`
 `;
 
 export const filtersContent = styled.div`
-  width: 350px;
-  margin-left: ${spacing(8)};
-  text-align: center;
+  margin-left: ${spacing(5)};
 `;
 
 export const contentWrapper = styled.div`
@@ -51,7 +49,6 @@ export const contentWrapper = styled.div`
     }
   `};
   ${filtersContent} {
-    width: 372px;
     ${media.lessThan('sm')`
       width: 100%;
       padding: 0;
@@ -60,7 +57,7 @@ export const contentWrapper = styled.div`
   ${media.greaterThan('sm')`
     & > ${facetContainer} {
       background: transparent;
-      width: auto;
+      width: 350px;
       box-shadow: none;
       border: 0;
       & > ${facetContainerHeader} {
@@ -84,22 +81,6 @@ export const filtersTag = styled.div`
   div {
     margin: ${spacing(1)} 0;
   }
-`;
-
-export const fade = styled.div`
-  position: absolute;
-  bottom: 0;
-
-  display: block;
-
-  width: 100%;
-  height: ${spacing(12)};
-
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.9) 100%
-  );
 `;
 
 export const contentSource = styled.div`

@@ -734,9 +734,9 @@ export const Library: React.FC<LibraryProps> = ({
 
               {results && (
                 <Styled.pagination>
-                  <Styled.totalRecords>
+                  <span>
                     Total <b>{total.toLocaleString('en-US')}</b> Items
-                  </Styled.totalRecords>
+                  </span>
                   <Styled.paginationControls>
                     <button
                       className={'prevPageArrow'}
