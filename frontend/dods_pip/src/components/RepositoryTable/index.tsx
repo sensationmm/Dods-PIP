@@ -22,6 +22,7 @@ export type RepositoryRowData = {
 
 export interface RepositoryTableProps {
   data: RepositoryRowData[];
+  onView: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
@@ -29,6 +30,7 @@ export interface RepositoryTableProps {
 export interface RepositoryRowProps {
   data: RepositoryRowData;
   keyString: string;
+  onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -36,6 +38,7 @@ export interface RepositoryRowProps {
 export const RepositoryRow: React.FC<RepositoryRowProps> = ({
   keyString,
   data,
+  onView,
   onEdit,
   onDelete,
 }) => {
@@ -72,7 +75,9 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
               />
             )}
             <Styled.titleText locked={rowIsLocked}>
-              <Text bold>{data.documentName}</Text>
+              <Text bold>
+                <span onClick={onView}>{data.documentName}</span>
+              </Text>
             </Styled.titleText>
           </Styled.tableTitle>
 
@@ -117,7 +122,7 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
   );
 };
 
-const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onEdit, onDelete }) => {
+const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onView, onEdit, onDelete }) => {
   return (
     <Styled.wrapper data-test="component-repository-table">
       <Styled.header>
@@ -136,6 +141,7 @@ const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onEdit, onDelet
           keyString={`repository-row-${count}`}
           data-test={`repository-row-${count}`}
           data={item}
+          onView={() => onView(item.id)}
           onEdit={() => onEdit(item.id)}
           onDelete={() => onDelete(item.id)}
         />

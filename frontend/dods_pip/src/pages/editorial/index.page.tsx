@@ -70,6 +70,10 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
     }
   }, [editorialRecords]);
 
+  const navigateToViewDocument = useCallback((uuid) => {
+    router.push(`/library/document/${uuid}`);
+  }, []);
+
   const navigateToEditDocument = useCallback((uuid) => {
     router.push(`/editorial/article/${uuid}`);
   }, []);
@@ -215,6 +219,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
             <Spacer size={7} />
             <RepositoryTable
               data={editorialData}
+              onView={navigateToViewDocument}
               onDelete={onDeleteDocument}
               onEdit={navigateToEditDocument}
             />
