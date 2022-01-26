@@ -23,17 +23,18 @@ config = Config().config_read(("config.ini"))
 content = Common().get_file_content(os.path.abspath(os.curdir) + '/templates/content_template_new.json')
 
 
-def s3_list_folders(prefix: str):
+def s3_list_folders(prefix: str, jurisdiction: str):
     result = s3_client.list_objects(Bucket=INPUT_BUCKET, Prefix=prefix, Delimiter='/')
     if result.get('CommonPrefixes') is not None:
         for o in result.get('CommonPrefixes'):
-            s3_list_folders(o.get('Prefix'))
+            s3_list_folders(o.get('Prefix'), jurisdiction)
             s3 = boto3.resource('s3')
             bucket = s3.Bucket(name=INPUT_BUCKET)
             message = {}
             for obj in bucket.objects.filter(Prefix=o.get('Prefix')):
                 if '.ml' in obj.key or '.html' in obj.key:
                     message = Validator().prepare_migration_content_message(message, obj.key)
+                message['jurisdiction'] = jurisdiction
             if bool(message):
                 string_message = dumps(message)
                 try:
@@ -52,8 +53,8 @@ def run(event, context):
     logger.debug('Starting publish the paths to sqs queue : "%s", prefix: "%s" ', SQS_QUEUE, PREFIX)
     if ('body' not in event):
         raise ValueError(f'Message body is empty!')
-    if Validator().migration_content_root_paths_validator(event['body']):
-        s3_list_folders(event['body']['root_path'])
+    if Validator().migration_content_root_paths_validator(event['body'], True):
+        s3_list_folders(event['body']['root_path'], event['body']['jurisdiction'])
 
 
 def consumer(event, context):
@@ -77,7 +78,7 @@ def consumer(event, context):
                 html_content = html_content['Body'].read().decode('utf-8')
 
                 content["documentId"] = item.code.text if item.code is not None else str(uuid.uuid4())
-                content["jurisdiction"] = "UK"
+                content["jurisdiction"] = message['jurisdiction'] if 'jurisdiction' in message else 'UK'
                 content["documentTitle"] = item.revision.localisation.title.text \
                     if item.revision.localisation.title is not None else ""
                 content["organisationName"] = item.organisationname.text if item.organisationname is not None else ""
