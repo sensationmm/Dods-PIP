@@ -1,5 +1,5 @@
 import { CollectionAlertError, CollectionAlertRecipientError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
-import { AlertRecipientInput, ClientAccount, Collection, CollectionAlert, CollectionAlertRecipient, Op, Role, Sequelize, User, WhereOptions } from "@dodsgroup/dods-model";
+import { AlertRecipientInput, ClientAccount, Collection, CollectionAlert, CollectionAlertRecipient, Op, Sequelize, User, WhereOptions } from "@dodsgroup/dods-model";
 import { mapRecipient } from "..";
 import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput, DeleteAlertRecipientInput, SearchAlertRecipientsInput, SearchAlertRecipientsOutput, UpdateRecipientParameters, AlertRecipientsOutput } from "./domain";
 
@@ -99,15 +99,16 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             include: [
                 {
                     model: User,
+                    as: 'updatedById'
+                },
+                {
+                    model: User,
+                    as: 'createdById'
+                },
+                {
+                    model: User,
                     as: 'user',
-                    required: true,
-                    include: [
-                        {
-                            model: Role,
-                            as: 'role',
-                            required: true,
-                        }
-                    ]
+                    required: true
                 },
                 {
                     model: CollectionAlert,
@@ -134,17 +135,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             limit,
         });
 
-        const data = rows.map((row) => ({
-            uuid: row.user.uuid,
-            name: row.user.fullName,
-            emailAddress: row.user.primaryEmail,
-            clientAccount: {
-                uuid: row.alert.collection.clientAccount.uuid,
-                name: row.alert.collection.clientAccount.name,
-            },
-            isDODSUser: Boolean(row.user.role.dodsRole),
-            isActive: row.user.isActive,
-        }));
+        const data = await Promise.all(rows.map(async (row) => await mapRecipient(row)));
 
 
         return {
@@ -343,7 +334,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             updatedBy: updater.id,
             isActive
         });
-        await updatedRecipient.reload({ include: ['user'] })
+        await updatedRecipient.reload({ include: ['user', 'updatedById', 'createdById'] })
         return await mapRecipient(updatedRecipient);
     }
 }
