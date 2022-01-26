@@ -734,73 +734,72 @@ export const Library: React.FC<LibraryProps> = ({
                     </Styled.searchResult>
                   );
                 })}
-
-              {results.length !== 0 && (
-                <Styled.pagination>
-                  <span>
-                    Total <b>{total.toLocaleString('en-US')}</b> Items
-                  </span>
-                  <Styled.paginationControls>
-                    <button
-                      className={'prevPageArrow'}
-                      disabled={prevPageDisabled}
-                      onClick={() => {
-                        if (offset !== 0) {
-                          const newOffset = offset - resultSize;
-                          setOffset(newOffset);
-                          setOffsetQuery(newOffset);
-                        }
-                      }}
-                    >
-                      <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
-                    </button>
-                    <span>Viewing page</span>
-                    <Select
-                      id={'pageSelect'}
-                      value={currentPage.toString()}
-                      size={'small'}
-                      isFilter={true}
-                      onChange={(value) => {
-                        const nextPage = parseInt(value);
-                        setCurrentPage(nextPage);
-                        const newOffset = (nextPage - 1) * resultSize;
-                        setOffset(newOffset);
-                        setOffsetQuery(newOffset);
-                      }}
-                      options={pagesOpts}
-                    />
+                {results.length !== 0 && (
+                  <Styled.pagination>
                     <span>
-                      of
-                      <b>{Math.round(total / resultSize)}</b>
+                      Total <b>{total.toLocaleString('en-US')}</b> Items
                     </span>
-                    <button
-                      className={'nextPageArrow'}
-                      disabled={nextPageDisabled}
-                      onClick={() => {
-                        if (offset < total) {
-                          const newOffset = offset + resultSize;
+                    <Styled.paginationControls>
+                      <button
+                        className={'prevPageArrow'}
+                        disabled={prevPageDisabled}
+                        onClick={() => {
+                          if (offset !== 0) {
+                            const newOffset = offset - resultSize;
+                            setOffset(newOffset);
+                            setOffsetQuery(newOffset);
+                          }
+                        }}
+                      >
+                        <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
+                      </button>
+                      <span>Viewing page</span>
+                      <Select
+                        id={'pageSelect'}
+                        value={currentPage.toString()}
+                        size={'small'}
+                        isFilter={true}
+                        onChange={(value) => {
+                          const nextPage = parseInt(value);
+                          setCurrentPage(nextPage);
+                          const newOffset = (nextPage - 1) * resultSize;
                           setOffset(newOffset);
                           setOffsetQuery(newOffset);
-                        }
-                      }}
-                    >
-                      <Icon src={Icons.ChevronRightBold} />
-                    </button>
-                  </Styled.paginationControls>
-                  <Styled.perPageSelect>
-                    <span>Items per page</span>
-                    <Select
-                      id={'itemPerPage'}
-                      value={resultSize.toString()}
-                      size={'small'}
-                      isFilter={true}
-                      onChange={onPerPageChange}
-                      options={recordsPerPage}
-                    />
-                  </Styled.perPageSelect>
-                </Styled.pagination>
-              )}
-            </Styled.resultsContent>
+                        }}
+                        options={pagesOpts}
+                      />
+                      <span>
+                        of
+                        <b>{Math.round(total / resultSize)}</b>
+                      </span>
+                      <button
+                        className={'nextPageArrow'}
+                        disabled={nextPageDisabled}
+                        onClick={() => {
+                          if (offset < total) {
+                            const newOffset = offset + resultSize;
+                            setOffset(newOffset);
+                            setOffsetQuery(newOffset);
+                          }
+                        }}
+                      >
+                        <Icon src={Icons.ChevronRightBold} />
+                      </button>
+                    </Styled.paginationControls>
+                    <Styled.perPageSelect>
+                      <span>Items per page</span>
+                      <Select
+                        id={'itemPerPage'}
+                        value={resultSize.toString()}
+                        size={'small'}
+                        isFilter={true}
+                        onChange={onPerPageChange}
+                        options={recordsPerPage}
+                      />
+                    </Styled.perPageSelect>
+                  </Styled.pagination>
+                )}
+              </Styled.resultsContent>
             )}
             {filtersVisible && (
               <FacetContainer heading={'Filters'}>
