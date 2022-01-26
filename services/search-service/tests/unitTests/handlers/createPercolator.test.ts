@@ -15,7 +15,8 @@ mockedSearchRepository.defaultInstance.createPercolator.mockResolvedValue(true)
 describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input - response should be valid', async () => {
         const data: createPercolatorParameters = {
-            "query": "1"
+            "query": "1",
+            alertId: "123",
         }
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {

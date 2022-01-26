@@ -38,7 +38,7 @@ const Label: React.FC<LabelProps> = ({
         data-test="text-component"
       >
         {label}
-        {parenthetical && <span>({parenthetical})</span>}
+        {parenthetical && <Styled.parenthetical>({parenthetical})</Styled.parenthetical>}
       </Text>
       {required && (
         <Styled.requiredLabel data-test="label-required">(Required)</Styled.requiredLabel>

@@ -7,7 +7,7 @@ import * as Styled from './FacetContainer.styles';
 
 interface FacetContainerProps {
   heading: string;
-  onClearSelection: () => void;
+  onClearSelection?: () => void;
   children: JSX.Element;
 }
 
@@ -26,12 +26,14 @@ const FacetContainer: React.FC<FacetContainerProps> = ({ heading, children, onCl
             {heading}
           </Text>
         </Styled.headingContainer>
-        <Styled.clearBtn onClick={onClearSelection} disabled={false}>
-          <Icon src={Icons.Bin} size={IconSize.small} data-test="component-icon" />
-          <Styled.clearBtnText>Clear</Styled.clearBtnText>
-        </Styled.clearBtn>
+        {onClearSelection && (
+          <Styled.clearBtn onClick={onClearSelection} disabled={false}>
+            <Icon src={Icons.Bin} size={IconSize.small} data-test="component-icon" />
+            <Styled.clearBtnText>Clear</Styled.clearBtnText>
+          </Styled.clearBtn>
+        )}
       </Styled.header>
-      <Styled.childrenContainer>{expanded ? children : null}</Styled.childrenContainer>
+      {expanded && <Styled.childrenContainer>{children}</Styled.childrenContainer>}
     </Styled.container>
   );
 };

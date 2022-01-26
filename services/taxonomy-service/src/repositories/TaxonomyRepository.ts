@@ -26,10 +26,10 @@ export class TaxonomyRepository implements Taxonomy {
                             {
                                 "bool": {
                                     "should": [
-                                        {"wildcard": {"label": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
-                                        {"wildcard": {"altLabel.en": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
-                                        {"wildcard": {"altLabel.de": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
-                                        {"wildcard": {"altLabel.fr": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"label.keyword": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.en.keyword": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.de.keyword": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
+                                        {"wildcard": {"altLabel.fr.keyword": {"value": "*" + data.tags + "*", "case_insensitive": true}}},
                                     ]
                                 }
                             }
@@ -53,7 +53,9 @@ export class TaxonomyRepository implements Taxonomy {
         if(!('tags' in data)){
             throw new HttpBadRequestError("No tags found to search")
         }
-        const es_response = await this.elasticsearch.search(await TaxonomyRepository.createSearchQuery(data))
+        const query = await TaxonomyRepository.createSearchQuery(data)
+        console.log(JSON.stringify(query))
+        const es_response = await this.elasticsearch.search(query)
         console.log(JSON.stringify(es_response))
         es_response.body.hits.hits.forEach((es_doc: any) => {
             let alt_labels: Array<string> = []

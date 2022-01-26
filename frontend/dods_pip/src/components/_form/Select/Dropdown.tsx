@@ -19,6 +19,7 @@ export interface DropdownProps {
   setValue: (val: string, item?: DropdownValue) => void;
   isFilter?: boolean;
   testId?: string;
+  inline?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -31,6 +32,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   setValue,
   isFilter = false,
   testId,
+  inline = false,
 }) => {
   return (
     <Styled.dropdown
@@ -40,6 +42,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       hasHelper={hasHelper}
       hasError={hasError}
       isFilter={isFilter}
+      inline={inline}
     >
       {options.map((item, count) => {
         const isActive =

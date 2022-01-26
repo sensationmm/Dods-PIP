@@ -2,6 +2,7 @@ import Facet from '@dods-ui/components/_form/Facet';
 import Select from '@dods-ui/components/_form/Select';
 import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
+import FacetContainer from '@dods-ui/components/FacetContainer';
 import { format } from 'date-fns';
 import esb, { Query, RequestBodySearch } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
@@ -32,7 +33,7 @@ interface ExtendedRequestBodySearch extends RequestBodySearch {
 }
 
 export interface ISourceData {
-  aggs_fields: { [key: string]: string[] };
+  aggs_fields?: { [key: string]: string[] };
   contentDateTime?: string;
   contentLocation?: string;
   contentSource?: ContentSourceType;
@@ -42,6 +43,9 @@ export interface ISourceData {
   sourceReferenceUri?: string;
   originator?: string;
   version?: string;
+  documentId?: string;
+  organisationName?: string;
+  taxonomyTerms?: { tagId: string; termLabel: string }[];
 }
 
 type BucketType = {
@@ -50,6 +54,36 @@ type BucketType = {
   selected?: boolean;
 };
 
+interface IAggregations {
+  contentSource?: {
+    buckets: BucketType[];
+  };
+  informationType?: {
+    buckets: BucketType[];
+  };
+  jurisdiction?: {
+    buckets: BucketType[];
+  };
+  originator?: {
+    buckets: BucketType[];
+  };
+  group?: {
+    buckets: BucketType[];
+  };
+  people?: {
+    buckets: BucketType[];
+  };
+  organizations?: {
+    buckets: BucketType[];
+  };
+  geography?: {
+    buckets: BucketType[];
+  };
+  topics?: {
+    buckets: BucketType[];
+  };
+}
+
 export interface IResponse {
   sourceReferenceUri?: string;
   es_response?: {
@@ -57,35 +91,8 @@ export interface IResponse {
       hits: { _source: ISourceData }[];
       total: { value: number };
     };
-    aggregations?: {
-      contentSource?: {
-        buckets: BucketType[];
-      };
-      informationType?: {
-        buckets: BucketType[];
-      };
-      jurisdiction?: {
-        buckets: BucketType[];
-      };
-      people?: {
-        buckets: BucketType[];
-      };
-      organizations?: {
-        buckets: BucketType[];
-      };
-      geography?: {
-        buckets: BucketType[];
-      };
-      topics?: {
-        buckets: BucketType[];
-      };
-    };
+    aggregations?: IAggregations;
   };
-}
-
-interface LibraryProps {
-  apiResponse: IResponse;
-  parsedQuery: QueryObject;
 }
 
 enum AggTypes {
@@ -96,10 +103,13 @@ enum AggTypes {
   people = 'people',
   organizations = 'organizations',
   geography = 'geography',
+  originator = 'originator',
+  organisationName = 'organisationName',
+  group = 'group',
 }
 
 type AggregationsType = {
-  [key in AggTypes]: {
+  [key in AggTypes]?: {
     terms: {
       field: string;
       min_doc_count: number;
@@ -107,13 +117,6 @@ type AggregationsType = {
     };
   };
 };
-
-interface RequestPayload {
-  query?: Query;
-  aggregations: AggregationsType;
-  size?: number;
-  from?: number;
-}
 
 const aggregations: AggregationsType = {
   topics: {
@@ -140,6 +143,20 @@ const aggregations: AggregationsType = {
   geography: {
     terms: {
       field: 'aggs_fields.geography',
+      min_doc_count: 0,
+      size: 500,
+    },
+  },
+  group: {
+    terms: {
+      field: 'organisationName.keyword',
+      min_doc_count: 0,
+      size: 500,
+    },
+  },
+  originator: {
+    terms: {
+      field: 'originator.keyword',
       min_doc_count: 0,
       size: 500,
     },
@@ -265,17 +282,27 @@ const getPayload = (
   };
 };
 
-export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) => {
+interface LibraryProps {
+  parsedQuery: QueryObject;
+  results: { _source: ISourceData }[];
+  total: number;
+  aggregations: IAggregations;
+}
+
+export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, parsedQuery }) => {
   const router = useRouter();
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
   const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
+  const [originators, setOriginators] = useState<BucketType[]>([]);
+  const [groups, setGroups] = useState<BucketType[]>([]);
   const [topics, setTopics] = useState<BucketType[]>([]);
   const [people, setPeople] = useState<BucketType[]>([]);
   const [organizations, setOrganizations] = useState<BucketType[]>([]);
   const [geography, setGeography] = useState<BucketType[]>([]);
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
   const [offset, setOffset] = useState(0);
+  const [filtersVisible, setFiltersVisible] = useState<boolean>(true);
   const [resultsSize, setResultsSize] = useState<number>(20);
 
   const currentQuery: QueryObject = useMemo(() => {
@@ -427,7 +454,9 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
       organizations,
       geography,
       topics,
-    } = apiResponse?.es_response?.aggregations || {};
+      originator,
+      group,
+    } = aggregations || {};
 
     const checkEmptyAggregation = (aggregation: { doc_count: number }) => {
       return aggregation.doc_count !== 0;
@@ -450,6 +479,8 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     setContentSources(updateWithBasicFilters(contentSource?.buckets));
     setInformationTypes(updateWithBasicFilters(informationType?.buckets));
     setJurisdictions(updateWithBasicFilters(jurisdiction?.buckets));
+    setOriginators(updateWithBasicFilters(originator?.buckets));
+    setGroups(updateWithBasicFilters(group?.buckets));
 
     const updateWithNestedFilters = (items: BucketType[] = []): BucketType[] => {
       return items.filter?.(checkEmptyAggregation)?.map((props) => {
@@ -468,7 +499,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     setOrganizations(updateWithNestedFilters(organizations?.buckets));
     setGeography(updateWithNestedFilters(geography?.buckets));
     setTopics(updateWithNestedFilters(topics?.buckets));
-  }, [parsedQuery, apiResponse]);
+  }, [parsedQuery, aggregations]);
 
   const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -491,31 +522,42 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
       </Head>
 
       <main>
-        <Panel>
+        <Panel bgColor={color.base.ivory}>
           <Text type={'h1'} headingStyle="heroExtraLarge">
             Library
           </Text>
           <Spacer size={12} />
-          <InputSearch
-            onKeyDown={onSearch}
-            id="search-library"
-            label="What are you looking for?"
-            value={searchText}
-            onChange={(val) => setSearchText(val)}
-            onClear={() => setKeywordQuery('')}
-          />
+          <Styled.librarySearchWrapper>
+            <section>
+              <InputSearch
+                onKeyDown={onSearch}
+                id="search-library"
+                label="What are you looking for?"
+                value={searchText}
+                onChange={(val) => setSearchText(val)}
+                onClear={() => setKeywordQuery('')}
+              />
+            </section>
+            <aside>
+              <Toggle
+                isActive={filtersVisible}
+                labelOn={'Filters'}
+                onChange={() => setFiltersVisible(!filtersVisible)}
+              />
+            </aside>
+          </Styled.librarySearchWrapper>
           <Spacer size={8} />
-          {apiResponse.es_response?.hits?.hits.length !== 0 && (
+          {results.length !== 0 && (
             <Styled.pagination>
               <div>
                 Showing
                 <span className={'pageCount'}>
-                  {offset + 1} - {(apiResponse?.es_response?.hits?.hits.length || 0) + offset}{' '}
+                  {offset + 1} - {(results.length || 0) + offset}{' '}
                 </span>
                 <Styled.totalRecords>
                   Total{' '}
                   <b className={'total'}>
-                    {apiResponse.es_response?.hits?.total?.value.toLocaleString('en-US')}
+                    {total.toLocaleString('en-US')}
                   </b>{' '}
                   Items
                 </Styled.totalRecords>
@@ -539,10 +581,18 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
 
           <Styled.contentWrapper>
             <Styled.resultsContent>
-              {apiResponse.es_response?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
-                const date = new Date(hit._source.contentDateTime);
-                const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
-                console.log('apiResponse', apiResponse);
+              {results?.map((item: { _source: ISourceData }, i: number) => {
+                const {
+                  documentTitle,
+                  documentContent,
+                  contentDateTime,
+                  organisationName,
+                  informationType,
+                  taxonomyTerms,
+                  documentId,
+                } = item._source;
+                const formattedTime =
+                  contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' hh:mm");
 
                 return (
                   <Styled.searchResult key={`search-result${i}`}>
@@ -552,7 +602,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                           <Styled.imageContainer />
                           <Styled.searchResultHeader>
                             <Styled.searchResultHeading>
-                              <h2>{hit._source.documentTitle}</h2>
+                              <h2>{documentTitle}</h2>
                               <Styled.date className={'mobileOnly'}>{formattedTime}</Styled.date>
                               <Styled.contentSource>
                                 <Icon
@@ -561,25 +611,21 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                                   color={color.theme.blue}
                                 />
                                 <Styled.contentSourceText>
-                                  {hit._source.informationType} / {hit._source.organisationName}
+                                  {informationType} / {organisationName}
                                 </Styled.contentSourceText>
                               </Styled.contentSource>
                             </Styled.searchResultHeading>
                           </Styled.searchResultHeader>
                           <Styled.date>{formattedTime}</Styled.date>
                         </Styled.topRow>
-                        {hit._source?.documentContent && (
+                        {documentContent && (
                           <Styled.contentPreview>
-                            <div
-                              dangerouslySetInnerHTML={{ __html: hit._source?.documentContent }}
-                            />
+                            <div dangerouslySetInnerHTML={{ __html: documentContent }} />
                           </Styled.contentPreview>
                         )}
                         <Styled.bottomRow>
                           <Styled.tagsWrapper>
-                            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
-                            {/* @ts-ignore */}
-                            {hit._source.taxonomyTerms.map((term, i) => {
+                            {taxonomyTerms?.map((term, i) => {
                               if (i > 5) {
                                 return;
                               }
@@ -613,7 +659,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                             })}
                           </Styled.tagsWrapper>
                           <Styled.readMore>
-                            <Link href={`/library/document/${hit._source.documentId}`}>
+                            <Link href={`/library/document/${documentId}`}>
                               <div>
                                 <span>Read more</span>
                                 <Icon
@@ -631,10 +677,10 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                 );
               })}
 
-              {apiResponse.es_response?.hits?.hits && (
+              {results && (
                 <Styled.pagination>
                   <Styled.totalRecords>
-                    Total <b>{apiResponse.es_response.hits.total.value.toLocaleString('en-US')}</b>{' '}
+                    Total <b>{total.toLocaleString('en-US')}</b>
                     Items
                   </Styled.totalRecords>
                   <Styled.paginationControls>
@@ -680,97 +726,122 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
                 </Styled.pagination>
               )}
             </Styled.resultsContent>
-
-            <Styled.filtersContent>
-              <DateFacet
-                onChange={setDateFilter}
-                values={{
-                  min: parsedQuery?.dateRange?.min,
-                  max: parsedQuery?.dateRange?.max,
-                }}
-              />
-              <Facet
-                title={'Content Source'}
-                records={contentSources}
-                onClearSelection={() => removeBasicFilters(contentSources)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.contentSource,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Information Type'}
-                records={informationTypes}
-                onClearSelection={() => removeBasicFilters(informationTypes)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.informationType,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Jurisdictions'}
-                records={jurisdictions}
-                onClearSelection={() => removeBasicFilters(jurisdictions)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.jurisdiction,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Topics'}
-                records={topics}
-                onClearSelection={() => removeNestedFilters(topics)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Organizations'}
-                records={organizations}
-                onClearSelection={() => removeNestedFilters(organizations)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'People'}
-                records={people}
-                onClearSelection={() => removeNestedFilters(people)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Geography'}
-                records={geography}
-                onClearSelection={() => removeNestedFilters(geography)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-            </Styled.filtersContent>
+            {filtersVisible && (
+              <FacetContainer heading={'Filters'}>
+                <Styled.filtersContent>
+                  <DateFacet
+                    onChange={setDateFilter}
+                    values={{
+                      min: parsedQuery?.dateRange?.min,
+                      max: parsedQuery?.dateRange?.max,
+                    }}
+                  />
+                  <Facet
+                    title={'Content Source'}
+                    records={contentSources}
+                    onClearSelection={() => removeBasicFilters(contentSources)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.contentSource,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Information Type'}
+                    records={informationTypes}
+                    onClearSelection={() => removeBasicFilters(informationTypes)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.informationType,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Jurisdictions'}
+                    records={jurisdictions}
+                    onClearSelection={() => removeBasicFilters(jurisdictions)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.jurisdiction,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Group'}
+                    records={groups}
+                    onClearSelection={() => removeBasicFilters(groups)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.organisationName,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Originator'}
+                    records={originators}
+                    onClearSelection={() => removeBasicFilters(originators)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.originator,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Topics'}
+                    records={topics}
+                    onClearSelection={() => removeNestedFilters(topics)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Organizations'}
+                    records={organizations}
+                    onClearSelection={() => removeNestedFilters(organizations)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'People'}
+                    records={people}
+                    onClearSelection={() => removeNestedFilters(people)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Geography'}
+                    records={geography}
+                    onClearSelection={() => removeNestedFilters(geography)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                </Styled.filtersContent>
+              </FacetContainer>
+            )}
           </Styled.contentWrapper>
         </Panel>
       </main>
@@ -802,7 +873,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { apiResponse, parsedQuery },
+    props: {
+      results: apiResponse?.es_response?.hits?.hits || [],
+      total: apiResponse?.es_response?.hits?.total?.value || 0,
+      aggregations: apiResponse?.es_response?.aggregations || {},
+      parsedQuery,
+    },
   };
 };
 

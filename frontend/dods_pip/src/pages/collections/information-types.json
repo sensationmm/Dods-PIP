@@ -1,0 +1,425 @@
+[
+  {
+    "label": "Statutory Instruments",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/a737f4a3-cff0-44cb-95fe-3b8aa72db2ad",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Grouping of Amendments",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/45b2ec23-4f76-48eb-afc7-3ce02f645efa",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Reports",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/16d3680f-e51b-4530-81c0-33853a7ee5a9",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Written Evidence",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/4026a022-d952-42ec-bd90-0fd6b5005e4a",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Standard Note",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/ff85b428-e814-4292-aa45-8d054431f9cf",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Devolved Weekly Business",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/d38e733b-695d-4509-9de5-caa2124c8c3b",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Early Day Motions",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/4e7af5ea-866d-4a3c-9573-06da3fd6ebda",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/1c8d9dba-6ca7-455d-900a-d97fd34e9c78",
+    "label": "Correspondence",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Consultations",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/7ee05ac7-8538-4792-b4ee-c3509cb43c15",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Responses",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/a5b19932-415f-4e5d-9ef2-4d456433f8ba",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Dods Marketing",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/ed8fafd7-c43c-4968-bc46-4c93affa2fc7",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Associated Memorandum",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/ec9e9c57-f309-470f-8872-53b9789b64a0",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Statements of Opinion",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/c5319755-9d82-4ea4-b865-e730dda6a9a7",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Unscheduled Business",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/d951287d-bdd7-429c-a7d2-2bbaf6ff2b49",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Dods Test",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/d971b9ee-aebd-476c-ba31-156637a17582",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Oral Evidence",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/5bac2567-e480-4da6-be60-e39c079b5716",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Corrected Oral Evidence",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/8f4ea8ae-ece2-4559-841b-32e302a9a662",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Uncorrected Oral Evidence",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/a729d169-aa7d-4828-a19f-c0ec4502174a",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Papers",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/f6ae4994-8619-40a1-932e-d20e0a981355",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Fatality Notices",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/675c2591-ae77-48ba-8479-bbb4f6ff8270",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Statistics",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/4c5cd6e7-c15e-43d5-af8e-8942d02ecd6c",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Votes and Proceedings",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/f1b73440-8abf-48b9-8789-4770a0d43189",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Petitions",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/57e9eaa4-c781-44fb-9f17-686785959c4d",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Research Papers",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/6ec348e3-d605-44fe-9273-d628c1145cec",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Consultation Tracker",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/96278a35-2581-4ff1-88cd-c737ea17b15e",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Minutes",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/fdf91167-6b39-45fb-b7d1-9fdce9720b5f",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Written Ministerial Statements",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/adeed8cd-e1a4-49da-bf19-59d0e23103e6",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Impact Assessments",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/08a70127-bf46-4a8e-b4af-e411bf7edab7",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Motions",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/18a95863-a16f-425f-83a6-d530d324ce34",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Register of Interests",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/803c015d-e62b-40e8-9280-48be482e5b6c",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Appointments",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/1b31b4b8-2d14-48b1-8763-85d7024e6e90",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Committee Summary",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/0d7036b4-0b5a-4aa3-a273-58687f4d1ee5",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Oral Answers",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/eea2c797-5a40-403a-8da8-9dd4ab1b43dc",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Question Time Summary",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/46bcd24e-2a54-4d4f-b426-a40e370f33ec",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Future Business",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/c6dac1c9-b307-4fe1-b3bf-ede9478f400a",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Brexit Bulletin",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/214ef9ae-757c-4aa1-a4bf-1f99535826af",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Selection of Amendments",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/01cbfc5f-7b36-45f0-ad80-01be6e8a6efb",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/ffed8fac-98b8-41b8-b40f-3ef3220f668e",
+    "label": "Amendments",
+    "topConceptOf": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ],
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Dods Monitoring Daily",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/abb9aa9e-0b63-4904-8a1f-b9b2f4f39837",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Breaking Announcements",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/1ca37835-e300-4b7a-b8fb-65581d619d29",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Written Answers",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/9c3be352-ce12-4a12-afbe-65b57f01357f",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Event Summary",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/d370a653-2bf3-4b50-952c-27a197e82c9e",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Reviews",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/7518f262-46ed-4fa5-9728-095ed5360877",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Oral Questions Tabled",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/b4af9cd1-17e4-4a91-987a-2704cb478ce6",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Order of Oral Questions",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/b8b316f5-0110-491b-9d15-0f629c36e2f1",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Debates",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/f652d1a8-5b4e-4b47-9f14-f0ff38fb7c43",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Westminster Weekly Business",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/7c2e0c7c-8a9d-4add-9833-9f3882a128ff",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Register of All-Party Groups",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/50d37a13-153f-4ff0-a6ca-4d718e7014ef",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Bills",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/cb404c59-27bf-4e1a-9ff2-869c8a1e1938",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Week in Politics",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/fc37a93c-6d0c-4ea2-a6c9-9f296f53946b",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Speeches",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/8de6e9d9-c961-46a5-be7c-1139334e9c47",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Debate Summary",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/6eb51fd2-e84a-4d17-be73-9a8f640264c1",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Press Releases",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/8e4c3a7c-af67-489b-b9cf-852ef9198c5a",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "News",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/58416ecc-e999-4dbb-a76b-cc277772f5a3",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Inquiries",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/e1490fad-7844-4679-992e-749d85384bb3",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "New and Change to Business",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/739ada32-dff2-438f-881c-e3344d45eae2",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Statement Text",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/1932715c-c791-443b-bafb-273f3dc17f53",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Written Questions Tabled",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/321def6c-fb87-47e5-a3ae-0bb31f77ca3e",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label":  "Marshalled List of Amendments",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/3a2d6399-d259-4843-bf7c-37a9beec2902",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  },
+  {
+    "label": "Explanatory Notes",
+    "id": "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes/6f73c7e0-c90b-4232-bf60-5cd01e61ef6c",
+    "inScheme": [
+      "http://www.dods.co.uk/taxonomy/instance/MonitoringTypes"
+    ]
+  }
+]

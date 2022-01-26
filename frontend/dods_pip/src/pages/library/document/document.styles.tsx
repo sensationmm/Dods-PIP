@@ -99,6 +99,17 @@ export const tagsContent = styled.div`
   `}
 `;
 
+export const inlinedTags = styled.div`
+  .tag {
+    font-weight: bold;
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    padding-left: 18px;
+    margin-left: 2px;
+    cursor: help;
+  }
+`;
+
 export const tagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -144,6 +155,32 @@ export const tab = styled.button`
       background: ${color.theme.blueLight};
     }
   }
+`;
+
+export const status = styled.div`
+  height: 32px;
+  border-radius: 60px;
+  background: ${color.base.white};
+  border: 1px solid ${color.base.greyLight};
+  display: inline-block;
+  padding: 0 ${spacing(10)};
+  line-height: 32px;
+  position: relative;
+  font-size: 14px;
+  font-weight: 700;
+`;
+
+export const statusIcon = styled.div`
+  position: absolute;
+  left: 3px;
+  top: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 60px;
+  background: ${color.accent.green};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const detailTable = styled.table`

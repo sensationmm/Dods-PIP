@@ -2,9 +2,16 @@ import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
 import { dropdownItem, select } from '@dods-ui/components/_form/Select/Select.styles';
 import { panel } from '@dods-ui/components/_layout/Panel/Panel.styles';
 import { Icon } from '@dods-ui/components/Icon/Icon.styles';
+import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
+import media from '@dods-ui/globals/media';
 import styled from 'styled-components';
 
 import { contentWrapper as chipsWrapper } from '../../components/Chips/Chips.styles';
+import {
+  childrenContainer,
+  container as facetContainer,
+  header as facetContainerHeader,
+} from '../../components/FacetContainer/FacetContainer.styles';
 import color from '../../globals/color';
 import spacing from '../../globals/spacing';
 
@@ -17,18 +24,59 @@ export const pageLibrary = styled.div`
   }
 `;
 
+export const filtersContent = styled.div`
+  width: 350px;
+  margin-left: ${spacing(8)};
+  text-align: center;
+`;
+
 export const contentWrapper = styled.div`
   display: flex;
+  flex-basis: 0;
+  ${media.lessThan('sm')`
+    flex-direction: column-reverse;
+    width: 100%;
+    ${filtersContent} {
+      margin: 0 0 ${spacing(6)};
+      width: 100%;
+    }
+    ${facetContainer} {
+      margin-bottom: ${spacing(4)};
+    }
+    & > ${facetContainer} {
+      & > ${facetContainerHeader} {
+        border-bottom: 0;
+      }
+      & > ${childrenContainer} {
+        padding: 0 ${spacing(4)} ${spacing(4)};
+      }
+    }
+  `};
+  ${filtersContent} {
+    width: 372px;
+    ${media.lessThan('sm')`
+      width: 100%;
+      padding: 0;
+    `};
+  }
+  ${media.greaterThan('sm')`
+    & > ${facetContainer} {
+      background: transparent;
+      width: auto;
+      box-shadow: none;
+      border: 0;
+      & > ${facetContainerHeader} {
+        display: none;
+      }
+      & > ${childrenContainer} {
+        padding: 0;
+      }
+    }
+  `};
 `;
 
 export const resultsContent = styled.section`
   flex: 1;
-`;
-
-export const filtersContent = styled.section`
-  width: 350px;
-  margin-left: 30px;
-  text-align: center;
 `;
 
 export const filtersTag = styled.div`
@@ -42,7 +90,7 @@ export const filtersTag = styled.div`
 
 export const fade = styled.div`
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
 
   display: block;
 
@@ -60,7 +108,7 @@ export const contentSource = styled.div`
   display: flex;
   align-items: center;
   color: ${color.theme.blue};
-  padding-bottom: 15px;
+  padding-bottom: ${spacing(4)};
 `;
 
 export const searchResult = styled.div`
@@ -219,9 +267,37 @@ export const topRow = styled.div`
 export const imageContainer = styled.span`
   width: 75px !important;
   height: 55px;
+  margin-top: 20px;
 
   img {
     border-radius: 10px;
+  }
+`;
+
+export const librarySearchWrapper = styled.div`
+  display: flex;
+  padding-bottom: ${spacing(4)};
+  border-bottom: 1px solid ${color.base.greyLight};
+  ${input} {
+    width: 629px;
+    ${media.lessThan('sm')`
+      width: 100%;
+    `};
+  }
+  section {
+    width: 908px;
+    ${media.lessThan('sm')`
+      width: 100%;
+    `};
+  }
+  aside {
+    width: 350px;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: ${spacing(6)};
+    ${media.lessThan('sm')`
+      display: none;
+    `};
   }
 `;
 
