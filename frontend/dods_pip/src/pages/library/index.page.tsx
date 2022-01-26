@@ -341,7 +341,7 @@ export const Library: React.FC<LibraryProps> = ({
 
   const pagesOpts: SelectItem[] = useMemo(() => {
     if (total > 0) {
-      const pageTotal = Math.round(total / resultsSize);
+      const pageTotal = Math.round(total / resultSize);
       return Array.from(Array(pageTotal).keys()).map((i) => {
         return { label: (i + 1).toString(), value: (i + 1).toString() };
       });
@@ -644,7 +644,7 @@ export const Library: React.FC<LibraryProps> = ({
                 <Icon src={Icons.Search} size={IconSize.xxlarge} color={color.base.greyDark} />
                 <div>
                   <h2>
-                    No results for <span>{currentSearch.searchTerm}</span>
+                    No results for <span>{searchText}</span>
                   </h2>
                   <p>Try checking your spelling or adjusting the filters</p>
                 </div>
