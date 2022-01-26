@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "a536af7a-b05f-41f0-9927-e86eec369f78",
-		"name": "DODS Dev",
+		"_postman_id": "0d1183b5-f9ad-424a-b37c-cabb99f34647",
+		"name": "DODS Dev v.1.25",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -111,7 +111,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userProfile\": {\n        \"title\": \"DODS Consultant\",\n        \"first_name\": \"Jhonny\",\n        \"last_name\": \"Lopez\",\n        \"primary_email_address\": \"jhonny.lopez+consultant600@somoglobal.com\",\n        \"secondary_email_address\": \"jhonny.lopez+consultant600@somoglobal.com\",\n        \"telephone_number_1\": \"+573214858576\",\n        \"telephone_number_2\": \"+573214858577\",\n        \"role_id\": \"d25c5ac2-d5df-4ae0-9cb7-c5817b725dba\"\n    }, \n    \"teamMemberType\": 3,\n    \"clientAccountId\": \"d4bbbd4b-e02f-4343-a7e9-397eea2b1bcd\"\n}",
+							"raw": "{\n    \"userProfile\": {\n        \"title\": \"DODS Consultant\",\n        \"first_name\": \"Jhonny\",\n        \"last_name\": \"Lopez\",\n        \"primary_email_address\": \"jhonny.lopez+consultant600@somoglobal.com\",\n        \"secondary_email_address\": \"jhonny.lopez+consultant600@somoglobal.com\",\n        \"telephone_number_1\": \"+573214858576\",\n        \"telephone_number_2\": \"+573214858577\",\n        \"role_id\": \"24e7ca86-1788-4b6e-b153-9c963dc928cb\"\n    }, \n    \"teamMemberType\": 3,\n    \"clientAccountId\": \"d4bbbd4b-e02f-4343-a7e9-397eea2b1bcd\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -835,7 +835,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{   \"contentSource\": \"House of Commons\",\r\n    \"informationType\": \"Press Release\",\r\n    \"documentTitle\": \"First Dev Test\",\r\n    \"sourceReferenceUri\": \"\",\r\n    \"createdBy\": \"Diego Avellaneda Torres\",\r\n    \"internallyCreated\": true,\r\n    \"documentContent\": \"<h1>DODS Typical Document</h1><p>Lorem Ipsum Dolor Sit Amet</p>\",\r\n    \"taxonomyTerms\": [\r\n        {\r\n            \"tagId\": \"sdfsdfsdf\",\r\n            \"facetType\": \"Topics\",\r\n            \"inScheme\": [\r\n                \"http://www.dods.co.uk/taxonomy/instance/Topics\"\r\n            ],\r\n            \"termLabel\": \"Term 4\",\r\n            \"ancestorTerms\": [\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 2\",\r\n                    \"rank\": 1\r\n                },\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 1\",\r\n                    \"rank\": 0\r\n                }\r\n            ],\r\n            \"alternative_labels\": [\r\n                \"Term B\",\r\n                \"Term C\"\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"raw": "{   \r\n    \"jurisdiction\": \"uk\",\r\n    \"contentSource\": \"House of Commons\",\r\n    \"informationType\": \"Press Release\",\r\n    \"documentTitle\": \"First Dev Test\",\r\n    \"sourceReferenceUri\": \"\",\r\n    \"createdBy\": \"Diego Avellaneda Torres\",\r\n    \"internallyCreated\": true,\r\n    \"documentContent\": \"<h1>DODS Typical Document</h1><p>Lorem Ipsum Dolor Sit Amet</p>\",\r\n    \"taxonomyTerms\": [\r\n    {\r\n      \"tagId\": \"http://www.dods.co.uk/taxonomy/instance/Topics/06e89442-f808-4d6c-bcd6-870d9406955e\",\r\n      \"facetType\": \"Topics\",\r\n      \"inScheme\": [\r\n        \"http://www.dods.co.uk/taxonomy/instance/Topics\"\r\n      ],\r\n      \"termLabel\": \"Biogas\",\r\n      \"ancestorTerms\": [\r\n        {\r\n          \"tagId\": \"http://www.dods.co.uk/taxonomy/instance/Topics/0330e3be-a0fc-4766-9b0a-48040bbb0b8e\",\r\n          \"termLabel\": \"Energy & Utilities\"\r\n        },\r\n        {\r\n          \"tagId\": \"http://www.dods.co.uk/taxonomy/instance/Topics/41a4f6f5-9a6f-4dd2-badd-4b91f2e5a595\",\r\n          \"termLabel\": \"Energy market\"\r\n        },\r\n        {\r\n          \"tagId\": \"http://www.dods.co.uk/taxonomy/instance/Topics/9deb3be9-6177-40a2-aeca-d2f1e36c838d\",\r\n          \"termLabel\": \"renewable energies\"\r\n        },\r\n        {\r\n          \"tagId\": \"http://www.dods.co.uk/taxonomy/instance/Topics/4a1f6bef-d87f-4c85-854d-2fa4f8cf7294\",\r\n          \"termLabel\": \"bioenergy\"\r\n        }\r\n      ],\r\n      \"alternative_labels\": [\r\n        \"\",\r\n        \"\",\r\n        \"\"\r\n      ]\r\n    }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -861,7 +861,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{   \"contentSource\": \"House of Commons\",\r\n    \"informationType\": \"Press Release\",\r\n    \"documentTitle\": \"Second Dev Test\",\r\n    \"sourceReferenceUri\": \"\",\r\n    \"createdBy\": \"Diego Avellaneda\",\r\n    \"internallyCreated\": true,\r\n    \"documentContent\": \"<h1>DODS Typical Document</h1><p>Lorem Ipsum Dolor Sit Amet</p>\",\r\n    \"taxonomyTerms\": [\r\n        {\r\n            \"tagId\": \"sdfsdfsdf\",\r\n            \"facetType\": \"Topics\",\r\n            \"inScheme\": [\r\n                \"http://www.dods.co.uk/taxonomy/instance/Topics\"\r\n            ],\r\n            \"termLabel\": \"Term 4\",\r\n            \"ancestorTerms\": [\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 2\",\r\n                    \"rank\": 1\r\n                },\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 1\",\r\n                    \"rank\": 0\r\n                }\r\n            ],\r\n            \"alternative_labels\": [\r\n                \"Term B\",\r\n                \"Term C\"\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"raw": "{   \r\n    \"jurisdiction\": \"eu\",\r\n    \"contentSource\": \"House of Commons\",\r\n    \"informationType\": \"Press Release\",\r\n    \"documentTitle\": \"Second Dev Test\",\r\n    \"sourceReferenceUri\": \"\",\r\n    \"createdBy\": \"Diego Avellaneda\",\r\n    \"internallyCreated\": true,\r\n    \"documentContent\": \"<h1>DODS Typical Document</h1><p>Lorem Ipsum Dolor Sit Amet</p>\",\r\n    \"taxonomyTerms\": [\r\n        {\r\n            \"tagId\": \"sdfsdfsdf\",\r\n            \"facetType\": \"Topics\",\r\n            \"inScheme\": [\r\n                \"http://www.dods.co.uk/taxonomy/instance/Topics\"\r\n            ],\r\n            \"termLabel\": \"Term 4\",\r\n            \"ancestorTerms\": [\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 2\",\r\n                    \"rank\": 1\r\n                },\r\n                {\r\n                    \"tagId\": \"sdfsdfsdf\",\r\n                    \"termLabel\": \"Term 1\",\r\n                    \"rank\": 0\r\n                }\r\n            ],\r\n            \"alternative_labels\": [\r\n                \"Term B\",\r\n                \"Term C\"\r\n            ]\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -896,6 +896,53 @@
 								"editorial-record",
 								"f688a257-08c2-4e6f-bcd9-15f33cca6669",
 								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish Document",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record/f688a257-08c2-4e6f-bcd9-15f33cca6669/publish",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record",
+								"f688a257-08c2-4e6f-bcd9-15f33cca6669",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Schedule Publishing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cron\": \"0 0 13 26 JAN ? 2022\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/editorial-record/f688a257-08c2-4e6f-bcd9-15f33cca6669/schedule",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"editorial-record",
+								"f688a257-08c2-4e6f-bcd9-15f33cca6669",
+								"schedule"
 							]
 						}
 					},
@@ -1425,13 +1472,39 @@
 			"name": "Collection Services",
 			"item": [
 				{
+					"name": "Create Collection",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientAccountId\": \"b2ff9f25-0ca0-4df4-ba5c-0c872a82f2d6\",\n    \"name\": \"4Chan\",\n    \"createdById\": \"18a817f8-00cd-4159-a797-6b0321040379\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update Collection",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"FW Collection Updatedw\"\n}",
+							"raw": "{\n    \"name\": \"FW Collection Updatedw\",\n    \"updatedBy\": \"6340c08f-0a01-41c1-8434-421f1fff3d1e\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1452,38 +1525,12 @@
 					"response": []
 				},
 				{
-					"name": "Create Collection",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"clientAccountId\": \"b2ff9f25-0ca0-4df4-ba5c-0c872a82f2d6\",\n    \"name\": \"FW Collection\",\n    \"createdById\": \"18a817f8-00cd-4159-a797-6b0321040379\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/collections",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"collections"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Search Collections",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/collections?clientAccountId=cd44bad6-8eeb-4870-abb8-72d297ea7a3e&searchTerm=Test&limit=30&offset=0",
+							"raw": "{{baseUrl}}/collections?sortBy=name&sortDirection=ASC&limit=30&offset=0",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -1493,21 +1540,21 @@
 							"query": [
 								{
 									"key": "clientAccountId",
-									"value": "cd44bad6-8eeb-4870-abb8-72d297ea7a3e"
+									"value": "cd44bad6-8eeb-4870-abb8-72d297ea7a3e",
+									"disabled": true
 								},
 								{
 									"key": "searchTerm",
-									"value": "Test"
+									"value": "3M",
+									"disabled": true
 								},
 								{
 									"key": "sortBy",
-									"value": "name",
-									"disabled": true
+									"value": "name"
 								},
 								{
 									"key": "sortDirection",
-									"value": "ASC",
-									"disabled": true
+									"value": "ASC"
 								},
 								{
 									"key": "limit",
@@ -1516,35 +1563,11 @@
 								{
 									"key": "offset",
 									"value": "0"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Collection Alerts",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts?limit=30&offset=1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"collections",
-								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
-								"alerts"
-							],
-							"query": [
-								{
-									"key": "limit",
-									"value": "30"
 								},
 								{
-									"key": "offset",
-									"value": "1"
+									"key": "startsWith",
+									"value": "COL",
+									"disabled": true
 								}
 							]
 						}
@@ -1588,13 +1611,42 @@
 					"response": []
 				},
 				{
+					"name": "Get Collection Alerts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts?limit=30&offset=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Alert (Step 1)",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"collectionId\": \"86cc34ae-47db-407c-b18d-bccfbd600e11\",\n  \"title\": \"here\",\n  \"alertQueries\": [{\n    \"query\": \"here dods\",\n    \"informationTypes\": \"infoTypes\",\n    \"contentSources\": \"Source\"\n  }\n],\n  \"createdBy\": \"6c16a036-2439-4b78-bf29-8069f4cd6c0b\"\n}",
+							"raw": "{\n  \"title\": \"here\",\n  \"createdBy\": \"6c16a036-2439-4b78-bf29-8069f4cd6c0b\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1616,7 +1668,37 @@
 					"response": []
 				},
 				{
-					"name": "Set Alert Recipients (Step 2)",
+					"name": "Set Alert Queries (Step 2)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"alertQueries\": [{\n    \"query\": \"here dods\",\n    \"informationTypes\": \"infoTypes\",\n    \"contentSources\": \"Source\"\n  }\n],\n  \"updatedBy\": \"6c16a036-2439-4b78-bf29-8069f4cd6c0b\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts/3105794f-cfb6-488a-9eba-260d5c6db430/queries",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts",
+								"3105794f-cfb6-488a-9eba-260d5c6db430",
+								"queries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Alert Recipients (Step 3)",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1646,7 +1728,7 @@
 					"response": []
 				},
 				{
-					"name": "Schedule Alert (Step 3)",
+					"name": "Schedule Alert (Step 4)",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1696,6 +1778,85 @@
 					"response": []
 				},
 				{
+					"name": "Rename Alert",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"New title\",\r\n    \"updatedBy\": \"6c16a036-2439-4b78-bf29-8069f4cd6c0b\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/350b159c-6e43-11ec-90d6-0242ac120003/alerts/59648fe0-534b-4b3b-9214-6bf57b0cdd56",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"350b159c-6e43-11ec-90d6-0242ac120003",
+								"alerts",
+								"59648fe0-534b-4b3b-9214-6bf57b0cdd56"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Alert",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/350b159c-6e43-11ec-90d6-0242ac120003/alerts/59648fe0-534b-4b3b-9214-6bf57b0cdd56",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"350b159c-6e43-11ec-90d6-0242ac120003",
+								"alerts",
+								"59648fe0-534b-4b3b-9214-6bf57b0cdd56"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Copy Alert To Collection",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"destinationCollectionId\": \"5c5cb4e5-5f60-47bd-b557-ed343d41d228\",\r\n  \"createdBy\": \"18a817f8-00cd-4159-a797-6b0321040379\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/350b159c-6e43-11ec-90d6-0242ac120003/alerts/59648fe0-534b-4b3b-9214-6bf57b0cdd56/copyTo",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"350b159c-6e43-11ec-90d6-0242ac120003",
+								"alerts",
+								"59648fe0-534b-4b3b-9214-6bf57b0cdd56",
+								"copyTo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Alert Queries",
 					"request": {
 						"method": "GET",
@@ -1717,13 +1878,13 @@
 					"response": []
 				},
 				{
-					"name": "Copy Alert",
+					"name": "Create Alert Query",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"destinationCollectionId\": \"c82a90b8-94a8-4cb5-a9c7-d669b858d339\",\n  \"createdBy\": \"b310c3d3-d72d-4a7e-b7b4-2bc8a1066354\"\n}",
+							"raw": "{\r\n  \"informationTypes\": \"test1\",\r\n  \"contentSources\": \"test1\",\r\n  \"query\": \"test1\",\r\n  \"createdBy\": \"18a817f8-00cd-4159-a797-6b0321040379\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1731,7 +1892,195 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/collections/d33f7495-f597-40c9-8cad-26fe81e7cdb6/alerts/9ed7d965-2847-440e-8afc-87b2851871f5/copyto",
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts/3105794f-cfb6-488a-9eba-260d5c6db430/queries",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts",
+								"3105794f-cfb6-488a-9eba-260d5c6db430",
+								"queries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Alert Query",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"contentSources\": \"Updated Endpoint content\",\r\n  \"informationTypes\": \"infoTypes update test\",\r\n  \"query\": \"Test query update\",\r\n  \"updatedBy\": \"6c16a036-2439-4b78-bf29-8069f4cd6c0b\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts/3105794f-cfb6-488a-9eba-260d5c6db430/queries/7fd6c3a1-a57e-415b-8b8f-e0965145480b",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts",
+								"3105794f-cfb6-488a-9eba-260d5c6db430",
+								"queries",
+								"7fd6c3a1-a57e-415b-8b8f-e0965145480b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Alert Query",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts/3105794f-cfb6-488a-9eba-260d5c6db430/queries/7fd6c3a1-a57e-415b-8b8f-e0965145480b",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts",
+								"3105794f-cfb6-488a-9eba-260d5c6db430",
+								"queries",
+								"7fd6c3a1-a57e-415b-8b8f-e0965145480b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate Alert Query",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"destinationAlertId\": \"e10d0824-bae1-48a9-88bc-f8be0f64c74f\",\r\n  \"createdBy\": \"6c16a036-2439-4b78-bf29-8069f4cd6c0b\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts/3105794f-cfb6-488a-9eba-260d5c6db430/queries/7fd6c3a1-a57e-415b-8b8f-e0965145480b/copyTo",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts",
+								"3105794f-cfb6-488a-9eba-260d5c6db430",
+								"queries",
+								"7fd6c3a1-a57e-415b-8b8f-e0965145480b",
+								"copyTo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Recipient from Alert",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"18a817f8-00cd-4159-a797-6b0321040379\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts/3105794f-cfb6-488a-9eba-260d5c6db430/recipients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts",
+								"3105794f-cfb6-488a-9eba-260d5c6db430",
+								"recipients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Recipients by Alert",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/collections/5c5cb4e5-5f60-47bd-b557-ed343d41d228/alerts/3105794f-cfb6-488a-9eba-260d5c6db430/recipients?limit=30&offset=0&sortBy=firstName&sortDirection=ASC&searchTerm=Diego",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"collections",
+								"5c5cb4e5-5f60-47bd-b557-ed343d41d228",
+								"alerts",
+								"3105794f-cfb6-488a-9eba-260d5c6db430",
+								"recipients"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "sortBy",
+									"value": "firstName"
+								},
+								{
+									"key": "sortDirection",
+									"value": "ASC"
+								},
+								{
+									"key": "searchTerm",
+									"value": "Diego"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Recipient",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"isActive\": true,\n  \"updatedBy\": \"b310c3d3-d72d-4a7e-b7b4-2bc8a1066354\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/collections/d33f7495-f597-40c9-8cad-26fe81e7cdb6/alerts/59648fe0-534b-4b3b-9214-6bf57b0cdd56/recipients/6c16a036-2439-4b78-bf29-8069f4cd6c0b",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -1739,28 +2088,9 @@
 								"collections",
 								"d33f7495-f597-40c9-8cad-26fe81e7cdb6",
 								"alerts",
-								"9ed7d965-2847-440e-8afc-87b2851871f5",
-								"copyto"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Alert",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/collections/86cc34ae-47db-407c-b18d-bccfbd600e11/alerts/e5f80c12-65ba-4157-8672-19c7d832e05a",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"collections",
-								"86cc34ae-47db-407c-b18d-bccfbd600e11",
-								"alerts",
-								"e5f80c12-65ba-4157-8672-19c7d832e05a"
+								"59648fe0-534b-4b3b-9214-6bf57b0cdd56",
+								"recipients",
+								"6c16a036-2439-4b78-bf29-8069f4cd6c0b"
 							]
 						}
 					},
@@ -1793,6 +2123,194 @@
 							"path": [
 								"email"
 							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search Services",
+			"item": [
+				{
+					"name": "Search Content",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\": {\r\n        \"basicFilters\":[{\"key\":\"contentSource\",\"value\":\"House of Lords\"}]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/search/contents/query",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"search",
+								"contents",
+								"query"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Schedule Service",
+			"item": [
+				{
+					"name": "Create Schedule",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"005d2eda-72bb-11ec-90d6-0242ac120002\",\n    \"type\":\"publish\",\n    \"cron\":\"0 0 13 24 DEC ? 2023\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev/scheduler",
+							"protocol": "https",
+							"host": [
+								"hxyqgu6qy7",
+								"execute-api",
+								"eu-west-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"scheduler"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Schedule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev/scheduler/005d2eda-72bb-11ec-90d6-0242ac120003",
+							"protocol": "https",
+							"host": [
+								"hxyqgu6qy7",
+								"execute-api",
+								"eu-west-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"scheduler",
+								"005d2eda-72bb-11ec-90d6-0242ac120003"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate Schedule",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev/scheduler/130fa1fa-72e0-11ec-90d6-0242ac120003/deactivate",
+							"protocol": "https",
+							"host": [
+								"hxyqgu6qy7",
+								"execute-api",
+								"eu-west-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"scheduler",
+								"130fa1fa-72e0-11ec-90d6-0242ac120003",
+								"deactivate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ActivateSchedule",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev/scheduler/005d2eda-72bb-11ec-90d6-0242ac120003/activate",
+							"protocol": "https",
+							"host": [
+								"hxyqgu6qy7",
+								"execute-api",
+								"eu-west-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"scheduler",
+								"005d2eda-72bb-11ec-90d6-0242ac120003",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Schedule",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"cron\":\"0 0 13 24 DEC ? 2022\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev/scheduler/130fa1fa-72e0-11ec-90d6-0242ac120003",
+							"protocol": "https",
+							"host": [
+								"hxyqgu6qy7",
+								"execute-api",
+								"eu-west-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"scheduler",
+								"130fa1fa-72e0-11ec-90d6-0242ac120003"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Schedule",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
 						}
 					},
 					"response": []
