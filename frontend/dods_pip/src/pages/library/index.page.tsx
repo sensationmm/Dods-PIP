@@ -705,11 +705,10 @@ export const Library: React.FC<LibraryProps> = ({
                               return (
                                 <Chips
                                   key={`chip-${i}-${term.termLabel}`}
-                                  label={
-                                    selectedIndex > -1 ? `* ${term.termLabel} *` : term.termLabel
-                                  }
+                                  label={term.termLabel}
                                   chipsSize={'dense'}
-                                  bold={false}
+                                  theme={selectedIndex > -1 ? 'light' : 'dark'}
+                                  bold={selectedIndex > -1 ? true : false}
                                 />
                               );
                             })}
