@@ -397,13 +397,13 @@ export const noResults = styled.div`
   margin: 0 auto auto;
   flex: 4;
   display: flex;
+  // using the border method below because standard css dashed border doesn't match Figma design
+  // https://kovart.github.io/dashed-border-generator/
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23C7C7C7' stroke-width='3' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
   padding: ${spacing(17)};
   align-items: center;
   justify-content: center;
-  max-width: 100%;
   overflow: hidden;
-  text-overflow: ellipsis;
   ${Icon} {
     margin-left: 0;
     min-width: 30px;
@@ -420,17 +420,15 @@ export const noResults = styled.div`
     margin: 0;
     color: ${color.base.greyDark};
     max-width: 100%;
-    overflow: hidden;
-    h2 {
-      display: flex;
-      flex: 1;
-      min-width: 0;
-      h2 {
-        margin-left: ${spacing(2)};
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+    white-space: nowrap;
+    span {
+      margin-left: ${spacing(2)};
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: ${color.theme.blue};
+      display: block;
     }
   }
   p {

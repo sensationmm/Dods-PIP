@@ -645,10 +645,7 @@ export const Library: React.FC<LibraryProps> = ({
                 <Icon src={Icons.Search} size={IconSize.xxlarge} color={color.base.greyDark} />
                 <div>
                   <Text color={color.base.greyDark} type={'h2'} headingStyle={'titleLarge'}>
-                    No results for{' '}
-                    <Text type={'h2'} color={color.theme.blue} headingStyle={'titleLarge'}>
-                      {searchText}
-                    </Text>
+                    No results for <span>{searchText}</span>
                   </Text>
                   <p>Try checking your spelling or adjusting the filters</p>
                 </div>
