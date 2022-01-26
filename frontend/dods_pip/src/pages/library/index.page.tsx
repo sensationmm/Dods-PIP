@@ -305,6 +305,8 @@ interface LibraryProps {
   apiErrorMessage?: string;
 }
 
+const DEFAULT_RESULT_SIZE = 20;
+
 export const Library: React.FC<LibraryProps> = ({
   results,
   total,
@@ -324,25 +326,18 @@ export const Library: React.FC<LibraryProps> = ({
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
   const [offset, setOffset] = useState(0);
   const [filtersVisible, setFiltersVisible] = useState<boolean>(true);
-  const [resultsSize, setResultsSize] = useState<number>(20);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
+  const resultSize = parsedQuery.resultsSize || DEFAULT_RESULT_SIZE;
+
   const prevPageDisabled: boolean = offset === 0;
-  const nextPageDisabled: boolean = offset + resultsSize > total;
+  const nextPageDisabled: boolean = offset + resultSize > total;
 
   useEffect(() => {
     if (apiErrorMessage) {
       console.error(apiErrorMessage);
     }
   }, [apiErrorMessage]);
-
-  const currentSearch: QueryObject = useMemo(() => {
-    if (typeof router.query.search === 'string') {
-      return JSON.parse(router.query.search || '{}') || {};
-    }
-
-    return {};
-  }, [router.query]);
 
   const pagesOpts: SelectItem[] = useMemo(() => {
     if (total > 0) {
@@ -352,7 +347,7 @@ export const Library: React.FC<LibraryProps> = ({
       });
     }
     return [{ label: '1', value: '1' }];
-  }, [total, resultsSize]);
+  }, [total, resultSize]);
 
   const setKeywordQuery = (searchTerm: string) => {
     setOffset(0);
@@ -371,7 +366,7 @@ export const Library: React.FC<LibraryProps> = ({
     setOffset(0);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { dateRange, ...rest } = currentSearch; // Remove dateRage
+    const { dateRange, ...rest } = parsedQuery; // Remove dateRage
 
     let newQuery: QueryObject = rest;
 
@@ -392,7 +387,7 @@ export const Library: React.FC<LibraryProps> = ({
   const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
     setOffset(0);
 
-    const { nestedFilters = [] } = currentSearch;
+    const { nestedFilters = [] } = parsedQuery;
 
     const selectedIndex = nestedFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
@@ -408,7 +403,7 @@ export const Library: React.FC<LibraryProps> = ({
       newNestedFilters = [...nestedFilters, { path, key, value }];
     }
 
-    const newQuery = { ...currentSearch, nestedFilters: newNestedFilters };
+    const newQuery = { ...parsedQuery, nestedFilters: newNestedFilters };
 
     router.push(
       {
@@ -423,7 +418,7 @@ export const Library: React.FC<LibraryProps> = ({
   const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
     setOffset(0);
 
-    const { basicFilters = [] } = currentSearch;
+    const { basicFilters = [] } = parsedQuery;
     const selectedIndex = basicFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
     );
@@ -436,7 +431,7 @@ export const Library: React.FC<LibraryProps> = ({
       newBasicFilters = [...basicFilters, { key, value }]; // add
     }
 
-    const newQuery = { ...currentSearch, basicFilters: newBasicFilters };
+    const newQuery = { ...parsedQuery, basicFilters: newBasicFilters };
 
     router.push(
       {
@@ -455,7 +450,7 @@ export const Library: React.FC<LibraryProps> = ({
       return !queries.find(({ key }) => value === key);
     });
 
-    const newQuery = { ...currentSearch, basicFilters: newBasicFilters };
+    const newQuery = { ...parsedQuery, basicFilters: newBasicFilters };
 
     router.push(
       {
@@ -474,7 +469,7 @@ export const Library: React.FC<LibraryProps> = ({
       return !queries.find(({ key }) => value === key);
     });
 
-    const newQuery = { ...currentSearch, nestedFilters: newNestedFilters };
+    const newQuery = { ...parsedQuery, nestedFilters: newNestedFilters };
 
     router.push(
       {
@@ -487,12 +482,12 @@ export const Library: React.FC<LibraryProps> = ({
   };
 
   const setPerPageCount = (resultsSize: number) => {
-    const newQuery = { ...currentSearch, resultsSize };
+    const newQuery = { ...parsedQuery, resultsSize };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -500,12 +495,12 @@ export const Library: React.FC<LibraryProps> = ({
   };
 
   const setOffsetQuery = (offset: number) => {
-    const newQuery = { ...currentSearch, offset };
+    const newQuery = { ...parsedQuery, offset };
 
     router.push(
       {
         pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery) },
       },
       undefined,
       { scroll: false },
@@ -582,7 +577,6 @@ export const Library: React.FC<LibraryProps> = ({
 
   const onPerPageChange = (value: string) => {
     const newResultSize = parseInt(value);
-    setResultsSize(newResultSize);
     setPerPageCount(newResultSize);
   };
 
@@ -633,7 +627,7 @@ export const Library: React.FC<LibraryProps> = ({
                 <span>Items per page</span>
                 <Select
                   id={'itemPerPage'}
-                  value={resultsSize.toString()}
+                  value={resultSize.toString()}
                   size={'small'}
                   isFilter={true}
                   onChange={onPerPageChange}
@@ -741,72 +735,72 @@ export const Library: React.FC<LibraryProps> = ({
                   );
                 })}
 
-                {results.length !== 0 && (
-                  <Styled.pagination>
-                    <span>
-                      Total <b>{total.toLocaleString('en-US')}</b> Items
-                    </span>
-                    <Styled.paginationControls>
-                      <button
-                        className={'prevPageArrow'}
-                        disabled={prevPageDisabled}
-                        onClick={() => {
-                          if (offset !== 0) {
-                            const newOffset = offset - resultsSize;
-                            setOffset(newOffset);
-                            setOffsetQuery(newOffset);
-                          }
-                        }}
-                      >
-                        <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
-                      </button>
-                      <span>Viewing page</span>
-                      <Select
-                        id={'pageSelect'}
-                        value={currentPage.toString()}
-                        size={'small'}
-                        isFilter={true}
-                        onChange={(value) => {
-                          const nextPage = parseInt(value);
-                          setCurrentPage(nextPage);
-                          const newOffset = (nextPage - 1) * resultsSize;
+              {results.length !== 0 && (
+                <Styled.pagination>
+                  <span>
+                    Total <b>{total.toLocaleString('en-US')}</b> Items
+                  </span>
+                  <Styled.paginationControls>
+                    <button
+                      className={'prevPageArrow'}
+                      disabled={prevPageDisabled}
+                      onClick={() => {
+                        if (offset !== 0) {
+                          const newOffset = offset - resultSize;
                           setOffset(newOffset);
                           setOffsetQuery(newOffset);
-                        }}
-                        options={pagesOpts}
-                      />
-                      <span>
-                        of
-                        <b>{Math.round(total / resultsSize)}</b>
-                      </span>
-                      <button
-                        className={'nextPageArrow'}
-                        disabled={nextPageDisabled}
-                        onClick={() => {
-                          if (offset < total) {
-                            const newOffset = offset + resultsSize;
-                            setOffset(newOffset);
-                            setOffsetQuery(newOffset);
-                          }
-                        }}
-                      >
-                        <Icon src={Icons.ChevronRightBold} />
-                      </button>
-                    </Styled.paginationControls>
-                    <Styled.perPageSelect>
-                      <span>Items per page</span>
-                      <Select
-                        id={'itemPerPage'}
-                        value={resultsSize.toString()}
-                        size={'small'}
-                        isFilter={true}
-                        onChange={onPerPageChange}
-                        options={recordsPerPage}
-                      />
-                    </Styled.perPageSelect>
-                  </Styled.pagination>
-                )}
-              </Styled.resultsContent>
+                        }
+                      }}
+                    >
+                      <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
+                    </button>
+                    <span>Viewing page</span>
+                    <Select
+                      id={'pageSelect'}
+                      value={currentPage.toString()}
+                      size={'small'}
+                      isFilter={true}
+                      onChange={(value) => {
+                        const nextPage = parseInt(value);
+                        setCurrentPage(nextPage);
+                        const newOffset = (nextPage - 1) * resultSize;
+                        setOffset(newOffset);
+                        setOffsetQuery(newOffset);
+                      }}
+                      options={pagesOpts}
+                    />
+                    <span>
+                      of
+                      <b>{Math.round(total / resultSize)}</b>
+                    </span>
+                    <button
+                      className={'nextPageArrow'}
+                      disabled={nextPageDisabled}
+                      onClick={() => {
+                        if (offset < total) {
+                          const newOffset = offset + resultSize;
+                          setOffset(newOffset);
+                          setOffsetQuery(newOffset);
+                        }
+                      }}
+                    >
+                      <Icon src={Icons.ChevronRightBold} />
+                    </button>
+                  </Styled.paginationControls>
+                  <Styled.perPageSelect>
+                    <span>Items per page</span>
+                    <Select
+                      id={'itemPerPage'}
+                      value={resultSize.toString()}
+                      size={'small'}
+                      isFilter={true}
+                      onChange={onPerPageChange}
+                      options={recordsPerPage}
+                    />
+                  </Styled.perPageSelect>
+                </Styled.pagination>
+              )}
+            </Styled.resultsContent>
             )}
             {filtersVisible && (
               <FacetContainer heading={'Filters'}>
