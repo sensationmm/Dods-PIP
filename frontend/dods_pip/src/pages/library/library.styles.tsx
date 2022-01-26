@@ -2,6 +2,7 @@ import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
 import { dropdownItem, select } from '@dods-ui/components/_form/Select/Select.styles';
 import { panel } from '@dods-ui/components/_layout/Panel/Panel.styles';
 import { Icon } from '@dods-ui/components/Icon/Icon.styles';
+import { heading } from '@dods-ui/components/Text/Text.styles';
 import media from '@dods-ui/globals/media';
 import styled from 'styled-components';
 
@@ -299,7 +300,6 @@ export const readMore = styled.a`
   font-family: 'Open Sans Bold', sans-serif;
   font-weight: bold;
   font-size: 12px;
-  display: flex;
   align-items: center;
   text-align: center;
   letter-spacing: 1px;
@@ -390,5 +390,54 @@ export const paginationControls = styled.div`
   }
   b {
     margin: 0 ${spacing(7)} 0 ${spacing(2)};
+  }
+`;
+
+export const noResults = styled.div`
+  margin: 0 auto auto;
+  flex: 4;
+  display: flex;
+  // using the border method below because standard css dashed border doesn't match Figma design
+  // https://kovart.github.io/dashed-border-generator/
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23C7C7C7' stroke-width='3' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  padding: ${spacing(17)};
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  ${Icon} {
+    margin-left: 0;
+    min-width: 30px;
+    min-height: 32px;
+  }
+  div {
+    margin-left: ${spacing(6)};
+    max-width: 100%;
+    overflow: hidden;
+  }
+  ${heading} {
+    font-size: ${spacing(8)};
+    line-height: ${spacing(10)};
+    margin: 0;
+    color: ${color.base.greyDark};
+    max-width: 100%;
+    white-space: nowrap;
+    span {
+      margin-left: ${spacing(2)};
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: ${color.theme.blue};
+      display: block;
+    }
+  }
+  p {
+    margin: ${spacing(1)} 0 0;
+    color: ${color.base.greyDark};
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: ${spacing(6)};
   }
 `;
