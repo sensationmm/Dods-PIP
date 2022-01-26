@@ -27,6 +27,7 @@ export const wrapper = styled.div.attrs(({ size }: { size: boxSizing }) => {
   padding: ${(props) => (props.size === 'extraSmall' ? spacing(4) : spacing(10))};
   position: relative;
   display: flex;
+  flex-direction: column;
 
   @media (min-width: 1024px) {
     padding: ${(props) => (props.size === 'extraSmall' ? spacing(4) : props.paddingDesktop)};
