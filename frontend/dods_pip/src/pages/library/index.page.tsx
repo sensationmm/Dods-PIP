@@ -347,10 +347,9 @@ export const Library: React.FC<LibraryProps> = ({
   const pagesOpts: SelectItem[] = useMemo(() => {
     if (total > 0) {
       const pageTotal = Math.round(total / resultsSize);
-      const pageOs = Array.from(Array(pageTotal).keys()).map((i) => {
+      return Array.from(Array(pageTotal).keys()).map((i) => {
         return { label: (i + 1).toString(), value: (i + 1).toString() };
       });
-      return pageOs;
     }
     return [{ label: '1', value: '1' }];
   }, [total, resultsSize]);
@@ -646,156 +645,169 @@ export const Library: React.FC<LibraryProps> = ({
           <Spacer size={8} />
 
           <Styled.contentWrapper>
-            <Styled.resultsContent>
-              {results?.map((item: { _source: ISourceData }, i: number) => {
-                const {
-                  documentTitle,
-                  documentContent,
-                  contentDateTime,
-                  organisationName,
-                  informationType,
-                  taxonomyTerms,
-                  documentId,
-                } = item._source;
-                const formattedTime =
-                  contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' hh:mm");
+            {results.length === 0 && (
+              <Styled.noResults>
+                <Icon src={Icons.Search} size={IconSize.xxlarge} color={color.base.greyDark} />
+                <div>
+                  <h2>
+                    No results for <span>{currentSearch.searchTerm}</span>
+                  </h2>
+                  <p>Try checking your spelling or adjusting the filters</p>
+                </div>
+              </Styled.noResults>
+            )}
+            {results.length > 0 && (
+              <Styled.resultsContent>
+                {results?.map((item: { _source: ISourceData }, i: number) => {
+                  const {
+                    documentTitle,
+                    documentContent,
+                    contentDateTime,
+                    organisationName,
+                    informationType,
+                    taxonomyTerms,
+                    documentId,
+                  } = item._source;
+                  const formattedTime =
+                    contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' hh:mm");
 
-                return (
-                  <Styled.searchResult key={`search-result${i}`}>
-                    <Box size={'extraSmall'}>
-                      <Styled.boxContent>
-                        <Styled.topRow>
-                          <Styled.imageContainer />
-                          <Styled.searchResultHeader>
-                            <Styled.searchResultHeading>
-                              <h2>{documentTitle}</h2>
-                              <Styled.date className={'mobileOnly'}>{formattedTime}</Styled.date>
-                              <Styled.contentSource>
+                  return (
+                    <Styled.searchResult key={`search-result${i}`}>
+                      <Box size={'extraSmall'}>
+                        <Styled.boxContent>
+                          <Styled.topRow>
+                            <Styled.imageContainer />
+                            <Styled.searchResultHeader>
+                              <Styled.searchResultHeading>
+                                <h2>{documentTitle}</h2>
+                                <Styled.date className={'mobileOnly'}>{formattedTime}</Styled.date>
+                                <Styled.contentSource>
+                                  <Icon
+                                    src={Icons.Document}
+                                    size={IconSize.medium}
+                                    color={color.theme.blue}
+                                  />
+                                  <Styled.contentSourceText>
+                                    {informationType} / {organisationName}
+                                  </Styled.contentSourceText>
+                                </Styled.contentSource>
+                              </Styled.searchResultHeading>
+                            </Styled.searchResultHeader>
+                            <Styled.date>{formattedTime}</Styled.date>
+                          </Styled.topRow>
+                          {documentContent && (
+                            <Styled.contentPreview>
+                              <div dangerouslySetInnerHTML={{ __html: documentContent }} />
+                            </Styled.contentPreview>
+                          )}
+                          <Styled.bottomRow>
+                            <Styled.tagsWrapper>
+                              {taxonomyTerms?.map((term, i) => {
+                                if (i > 5) {
+                                  return;
+                                }
+
+                                const selectedIndex =
+                                  parsedQuery?.nestedFilters?.findIndex(
+                                    ({ value, path }) =>
+                                      path === 'taxonomyTerms' && value === term.termLabel,
+                                  ) ?? -1;
+
+                                return (
+                                  <Chips
+                                    key={`chip-${i}-${term.termLabel}`}
+                                    label={term.termLabel}
+                                    chipsSize={'dense'}
+                                    theme={selectedIndex > -1 ? 'light' : 'dark'}
+                                    bold={selectedIndex > -1}
+                                  />
+                                );
+                              })}
+                            </Styled.tagsWrapper>
+                            <Link href={`/library/document/${documentId}`} passHref>
+                              <Styled.readMore>
+                                <span>Read more</span>
                                 <Icon
-                                  src={Icons.Document}
-                                  size={IconSize.medium}
+                                  src={Icons.ChevronRightBold}
+                                  size={IconSize.small}
                                   color={color.theme.blue}
                                 />
-                                <Styled.contentSourceText>
-                                  {informationType} / {organisationName}
-                                </Styled.contentSourceText>
-                              </Styled.contentSource>
-                            </Styled.searchResultHeading>
-                          </Styled.searchResultHeader>
-                          <Styled.date>{formattedTime}</Styled.date>
-                        </Styled.topRow>
-                        {documentContent && (
-                          <Styled.contentPreview>
-                            <div dangerouslySetInnerHTML={{ __html: documentContent }} />
-                          </Styled.contentPreview>
-                        )}
-                        <Styled.bottomRow>
-                          <Styled.tagsWrapper>
-                            {taxonomyTerms?.map((term, i) => {
-                              if (i > 5) {
-                                return;
-                              }
+                              </Styled.readMore>
+                            </Link>
+                          </Styled.bottomRow>
+                        </Styled.boxContent>
+                      </Box>
+                    </Styled.searchResult>
+                  );
+                })}
 
-                              const selectedIndex =
-                                parsedQuery?.nestedFilters?.findIndex(
-                                  ({ value, path }) =>
-                                    path === 'taxonomyTerms' && value === term.termLabel,
-                                ) ?? -1;
-
-                              return (
-                                <Chips
-                                  key={`chip-${i}-${term.termLabel}`}
-                                  label={term.termLabel}
-                                  chipsSize={'dense'}
-                                  theme={selectedIndex > -1 ? 'light' : 'dark'}
-                                  bold={selectedIndex > -1 ? true : false}
-                                />
-                              );
-                            })}
-                          </Styled.tagsWrapper>
-                          <Link href={`/library/document/${documentId}`} passHref>
-                            <Styled.readMore>
-                              <span>Read more</span>
-                              <Icon
-                                src={Icons.ChevronRightBold}
-                                size={IconSize.small}
-                                color={color.theme.blue}
-                              />
-                            </Styled.readMore>
-                          </Link>
-                        </Styled.bottomRow>
-                      </Styled.boxContent>
-                    </Box>
-                  </Styled.searchResult>
-                );
-              })}
-
-              {results && (
-                <Styled.pagination>
-                  <span>
-                    Total <b>{total.toLocaleString('en-US')}</b> Items
-                  </span>
-                  <Styled.paginationControls>
-                    <button
-                      className={'prevPageArrow'}
-                      disabled={prevPageDisabled}
-                      onClick={() => {
-                        if (offset !== 0) {
-                          const newOffset = offset - resultsSize;
-                          setOffset(newOffset);
-                          setOffsetQuery(newOffset);
-                        }
-                      }}
-                    >
-                      <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
-                    </button>
-                    <span>Viewing page</span>
-                    <Select
-                      id={'pageSelect'}
-                      value={currentPage.toString()}
-                      size={'small'}
-                      isFilter={true}
-                      onChange={(value) => {
-                        const nextPage = parseInt(value);
-                        setCurrentPage(nextPage);
-                        const newOffset = (nextPage - 1) * resultsSize;
-                        setOffset(newOffset);
-                        setOffsetQuery(newOffset);
-                      }}
-                      options={pagesOpts}
-                    />
+                {results.length !== 0 && (
+                  <Styled.pagination>
                     <span>
-                      of
-                      <b>{Math.round(total / resultsSize)}</b>
+                      Total <b>{total.toLocaleString('en-US')}</b> Items
                     </span>
-                    <button
-                      className={'nextPageArrow'}
-                      disabled={nextPageDisabled}
-                      onClick={() => {
-                        if (offset < total) {
-                          const newOffset = offset + resultsSize;
+                    <Styled.paginationControls>
+                      <button
+                        className={'prevPageArrow'}
+                        disabled={prevPageDisabled}
+                        onClick={() => {
+                          if (offset !== 0) {
+                            const newOffset = offset - resultsSize;
+                            setOffset(newOffset);
+                            setOffsetQuery(newOffset);
+                          }
+                        }}
+                      >
+                        <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
+                      </button>
+                      <span>Viewing page</span>
+                      <Select
+                        id={'pageSelect'}
+                        value={currentPage.toString()}
+                        size={'small'}
+                        isFilter={true}
+                        onChange={(value) => {
+                          const nextPage = parseInt(value);
+                          setCurrentPage(nextPage);
+                          const newOffset = (nextPage - 1) * resultsSize;
                           setOffset(newOffset);
                           setOffsetQuery(newOffset);
-                        }
-                      }}
-                    >
-                      <Icon src={Icons.ChevronRightBold} />
-                    </button>
-                  </Styled.paginationControls>
-                  <Styled.perPageSelect>
-                    <span>Items per page</span>
-                    <Select
-                      id={'itemPerPage'}
-                      value={resultsSize.toString()}
-                      size={'small'}
-                      isFilter={true}
-                      onChange={onPerPageChange}
-                      options={recordsPerPage}
-                    />
-                  </Styled.perPageSelect>
-                </Styled.pagination>
-              )}
-            </Styled.resultsContent>
+                        }}
+                        options={pagesOpts}
+                      />
+                      <span>
+                        of
+                        <b>{Math.round(total / resultsSize)}</b>
+                      </span>
+                      <button
+                        className={'nextPageArrow'}
+                        disabled={nextPageDisabled}
+                        onClick={() => {
+                          if (offset < total) {
+                            const newOffset = offset + resultsSize;
+                            setOffset(newOffset);
+                            setOffsetQuery(newOffset);
+                          }
+                        }}
+                      >
+                        <Icon src={Icons.ChevronRightBold} />
+                      </button>
+                    </Styled.paginationControls>
+                    <Styled.perPageSelect>
+                      <span>Items per page</span>
+                      <Select
+                        id={'itemPerPage'}
+                        value={resultsSize.toString()}
+                        size={'small'}
+                        isFilter={true}
+                        onChange={onPerPageChange}
+                        options={recordsPerPage}
+                      />
+                    </Styled.perPageSelect>
+                  </Styled.pagination>
+                )}
+              </Styled.resultsContent>
+            )}
             {filtersVisible && (
               <FacetContainer heading={'Filters'}>
                 <Styled.filtersContent>

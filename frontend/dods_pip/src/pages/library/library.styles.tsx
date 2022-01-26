@@ -299,7 +299,6 @@ export const readMore = styled.a`
   font-family: 'Open Sans Bold', sans-serif;
   font-weight: bold;
   font-size: 12px;
-  display: flex;
   align-items: center;
   text-align: center;
   letter-spacing: 1px;
@@ -390,5 +389,48 @@ export const paginationControls = styled.div`
   }
   b {
     margin: 0 ${spacing(7)} 0 ${spacing(2)};
+  }
+`;
+
+export const noResults = styled.div`
+  margin: 0 auto auto;
+  flex: 4;
+  display: flex;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23C7C7C7' stroke-width='3' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  padding: ${spacing(17)};
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  ${Icon} {
+    margin-left: 0;
+  }
+  div {
+    margin-left: ${spacing(6)};
+    max-width: 100%;
+  }
+  h2 {
+    font-family: 'Libre Baskerville', Georgia, 'Times New Roman', Times, serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: ${spacing(8)};
+    line-height: ${spacing(10)};
+    margin: 0;
+    color: ${color.base.greyDark};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    span {
+      color: ${color.theme.blue};
+    }
+  }
+  p {
+    margin: ${spacing(1)} 0 0;
+    color: ${color.base.greyDark};
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: ${spacing(6)};
   }
 `;
