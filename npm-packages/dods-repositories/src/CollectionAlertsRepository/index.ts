@@ -2,6 +2,7 @@ import {
     AlertByIdOutput,
     AlertOutput,
     AlertQueryResponse,
+    AlertWithQueriesOutput,
     CollectionAlertsPersister,
     CopyAlertParameters,
     CopyAlertResponse,
@@ -14,11 +15,11 @@ import {
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
     SetAlertQueriesParameters,
+    UpdateAlertParameters,
     UpdateAlertQuery,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters,
-    UpdateAlertParameters
+    setAlertScheduleParameters
 } from './domain';
 import {
     AlertDocumentInput,
@@ -584,7 +585,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return await mapAlertQuery(updateQuery, alert);
     }
 
-    async setAlertQueries(parameters: SetAlertQueriesParameters): Promise<AlertOutput> {
+    async setAlertQueries(parameters: SetAlertQueriesParameters): Promise<AlertWithQueriesOutput> {
         const { collectionId, updatedBy, alertId, alertQueries } = parameters;
 
         const alertOwner = await this.collectionModel.findOne({
@@ -636,8 +637,14 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             return CollectionAlertsRepository.defaultInstance.createQuery(createAlertQueryParameters);
         }))
 
+        const createdQueries = await updatedAlert.getAlertQueries({ include: ['createdById', 'updatedById'] });
 
-        return await mapAlert(updatedAlert)
+        return {
+            alert: await mapAlert(updatedAlert),
+            queries: await Promise.all(
+                createdQueries.map((query) => mapAlertQuery(query, updatedAlert))
+            ),
+        }
     }
 
     async updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput> {

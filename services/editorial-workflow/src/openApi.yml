@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
     description: Dods Editorial Workflow API
-    version: '1.0.0'
+    version: "1.0.0"
     title: Editorial Workflow Service API
 paths:
     /editorial-record:
@@ -9,16 +9,16 @@ paths:
             operationId: createEditorialRecord
             summary: Create new Editorial Record
             requestBody:
-                $ref: '#/components/requestBodies/CreateEditorialRecord'
+                $ref: "#/components/requestBodies/CreateEditorialRecord"
             responses:
-                '200':
-                    $ref: '#/components/responses/EditorialRecordResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/EditorialRecordResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
         get:
             summary: List Editorial Records found by search parameters
             parameters:
@@ -75,174 +75,143 @@ paths:
                       format: date
                   required: false
             responses:
-                '200':
-                    $ref: '#/components/responses/EditorialRecordListResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/EditorialRecordListResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
     /editorial-record/{recordId}:
         put:
             summary: Update Editorial Record
             parameters:
-                -   
-                    name: recordId
-                    in: path
-                    required: true
-                    schema:
-                        type: string
-                        format: uuid
-                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                - $ref: "#/components/parameters/recordId"
             requestBody:
-                $ref: '#/components/requestBodies/UpdateEditorialRecord'
+                $ref: "#/components/requestBodies/UpdateEditorialRecord"
             responses:
-                '200':
-                    $ref: '#/components/responses/EditorialRecordResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/EditorialRecordResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
         get:
             summary: Get Editorial Record by UUID
             parameters:
-                -   
-                    name: recordId
-                    in: path
-                    required: true
-                    schema:
-                        type: string
-                        format: uuid
-                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                - $ref: "#/components/parameters/recordId"
             responses:
-                '200':
-                    $ref: '#/components/responses/EditorialRecordResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/EditorialRecordResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
+        delete:
+            operationId: archiveEditorialRecord
+            summary: "Archive Editorial Record"
+            description: "Archive Editorial Record"
+            parameters:
+                - $ref: "#/components/parameters/recordId"
+            responses:
+                "200":
+                  description: OK
+                "404":
+                  $ref: "#/components/responses/NotFound"
     /editorial-record/{recordId}/lock:
         put:
             summary: Update Editorial Record
             parameters:
-                -   
-                    name: recordId
-                    in: path
-                    required: true
-                    schema:
-                        type: string
-                        format: uuid
-                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                - $ref: "#/components/parameters/recordId"
             requestBody:
-                $ref: '#/components/requestBodies/LockEditorialRecord'
+                $ref: "#/components/requestBodies/LockEditorialRecord"
             responses:
-                '200':
-                    $ref: '#/components/responses/EditorialRecordResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/EditorialRecordResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
     /content-sources:
         get:
             summary: List content sources based upon data in Editorial Records table
             responses:
-                '200':
-                    $ref: '#/components/responses/ContentSourcesListResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/ContentSourcesListResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
     /information-types:
         get:
             summary: List information types based upon data in Editorial Records table
             responses:
-                '200':
-                    $ref: '#/components/responses/InformationTypesListResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/InformationTypesListResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
     /editorial-record-status:
         get:
             summary: List of status based upon data in Editorial Records Statuses table
             responses:
-                '200':
-                    $ref: '#/components/responses/EditorialRecordStatusListResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/EditorialRecordStatusListResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
     /editorial-record/{recordId}/publish:
         post:
             summary: Publish Editorial Record
             parameters:
-                -   
-                    name: recordId
-                    in: path
-                    required: true
-                    schema:
-                        type: string
-                        format: uuid
-                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                - $ref: "#/components/parameters/recordId"
             requestBody:
-                $ref: '#/components/requestBodies/LockEditorialRecord'
+                $ref: "#/components/requestBodies/LockEditorialRecord"
             responses:
-                '200':
-                    $ref: '#/components/responses/EditorialRecordResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
-                    
+                "200":
+                    $ref: "#/components/responses/EditorialRecordResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
+
     /editorial-record/{recordId}/document:
         put:
             summary: Update Editorial Record Document
             parameters:
-                -   
-                    name: recordId
-                    in: path
-                    required: true
-                    schema:
-                        type: string
-                        format: uuid
-                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                - $ref: "#/components/parameters/recordId"
             requestBody:
-                $ref: '#/components/requestBodies/UpdateEditorialRecordDocument'
+                $ref: "#/components/requestBodies/UpdateEditorialRecordDocument"
             responses:
-                '200':
-                    $ref: '#/components/responses/EditorialRecordResponse'
-                '400':
-                    $ref: '#/components/responses/BadRequest'
-                '401':
-                    $ref: '#/components/responses/Unauthenticated'
-                '403':
-                    $ref: '#/components/responses/Unauthorized'
+                "200":
+                    $ref: "#/components/responses/EditorialRecordResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthenticated"
+                "403":
+                    $ref: "#/components/responses/Unauthorized"
         get:
             summary: Get document from editorial record
             parameters:
-                -   
-                    name: recordId
-                    in: path
-                    required: true
-                    schema:
-                        type: string
-                        format: uuid
-                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+                - $ref: "#/components/parameters/recordId"
             responses:
                 '200':
                     $ref: '#/components/responses/getEditorialRecordDocumentResponse'
@@ -278,13 +247,22 @@ paths:
                     $ref: '#/components/responses/Unauthorized'
 
 components:
+    parameters:
+        recordId:
+            in: path
+            name: recordId
+            schema:
+                type: string
+                format: uuid
+            required: true
+            example: d290f1ss-6c54-4b01-98e6-d701748f7151
     responses:
         ContentSourcesListResponse:
             description: Content sources in editorial records
-            content: 
+            content:
                 application/json:
                     schema:
-                        type: 'object'
+                        type: "object"
                         required:
                             - success
                             - contentSources
@@ -295,13 +273,13 @@ components:
                             contentSources:
                                 type: array
                                 items:
-                                    $ref: '#/components/schemas/ContentSourcesListResponse'
+                                    $ref: "#/components/schemas/ContentSourcesListResponse"
         InformationTypesListResponse:
             description: Information types in editorial records
-            content: 
+            content:
                 application/json:
                     schema:
-                        type: 'object'
+                        type: "object"
                         required:
                             - success
                             - informationTypes
@@ -312,20 +290,20 @@ components:
                             informationTypes:
                                 type: array
                                 items:
-                                    $ref: '#/components/schemas/InformationTypesListResponse'
+                                    $ref: "#/components/schemas/InformationTypesListResponse"
         EditorialRecordResponse:
             description: Response with single Editorial Record
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/EditorialRecordResponse'
+                        $ref: "#/components/schemas/EditorialRecordResponse"
 
         EditorialRecordListResponse:
             description: Editorial Records found with search parameters
             content:
                 application/json:
                     schema:
-                        type: 'object'
+                        type: "object"
                         required:
                             - totalRecords
                             - filteredRecords
@@ -340,13 +318,13 @@ components:
                             results:
                                 type: array
                                 items:
-                                    $ref: '#/components/schemas/EditorialRecordResponse'
+                                    $ref: "#/components/schemas/EditorialRecordResponse"
         EditorialRecordStatusListResponse:
             description: Editorial Records status in editorial records table
             content:
                 application/json:
                     schema:
-                        type: 'object'
+                        type: "object"
                         required:
                             - success
                             - statuses
@@ -357,49 +335,49 @@ components:
                             status:
                                 type: array
                                 items:
-                                    $ref: '#/components/schemas/EditorialRecordStatusResponse'
-                                    
+                                    $ref: "#/components/schemas/EditorialRecordStatusResponse"
+
         getEditorialRecordDocumentResponse:
-            description: Get editorial record document 
+            description: Get editorial record document
             content:
                 application/json:
                     schema:
-                        type: 'object'
+                        type: "object"
                         properties:
                             success:
                                 type: boolean
                                 example: true
-                            message: 
+                            message:
                                 type: string
                                 example: Document found
                             document:
                                 type: object
-                                $ref: '#/components/schemas/Document'
+                                $ref: "#/components/schemas/Document"
 
         BadRequest:
             description: Bad request
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/Error'
+                        $ref: "#/components/schemas/Error"
         Unauthenticated:
             description: Unauthenticated
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/Error'
+                        $ref: "#/components/schemas/Error"
         Unauthorized:
             description: Unauthorized
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/Error'
+                        $ref: "#/components/schemas/Error"
         NotFound:
             description: The specified resource was not found
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/Error'
+                        $ref: "#/components/schemas/Error"
 
     requestBodies:
         CreateEditorialRecord:
@@ -431,7 +409,7 @@ components:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/UpdateEditorialRecordRequest'
+                        $ref: "#/components/schemas/UpdateEditorialRecordRequest"
         LockEditorialRecord:
             description: A JSON object containing Editorial Record information
             required: true
@@ -440,7 +418,7 @@ components:
                     schema:
                         type: object
                         required:
-                          - assignedEditorId
+                            - assignedEditorId
                         properties:
                             assignedEditorId:
                                 type: string
@@ -452,7 +430,7 @@ components:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/Document'
+                        $ref: "#/components/schemas/Document"
 
     schemas:
         Error:
@@ -460,14 +438,14 @@ components:
             properties:
                 code:
                     type: string
-                    example: '4xx'
+                    example: "4xx"
                 message:
                     type: string
                     example: Error message relevant to error
             required:
                 - code
                 - message
-        
+
         EditorialRecordBase:
             type: object
             properties:
@@ -486,8 +464,8 @@ components:
                 scheduledPublishingDate:
                     type: string
                     format: date
-                    example: '2020-09-01 09:30:26'     
-        
+                    example: "2020-09-01 09:30:26"
+
         EditorialRecordStatusBase:
             type: object
             properties:
@@ -498,7 +476,7 @@ components:
                 name:
                     type: string
                     example: In Progress
-        
+
         ContentSourceBase:
             type: object
             properties:
@@ -519,7 +497,7 @@ components:
 
         UpdateEditorialRecordRequest:
             allOf:
-              - $ref: '#/components/schemas/EditorialRecordBase'
+                - $ref: "#/components/schemas/EditorialRecordBase"
             type: object
             properties:
                 assignedEditorId:
@@ -533,7 +511,7 @@ components:
 
         CreateEditorialRecordRequest:
             allOf:
-              - $ref: '#/components/schemas/EditorialRecordBase'
+                - $ref: "#/components/schemas/EditorialRecordBase"
             type: object
             properties:
                 assignedEditorId:
@@ -550,12 +528,12 @@ components:
 
         EditorialRecordResponse:
             allOf:
-              - $ref: '#/components/schemas/EditorialRecordBase'
+                - $ref: "#/components/schemas/EditorialRecordBase"
             type: object
             required:
-              - uuid
+                - uuid
             properties:
-                uuid: 
+                uuid:
                     type: string
                     format: uuid
                     example: d290f1ss-6c54-4b01-98e6-d701748f7151
@@ -582,21 +560,21 @@ components:
                 createdAt:
                     type: string
                     format: date
-                    example: '2020-09-01 09:30:26'
+                    example: "2020-09-01 09:30:26"
                 updatedAt:
                     type: string
                     format: date
-                    example: '2020-09-01 09:30:26'
-        
+                    example: "2020-09-01 09:30:26"
+
         EditorialRecordStatusResponse:
             allOf:
-              - $ref: '#/components/schemas/EditorialRecordStatusBase'
+                - $ref: "#/components/schemas/EditorialRecordStatusBase"
             type: object
             required:
-              - uuid
-              - name
+                - uuid
+                - name
             properties:
-                uuid: 
+                uuid:
                     type: string
                     format: uuid
                     example: d290f1ss-6c54-4b01-98e6-d701748f7151
@@ -606,27 +584,27 @@ components:
 
         ContentSourcesListResponse:
             allOf:
-              - $ref: '#/components/schemas/ContentSourceBase'
+                - $ref: "#/components/schemas/ContentSourceBase"
             type: object
             required:
-              - id
-              - name
+                - id
+                - name
             properties:
-                id: 
+                id:
                     type: string
                 name:
                     type: string
                     example: House of Commons
-        
+
         InformationTypesListResponse:
             allOf:
-              - $ref: '#/components/schemas/InformationTypeBase'
+                - $ref: "#/components/schemas/InformationTypeBase"
             type: object
             required:
-              - id
-              - name
+                - id
+                - name
             properties:
-                id: 
+                id:
                     type: string
                 name:
                     type: string
@@ -665,38 +643,38 @@ components:
             - documentTitle
         
         EditorialDocument:
-          type: object
-          additionalProperties: false
-          properties:
-            contentSource:
-              type: string
-            createdBy:
-              type: string
-            documentContent:
-              type: string
-            documentTitle:
-              type: string
-            informationType:
-              type: string
-            internallyCreated:
-              type: boolean
-            jurisdiction:
-              type: string
-            schemaType:
-              type: string
-            sourceReferenceUri:
-              type: string
-            taxonomyTerms:
-              items:
-                $ref: '#/components/schemas/TaxonomyTerm'
-              type: array
-          required:
-            - documentTitle
-            - createdBy
-            - contentSource
-            - informationType
-            - documentContent
-        
+            type: object
+            additionalProperties: false
+            properties:
+                contentSource:
+                    type: string
+                createdBy:
+                    type: string
+                documentContent:
+                    type: string
+                documentTitle:
+                    type: string
+                informationType:
+                    type: string
+                internallyCreated:
+                    type: boolean
+                jurisdiction:
+                    type: string
+                schemaType:
+                    type: string
+                sourceReferenceUri:
+                    type: string
+                taxonomyTerms:
+                    items:
+                        $ref: "#/components/schemas/TaxonomyTerm"
+                    type: array
+            required:
+                - documentTitle
+                - createdBy
+                - contentSource
+                - informationType
+                - documentContent
+
         TaxonomyTerm:
           type: object
           additionalProperties: false
@@ -732,65 +710,65 @@ components:
               type: string
             
         Document:
-          type: object
-          properties:
-            jurisdiction:
-              type: string
-              example: UK
-            documentTitle:
-              type: string
-              example: New Which? research reveals the most sustainable savings providers
-            organisationName:
-              type: string
-            sourceReferenceFormat:
-              type: string
-              example: text/plain
-            sourceReferenceUri:
-              type: string
-              example: https://press.which.co.uk/whichpressreleases/new-which-research-reveals-the-most-sustainable-savings-providers/
-            createdBy:
-              type: string
-              example: taerekim@gmail.com
-            internallyCreated:
-              type: boolean
-            schemaType:
-              type: string
-              example: External
-            contentSource:
-              type: string
-              example: UK Stakeholder
-            informationType:
-              type: string
-              example: Press Releases
-            contentDateTime:
-              type: string
-              format: date-time
-              example: "2021-08-18T10:29:20.778+01:00"
-            createdDateTime:
-              type: string
-              format: date-time
-              example: "2021-08-18T10:29:51.960+01:00"
-            ingestedDateTime:
-              type: string
-              format: date-time
-              example: "2021-08-18T10:29:51.960+01:00"
-            version:
-              type: string
-              example: "1.0"
-            countryOfOrigin:
-              type: string
-              example: GBR
-            feedFormat:
-              type: string
-              example: text/plain
-            language:
-              type: string
-              example: en
-            taxonomyTerms:
-              items:
-                $ref: '#/components/schemas/TaxonomyTerm'
-              type: array
-            originalContent:
-              type: string
-            documentContent:
-              type: string
+            type: object
+            properties:
+                jurisdiction:
+                    type: string
+                    example: UK
+                documentTitle:
+                    type: string
+                    example: New Which? research reveals the most sustainable savings providers
+                organisationName:
+                    type: string
+                sourceReferenceFormat:
+                    type: string
+                    example: text/plain
+                sourceReferenceUri:
+                    type: string
+                    example: https://press.which.co.uk/whichpressreleases/new-which-research-reveals-the-most-sustainable-savings-providers/
+                createdBy:
+                    type: string
+                    example: taerekim@gmail.com
+                internallyCreated:
+                    type: boolean
+                schemaType:
+                    type: string
+                    example: External
+                contentSource:
+                    type: string
+                    example: UK Stakeholder
+                informationType:
+                    type: string
+                    example: Press Releases
+                contentDateTime:
+                    type: string
+                    format: date-time
+                    example: "2021-08-18T10:29:20.778+01:00"
+                createdDateTime:
+                    type: string
+                    format: date-time
+                    example: "2021-08-18T10:29:51.960+01:00"
+                ingestedDateTime:
+                    type: string
+                    format: date-time
+                    example: "2021-08-18T10:29:51.960+01:00"
+                version:
+                    type: string
+                    example: "1.0"
+                countryOfOrigin:
+                    type: string
+                    example: GBR
+                feedFormat:
+                    type: string
+                    example: text/plain
+                language:
+                    type: string
+                    example: en
+                taxonomyTerms:
+                    items:
+                        $ref: "#/components/schemas/TaxonomyTerm"
+                    type: array
+                originalContent:
+                    type: string
+                documentContent:
+                    type: string

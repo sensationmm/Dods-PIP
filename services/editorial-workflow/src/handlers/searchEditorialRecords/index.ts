@@ -6,4 +6,5 @@ export const handle = buildLambdaFunction(searchEditorialRecords, {
     openApiDocumentPath: config.openApiPath,
     validateRequests: false,
     validateResponses: false,
+    validateSecurity: false,
 });

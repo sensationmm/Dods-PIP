@@ -18,7 +18,6 @@ export const filtersContent = styled.div`
 
 export const contentWrapper = styled.div`
   display: flex;
-  flex-basis: 0;
   ${media.lessThan('sm')`
     flex-direction: column-reverse;
     width: 100%;
@@ -150,24 +149,37 @@ export const bottomRow = styled.div`
   margin-top: ${spacing(3)};
   color: ${color.theme.blue};
   margin-bottom: ${spacing(3)};
-
-  a {
-    position: absolute;
-    bottom: ${spacing(6)};
-    right ${spacing(6)};
-  }
 `;
 
 export const tagsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: ${spacing(1)};
   margin-top: ${spacing(6)};
   color: ${color.theme.blue};
   max-width: 80%;
 
   div {
     margin: 1px;
+  }
+`;
+
+export const tag = styled.span`
+  line-height: 32px;
+  padding: 0 ${spacing(4)};
+  color: ${color.theme.blue};
+  background: ${color.base.white};
+  border: 1px solid ${color.base.greyLight};
+  border-radius: 60px;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.selectedTag {
+    background: ${color.shadow.blue};
+    font-weight: bold;
   }
 `;
 
@@ -230,5 +242,22 @@ export const librarySearchWrapper = styled.div`
     ${media.lessThan('sm')`
       display: none;
     `};
+  }
+`;
+
+export const readMoreLink = styled.a`
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  color: ${color.theme.blue};
+  padding-right: 20px;
+  position: absolute;
+  right: 20px;
+  bottom: 25px;
+
+  > div {
+    position: absolute;
+    right: 0;
+    top: 5px;
   }
 `;

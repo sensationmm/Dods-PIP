@@ -99,6 +99,10 @@ export const modalHeaderTitle = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+
+  > ${Icon} {
+    margin-right: ${spacing(5)};
+  }
 `;
 
 export const titleAside = styled.div`
