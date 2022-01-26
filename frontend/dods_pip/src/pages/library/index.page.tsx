@@ -1,5 +1,6 @@
 import Facet from '@dods-ui/components/_form/Facet';
-import Select from '@dods-ui/components/_form/Select';
+import Select, { SelectItem } from '@dods-ui/components/_form/Select';
+import Toggle from '@dods-ui/components/_form/Toggle';
 import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
@@ -196,6 +197,7 @@ interface QueryObject {
     value: string;
   }[];
   resultsSize?: number;
+  offset?: number;
   dateRange?: IDateRange;
 }
 
@@ -206,7 +208,6 @@ const getPayload = (
 ): { payload?: unknown; parsedQuery?: QueryObject } => {
   let esbQuery = esb.boolQuery();
   let parsedQuery;
-  let resultsSize = 20;
 
   try {
     parsedQuery = typeof query === 'string' ? JSON.parse(query) : {};
@@ -216,9 +217,9 @@ const getPayload = (
       basicFilters = [],
       nestedFilters = [],
       dateRange = {},
+      resultsSize = 20,
+      offset = 0,
     }: QueryObject = parsedQuery;
-
-    resultsSize = parsedQuery.resultsSize;
 
     const phrases = searchTerm.match(/"(.*?)"/g) || []; // Anything in double quotes, e.g "I am a phrase"
     const regex = new RegExp(`${phrases.join('|')}`, 'g');
@@ -265,8 +266,8 @@ const getPayload = (
                   .lte(dateRange.max || format(new Date(), 'yyyy-MM-dd')),
               ),
             )
-            .size(20)
-            .from(resultsSize) as ExtendedRequestBodySearch
+            .size(resultsSize)
+            .from(offset) as ExtendedRequestBodySearch
         )._body,
         aggregations,
       },
@@ -304,6 +305,10 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
   const [offset, setOffset] = useState(0);
   const [filtersVisible, setFiltersVisible] = useState<boolean>(true);
   const [resultsSize, setResultsSize] = useState<number>(20);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const prevPageDisabled: boolean = offset === 0;
+  const nextPageDisabled: boolean = offset + resultsSize > total;
 
   const currentQuery: QueryObject = useMemo(() => {
     if (typeof router.query.query === 'string') {
@@ -312,6 +317,17 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
 
     return {};
   }, [router.query]);
+
+  const pagesOpts: SelectItem[] = useMemo(() => {
+    if (total > 0) {
+      const pageTotal = Math.round(total / resultsSize);
+      const pageOs = Array.from(Array(pageTotal).keys()).map((i) => {
+        return { label: (i + 1).toString(), value: (i + 1).toString() };
+      });
+      return pageOs;
+    }
+    return [{ label: '1', value: '1' }];
+  }, [total, resultsSize]);
 
   const setKeywordQuery = (searchTerm: string) => {
     setOffset(0);
@@ -445,6 +461,32 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
     );
   };
 
+  const setPerPageCount = (resultsSize: number) => {
+    const newQuery = { ...currentQuery, resultsSize };
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
+  const setOffsetQuery = (offset: number) => {
+    const newQuery = { ...currentQuery, offset };
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { query: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
   useEffect(() => {
     const {
       contentSource,
@@ -515,6 +557,12 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
     { label: '50', value: '50' },
   ];
 
+  const onPerPageChange = (value: string) => {
+    const newResultSize = parseInt(value);
+    setResultsSize(newResultSize);
+    setPerPageCount(newResultSize);
+  };
+
   return (
     <Styled.pageLibrary data-test="page-library">
       <Head>
@@ -555,11 +603,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
                   {offset + 1} - {(results.length || 0) + offset}{' '}
                 </span>
                 <Styled.totalRecords>
-                  Total{' '}
-                  <b className={'total'}>
-                    {total.toLocaleString('en-US')}
-                  </b>{' '}
-                  Items
+                  Total <b className={'total'}>{total.toLocaleString('en-US')}</b> Items
                 </Styled.totalRecords>
               </div>
               <Styled.perPageSelect>
@@ -569,9 +613,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
                   value={resultsSize.toString()}
                   size={'small'}
                   isFilter={true}
-                  onChange={(value) => {
-                    setResultsSize(parseInt(value));
-                  }}
+                  onChange={onPerPageChange}
                   options={recordsPerPage}
                 />
               </Styled.perPageSelect>
@@ -680,35 +722,54 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
               {results && (
                 <Styled.pagination>
                   <Styled.totalRecords>
-                    Total <b>{total.toLocaleString('en-US')}</b>
-                    Items
+                    Total <b>{total.toLocaleString('en-US')}</b> Items
                   </Styled.totalRecords>
                   <Styled.paginationControls>
-                    <span className={'pageArrow'}>
+                    <button
+                      className={'prevPageArrow'}
+                      disabled={prevPageDisabled}
+                      onClick={() => {
+                        if (offset !== 0) {
+                          const newOffset = offset - resultsSize;
+                          setOffset(newOffset);
+                          setOffsetQuery(newOffset);
+                        }
+                      }}
+                    >
                       <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
-                    </span>
+                    </button>
                     <span>Viewing page</span>
                     <Select
-                      id={'itemPerPage'}
-                      value={resultsSize.toString()}
+                      id={'pageSelect'}
+                      value={currentPage.toString()}
                       size={'small'}
                       isFilter={true}
                       onChange={(value) => {
-                        setResultsSize(parseInt(value));
+                        const nextPage = parseInt(value);
+                        setCurrentPage(nextPage);
+                        const newOffset = (nextPage - 1) * resultsSize;
+                        setOffset(newOffset);
+                        setOffsetQuery(newOffset);
                       }}
-                      options={[
-                        { label: '10', value: '10' },
-                        { label: '20', value: '20' },
-                        { label: '30', value: '30' },
-                        { label: '40', value: '40' },
-                        { label: '50', value: '50' },
-                      ]}
+                      options={pagesOpts}
                     />
                     <span>
                       of
-                      <b>{Math.round(apiResponse.es_response.hits.total.value / resultsSize)}</b>
+                      <b>{Math.round(total / resultsSize)}</b>
                     </span>
-                    <Icon src={Icons.ChevronRightBold} />
+                    <button
+                      className={'nextPageArrow'}
+                      disabled={nextPageDisabled}
+                      onClick={() => {
+                        if (offset < total) {
+                          const newOffset = offset + resultsSize;
+                          setOffset(newOffset);
+                          setOffsetQuery(newOffset);
+                        }
+                      }}
+                    >
+                      <Icon src={Icons.ChevronRightBold} />
+                    </button>
                   </Styled.paginationControls>
                   <Styled.perPageSelect>
                     <span>Items per page</span>
@@ -717,9 +778,7 @@ export const Library: React.FC<LibraryProps> = ({ results, total, aggregations, 
                       value={resultsSize.toString()}
                       size={'small'}
                       isFilter={true}
-                      onChange={(value) => {
-                        setResultsSize(parseInt(value));
-                      }}
+                      onChange={onPerPageChange}
                       options={recordsPerPage}
                     />
                   </Styled.perPageSelect>

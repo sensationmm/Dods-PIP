@@ -2,7 +2,6 @@ import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
 import { dropdownItem, select } from '@dods-ui/components/_form/Select/Select.styles';
 import { panel } from '@dods-ui/components/_layout/Panel/Panel.styles';
 import { Icon } from '@dods-ui/components/Icon/Icon.styles';
-import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
 import media from '@dods-ui/globals/media';
 import styled from 'styled-components';
 
@@ -18,8 +17,8 @@ import spacing from '../../globals/spacing';
 export const pageLibrary = styled.div`
   @media (max-width: 599px) {
     ${panel} {
-      padding-left: 16px;
-      padding-right: 16px;
+      padding-left: ${spacing(4)};
+      padding-right: ${spacing(4)};
     }
   }
 `;
@@ -84,7 +83,7 @@ export const filtersTag = styled.div`
   justify-content: center;
 
   div {
-    margin: 5px 0;
+    margin: ${spacing(1)} 0;
   }
 `;
 
@@ -95,7 +94,7 @@ export const fade = styled.div`
   display: block;
 
   width: 100%;
-  height: 50px;
+  height: ${spacing(12)};
 
   background-image: linear-gradient(
     to bottom,
@@ -113,7 +112,7 @@ export const contentSource = styled.div`
 
 export const searchResult = styled.div`
   width: 100%;
-  padding-bottom: 16px;
+  padding-bottom: ${spacing(4)};
 
   ${chipsWrapper} {
     font-weight: normal;
@@ -135,13 +134,13 @@ export const searchResultHeading = styled.div`
   align-items: flex-start;
   justify-content: stretch;
   h2 {
-    margin: 0 0 5px;
+    margin: 0 0 ${spacing(1)};
     color: ${color.theme.blue};
     font-weight: 700;
     font-family: 'Open Sans Bold', sans-serif;
     font-style: normal;
     font-size: 18px;
-    line-height: 24px;
+    line-height: ${spacing(6)};
     display: flex;
     align-items: center;
   }
@@ -150,22 +149,22 @@ export const searchResultHeading = styled.div`
 export const contentPreview = styled.div`
   position: relative;
   width: 100%;
-  height: 48px;
+  height: ${spacing(12)};
   overflow: hidden;
   font-family: 'Open Sans', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
-  line-height: 16px;
-  padding: 16px 4px 0;
+  line-height: ${spacing(4)};
+  padding: ${spacing(4)} ${spacing(1)} 0;
   * {
     font-family: 'Open Sans', sans-serif !important;
     font-style: normal !important;
     font-weight: normal !important;
     font-size: 12px !important;
-    line-height: 16px !important;
+    line-height: ${spacing(4)} !important;
     display: inline !important;
-    margin-right: 6px !important;
+    margin-right: ${spacing(1)} !important;
     margin-left: 0 !important;
   }
 `;
@@ -177,7 +176,7 @@ export const contentSourceText = styled.div`
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
-  line-height: 16px;
+  line-height: ${spacing(4)};
 `;
 
 export const boxContent = styled.div`
@@ -188,7 +187,7 @@ export const boxContent = styled.div`
 `;
 
 export const bottomRow = styled.div`
-  padding-top: 16px;
+  padding-top: ${spacing(4)};
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -210,7 +209,7 @@ export const tagsWrapper = styled.div`
   color: ${color.theme.blue};
   max-width: 446px;
   width: 75%;
-  height: 32px;
+  height: ${spacing(8)};
   overflow: hidden;
   align-items: center;
   @media (max-width: 599px) {
@@ -228,10 +227,10 @@ export const date = styled.p`
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
-  line-height: 16px;
+  line-height: ${spacing(4)};
   white-space: nowrap;
-  margin: 6px 0 auto auto;
-  padding-left: 16px;
+  margin: ${spacing(1)} 0 auto auto;
+  padding-left: ${spacing(4)};
   display: flex;
   align-self: flex-end;
 `;
@@ -266,8 +265,8 @@ export const topRow = styled.div`
 
 export const imageContainer = styled.span`
   width: 75px !important;
-  height: 55px;
-  margin-top: 20px;
+  height: ${spacing(13)};
+  margin-top: ${spacing(5)};
 
   img {
     border-radius: 10px;
@@ -276,16 +275,11 @@ export const imageContainer = styled.span`
 
 export const librarySearchWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
   padding-bottom: ${spacing(4)};
   border-bottom: 1px solid ${color.base.greyLight};
-  ${input} {
-    width: 629px;
-    ${media.lessThan('sm')`
-      width: 100%;
-    `};
-  }
   section {
-    width: 908px;
+    width: 629px;
     ${media.lessThan('sm')`
       width: 100%;
     `};
@@ -318,7 +312,7 @@ export const readMore = styled.div`
     font-style: normal;
     font-weight: bold;
     font-size: 12px;
-    line-height: 13px;
+    line-height: ${spacing(3)};
     display: flex;
     align-items: center;
     text-align: center;
@@ -391,8 +385,19 @@ export const perPageSelect = styled.div`
 export const paginationControls = styled.div`
   display: flex;
   align-items: center;
-  .pageArrow {
+  .prevPageArrow {
     margin-right: ${spacing(7)};
+  }
+  .prevPageArrow,
+  .nextPageArrow {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    &:disabled {
+      svg {
+        color: ${color.base.greyMid};
+      }
+    }
   }
   ${select} {
     margin: 0 ${spacing(2)};
