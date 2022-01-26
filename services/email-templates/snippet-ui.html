@@ -1,0 +1,2280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Template: Snippet UI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Open+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Libre Baskerville", Georgia, "Times New Roman", Times,
+          serif;
+        font-weight: 400;
+      }
+
+      html,
+      body,
+      table,
+      tbody,
+      tr,
+      td,
+      div,
+      p,
+      ul,
+      ol,
+      li,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Open Sans", "Segoe UI", Tahoma, sans-serif;
+        background-color: #f8f8f8;
+        color: #222955;
+        margin: 0;
+        padding: 0;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      table {
+        border-spacing: 0;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+
+      table td {
+        border-collapse: collapse;
+      }
+
+      .ExternalClass {
+        width: 100%;
+      }
+
+      .ExternalClass,
+      .ExternalClass p,
+      .ExternalClass span,
+      .ExternalClass font,
+      .ExternalClass td,
+      .ExternalClass div {
+        line-height: 100%;
+      }
+      /* Outermost container in Outlook.com */
+
+      a {
+        color: #124384;
+      }
+
+      img {
+        -ms-interpolation-mode: bicubic;
+      }
+
+      .wrapper {
+        width: 100%;
+        table-layout: fixed;
+        background-color: #f8f8f8;
+      }
+
+      .column {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      @media all and (max-width: 600px) {
+        .btn {
+          width: 100%;
+          margin: 0 0 10px 0;
+        }
+        .content-col-left {
+          margin: 0 0 10px 0;
+          max-width: 100% !important;
+          text-align: center;
+        }
+        .content-col-right {
+          max-width: 100% !important;
+        }
+      }
+
+      @media all and (max-width: 700px) {
+        .section-logo-right {
+          display: none;
+        }
+        .col-info {
+          max-width: 100% !important;
+          padding: 0 0 20px 0;
+        }
+        .col-action {
+          max-width: 100% !important;
+        }
+        .footer-col {
+          max-width: 100% !important;
+          padding: 0 0 20px 0;
+        }
+        .footer-col-first {
+          border-bottom: 1px solid #c7c7c7;
+        }
+        .footer-col-last {
+          border: 0 !important;
+        }
+        .footer-col-right {
+          padding: 20px 0 0 0 !important;
+        }
+      }
+
+      @media all and (max-width: 900px) {
+        .column {
+          max-width: 100% !important;
+        }
+        .column-first {
+          margin: 0 0 20px 0;
+        }
+      }
+
+      @media all and (max-width: 1060px) {
+        .contentContainer {
+          padding: 0 20px 60px !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <center class="wrapper">
+      <table
+        role="presentation"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        width="100%"
+        class="main"
+        style="background-color: #f8f8f8; width: 100%; margin: 0 auto"
+      >
+        <tr>
+          <td>
+            <!--[if gte mso 9]><table width="600" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
+            <table
+              role="presentation"
+              width="100%"
+              style="
+                margin: 0 auto;
+                width: 100%;
+                max-width: 1040px;
+                padding: 0 0 60px 0;
+              "
+              class="contentContainer"
+            >
+              <!-- Logo -->
+              <tr>
+                <td style="padding: 50px 0 45px">
+                  <a name="top"></a>
+                  <img
+                    src="./images/logo.png"
+                    width="146"
+                    height="90"
+                    alt="DODS"
+                  />
+                </td>
+              </tr>
+              <!-- Main Header -->
+              <tr>
+                <td
+                  class="two-columns"
+                  style="padding: 0 0 32px 0"
+                  width="100%"
+                >
+                  <table
+                    role="presentation"
+                    width="64"
+                    style="
+                      border-collapse: separate;
+                      width: 100%;
+                      max-width: 75px;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      text-align: center;
+                    "
+                    class="column"
+                  >
+                    <tr>
+                      <td
+                        style="
+                          background: #ffffff;
+                          border-radius: 8px;
+                          box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                          padding: 14px;
+                        "
+                      >
+                        <!-- Headline icon if it changes -->
+                        <img src="./images/icon-document.png" alt="" />
+                      </td>
+                    </tr>
+                  </table>
+                  <table
+                    role="presentation"
+                    width="100%"
+                    style="width: 100%; max-width: 86%"
+                    class="column"
+                  >
+                    <tr>
+                      <td
+                        style="
+                          font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                            sans-serif;
+                          font-size: 18px;
+                          line-height: 24px;
+                          padding: 0 0 10px 0;
+                        "
+                      >
+                        <img
+                          style="vertical-align: middle; width: 16px"
+                          src="./images/icon-clock.png"
+                          width="16"
+                        />
+                        <!-- Headline Date -->
+                        <span style="display: inline-block; padding: 0 0 0 0"
+                          >1 May 2021</span
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <!-- Email Template Headline -->
+                        <h1
+                          style="
+                            font-family: 'Libre Baskerville', Georgia,
+                              'Times New Roman', Times, serif;
+                            font-weight: 400;
+                            font-size: 32px;
+                            line-height: 40px;
+                          "
+                        >
+                          The headline of an alert goes here
+                        </h1>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Jump Links -->
+              <tr>
+                <td style="padding: 0 0 30px 0">
+                  <!-- Container box with drop shadow repeatable section -->
+                  <table
+                    role="presentation"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td
+                        style="padding: 30px 10px 30px 30px"
+                        class="two-columns"
+                      >
+                        <table
+                          role="presentation"
+                          width="100%"
+                          style="width: 100%; max-width: 90%"
+                          class="column"
+                        >
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Section Title -->
+                              <h2
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 24px;
+                                  line-height: 32px;
+                                "
+                              >
+                                UK Stakeholder
+                              </h2>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 0 20px;
+                              "
+                            >
+                              <!-- List of anchor links/jump links -->
+                              <ul>
+                                <!-- List items iterable -->
+                                <li>
+                                  <a style="color: #124384" href="#example"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                              </ul>
+                            </td>
+                          </tr>
+                        </table>
+                        <table
+                          role="presentation"
+                          width="100%"
+                          style="width: 100%; max-width: 48px"
+                          class="column"
+                        >
+                          <tr>
+                            <td>
+                              <!-- Section logo or icon -->
+                              <img
+                                class="section-logo-right"
+                                src="./images/image-placeholder.png"
+                                alt=""
+                              />
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 0 0 30px 0">
+                  <!-- Container box with drop shadow -->
+                  <!-- identical to section above, iterable -->
+                  <table
+                    role="presentation"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td
+                        style="padding: 30px 10px 30px 30px"
+                        class="two-columns"
+                      >
+                        <table
+                          role="presentation"
+                          width="100%"
+                          style="width: 100%; max-width: 90%"
+                          class="column"
+                        >
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Section Title -->
+                              <h2
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 24px;
+                                  line-height: 32px;
+                                "
+                              >
+                                House of Commons
+                              </h2>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 0 20px;
+                              "
+                            >
+                              <!-- List of anchor links/jump links -->
+                              <ul>
+                                <!-- List items iterable -->
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                              </ul>
+                            </td>
+                          </tr>
+                        </table>
+                        <table
+                          role="presentation"
+                          width="100%"
+                          style="width: 100%; max-width: 48px"
+                          class="column"
+                        >
+                          <tr>
+                            <td>
+                              <!-- Section logo or icon -->
+                              <img
+                                class="section-logo-right"
+                                src="./images/image-placeholder.png"
+                                alt=""
+                              />
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 0 0 24px 0">
+                  <!-- Container box with drop shadow -->
+                  <!-- identical to section above, iterable -->
+                  <table
+                    role="presentation"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td
+                        style="padding: 30px 10px 30px 30px"
+                        class="two-columns"
+                      >
+                        <table
+                          role="presentation"
+                          width="100%"
+                          style="width: 100%; max-width: 90%"
+                          class="column"
+                        >
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Section Title -->
+                              <h2
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 24px;
+                                  line-height: 32px;
+                                "
+                              >
+                                House of Lords
+                              </h2>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 0 20px;
+                              "
+                            >
+                              <!-- List of anchor links/jump links -->
+                              <ul>
+                                <!-- List items iterable -->
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                                <li>
+                                  <a style="color: #124384" href="#"
+                                    >Headline here Ipsum is simply dummy text of
+                                    the printing and typesetting industry.</a
+                                  >
+                                </li>
+                              </ul>
+                            </td>
+                          </tr>
+                        </table>
+                        <table
+                          role="presentation"
+                          width="100%"
+                          style="width: 100%; max-width: 48px"
+                          class="column"
+                        >
+                          <tr>
+                            <td>
+                              <!-- Section logo or icon -->
+                              <img
+                                class="section-logo-right"
+                                src="./images/image-placeholder.png"
+                                alt=""
+                              />
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Actions -->
+              <tr>
+                <td style="padding: 0 0 60px 0">
+                  <table role="presentation" width="100%">
+                    <tr>
+                      <td class="two-columns">
+                        <table
+                          role="presentation"
+                          style="width: 100%; max-width: 54%"
+                          width="100%"
+                          class="column col-info"
+                        >
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 18px;
+                                line-height: 24px;
+                                color: #757575;
+                              "
+                            >
+                              <!-- if this needs updating, information statement -->
+                              <img
+                                style="vertical-align: middle; width: 16px"
+                                src="./images/icon-info.png"
+                                width="16"
+                              />
+                              <span
+                                >To change any preferences, please contact your
+                                consultant.</span
+                              >
+                            </td>
+                          </tr>
+                        </table>
+                        <table
+                          role="presentation"
+                          width="100%"
+                          style="width: 100%; max-width: 312px"
+                          class="column col-action"
+                        >
+                          <tr>
+                            <td
+                              class="col-action-inner"
+                              style="text-align: right"
+                            >
+                              <!-- Email button, needs link to email -->
+                              <button
+                                style="
+                                  font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                    sans-serif;
+                                  font-size: 16px;
+                                  font-weight: 700;
+                                  line-height: 12px;
+                                  background: #ffffff;
+                                  border: 0;
+                                  border-radius: 8px;
+                                  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                                  color: #124384;
+                                  cursor: pointer;
+                                  margin-right: 10px;
+                                  padding: 14px 12px 12px;
+                                "
+                                class="btn"
+                              >
+                                <span
+                                  style="
+                                    display: inline-block;
+                                    margin-right: 4px;
+                                  "
+                                  >Email us</span
+                                >
+                                <img
+                                  style="vertical-align: middle"
+                                  src="./images/icon-email.png"
+                                  width="16"
+                                />
+                              </button>
+                              <!-- Link back to read in platform -->
+                              <button
+                                style="
+                                  font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                    sans-serif;
+                                  font-size: 16px;
+                                  font-weight: 700;
+                                  line-height: 12px;
+                                  background: #124384;
+                                  border: 0;
+                                  border-radius: 8px;
+                                  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                                  color: #ffffff;
+                                  cursor: pointer;
+                                  padding: 14px 12px 12px;
+                                "
+                                class="btn"
+                              >
+                                <span
+                                  style="
+                                    display: inline-block;
+                                    margin-right: 4px;
+                                  "
+                                  >Read in platform</span
+                                >
+                                <img
+                                  style="vertical-align: middle"
+                                  src="./images/icon-chevron-right.png"
+                                  width="16"
+                                />
+                              </button>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Separator -->
+              <!-- Repeatable section width changing title and logo -->
+              <tr>
+                <td
+                  style="
+                    background-image: url('./images/line.png');
+                    background-position: 0 20px;
+                    background-repeat: repeat-x;
+                    padding: 0 0 30px 0;
+                  "
+                >
+                  <!-- Separator Title -->
+                  <h2
+                    style="
+                      font-family: 'Libre Baskerville', Georgia,
+                        'Times New Roman', Times, serif;
+                      font-weight: 400;
+                      font-size: 24px;
+                      line-height: 32px;
+                      display: inline-block;
+                      background-color: #f8f8f8;
+                      padding: 0 30px 0 0;
+                    "
+                  >
+                    <!-- Image logo or icon based on section content -->
+                    <img
+                      style="vertical-align: middle; margin: 0 5px 0 0"
+                      src="./images/image-placeholder.png"
+                      width="40"
+                      height="40"
+                    />
+                    UK Stakeholder
+                  </h2>
+                </td>
+              </tr>
+              <!-- Content Block -->
+              <!-- Row with Two Columns is iterable: row bottom padding should be 20px -->
+              <tr>
+                <!-- Two Columns Container -->
+                <!-- Consider this a row with two blocks, can be iterable -->
+                <td class="two-columns" style="padding: 0 0 20px 0">
+                  <!-- Container box with drop shadow -->
+                  <!-- Column One -->
+                  <table
+                    role="presentation"
+                    class="column column-first"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                      max-width: 49%;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="example"
+                                  >Full headline here #1</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 0 0">
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/image-placeholder-2.png"
+                              />
+                              <!-- Category/type title -->
+                              <span>HM Revenue & Custom</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/icon-sm-document.png"
+                              /><!-- category type --><span>Press Release</span>
+                              <span>|</span>
+                              <!-- Meta Date -->
+                              <span>24 September 2021 at 11:00</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraph snippet -->
+                              <p style="margin: 0 0 20px 0">
+                                Mary Kelly Foy (City of Durham): To ask the
+                                Secretary of State for Education, whether he
+                                plans to provide schools in (a) City of Durham
+                                and (b) England with extra funding to meet
+                                increased heating costs during the 2021-22
+                                academic year. [59057]
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <button
+                                      style="
+                                        font-family: 'Open Sans', 'Segoe UI',
+                                          Tahoma, sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        line-height: 12px;
+                                        background: #124384;
+                                        border: 0;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 1px 8px
+                                          rgba(0, 0, 0, 0.1);
+                                        color: #ffffff;
+                                        cursor: pointer;
+                                        padding: 14px 12px 12px;
+                                      "
+                                      class="btn"
+                                    >
+                                      <span
+                                        style="
+                                          display: inline-block;
+                                          margin-right: 4px;
+                                        "
+                                        >Go to article</span
+                                      >
+                                      <img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-right.png"
+                                        width="16"
+                                      />
+                                    </button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  <!-- Container box with drop shadow -->
+                  <!-- Column Two -->
+                  <table
+                    role="presentation"
+                    class="column column-first"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                      max-width: 49%;
+                      float: right;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="example"
+                                  >Full headline here #1</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 0 0">
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/image-placeholder-2.png"
+                              />
+                              <!-- Category/type title -->
+                              <span>HM Revenue & Custom</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/icon-sm-document.png"
+                              /><!-- category type --><span>Press Release</span>
+                              <span>|</span>
+                              <!-- Meta Date -->
+                              <span>24 September 2021 at 11:00</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraph snippet -->
+                              <p style="margin: 0 0 20px 0">
+                                Mary Kelly Foy (City of Durham): To ask the
+                                Secretary of State for Education, whether he
+                                plans to provide schools in (a) City of Durham
+                                and (b) England with extra funding to meet
+                                increased heating costs during the 2021-22
+                                academic year. [59057]
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <button
+                                      style="
+                                        font-family: 'Open Sans', 'Segoe UI',
+                                          Tahoma, sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        line-height: 12px;
+                                        background: #124384;
+                                        border: 0;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 1px 8px
+                                          rgba(0, 0, 0, 0.1);
+                                        color: #ffffff;
+                                        cursor: pointer;
+                                        padding: 14px 12px 12px;
+                                      "
+                                      class="btn"
+                                    >
+                                      <span
+                                        style="
+                                          display: inline-block;
+                                          margin-right: 4px;
+                                        "
+                                        >Go to article</span
+                                      >
+                                      <img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-right.png"
+                                        width="16"
+                                      />
+                                    </button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Row with Two Columns -->
+              <tr>
+                <!-- Two Columns Container: Last row should have bottom padding of 60px -->
+                <td class="two-columns" style="padding: 0 0 60px 0">
+                  <!-- Container box with drop shadow -->
+                  <!-- Column One -->
+                  <table
+                    role="presentation"
+                    class="column column-first"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                      max-width: 49%;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="example"
+                                  >Full headline here #1</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 0 0">
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/image-placeholder-2.png"
+                              />
+                              <!-- Category/type title -->
+                              <span>HM Revenue & Custom</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/icon-sm-document.png"
+                              /><!-- category type --><span>Press Release</span>
+                              <span>|</span>
+                              <!-- Meta Date -->
+                              <span>24 September 2021 at 11:00</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraph snippet -->
+                              <p style="margin: 0 0 20px 0">
+                                Mary Kelly Foy (City of Durham): To ask the
+                                Secretary of State for Education, whether he
+                                plans to provide schools in (a) City of Durham
+                                and (b) England with extra funding to meet
+                                increased heating costs during the 2021-22
+                                academic year. [59057]
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <button
+                                      style="
+                                        font-family: 'Open Sans', 'Segoe UI',
+                                          Tahoma, sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        line-height: 12px;
+                                        background: #124384;
+                                        border: 0;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 1px 8px
+                                          rgba(0, 0, 0, 0.1);
+                                        color: #ffffff;
+                                        cursor: pointer;
+                                        padding: 14px 12px 12px;
+                                      "
+                                      class="btn"
+                                    >
+                                      <span
+                                        style="
+                                          display: inline-block;
+                                          margin-right: 4px;
+                                        "
+                                        >Go to article</span
+                                      >
+                                      <img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-right.png"
+                                        width="16"
+                                      />
+                                    </button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  <!-- Container box with drop shadow -->
+                  <!-- Column Two -->
+                  <table
+                    role="presentation"
+                    class="column column-first"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                      max-width: 49%;
+                      float: right;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="example"
+                                  >Full headline here #1</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 0 0">
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/image-placeholder-2.png"
+                              />
+                              <!-- Category/type title -->
+                              <span>HM Revenue & Custom</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/icon-sm-document.png"
+                              /><!-- category type --><span>Press Release</span>
+                              <span>|</span>
+                              <!-- Meta Date -->
+                              <span>24 September 2021 at 11:00</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraph snippet -->
+                              <p style="margin: 0 0 20px 0">
+                                Mary Kelly Foy (City of Durham): To ask the
+                                Secretary of State for Education, whether he
+                                plans to provide schools in (a) City of Durham
+                                and (b) England with extra funding to meet
+                                increased heating costs during the 2021-22
+                                academic year. [59057]
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <button
+                                      style="
+                                        font-family: 'Open Sans', 'Segoe UI',
+                                          Tahoma, sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        line-height: 12px;
+                                        background: #124384;
+                                        border: 0;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 1px 8px
+                                          rgba(0, 0, 0, 0.1);
+                                        color: #ffffff;
+                                        cursor: pointer;
+                                        padding: 14px 12px 12px;
+                                      "
+                                      class="btn"
+                                    >
+                                      <span
+                                        style="
+                                          display: inline-block;
+                                          margin-right: 4px;
+                                        "
+                                        >Go to article</span
+                                      >
+                                      <img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-right.png"
+                                        width="16"
+                                      />
+                                    </button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Separator -->
+              <tr>
+                <td
+                  style="
+                    background-image: url('./images/line.png');
+                    background-position: 0 20px;
+                    background-repeat: no-repeat;
+                    padding: 0 0 30px 0;
+                  "
+                >
+                  <!-- Separator Title -->
+                  <h2
+                    style="
+                      font-family: 'Libre Baskerville', Georgia,
+                        'Times New Roman', Times, serif;
+                      font-weight: 400;
+                      font-size: 24px;
+                      line-height: 32px;
+                      display: inline-block;
+                      background-color: #f8f8f8;
+                      padding: 0 30px 0 0;
+                    "
+                  >
+                    <!-- Image logo or icon based on section content -->
+                    <img
+                      style="vertical-align: middle; margin: 0 5px 0 0"
+                      src="./images/image-placeholder.png"
+                      width="40"
+                      height="40"
+                    />
+                    House of Commons
+                  </h2>
+                </td>
+              </tr>
+              <!-- Content Block -->
+              <!-- Row with Two Columns is iterable: row bottom padding should be 20px -->
+              <tr>
+                <!-- Two Columns Container -->
+                <!-- Consider this a row with two blocks, can be iterable -->
+                <td class="two-columns" style="padding: 0 0 20px 0">
+                  <!-- Container box with drop shadow -->
+                  <!-- Column One -->
+                  <table
+                    role="presentation"
+                    class="column column-first"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                      max-width: 49%;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="example"
+                                  >Full headline here #1</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 0 0">
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/image-placeholder-2.png"
+                              />
+                              <!-- Category/type title -->
+                              <span>HM Revenue & Custom</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/icon-sm-document.png"
+                              /><!-- category type --><span>Press Release</span>
+                              <span>|</span>
+                              <!-- Meta Date -->
+                              <span>24 September 2021 at 11:00</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraph snippet -->
+                              <p style="margin: 0 0 20px 0">
+                                Mary Kelly Foy (City of Durham): To ask the
+                                Secretary of State for Education, whether he
+                                plans to provide schools in (a) City of Durham
+                                and (b) England with extra funding to meet
+                                increased heating costs during the 2021-22
+                                academic year. [59057]
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <button
+                                      style="
+                                        font-family: 'Open Sans', 'Segoe UI',
+                                          Tahoma, sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        line-height: 12px;
+                                        background: #124384;
+                                        border: 0;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 1px 8px
+                                          rgba(0, 0, 0, 0.1);
+                                        color: #ffffff;
+                                        cursor: pointer;
+                                        padding: 14px 12px 12px;
+                                      "
+                                      class="btn"
+                                    >
+                                      <span
+                                        style="
+                                          display: inline-block;
+                                          margin-right: 4px;
+                                        "
+                                        >Go to article</span
+                                      >
+                                      <img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-right.png"
+                                        width="16"
+                                      />
+                                    </button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  <!-- Container box with drop shadow -->
+                  <!-- Column Two -->
+                  <table
+                    role="presentation"
+                    class="column column-first"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                      max-width: 49%;
+                      float: right;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="example"
+                                  >Full headline here #1</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 0 0">
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/image-placeholder-2.png"
+                              />
+                              <!-- Category/type title -->
+                              <span>HM Revenue & Custom</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/icon-sm-document.png"
+                              /><!-- category type --><span>Press Release</span>
+                              <span>|</span>
+                              <!-- Meta Date -->
+                              <span>24 September 2021 at 11:00</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraph snippet -->
+                              <p style="margin: 0 0 20px 0">
+                                Mary Kelly Foy (City of Durham): To ask the
+                                Secretary of State for Education, whether he
+                                plans to provide schools in (a) City of Durham
+                                and (b) England with extra funding to meet
+                                increased heating costs during the 2021-22
+                                academic year. [59057]
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <button
+                                      style="
+                                        font-family: 'Open Sans', 'Segoe UI',
+                                          Tahoma, sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        line-height: 12px;
+                                        background: #124384;
+                                        border: 0;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 1px 8px
+                                          rgba(0, 0, 0, 0.1);
+                                        color: #ffffff;
+                                        cursor: pointer;
+                                        padding: 14px 12px 12px;
+                                      "
+                                      class="btn"
+                                    >
+                                      <span
+                                        style="
+                                          display: inline-block;
+                                          margin-right: 4px;
+                                        "
+                                        >Go to article</span
+                                      >
+                                      <img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-right.png"
+                                        width="16"
+                                      />
+                                    </button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Row with Two Columns -->
+              <tr>
+                <!-- Two Columns Container: Last row should have bottom padding of 60px -->
+                <td class="two-columns" style="padding: 0 0 60px 0">
+                  <!-- Container box with drop shadow -->
+                  <!-- Column One -->
+                  <table
+                    role="presentation"
+                    class="column column-first"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                      max-width: 49%;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="example"
+                                  >Full headline here #1</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 0 0">
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/image-placeholder-2.png"
+                              />
+                              <!-- Category/type title -->
+                              <span>HM Revenue & Custom</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/icon-sm-document.png"
+                              /><!-- category type --><span>Press Release</span>
+                              <span>|</span>
+                              <!-- Meta Date -->
+                              <span>24 September 2021 at 11:00</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraph snippet -->
+                              <p style="margin: 0 0 20px 0">
+                                Mary Kelly Foy (City of Durham): To ask the
+                                Secretary of State for Education, whether he
+                                plans to provide schools in (a) City of Durham
+                                and (b) England with extra funding to meet
+                                increased heating costs during the 2021-22
+                                academic year. [59057]
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <button
+                                      style="
+                                        font-family: 'Open Sans', 'Segoe UI',
+                                          Tahoma, sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        line-height: 12px;
+                                        background: #124384;
+                                        border: 0;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 1px 8px
+                                          rgba(0, 0, 0, 0.1);
+                                        color: #ffffff;
+                                        cursor: pointer;
+                                        padding: 14px 12px 12px;
+                                      "
+                                      class="btn"
+                                    >
+                                      <span
+                                        style="
+                                          display: inline-block;
+                                          margin-right: 4px;
+                                        "
+                                        >Go to article</span
+                                      >
+                                      <img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-right.png"
+                                        width="16"
+                                      />
+                                    </button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  <!-- Container box with drop shadow -->
+                  <!-- Column Two -->
+                  <table
+                    role="presentation"
+                    class="column column-first"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                      max-width: 49%;
+                      float: right;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="example"
+                                  >Full headline here #1</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 0 0">
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/image-placeholder-2.png"
+                              />
+                              <!-- Category/type title -->
+                              <span>HM Revenue & Custom</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="./images/icon-sm-document.png"
+                              /><!-- category type --><span>Press Release</span>
+                              <span>|</span>
+                              <!-- Meta Date -->
+                              <span>24 September 2021 at 11:00</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraph snippet -->
+                              <p style="margin: 0 0 20px 0">
+                                Mary Kelly Foy (City of Durham): To ask the
+                                Secretary of State for Education, whether he
+                                plans to provide schools in (a) City of Durham
+                                and (b) England with extra funding to meet
+                                increased heating costs during the 2021-22
+                                academic year. [59057]
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <button
+                                      style="
+                                        font-family: 'Open Sans', 'Segoe UI',
+                                          Tahoma, sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        line-height: 12px;
+                                        background: #124384;
+                                        border: 0;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 1px 8px
+                                          rgba(0, 0, 0, 0.1);
+                                        color: #ffffff;
+                                        cursor: pointer;
+                                        padding: 14px 12px 12px;
+                                      "
+                                      class="btn"
+                                    >
+                                      <span
+                                        style="
+                                          display: inline-block;
+                                          margin-right: 4px;
+                                        "
+                                        >Go to article</span
+                                      >
+                                      <img
+                                        style="vertical-align: middle"
+                                        src="./images/icon-chevron-right.png"
+                                        width="16"
+                                      />
+                                    </button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Main Footer Header -->
+              <tr>
+                <td style="padding: 0 0 30px 0">
+                  <!-- Footer Title -->
+                  <h1
+                    style="
+                      font-family: 'Libre Baskerville', Georgia,
+                        'Times New Roman', Times, serif;
+                      font-weight: 400;
+                      font-size: 32px;
+                      line-height: 40px;
+                    "
+                  >
+                    Contact Dods
+                  </h1>
+                </td>
+              </tr>
+              <!-- Footer Section -->
+              <tr>
+                <td
+                  style="
+                    background-color: #124384;
+                    color: #ffffff;
+                    padding: 24px;
+                  "
+                  class="two-columns footer-columns"
+                >
+                  <table
+                    role="presentation"
+                    width="50%"
+                    style="width: 100%; max-width: 49%"
+                    class="column footer-col footer-col-first"
+                  >
+                    <tr>
+                      <td>
+                        <!-- Footer left side title -->
+                        <p style="font-weight: 700; margin: 0 0 20px 0">
+                          Change your preferences
+                        </p>
+                        <!-- Footer left side content -->
+                        <p>
+                          To change any preferences,<br />
+                          please contact your consultant.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                  <table
+                    role="presentation"
+                    width="50%"
+                    style="
+                      border-left: 1px solid #c7c7c7;
+                      width: 100%;
+                      max-width: 49%;
+                    "
+                    class="column footer-col footer-col-last"
+                  >
+                    <tr>
+                      <td class="footer-col-right" style="padding: 0 0 0 30px">
+                        <!-- Footer right side title -->
+                        <p style="font-weight: 700; margin: 0 0 20px 0">
+                          Custom Service
+                        </p>
+                        <!-- Footer right side phone number -->
+                        <p>
+                          <img src="./images/icon-mobile.png" /> +44 207 593
+                          5500
+                        </p>
+                        <p>
+                          <img
+                            style="vertical-align: middle; margin: 0 2px 0 0"
+                            src="./images/icon-sm-email.png"
+                          />
+                          <!-- Footer right side email -->
+                          <a
+                            style="color: #ffffff; text-decoration: none"
+                            href="mailto:customer.service@dodsgroup.com"
+                            >customer.service@dodsgroup.com</a
+                          >
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Footer Text -->
+              <tr>
+                <td style="padding: 30px 0 0 0">
+                  <!-- Foote small text -->
+                  <p
+                    style="
+                      font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;
+                      font-size: 12px;
+                      line-height: 16px;
+                      color: #222955;
+                      margin: 0 0 22px 0;
+                    "
+                  >
+                    This email may contain Parliamentary information licensed
+                    under the Open Parliament Licence v1.0, public sector
+                    information licensed under the Open Government Licence v1.0;
+                    information subject to copyright of the National Assembly
+                    for Wales Commission and/or information reproduced under the
+                    terms of the Click-Use Licence; European Commission
+                    information; reproduction is authorised, provided the source
+                    is acknowledged, save where otherwise stated. For further
+                    info see http://europa.eu/geninfo/legal_notices_en.htm. All
+                    other material may be subject to copyright.
+                  </p>
+                  <!-- Footer extra small text -->
+                  <p
+                    style="
+                      font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;
+                      font-size: 10px;
+                      line-height: 16px;
+                      color: #222955;
+                    "
+                  >
+                    Merit Group plc 2021 Registered in England under Company
+                    number 04267888 Registered Office: 11th Floor, The Shard, 32
+                    London Bridge Street, London SE1 9SG.
+                  </p>
+                </td>
+              </tr>
+            </table>
+            <!--[if gte mso 9]></td></tr></table><![endif]-->
+          </td>
+        </tr>
+      </table>
+    </center>
+  </body>
+</html>
