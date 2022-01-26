@@ -56,6 +56,20 @@ export interface AlertRecipientsOutput {
     };
     isActive: boolean;
     isDodsUser?: boolean;
+    createdAt?: Date;
+    createdBy?: {
+        uuid: string;
+        name: string;
+        emailAddress: string;
+        isDodsUser: boolean;
+    }
+    updatedAt?: Date;
+    updatedBy?: {
+        uuid: string;
+        name: string;
+        emailAddress: string;
+        isDodsUser: boolean;
+    }
 }
 
 export interface SearchAlertRecipientsInput extends Pagination {
