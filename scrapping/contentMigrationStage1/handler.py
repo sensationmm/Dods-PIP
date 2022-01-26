@@ -78,7 +78,7 @@ def consumer(event, context):
                 html_content = html_content['Body'].read().decode('utf-8')
 
                 content["documentId"] = item.code.text if item.code is not None else str(uuid.uuid4())
-                content["jurisdiction"] = "UK"
+                content["jurisdiction"] = message['jurisdiction'] if 'jurisdiction' in message else 'UK'
                 content["documentTitle"] = item.revision.localisation.title.text \
                     if item.revision.localisation.title is not None else ""
                 content["organisationName"] = item.organisationname.text if item.organisationname is not None else ""
