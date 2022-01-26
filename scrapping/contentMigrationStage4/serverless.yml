@@ -1,26 +1,26 @@
-service: migration-step-2
+service: migration-step-4
 
 frameworkVersion: '2'
-projectDir: ../../
+projectDir: ../
 variablesResolutionMode: 20210326
 configValidationMode: error
-useDotenv: true
 
 plugins:
   - serverless-python-requirements
   - serverless-offline
 custom:
-  resource_prefix: migration-step-2
-  app_acronym: migration-step-2-bucket
+  resource_prefix: migration-step-4
+  app_acronym: migration-step-4-bucket
   default_stage: dev
+  account_id: 390773179818
   stage: ${opt:stage, self:custom.default_stage}
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  s3_input_bucket: pip-dev-migration-stage-1-output
-  s3_output_bucket: pip-dev-migration-stage-2-output
+  s3_input_bucket: pip-dev-migration-stage-3-output
+  s3_output_bucket: pip-dev-migration-stage-4-output
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
-  queue_name: pip-dev-migration-stage-2-queue.fifo
+  queue_name: pip-dev-migration-stage-4-queue.fifo
   pythonRequirements:
     pythonBin: python3
 
@@ -47,15 +47,13 @@ provider:
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
     KEY_PREFIX: ${self:custom.resource_prefix}
-    REGION: ${file(../../serverless.common.yml):custom.region}
+    REGION: ${file(../serverless.common.yml):custom.region}
     INPUT_BUCKET: ${self:custom.s3_input_bucket}
     OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
-    CONTENT_BUCKET: ${file(../../serverless.common.yml):custom.content_bucket}
-    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
-    ES_KEY_ID: ${env:ES_KEY_ID}
-    ES_API_KEY: ${env:ES_API_KEY}
+    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
+    LAMBDA_CONTENT_INDEXER_ARN: arn:aws:lambda:${self:custom.region}:${self:custom.account_id}:function:content-indexer-dev
 
   iamRoleStatements:
     - Effect: Allow
@@ -66,20 +64,25 @@ provider:
     - Effect: "Allow"
       Action:
         - "sqs:*"
-      Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-2-queue.fifo"
+      Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-4-queue.fifo"
+
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "arn:aws:lambda:eu-west-1:390773179818:function:content-indexer-dev"
 
 functions:
   migrate:
-    name: migration-step-2-publisher-${sls:stage}
-    description: Publish filepath to SQS for migration content from DODS step-1
+    name: migration-step-4-publisher-${sls:stage}
+    description: Publish filepath to SQS for migration content from DODS step-3
     handler: handler.run
     timeout: 900
   receiver:
-    name: migration-step-2-receiver-${sls:stage}
-    description: Receive filepath to SQS for migration content from DODS step-1
+    name: migration-step-4-receiver-${sls:stage}
+    description: Receive filepath to SQS for migration content from DODS step-4
     handler: handler.consumer
     timeout: 30
     events:
       - sqs:
-          arn: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-2-queue.fifo
+          arn: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-4-queue.fifo
           batchSize: 1
