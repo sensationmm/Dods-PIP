@@ -1,5 +1,7 @@
 import Facet from '@dods-ui/components/_form/Facet';
+import Select, { SelectItem } from '@dods-ui/components/_form/Select';
 import Toggle from '@dods-ui/components/_form/Toggle';
+import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
 import { format } from 'date-fns';
@@ -195,6 +197,7 @@ interface QueryObject {
     value: string;
   }[];
   resultsSize?: number;
+  offset?: number;
   dateRange?: IDateRange;
 }
 
@@ -211,7 +214,6 @@ const getPayload = ({
 }): { payload?: unknown; parsedQuery?: QueryObject } => {
   let esbQuery = esb.boolQuery();
   let parsedQuery;
-  let resultsSize = 20;
 
   try {
     parsedQuery = typeof search === 'string' ? JSON.parse(search) : {};
@@ -221,9 +223,9 @@ const getPayload = ({
       basicFilters = [],
       nestedFilters = [],
       dateRange = {},
+      resultsSize = 20,
+      offset = 0,
     }: QueryObject = parsedQuery;
-
-    resultsSize = parsedQuery.resultsSize;
 
     const phrases = searchTerm.match(/"(.*?)"/g) || []; // Anything in double quotes, e.g "I am a phrase"
     const regex = new RegExp(`${phrases.join('|')}`, 'g');
@@ -278,8 +280,8 @@ const getPayload = ({
                   .lte(dateRange.max || format(new Date(), 'yyyy-MM-dd')),
               ),
             )
-            .size(20)
-            .from(resultsSize) as ExtendedRequestBodySearch
+            .size(resultsSize)
+            .from(offset) as ExtendedRequestBodySearch
         )._body,
         aggregations,
       },
@@ -303,6 +305,8 @@ interface LibraryProps {
   apiErrorMessage?: string;
 }
 
+const DEFAULT_RESULT_SIZE = 20;
+
 export const Library: React.FC<LibraryProps> = ({
   results,
   total,
@@ -321,8 +325,13 @@ export const Library: React.FC<LibraryProps> = ({
   const [geography, setGeography] = useState<BucketType[]>([]);
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
   const [offset, setOffset] = useState(0);
-  const [resultsSize] = useState(20);
   const [filtersVisible, setFiltersVisible] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const resultSize = parsedQuery.resultsSize || DEFAULT_RESULT_SIZE;
+
+  const prevPageDisabled: boolean = offset === 0;
+  const nextPageDisabled: boolean = offset + resultSize > total;
 
   useEffect(() => {
     if (apiErrorMessage) {
@@ -330,13 +339,16 @@ export const Library: React.FC<LibraryProps> = ({
     }
   }, [apiErrorMessage]);
 
-  const currentSearch: QueryObject = useMemo(() => {
-    if (typeof router.query.search === 'string') {
-      return JSON.parse(router.query.search || '{}') || {};
+  const pagesOpts: SelectItem[] = useMemo(() => {
+    if (total > 0) {
+      const pageTotal = Math.round(total / resultSize);
+      const pageOs = Array.from(Array(pageTotal).keys()).map((i) => {
+        return { label: (i + 1).toString(), value: (i + 1).toString() };
+      });
+      return pageOs;
     }
-
-    return {};
-  }, [router.query]);
+    return [{ label: '1', value: '1' }];
+  }, [total, resultSize]);
 
   const setKeywordQuery = (searchTerm: string) => {
     setOffset(0);
@@ -355,7 +367,7 @@ export const Library: React.FC<LibraryProps> = ({
     setOffset(0);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { dateRange, ...rest } = currentSearch; // Remove dateRage
+    const { dateRange, ...rest } = parsedQuery; // Remove dateRage
 
     let newQuery: QueryObject = rest;
 
@@ -376,7 +388,7 @@ export const Library: React.FC<LibraryProps> = ({
   const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
     setOffset(0);
 
-    const { nestedFilters = [] } = currentSearch;
+    const { nestedFilters = [] } = parsedQuery;
 
     const selectedIndex = nestedFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
@@ -392,7 +404,7 @@ export const Library: React.FC<LibraryProps> = ({
       newNestedFilters = [...nestedFilters, { path, key, value }];
     }
 
-    const newQuery = { ...currentSearch, nestedFilters: newNestedFilters };
+    const newQuery = { ...parsedQuery, nestedFilters: newNestedFilters };
 
     router.push(
       {
@@ -407,7 +419,7 @@ export const Library: React.FC<LibraryProps> = ({
   const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
     setOffset(0);
 
-    const { basicFilters = [] } = currentSearch;
+    const { basicFilters = [] } = parsedQuery;
     const selectedIndex = basicFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
     );
@@ -420,7 +432,7 @@ export const Library: React.FC<LibraryProps> = ({
       newBasicFilters = [...basicFilters, { key, value }]; // add
     }
 
-    const newQuery = { ...currentSearch, basicFilters: newBasicFilters };
+    const newQuery = { ...parsedQuery, basicFilters: newBasicFilters };
 
     router.push(
       {
@@ -439,7 +451,7 @@ export const Library: React.FC<LibraryProps> = ({
       return !queries.find(({ key }) => value === key);
     });
 
-    const newQuery = { ...currentSearch, basicFilters: newBasicFilters };
+    const newQuery = { ...parsedQuery, basicFilters: newBasicFilters };
 
     router.push(
       {
@@ -458,7 +470,33 @@ export const Library: React.FC<LibraryProps> = ({
       return !queries.find(({ key }) => value === key);
     });
 
-    const newQuery = { ...currentSearch, nestedFilters: newNestedFilters };
+    const newQuery = { ...parsedQuery, nestedFilters: newNestedFilters };
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { search: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
+  const setPerPageCount = (resultsSize: number) => {
+    const newQuery = { ...parsedQuery, resultsSize };
+
+    router.push(
+      {
+        pathname: '/library',
+        query: { search: JSON.stringify(newQuery) },
+      },
+      undefined,
+      { scroll: false },
+    );
+  };
+
+  const setOffsetQuery = (offset: number) => {
+    const newQuery = { ...parsedQuery, offset };
 
     router.push(
       {
@@ -530,8 +568,21 @@ export const Library: React.FC<LibraryProps> = ({
     }
   };
 
+  const recordsPerPage = [
+    { label: '10', value: '10' },
+    { label: '20', value: '20' },
+    { label: '30', value: '30' },
+    { label: '40', value: '40' },
+    { label: '50', value: '50' },
+  ];
+
+  const onPerPageChange = (value: string) => {
+    const newResultSize = parseInt(value);
+    setPerPageCount(newResultSize);
+  };
+
   return (
-    <div data-test="page-library">
+    <Styled.pageLibrary data-test="page-library">
       <Head>
         <title>Dods PIP | Library</title>
       </Head>
@@ -563,9 +614,28 @@ export const Library: React.FC<LibraryProps> = ({
           </Styled.librarySearchWrapper>
           <Spacer size={8} />
           {results.length !== 0 && (
-            <div>
-              Showing {offset + 1} - {(results.length || 0) + offset} of {total}
-            </div>
+            <Styled.pagination>
+              <div>
+                Showing
+                <span className={'pageCount'}>
+                  {offset + 1} - {(results.length || 0) + offset}{' '}
+                </span>
+                <Styled.totalRecords>
+                  Total <b className={'total'}>{total.toLocaleString('en-US')}</b> Items
+                </Styled.totalRecords>
+              </div>
+              <Styled.perPageSelect>
+                <span>Items per page</span>
+                <Select
+                  id={'itemPerPage'}
+                  value={resultSize.toString()}
+                  size={'small'}
+                  isFilter={true}
+                  onChange={onPerPageChange}
+                  options={recordsPerPage}
+                />
+              </Styled.perPageSelect>
+            </Styled.pagination>
           )}
           <Spacer size={8} />
 
@@ -589,28 +659,28 @@ export const Library: React.FC<LibraryProps> = ({
                     <Box size={'extraSmall'}>
                       <Styled.boxContent>
                         <Styled.topRow>
-                          <span>
-                            <Styled.imageContainer />
-                            <div>
+                          <Styled.imageContainer />
+                          <Styled.searchResultHeader>
+                            <Styled.searchResultHeading>
                               <h2>{documentTitle}</h2>
+                              <Styled.date className={'mobileOnly'}>{formattedTime}</Styled.date>
                               <Styled.contentSource>
                                 <Icon
-                                  src={Icons.Calendar}
-                                  size={IconSize.small}
+                                  src={Icons.Document}
+                                  size={IconSize.medium}
                                   color={color.theme.blue}
                                 />
                                 <Styled.contentSourceText>
                                   {informationType} / {organisationName}
                                 </Styled.contentSourceText>
                               </Styled.contentSource>
-                            </div>
-                            <p>{formattedTime}</p>
-                          </span>
+                            </Styled.searchResultHeading>
+                          </Styled.searchResultHeader>
+                          <Styled.date>{formattedTime}</Styled.date>
                         </Styled.topRow>
                         {documentContent && (
                           <Styled.contentPreview>
                             <div dangerouslySetInnerHTML={{ __html: documentContent }} />
-                            <Styled.fade />
                           </Styled.contentPreview>
                         )}
                         <Styled.bottomRow>
@@ -627,21 +697,25 @@ export const Library: React.FC<LibraryProps> = ({
                                 ) ?? -1;
 
                               return (
-                                <Styled.tag
-                                  className={selectedIndex > -1 ? 'selectedTag' : ''}
-                                  key={`taxonomy-${i}`}
-                                  title={term.termLabel}
-                                >
-                                  {term.termLabel}
-                                </Styled.tag>
+                                <Chips
+                                  key={`chip-${i}-${term.termLabel}`}
+                                  label={term.termLabel}
+                                  chipsSize={'dense'}
+                                  theme={selectedIndex > -1 ? 'light' : 'dark'}
+                                  bold={selectedIndex > -1 ? true : false}
+                                />
                               );
                             })}
                           </Styled.tagsWrapper>
                           <Link href={`/library/document/${documentId}`} passHref>
-                            <Styled.readMoreLink>
+                            <Styled.readMore>
                               <span>Read more</span>
-                              <Icon src={Icons.ChevronRightBold} />
-                            </Styled.readMoreLink>
+                              <Icon
+                                src={Icons.ChevronRightBold}
+                                size={IconSize.small}
+                                color={color.theme.blue}
+                              />
+                            </Styled.readMore>
                           </Link>
                         </Styled.bottomRow>
                       </Styled.boxContent>
@@ -652,25 +726,67 @@ export const Library: React.FC<LibraryProps> = ({
 
               {results && (
                 <Styled.pagination>
-                  <span>Total {total} Items</span>
-                  <div>
-                    <span
+                  <span>
+                    Total <b>{total.toLocaleString('en-US')}</b> Items
+                  </span>
+                  <Styled.paginationControls>
+                    <button
+                      className={'prevPageArrow'}
+                      disabled={prevPageDisabled}
                       onClick={() => {
                         if (offset !== 0) {
-                          setOffset(offset - resultsSize);
+                          const newOffset = offset - resultSize;
+                          setOffset(newOffset);
+                          setOffsetQuery(newOffset);
                         }
                       }}
                     >
-                      previous
+                      <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
+                    </button>
+                    <span>Viewing page</span>
+                    <Select
+                      id={'pageSelect'}
+                      value={currentPage.toString()}
+                      size={'small'}
+                      isFilter={true}
+                      onChange={(value) => {
+                        const nextPage = parseInt(value);
+                        setCurrentPage(nextPage);
+                        const newOffset = (nextPage - 1) * resultSize;
+                        setOffset(newOffset);
+                        setOffsetQuery(newOffset);
+                      }}
+                      options={pagesOpts}
+                    />
+                    <span>
+                      of
+                      <b>{Math.round(total / resultSize)}</b>
                     </span>
-                    <span
+                    <button
+                      className={'nextPageArrow'}
+                      disabled={nextPageDisabled}
                       onClick={() => {
-                        setOffset(offset + resultsSize);
+                        if (offset < total) {
+                          const newOffset = offset + resultSize;
+                          setOffset(newOffset);
+                          setOffsetQuery(newOffset);
+                        }
                       }}
                     >
-                      next
-                    </span>
-                  </div>
+                      <Icon src={Icons.ChevronRightBold} />
+                    </button>
+                  </Styled.paginationControls>
+                  <Styled.perPageSelect>
+                    <span>Items per page</span>
+                    <Select
+                      id={'itemPerPage'}
+                      value={resultSize.toString()}
+                      size={'small'}
+                      isFilter={true}
+                      onChange={onPerPageChange}
+                      options={recordsPerPage}
+                    />
+                  </Styled.perPageSelect>
                 </Styled.pagination>
               )}
             </Styled.resultsContent>
@@ -782,7 +898,7 @@ export const Library: React.FC<LibraryProps> = ({
           </Styled.contentWrapper>
         </Panel>
       </main>
-    </div>
+    </Styled.pageLibrary>
   );
 };
 

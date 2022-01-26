@@ -8,7 +8,7 @@ import spacing from '../../../globals/spacing';
 
 export const facet = styled.div`
   display: flex;
-  margin-bottom: 8px;
+  margin-bottom: ${spacing(2)};
   width: 100%;
 
   label {
@@ -124,6 +124,7 @@ export const facetChipsWrapper = styled.div`
   display: flex;
   padding: ${spacing(4)} ${leftRightPadding};
   position: relative;
+  gap: ${spacing(1)};
 
   &:after {
     content: '';

@@ -18,6 +18,7 @@ export interface ChipsProps {
   onCloseClick?: (val: string) => void;
   theme?: 'dark' | 'light';
   hasFlash?: boolean;
+  bold?: boolean;
 }
 
 const Chips: React.FC<ChipsProps> = ({
@@ -30,6 +31,7 @@ const Chips: React.FC<ChipsProps> = ({
   onCloseClick,
   theme = 'light',
   hasFlash = false,
+  bold = true,
 }) => {
   const [hovering, setHovering] = React.useState<boolean>(false);
 
@@ -76,7 +78,7 @@ const Chips: React.FC<ChipsProps> = ({
         <Text
           data-test="chips-label"
           type={chipsSize === 'medium' ? 'body' : 'bodySmall'}
-          bold
+          bold={bold}
           color={disabled ? color.base.greyDark : color.theme.blue}
         >
           {label}
