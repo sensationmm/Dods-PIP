@@ -64,7 +64,7 @@ provider:
         BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/
         BUCKET_EDITORIAL: dods-dev-editorial-record-documents
         CONTENT_INDEXER_LAMBDA: content-indexer-dev
-        JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${self:provider.region}_KSdDYoclx/.well-known/jwks.json'
+        JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
 
 custom:
     webpack:
