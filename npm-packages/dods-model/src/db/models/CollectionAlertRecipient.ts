@@ -54,10 +54,10 @@ export class CollectionAlertRecipient
     public createUser!: BelongsToCreateAssociationMixin<User>;
 
     public readonly createdById!: User;
-    public getCreatedId!: BelongsToGetAssociationMixin<User>;
-    public setCreatedId!: BelongsToSetAssociationMixin<User, number>;
+    public getCreatedById!: BelongsToGetAssociationMixin<User>;
+    public setCreatedById!: BelongsToSetAssociationMixin<User, number>;
 
-    public readonly updatedId!: User;
+    public readonly updatedById!: User;
     public getUpdatedById!: BelongsToGetAssociationMixin<User>;
     public setUpdatedById!: BelongsToSetAssociationMixin<User, number>;
 
