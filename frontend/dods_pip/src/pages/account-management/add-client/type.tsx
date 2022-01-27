@@ -15,6 +15,7 @@ export type TeamMember = {
   secondaryEmailAddress?: string;
   telephoneNumber1?: string;
   telephoneNumber2?: string;
+  accountName?: string;
 };
 
 export enum TeamMemberType {
@@ -55,5 +56,6 @@ export enum RoleType {
 export type DropdownValue = {
   label: string;
   value: string;
+  icon?: string;
   userData?: TeamMember | Record<string, unknown>;
 };

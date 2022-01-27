@@ -19,13 +19,18 @@ export interface AlertQueryProps {
   source: DropdownValue[];
   informationType: DropdownValue[];
   searchTerms: string;
+  done: boolean;
+  edit: boolean;
 }
 
 export type Operators = 'OR' | 'AND' | 'NOT';
 
 export interface AlertQueryScreenProps extends AlertQueryProps {
   onSave: (query: AlertQueryProps) => void;
+  onDuplicate: () => void;
+  onEdit: () => void;
   onCancel: () => void;
+  onDelete: () => void;
   numQueries: number;
 }
 
@@ -34,7 +39,12 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   source,
   informationType,
   searchTerms,
+  done,
+  edit,
   onSave,
+  onDuplicate,
+  onEdit,
+  onDelete,
   onCancel,
   numQueries,
 }) => {
@@ -47,7 +57,8 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const [addedTagsToSave, setAddedTagsToSave] = React.useState<TagsData[]>([]);
   const [operator, setOperator] = React.useState<Operators>('OR');
   const [isValidated, setIsValidated] = React.useState<boolean>(false);
-  const [isDone, setIsDone] = React.useState<boolean>(source.length > 0);
+  const [isDone, setIsDone] = React.useState<boolean>(done);
+  const [isEdit, setIsEdit] = React.useState<boolean>(edit);
   const [preview, setPreview] = React.useState<JSX.Element[]>([]);
 
   React.useEffect(() => {
@@ -57,14 +68,26 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
     }
   }, [tags]);
 
+  React.useEffect(() => {
+    setIsDone(done);
+  }, [done]);
+
+  React.useEffect(() => {
+    setIsEdit(edit);
+  }, [edit]);
+
   const formatLabels = (selectedLabels: DropdownValue[]) => {
     const final: Array<JSX.Element> = [];
 
     selectedLabels.forEach((selected, count) => {
-      final.push(<Text color={color.base.greyDark}>{selected.label}</Text>);
+      final.push(
+        <Text key={`label-${count}`} color={color.base.greyDark}>
+          {selected.label}
+        </Text>,
+      );
       if (count + 1 < selectedLabels.length) {
         final.push(
-          <Text bold color={color.theme.blueLight}>
+          <Text key={`label-${count}-or`} bold color={color.theme.blueLight}>
             {' OR '}
           </Text>,
         );
@@ -111,7 +134,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
     <Styled.wrapper data-test="component-alert-query">
       <Styled.box>
         <Text bold>Source:</Text>
-        {!isDone ? (
+        {!isDone || isEdit ? (
           <TagSelector
             id="select-sources"
             isQuery
@@ -133,7 +156,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
 
       <Styled.box>
         <Text bold>Information type:</Text>
-        {!isDone ? (
+        {!isDone || isEdit ? (
           <TagSelector
             id="select-infoTypes"
             isQuery
@@ -155,7 +178,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
 
       <Styled.box>
         <Text bold>Search terms:</Text>
-        {!isDone ? (
+        {!isDone || isEdit ? (
           <Styled.terms>
             <div>
               <Styled.termsHeader>
@@ -197,14 +220,14 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
 
       <Spacer size={4} />
 
-      {!isDone ? (
+      {!isDone || isEdit ? (
         <Styled.actions>
           <Button
             type="text"
             label="Cancel"
             icon={Icons.CrossBold}
             onClick={onCancel}
-            disabled={numQueries === 0}
+            disabled={numQueries === 0 && !isEdit}
           />
           {!isValidated ? (
             <Button
@@ -228,6 +251,8 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
                   source: sources,
                   informationType: infoTypes,
                   searchTerms: terms,
+                  done: true,
+                  edit: false,
                 });
               }}
             />
@@ -235,11 +260,22 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
         </Styled.actions>
       ) : (
         <Styled.actions>
-          <Button type="text" label="Delete" icon={Icons.Bin} disabled={numQueries < 2} />
-          <Button type="secondary" label="Duplicate" icon={Icons.Duplicate} />
-          <Button type="secondary" label="Copy to" icon={Icons.Copy} />
-          <Button type="secondary" label="Edit" icon={Icons.Pencil} />
-          <Button label="View Results" icon={Icons.ChevronRightBold} iconAlignment="right" />
+          <Button
+            type="text"
+            label="Delete"
+            icon={Icons.Bin}
+            disabled={numQueries < 2}
+            onClick={onDelete}
+          />
+          <Button type="secondary" label="Duplicate" icon={Icons.Duplicate} onClick={onDuplicate} />
+          <Button type="secondary" label="Copy to" icon={Icons.Copy} disabled />
+          <Button type="secondary" label="Edit" icon={Icons.Pencil} onClick={onEdit} />
+          <Button
+            label="View Results"
+            icon={Icons.ChevronRightBold}
+            iconAlignment="right"
+            disabled
+          />
         </Styled.actions>
       )}
 
