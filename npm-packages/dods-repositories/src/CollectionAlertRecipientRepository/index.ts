@@ -224,7 +224,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             timezone: collectionAlert.timezone || '',
             searchQueriesCount: await collectionAlert.countAlertQueries() || 0,
             recipientsCount: alertRecipients.length,
-            lastStepCompleted: 2,
+            lastStepCompleted: collectionAlert.lastStepCompleted,
             isPublished: false,
             createdBy: {
                 uuid: collectionAlert.createdById?.uuid || '',
