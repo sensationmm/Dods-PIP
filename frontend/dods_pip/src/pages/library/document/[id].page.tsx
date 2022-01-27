@@ -12,7 +12,7 @@ import React, { useMemo, useState } from 'react';
 import color from '../../../globals/color';
 import fetchJson from '../../../lib/fetchJson';
 import { Api } from '../../../utils/api';
-import { IResponse, ISourceData } from '../index.page';
+import { IResponse, ISourceData } from '../index';
 import * as Styled from './document.styles';
 import Header from './header';
 

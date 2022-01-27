@@ -4,9 +4,8 @@ import Toggle from '@dods-ui/components/_form/Toggle';
 import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
-import { span } from '@dods-ui/components/Text/Text.styles';
 import { format } from 'date-fns';
-import esb, { Query, RequestBodySearch, TermQuery } from 'elastic-builder';
+import esb, { TermQuery } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -19,83 +18,21 @@ import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
 import Icon, { IconSize } from '../../components/Icon/';
 import { Icons } from '../../components/Icon/assets';
-import { IconType as ContentSourceType } from '../../components/IconContentSource/assets';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import fetchJson from '../../lib/fetchJson';
 import { Api } from '../../utils/api';
+import {
+  AggregationsType,
+  BucketType,
+  ExtendedRequestBodySearch,
+  IAggregations,
+  IResponse,
+  ISourceData,
+  QueryObject,
+  QueryString,
+} from './index';
 import * as Styled from './library.styles';
-
-interface ExtendedRequestBodySearch extends RequestBodySearch {
-  _body: {
-    from?: number;
-    to?: number;
-    query?: Query;
-  };
-}
-
-export interface ISourceData {
-  aggs_fields?: { [key: string]: string[] };
-  contentDateTime?: string;
-  contentLocation?: string;
-  contentSource?: ContentSourceType;
-  documentContent?: string;
-  documentTitle?: string;
-  informationType?: string;
-  sourceReferenceUri?: string;
-  originator?: string;
-  version?: string;
-  documentId?: string;
-  organisationName?: string;
-  taxonomyTerms?: { tagId: string; termLabel: string }[];
-}
-
-type BucketType = {
-  doc_count: number;
-  key: string;
-  selected?: boolean;
-};
-
-interface IAggregations {
-  contentSource?: {
-    buckets: BucketType[];
-  };
-  informationType?: {
-    buckets: BucketType[];
-  };
-  jurisdiction?: {
-    buckets: BucketType[];
-  };
-  originator?: {
-    buckets: BucketType[];
-  };
-  group?: {
-    buckets: BucketType[];
-  };
-  people?: {
-    buckets: BucketType[];
-  };
-  organizations?: {
-    buckets: BucketType[];
-  };
-  geography?: {
-    buckets: BucketType[];
-  };
-  topics?: {
-    buckets: BucketType[];
-  };
-}
-
-export interface IResponse {
-  sourceReferenceUri?: string;
-  es_response?: {
-    hits: {
-      hits: { _source: ISourceData }[];
-      total: { value: number };
-    };
-    aggregations?: IAggregations;
-  };
-}
 
 enum AggTypes {
   contentSource = 'contentSource',
@@ -109,16 +46,6 @@ enum AggTypes {
   organisationName = 'organisationName',
   group = 'group',
 }
-
-type AggregationsType = {
-  [key in AggTypes]?: {
-    terms: {
-      field: string;
-      min_doc_count: number;
-      size: number;
-    };
-  };
-};
 
 const aggregations: AggregationsType = {
   topics: {
@@ -185,24 +112,6 @@ const aggregations: AggregationsType = {
     },
   },
 };
-
-interface QueryObject {
-  searchTerm?: string;
-  basicFilters?: {
-    key: string;
-    value: string;
-  }[];
-  nestedFilters?: {
-    path: string;
-    key: string;
-    value: string;
-  }[];
-  resultsSize?: number;
-  offset?: number;
-  dateRange?: IDateRange;
-}
-
-type QueryString = string | string[] | undefined;
 
 const getPayload = ({
   search = '{}',
