@@ -36,7 +36,7 @@ class DataModel(Model):
     """
 
     class Meta:
-        table_name = os.environ.get("dynamodb_table", "ingestion")
+        table_name = os.environ.get("DYNAMODB_TABLE", "ingestion")
         host = os.environ.get("DYNAMODB_HOST", "http://localhost:4566")
 
     external_id = UnicodeAttribute(hash_key=True)
@@ -122,9 +122,13 @@ def create_document(document: dict) -> str:
     # awslocal s3api create-bucket --bucket infrastackdev-dodscontentextraction
     # awslocal s3 ls s3://infrastackdev-dodscontentextraction --recursive
 
-    s3 = boto3.client(
-        "s3", endpoint_url=os.environ.get("ENDPOINT_URL", "http://localhost:4566")
-    )
+    endpoint_url = os.environ.get("ENDPOINT_URL")
+
+    if endpoint_url:
+        s3 = boto3.client("s3", endpoint_url=endpoint_url)
+    else:
+        s3 = boto3.client("s3")
+
     bucket = os.environ.get("BUCKET_NAME", "infrastackdev-dodscontentextraction")
     content = json.dumps(document["mapped"], indent=2)
 
