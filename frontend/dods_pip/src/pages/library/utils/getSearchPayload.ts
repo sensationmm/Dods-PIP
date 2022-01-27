@@ -132,9 +132,6 @@ const getSearchPayload = ({
         ),
       );
 
-    console.log('currentPage', currentPage);
-    console.log('resultSize', resultSize);
-
     return {
       payload: {
         ...(
