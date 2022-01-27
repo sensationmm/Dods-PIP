@@ -38,6 +38,7 @@ class DataModel(Model):
     class Meta:
         table_name = os.environ.get("DYNAMODB_TABLE", "ingestion")
         host = os.environ.get("DYNAMODB_HOST", "http://localhost:4566")
+        region = os.environ.get("REGION", "eu-west-1")
 
     external_id = UnicodeAttribute(hash_key=True)
     document_id = UnicodeAttribute()
