@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import EditorialForm, { EditorialFormFields } from './editorial-form';
+import ScheduleModal from './schedule-modal';
 
 interface EditorialProps extends LoadingHOCProps {}
 
@@ -48,6 +49,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
 
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const setFieldValue = (field: keyof EditorialFormFields, value: string) => {
     const updatedData = { ...fieldData, [field]: value };
@@ -101,12 +103,14 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   };
 
   const onSchedule = async () => {
-    const date = new Date().toISOString();
-    setLoading(true);
-    // TODO populate with data once back end is correct
-    await scheduleEditorial({ date, documentId: 'guid-here' });
-    setLoading(false);
-    addNotification({ title: `Document successfully scheduled for ${date}`, type: 'confirm' });
+    console.log('@?@??@???@');
+
+    // const date = new Date().toISOString();
+    // setLoading(true);
+    // // TODO populate with data once back end is correct
+    // await scheduleEditorial({ date, documentId: 'guid-here' });
+    // setLoading(false);
+    // addNotification({ title: `Document successfully scheduled for ${date}`, type: 'confirm' });
   };
 
   const onDelete = async () => {
@@ -153,7 +157,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             onSaveAndEdit={() => onSave()}
             onPublish={() => onPublish()}
             onDelete={onDelete}
-            onSchedule={() => onSchedule()}
+            onSchedule={() => setShowScheduleModal(true)}
             onUnschedule={() => onSchedule()}
             onUpdateArticle={() => onSave()}
             onPreview={() => router.push('/editorial/preview')} // Preview active local content or from server??
@@ -181,6 +185,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           />
         </main>
       </Panel>
+
+      {showScheduleModal && <ScheduleModal />}
     </div>
   );
 };
