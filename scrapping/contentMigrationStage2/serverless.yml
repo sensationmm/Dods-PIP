@@ -53,9 +53,9 @@ provider:
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
     CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
-    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
-    ES_KEY_ID: ${env:ES_KEY_ID}
-    ES_API_KEY: ${env:ES_API_KEY}
+    ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
+    ES_KEY_ID: ${ssm:/infra/elastic/key_id}
+    ES_API_KEY: ${ssm:/infra/elastic/api_key}
 
   iamRoleStatements:
     - Effect: Allow

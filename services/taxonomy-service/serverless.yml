@@ -51,11 +51,11 @@ provider:
     NODE_ENV: ${opt:NODE_ENV, 'test'}
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
-    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
-    ES_KEY_ID: ${env:ES_KEY_ID}
-    ES_API_KEY: ${env:ES_API_KEY}
     TAXONOMY_TREE_BUCKET: pip-${self:provider.stage}-taxonomy-data
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
+    ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
+    ES_KEY_ID: ${ssm:/infra/elastic/key_id}
+    ES_API_KEY: ${ssm:/infra/elastic/api_key}
 
 custom:
   webpack:
