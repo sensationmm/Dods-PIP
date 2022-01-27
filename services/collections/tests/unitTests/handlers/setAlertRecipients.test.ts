@@ -64,7 +64,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'The alert recipients were set successfully',
-            ...defaultSetAlertRecipientsRepositoryResponse,
+            alert: defaultSetAlertRecipientsRepositoryResponse,
         });
 
         expect(response).toEqual(expectedResponse);
