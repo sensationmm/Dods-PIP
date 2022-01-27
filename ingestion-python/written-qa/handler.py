@@ -23,7 +23,7 @@ def run(event, context):
 
 
 if __name__ == "__main__":
-    from written_qa import get_context_from_cli
+    from written_qa import get_lambda_event_from_cli
 
-    context = get_context_from_cli()
-    run(None, context)
+    event = get_lambda_event_from_cli()
+    run(event, None)

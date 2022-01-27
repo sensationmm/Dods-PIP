@@ -452,7 +452,7 @@ def get_document_content(document: dict) -> str:
     return output
 
 
-def get_context_from_cli() -> dict:
+def get_lambda_event_from_cli() -> dict:
     """Parse arguments from command."""
 
     parser = argparse.ArgumentParser(description="Consume data from Hansard")

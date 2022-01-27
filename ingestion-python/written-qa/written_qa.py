@@ -242,7 +242,7 @@ def get_document_originator(document: dict, answered_state) -> str:
     return originator
 
 
-def get_context_from_cli():
+def get_lambda_event_from_cli():
     """Parse arguments from command line."""
 
     parser = argparse.ArgumentParser(description="Consume data from Written Questions & Answers API")
