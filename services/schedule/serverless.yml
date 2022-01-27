@@ -53,11 +53,11 @@ provider:
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
     CORS_ORIGINS: "*"
-    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
-    ES_CLOUD_ID: ${env:ES_CLOUD_ID}
-    ES_KEY_ID: ${env:ES_KEY_ID}
-    ES_API_KEY: ${env:ES_API_KEY}
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
+    ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
+    ES_KEY_ID: ${ssm:/infra/elastic/key_id}
+    ES_API_KEY: ${ssm:/infra/elastic/api_key}
     ALERT_API_KEY: ${file(../env-config.${self:provider.stage}.js):apiKeys, file(../env-config.dev.js):apiKeys}
 
 custom:

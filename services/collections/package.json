@@ -53,6 +53,7 @@
     "openapi-types": "^9.3.1",
     "pre-commit": "^1.2.2",
     "serverless": "^2.68.0",
+    "serverless-add-api-key": "^4.2.1",
     "serverless-api-gateway-caching": "^1.7.4",
     "serverless-dependson-plugin": "^1.1.2",
     "serverless-localstack": "^0.4.35",
@@ -69,8 +70,8 @@
   },
   "dependencies": {
     "@dodsgroup/dods-lambda": "^1.4.6",
-    "@dodsgroup/dods-model": "^1.1.4",
-    "@dodsgroup/dods-repositories": "^1.5.4",
+    "@dodsgroup/dods-model": "^1.1.8",
+    "@dodsgroup/dods-repositories": "^1.6.0",
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1046.0",
     "axios": "^0.21.4",

@@ -1,7 +1,14 @@
 import { AlertOutput, AlertQueryResponse } from "./../CollectionAlertsRepository/domain";
-import { Collection, CollectionAlert, CollectionAlertQuery } from "@dodsgroup/dods-model";
+import { Collection, CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient, Role, User } from "@dodsgroup/dods-model";
 
-import { CollectionOutput } from "..";
+import { AlertRecipientsOutput, CollectionOutput } from "..";
+
+export interface userBy {
+    uuid: string;
+    name: string;
+    emailAddress: string;
+    isDodsUser: boolean;
+}
 
 export function cloneObject<T, E>(
     target: T,
@@ -51,9 +58,6 @@ export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => 
 
 export const mapAlertQuery = async (model: CollectionAlertQuery, alertModel: CollectionAlert): Promise<AlertQueryResponse> => {
     const { uuid, name, informationTypes, contentSources, query, createdAt, updatedAt, createdById, updatedById } = model;
-    const role = await createdById?.getRole();
-    const isDodsUser = role ? Boolean(role.dodsRole) : undefined
-
     return {
         uuid,
         name,
@@ -64,23 +68,8 @@ export const mapAlertQuery = async (model: CollectionAlertQuery, alertModel: Col
         },
         contentSources,
         query,
-        createdBy: createdById
-            ? {
-                uuid: createdById.uuid,
-                name: createdById.fullName,
-                emailAddress: createdById.primaryEmail,
-                isDodsUser
-            }
-            : null,
-
-        updatedBy: updatedById
-            ? {
-                uuid: updatedById.uuid,
-                name: updatedById.fullName,
-                emailAddress: updatedById.primaryEmail,
-                isDodsUser
-            }
-            : null,
+        createdBy: getUserInfo(createdById, await createdById?.getRole()),
+        updatedBy: getUserInfo(updatedById, await updatedById?.getRole()),
         createdAt,
         updatedAt,
     };
@@ -88,19 +77,48 @@ export const mapAlertQuery = async (model: CollectionAlertQuery, alertModel: Col
 
 export const mapCollection = async (model: Collection): Promise<CollectionOutput> => {
     const { uuid, name, clientAccount, createdAt, createdBy, updatedAt, updatedBy, alerts, savedQueries, documents } = model;
-    const role = await createdBy?.getRole();
-    const isDodsUser = role ? Boolean(role.dodsRole) : undefined
 
     return {
         uuid,
         name,
         clientAccount: { uuid: clientAccount.uuid, name: clientAccount.name },
         createdAt: createdAt,
-        createdBy: createdBy ? { uuid: createdBy.uuid, name: createdBy.fullName, emailAddress: createdBy.primaryEmail, isDodsUser } : {},
+        createdBy: getUserInfo(createdBy, await createdBy?.getRole()),
         updatedAt: updatedAt,
-        updatedBy: updatedBy ? { uuid: updatedBy.uuid, name: updatedBy.fullName, emailAddress: updatedBy.primaryEmail, isDodsUser } : {},
+        updatedBy: getUserInfo(updatedBy, await updatedBy?.getRole()),
         alertsCount: alerts?.length,
         queriesCount: savedQueries?.length,
         documentsCount: documents?.length,
     }
+}
+
+export const mapRecipient = async (model: CollectionAlertRecipient): Promise<AlertRecipientsOutput> => {
+    const { user, isActive, alert, createdAt, updatedAt, createdById, updatedById } = model;
+
+    return {
+        uuid: user.uuid,
+        name: user.fullName,
+        emailAddress: user.primaryEmail,
+        clientAccount: alert?.collection?.clientAccount ? {
+            uuid: alert.collection.clientAccount.uuid, name: alert.collection.clientAccount.name,
+        } : undefined,
+        createdAt,
+        createdBy: getUserInfo(createdById, await createdById?.getRole()),
+        updatedAt,
+        updatedBy: getUserInfo(updatedById, await updatedById?.getRole()),
+        isActive,
+        isDodsUser: checkIsDodsUser(await user?.getRole()),
+    }
+}
+
+const checkIsDodsUser = (role: Role): boolean => role ? Boolean(role.dodsRole) : false
+
+const getUserInfo = (user: User, role: Role): userBy | undefined => {
+    return user ?
+        {
+            uuid: user.uuid,
+            name: user.fullName,
+            emailAddress: user.primaryEmail,
+            isDodsUser: checkIsDodsUser(role)
+        } : undefined
 }

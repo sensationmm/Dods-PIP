@@ -71,6 +71,8 @@ if (process.env.NODE_ENV !== 'test') {
 
     CollectionAlertRecipient.belongsTo(User, { as: 'user', foreignKey: 'userId', targetKey: 'id' });
     CollectionAlertRecipient.belongsTo(CollectionAlert, { as: 'alert', foreignKey: 'alertId', targetKey: 'id' });
+    CollectionAlertRecipient.belongsTo(User, { as: 'updatedById', foreignKey: 'updatedBy', targetKey: 'id' });
+    CollectionAlertRecipient.belongsTo(User, { as: 'createdById', foreignKey: 'createdBy', targetKey: 'id' });
 }
 
 export * from './models';

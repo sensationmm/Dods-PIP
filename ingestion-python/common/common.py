@@ -2,6 +2,7 @@ import boto3
 import json
 import logging
 import os
+import sys
 
 from datetime import datetime
 from hashlib import sha256

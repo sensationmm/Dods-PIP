@@ -8,7 +8,7 @@ import spacing from '../../../globals/spacing';
 
 export const facet = styled.div`
   display: flex;
-  margin-bottom: 8px;
+  margin-bottom: ${spacing(2)};
   width: 100%;
 
   label {
@@ -119,7 +119,20 @@ export const facetViewMoreBtn = styled.button`
   }
 `;
 
+const leftRightPadding = spacing(6);
 export const facetChipsWrapper = styled.div`
   display: flex;
-  padding: 24px;
+  padding: ${spacing(4)} ${leftRightPadding};
+  position: relative;
+  gap: ${spacing(1)};
+
+  &:after {
+    content: '';
+    width: calc(100% - (${leftRightPadding} * 2));
+    height: 1px;
+    background: ${color.base.greyLight};
+    position: absolute;
+    bottom: 0;
+    left: ${leftRightPadding};
+  }
 `;

@@ -1,14 +1,15 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-import { CreateEditorialRecordParameters, EditorialDocument, config, } from '../../domain';
 
-import { EditorialRecordRepository } from '../../repositories/EditorialRecordRepository';
-import { S3 } from '@aws-sdk/client-s3';
+import { EditorialRecordRepository, CreateEditorialRecordParameters, DefaultAwsService, AwsService } from '@dodsgroup/dods-repositories';
+
+import { EditorialDocument, config, } from '../../domain';
+
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 
 const { aws: { region, buckets: { documents: documentsBucket } } } = config;
 
-const s3 = new S3({ region: region });
+const awsService: AwsService = new DefaultAwsService(region);
 
 export const isCreateEditorialRecordParameters = (params: any): params is CreateEditorialRecordParameters => 's3Location' in params;
 
@@ -82,12 +83,8 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
 
     Object.assign(document, { documentId });
 
-    await s3
-        .putObject({
-            Bucket: documentsBucket,
-            Key: fileKey,
-            Body: JSON.stringify(document),
-        });
+    await awsService.putInS3(documentsBucket, fileKey, document);
+
     const createEditorialRecordParams = {
         documentName: documentName,
         s3Location: `arn:aws:s3:::${documentsBucket}/${fileKey}`,

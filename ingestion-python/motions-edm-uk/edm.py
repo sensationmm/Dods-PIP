@@ -221,7 +221,7 @@ def get_document_content(document: dict) -> str:
     return output
 
 
-def get_context_from_cli() -> str:
+def get_lambda_event_from_cli() -> str:
     """Parse arguments from command line."""
 
     parser = argparse.ArgumentParser(description="Consume data from EDM API")

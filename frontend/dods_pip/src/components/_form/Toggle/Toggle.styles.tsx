@@ -5,6 +5,12 @@ import opacity from '../../../globals/opacity';
 import spacing from '../../../globals/spacing';
 import { hexAToRGBA } from '../../../utils/color';
 
+export const wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
 type WrapperProps = {
   disabled: boolean;
   hasOnLabel: boolean;
@@ -12,7 +18,7 @@ type WrapperProps = {
   small: boolean;
 };
 
-export const wrapper = styled.div<WrapperProps>`
+export const toggleWrapper = styled.div<WrapperProps>`
   position: relative;
   outline: 0;
   display: grid;

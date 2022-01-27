@@ -1,6 +1,6 @@
 const { execSync } = require('child_process');
 
-const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage test --format json`;
+const fullServerlessInfoCommand = `SLS_DEPRECATION_DISABLE='*' npx serverless print --stage dev --format json`;
 
 let infoCache = '';
 const fetchServerlessInfo = () => {

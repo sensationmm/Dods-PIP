@@ -29,6 +29,8 @@ export const day = styled.div<DayProps>`
   display: flex;
   justify-content: center;
 
+  ${({ disabled }) => disabled && 'pointer-events: none;'}
+
   &:first-of-type {
     border-radius: 8px 0 0 8px;
   }

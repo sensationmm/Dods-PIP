@@ -49,6 +49,7 @@ provider:
     LOGIN_LAST_PASSWORDS_NOT_REUSE_MINUTES: 262800 # 6 months
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     RESET_PASSWORD_URL: ${file(../env-config.${self:provider.stage}.js):frontendURL}/password-reset
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
 
   eventBridge:
     useCloudFormation: true
@@ -104,6 +105,7 @@ custom:
     DODS_LOGIN_LAST_PASSWORDS_DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-login-last-passwords
     DODS_LOGIN_EVENT_BUS_NAME: ${self:service}-${self:provider.stage}-login-event-bus
     DOD_LOGIN_EVENT_BUS_ARN: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/${self:custom.resourceNames.DODS_LOGIN_EVENT_BUS_NAME}
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
     DODS_USER_POOL_NAME: ${self:service}-${self:provider.stage}-UserPool
     DODS_USER_POOL_CLIENT_NAME: ${self:service}-${self:provider.stage}-UserPoolClient
   env:
@@ -112,8 +114,8 @@ custom:
       ses_source_arn: arn:aws:ses:eu-west-1:390773179818:identity/michael.brown@somoglobal.com
       cognito_reply_to: donotreply@somoglobal.com
     qa:
-      ses_from: michael.brown@somoglobal.com
-      ses_source_arn: arn:aws:ses:eu-west-1:817206606893:identity/michael.brown@somoglobal.com
+      ses_from: giovanni.espinosa@somoglobal.com
+      ses_source_arn: arn:aws:ses:eu-west-1:817206606893:identity/giovanni.espinosa@somoglobal.com
       cognito_reply_to: donotreply@somoglobal.com
     test:
       ses_from: giovanni.espinosa@somoglobal.com
@@ -452,3 +454,10 @@ resources:
       Properties:
         UserPoolId: !Ref DodsUserPool
         Domain: dods-pip-${self:provider.stage}
+
+  Outputs:
+    UserPoolId:
+      Value:
+        Ref: DodsUserPool
+      Export:
+        Name: ${self:provider.stage}-UserPoolId

@@ -19,7 +19,7 @@ describe('DayPicker', () => {
   it('calls onClick if provided', () => {
     const day = wrapper.find('[data-test="day-wed"]');
     day.simulate('click');
-    expect(onClick).toHaveBeenCalledWith('wed');
+    expect(onClick).toHaveBeenCalledWith(['wed']);
   });
 
   it('does not call onClick if not provided', () => {

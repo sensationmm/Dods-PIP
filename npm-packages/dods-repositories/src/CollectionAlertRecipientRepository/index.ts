@@ -1,11 +1,24 @@
 import { CollectionAlertError, CollectionAlertRecipientError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
-import { AlertRecipientInput, ClientAccount, Collection, CollectionAlert, CollectionAlertRecipient, Op, Role, Sequelize, User, WhereOptions } from "@dodsgroup/dods-model";
-import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput, DeleteAlertRecipientInput, SearchAlertRecipientsInput, SearchAlertRecipientsOutput, } from "./domain";
+import { AlertRecipientInput, ClientAccount, Collection, CollectionAlert, CollectionAlertRecipient, Op, Sequelize, User, WhereOptions } from "@dodsgroup/dods-model";
+import { mapRecipient } from "..";
+import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput, DeleteAlertRecipientInput, SearchAlertRecipientsInput, SearchAlertRecipientsOutput, UpdateRecipientParameters, AlertRecipientsOutput } from "./domain";
 
 export * from './domain';
 
 export class CollectionAlertRecipientRepository implements CollectionAlertRecipientPersister {
-    static defaultInstance: CollectionAlertRecipientPersister = new CollectionAlertRecipientRepository();
+    static defaultInstance: CollectionAlertRecipientPersister = new CollectionAlertRecipientRepository(
+        CollectionAlertRecipient,
+        CollectionAlert,
+        Collection,
+        User);
+
+    constructor(
+        private model: typeof CollectionAlertRecipient,
+        private alertModel: typeof CollectionAlert,
+        private collectionModel: typeof Collection,
+        private userModel: typeof User
+    ) { }
+
 
     async list(parameters: SearchAlertRecipientsInput): Promise<SearchAlertRecipientsOutput> {
 
@@ -17,7 +30,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             throw new CollectionError('Collection not found');
         }
 
-        const collectionAlert = await CollectionAlert.findOne({
+        const collectionAlert = await this.alertModel.findOne({
             where: {
                 uuid: alertId
             },
@@ -86,15 +99,16 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             include: [
                 {
                     model: User,
+                    as: 'updatedById'
+                },
+                {
+                    model: User,
+                    as: 'createdById'
+                },
+                {
+                    model: User,
                     as: 'user',
-                    required: true,
-                    include: [
-                        {
-                            model: Role,
-                            as: 'role',
-                            required: true,
-                        }
-                    ]
+                    required: true
                 },
                 {
                     model: CollectionAlert,
@@ -121,17 +135,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             limit,
         });
 
-        const data = rows.map((row) => ({
-            uuid: row.user.uuid,
-            name: row.user.fullName,
-            emailAddress: row.user.primaryEmail,
-            clientAccount: {
-                uuid: row.alert.collection.clientAccount.uuid,
-                name: row.alert.collection.clientAccount.name,
-            },
-            isDODSUser: Boolean(row.user.role.dodsRole),
-            isActive: row.user.isActive,
-        }));
+        const data = await Promise.all(rows.map(async (row) => await mapRecipient(row)));
 
 
         return {
@@ -147,13 +151,13 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
 
         const { recipients, updatedBy, collectionId, alertId } = parameters;
 
-        const collection = await Collection.findOne({ where: { uuid: collectionId } });
+        const collection = await this.collectionModel.findOne({ where: { uuid: collectionId } });
 
         if (!collection) {
             throw new CollectionError('Collection not found');
         }
 
-        const collectionAlert = await CollectionAlert.findOne({
+        const collectionAlert = await this.alertModel.findOne({
             where: {
                 uuid: alertId
             },
@@ -168,7 +172,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             throw new CollectionAlertError('Collection Alert not found');
         }
 
-        const updatedByUser = await User.findOne({ where: { uuid: updatedBy } });
+        const updatedByUser = await this.userModel.findOne({ where: { uuid: updatedBy } });
 
         if (!updatedByUser) {
             throw new UserProfileError(`UserProfile not found for updatedBy: ${updatedBy}`);
@@ -179,7 +183,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
         for (const recipient of recipients) {
             const { userId } = recipient;
 
-            const recipientUser = await User.findOne({ where: { uuid: userId } });
+            const recipientUser = await this.userModel.findOne({ where: { uuid: userId } });
 
             if (!recipientUser) {
                 throw new UserProfileError(`UserProfile not found for recipientUser: ${userId}`);
@@ -240,7 +244,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
     async delete(parameters: DeleteAlertRecipientInput): Promise<boolean> {
         const { userId, alertId } = parameters;
 
-        const collectionAlert = await CollectionAlert.findOne({
+        const collectionAlert = await this.alertModel.findOne({
             where: {
                 uuid: alertId
             },
@@ -250,13 +254,13 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             throw new CollectionAlertError('Collection Alert not found');
         }
 
-        const alertRecipientUser = await User.findOne({ where: { uuid: userId } });
+        const alertRecipientUser = await this.userModel.findOne({ where: { uuid: userId } });
 
         if (!alertRecipientUser) {
             throw new UserProfileError('User not found');
         }
 
-        const alertRecipient = await CollectionAlertRecipient.findOne({ where: { alertId: collectionAlert.id, userId: alertRecipientUser.id } });
+        const alertRecipient = await this.model.findOne({ where: { alertId: collectionAlert.id, userId: alertRecipientUser.id } });
 
         if (!alertRecipient) {
             throw new CollectionAlertRecipientError('Recipient not found');
@@ -265,5 +269,72 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
         await alertRecipient.destroy();
 
         return true;
+    }
+
+    async update(parameters: UpdateRecipientParameters): Promise<AlertRecipientsOutput> {
+        const { userId, collectionId, alertId, isActive, updatedBy } = parameters;
+
+        const user = await this.userModel.findOne({
+            where: {
+                uuid: userId,
+                isActive: true
+            },
+        });
+
+        if (!user) {
+            throw new CollectionAlertRecipientError(`Unable to retrieve User with uuid: ${userId}`);
+        }
+
+        const updater = await this.userModel.findOne({
+            where: {
+                uuid: updatedBy,
+                isActive: true
+            },
+        });
+
+        if (!updater) {
+            throw new CollectionAlertRecipientError(`Unable to retrieve User with uuid: ${updatedBy}`);
+        }
+
+        const collection = await this.collectionModel.findOne({
+            where: {
+                uuid: collectionId,
+                isActive: true
+            },
+        });
+
+        if (!collection) {
+            throw new CollectionAlertRecipientError(`Unable to retrieve Collection with uuid: ${collectionId}`);
+        }
+
+        const alert = await this.alertModel.findOne({
+            where: {
+                uuid: alertId,
+                collectionId: collection.id,
+                isActive: true
+            },
+        });
+
+        if (!alert) {
+            throw new CollectionAlertRecipientError(`Unable to retrieve Alert with uuid: ${alertId} or doesn't belong to collection with uuid: ${collectionId}`);
+        }
+
+        const recipient = await this.model.findOne({
+            where: {
+                userId: user.id,
+                alertId: alert.id
+            },
+        });
+
+        if (!recipient) {
+            throw new CollectionAlertRecipientError(`Unable to retrieve Recipient who belongs to alert with uuid: ${alertId}`);
+        }
+
+        const updatedRecipient = await recipient.update({
+            updatedBy: updater.id,
+            isActive
+        });
+        await updatedRecipient.reload({ include: ['user', 'updatedById', 'createdById'] })
+        return await mapRecipient(updatedRecipient);
     }
 }

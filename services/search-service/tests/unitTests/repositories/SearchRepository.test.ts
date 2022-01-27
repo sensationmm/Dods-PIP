@@ -59,11 +59,13 @@ const MOCK_SEARCH_RESPONSE = {
             }]}}}
 const mockSearch = jest.fn().mockReturnValue(MOCK_SEARCH_RESPONSE);
 const mockUpdate = jest.fn().mockReturnValue(true)
+const mockDelete = jest.fn().mockReturnValue(true)
 
 jest.mock('../../../src/elasticsearch', () => ({
     index: () => mockIndex(),
     search: () => mockSearch(),
     update: () => mockUpdate(),
+    delete: () => mockDelete(),
 }));
 
 afterEach(() => {
@@ -107,7 +109,8 @@ describe(`Schedule repository percolator tests`, () => {
         }
         await SearchRepository.defaultInstance.updatePercolator(data)
 
-        expect(mockUpdate).toHaveBeenCalled();
+        expect(mockDelete).toHaveBeenCalled();
+        expect(mockIndex).toHaveBeenCalled();
     });
 });
 

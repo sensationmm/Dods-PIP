@@ -1,7 +1,6 @@
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
-import { DocumentPublishRepository } from '../../../src/repositories/DocumentPublishRepository';
-import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
+import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { mocked } from 'ts-jest/utils';
 import { scheduleEditorialRecord } from '../../../src/handlers/scheduleEditorialRecord/scheduleEditorialRecord';
 
@@ -13,11 +12,10 @@ const defaultUpdatedRecord: any = {
     s3Location: 'SomeLocation',
 };
 
-jest.mock('../../../src/repositories/EditorialRecordRepository');
-jest.mock('../../../src/repositories/DocumentPublishRepository');
+jest.mock('@dodsgroup/dods-repositories');
 
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
-const mockedDocumentPublishRepository = mocked(DocumentPublishRepository, true);
+const mockedDocumentPublishRepository = mocked(DocumentRepository, true);
 
 const FUNCTION_NAME = scheduleEditorialRecord.name;
 
@@ -61,12 +59,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
             message: 'Error could not schedule the public of the document',
         });
 
-        expect(EditorialRecordRepository.defaultInstance.scheduleEditorialRecord).toBeCalledWith(
-            requestParams
-        );
+        expect(DocumentRepository.defaultInstance.scheduleWebhook).toBeCalledWith(requestParams);
         expect(response).toEqual(expectedBadResponse);
     });
-
 
     test('Service Error - should throw', async () => {
         const requestParams = {

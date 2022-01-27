@@ -17,13 +17,14 @@ logger = logging.getLogger(__name__)
 
 def run(event, context):
     try:
-        import_content(context["date"], context["house"])
+        import_content(event["date"], event["house"])
     except Exception:  # no-qa
         logger.exception("Unexpected exception during task run")
 
 
 if __name__ == "__main__":
-    from hansard import get_context_from_cli
+    from hansard import get_lambda_event_from_cli
 
-    context = get_context_from_cli()
-    run(None, context)
+    # https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-concepts.html#gettingstarted-concepts-event
+    event = get_lambda_event_from_cli()
+    run(event, None)
