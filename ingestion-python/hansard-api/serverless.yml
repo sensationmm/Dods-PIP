@@ -47,7 +47,7 @@ provider:
     DYNAMODB_TABLE: ${self:custom.dynamodb_table}
     DYNAMODB_HOST: ${self:custom.dynamodb_host}
     REGION: eu-west-1
-    CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+    BUCKET_NAME: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
