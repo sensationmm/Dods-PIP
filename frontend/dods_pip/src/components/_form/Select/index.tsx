@@ -9,6 +9,7 @@ import * as Styled from './Select.styles';
 export type SelectItem = {
   label: string;
   value: string;
+  icon?: string;
 };
 
 export interface SelectProps extends Omit<InputTextProps, 'icon' | 'length'> {

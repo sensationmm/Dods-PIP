@@ -5,7 +5,6 @@ import Alert, { AlertData } from '@dods-ui/components/Alert';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Modal from '@dods-ui/components/Modal';
 import Text from '@dods-ui/components/Text';
-import { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import { User } from '@dods-ui/lib/useUser';
 import loadAccounts from '@dods-ui/pages/accounts/load-accounts';
 import loadCollections from '@dods-ui/pages/collections/load-collections';
@@ -17,7 +16,8 @@ import * as Styled from './collections.styles';
 
 export interface CollectionAlertProps extends AlertData {
   user: User;
-  addNotification: LoadingHOCProps['addNotification'];
+  onDelete: () => Promise<void>;
+  onCopy: (collectionId: string) => Promise<void>;
 }
 
 type Errors = {
@@ -30,7 +30,8 @@ const CollectionAlert: React.FC<CollectionAlertProps> = ({
   deliveryTimes,
   collectionId,
   user,
-  addNotification,
+  onDelete,
+  onCopy,
   ...rest
 }) => {
   const router = useRouter();
@@ -44,14 +45,20 @@ const CollectionAlert: React.FC<CollectionAlertProps> = ({
   const [loadingCollections, setLoadingCollections] = React.useState<boolean>(false);
 
   const deleteAlert = () => {
-    window.alert(`Delete Alert ${uuid}`);
     setShowDelete(false);
-    addNotification({ type: 'confirm', title: 'Alert deleted' });
+    onDelete();
   };
 
   const copyAlert = () => {
-    window.alert(`Copy ${copyAccount} / ${copyCollection}`);
+    onCopy(copyCollection);
+    resetCopy();
+  };
+
+  const resetCopy = () => {
     setShowCopy(false);
+    setCopyAccount('');
+    setCopyCollection('');
+    setCollections([]);
   };
 
   React.useEffect(() => {
@@ -80,7 +87,7 @@ const CollectionAlert: React.FC<CollectionAlertProps> = ({
         onDelete={() => setShowDelete(true)}
         onCopy={() => setShowCopy(true)}
         onViewResults={() => router.push(`/collections/${collectionId}`)}
-        onViewSettings={() => router.push(`/collections/${collectionId}`)}
+        onViewSettings={() => router.push(`/collections/${collectionId}/alerts/${uuid}/edit`)}
       />
 
       {showDelete && (
@@ -116,15 +123,13 @@ const CollectionAlert: React.FC<CollectionAlertProps> = ({
         <Modal
           title="Where do you want to copy to?"
           size="large"
-          onClose={() => {
-            setShowCopy(false);
-          }}
+          onClose={resetCopy}
           buttons={[
             {
               isSmall: true,
               type: 'secondary',
               label: 'Cancel',
-              onClick: () => setShowCopy(false),
+              onClick: resetCopy,
             },
             {
               isSmall: true,
@@ -178,7 +183,6 @@ const CollectionAlert: React.FC<CollectionAlertProps> = ({
               onBlur={() =>
                 validateField('collection', 'Collection', copyAccount, errors, setErrors)
               }
-              onKeyPress={(val, search?: string) => loadAccounts(setAccounts, search)}
               onKeyPressHasSearch
               isDisabled={collections.length === 0 || loadingCollections}
             />

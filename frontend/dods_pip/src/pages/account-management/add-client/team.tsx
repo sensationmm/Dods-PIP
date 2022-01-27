@@ -44,10 +44,11 @@ type PutPayload = {
   teamMemberType: number;
 };
 
-type User = {
+export type User = {
   uuid: string;
   firstName: string;
   lastName: string;
+  isDodsUser: boolean;
 };
 
 export interface TeamProps {

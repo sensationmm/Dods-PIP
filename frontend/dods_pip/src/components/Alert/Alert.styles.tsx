@@ -77,3 +77,20 @@ export const actionsButtons = styled.div`
     margin-left: ${spacing(2)};
   }
 `;
+
+export const incomplete = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+export const incompleteAlert = styled.div`
+  width: 20px;
+  height: 20px;
+  background: ${color.alert.red};
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: ${spacing(3)};
+`;
