@@ -1,6 +1,7 @@
 import { CollectionAlertError, CollectionAlertRecipientError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
 import { AlertRecipientInput, ClientAccount, Collection, CollectionAlert, CollectionAlertRecipient, Op, Sequelize, User, WhereOptions } from "@dodsgroup/dods-model";
 import { mapRecipient } from "..";
+import { LastStepCompleted } from "../shared/Constants";
 import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput, DeleteAlertRecipientInput, SearchAlertRecipientsInput, SearchAlertRecipientsOutput, UpdateRecipientParameters, AlertRecipientsOutput } from "./domain";
 
 export * from './domain';
@@ -196,7 +197,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
 
         await CollectionAlertRecipient.bulkCreate(alertRecipients, { ignoreDuplicates: true });
 
-        await collectionAlert.update({ lastStepCompleted: 2 }, { where: { lastStepCompleted: 1 } });
+        await collectionAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertRecipients }, { where: { lastStepCompleted: LastStepCompleted.SetAlertQueries } });
 
         await collectionAlert.update({ updatedBy: updatedByUser.id });
 
