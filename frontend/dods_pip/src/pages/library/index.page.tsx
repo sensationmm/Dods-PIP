@@ -133,8 +133,8 @@ const getPayload = ({
       basicFilters = [],
       nestedFilters = [],
       dateRange = {},
-      resultsSize = 20,
-      offset = 0,
+      resultSize = 20,
+      currentPage = 0,
     }: QueryObject = parsedQuery;
 
     const phrases = searchTerm.match(/"(.*?)"/g) || []; // Anything in double quotes, e.g "I am a phrase"
@@ -190,8 +190,8 @@ const getPayload = ({
                   .lte(dateRange.max || format(new Date(), 'yyyy-MM-dd')),
               ),
             )
-            .size(resultsSize)
-            .from(offset) as ExtendedRequestBodySearch
+            .size(resultSize)
+            .from(currentPage * resultSize) as ExtendedRequestBodySearch
         )._body,
         aggregations,
       },
@@ -207,19 +207,19 @@ const getPayload = ({
   };
 };
 
-interface LibraryProps {
+interface ILibraryProps {
   parsedQuery: QueryObject;
   results: { _source: ISourceData }[];
-  total: number;
+  totalDocs: number;
   aggregations: IAggregations;
   apiErrorMessage?: string;
 }
 
 const DEFAULT_RESULT_SIZE = 20;
 
-export const Library: React.FC<LibraryProps> = ({
+export const Library: React.FC<ILibraryProps> = ({
   results,
-  total,
+  totalDocs,
   aggregations,
   parsedQuery,
   apiErrorMessage,
@@ -234,14 +234,9 @@ export const Library: React.FC<LibraryProps> = ({
   const [organizations, setOrganizations] = useState<BucketType[]>([]);
   const [geography, setGeography] = useState<BucketType[]>([]);
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
-  const [offset, setOffset] = useState(0);
-  const [filtersVisible, setFiltersVisible] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [filtersVisible, setFiltersVisible] = useState(true);
 
-  const resultSize = parsedQuery.resultsSize || DEFAULT_RESULT_SIZE;
-
-  const prevPageDisabled: boolean = offset === 0;
-  const nextPageDisabled: boolean = offset + resultSize > total;
+  const { currentPage = 1, resultSize = DEFAULT_RESULT_SIZE } = parsedQuery;
 
   useEffect(() => {
     if (apiErrorMessage) {
@@ -250,22 +245,20 @@ export const Library: React.FC<LibraryProps> = ({
   }, [apiErrorMessage]);
 
   const pagesOpts: SelectItem[] = useMemo(() => {
-    if (total > 0) {
-      const pageTotal = Math.round(total / resultSize);
+    if (totalDocs > 0) {
+      const pageTotal = Math.round(totalDocs / resultSize);
       return Array.from(Array(pageTotal).keys()).map((i) => {
         return { label: (i + 1).toString(), value: (i + 1).toString() };
       });
     }
     return [{ label: '1', value: '1' }];
-  }, [total, resultSize]);
+  }, [totalDocs, resultSize]);
 
   const setKeywordQuery = (searchTerm: string) => {
-    setOffset(0);
-
     router.push(
       {
         pathname: '/library',
-        query: { search: JSON.stringify({ searchTerm }) },
+        query: { search: JSON.stringify({ searchTerm, currentPage: 1 }) },
       },
       undefined,
       { scroll: false },
@@ -273,15 +266,13 @@ export const Library: React.FC<LibraryProps> = ({
   };
 
   const setDateFilter = ({ min, max }: IDateRange) => {
-    setOffset(0);
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { dateRange, ...rest } = parsedQuery; // Remove dateRage
 
     let newQuery: QueryObject = rest;
 
     if (min && max) {
-      newQuery = { ...rest, dateRange: { min, max } };
+      newQuery = { ...rest, dateRange: { min, max }, currentPage: 0 };
     }
 
     router.push(
@@ -295,8 +286,6 @@ export const Library: React.FC<LibraryProps> = ({
   };
 
   const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
-    setOffset(0);
-
     const { nestedFilters = [] } = parsedQuery;
 
     const selectedIndex = nestedFilters.findIndex(
@@ -318,7 +307,7 @@ export const Library: React.FC<LibraryProps> = ({
     router.push(
       {
         pathname: '/library',
-        query: { search: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery), currentPage: 1 },
       },
       undefined,
       { scroll: false },
@@ -326,8 +315,6 @@ export const Library: React.FC<LibraryProps> = ({
   };
 
   const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
-    setOffset(0);
-
     const { basicFilters = [] } = parsedQuery;
     const selectedIndex = basicFilters.findIndex(
       (filter) => filter.key === key && filter.value === value,
@@ -346,7 +333,7 @@ export const Library: React.FC<LibraryProps> = ({
     router.push(
       {
         pathname: '/library',
-        query: { search: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery), currentPage: 1 },
       },
       undefined,
       { scroll: false },
@@ -365,7 +352,7 @@ export const Library: React.FC<LibraryProps> = ({
     router.push(
       {
         pathname: '/library',
-        query: { search: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery), currentPage: 1 },
       },
       undefined,
       { scroll: false },
@@ -384,15 +371,15 @@ export const Library: React.FC<LibraryProps> = ({
     router.push(
       {
         pathname: '/library',
-        query: { search: JSON.stringify(newQuery) },
+        query: { search: JSON.stringify(newQuery), currentPage: 1 },
       },
       undefined,
       { scroll: false },
     );
   };
 
-  const setPerPageCount = (resultsSize: number) => {
-    const newQuery = { ...parsedQuery, resultsSize };
+  const setPerPageCount = (resultSize: number) => {
+    const newQuery = { ...parsedQuery, resultSize, currentPage: 1 };
 
     router.push(
       {
@@ -404,8 +391,8 @@ export const Library: React.FC<LibraryProps> = ({
     );
   };
 
-  const setOffsetQuery = (offset: number) => {
-    const newQuery = { ...parsedQuery, offset };
+  const setCurrentPageQuery = (currentPage: number) => {
+    const newQuery = { ...parsedQuery, currentPage };
 
     router.push(
       {
@@ -527,10 +514,10 @@ export const Library: React.FC<LibraryProps> = ({
               <div>
                 Showing
                 <span className={'pageCount'}>
-                  {offset + 1} - {(results.length || 0) + offset}{' '}
+                  {(currentPage - 1) * resultSize} - {(currentPage - 1) * resultSize + resultSize}
                 </span>
                 <Styled.totalRecords>
-                  Total <b className={'total'}>{total.toLocaleString('en-US')}</b> Items
+                  Total <b className={'totalDocs'}>{totalDocs.toLocaleString('en-US')}</b> Items
                 </Styled.totalRecords>
               </div>
               <Styled.perPageSelect>
@@ -647,17 +634,15 @@ export const Library: React.FC<LibraryProps> = ({
                 {results.length > 0 && (
                   <Styled.pagination>
                     <span>
-                      Total <b>{total.toLocaleString('en-US')}</b> Items
+                      Total <b>{totalDocs.toLocaleString('en-US')}</b> Items
                     </span>
                     <Styled.paginationControls>
                       <button
                         className={'prevPageArrow'}
-                        disabled={prevPageDisabled}
+                        disabled={currentPage === 1}
                         onClick={() => {
-                          if (offset !== 0) {
-                            const newOffset = offset - resultSize;
-                            setOffset(newOffset);
-                            setOffsetQuery(newOffset);
+                          if (currentPage > 1) {
+                            setCurrentPageQuery(currentPage - 1);
                           }
                         }}
                       >
@@ -666,30 +651,25 @@ export const Library: React.FC<LibraryProps> = ({
                       <span>Viewing page</span>
                       <Select
                         id={'pageSelect'}
-                        value={currentPage.toString()}
+                        value={currentPage?.toString() || '1'}
                         size={'small'}
                         isFilter={true}
                         onChange={(value) => {
                           const nextPage = parseInt(value);
-                          setCurrentPage(nextPage);
-                          const newOffset = (nextPage - 1) * resultSize;
-                          setOffset(newOffset);
-                          setOffsetQuery(newOffset);
+                          setCurrentPageQuery(nextPage);
                         }}
                         options={pagesOpts}
                       />
                       <span>
                         of
-                        <b>{Math.round(total / resultSize)}</b>
+                        <b>{Math.round(totalDocs / resultSize)}</b>
                       </span>
                       <button
                         className={'nextPageArrow'}
-                        disabled={nextPageDisabled}
+                        disabled={currentPage * resultSize === totalDocs}
                         onClick={() => {
-                          if (offset < total) {
-                            const newOffset = offset + resultSize;
-                            setOffset(newOffset);
-                            setOffsetQuery(newOffset);
+                          if (currentPage * resultSize < totalDocs) {
+                            setCurrentPageQuery(currentPage + 1);
                           }
                         }}
                       >
@@ -859,7 +839,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           apiErrorMessage: error.data.message,
           parsedQuery: {},
           results: [],
-          total: 0,
+          totalDocs: 0,
           aggregations: [],
         },
       };
@@ -875,7 +855,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       results: apiResponse?.es_response?.hits?.hits || [],
-      total: apiResponse?.es_response?.hits?.total?.value || 0,
+      totalDocs: apiResponse?.es_response?.hits?.total?.value || 0,
       aggregations: apiResponse?.es_response?.aggregations || {},
       parsedQuery,
     },

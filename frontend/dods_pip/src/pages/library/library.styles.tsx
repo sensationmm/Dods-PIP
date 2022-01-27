@@ -380,6 +380,7 @@ export const paginationControls = styled.div`
     border: 0;
     cursor: pointer;
     &:disabled {
+      pointer-events: none;
       svg {
         color: ${color.base.greyMid};
       }
