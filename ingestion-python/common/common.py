@@ -66,7 +66,10 @@ def store_document(document: dict):
     except TableDoesNotExist:
         # Expected only in local dev in certain situations
         logger.error("Data Model table not found, creating and exiting...")
-        DataModel.create_table(read_capacity_units=1, write_capacity_units=1)
+        DataModel.create_table(
+            read_capacity_units=os.environ.get("DYNAMODB_READ_CAPACITY_UNITS", 1),
+            write_capacity_units=os.environ.get("DYNAMODB_WRITE_CAPACITY_UNITS", 1),
+        )
         sys.exit(30)
 
     else:
