@@ -155,7 +155,22 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
           
-          
+  /collections/{collectionId}/alerts/{alertId}/process:
+    put:
+      operationId: processAlert
+      summary: "Process Alert"
+      description: "Process Alert Webhook endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateAlertResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
   /collections/{collectionId}/alerts/{alertId}/schedule:
     put:
       operationId: setAlertSchedule
