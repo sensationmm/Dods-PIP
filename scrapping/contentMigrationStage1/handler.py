@@ -1,6 +1,5 @@
 import os
 import uuid
-from datetime import datetime
 from json import loads, dumps
 import boto3
 from bs4 import BeautifulSoup
@@ -8,8 +7,7 @@ from lib.common import Common
 from lib.configs import Config
 from lib.logger import logger
 from lib.validation import Validator
-from slugify import slugify
-import lxml
+import re
 
 
 INPUT_BUCKET = os.environ['INPUT_BUCKET']
@@ -106,7 +104,7 @@ def consumer(event, context):
                 content["language"] = item.revision.localisation.language.text \
                     if item.revision.localisation.language is not None else "en"
                 content["originalContent"] = ""
-                content["documentContent"] = str(html_content)
+                content["documentContent"] = str(re.sub(' style=..*"', '', html_content))
 
                 annotations = soup.findChildren('granularannotation')
                 taxonomy_terms  = []

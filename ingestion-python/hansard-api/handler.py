@@ -9,6 +9,7 @@ Serverless task handler for the Hansard API.
 import logging
 import logging.config
 from hansard import import_content
+from datetime import datetime
 
 
 logging.config.fileConfig('logging.ini', disable_existing_loggers=False)
@@ -17,7 +18,12 @@ logger = logging.getLogger(__name__)
 
 def run(event, context):
     try:
-        import_content(event["date"], event["house"])
+        if event["date"] == "today":
+            logger.info(f"Got special date 'today'")
+            import_content(datetime.today().strftime(
+                '%Y-%m-%d'), event["house"])
+        else:
+            import_content(event["date"], event["house"])
     except Exception:  # no-qa
         logger.exception("Unexpected exception during task run")
 

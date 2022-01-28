@@ -1,29 +1,76 @@
 import Checkbox from '@dods-ui/components/_form/Checkbox';
 import InputSearch from '@dods-ui/components/_form/InputSearch';
 import Spacer from '@dods-ui/components/_layout/Spacer';
-import Avatar from '@dods-ui/components/Avatar';
+import Avatar, { UserType } from '@dods-ui/components/Avatar';
 import Badge from '@dods-ui/components/Badge';
 import Button from '@dods-ui/components/Button';
 import { PlainTable } from '@dods-ui/components/DataTable';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Modal from '@dods-ui/components/Modal';
-import Pagination from '@dods-ui/components/Pagination';
 import TagSelector from '@dods-ui/components/TagSelector';
 import Text from '@dods-ui/components/Text';
+import fetchJson from '@dods-ui/lib/fetchJson';
 import { DropdownValue } from '@dods-ui/pages/account-management/add-client/type';
-import React from 'react';
+import { UserAccount } from '@dods-ui/pages/account-management/users.page';
+import { Api, BASE_URI } from '@dods-ui/utils/api';
+import { getUserName } from '@dods-ui/utils/string';
+import { debounce } from 'lodash';
+import React, { useMemo } from 'react';
 
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep3: React.FC<AlertStepProps> = () => {
+const AlertStep3: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
   const [filter, setFilter] = React.useState<string>('');
   const [showAdd, setShowAdd] = React.useState<boolean>(false);
   const [showRemove, setShowRemove] = React.useState<boolean>(false);
-  const [newUsers, setNewUsers] = React.useState<DropdownValue[]>([]);
+  const [userResults, setUserResults] = React.useState<DropdownValue[]>([]);
+  const [newRecipients, setNewRecipients] = React.useState<DropdownValue[]>([]);
+  const [recipients, setRecipients] = React.useState<DropdownValue[]>([]);
+  const [deleteTarget, setDeleteTarget] = React.useState<string>('');
 
-  const { PaginationButtons, PaginationStats } = Pagination(5, '5');
+  const debounceSearchUsers = debounce(async (name: string) => {
+    try {
+      const response = await fetchJson(`${BASE_URI}${Api.Users}?name=${name}`, { method: 'GET' });
+      const { success = false, data = [] } = response;
+
+      if (success && Array.isArray(data)) {
+        const values = data
+          .filter((item) => (item as UserAccount).isDodsUser)
+          .map((item: UserAccount) => ({
+            value: item.uuid,
+            label: getUserName(item),
+            icon: item.isDodsUser ? 'consultant' : 'client',
+            userData: {
+              accountName: item.clientAccount.name as string,
+            },
+          }));
+
+        setUserResults(values);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, 150);
+
+  const searchUsers = useMemo(() => debounceSearchUsers, []);
+
+  const reset = () => {
+    setUserResults([]);
+    setNewRecipients([]);
+  };
+
+  const onDelete = (id: string) => {
+    setShowRemove(true);
+    setDeleteTarget(id);
+  };
+
+  const handleDelete = () => {
+    setRecipients(recipients.filter((rec) => rec.value !== deleteTarget));
+    setShowRemove(false);
+    setDeleteTarget('');
+  };
 
   return (
     <>
@@ -33,7 +80,7 @@ const AlertStep3: React.FC<AlertStepProps> = () => {
           <Text type="h2" headingStyle="title">
             Recipients
           </Text>
-          <Badge number={5} label="Recipients" size="small" />
+          <Badge number={recipients.length} label="Recipients" size="small" />
         </Styled.sectionHeader>
 
         <Styled.sectionHeader>
@@ -59,15 +106,22 @@ const AlertStep3: React.FC<AlertStepProps> = () => {
       <PlainTable
         headings={['Name', 'Account', 'Active', '']}
         colWidths={[7, 5, 1, 2]}
-        rows={[
-          [
-            '12345',
+        rows={recipients
+          .filter(
+            (recipient) =>
+              recipient.label.toLowerCase().search(filter.toLowerCase()) > -1 ||
+              (recipient.userData?.accountName as string)
+                .toLowerCase()
+                .search(filter.toLowerCase()) > -1,
+          )
+          .map((recipient) => [
+            recipient.value,
             <Styled.sectionHeader key="title1">
-              <Avatar type="client" size="small" />
-              <Text bold>John Lewis</Text>
+              <Avatar type={recipient.icon as UserType} size="small" />
+              <Text bold>{recipient.label}</Text>
             </Styled.sectionHeader>,
             <>
-              <Text>Account header</Text>
+              <Text>{recipient.userData?.accountName as string}</Text>
             </>,
             <>
               <Checkbox id="active1" isChecked onChange={console.log} />
@@ -77,95 +131,10 @@ const AlertStep3: React.FC<AlertStepProps> = () => {
                 type="text"
                 label="Remove"
                 icon={Icons.Bin}
-                onClick={() => setShowRemove(true)}
+                onClick={() => onDelete(recipient.value)}
               />
             </>,
-          ],
-          [
-            '12345',
-            <Styled.sectionHeader key="title2">
-              <Avatar type="client" size="small" />
-              <Text bold>John Lewis</Text>
-            </Styled.sectionHeader>,
-            <>
-              <Text>Account header</Text>
-            </>,
-            <>
-              <Checkbox id="active2" isChecked onChange={console.log} />
-            </>,
-            <>
-              <Button
-                type="text"
-                label="Remove"
-                icon={Icons.Bin}
-                onClick={() => setShowRemove(true)}
-              />
-            </>,
-          ],
-          [
-            '12345',
-            <Styled.sectionHeader key="title3">
-              <Avatar type="client" size="small" />
-              <Text bold>John Lewis</Text>
-            </Styled.sectionHeader>,
-            <>
-              <Text>Account header</Text>
-            </>,
-            <>
-              <Checkbox id="active3" isChecked onChange={console.log} />
-            </>,
-            <>
-              <Button
-                type="text"
-                label="Remove"
-                icon={Icons.Bin}
-                onClick={() => setShowRemove(true)}
-              />
-            </>,
-          ],
-          [
-            '12345',
-            <Styled.sectionHeader key="title4">
-              <Avatar type="client" size="small" />
-              <Text bold>John Lewis</Text>
-            </Styled.sectionHeader>,
-            <>
-              <Text>Account header</Text>
-            </>,
-            <>
-              <Checkbox id="active4" isChecked onChange={console.log} />
-            </>,
-            <>
-              <Button
-                type="text"
-                label="Remove"
-                icon={Icons.Bin}
-                onClick={() => setShowRemove(true)}
-              />
-            </>,
-          ],
-          [
-            '12345',
-            <Styled.sectionHeader key="title5">
-              <Avatar type="client" size="small" />
-              <Text bold>John Lewis</Text>
-            </Styled.sectionHeader>,
-            <>
-              <Text>Account header</Text>
-            </>,
-            <>
-              <Checkbox id="active5" isChecked onChange={console.log} />
-            </>,
-            <>
-              <Button
-                type="text"
-                label="Remove"
-                icon={Icons.Bin}
-                onClick={() => setShowRemove(true)}
-              />
-            </>,
-          ],
-        ]}
+          ])}
         emptyMessage="You need to do at least one recipient"
         emptyAction={
           <Button
@@ -177,10 +146,26 @@ const AlertStep3: React.FC<AlertStepProps> = () => {
           />
         }
       />
-      <Spacer size={5} />
-      <PaginationStats>
-        <PaginationButtons />
-      </PaginationStats>
+
+      <Spacer size={15} />
+
+      <Styled.actions>
+        <Button
+          type="text"
+          inline
+          label="Back"
+          icon={Icons.ChevronLeftBold}
+          onClick={() => setActiveStep(2)}
+        />
+        <Button
+          inline
+          label={'Next'}
+          icon={Icons.ChevronRightBold}
+          iconAlignment="right"
+          onClick={() => editAlert(recipients)}
+          disabled={recipients.length === 0}
+        />
+      </Styled.actions>
 
       {showAdd && (
         <Modal
@@ -192,26 +177,37 @@ const AlertStep3: React.FC<AlertStepProps> = () => {
               isSmall: true,
               type: 'secondary',
               label: 'Cancel',
-              onClick: () => setShowAdd(false),
+              onClick: () => {
+                reset();
+                setShowAdd(false);
+              },
             },
             {
               isSmall: true,
               type: 'primary',
               label: 'Add to alert',
               icon: Icons.Add,
-              onClick: () => setShowAdd(false),
+              onClick: () => {
+                reset();
+                setRecipients([...recipients, ...newRecipients]);
+                setShowAdd(false);
+              },
+              disabled: newRecipients.length === 0,
             },
           ]}
           buttonAlignment="right"
+          bodyOverflow
         >
           <TagSelector
             id="add-recipients"
             title="Search and add users in bulk"
             placeholder="Start typing to search"
             helperText="Click on the person or account to add them to this list"
-            values={newUsers}
+            values={userResults}
+            onKeyPress={searchUsers}
             emptyMessage=""
-            onChange={(val) => setNewUsers(val as DropdownValue[])}
+            onChange={(val) => setNewRecipients(val as DropdownValue[])}
+            selectedValues={newRecipients}
           />
         </Modal>
       )}
@@ -221,20 +217,26 @@ const AlertStep3: React.FC<AlertStepProps> = () => {
           title="Do you wish to remove?"
           titleIcon={Icons.Bin}
           size="large"
-          onClose={() => setShowRemove(false)}
+          onClose={() => {
+            setShowRemove(false);
+            setDeleteTarget('');
+          }}
           buttons={[
             {
               isSmall: true,
               type: 'secondary',
               label: 'Back',
-              onClick: () => setShowRemove(false),
+              onClick: () => {
+                setShowRemove(false);
+                setDeleteTarget('');
+              },
             },
             {
               isSmall: true,
               type: 'primary',
               label: 'Confirm and remove',
               icon: Icons.Bin,
-              onClick: () => setShowRemove(false),
+              onClick: handleDelete,
             },
           ]}
           buttonAlignment="right"

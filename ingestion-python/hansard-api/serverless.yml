@@ -35,6 +35,7 @@ package:
 provider:
   name: aws
   runtime: python3.9
+  timeout: 120
   lambdaHashingVersion: 20201221
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
@@ -47,7 +48,7 @@ provider:
     DYNAMODB_TABLE: ${self:custom.dynamodb_table}
     DYNAMODB_HOST: ${self:custom.dynamodb_host}
     REGION: eu-west-1
-    CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+    BUCKET_NAME: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
@@ -74,10 +75,12 @@ functions:
     # description:
     handler: handler.run
     events:
-      ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(00 05 ? * MON-FRI *)
-      ## Invoke lambda once a day
-      # - schedule: rate(1 day)
+      - eventBridge:
+          schedule: cron(00 08-22/2 ? * MON-FRI *)
+          input:
+            date: today
+            house: commons
+
 
 resources:
    Resources:

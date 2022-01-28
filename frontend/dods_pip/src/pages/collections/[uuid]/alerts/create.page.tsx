@@ -20,6 +20,7 @@ export const AddAlert: React.FC<AddAlertProps> = ({ setLoading }) => {
     collectionId: '',
     accountName: '',
     collectionName: '',
+    queries: [],
   });
 
   const loadCollection = async (id: Collection['uuid']) => {
