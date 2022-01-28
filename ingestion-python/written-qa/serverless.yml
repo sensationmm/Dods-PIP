@@ -18,7 +18,7 @@ custom:
   dynamodb_table: ${self:service}-${self:custom.stage}-table
   dynamodb_arn: arn:aws:dynamodb:${self:custom.region}:*:table/${self:custom.dynamodb_table}
   dynamodb_host: https://dynamodb.${self:custom.region}.amazonaws.com
-  s3_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+  s3_bucket: pip-${self:provider.stage}-content-extraction
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
 
 package:
@@ -48,7 +48,7 @@ provider:
     DYNAMODB_TABLE: ${self:custom.dynamodb_table}
     DYNAMODB_HOST: ${self:custom.dynamodb_host}
     REGION: eu-west-1
-    CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+    BUCKET_NAME: pip-${self:provider.stage}-content-extraction
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
@@ -72,13 +72,12 @@ provider:
 functions:
   scrape:
     name: ${self:service}-${sls:stage}
-    # description:
     handler: handler.run
     events:
-      ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(00 05 ? * MON-FRI *)
-      ## Invoke lambda once a day
-      # - schedule: rate(1 day)
+      - eventBridge:
+          schedule: cron(15 08-22/2 ? * MON-FRI *)
+          input:
+            date: today
 
 resources:
    Resources:
