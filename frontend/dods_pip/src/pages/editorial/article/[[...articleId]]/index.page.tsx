@@ -21,6 +21,7 @@ import {
 import getContentSources from '@dods-ui/utils/getContentSources';
 import getInformationTypes from '@dods-ui/utils/getInformationTypes';
 import getJurisdiction from '@dods-ui/utils/getJurisdiction';
+import useStateWithCallback from '@dods-ui/utils/useStateWithCallback';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -51,7 +52,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   });
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
-  const [savedDocumentContent, setSavedDocumentContent] = useState<string | undefined>();
+  const [savedDocumentContent, setSavedDocumentContent] = useStateWithCallback<string | undefined>(
+    undefined,
+  );
   const [savedDocumentTags, setSavedDocumentTags] = useState<TagsData[] | undefined>();
   const [jurisdiction, setJurisdiction] = useState<string>();
   const [validContentSources, setValidContentSources] = useState<string[] | undefined>();
@@ -94,41 +97,41 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   useEffect(() => {
     const getDocData = async (uuid: string) => {
       setLoading(true);
-      await getEditorialPreview(uuid)
-        .then((response) => {
-          if (response.success) {
-            const {
-              documentTitle,
-              documentContent,
-              informationType,
-              contentSource,
-              sourceReferenceUri,
-              taxonomyTerms,
-            } = response.document;
-            const fieldData = {
-              title: documentTitle,
-              content: documentContent,
-              informationType,
-              sourceName: contentSource,
-              sourceUrl: sourceReferenceUri || '',
-            };
-            setSavedDocumentContent(documentContent);
-            setSavedDocumentTags(taxonomyTerms);
-            setJurisdiction(getJurisdiction({ contentSource }));
-            setValidInfoTypes(getInformationTypes({ contentSource, informationType }));
-            setFieldData(fieldData);
-            global.localStorage.setItem(EDITORIAL_STORAGE_KEY, JSON.stringify(fieldData));
-          } else {
-            addNotification({
-              type: 'warn',
-              title: 'Error - Failed to load document',
-              text: response.message,
-            });
-          }
-        })
-        .finally(() => {
+      await getEditorialPreview(uuid).then((response) => {
+        if (response.success) {
+          const {
+            documentTitle,
+            documentContent,
+            informationType,
+            contentSource,
+            sourceReferenceUri,
+            taxonomyTerms,
+          } = response.document;
+          const fieldData = {
+            title: documentTitle,
+            content: documentContent,
+            informationType,
+            sourceName: contentSource,
+            sourceUrl: sourceReferenceUri || '',
+          };
+          setSavedDocumentContent(
+            documentContent,
+            (content: string) => content.length && setLoading(false),
+          );
+          setSavedDocumentTags(taxonomyTerms);
+          setJurisdiction(getJurisdiction({ contentSource }));
+          setValidInfoTypes(getInformationTypes({ contentSource, informationType }));
+          setFieldData(fieldData);
+          global.localStorage.setItem(EDITORIAL_STORAGE_KEY, JSON.stringify(fieldData));
+        } else {
           setLoading(false);
-        });
+          addNotification({
+            type: 'warn',
+            title: 'Error - Failed to load document',
+            text: response.message,
+          });
+        }
+      });
     };
     if (isEditMode && articleId.length) {
       getDocData(articleId[0]);
