@@ -30,8 +30,6 @@ const AlertStep4: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
   React.useEffect(() => {
     if (!isSpecific) {
       setDays(['MON', 'TUE', 'WED', 'THU', 'FRI']);
-    } else {
-      setDays([]);
     }
   }, [isSpecific]);
 
@@ -40,6 +38,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
       setTimezone('');
       setDays([]);
       setTimes([]);
+      setIsSpecific(true);
     }
   }, [isScheduled]);
 
@@ -53,6 +52,13 @@ const AlertStep4: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
     }
 
     setTimes(existing);
+  };
+
+  const handleSetDays = (days: DayType[]) => {
+    setDays(days);
+    if (!isSpecific) {
+      setIsSpecific(true);
+    }
   };
 
   const cronTime = () => {
@@ -104,7 +110,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
                 />
               </Styled.schedule>
               <Spacer size={3} />
-              <DayPicker selected={days} onClick={setDays} disabled={!isSpecific || !isScheduled} />
+              <DayPicker selected={days} onClick={handleSetDays} disabled={!isScheduled} />
             </div>
           </Styled.schedule>
 
