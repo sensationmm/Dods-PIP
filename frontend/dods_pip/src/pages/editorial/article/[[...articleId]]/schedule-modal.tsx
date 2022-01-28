@@ -1,3 +1,4 @@
+import DatePicker from '@dods-ui/components/_form/DatePicker';
 import InputText from '@dods-ui/components/_form/InputText';
 import Label from '@dods-ui/components/_form/Label';
 import RadioGroup from '@dods-ui/components/_form/RadioGroup';
@@ -6,7 +7,8 @@ import Spacer from '@dods-ui/components/_layout/Spacer';
 import Button from '@dods-ui/components/Button';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Modal from '@dods-ui/components/Modal';
-import React, { useState } from 'react';
+import { format } from 'date-fns';
+import React, { useMemo, useState } from 'react';
 
 import * as Styled from './schedule-modal.styles';
 
@@ -45,9 +47,58 @@ const ScheduleModal: React.FC = () => {
   const [time, setTime] = useState('');
   const [timePeriod, setTimePeriod] = useState('am');
   const [timezone, setTimezone] = useState('0');
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+
+  const showDatePicker = period !== 'today';
+
+  const renderTimeInputs = useMemo(() => {
+    return (
+      <div>
+        <Label label="Choose a time" required />
+        <Styled.inputGroup>
+          <Styled.timeInput>
+            <InputText id="time" value={time} placeholder="hh:mm" onChange={setTime} />
+          </Styled.timeInput>
+          <Select
+            id="am-pm"
+            options={timePeriods}
+            value={timePeriod}
+            placeholder="AM"
+            onChange={setTimePeriod}
+          />
+          <Select
+            id="timezone"
+            options={timezones}
+            value={timezone}
+            placeholder="hh:mm"
+            onChange={setTimezone}
+          />
+        </Styled.inputGroup>
+      </div>
+    );
+  }, [time, timePeriod, timezone]);
+
+  const renderDatePicker = useMemo(() => {
+    return (
+      <div>
+        <Label label="Assign a publishing date" required />
+        <DatePicker
+          id="min-date"
+          minDate={format(new Date(), 'yyyy-MM-dd')}
+          onChange={setDate}
+          value={date}
+          placeholder="dd/mm/yyyy"
+        />
+      </div>
+    );
+  }, [date]);
 
   return (
-    <Modal size="large" title="Schedule Publishing for this content" bodyOverflow>
+    <Modal
+      size={showDatePicker ? 'xlarge' : 'large'}
+      title="Schedule Publishing for this content"
+      bodyOverflow
+    >
       <Spacer size={3} />
       <Styled.fields>
         <div>
@@ -68,28 +119,8 @@ const ScheduleModal: React.FC = () => {
             ]}
           />
         </div>
-        <div>
-          <Label label="Choose a time" required />
-          <Styled.inputGroup>
-            <Styled.timeInput>
-              <InputText id="time" value={time} placeholder="hh:mm" onChange={setTime} />
-            </Styled.timeInput>
-            <Select
-              id="am-pm"
-              options={timePeriods}
-              value={timePeriod}
-              placeholder="AM"
-              onChange={setTimePeriod}
-            />
-            <Select
-              id="timezone"
-              options={timezones}
-              value={timezone}
-              placeholder="hh:mm"
-              onChange={setTimezone}
-            />
-          </Styled.inputGroup>
-        </div>
+        {showDatePicker && renderDatePicker}
+        {renderTimeInputs}
       </Styled.fields>
       <Styled.buttons>
         <Button type="secondary" label="Cancel" />
