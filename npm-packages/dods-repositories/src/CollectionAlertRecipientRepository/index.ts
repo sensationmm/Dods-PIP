@@ -197,7 +197,9 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
 
         await CollectionAlertRecipient.bulkCreate(alertRecipients, { ignoreDuplicates: true });
 
-        await collectionAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertRecipients }, { where: { lastStepCompleted: LastStepCompleted.SetAlertQueries } });
+        if (collectionAlert.lastStepCompleted === LastStepCompleted.SetAlertQueries) {
+            await collectionAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertRecipients });
+        }
 
         await collectionAlert.update({ updatedBy: updatedByUser.id });
 
