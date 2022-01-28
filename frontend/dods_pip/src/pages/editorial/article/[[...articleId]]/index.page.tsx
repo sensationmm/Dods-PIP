@@ -14,6 +14,7 @@ import {
   scheduleEditorial,
   setEditorialPublishState,
 } from '@dods-ui/pages/editorial/editorial.service';
+import dateToCron from '@dods-ui/utils/dateToCron';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -103,16 +104,14 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   };
 
   const onSchedule = async (dateAndTime: Date) => {
-    console.log('dateAndTime', dateAndTime);
-
-    console.log('articleId', articleId);
-
-    // const date = new Date().toISOString();
-    // setLoading(true);
-    // // TODO populate with data once back end is correct
-    await scheduleEditorial({ date: dateAndTime.toDateString(), documentId: articleId[0] });
-    // setLoading(false);
-    // addNotification({ title: `Document successfully scheduled for ${date}`, type: 'confirm' });
+    setLoading(true);
+    await scheduleEditorial({ cron: dateToCron(dateAndTime), documentId: articleId[0] });
+    setShowScheduleModal(false);
+    setLoading(false);
+    addNotification({
+      title: `Document successfully scheduled for ${dateAndTime}`,
+      type: 'confirm',
+    });
   };
 
   const onDelete = async () => {

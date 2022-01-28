@@ -51,7 +51,7 @@ export const setEditorialPublishState = async (payload: {
 
 export const scheduleEditorial = async (payload: {
   // Payload contract not confirmed
-  date: string;
+  cron: string;
   documentId: string;
 }): Promise<EditorialRecordResponse> => {
   const results = await fetchJson(
@@ -61,8 +61,6 @@ export const scheduleEditorial = async (payload: {
       body: JSON.stringify(payload),
     },
   );
-
-  console.log('results', results);
 
   return results.data as unknown as EditorialRecordResponse; // No idea what the response is yet
 };
