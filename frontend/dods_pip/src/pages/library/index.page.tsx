@@ -1,11 +1,13 @@
 import Facet from '@dods-ui/components/_form/Facet';
+import Select, { SelectItem } from '@dods-ui/components/_form/Select';
+import Toggle from '@dods-ui/components/_form/Toggle';
+import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
+import FacetContainer from '@dods-ui/components/FacetContainer';
 import { format } from 'date-fns';
-import esb, { Query, RequestBodySearch } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
@@ -14,412 +16,82 @@ import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
 import Icon, { IconSize } from '../../components/Icon/';
 import { Icons } from '../../components/Icon/assets';
-import { IconType as ContentSourceType } from '../../components/IconContentSource/assets';
-import Tag from '../../components/Tag';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import fetchJson from '../../lib/fetchJson';
 import { Api } from '../../utils/api';
+import { BucketType, IAggregations, IResponse, ISourceData, QueryObject } from './index';
 import * as Styled from './library.styles';
+import getPayload from './utils/getSearchPayload';
+import useSearchQueries, { AggTypes } from './utils/useSearchQueries';
 
-interface ExtendedRequestBodySearch extends RequestBodySearch {
-  _body: {
-    from?: number;
-    to?: number;
-    query?: Query;
-  };
-}
-
-export interface ISourceData {
-  aggs_fields: { [key: string]: string[] };
-  contentDateTime?: string;
-  contentLocation?: string;
-  contentSource?: ContentSourceType;
-  documentContent?: string;
-  documentTitle?: string;
-  informationType?: string;
-  sourceReferenceUri?: string;
-  originator?: string;
-  version?: string;
-}
-
-type BucketType = {
-  doc_count: number;
-  key: string;
-  selected?: boolean;
-};
-
-export interface IResponse {
-  sourceReferenceUri?: string;
-  es_response?: {
-    hits: {
-      hits: { _source: ISourceData }[];
-      total: { value: number };
-    };
-    aggregations?: {
-      contentSource?: {
-        buckets: BucketType[];
-      };
-      informationType?: {
-        buckets: BucketType[];
-      };
-      jurisdiction?: {
-        buckets: BucketType[];
-      };
-      people?: {
-        buckets: BucketType[];
-      };
-      organizations?: {
-        buckets: BucketType[];
-      };
-      geography?: {
-        buckets: BucketType[];
-      };
-      topics?: {
-        buckets: BucketType[];
-      };
-    };
-  };
-}
-
-interface LibraryProps {
-  apiResponse: IResponse;
+interface ILibraryProps {
   parsedQuery: QueryObject;
+  results: { _source: ISourceData }[];
+  totalDocs: number;
+  aggregations: IAggregations;
+  apiErrorMessage?: string;
 }
 
-enum AggTypes {
-  contentSource = 'contentSource',
-  jurisdiction = 'jurisdiction',
-  informationType = 'informationType',
-  topics = 'topics',
-  people = 'people',
-  organizations = 'organizations',
-  geography = 'geography',
-}
+const DEFAULT_RESULT_SIZE = 20;
 
-type AggregationsType = {
-  [key in AggTypes]: {
-    terms: {
-      field: string;
-      min_doc_count: number;
-      size: number;
-    };
-  };
-};
-
-const aggregations: AggregationsType = {
-  topics: {
-    terms: {
-      field: 'aggs_fields.topics',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  people: {
-    terms: {
-      field: 'aggs_fields.people',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  organizations: {
-    terms: {
-      field: 'aggs_fields.organizations.keyword',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  geography: {
-    terms: {
-      field: 'aggs_fields.geography',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  jurisdiction: {
-    terms: {
-      field: 'jurisdiction',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  informationType: {
-    terms: {
-      field: 'informationType.keyword',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  contentSource: {
-    terms: {
-      field: 'contentSource.keyword',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-};
-
-interface QueryObject {
-  searchTerm?: string;
-  basicFilters?: {
-    key: string;
-    value: string;
-  }[];
-  nestedFilters?: {
-    path: string;
-    key: string;
-    value: string;
-  }[];
-  resultsSize?: number;
-  dateRange?: IDateRange;
-}
-
-type QueryString = string | string[] | undefined;
-
-const getPayload = (
-  query: QueryString = '{}',
-): { payload?: unknown; parsedQuery?: QueryObject } => {
-  let esbQuery = esb.boolQuery();
-  let parsedQuery;
-  let resultsSize = 20;
-
-  try {
-    parsedQuery = typeof query === 'string' ? JSON.parse(query) : {};
-
-    const {
-      searchTerm = '',
-      basicFilters = [],
-      nestedFilters = [],
-      dateRange = {},
-    }: QueryObject = parsedQuery;
-
-    resultsSize = parsedQuery.resultsSize;
-
-    const phrases = searchTerm.match(/"(.*?)"/g) || []; // Anything in double quotes, e.g "I am a phrase"
-    const regex = new RegExp(`${phrases.join('|')}`, 'g');
-    const words = searchTerm.replace(regex, ''); // remove all phrases and we're left with the words
-
-    if (searchTerm) {
-      esbQuery = esbQuery.must(
-        esb
-          .boolQuery()
-          .should(phrases.map((phrase) => esb.matchPhraseQuery('documentContent', phrase)))
-          .should(phrases.map((phrase) => esb.matchPhraseQuery('documentTitle', phrase)))
-          .should(words ? esb.matchQuery('documentContent', words) : [])
-          .should(words ? esb.matchQuery('documentTitle', words) : []),
-      );
-    }
-
-    // Facets
-    esbQuery = esbQuery
-      .must(
-        basicFilters.map(({ key, value }) =>
-          esb.termQuery(key === 'jurisdiction' ? key : `${key}.keyword`, value),
-        ),
-      )
-      .must(
-        nestedFilters.map(({ path, key, value }) =>
-          esb
-            .nestedQuery()
-            .path(path)
-            .query(esb.termQuery(key.includes('termLabel') ? `${key}.keyword` : key, value)),
-        ),
-      );
-
-    return {
-      payload: {
-        ...(
-          esb
-            .requestBodySearch()
-            .query(
-              esbQuery.filter(
-                esb
-                  .rangeQuery('contentDateTime')
-                  // Fallback to beginning of JS time to now
-                  .gte(dateRange.min || format(new Date(0), 'yyyy-MM-dd'))
-                  .lte(dateRange.max || format(new Date(), 'yyyy-MM-dd')),
-              ),
-            )
-            .size(20)
-            .from(resultsSize) as ExtendedRequestBodySearch
-        )._body,
-        aggregations,
-      },
-      parsedQuery,
-    };
-  } catch (error) {
-    console.error(error);
-  }
-
-  return {
-    payload: {},
-    parsedQuery,
-  };
-};
-
-export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) => {
-  const router = useRouter();
+export const Library: React.FC<ILibraryProps> = ({
+  results,
+  totalDocs,
+  aggregations,
+  parsedQuery,
+  apiErrorMessage,
+}) => {
+  const {
+    setKeywordQuery,
+    setCurrentPageQuery,
+    setResultSize,
+    setBasicQuery,
+    unsetBasicQuery,
+    setNestedQuery,
+    unsetNestedQuery,
+    setDateQuery,
+  } = useSearchQueries(parsedQuery);
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
-  const [jurisdictions, setJurisdictions] = useState<BucketType[]>([]);
+  const [originators, setOriginators] = useState<BucketType[]>([]);
+  const [groups, setGroups] = useState<BucketType[]>([]);
   const [topics, setTopics] = useState<BucketType[]>([]);
   const [people, setPeople] = useState<BucketType[]>([]);
   const [organizations, setOrganizations] = useState<BucketType[]>([]);
   const [geography, setGeography] = useState<BucketType[]>([]);
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
-  const [offset, setOffset] = useState(0);
-  const [resultsSize] = useState(20);
+  const [filtersVisible, setFiltersVisible] = useState(true);
 
-  const currentQuery: QueryObject = useMemo(() => {
-    if (typeof router.query.query === 'string') {
-      return JSON.parse(router.query.query || '{}') || {};
+  const { currentPage = 1, resultSize = DEFAULT_RESULT_SIZE } = parsedQuery;
+
+  useEffect(() => {
+    if (apiErrorMessage) {
+      console.error(apiErrorMessage);
     }
+  }, [apiErrorMessage]);
 
-    return {};
-  }, [router.query]);
-
-  const setKeywordQuery = (searchTerm: string) => {
-    setOffset(0);
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { query: JSON.stringify({ searchTerm }) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const setDateFilter = ({ min, max }: IDateRange) => {
-    setOffset(0);
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { dateRange, ...rest } = currentQuery; // Remove dateRage
-
-    let newQuery: QueryObject = rest;
-
-    if (min && max) {
-      newQuery = { ...rest, dateRange: { min, max } };
+  const pagesOpts: SelectItem[] = useMemo(() => {
+    if (totalDocs > 0) {
+      const pageTotal = Math.round(totalDocs / resultSize);
+      return Array.from(Array(pageTotal).keys()).map((i) => {
+        return { label: (i + 1).toString(), value: (i + 1).toString() };
+      });
     }
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
-    setOffset(0);
-
-    const { nestedFilters = [] } = currentQuery;
-
-    const selectedIndex = nestedFilters.findIndex(
-      (filter) => filter.key === key && filter.value === value,
-    );
-
-    let newNestedFilters = [...nestedFilters];
-
-    if (selectedIndex > -1) {
-      // remove
-      newNestedFilters.splice(selectedIndex, 1);
-    } else {
-      // add
-      newNestedFilters = [...nestedFilters, { path, key, value }];
-    }
-
-    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
-    setOffset(0);
-
-    const { basicFilters = [] } = currentQuery;
-    const selectedIndex = basicFilters.findIndex(
-      (filter) => filter.key === key && filter.value === value,
-    );
-
-    let newBasicFilters = [...basicFilters];
-
-    if (selectedIndex > -1) {
-      newBasicFilters.splice(selectedIndex, 1); // remove
-    } else {
-      newBasicFilters = [...basicFilters, { key, value }]; // add
-    }
-
-    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const removeBasicFilters = (queries: BucketType[]) => {
-    const { basicFilters = [] } = parsedQuery;
-
-    const newBasicFilters = basicFilters.filter(({ value }) => {
-      return !queries.find(({ key }) => value === key);
-    });
-
-    const newQuery = { ...currentQuery, basicFilters: newBasicFilters };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const removeNestedFilters = (queries: BucketType[]) => {
-    const { nestedFilters = [] } = parsedQuery;
-
-    const newNestedFilters = nestedFilters.filter(({ value }) => {
-      return !queries.find(({ key }) => value === key);
-    });
-
-    const newQuery = { ...currentQuery, nestedFilters: newNestedFilters };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { query: JSON.stringify(newQuery) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
+    return [{ label: '1', value: '1' }];
+  }, [totalDocs, resultSize]);
 
   useEffect(() => {
     const {
       contentSource,
       informationType,
-      jurisdiction,
       people,
       organizations,
       geography,
       topics,
-    } = apiResponse?.es_response?.aggregations || {};
+      originator,
+      group,
+    } = aggregations || {};
 
     const checkEmptyAggregation = (aggregation: { doc_count: number }) => {
       return aggregation.doc_count !== 0;
@@ -441,7 +113,8 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
 
     setContentSources(updateWithBasicFilters(contentSource?.buckets));
     setInformationTypes(updateWithBasicFilters(informationType?.buckets));
-    setJurisdictions(updateWithBasicFilters(jurisdiction?.buckets));
+    setOriginators(updateWithBasicFilters(originator?.buckets));
+    setGroups(updateWithBasicFilters(group?.buckets));
 
     const updateWithNestedFilters = (items: BucketType[] = []): BucketType[] => {
       return items.filter?.(checkEmptyAggregation)?.map((props) => {
@@ -460,7 +133,7 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     setOrganizations(updateWithNestedFilters(organizations?.buckets));
     setGeography(updateWithNestedFilters(geography?.buckets));
     setTopics(updateWithNestedFilters(topics?.buckets));
-  }, [parsedQuery, apiResponse]);
+  }, [parsedQuery, aggregations]);
 
   const onSearch = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -468,266 +141,403 @@ export const Library: React.FC<LibraryProps> = ({ apiResponse, parsedQuery }) =>
     }
   };
 
+  const recordsPerPage = useMemo(() => {
+    return [
+      { label: '10', value: '10' },
+      { label: '20', value: '20' },
+      { label: '30', value: '30' },
+      { label: '40', value: '40' },
+      { label: '50', value: '50' },
+    ];
+  }, []);
+
+  const onPerPageChange = (value: string) => {
+    const newResultSize = parseInt(value);
+    setResultSize(newResultSize);
+  };
+
   return (
-    <div data-test="page-library">
+    <Styled.pageLibrary data-test="page-library">
       <Head>
         <title>Dods PIP | Library</title>
       </Head>
 
       <main>
-        <Panel>
+        <Panel bgColor={color.base.ivory}>
           <Text type={'h1'} headingStyle="heroExtraLarge">
             Library
           </Text>
           <Spacer size={12} />
-          <InputSearch
-            onKeyDown={onSearch}
-            id="search-library"
-            label="What are you looking for?"
-            value={searchText}
-            onChange={(val) => setSearchText(val)}
-            onClear={() => setKeywordQuery('')}
-          />
+          <Styled.librarySearchWrapper>
+            <section>
+              <InputSearch
+                onKeyDown={onSearch}
+                id="search-library"
+                label="What are you looking for?"
+                value={searchText}
+                onChange={(val) => setSearchText(val)}
+                onClear={() => setKeywordQuery('')}
+              />
+            </section>
+            <aside>
+              <Toggle
+                isActive={filtersVisible}
+                labelOn={'Filters'}
+                onChange={() => setFiltersVisible(!filtersVisible)}
+              />
+            </aside>
+          </Styled.librarySearchWrapper>
           <Spacer size={8} />
-          {apiResponse.es_response?.hits?.hits.length !== 0 && (
-            <div>
-              Showing {offset + 1} - {(apiResponse?.es_response?.hits?.hits.length || 0) + offset}{' '}
-              of {apiResponse.es_response?.hits?.total?.value}
-            </div>
+          {results.length !== 0 && (
+            <Styled.pagination>
+              <div>
+                Showing
+                <span className={'pageCount'}>
+                  {(currentPage - 1) * resultSize} - {(currentPage - 1) * resultSize + resultSize}
+                </span>
+                <Styled.totalRecords>
+                  Total <b className={'totalDocs'}>{totalDocs.toLocaleString('en-US')}</b> Items
+                </Styled.totalRecords>
+              </div>
+              <Styled.perPageSelect>
+                <span>Items per page</span>
+                <Select
+                  id={'itemPerPage'}
+                  value={resultSize.toString()}
+                  size={'small'}
+                  isFilter={true}
+                  onChange={onPerPageChange}
+                  options={recordsPerPage}
+                />
+              </Styled.perPageSelect>
+            </Styled.pagination>
           )}
           <Spacer size={8} />
 
           <Styled.contentWrapper>
-            <Styled.resultsContent>
-              {apiResponse.es_response?.hits?.hits?.map((hit: Record<string, any>, i: number) => {
-                const date = new Date(hit._source.contentDateTime);
-                const formattedTime = format(date, "d MMMM yyyy 'at' hh:mm");
+            {!results.length && (
+              <Styled.noResults>
+                <Icon src={Icons.Search} size={IconSize.xxlarge} color={color.base.greyDark} />
+                <div>
+                  <Text color={color.base.greyDark} type={'h2'} headingStyle={'titleLarge'}>
+                    No results for <span>{searchText}</span>
+                  </Text>
+                  <p>Try checking your spelling or adjusting the filters</p>
+                </div>
+              </Styled.noResults>
+            )}
+            {results.length > 0 && (
+              <Styled.resultsContent>
+                {results?.map((item: { _source: ISourceData }, i: number) => {
+                  const {
+                    documentTitle,
+                    documentContent,
+                    contentDateTime,
+                    organisationName,
+                    informationType,
+                    taxonomyTerms,
+                    documentId,
+                  } = item._source;
+                  const formattedTime =
+                    contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' hh:mm");
 
-                return (
-                  <Styled.searchResult key={`search-result${i}`}>
-                    <Box size={'extraSmall'}>
-                      <Styled.boxContent>
-                        <Styled.topRow>
-                          <span>
+                  return (
+                    <Styled.searchResult key={`search-result${i}`}>
+                      <Box size={'extraSmall'}>
+                        <Styled.boxContent>
+                          <Styled.topRow>
                             <Styled.imageContainer />
-                            <div>
-                              <h2> {hit._source.documentTitle}</h2>
-                              <Styled.contentSource>
+                            <Styled.searchResultHeader>
+                              <Styled.searchResultHeading>
+                                <h2>{documentTitle}</h2>
+                                <Styled.date className={'mobileOnly'}>{formattedTime}</Styled.date>
+                                <Styled.contentSource>
+                                  <Icon
+                                    src={Icons.Document}
+                                    size={IconSize.medium}
+                                    color={color.theme.blue}
+                                  />
+                                  <Styled.contentSourceText>
+                                    {informationType} / {organisationName}
+                                  </Styled.contentSourceText>
+                                </Styled.contentSource>
+                              </Styled.searchResultHeading>
+                            </Styled.searchResultHeader>
+                            <Styled.date>{formattedTime}</Styled.date>
+                          </Styled.topRow>
+                          {documentContent && (
+                            <Styled.contentPreview>
+                              <div dangerouslySetInnerHTML={{ __html: documentContent }} />
+                            </Styled.contentPreview>
+                          )}
+                          <Styled.bottomRow>
+                            <Styled.tagsWrapper>
+                              {taxonomyTerms?.map((term, i) => {
+                                if (i > 5) {
+                                  return;
+                                }
+
+                                const selectedIndex =
+                                  parsedQuery?.nestedFilters?.findIndex(
+                                    ({ value, path }) =>
+                                      path === 'taxonomyTerms' && value === term.termLabel,
+                                  ) ?? -1;
+
+                                return (
+                                  <Chips
+                                    key={`chip-${i}-${term.termLabel}`}
+                                    label={term.termLabel}
+                                    chipsSize={'dense'}
+                                    theme={selectedIndex > -1 ? 'light' : 'dark'}
+                                    bold={selectedIndex > -1}
+                                  />
+                                );
+                              })}
+                            </Styled.tagsWrapper>
+                            <Link href={`/library/document/${documentId}`} passHref>
+                              <Styled.readMore>
+                                <span>Read more</span>
                                 <Icon
-                                  src={Icons.Calendar}
+                                  src={Icons.ChevronRightBold}
                                   size={IconSize.small}
                                   color={color.theme.blue}
                                 />
-                                <Styled.contentSourceText>
-                                  {hit._source.informationType} / {hit._source.organisationName}
-                                </Styled.contentSourceText>
-                              </Styled.contentSource>
-                            </div>
-                            <p>{formattedTime}</p>
-                          </span>
-                        </Styled.topRow>
-                        {hit._source?.documentContent && (
-                          <Styled.contentPreview>
-                            <div
-                              dangerouslySetInnerHTML={{ __html: hit._source?.documentContent }}
-                            />
-                            <Styled.fade />
-                          </Styled.contentPreview>
-                        )}
-                        <Styled.bottomRow>
-                          <Styled.tagsWrapper>
-                            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
-                            {/* @ts-ignore */}
-                            {hit._source.taxonomyTerms.map((term, i) => {
-                              if (i > 5) {
-                                return;
-                              }
-
-                              const selectedIndex =
-                                parsedQuery?.nestedFilters?.findIndex(
-                                  ({ value, path }) =>
-                                    path === 'taxonomyTerms' && value === term.tagId,
-                                ) ?? -1;
-
-                              return (
-                                <div
-                                  onClick={() => {
-                                    setNestedQuery({
-                                      path: 'taxonomyTerms',
-                                      key: 'taxonomyTerms.tagId',
-                                      value: term.tagId,
-                                    });
-                                  }}
-                                  key={`taxonomy-${i}`}
-                                >
-                                  <Tag
-                                    label={
-                                      selectedIndex > -1 ? `* ${term.termLabel} *` : term.termLabel
-                                    }
-                                    width={'fixed'}
-                                    bgColor={color.shadow.blue}
-                                  />
-                                </div>
-                              );
-                            })}
-                          </Styled.tagsWrapper>
-                          <Link href={`/library/document/${hit._source.documentId}`}>
-                            Read more
-                          </Link>
-                        </Styled.bottomRow>
-                      </Styled.boxContent>
-                    </Box>
-                  </Styled.searchResult>
-                );
-              })}
-
-              {apiResponse.es_response?.hits?.hits && (
-                <Styled.pagination>
-                  <span>Total {apiResponse.es_response.hits.total.value} Items</span>
-                  <div>
-                    <span
-                      onClick={() => {
-                        if (offset !== 0) {
-                          setOffset(offset - resultsSize);
-                        }
-                      }}
-                    >
-                      previous
+                              </Styled.readMore>
+                            </Link>
+                          </Styled.bottomRow>
+                        </Styled.boxContent>
+                      </Box>
+                    </Styled.searchResult>
+                  );
+                })}
+                {results.length > 0 && (
+                  <Styled.pagination>
+                    <span>
+                      Total <b>{totalDocs.toLocaleString('en-US')}</b> Items
                     </span>
-                    <span
-                      onClick={() => {
-                        setOffset(offset + resultsSize);
-                      }}
-                    >
-                      next
-                    </span>
-                  </div>
-                </Styled.pagination>
-              )}
-            </Styled.resultsContent>
-
-            <Styled.filtersContent>
-              <DateFacet
-                onChange={setDateFilter}
-                values={{
-                  min: parsedQuery?.dateRange?.min,
-                  max: parsedQuery?.dateRange?.max,
-                }}
-              />
-              <Facet
-                title={'Content Source'}
-                records={contentSources}
-                onClearSelection={() => removeBasicFilters(contentSources)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.contentSource,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Information Type'}
-                records={informationTypes}
-                onClearSelection={() => removeBasicFilters(informationTypes)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.informationType,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Jurisdictions'}
-                records={jurisdictions}
-                onClearSelection={() => removeBasicFilters(jurisdictions)}
-                onChange={(value) => {
-                  setBasicQuery({
-                    key: AggTypes.jurisdiction,
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Topics'}
-                records={topics}
-                onClearSelection={() => removeNestedFilters(topics)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Organizations'}
-                records={organizations}
-                onClearSelection={() => removeNestedFilters(organizations)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'People'}
-                records={people}
-                onClearSelection={() => removeNestedFilters(people)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-              <Facet
-                title={'Geography'}
-                records={geography}
-                onClearSelection={() => removeNestedFilters(geography)}
-                onChange={(value) => {
-                  setNestedQuery({
-                    path: 'taxonomyTerms',
-                    key: 'taxonomyTerms.termLabel',
-                    value,
-                  });
-                }}
-              />
-            </Styled.filtersContent>
+                    <Styled.paginationControls>
+                      <button
+                        className={'prevPageArrow'}
+                        disabled={currentPage === 1}
+                        onClick={() => {
+                          if (currentPage > 1) {
+                            setCurrentPageQuery(currentPage - 1);
+                          }
+                        }}
+                      >
+                        <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
+                      </button>
+                      <span>Viewing page</span>
+                      <Select
+                        id={'pageSelect'}
+                        value={currentPage?.toString() || '1'}
+                        size={'small'}
+                        isFilter={true}
+                        onChange={(value) => {
+                          const nextPage = parseInt(value);
+                          setCurrentPageQuery(nextPage);
+                        }}
+                        options={pagesOpts}
+                      />
+                      <span>
+                        of
+                        <b>{Math.round(totalDocs / resultSize)}</b>
+                      </span>
+                      <button
+                        className={'nextPageArrow'}
+                        disabled={currentPage * resultSize === totalDocs}
+                        onClick={() => {
+                          if (currentPage * resultSize < totalDocs) {
+                            setCurrentPageQuery(currentPage + 1);
+                          }
+                        }}
+                      >
+                        <Icon src={Icons.ChevronRightBold} />
+                      </button>
+                    </Styled.paginationControls>
+                    <Styled.perPageSelect>
+                      <span>Items per page</span>
+                      <Select
+                        id={'itemPerPage'}
+                        value={resultSize.toString()}
+                        size={'small'}
+                        isFilter={true}
+                        onChange={onPerPageChange}
+                        options={recordsPerPage}
+                      />
+                    </Styled.perPageSelect>
+                  </Styled.pagination>
+                )}
+              </Styled.resultsContent>
+            )}
+            {filtersVisible && (
+              <FacetContainer heading={'Filters'}>
+                <Styled.filtersContent>
+                  <DateFacet
+                    onChange={setDateQuery}
+                    values={{
+                      min: parsedQuery?.dateRange?.min,
+                      max: parsedQuery?.dateRange?.max,
+                    }}
+                  />
+                  <Facet
+                    title={'Content Source'}
+                    records={contentSources}
+                    onClearSelection={() => unsetBasicQuery(contentSources)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.contentSource,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Information Type'}
+                    records={informationTypes}
+                    onClearSelection={() => unsetBasicQuery(informationTypes)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.informationType,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Group'}
+                    records={groups}
+                    onClearSelection={() => unsetBasicQuery(groups)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.organisationName,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Originator'}
+                    records={originators}
+                    onClearSelection={() => unsetBasicQuery(originators)}
+                    onChange={(value) => {
+                      setBasicQuery({
+                        key: AggTypes.originator,
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Topics'}
+                    records={topics}
+                    onClearSelection={() => unsetNestedQuery(topics)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Organizations'}
+                    records={organizations}
+                    onClearSelection={() => unsetNestedQuery(organizations)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'People'}
+                    records={people}
+                    onClearSelection={() => unsetNestedQuery(people)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                  <Facet
+                    title={'Geography'}
+                    records={geography}
+                    onClearSelection={() => unsetNestedQuery(geography)}
+                    onChange={(value) => {
+                      setNestedQuery({
+                        path: 'taxonomyTerms',
+                        key: 'taxonomyTerms.termLabel',
+                        value,
+                      });
+                    }}
+                  />
+                </Styled.filtersContent>
+              </FacetContainer>
+            )}
           </Styled.contentWrapper>
         </Panel>
       </main>
-    </div>
+    </Styled.pageLibrary>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
 
-  const { payload, parsedQuery } = getPayload(query.query);
-
   let apiResponse: IResponse = {};
 
+  const accountId = context.req.cookies['account-id'];
+  let parsedQuery;
+
   try {
-    const sPayload = JSON.stringify(payload);
+    const response = await fetchJson(
+      `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}`,
+      {
+        method: 'GET',
+      },
+    );
+
+    const { data = {} } = response;
+    const { isEU, isUK } = data;
+
+    const payload = getPayload({ search: query.search, isEU, isUK });
+    parsedQuery = payload.parsedQuery;
+
+    const sPayload = JSON.stringify(payload.payload);
     apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
     })) as IResponse;
   } catch (error) {
     console.error(error);
+
+    if (!error.data.success) {
+      return {
+        props: {
+          apiErrorMessage: error.data.message,
+          parsedQuery: {},
+          results: [],
+          totalDocs: 0,
+          aggregations: [],
+        },
+      };
+    }
   }
 
-  if (!apiResponse) {
+  if (!apiResponse || !accountId) {
     return {
       notFound: true,
     };
   }
 
   return {
-    props: { apiResponse, parsedQuery },
+    props: {
+      results: apiResponse?.es_response?.hits?.hits || [],
+      totalDocs: apiResponse?.es_response?.hits?.total?.value || 0,
+      aggregations: apiResponse?.es_response?.aggregations || {},
+      parsedQuery,
+    },
   };
 };
 

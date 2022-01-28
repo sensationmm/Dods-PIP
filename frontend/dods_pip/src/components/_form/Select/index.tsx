@@ -9,12 +9,14 @@ import * as Styled from './Select.styles';
 export type SelectItem = {
   label: string;
   value: string;
+  icon?: string;
 };
 
 export interface SelectProps extends Omit<InputTextProps, 'icon' | 'length'> {
   options: SelectItem[];
   isFullWidth?: boolean;
   isFilter?: boolean;
+  inline?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -34,6 +36,7 @@ const Select: React.FC<SelectProps> = ({
   isFullWidth = false,
   isFilter = false,
   testId,
+  inline = false,
 }) => {
   const firstRun = React.useRef(true);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -67,6 +70,7 @@ const Select: React.FC<SelectProps> = ({
       isDisabled={isDisabled}
       isFullWidth={isFullWidth}
       isFilter={isFilter}
+      inline={inline}
     >
       <OutsideClickHandler onOutsideClick={() => setIsOpen(false)}>
         <Styled.select>
@@ -102,6 +106,7 @@ const Select: React.FC<SelectProps> = ({
             selectedValue={value}
             setValue={setValue}
             isFilter={isFilter}
+            inline={inline}
           />
         </Styled.select>
       </OutsideClickHandler>

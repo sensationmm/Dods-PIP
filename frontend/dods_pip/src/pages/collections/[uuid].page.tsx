@@ -13,18 +13,19 @@ import Modal from '@dods-ui/components/Modal';
 import Pagination from '@dods-ui/components/Pagination';
 import SectionAccordion from '@dods-ui/components/SectionAccordion';
 import Text from '@dods-ui/components/Text';
+import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import fetchJson from '@dods-ui/lib/fetchJson';
 import useUser from '@dods-ui/lib/useUser';
-import MockAlertsData from '@dods-ui/mocks/data/alerts.json';
-import { Api, BASE_URI } from '@dods-ui/utils/api';
+import { Api, BASE_URI, toQueryString } from '@dods-ui/utils/api';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import { Alert } from './[uuid]/alerts/alert-setup';
 import CollectionAlert from './collection-alert';
 import * as Styled from './collections-details.styles';
-import { Collection } from './index.page';
+import { Collection, FilterParams } from './index.page';
 
 type Errors = {
   editTitle?: string;
@@ -44,7 +45,36 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
   const [editTitle, setEditTitle] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Errors>({});
   const [showDelete, setShowDelete] = React.useState<boolean>(false);
-  const [alerts] = React.useState<AlertData[]>(MockAlertsData.alerts as AlertData[]);
+  const [alerts, setAlerts] = React.useState<AlertData[]>();
+  const [totalAlerts, setTotalAlerts] = React.useState<number>();
+
+  const getFilterQueryString = () => {
+    const params: FilterParams = {
+      limit: numPerPage,
+      offset: activePage * numPerPage,
+    };
+
+    return toQueryString(params);
+  };
+
+  const loadAlerts = async (collectionId: Collection['uuid']) => {
+    setLoading(true);
+    const queryString = getFilterQueryString();
+    try {
+      const result = await fetchJson(
+        `${BASE_URI}${Api.Collections}/${collectionId}/alerts${queryString}`,
+        {
+          method: 'GET',
+        },
+      );
+      const { alerts = [], totalRecords = 0 } = result;
+      setAlerts(alerts as AlertData[]);
+      setTotalAlerts(totalRecords);
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const loadCollection = async (id: Collection['uuid']) => {
     setLoading(true);
@@ -56,7 +86,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
 
       setCollection(data as Collection);
       setEditTitle(data.name as Collection['name']);
-      setLoading(false);
+      await loadAlerts(id as Collection['uuid']);
     } catch (e) {
       console.log(e);
       setLoading(false);
@@ -64,13 +94,19 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
   };
 
   React.useEffect(() => {
-    collectionId && loadCollection(collectionId as Collection['uuid']);
+    collectionId !== '' && loadCollection(collectionId as Collection['uuid']);
   }, [collectionId]);
 
   const { activePage, numPerPage, PaginationButtons, PaginationStats } = Pagination(
-    MockAlertsData.alerts.length,
+    totalAlerts || 0,
     '5',
   );
+
+  React.useEffect(() => {
+    (async () => {
+      collectionId !== '' && (await loadAlerts(collectionId as Collection['uuid']));
+    })();
+  }, [activePage, numPerPage]);
 
   if (!collection) return null;
 
@@ -102,6 +138,48 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
       router.push('/collections');
       setLoading(false);
       addNotification({ title: 'Collection deleted sucessfully', type: 'confirm' });
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
+  };
+
+  const deleteAlert = async (id: Alert['uuid']) => {
+    setLoading(true);
+    try {
+      await fetchJson(`${BASE_URI}${Api.Collections}/${collection.uuid}${Api.Alerts}/${id}`, {
+        method: 'DELETE',
+      });
+      setLoading(false);
+      await loadAlerts(collection.uuid);
+      addNotification({ title: 'Alert deleted sucessfully', type: 'confirm' });
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
+  };
+
+  const copyAlert = async (alertId: Alert['uuid'], copyCollectionId: Collection['uuid']) => {
+    setLoading(true);
+    try {
+      await fetchJson(
+        `${BASE_URI}${Api.Collections}/${collection.uuid}${Api.Alerts}/${alertId}/copyto`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            destinationCollectionId: copyCollectionId,
+            createdBy: user.id,
+          }),
+        },
+      );
+      setLoading(false);
+      addNotification({
+        title: 'Alert copied sucessfully',
+        text: 'Copied to new collection',
+        type: 'confirm',
+        action: () => router.push(`/collections/${copyCollectionId}`),
+        actionLabel: 'View Collection',
+      });
     } catch (e) {
       console.log(e);
       setLoading(false);
@@ -173,7 +251,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
                     <Text type="h2" headingStyle="titleLarge">
                       Alerts
                     </Text>
-                    <Badge number={alerts.length} label="Alerts" size="small" />
+                    <Badge number={totalAlerts} label="Alerts" size="small" />
                   </Styled.alertsHeaderTitle>
                   <Button
                     isSmall
@@ -183,29 +261,47 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
                     iconAlignment="right"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/collections/${collectionId}/add-alert`);
+                      router.push(`/collections/${collectionId}/alerts/create`);
                     }}
                   />
                 </Styled.alertsHeader>
               }
               isOpen
             >
-              {alerts
-                .slice(activePage * numPerPage, activePage * numPerPage + numPerPage)
-                .map((alert, count) => [
+              {alerts && alerts.length > 0 ? (
+                alerts.map((alert, count) => [
                   <CollectionAlert
                     key={`alert-${alert.uuid}`}
                     {...alert}
                     collectionId={collectionId as string}
                     user={user}
-                    addNotification={addNotification}
+                    onDelete={() => deleteAlert(alert.uuid)}
+                    onCopy={(copyCollectionId) => copyAlert(alert.uuid, copyCollectionId)}
                   />,
                   count + 1 !== alerts.length && <Spacer key={`spacer-${alert.uuid}`} size={4} />,
-                ])}
+                ])
+              ) : (
+                <Styled.noAlertsMessage>
+                  <Text color={color.base.grey}>No alert has been added</Text>
+                  <Button
+                    isSmall
+                    type="text"
+                    label="Add Alert"
+                    icon={Icons.Add}
+                    iconAlignment="right"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/collections/${collectionId}/alerts/create`);
+                    }}
+                  />
+                </Styled.noAlertsMessage>
+              )}
               <Spacer size={8} />
-              <PaginationStats>
-                <PaginationButtons />
-              </PaginationStats>
+              {alerts && alerts.length > 0 && (
+                <PaginationStats>
+                  <PaginationButtons />
+                </PaginationStats>
+              )}
             </SectionAccordion>
           </Box>
         </Panel>

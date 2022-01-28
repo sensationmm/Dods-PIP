@@ -15,7 +15,7 @@ provider:
   runtime: nodejs14.x
   deploymentBucket:
     name: pip-${self:provider.stage}-scrapping-lambdas
-  stage: ${opt:stage, 'local'}
+  stage: ${opt:stage, 'dev'}
   lambdaHashingVersion: 20201221
 
   #------- This section is only required for Lambdas that need
@@ -57,7 +57,8 @@ provider:
     description: Default Gateway for ${self:provider.stage} deployed by Terraform
 
   environment:
-    NODE_ENV: ${opt:NODE_ENV, 'test'}
+    NODE_ENV: ${opt:NODE_ENV, 'development'}
+    SERVERLESS_REGION: ${self:provider.region} 
     SERVERLESS_STAGE: ${self:provider.stage}
     SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
     CORS_ORIGINS: "*"
@@ -67,8 +68,8 @@ provider:
     DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
     DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
     DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
-    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
     SAY_TURKISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayTurkishHelloEndpoint, self:custom.endpoints.default.sayTurkishHelloEndpoint}
     SAY_ENGLISH_HELLO_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.sayEnglishHelloEndpoint, self:custom.endpoints.default.sayEnglishHelloEndpoint}
     GET_FULL_NAME_ENDPOINT: ${self:custom.endpoints.${self:provider.stage}.getFullNameEndpoint, self:custom.endpoints.default.getFullNameEndpoint}

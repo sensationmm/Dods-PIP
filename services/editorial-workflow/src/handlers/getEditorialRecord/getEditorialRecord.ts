@@ -1,7 +1,8 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
+import { EditorialRecordRepository } from '@dodsgroup/dods-repositories';
+
 import { BadParameterError } from '../../domain';
-import { EditorialRecordRepository } from '../../repositories/EditorialRecordRepository';
 
 export const getEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = async ({
     recordId,

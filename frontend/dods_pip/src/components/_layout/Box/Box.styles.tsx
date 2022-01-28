@@ -16,6 +16,7 @@ export const wrapper = styled.div.attrs(({ size }: { size: boxSizing }) => {
   const { paddingDesktop } = THEME[size];
   return {
     paddingDesktop,
+    size,
   };
 })`
   background: ${color.base.white};
@@ -23,10 +24,12 @@ export const wrapper = styled.div.attrs(({ size }: { size: boxSizing }) => {
   border-radius: ${spacing(2)};
   box-shadow: ${elevation.dropShadowBoxComponent};
   box-sizing: border-box;
-  padding: ${spacing(10)};
+  padding: ${(props) => (props.size === 'extraSmall' ? spacing(4) : spacing(10))};
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   @media (min-width: 1024px) {
-    padding: ${(props) => props.paddingDesktop};
+    padding: ${(props) => (props.size === 'extraSmall' ? spacing(4) : props.paddingDesktop)};
   }
 `;

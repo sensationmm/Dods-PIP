@@ -1,7 +1,7 @@
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { BadParameterError } from '../../../src/domain';
-import { EditorialRecordRepository } from '../../../src/repositories/EditorialRecordRepository';
+import { EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { getEditorialRecord } from '../../../src/handlers/getEditorialRecord/getEditorialRecord';
 import { mocked } from 'ts-jest/utils';
 
@@ -13,7 +13,7 @@ const defaultCreatedRecord: any = {
     s3Location: 'SomeLocation',
 };
 
-jest.mock('../../../src/repositories/EditorialRecordRepository');
+jest.mock('@dodsgroup/dods-repositories');
 
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
 

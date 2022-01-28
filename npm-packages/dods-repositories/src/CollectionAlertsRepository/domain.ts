@@ -16,6 +16,7 @@ export interface AlertOutput {
     createdAt?: Date;
     updatedBy: { uuid?: string, name?: string, emailAddress?: string, isDodsUser?: boolean } | {}
     updatedAt?: Date | null;
+    lastExecutedAt?: Date;
 }
 
 export interface SearchCollectionAlertsParameters {
@@ -197,4 +198,9 @@ export interface UpdateAlertParameters {
     alertId: string;
     updatedBy: string;
     title: string;
+}
+
+export interface AlertWithQueriesOutput {
+    alert: AlertOutput,
+    queries: AlertQueryResponse[]
 }

@@ -2,6 +2,7 @@ import {
     AlertByIdOutput,
     AlertOutput,
     AlertQueryResponse,
+    AlertWithQueriesOutput,
     CollectionAlertsPersister,
     CopyAlertParameters,
     CopyAlertResponse,
@@ -14,11 +15,11 @@ import {
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
     SetAlertQueriesParameters,
+    UpdateAlertParameters,
     UpdateAlertQuery,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters,
-    UpdateAlertParameters
+    setAlertScheduleParameters
 } from './domain';
 import {
     AlertDocumentInput,
@@ -34,6 +35,7 @@ import {
 import { cloneArray, cloneObject, mapAlert, mapAlertQuery } from '..';
 
 import { CollectionError } from '@dodsgroup/dods-domain';
+import { LastStepCompleted } from '../shared/Constants';
 
 export * from './domain';
 
@@ -131,6 +133,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             collectionId: alertOwner.id,
             title: title,
             createdBy: alertCreator.id,
+            lastStepCompleted: LastStepCompleted.CreateAlert
         };
         const newAlert = await CollectionAlert.create(createObject);
         await newAlert.reload({ include: ['collection', 'createdById'] });
@@ -180,13 +183,13 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
 
         try {
+            await alert.update({ lastStepCompleted: LastStepCompleted.ScheduleAlert }, { where: { lastStepCompleted: LastStepCompleted.SetAlertRecipients } });
             await alert.update({
                 isScheduled: isScheduled,
                 hasKeywordsHighlight: hasKeywordHighlight,
                 timezone: timezone,
                 schedule: schedule,
                 updatedBy: alertOwner.id,
-                lastStepCompleted: 3,
                 templateId: alertTemplateId,
             });
 
@@ -584,7 +587,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return await mapAlertQuery(updateQuery, alert);
     }
 
-    async setAlertQueries(parameters: SetAlertQueriesParameters): Promise<AlertOutput> {
+    async setAlertQueries(parameters: SetAlertQueriesParameters): Promise<AlertWithQueriesOutput> {
         const { collectionId, updatedBy, alertId, alertQueries } = parameters;
 
         const alertOwner = await this.collectionModel.findOne({
@@ -618,6 +621,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Error: Alert with uuid: ${alertId} does not exist`);
         }
 
+        await updatedAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertQueries }, { where: { lastStepCompleted: LastStepCompleted.CreateAlert } });
         await updatedAlert.update({
             updatedBy: alertUpdater.id
         });
@@ -636,8 +640,14 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             return CollectionAlertsRepository.defaultInstance.createQuery(createAlertQueryParameters);
         }))
 
+        const createdQueries = await updatedAlert.getAlertQueries({ include: ['createdById', 'updatedById'] });
 
-        return await mapAlert(updatedAlert)
+        return {
+            alert: await mapAlert(updatedAlert),
+            queries: await Promise.all(
+                createdQueries.map((query) => mapAlertQuery(query, updatedAlert))
+            ),
+        }
     }
 
     async updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput> {

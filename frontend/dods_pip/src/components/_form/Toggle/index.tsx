@@ -1,11 +1,15 @@
+import Spacer from '@dods-ui/components/_layout/Spacer';
 import classNames from 'classnames';
 import React from 'react';
 
 import color from '../../../globals/color';
 import Text from '../../Text';
+import Label from '../Label';
 import * as Styled from './Toggle.styles';
 
 export interface ToggleProps {
+  label?: string;
+  required?: boolean;
   isActive?: boolean;
   isDisabled?: boolean;
   onChange: (val: boolean) => void;
@@ -15,6 +19,8 @@ export interface ToggleProps {
 }
 
 const Toggle: React.FC<ToggleProps> = ({
+  label,
+  required = false,
   isActive = false,
   isDisabled = false,
   onChange,
@@ -32,42 +38,52 @@ const Toggle: React.FC<ToggleProps> = ({
   };
 
   return (
-    <Styled.wrapper
-      data-test="component-toggle"
-      onKeyDown={trigger}
-      tabIndex={0}
-      disabled={isDisabled}
-      hasOffLabel={labelOff !== undefined}
-      hasOnLabel={labelOn !== undefined}
-      small={isSmall}
-    >
-      {labelOff && (
-        <Text
-          type={isSmall ? 'bodySmall' : 'body'}
-          color={isDisabled ? color.base.grey : !isActive ? color.theme.blue : color.base.greyDark}
-          bold={!isActive}
-        >
-          <span onClick={() => (isDisabled ? null : onChange(false))}>{labelOff}</span>
-        </Text>
+    <Styled.wrapper>
+      {label && (
+        <>
+          <Label label={label} required={required} />
+          <Spacer size={2} />
+        </>
       )}
-      <Component
-        data-test="toggle-control"
-        className={classNames({ disabled: isDisabled })}
-        onClick={() => (isDisabled ? null : onChange(!isActive))}
+      <Styled.toggleWrapper
+        data-test="component-toggle"
+        onKeyDown={trigger}
+        tabIndex={0}
+        disabled={isDisabled}
+        hasOffLabel={labelOff !== undefined}
+        hasOnLabel={labelOn !== undefined}
         small={isSmall}
       >
-        <Styled.control small={isSmall} />
-      </Component>
-
-      {labelOn && (
-        <Text
-          type={isSmall ? 'bodySmall' : 'body'}
-          color={isDisabled ? color.base.grey : isActive ? color.theme.blue : color.base.greyDark}
-          bold={isActive}
+        {labelOff && (
+          <Text
+            type={isSmall ? 'bodySmall' : 'body'}
+            color={
+              isDisabled ? color.base.grey : !isActive ? color.theme.blue : color.base.greyDark
+            }
+            bold={!isActive}
+          >
+            <span onClick={() => (isDisabled ? null : onChange(false))}>{labelOff}</span>
+          </Text>
+        )}
+        <Component
+          data-test="toggle-control"
+          className={classNames({ disabled: isDisabled })}
+          onClick={() => (isDisabled ? null : onChange(!isActive))}
+          small={isSmall}
         >
-          <span onClick={() => (isDisabled ? null : onChange(true))}>{labelOn}</span>
-        </Text>
-      )}
+          <Styled.control small={isSmall} />
+        </Component>
+
+        {labelOn && (
+          <Text
+            type={isSmall ? 'bodySmall' : 'body'}
+            color={isDisabled ? color.base.grey : isActive ? color.theme.blue : color.base.greyDark}
+            bold={isActive}
+          >
+            <span onClick={() => (isDisabled ? null : onChange(true))}>{labelOn}</span>
+          </Text>
+        )}
+      </Styled.toggleWrapper>
     </Styled.wrapper>
   );
 };

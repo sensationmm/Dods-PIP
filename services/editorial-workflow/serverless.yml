@@ -50,9 +50,11 @@ provider:
         description: Default Gateway for ${self:provider.stage} deployed by Terraform
 
     environment:
+        NODE_ENV: ${opt:NODE_ENV, 'development'}
         SERVERLESS_REGION: ${self:provider.region} 
         SERVERLESS_STAGE: ${self:provider.stage}
         SERVERLESS_PORT: ${self:custom.serverless-offline.httpPort}
+        CORS_ORIGINS: "*"
         DB_CONNECTION_LIMIT: 5
         DB_DRIVER: mariadb
         DB_NAME: dods
@@ -62,9 +64,7 @@ provider:
         BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/
         BUCKET_EDITORIAL: dods-dev-editorial-record-documents
         CONTENT_INDEXER_LAMBDA: content-indexer-dev
-        JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${self:provider.region}_KSdDYoclx/.well-known/jwks.json'
-
-
+        JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
 
 custom:
     webpack:
@@ -212,5 +212,25 @@ functions:
             - http:
                   method: post        
                   path: /editorial-record/{recordId}/publish
+                #   caching:
+                    #   enabled: false
+
+    scheduleEditorialRecord:
+        handler: src/handlers/scheduleEditorialRecord/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: post        
+                  path: /editorial-record/{recordId}/schedule
+                #   caching:
+                    #   enabled: false
+                    
+    archiveEditorialRecord:
+        handler: src/handlers/archiveEditorialRecord/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: delete        
+                  path: /editorial-record/{recordId}
                 #   caching:
                     #   enabled: false

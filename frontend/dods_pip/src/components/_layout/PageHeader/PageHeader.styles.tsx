@@ -10,7 +10,7 @@ export const wrapper = styled.header`
   border-bottom: 1px solid ${color.base.greyLight};
   padding-top: ${spacing(1)};
   position: relative;
-  z-index: 2;
+  z-index: 1;
   background: ${color.base.white};
   min-height: 180px;
 `;

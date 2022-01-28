@@ -1,0 +1,5 @@
+@contentType = application/json
+
+# @name processAlert
+
+PUT {{host}}/collections/BCB19F7E-1EF4-4F68-8AA8-77789EA1F1DD/alerts/BCB19F7E-1EF4-4F68-8AA8-77789EA1F1DE/process HTTP/1.1
