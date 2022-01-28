@@ -1,5 +1,5 @@
 import DatePicker from '@dods-ui/components/_form/DatePicker';
-import InputText from '@dods-ui/components/_form/InputText';
+import InputBase from '@dods-ui/components/_form/InputBase';
 import Label from '@dods-ui/components/_form/Label';
 import RadioGroup from '@dods-ui/components/_form/RadioGroup';
 import Select, { SelectItem } from '@dods-ui/components/_form/Select';
@@ -7,8 +7,8 @@ import Spacer from '@dods-ui/components/_layout/Spacer';
 import Button from '@dods-ui/components/Button';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Modal from '@dods-ui/components/Modal';
-import { format } from 'date-fns';
-import React, { useMemo, useState } from 'react';
+import { addHours, format, parseISO } from 'date-fns';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import * as Styled from './schedule-modal.styles';
 
@@ -31,25 +31,21 @@ const timezones: SelectItem[] = [
   },
 ];
 
-const timePeriods: SelectItem[] = [
-  {
-    label: 'AM',
-    value: 'am',
-  },
-  {
-    label: 'PM',
-    value: 'pm',
-  },
-];
+interface IScheduleModalProps {
+  onClose: () => void;
+  onSchedule: (dateAndTime: Date) => void;
+}
 
-const ScheduleModal: React.FC = () => {
+const getDateNow = () => format(new Date(), 'yyyy-MM-dd');
+
+const ScheduleModal: React.FC<IScheduleModalProps> = ({ onClose, onSchedule }) => {
   const [period, setPeriod] = useState('today');
   const [time, setTime] = useState('');
-  const [timePeriod, setTimePeriod] = useState('am');
   const [timezone, setTimezone] = useState('0');
-  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [date, setDate] = useState(getDateNow());
 
   const showDatePicker = period !== 'today';
+  const disableSubmit = !time;
 
   const renderTimeInputs = useMemo(() => {
     return (
@@ -57,15 +53,8 @@ const ScheduleModal: React.FC = () => {
         <Label label="Choose a time" required />
         <Styled.inputGroup>
           <Styled.timeInput>
-            <InputText id="time" value={time} placeholder="hh:mm" onChange={setTime} />
+            <InputBase id="time" type="time" value={time} placeholder="hh:mm" onChange={setTime} />
           </Styled.timeInput>
-          <Select
-            id="am-pm"
-            options={timePeriods}
-            value={timePeriod}
-            placeholder="AM"
-            onChange={setTimePeriod}
-          />
           <Select
             id="timezone"
             options={timezones}
@@ -76,7 +65,7 @@ const ScheduleModal: React.FC = () => {
         </Styled.inputGroup>
       </div>
     );
-  }, [time, timePeriod, timezone]);
+  }, [time, timezone]);
 
   const renderDatePicker = useMemo(() => {
     return (
@@ -84,7 +73,7 @@ const ScheduleModal: React.FC = () => {
         <Label label="Assign a publishing date" required />
         <DatePicker
           id="min-date"
-          minDate={format(new Date(), 'yyyy-MM-dd')}
+          minDate={getDateNow()}
           onChange={setDate}
           value={date}
           placeholder="dd/mm/yyyy"
@@ -93,10 +82,17 @@ const ScheduleModal: React.FC = () => {
     );
   }, [date]);
 
+  useEffect(() => {
+    if (!showDatePicker) {
+      setDate(getDateNow());
+    }
+  }, [showDatePicker]);
+
   return (
     <Modal
       size={showDatePicker ? 'xlarge' : 'large'}
       title="Schedule Publishing for this content"
+      onClose={onClose}
       bodyOverflow
     >
       <Spacer size={3} />
@@ -123,8 +119,17 @@ const ScheduleModal: React.FC = () => {
         {renderTimeInputs}
       </Styled.fields>
       <Styled.buttons>
-        <Button type="secondary" label="Cancel" />
-        <Button icon={Icons.Clock} type="secondary" label="Schedule Publishing" disabled />
+        <Button type="secondary" label="Cancel" onClick={onClose} />
+        <Button
+          icon={Icons.Clock}
+          type="secondary"
+          label="Schedule Publishing"
+          onClick={() => {
+            const dateAndTime = addHours(parseISO(`${date}T${time}`), -parseInt(timezone));
+            onSchedule(dateAndTime);
+          }}
+          disabled={disableSubmit}
+        />
       </Styled.buttons>
     </Modal>
   );

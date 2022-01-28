@@ -102,27 +102,31 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     addNotification({ title: 'Document successfully published', type: 'confirm' });
   };
 
-  const onSchedule = async () => {
-    console.log('@?@??@???@');
+  const onSchedule = async (dateAndTime: Date) => {
+    console.log('dateAndTime', dateAndTime);
+
+    console.log('articleId', articleId);
 
     // const date = new Date().toISOString();
     // setLoading(true);
     // // TODO populate with data once back end is correct
-    // await scheduleEditorial({ date, documentId: 'guid-here' });
+    await scheduleEditorial({ date: dateAndTime.toDateString(), documentId: articleId[0] });
     // setLoading(false);
     // addNotification({ title: `Document successfully scheduled for ${date}`, type: 'confirm' });
   };
 
   const onDelete = async () => {
-    const date = new Date().toISOString();
-    setLoading(true);
-    // TODO populate with data once back end is correct
-    await scheduleEditorial({ date, documentId: 'guid-here' });
-    setLoading(false);
-    addNotification({ title: `Document successfully deleted`, type: 'confirm' });
-    setTimeout(() => {
-      router.push('/editorial');
-    }, 600);
+    // Todo...
+    console.warn('Delete not yet implemented');
+    // const date = new Date().toISOString();
+    // setLoading(true);
+    // // TODO populate with data once back end is correct
+    // await scheduleEditorial({ date, documentId: 'guid-here' });
+    // setLoading(false);
+    // addNotification({ title: `Document successfully deleted`, type: 'confirm' });
+    // setTimeout(() => {
+    //   router.push('/editorial');
+    // }, 600);
   };
 
   return (
@@ -158,7 +162,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             onPublish={() => onPublish()}
             onDelete={onDelete}
             onSchedule={() => setShowScheduleModal(true)}
-            onUnschedule={() => onSchedule()}
+            // onUnschedule={() => onSchedule()}
             onUpdateArticle={() => onSave()}
             onPreview={() => router.push('/editorial/preview')} // Preview active local content or from server??
             onUnpublish={() => onPublish()}
@@ -186,7 +190,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
         </main>
       </Panel>
 
-      {showScheduleModal && <ScheduleModal />}
+      {showScheduleModal && (
+        <ScheduleModal onClose={() => setShowScheduleModal(false)} onSchedule={onSchedule} />
+      )}
     </div>
   );
 };

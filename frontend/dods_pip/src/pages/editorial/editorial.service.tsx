@@ -54,10 +54,15 @@ export const scheduleEditorial = async (payload: {
   date: string;
   documentId: string;
 }): Promise<EditorialRecordResponse> => {
-  const results = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
-    method: 'PUT',
-    body: JSON.stringify(payload),
-  });
+  const results = await fetchJson(
+    `${BASE_URI}${Api.EditorialRecords}/${payload.documentId}/schedule`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+  );
+
+  console.log('results', results);
 
   return results.data as unknown as EditorialRecordResponse; // No idea what the response is yet
 };

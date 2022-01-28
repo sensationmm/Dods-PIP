@@ -13,7 +13,7 @@ export const inputGroup = styled.div`
 `;
 
 export const timeInput = styled.div`
-  width: 70px;
+  width: 100px;
 `;
 
 export const buttons = styled.div`
