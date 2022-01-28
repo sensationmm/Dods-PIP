@@ -75,10 +75,12 @@ functions:
     # description:
     handler: handler.run
     events:
-      ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(00 05 ? * MON-FRI *)
-      ## Invoke lambda once a day
-      # - schedule: rate(1 day)
+      - eventBridge:
+          schedule: cron(00 05 ? * MON-FRI *)
+          input:
+            date: today
+            house: commons
+
 
 resources:
    Resources:
