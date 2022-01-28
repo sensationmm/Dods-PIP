@@ -17,6 +17,8 @@ export type UserResponse = {
 
 interface CustomResponse extends Response, UserResponse {
   data?: Record<string, unknown>;
+  alerts?: Record<string, unknown>;
+  alert?: Record<string, unknown>;
   totalRecords?: number;
   filteredRecords?: number;
   message?: string;

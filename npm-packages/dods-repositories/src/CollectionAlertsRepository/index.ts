@@ -35,6 +35,7 @@ import {
 import { cloneArray, cloneObject, mapAlert, mapAlertQuery } from '..';
 
 import { CollectionError } from '@dodsgroup/dods-domain';
+import { LastStepCompleted } from '../shared/Constants';
 
 export * from './domain';
 
@@ -132,6 +133,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             collectionId: alertOwner.id,
             title: title,
             createdBy: alertCreator.id,
+            lastStepCompleted: LastStepCompleted.CreateAlert
         };
         const newAlert = await CollectionAlert.create(createObject);
         await newAlert.reload({ include: ['collection', 'createdById'] });
@@ -181,13 +183,13 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
 
         try {
+            await alert.update({ lastStepCompleted: LastStepCompleted.ScheduleAlert }, { where: { lastStepCompleted: LastStepCompleted.SetAlertRecipients } });
             await alert.update({
                 isScheduled: isScheduled,
                 hasKeywordsHighlight: hasKeywordHighlight,
                 timezone: timezone,
                 schedule: schedule,
                 updatedBy: alertOwner.id,
-                lastStepCompleted: 3,
                 templateId: alertTemplateId,
             });
 
@@ -619,6 +621,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Error: Alert with uuid: ${alertId} does not exist`);
         }
 
+        await updatedAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertQueries }, { where: { lastStepCompleted: LastStepCompleted.CreateAlert } });
         await updatedAlert.update({
             updatedBy: alertUpdater.id
         });

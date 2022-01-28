@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import color from '../../../globals/color';
 import elevation from '../../../globals/elevation';
 import spacing from '../../../globals/spacing';
+import { wrapper as Avatar } from '../../Avatar/Avatar.styles';
 import { input as Input, wrapper as InputText } from '../InputBase/InputBase.styles';
 
 type WrapperProps = {
@@ -135,5 +136,15 @@ export const dropdownItem = styled.div<DropdownItemProps>`
 
   &:last-of-type {
     border-radius: 0 0 8px 8px;
+  }
+`;
+
+export const dropdownItemTitle = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  > ${Avatar} {
+    margin-right: ${spacing(3)};
   }
 `;

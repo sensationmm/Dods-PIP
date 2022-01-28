@@ -45,7 +45,7 @@ export type Role = {
 };
 
 export type UserAccount = {
-  uuid: number;
+  uuid: string;
   firstName: string;
   lastName: string;
   clientAccount: ClientAccount;

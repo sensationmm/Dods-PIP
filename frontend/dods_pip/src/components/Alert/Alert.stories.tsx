@@ -15,10 +15,9 @@ export const Primary = Template.bind({});
 
 Primary.args = {
   title: 'Final Services Market Act 2000',
-  searchQueries: 9,
-  recipients: 18,
-  immediateDelivery: false,
-  deliveryDays: ['wed', 'fri'],
-  deliveryTimes: ['11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
+  searchQueriesCount: 9,
+  recipientsCount: 18,
+  isScheduled: true,
+  schedule: '0 0 08,12,20 ? * MON,TUE,WED *',
   isConsultant: true,
 };

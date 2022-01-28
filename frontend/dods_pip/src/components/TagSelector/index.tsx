@@ -95,6 +95,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
         )}
         <Styled.tags>
           {selectedValues.map((item, count) => {
+            item = item as DropdownValue;
             const key = typeof item === 'string' ? `chip-${count}` : `chip-${item.value}`;
             const label = typeof item === 'string' ? item : item.label;
             const value = typeof item === 'string' ? '' : item.value;
@@ -105,7 +106,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
                 label={label}
                 value={value}
                 onCloseClick={handleRemove}
-                avatarType={icon as UserType}
+                avatarType={(item.icon || icon) as UserType}
                 theme="dark"
               />
             );

@@ -4,7 +4,7 @@ import React from 'react';
 import Text from '../Text';
 import * as Styled from './DayPicker.styles';
 
-export type DayType = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+export type DayType = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
 
 type DayConfig = {
   label: string;
@@ -23,13 +23,13 @@ const DayPicker: React.FC<DayPickerProps> = ({
   onClick = undefined,
 }) => {
   const days = [
-    { label: 'Mon', value: 'mon' },
-    { label: 'Tue', value: 'tue' },
-    { label: 'Wed', value: 'wed' },
-    { label: 'Thu', value: 'thu' },
-    { label: 'Fri', value: 'fri' },
-    { label: 'Sat', value: 'sat' },
-    { label: 'Sun', value: 'sun' },
+    { label: 'Mon', value: 'MON' },
+    { label: 'Tue', value: 'TUE' },
+    { label: 'Wed', value: 'WED' },
+    { label: 'Thu', value: 'THU' },
+    { label: 'Fri', value: 'FRI' },
+    { label: 'Sat', value: 'SAT' },
+    { label: 'Sun', value: 'SUN' },
   ] as DayConfig[];
 
   const handleClick = (clicked: DayType) => {
