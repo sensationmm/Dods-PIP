@@ -25,8 +25,10 @@ export const wrapper = styled.div<WrapperProps>`
   }
 
   ${Input} {
-    background: ${({ inline, hasError, isFilter }) =>
-      inline
+    background: ${({ isDisabled, inline, hasError, isFilter }) =>
+      isDisabled
+        ? color.base.greyLight
+        : inline
         ? 'transparent'
         : hasError
         ? color.shadow.red
