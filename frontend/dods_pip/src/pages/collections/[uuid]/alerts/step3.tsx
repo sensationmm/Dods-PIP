@@ -21,13 +21,15 @@ import React, { useMemo } from 'react';
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep3: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
+const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert }) => {
   const [filter, setFilter] = React.useState<string>('');
   const [showAdd, setShowAdd] = React.useState<boolean>(false);
   const [showRemove, setShowRemove] = React.useState<boolean>(false);
   const [userResults, setUserResults] = React.useState<DropdownValue[]>([]);
   const [newRecipients, setNewRecipients] = React.useState<DropdownValue[]>([]);
-  const [recipients, setRecipients] = React.useState<DropdownValue[]>([]);
+  const [recipients, setRecipients] = React.useState<DropdownValue[]>(
+    alert.recipients && alert.recipients.length > 0 ? alert.recipients : [],
+  );
   const [deleteTarget, setDeleteTarget] = React.useState<string>('');
 
   const debounceSearchUsers = debounce(async (name: string) => {

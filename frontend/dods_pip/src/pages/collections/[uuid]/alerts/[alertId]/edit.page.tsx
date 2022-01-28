@@ -1,6 +1,8 @@
+import { AlertQueryProps } from '@dods-ui/components/AlertQuery';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import fetchJson from '@dods-ui/lib/fetchJson';
 import { ClientAccount } from '@dods-ui/pages/account-management/accounts.page';
+import { UserAccount } from '@dods-ui/pages/account-management/users.page';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -27,6 +29,22 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
       );
       const { alert = {} as AlertSetupType } = result;
 
+      const alertQueries = await fetchJson(
+        `${BASE_URI}${Api.Collections}/${collectionId}${Api.Alerts}/${alertId}${Api.Queries}`,
+        {
+          method: 'GET',
+        },
+      );
+      const { queries = [] as AlertQueryProps[] } = alertQueries;
+
+      const alertRecipients = await fetchJson(
+        `${BASE_URI}${Api.Collections}/${collectionId}${Api.Alerts}/${alertId}${Api.Recipients}`,
+        {
+          method: 'GET',
+        },
+      );
+      const { data: recipients = [] } = alertRecipients;
+
       setAlert({
         ...alert,
         collectionId: (alert.collection as Partial<Collection>).uuid,
@@ -37,6 +55,16 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
         accountName: (
           (alert.collection as Partial<Collection>).clientAccount as Partial<ClientAccount>
         ).name,
+        queries: queries,
+        // recipients: (recipients as UserAccount[]).map((recipient: UserAccount) => ({
+        recipients: (recipients as any).map((recipient: UserAccount) => ({
+          label: recipient.name,
+          value: recipient.uuid,
+          icon: recipient.isDodsUser ? 'consultant' : 'client',
+          userData: {
+            accountName: recipient.clientAccount.name,
+          },
+        })),
       } as AlertSetupType);
       setLoading(false);
     } catch (e) {
@@ -61,7 +89,7 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
         setLoading={setLoading}
         collectionId={alert.collectionId}
         collectionName={alert.collectionName}
-        accountName={''}
+        accountName={alert.accountName}
         alert={alert}
         setAlert={setAlert}
       />

@@ -41,12 +41,18 @@ export const actions = styled.div`
   align-items: center;
 `;
 
-export const key = styled.div`
+export const key = styled.span`
   color: ${color.base.white};
   padding: ${spacing(1)} ${spacing(2)};
   border-radius: 8px;
   text-transform: uppercase;
   font-family: 'Open Sans Bold';
+
+  margin-right: ${spacing(2)};
+
+  &:last-of-type {
+    margin-right: 0;
+  }
 `;
 
 export const keyOr = styled(key)`

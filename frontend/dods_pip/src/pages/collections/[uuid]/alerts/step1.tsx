@@ -5,18 +5,15 @@ import Button from '@dods-ui/components/Button';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Text from '@dods-ui/components/Text';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep1: React.FC<AlertStepProps> = ({
-  alert,
-  setAlert,
-  setActiveStep,
-  editAlert,
-  createAlert,
-}) => {
+const AlertStep1: React.FC<AlertStepProps> = ({ alert, setAlert, editAlert, createAlert }) => {
+  const router = useRouter();
+
   return (
     <>
       <Styled.sectionHeader>
@@ -68,8 +65,7 @@ const AlertStep1: React.FC<AlertStepProps> = ({
           inline
           label="Back"
           icon={Icons.ChevronLeftBold}
-          disabled
-          onClick={() => setActiveStep(1)}
+          onClick={() => router.back()}
         />
         <Button
           inline

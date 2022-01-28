@@ -8,25 +8,43 @@ import Popover from '@dods-ui/components/Popover';
 import Text from '@dods-ui/components/Text';
 import React from 'react';
 
-import { AlertStepProps } from './alert-setup';
+import { AlertResultProps, AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep2: React.FC<AlertStepProps> = ({ editAlert, setActiveStep }) => {
+const AlertStep2: React.FC<AlertStepProps> = ({ alert, editAlert, setActiveStep }) => {
   const query = {
     source: [],
     informationType: [],
     searchTerms: '',
     done: false,
-    edit: true,
+    edit: false,
   } as Omit<AlertQueryProps, 'id' | 'numQueries'>;
 
-  const [queries, setQueries] = React.useState<AlertQueryProps[]>([
-    {
-      id: Date.now(),
-      ...query,
-    },
-  ]);
-  const [adding, setAdding] = React.useState<boolean>(true);
+  const [queries, setQueries] = React.useState<AlertQueryProps[]>(
+    alert.queries && alert.queries.length > 0
+      ? (alert.queries as AlertResultProps[]).map(
+          (query: AlertResultProps) =>
+            ({
+              id: query.uuid,
+              source: query.contentSources
+                .split(',')
+                .map((term: string) => ({ value: term, label: term })),
+              informationType: query.informationTypes
+                .split(',')
+                .map((term: string) => ({ value: term, label: term })),
+              searchTerms: query.query,
+              done: true,
+              edit: false,
+            } as unknown as AlertQueryProps),
+        )
+      : [
+          {
+            id: Date.now(),
+            ...query,
+          },
+        ],
+  );
+  const [adding, setAdding] = React.useState<boolean>(!alert.queries || alert.queries.length === 0);
 
   const numQueries = adding ? queries.length - 1 : queries.length;
 
