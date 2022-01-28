@@ -7,6 +7,8 @@ export enum Api {
   ClientAccounts = '/client-accounts',
   Collections = '/collections',
   CollectionDetails = '/collections/details',
+  Queries = '/queries',
+  Recipients = '/recipients',
   EnableUser = '/enableUser',
   ForgotPassword = '/forgotPassword',
   GetUser = '/get-user',
