@@ -2,6 +2,7 @@ import { input } from '@dods-ui/components/_form/InputBase/InputBase.styles';
 import { dropdownItem, select } from '@dods-ui/components/_form/Select/Select.styles';
 import { panel } from '@dods-ui/components/_layout/Panel/Panel.styles';
 import { Icon } from '@dods-ui/components/Icon/Icon.styles';
+import { IconContentSource } from '@dods-ui/components/IconContentSource/IconContentSource.styles';
 import { heading } from '@dods-ui/components/Text/Text.styles';
 import media from '@dods-ui/globals/media';
 import styled from 'styled-components';
@@ -16,12 +17,12 @@ import color from '../../globals/color';
 import spacing from '../../globals/spacing';
 
 export const pageLibrary = styled.div`
-  @media (max-width: 599px) {
+  ${media.lessThan('sm')`
     ${panel} {
       padding-left: ${spacing(4)};
       padding-right: ${spacing(4)};
     }
-  }
+  `}
 `;
 
 export const filtersContent = styled.div`
@@ -129,9 +130,10 @@ export const searchResultHeading = styled.div`
 
 export const contentPreview = styled.div`
   position: relative;
-  width: 100%;
-  height: ${spacing(12)};
+  min-height: ${spacing(4)};
+  max-height: ${spacing(20)};
   overflow: hidden;
+  text-overflow: ellipsis;
   font-family: 'Open Sans', sans-serif;
   font-style: normal;
   font-weight: normal;
@@ -147,6 +149,22 @@ export const contentPreview = styled.div`
     display: inline !important;
     margin-right: ${spacing(1)} !important;
     margin-left: 0 !important;
+  }
+  // these are needed for multi-line ellipsis
+  &:before {
+    content: '...';
+    position: absolute;
+    bottom: 0;
+    right: ${spacing(3)};
+    background: white;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    right: ${spacing(3)}; /* note: not using bottom */
+    width: 1rem;
+    height: 1rem;
+    background: white;
   }
 `;
 
@@ -173,11 +191,6 @@ export const bottomRow = styled.div`
   flex-wrap: wrap;
   justify-content: space-between;
   color: ${color.theme.blue};
-  a {
-    position: absolute;
-    bottom: ${spacing(6)};
-    right ${spacing(6)};
-  }
   @media (max-width: 599px) {
     flex-direction: column;
   }
@@ -200,6 +213,11 @@ export const tagsWrapper = styled.div`
 
   div {
     margin: 1px;
+  }
+  .extraChipsCount {
+    color: ${color.base.greyDark};
+    font-size: 12px;
+    font-family: 'Open Sans', sans-serif;
   }
 `;
 
@@ -264,12 +282,11 @@ export const topRow = styled.div`
 `;
 
 export const imageContainer = styled.span`
-  width: 75px !important;
-  height: ${spacing(13)};
-  margin-top: ${spacing(5)};
-
-  img {
-    border-radius: 10px;
+  max-width: ${spacing(10)};
+  margin-right: ${spacing(4)};
+  ${IconContentSource} {
+    width: ${spacing(10)};
+    height: ${spacing(10)};
   }
 `;
 
@@ -306,6 +323,20 @@ export const readMore = styled.a`
   color: ${color.theme.blue};
   text-decoration: none;
   gap: ${spacing(2)};
+  ${media.lessThan('sm')`
+      margin: ${spacing(5)} 0 0 ${spacing(2)};
+    `};
+`;
+
+export const perPageSelect = styled.div`
+  display: flex;
+  align-items: center;
+  ${select} {
+    #itemPerPage {
+      width: 75px;
+      padding-right: ${spacing(8)};
+    }
+  }
 `;
 
 export const pagination = styled.div`
@@ -351,26 +382,28 @@ export const pagination = styled.div`
       width: 12px;
     }
   }
+  ${media.lessThan('md')`
+    ${perPageSelect}, .itemTotal {
+      display: none;
+    }
+  `}
 `;
 
 export const totalRecords = styled.span`
   margin-left: ${spacing(7)};
 `;
 
-export const perPageSelect = styled.div`
-  display: flex;
-  align-items: center;
-  ${select} {
-    #itemPerPage {
-      width: 75px;
-      padding-right: ${spacing(8)};
-    }
-  }
-`;
-
 export const paginationControls = styled.div`
   display: flex;
   align-items: center;
+  ${media.lessThan('md')`
+    width: 100%;
+    justify-content: space-between;
+  `}
+  .paginalControlsInner {
+    display: flex;
+    align-items: center;
+  }
   .prevPageArrow {
     margin-right: ${spacing(7)};
   }

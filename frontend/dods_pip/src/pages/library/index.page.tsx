@@ -2,8 +2,9 @@ import Facet from '@dods-ui/components/_form/Facet';
 import Select, { SelectItem } from '@dods-ui/components/_form/Select';
 import Toggle from '@dods-ui/components/_form/Toggle';
 import Chips from '@dods-ui/components/Chips';
-import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
+import DateFacet from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
+import IconContentSource from '@dods-ui/components/IconContentSource';
 import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -34,6 +35,7 @@ interface ILibraryProps {
 }
 
 const DEFAULT_RESULT_SIZE = 20;
+const TAXONOMY_TERMS_LENGTH = 2;
 
 export const Library: React.FC<ILibraryProps> = ({
   results,
@@ -237,6 +239,7 @@ export const Library: React.FC<ILibraryProps> = ({
                     informationType,
                     taxonomyTerms,
                     documentId,
+                    contentSource,
                   } = item._source;
                   const formattedTime =
                     contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' hh:mm");
@@ -246,7 +249,9 @@ export const Library: React.FC<ILibraryProps> = ({
                       <Box size={'extraSmall'}>
                         <Styled.boxContent>
                           <Styled.topRow>
-                            <Styled.imageContainer />
+                            <Styled.imageContainer>
+                              <IconContentSource icon={contentSource} width={40} height={40} />
+                            </Styled.imageContainer>
                             <Styled.searchResultHeader>
                               <Styled.searchResultHeading>
                                 <h2>{documentTitle}</h2>
@@ -272,7 +277,7 @@ export const Library: React.FC<ILibraryProps> = ({
                           )}
                           <Styled.bottomRow>
                             <Styled.tagsWrapper>
-                              {taxonomyTerms?.map((term, i) => {
+                              {taxonomyTerms?.slice(0, TAXONOMY_TERMS_LENGTH - 1).map((term, i) => {
                                 if (i > 5) {
                                   return;
                                 }
@@ -288,11 +293,18 @@ export const Library: React.FC<ILibraryProps> = ({
                                     key={`chip-${i}-${term.termLabel}`}
                                     label={term.termLabel}
                                     chipsSize={'dense'}
-                                    theme={selectedIndex > -1 ? 'light' : 'dark'}
+                                    theme={selectedIndex > -1 ? 'dark' : 'light'}
                                     bold={selectedIndex > -1}
                                   />
                                 );
                               })}
+                              <div>
+                                {taxonomyTerms && taxonomyTerms.length > TAXONOMY_TERMS_LENGTH && (
+                                  <span className={'extraChipsCount'}>
+                                    +{taxonomyTerms.length - TAXONOMY_TERMS_LENGTH}
+                                  </span>
+                                )}
+                              </div>
                             </Styled.tagsWrapper>
                             <Link href={`/library/document/${documentId}`} passHref>
                               <Styled.readMore>
@@ -312,7 +324,7 @@ export const Library: React.FC<ILibraryProps> = ({
                 })}
                 {results.length > 0 && (
                   <Styled.pagination>
-                    <span>
+                    <span className={'itemTotal'}>
                       Total <b>{totalDocs.toLocaleString('en-US')}</b> Items
                     </span>
                     <Styled.paginationControls>
@@ -327,22 +339,24 @@ export const Library: React.FC<ILibraryProps> = ({
                       >
                         <Icon src={Icons.ChevronLeftBold} size={IconSize.small} />
                       </button>
-                      <span>Viewing page</span>
-                      <Select
-                        id={'pageSelect'}
-                        value={currentPage?.toString() || '1'}
-                        size={'small'}
-                        isFilter={true}
-                        onChange={(value) => {
-                          const nextPage = parseInt(value);
-                          setCurrentPageQuery(nextPage);
-                        }}
-                        options={pagesOpts}
-                      />
-                      <span>
-                        of
-                        <b>{Math.round(totalDocs / resultSize)}</b>
-                      </span>
+                      <div className={'paginalControlsInner'}>
+                        <span>Viewing page</span>
+                        <Select
+                          id={'pageSelect'}
+                          value={currentPage?.toString() || '1'}
+                          size={'small'}
+                          isFilter={true}
+                          onChange={(value) => {
+                            const nextPage = parseInt(value);
+                            setCurrentPageQuery(nextPage);
+                          }}
+                          options={pagesOpts}
+                        />
+                        <span>
+                          of
+                          <b>{Math.round(totalDocs / resultSize)}</b>
+                        </span>
+                      </div>
                       <button
                         className={'nextPageArrow'}
                         disabled={currentPage * resultSize === totalDocs}
