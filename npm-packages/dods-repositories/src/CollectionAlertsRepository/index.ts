@@ -25,6 +25,7 @@ import {
     AlertDocumentInput,
     AlertInput,
     AlertQueryInput,
+    ClientAccount,
     Collection,
     CollectionAlert,
     CollectionAlertDocument,
@@ -35,6 +36,7 @@ import {
 import { cloneArray, cloneObject, mapAlert, mapAlertQuery } from '..';
 
 import { CollectionError } from '@dodsgroup/dods-domain';
+import { LastStepCompleted } from '../shared/Constants';
 
 export * from './domain';
 
@@ -132,6 +134,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             collectionId: alertOwner.id,
             title: title,
             createdBy: alertCreator.id,
+            lastStepCompleted: LastStepCompleted.CreateAlert
         };
         const newAlert = await CollectionAlert.create(createObject);
         await newAlert.reload({ include: ['collection', 'createdById'] });
@@ -181,13 +184,15 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
 
         try {
+            if (alert.lastStepCompleted === LastStepCompleted.SetAlertRecipients) {
+                await alert.update({ lastStepCompleted: LastStepCompleted.ScheduleAlert });
+            }
             await alert.update({
                 isScheduled: isScheduled,
                 hasKeywordsHighlight: hasKeywordHighlight,
                 timezone: timezone,
                 schedule: schedule,
                 updatedBy: alertOwner.id,
-                lastStepCompleted: 3,
                 templateId: alertTemplateId,
             });
 
@@ -218,7 +223,16 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                 collectionId: collection.id,
                 isActive: true,
             },
-            include: ['collection', 'createdById', 'updatedById', 'alertTemplate'],
+            include: [{
+                model: Collection,
+                as: 'collection',
+                include: [
+                    {
+                        model: ClientAccount,
+                        as: 'clientAccount',
+                    }
+                ]
+            }, 'createdById', 'updatedById', 'alertTemplate'],
         });
 
         if (!alert) {
@@ -619,6 +633,9 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Error: Alert with uuid: ${alertId} does not exist`);
         }
 
+        if (updatedAlert.lastStepCompleted === LastStepCompleted.CreateAlert) {
+            await updatedAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertQueries });
+        }
         await updatedAlert.update({
             updatedBy: alertUpdater.id
         });

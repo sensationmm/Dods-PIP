@@ -3,11 +3,11 @@ import { CollectionAlertRecipientRepository, SetAlertRecipientsInput } from '@do
 
 export const setAlertRecipients: AsyncLambdaHandler<SetAlertRecipientsInput> = async (params) => {
 
-    const response = await CollectionAlertRecipientRepository.defaultInstance.setAlertRecipients(params);
+    const alert = await CollectionAlertRecipientRepository.defaultInstance.setAlertRecipients(params);
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
         message: 'The alert recipients were set successfully',
-        ...response,
+        alert
     });
 };

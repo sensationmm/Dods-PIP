@@ -32,22 +32,25 @@ export function cloneArray<T, E>(target: T[],
 
 export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => {
     const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted, lastExecutedAt } = model;
-    const role = await createdById?.getRole();
-    const isDodsUser = role ? Boolean(role.dodsRole) : undefined
 
     return {
         id,
         uuid,
         title,
         description,
-        collection: collection ? { uuid: collection.uuid, name: collection.name } : {},
-        template: alertTemplate ? { id: alertTemplate.id, name: alertTemplate.name } : {},
+        collection: collection ? {
+            uuid: collection.uuid, name: collection.name,
+            clientAccount: collection.clientAccount ? {
+                uuid: collection.clientAccount.uuid, name: collection.clientAccount.name,
+            } : undefined
+        } : undefined,
+        template: alertTemplate ? { id: alertTemplate.id, name: alertTemplate.name } : undefined,
         schedule,
         timezone,
-        createdBy: createdById ? { uuid: createdById.uuid, name: createdById.fullName, emailAddress: createdById.primaryEmail, isDodsUser } : {},
         createdAt,
+        createdBy: getUserInfo(createdById, await createdById?.getRole()),
         updatedAt,
-        updatedBy: updatedById ? { uuid: updatedById.uuid, name: updatedById.fullName, emailAddress: updatedById.primaryEmail, isDodsUser } : {},
+        updatedBy: getUserInfo(updatedById, await updatedById?.getRole()),
         hasKeywordsHighlight: hasKeywordsHighlight ? true : false,
         isScheduled: isScheduled ? true : false,
         lastStepCompleted: lastStepCompleted,

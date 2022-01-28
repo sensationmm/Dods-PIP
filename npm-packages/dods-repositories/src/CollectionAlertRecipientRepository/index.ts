@@ -1,6 +1,7 @@
 import { CollectionAlertError, CollectionAlertRecipientError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
 import { AlertRecipientInput, ClientAccount, Collection, CollectionAlert, CollectionAlertRecipient, Op, Sequelize, User, WhereOptions } from "@dodsgroup/dods-model";
 import { mapRecipient } from "..";
+import { LastStepCompleted } from "../shared/Constants";
 import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput, DeleteAlertRecipientInput, SearchAlertRecipientsInput, SearchAlertRecipientsOutput, UpdateRecipientParameters, AlertRecipientsOutput } from "./domain";
 
 export * from './domain';
@@ -196,7 +197,9 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
 
         await CollectionAlertRecipient.bulkCreate(alertRecipients, { ignoreDuplicates: true });
 
-        await collectionAlert.update({ lastStepCompleted: 2 }, { where: { lastStepCompleted: 1 } });
+        if (collectionAlert.lastStepCompleted === LastStepCompleted.SetAlertQueries) {
+            await collectionAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertRecipients });
+        }
 
         await collectionAlert.update({ updatedBy: updatedByUser.id });
 
@@ -223,7 +226,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             timezone: collectionAlert.timezone || '',
             searchQueriesCount: await collectionAlert.countAlertQueries() || 0,
             recipientsCount: alertRecipients.length,
-            lastStepCompleted: 2,
+            lastStepCompleted: collectionAlert.lastStepCompleted,
             isPublished: false,
             createdBy: {
                 uuid: collectionAlert.createdById?.uuid || '',

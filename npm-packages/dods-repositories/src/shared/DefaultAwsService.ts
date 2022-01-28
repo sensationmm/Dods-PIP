@@ -1,6 +1,6 @@
 import { TextDecoder } from "util";
 import { Lambda } from '@aws-sdk/client-lambda';
-import { S3 } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 const { AWS_REGION, NODE_ENV, _endpoint = NODE_ENV === 'development' ? 'http://localhost:3002' : undefined } = process.env;
 
@@ -15,12 +15,11 @@ export class DefaultAwsService implements AwsService {
     static defaultInstance: AwsService = new DefaultAwsService();
 
     lambdaClient: Lambda;
-    s3Client: S3;
+    s3Client: S3Client;
 
     constructor(region: string = AWS_REGION!, endpoint: string = _endpoint!) {
-        const awsOptions = { endpoint, region };
-        this.lambdaClient = new Lambda(awsOptions);
-        this.s3Client = new S3(awsOptions);
+        this.lambdaClient = new Lambda({ endpoint, region });
+        this.s3Client = new S3Client({ region });
     }
 
     async invokeLambda<TResult>(lambdaName: string, payload: any, defaultResponse: TResult) {
@@ -38,9 +37,9 @@ export class DefaultAwsService implements AwsService {
         return response;
     }
 
-    async getFromS3(bucket: string, keyName: string): Promise<string | Error> {
+    async getFromS3(Bucket: string, Key: string): Promise<string | Error> {
         try {
-            const content = await this.s3Client.getObject({ Bucket: bucket, Key: keyName });
+            const content = await this.s3Client.send(new GetObjectCommand({ Bucket, Key }));
 
             const documentContent = content.Body?.toString('utf-8');
 
@@ -50,15 +49,13 @@ export class DefaultAwsService implements AwsService {
         }
     }
 
-    async putInS3(bucket: string, keyName: string, body: any): Promise<boolean | Error> {
+    async putInS3(Bucket: string, Key: string, body: any): Promise<boolean | Error> {
         try {
-            const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
-
-            await this.s3Client.putObject({ Bucket: bucket, Key: keyName, Body: bodyString });
+            const Body = typeof body === 'string' ? body : JSON.stringify(body);
+            this.s3Client.send(new PutObjectCommand({ Bucket, Key, Body }));
         } catch (error: any) {
             return error;
         }
-
         return true;
     }
 }

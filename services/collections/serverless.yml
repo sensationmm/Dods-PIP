@@ -101,7 +101,7 @@ custom:
 
   apiKeys:
     - name: webhook-api-key
-      value: ${file(../env-config.${self:provider.stage}.js):apiKeys, file(../env-config.dev.js):apiKeys}
+      value: ${ssm:/infra/elastic/hook_key}
 
 plugins:
   - serverless-webpack
