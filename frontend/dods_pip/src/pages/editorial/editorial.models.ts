@@ -1,3 +1,4 @@
+import { TagsData } from '@dods-ui/components/ContentTagger/TagBrowser';
 import { RepositoryStatusTypes } from '@dods-ui/components/RepositoryStatus';
 
 export type metadataSelectionKey = 'contentSources' | 'informationTypes' | 'status';
@@ -127,9 +128,9 @@ export type EditorialRecordListResponse = {
 };
 
 export type AncestorTerm = {
-  tagId: string;
-  termLabel: string;
-  rank?: number;
+  tagId: TagsData['tagId'];
+  termLabel: TagsData['termLabel'];
+  rank?: number; // TODO: this should be enforced without the ? once the BE API is fixed to always return a rank
 };
 
 export type TaxonomyTerm = {

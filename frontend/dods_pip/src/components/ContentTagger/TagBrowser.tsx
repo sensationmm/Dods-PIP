@@ -1,5 +1,6 @@
 import color from '@dods-ui/globals/color';
 import fetchJson from '@dods-ui/lib/fetchJson';
+import { AncestorTerm } from '@dods-ui/pages/editorial/editorial.models';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 import { debounce } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
@@ -24,12 +25,6 @@ import { ContentTaggerProps } from './';
 import * as Styled from './ContentTagger.styles';
 import TagPanel from './TagPanel';
 import TagTree from './TagTree';
-
-type AncestorTerm = {
-  tagId: string;
-  termLabel: string;
-  rank?: number;
-};
 
 export type TagsData = {
   tagId: string;

@@ -10,7 +10,7 @@ import { Icons } from '@dods-ui/components/Icon/assets';
 import Modal from '@dods-ui/components/Modal';
 import TagSelector from '@dods-ui/components/TagSelector';
 import Text from '@dods-ui/components/Text';
-import fetchJson from '@dods-ui/lib/fetchJson';
+import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import { DropdownValue } from '@dods-ui/pages/account-management/add-client/type';
 import { UserAccount } from '@dods-ui/pages/account-management/users.page';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
@@ -34,7 +34,9 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
 
   const debounceSearchUsers = debounce(async (name: string) => {
     try {
-      const response = await fetchJson(`${BASE_URI}${Api.Users}?name=${name}`, { method: 'GET' });
+      const response = await fetchJson<CustomResponse>(`${BASE_URI}${Api.Users}?name=${name}`, {
+        method: 'GET',
+      });
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {

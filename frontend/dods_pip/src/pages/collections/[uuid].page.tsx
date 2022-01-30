@@ -61,7 +61,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
     setLoading(true);
     const queryString = getFilterQueryString();
     try {
-      const result = await fetchJson(
+      const result = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.Collections}/${collectionId}/alerts${queryString}`,
         {
           method: 'GET',

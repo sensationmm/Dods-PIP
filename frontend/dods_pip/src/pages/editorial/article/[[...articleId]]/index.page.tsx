@@ -292,18 +292,20 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   const onDelete = async () => {
     if (!isEditMode) return;
     if (articleId.length) {
+      let routeChangeTimer: ReturnType<typeof setTimeout>;
       setLoading(true);
       await deleteEditorialRecord(articleId[0])
         .then((response) => {
           if (response.success) {
             addNotification({ title: `Document successfully deleted`, type: 'confirm' });
-            setTimeout(() => {
+            routeChangeTimer = setTimeout(() => {
               router.push('/editorial');
             }, 600);
           }
         })
         .finally(() => {
           setLoading(false);
+          clearTimeout(routeChangeTimer);
         });
     }
   };
