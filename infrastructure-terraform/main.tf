@@ -39,7 +39,7 @@ module "dev" {
 module "production" {
   source      = "./environments/deployment"
   environment = "production"
-  app_image   = "186202231680.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:1cccbe9"
+  app_image   = "186202231680.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:9a79045"
   account_id  = "186202231680"
   db_password = var.db_password
   providers = {
