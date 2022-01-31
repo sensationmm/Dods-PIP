@@ -97,7 +97,7 @@ def consumer(event, context):
                     document['taxonomyTerms'].extend(auto_tagging_response['taxonomyTerms'])
 
                     logger.info('Auto tagging response: %s', auto_tagging_response)
-                    document['documentContent'] = auto_tagging_response['content']
+                    #document['documentContent'] = auto_tagging_response['content']
 
                     logger.info('Auto tagging process has been finished for this: %s', message['file_path_content_document'])
                     s3_response = s3_client.put_object(
