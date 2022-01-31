@@ -1,6 +1,7 @@
 import InputSearch from '@dods-ui/components/_form/InputSearch';
 import InputText from '@dods-ui/components/_form/InputText';
 import Spacer from '@dods-ui/components/_layout/Spacer';
+import Button from '@dods-ui/components/Button';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Text from '@dods-ui/components/Text';
@@ -9,7 +10,13 @@ import React from 'react';
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep1: React.FC<AlertStepProps> = ({ alert, setAlert }) => {
+const AlertStep1: React.FC<AlertStepProps> = ({
+  alert,
+  setAlert,
+  setActiveStep,
+  editAlert,
+  createAlert,
+}) => {
   return (
     <>
       <Styled.sectionHeader>
@@ -38,7 +45,7 @@ const AlertStep1: React.FC<AlertStepProps> = ({ alert, setAlert }) => {
           id="accountId"
           label="Account"
           required
-          value={alert.accountName}
+          value={alert.accountName || ''}
           isDisabled
           onChange={(val) => setAlert({ ...alert, accountId: val })}
         />
@@ -47,11 +54,34 @@ const AlertStep1: React.FC<AlertStepProps> = ({ alert, setAlert }) => {
           id="collectionId"
           label="Collection"
           required
-          value={alert.collectionName}
+          value={alert.collectionName || ''}
           isDisabled
           onChange={(val) => setAlert({ ...alert, collectionId: val })}
         />
       </Styled.grid>
+
+      <Spacer size={15} />
+
+      <Styled.actions>
+        <Button
+          type="text"
+          inline
+          label="Back"
+          icon={Icons.ChevronLeftBold}
+          disabled
+          onClick={() => setActiveStep(1)}
+        />
+        <Button
+          inline
+          label={'Next'}
+          icon={Icons.ChevronRightBold}
+          iconAlignment="right"
+          onClick={() =>
+            alert.uuid ? editAlert({ title: alert.title }) : createAlert && createAlert()
+          }
+          disabled={alert.title === ''}
+        />
+      </Styled.actions>
     </>
   );
 };

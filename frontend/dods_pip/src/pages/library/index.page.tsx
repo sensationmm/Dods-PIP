@@ -5,11 +5,9 @@ import Chips from '@dods-ui/components/Chips';
 import DateFacet, { IDateRange } from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
 import { format } from 'date-fns';
-import esb, { TermQuery } from 'elastic-builder';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
@@ -22,190 +20,10 @@ import Text from '../../components/Text';
 import color from '../../globals/color';
 import fetchJson from '../../lib/fetchJson';
 import { Api } from '../../utils/api';
-import {
-  AggregationsType,
-  BucketType,
-  ExtendedRequestBodySearch,
-  IAggregations,
-  IResponse,
-  ISourceData,
-  QueryObject,
-  QueryString,
-} from './index';
+import { BucketType, IAggregations, IResponse, ISourceData, QueryObject } from './index';
 import * as Styled from './library.styles';
-
-enum AggTypes {
-  contentSource = 'contentSource',
-  jurisdiction = 'jurisdiction',
-  informationType = 'informationType',
-  topics = 'topics',
-  people = 'people',
-  organizations = 'organizations',
-  geography = 'geography',
-  originator = 'originator',
-  organisationName = 'organisationName',
-  group = 'group',
-}
-
-const aggregations: AggregationsType = {
-  topics: {
-    terms: {
-      field: 'aggs_fields.topics',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  people: {
-    terms: {
-      field: 'aggs_fields.people',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  organizations: {
-    terms: {
-      field: 'aggs_fields.organizations.keyword',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  geography: {
-    terms: {
-      field: 'aggs_fields.geography',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  group: {
-    terms: {
-      field: 'organisationName.keyword',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  originator: {
-    terms: {
-      field: 'originator.keyword',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  jurisdiction: {
-    terms: {
-      field: 'jurisdiction',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  informationType: {
-    terms: {
-      field: 'informationType.keyword',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-  contentSource: {
-    terms: {
-      field: 'contentSource.keyword',
-      min_doc_count: 0,
-      size: 500,
-    },
-  },
-};
-
-const getPayload = ({
-  search = '{}',
-  isEU,
-  isUK,
-}: {
-  search: QueryString;
-  isEU?: boolean | unknown;
-  isUK?: boolean | unknown;
-}): { payload?: unknown; parsedQuery?: QueryObject } => {
-  let esbQuery = esb.boolQuery();
-  let parsedQuery;
-
-  try {
-    parsedQuery = typeof search === 'string' ? JSON.parse(search) : {};
-
-    const {
-      searchTerm = '',
-      basicFilters = [],
-      nestedFilters = [],
-      dateRange = {},
-      resultSize = 20,
-      currentPage = 0,
-    }: QueryObject = parsedQuery;
-
-    const phrases = searchTerm.match(/"(.*?)"/g) || []; // Anything in double quotes, e.g "I am a phrase"
-    const regex = new RegExp(`${phrases.join('|')}`, 'g');
-    const words = searchTerm.replace(regex, ''); // remove all phrases and we're left with the words
-
-    if (searchTerm) {
-      esbQuery = esbQuery.must(
-        esb
-          .boolQuery()
-          .should(phrases.map((phrase) => esb.matchPhraseQuery('documentContent', phrase)))
-          .should(phrases.map((phrase) => esb.matchPhraseQuery('documentTitle', phrase)))
-          .should(words ? esb.matchQuery('documentContent', words) : [])
-          .should(words ? esb.matchQuery('documentTitle', words) : []),
-      );
-    }
-
-    let jurisdictionFilter: TermQuery[] = []; // if both isEU and isUK then no need to filter
-
-    if (isEU && !isUK) {
-      jurisdictionFilter = [esb.termQuery('jurisdiction', 'EU')];
-    } else if (!isEU && isUK) {
-      jurisdictionFilter = [esb.termQuery('jurisdiction', 'UK')];
-    }
-
-    // Facets
-    esbQuery = esbQuery
-      .must(
-        basicFilters
-          .map(({ key, value }) => esb.termQuery(`${key}.keyword`, value))
-          .concat(jurisdictionFilter),
-      )
-      .must(
-        nestedFilters.map(({ path, key, value }) =>
-          esb
-            .nestedQuery()
-            .path(path)
-            .query(esb.termQuery(key.includes('termLabel') ? `${key}.keyword` : key, value)),
-        ),
-      );
-
-    return {
-      payload: {
-        ...(
-          esb
-            .requestBodySearch()
-            .query(
-              esbQuery.filter(
-                esb
-                  .rangeQuery('contentDateTime')
-                  // Fallback to beginning of JS time to now
-                  .gte(dateRange.min || format(new Date(0), 'yyyy-MM-dd'))
-                  .lte(dateRange.max || format(new Date(), 'yyyy-MM-dd')),
-              ),
-            )
-            .size(resultSize)
-            .from(currentPage * resultSize) as ExtendedRequestBodySearch
-        )._body,
-        aggregations,
-      },
-      parsedQuery,
-    };
-  } catch (error) {
-    console.error(error);
-  }
-
-  return {
-    payload: {},
-    parsedQuery,
-  };
-};
+import getPayload from './utils/getSearchPayload';
+import useSearchQueries, { AggTypes } from './utils/useSearchQueries';
 
 interface ILibraryProps {
   parsedQuery: QueryObject;
@@ -224,7 +42,16 @@ export const Library: React.FC<ILibraryProps> = ({
   parsedQuery,
   apiErrorMessage,
 }) => {
-  const router = useRouter();
+  const {
+    setKeywordQuery,
+    setCurrentPageQuery,
+    setResultSize,
+    setBasicQuery,
+    unsetBasicQuery,
+    setNestedQuery,
+    unsetNestedQuery,
+    setDateQuery,
+  } = useSearchQueries(parsedQuery);
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
   const [originators, setOriginators] = useState<BucketType[]>([]);
@@ -253,156 +80,6 @@ export const Library: React.FC<ILibraryProps> = ({
     }
     return [{ label: '1', value: '1' }];
   }, [totalDocs, resultSize]);
-
-  const setKeywordQuery = (searchTerm: string) => {
-    router.push(
-      {
-        pathname: '/library',
-        query: { search: JSON.stringify({ searchTerm, currentPage: 1 }) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const setDateFilter = ({ min, max }: IDateRange) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { dateRange, ...rest } = parsedQuery; // Remove dateRage
-
-    let newQuery: QueryObject = rest;
-
-    if (min && max) {
-      newQuery = { ...rest, dateRange: { min, max }, currentPage: 0 };
-    }
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { search: JSON.stringify(newQuery) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const setNestedQuery = ({ path, key, value }: { path: string; key: string; value: string }) => {
-    const { nestedFilters = [] } = parsedQuery;
-
-    const selectedIndex = nestedFilters.findIndex(
-      (filter) => filter.key === key && filter.value === value,
-    );
-
-    let newNestedFilters = [...nestedFilters];
-
-    if (selectedIndex > -1) {
-      // remove
-      newNestedFilters.splice(selectedIndex, 1);
-    } else {
-      // add
-      newNestedFilters = [...nestedFilters, { path, key, value }];
-    }
-
-    const newQuery = { ...parsedQuery, nestedFilters: newNestedFilters };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { search: JSON.stringify(newQuery), currentPage: 1 },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const setBasicQuery = ({ key, value }: { key: AggTypes; value: string }) => {
-    const { basicFilters = [] } = parsedQuery;
-    const selectedIndex = basicFilters.findIndex(
-      (filter) => filter.key === key && filter.value === value,
-    );
-
-    let newBasicFilters = [...basicFilters];
-
-    if (selectedIndex > -1) {
-      newBasicFilters.splice(selectedIndex, 1); // remove
-    } else {
-      newBasicFilters = [...basicFilters, { key, value }]; // add
-    }
-
-    const newQuery = { ...parsedQuery, basicFilters: newBasicFilters };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { search: JSON.stringify(newQuery), currentPage: 1 },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const removeBasicFilters = (queries: BucketType[]) => {
-    const { basicFilters = [] } = parsedQuery;
-
-    const newBasicFilters = basicFilters.filter(({ value }) => {
-      return !queries.find(({ key }) => value === key);
-    });
-
-    const newQuery = { ...parsedQuery, basicFilters: newBasicFilters };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { search: JSON.stringify(newQuery), currentPage: 1 },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const removeNestedFilters = (queries: BucketType[]) => {
-    const { nestedFilters = [] } = parsedQuery;
-
-    const newNestedFilters = nestedFilters.filter(({ value }) => {
-      return !queries.find(({ key }) => value === key);
-    });
-
-    const newQuery = { ...parsedQuery, nestedFilters: newNestedFilters };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { search: JSON.stringify(newQuery), currentPage: 1 },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const setPerPageCount = (resultSize: number) => {
-    const newQuery = { ...parsedQuery, resultSize, currentPage: 1 };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { search: JSON.stringify(newQuery) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
-
-  const setCurrentPageQuery = (currentPage: number) => {
-    const newQuery = { ...parsedQuery, currentPage };
-
-    router.push(
-      {
-        pathname: '/library',
-        query: { search: JSON.stringify(newQuery) },
-      },
-      undefined,
-      { scroll: false },
-    );
-  };
 
   useEffect(() => {
     const {
@@ -464,17 +141,19 @@ export const Library: React.FC<ILibraryProps> = ({
     }
   };
 
-  const recordsPerPage = [
-    { label: '10', value: '10' },
-    { label: '20', value: '20' },
-    { label: '30', value: '30' },
-    { label: '40', value: '40' },
-    { label: '50', value: '50' },
-  ];
+  const recordsPerPage = useMemo(() => {
+    return [
+      { label: '10', value: '10' },
+      { label: '20', value: '20' },
+      { label: '30', value: '30' },
+      { label: '40', value: '40' },
+      { label: '50', value: '50' },
+    ];
+  }, []);
 
   const onPerPageChange = (value: string) => {
     const newResultSize = parseInt(value);
-    setPerPageCount(newResultSize);
+    setResultSize(newResultSize);
   };
 
   return (
@@ -695,7 +374,7 @@ export const Library: React.FC<ILibraryProps> = ({
               <FacetContainer heading={'Filters'}>
                 <Styled.filtersContent>
                   <DateFacet
-                    onChange={setDateFilter}
+                    onChange={setDateQuery}
                     values={{
                       min: parsedQuery?.dateRange?.min,
                       max: parsedQuery?.dateRange?.max,
@@ -704,7 +383,7 @@ export const Library: React.FC<ILibraryProps> = ({
                   <Facet
                     title={'Content Source'}
                     records={contentSources}
-                    onClearSelection={() => removeBasicFilters(contentSources)}
+                    onClearSelection={() => unsetBasicQuery(contentSources)}
                     onChange={(value) => {
                       setBasicQuery({
                         key: AggTypes.contentSource,
@@ -715,7 +394,7 @@ export const Library: React.FC<ILibraryProps> = ({
                   <Facet
                     title={'Information Type'}
                     records={informationTypes}
-                    onClearSelection={() => removeBasicFilters(informationTypes)}
+                    onClearSelection={() => unsetBasicQuery(informationTypes)}
                     onChange={(value) => {
                       setBasicQuery({
                         key: AggTypes.informationType,
@@ -726,7 +405,7 @@ export const Library: React.FC<ILibraryProps> = ({
                   <Facet
                     title={'Group'}
                     records={groups}
-                    onClearSelection={() => removeBasicFilters(groups)}
+                    onClearSelection={() => unsetBasicQuery(groups)}
                     onChange={(value) => {
                       setBasicQuery({
                         key: AggTypes.organisationName,
@@ -737,7 +416,7 @@ export const Library: React.FC<ILibraryProps> = ({
                   <Facet
                     title={'Originator'}
                     records={originators}
-                    onClearSelection={() => removeBasicFilters(originators)}
+                    onClearSelection={() => unsetBasicQuery(originators)}
                     onChange={(value) => {
                       setBasicQuery({
                         key: AggTypes.originator,
@@ -748,7 +427,7 @@ export const Library: React.FC<ILibraryProps> = ({
                   <Facet
                     title={'Topics'}
                     records={topics}
-                    onClearSelection={() => removeNestedFilters(topics)}
+                    onClearSelection={() => unsetNestedQuery(topics)}
                     onChange={(value) => {
                       setNestedQuery({
                         path: 'taxonomyTerms',
@@ -760,7 +439,7 @@ export const Library: React.FC<ILibraryProps> = ({
                   <Facet
                     title={'Organizations'}
                     records={organizations}
-                    onClearSelection={() => removeNestedFilters(organizations)}
+                    onClearSelection={() => unsetNestedQuery(organizations)}
                     onChange={(value) => {
                       setNestedQuery({
                         path: 'taxonomyTerms',
@@ -772,7 +451,7 @@ export const Library: React.FC<ILibraryProps> = ({
                   <Facet
                     title={'People'}
                     records={people}
-                    onClearSelection={() => removeNestedFilters(people)}
+                    onClearSelection={() => unsetNestedQuery(people)}
                     onChange={(value) => {
                       setNestedQuery({
                         path: 'taxonomyTerms',
@@ -784,7 +463,7 @@ export const Library: React.FC<ILibraryProps> = ({
                   <Facet
                     title={'Geography'}
                     records={geography}
-                    onClearSelection={() => removeNestedFilters(geography)}
+                    onClearSelection={() => unsetNestedQuery(geography)}
                     onChange={(value) => {
                       setNestedQuery({
                         path: 'taxonomyTerms',

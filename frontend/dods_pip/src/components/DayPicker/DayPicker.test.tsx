@@ -17,14 +17,14 @@ describe('DayPicker', () => {
   });
 
   it('calls onClick if provided', () => {
-    const day = wrapper.find('[data-test="day-wed"]');
+    const day = wrapper.find('[data-test="day-WED"]');
     day.simulate('click');
-    expect(onClick).toHaveBeenCalledWith(['wed']);
+    expect(onClick).toHaveBeenCalledWith(['WED']);
   });
 
   it('does not call onClick if not provided', () => {
     wrapper = shallow(<DayPicker />);
-    const day = wrapper.find('[data-test="day-wed"]');
+    const day = wrapper.find('[data-test="day-WED"]');
     day.simulate('click');
     expect(onClick).toHaveBeenCalledTimes(0);
   });

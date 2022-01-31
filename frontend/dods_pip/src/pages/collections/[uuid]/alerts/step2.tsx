@@ -11,11 +11,13 @@ import React from 'react';
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep2: React.FC<AlertStepProps> = () => {
+const AlertStep2: React.FC<AlertStepProps> = ({ editAlert, setActiveStep }) => {
   const query = {
     source: [],
     informationType: [],
     searchTerms: '',
+    done: false,
+    edit: true,
   } as Omit<AlertQueryProps, 'id' | 'numQueries'>;
 
   const [queries, setQueries] = React.useState<AlertQueryProps[]>([
@@ -37,6 +39,28 @@ const AlertStep2: React.FC<AlertStepProps> = () => {
       ...queries,
     ]);
     setAdding(true);
+  };
+
+  const duplicateQuery = (i: number) => {
+    const src = queries.slice(i, 1)[0];
+    setQueries([{ ...src, id: Date.now(), done: false }, ...queries]);
+    setAdding(true);
+  };
+
+  const editQuery = (i: number, setEdit = true) => {
+    const existing = queries.slice();
+    setQueries(
+      existing.map((query, count) => {
+        if (count === i) {
+          return {
+            ...query,
+            edit: setEdit,
+          };
+        } else {
+          return query;
+        }
+      }),
+    );
   };
 
   return (
@@ -77,22 +101,61 @@ const AlertStep2: React.FC<AlertStepProps> = () => {
 
       {queries
         .sort((a, b) => (a.id < b.id ? 1 : -1))
-        .map((query) => [
+        .map((query, count) => [
           <AlertQuery
             key={`query-${query.id}`}
             {...query}
             onSave={(query) => {
-              setQueries([query, ...queries.slice(1)]);
+              const existing = queries.slice();
+              setQueries(
+                existing.map((ex) => {
+                  if (ex.id === query.id) {
+                    return query;
+                  } else {
+                    return ex;
+                  }
+                }),
+              );
               setAdding(false);
             }}
             onCancel={() => {
               setAdding(false);
-              setQueries(queries.slice(1));
+              query.edit && !query.done ? editQuery(count, false) : setQueries(queries.slice(1));
+            }}
+            onDuplicate={() => {
+              duplicateQuery(count);
+            }}
+            onEdit={() => {
+              setAdding(true);
+              editQuery(count);
+            }}
+            onDelete={() => {
+              setQueries(queries.filter((del) => query.id !== del.id));
             }}
             numQueries={numQueries}
           />,
           <Spacer key={`spacer-${query.id}`} size={6} />,
         ])}
+
+      <Spacer size={15} />
+
+      <Styled.actions>
+        <Button
+          type="text"
+          inline
+          label="Back"
+          icon={Icons.ChevronLeftBold}
+          onClick={() => setActiveStep(1)}
+        />
+        <Button
+          inline
+          label={'Next'}
+          icon={Icons.ChevronRightBold}
+          iconAlignment="right"
+          onClick={() => editAlert(queries)}
+          disabled={adding || queries.length === 0}
+        />
+      </Styled.actions>
     </>
   );
 };
