@@ -9,15 +9,22 @@ import Button from '@dods-ui/components/Button';
 import DataCount from '@dods-ui/components/DataCount';
 import Icon from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
-import RepositoryTable, { RepositoryTableProps } from '@dods-ui/components/RepositoryTable';
+import RepositoryTable, { RepositoryRowData } from '@dods-ui/components/RepositoryTable';
 import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
-import { MetadataSelection } from '@dods-ui/pages/editorial/editorial.models';
-import { getMetadataSelections } from '@dods-ui/pages/editorial/editorial.service';
+import {
+  EditorialRecordListResponse,
+  MetadataSelection,
+} from '@dods-ui/pages/editorial/editorial.models';
+import {
+  deleteEditorialRecord,
+  getMetadataSelections,
+  getRecords,
+} from '@dods-ui/pages/editorial/editorial.service';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import * as Styled from './index.page.styles';
 
@@ -31,19 +38,65 @@ interface Filters {
   itemsPerPage?: number;
 }
 
-export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
+export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotification }) => {
   const [isActiveFilter, setIsActiveFilter] = useState<boolean>(true);
   const [filters, setFilters] = useState<Filters>({});
-
+  const [editorialRecords, setEditorialRecords] = useState<EditorialRecordListResponse>();
+  const [editorialData, setEditorialData] = useState<RepositoryRowData[]>([]);
   const [selectFilterValues, setSelectFilterValues] = useState<MetadataSelection>({
     contentSources: [],
     informationTypes: [],
     status: [],
   });
-
   const router = useRouter();
 
-  const editorialData = [] as RepositoryTableProps['data'];
+  useEffect(() => {
+    const getEditorialRecords = async () => {
+      setLoading(true);
+      await getRecords()
+        .then((response) => {
+          setEditorialRecords(response);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+    getEditorialRecords();
+  }, []);
+
+  useEffect(() => {
+    if (editorialRecords?.data?.results?.length) {
+      const data: RepositoryRowData[] = editorialRecords.data.results.map(
+        ({ uuid, documentName, status, updatedAt, assignedEditor }) => ({
+          id: uuid,
+          documentName,
+          status: status?.status || 'draft',
+          updated: updatedAt,
+          assignedEditor: assignedEditor?.fullName,
+        }),
+      );
+      setEditorialData(data);
+    }
+  }, [editorialRecords]);
+
+  const navigateToViewDocument = useCallback((uuid) => {
+    router.push(`/library/document/${uuid}?preview=true`);
+  }, []);
+
+  const navigateToEditDocument = useCallback((uuid) => {
+    router.push(`/editorial/article/${uuid}`);
+  }, []);
+
+  const onDeleteDocument = useCallback(async (uuid) => {
+    setLoading(true);
+    await deleteEditorialRecord(uuid)
+      .then(() => {
+        addNotification({ title: 'Record deleted', type: 'confirm' });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const addFilters = (newFilters: Filters) => setFilters({ ...filters, ...newFilters });
   const removeFilter = (filterKey: keyof Filters) => {
@@ -180,7 +233,12 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading }) => {
               </Styled.dateFilter>
             </Styled.row>
             <Spacer size={7} />
-            <RepositoryTable data={editorialData} onDelete={console.log} onEdit={console.log} />
+            <RepositoryTable
+              data={editorialData}
+              onView={navigateToViewDocument}
+              onDelete={onDeleteDocument}
+              onEdit={navigateToEditDocument}
+            />
           </Box>
         </main>
       </Panel>

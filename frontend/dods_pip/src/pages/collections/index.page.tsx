@@ -7,7 +7,7 @@ import Loader from '@dods-ui/components/Loader';
 import Modal from '@dods-ui/components/Modal';
 import Pagination, { PaginationType } from '@dods-ui/components/Pagination';
 import Text from '@dods-ui/components/Text';
-import fetchJson from '@dods-ui/lib/fetchJson';
+import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import useDebounce from '@dods-ui/lib/useDebounce';
 import useUser, { User } from '@dods-ui/lib/useUser';
 import loadAccounts from '@dods-ui/pages/accounts/load-accounts';
@@ -113,7 +113,7 @@ export const Collections: React.FC<CollectionsProps> = ({
       } else {
         url = `${BASE_URI}${Api.Collections}/${user.clientAccountId}${queryString}`;
       }
-      const results = await fetchJson(url, {
+      const results = await fetchJson<CustomResponse>(url, {
         method: 'GET',
       });
       const { data = [], filteredRecords } = results;
