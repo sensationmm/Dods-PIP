@@ -25,7 +25,7 @@ def handle(event, context):
         'Organisations',
         'Geography'
     ]
-    """
+
     for taxonomy_type in taxonomy_types:
         taxonomy_response = es.search(index='taxonomy', query={"bool": {"must": [{"match": {"inScheme": taxonomy_type}}]}}, size=10000)
         logging.info(f"Total Count : {taxonomy_response['hits']['total']['value']}")
@@ -45,7 +45,6 @@ def handle(event, context):
                 if taxonomy_term_item not in content_tags:
                     content_tags.append(taxonomy_term_item)
                 content = post_match_content
-    """
     return {
         'content': content,
         'taxonomyTerms': content_tags

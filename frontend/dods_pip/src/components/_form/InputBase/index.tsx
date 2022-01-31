@@ -6,7 +6,7 @@ import Text from '../../Text';
 import Label from '../Label';
 import * as Styled from './InputBase.styles';
 
-type InputType = 'text' | 'search' | 'password';
+type InputType = 'text' | 'search' | 'password' | 'time';
 type InputSize = 'small' | 'medium' | 'large';
 
 export interface InputBaseProps {
