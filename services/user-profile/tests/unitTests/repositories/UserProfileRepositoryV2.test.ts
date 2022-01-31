@@ -185,7 +185,8 @@ describe(`${CLASS_NAME}`, () => {
 
         const parameters: CreateUserPersisterInput = {
             ...userSequelizeResult,
-            telephoneNumber: userSequelizeResult.primaryEmail,
+            telephoneNumber1: userSequelizeResult.primaryEmail,
+            telephoneNumber2: userSequelizeResult.primaryEmail,
             roleId: roleSequelizeResult.id.toString(),
         };
 

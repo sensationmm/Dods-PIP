@@ -171,7 +171,7 @@ pipelines:
             - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
             - docker push ${IMAGE_NAME}
             - ../../tools/ecs_deploy --service-name frontend-service --cluster pip-${ENVIRONMENT,,}-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
-            - aws ssm put-parameter --name "frontend-image" --value $IMAGE_TAG --type String --tags "Key=deployment,Value=pipeline cli"
+            - aws ssm put-parameter --name "frontend-image" --value $IMAGE_NAME --type String --overwrite
 
     deploy_services:
       - variables:
