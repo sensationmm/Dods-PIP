@@ -2,7 +2,7 @@ const { Client } = require('@elastic/elasticsearch')
 
 import {
     activateScheduleParameters,
-    config,
+    config, createAlertScheduleParameters,
     createScheduleParameters,
     deactivateScheduleParameters,
     deleteScheduleParameters,
@@ -16,29 +16,47 @@ import elasticsearch from "../elasticsearch"
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL } } } = config;
 export class ScheduleRepository implements Schedule {
 
+    alertApiKey = config.dods.downstreamKeys.alertApiKey
+
     constructor(private elasticsearch: typeof Client, private baseURL: string = apiGatewayBaseURL) { }
 
     static defaultInstance: Schedule = new ScheduleRepository(elasticsearch);
 
 
     static createSearchQuery(data: createScheduleParameters | updateScheduleParameters): any {
-
-        if (data.scheduleType === 'publish') {
-            return {
-                id: data.scheduleId,
-                active: true,
-                body: {
-                    trigger: {
-                        schedule: { "cron": data.cron }
-                    },
-                    actions: {
+        return {
+            id: data.scheduleId,
+            active: true,
+            body: {
+                trigger: {schedule: { "cron": data.cron }},
+                actions: {
+                    webhook: {
                         webhook: {
-                            webhook: {
-                                method: "POST",
-                                //url: "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document/" + data.scheduleId + "/" + data.scheduleType,
-                                url: `${data.baseURL}/editorial-record/${data.scheduleId}/${data.scheduleType}`
-                            }
+                            method: "POST",
+                            url: `${data.baseURL}/editorial-record/${data.scheduleId}/${data.scheduleType}`
                         }
+                    }
+                }
+            }
+        }
+
+    }
+    static createAlertSearchQuery(data: createAlertScheduleParameters): any {
+        return {
+            id: data.scheduleId,
+            active: true,
+            body: {
+                trigger: {schedule: { "cron": data.cron }},
+                actions: {
+                    webhook: {
+                        webhook: {
+                            method: "PUT",
+                            url: `${data.baseURL}/collections/${data.collectionId}/alerts/${data.scheduleId}/process/`,
+                            headers : {
+                                "schedule-api-key" : data.apiKey
+                            },
+                        }
+
                     }
                 }
             }
@@ -51,6 +69,14 @@ export class ScheduleRepository implements Schedule {
         const query = ScheduleRepository.createSearchQuery(data);
 
         return await this.elasticsearch.watcher.putWatch(query);
+    }
+
+    async createAlertSchedule(data: createAlertScheduleParameters): Promise<any> {
+        data.baseURL = this.baseURL;
+        data.apiKey = this.alertApiKey
+        const query = ScheduleRepository.createAlertSearchQuery(data);
+
+        return this.elasticsearch.watcher.putWatch(query);
     }
 
     async deleteSchedule(data: deleteScheduleParameters): Promise<void> {

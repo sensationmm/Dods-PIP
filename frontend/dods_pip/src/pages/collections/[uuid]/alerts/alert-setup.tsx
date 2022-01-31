@@ -5,7 +5,7 @@ import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
 import ProgressTracker from '@dods-ui/components/ProgressTracker';
 import color from '@dods-ui/globals/color';
 import { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
-import fetchJson from '@dods-ui/lib/fetchJson';
+import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import useUser from '@dods-ui/lib/useUser';
 import { DropdownValue } from '@dods-ui/pages/account-management/add-client/type';
 import { UserAccount } from '@dods-ui/pages/account-management/users.page';
@@ -90,13 +90,16 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
   const createAlert = async () => {
     setLoading(true);
     try {
-      const result = await fetchJson(`${BASE_URI}${Api.Collections}/${collectionId}/alerts`, {
-        method: 'POST',
-        body: JSON.stringify({
-          title: alert.title,
-          createdBy: user.id,
-        }),
-      });
+      const result = await fetchJson<CustomResponse>(
+        `${BASE_URI}${Api.Collections}/${collectionId}/alerts`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            title: alert.title,
+            createdBy: user.id,
+          }),
+        },
+      );
       setActiveStep(2);
       setAlert({
         ...alert,
@@ -143,7 +146,7 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
     body.updatedBy = user.id;
 
     try {
-      const result = await fetchJson(
+      const result = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.Collections}/${collectionId}/alerts/${alert.uuid}${urlSlug}`,
         {
           method: 'PUT',

@@ -63,6 +63,7 @@ const Modal: FC<ModalProps> = ({
       // extraneous coverage reporting - implicitly tested
       /* istanbul ignore next */
       window.removeEventListener('keydown', closeOnEscapeKeyDown);
+      document.body.style.overflow = 'unset';
     };
   }, []);
 

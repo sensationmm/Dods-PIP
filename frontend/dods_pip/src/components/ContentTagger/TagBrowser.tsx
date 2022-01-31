@@ -1,5 +1,6 @@
 import color from '@dods-ui/globals/color';
 import fetchJson from '@dods-ui/lib/fetchJson';
+import { AncestorTerm } from '@dods-ui/pages/editorial/editorial.models';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 import { debounce } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
@@ -30,8 +31,11 @@ export type TagsData = {
   termLabel: string;
   alternative_labels?: Array<string>;
   childTerms?: TagsData[];
-  ancestorTerms?: TagsData[];
+  ancestorTerms?: AncestorTerm[];
   type?: string;
+  facetType: string;
+  inScheme: Array<string>;
+  score?: number;
 };
 
 type TagTreeDataType = 'people' | 'organisations' | 'topics' | 'geographies';
@@ -122,6 +126,12 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   }, 500);
 
   const searchTags = useMemo(() => debounceSearchTags, []);
+
+  useEffect(() => {
+    if (tags.length) {
+      setTags(tags);
+    }
+  }, [tags.length]);
 
   useEffect(() => {
     active && isBrowsing && !fetchingTagsData && !hasTagTree && loadTree();

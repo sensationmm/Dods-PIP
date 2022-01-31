@@ -1,5 +1,5 @@
 import {
-    activateScheduleParameters,
+    activateScheduleParameters, createAlertScheduleParameters,
     createScheduleParameters,
     deactivateScheduleParameters,
     deleteScheduleParameters,
@@ -45,6 +45,13 @@ const CREATE_SCHEDULE_INPUT: createScheduleParameters = {
     "baseURL": "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document"
 }
 
+const CREATE_ALERT_SCHEDULE_INPUT: createAlertScheduleParameters = {
+    "scheduleId": "123",
+    "collectionId": "publish",
+    "cron": "0 0 13 24 DEC ? 2021",
+    "baseURL": "https://wariugozq8.execute-api.eu-west-1.amazonaws.com/document"
+}
+
 describe(`Schedule repository tests`, () => {
 
     test(`createSearchQuery returns correct query`, async () => {
@@ -70,11 +77,45 @@ describe(`Schedule repository tests`, () => {
         expect(searchQuery).toEqual(expectedQuery)
     });
 
+    test(`createAlertSearchQuery returns correct query`, async () => {
+        const expectedQuery = {
+            id: CREATE_ALERT_SCHEDULE_INPUT.scheduleId,
+            active: true,
+            body: {
+                trigger: { schedule: { "cron": CREATE_ALERT_SCHEDULE_INPUT.cron } },
+                actions: {
+                    webhook: {
+                        webhook: {
+                            method: "PUT",
+                            url: `${CREATE_ALERT_SCHEDULE_INPUT.baseURL}/collections/${CREATE_ALERT_SCHEDULE_INPUT.collectionId}/alerts/${CREATE_ALERT_SCHEDULE_INPUT.scheduleId}/process/`,
+                            headers : {
+                                "schedule-api-key" : CREATE_ALERT_SCHEDULE_INPUT.apiKey
+                            },
+                        }
+                    }
+                }
+            }
+        }
+
+
+        const searchQuery = ScheduleRepository.createAlertSearchQuery(CREATE_ALERT_SCHEDULE_INPUT)
+
+        expect(searchQuery).toEqual(expectedQuery)
+    });
+
     test(`createSchedule calls createSearchQuery`, async () => {
         const spy = jest.spyOn(ScheduleRepository, 'createSearchQuery');
         await ScheduleRepository.defaultInstance.createSchedule(CREATE_SCHEDULE_INPUT)
 
-        expect(mockPutWatch).toHaveBeenCalledTimes(1);
+        expect(mockPutWatch).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+    });
+
+    test(`createAlertSchedule calls createAlertSearchQuery`, async () => {
+        const spy = jest.spyOn(ScheduleRepository, 'createAlertSearchQuery');
+        await ScheduleRepository.defaultInstance.createAlertSchedule(CREATE_ALERT_SCHEDULE_INPUT)
+
+        expect(mockPutWatch).toHaveBeenCalled();
         expect(spy).toHaveBeenCalled();
     });
 
@@ -84,7 +125,7 @@ describe(`Schedule repository tests`, () => {
         }
         await ScheduleRepository.defaultInstance.getSchedule(getScheduleParameters)
 
-        expect(mockPutWatch).toHaveBeenCalledTimes(1);
+        expect(mockPutWatch).toHaveBeenCalled();
     });
 
     test(`deleteSchedule calls deleteWatch`, async () => {
@@ -93,7 +134,7 @@ describe(`Schedule repository tests`, () => {
         }
         await ScheduleRepository.defaultInstance.deleteSchedule(deleteScheduleParameters)
 
-        expect(mockDeleteWatch).toHaveBeenCalledTimes(1);
+        expect(mockDeleteWatch).toHaveBeenCalled();
     });
 
     test(`updateSchedule updates the schedule`, async () => {

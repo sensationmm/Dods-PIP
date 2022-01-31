@@ -25,6 +25,7 @@ const envVarsSchema = Joi.object()
         ES_CLOUD_ID: Joi.string().required(),
         ES_KEY_ID: Joi.string().required(),
         ES_API_KEY: Joi.string().required(),
+        ALERT_API_KEY: Joi.string().required(),
     })
     .unknown();
 
@@ -42,6 +43,9 @@ export const config = {
     dods: {
         downstreamEndpoints: {
             apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
+        },
+        downstreamKeys: {
+            alertApiKey: envVars.ALERT_API_KEY as string,
         }
     },
     aws: {},
