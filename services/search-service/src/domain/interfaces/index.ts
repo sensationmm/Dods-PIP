@@ -3,7 +3,7 @@ export interface GetContentParameters {
 }
 
 export interface RawQueryParameters {
-    query: string;
+    query: object;
 }
 
 export interface createPercolatorParameters {
@@ -11,5 +11,5 @@ export interface createPercolatorParameters {
     alertId: string;
 }
 
-export interface updatePercolatorParameters extends createPercolatorParameters{
+export interface updatePercolatorParameters extends createPercolatorParameters {
 }
