@@ -35,7 +35,7 @@ interface ILibraryProps {
 }
 
 const DEFAULT_RESULT_SIZE = 20;
-const TAXONOMY_TERMS_LENGTH = 2;
+const TAXONOMY_TERMS_LENGTH = 5;
 
 export const Library: React.FC<ILibraryProps> = ({
   results,

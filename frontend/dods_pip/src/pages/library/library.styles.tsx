@@ -130,8 +130,8 @@ export const searchResultHeading = styled.div`
 
 export const contentPreview = styled.div`
   position: relative;
-  min-height: ${spacing(4)};
-  max-height: ${spacing(20)};
+  min-height: 16px;
+  max-height: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: 'Open Sans', sans-serif;
