@@ -18,6 +18,9 @@ export const Tagger: React.FC<TaggerProps> = () => {
       termLabel: 'radiation and nuclear waste',
       type: 'Topics',
       instances: 3,
+      facetType: '',
+      inScheme: [],
+      score: 0,
     },
   ]);
 

@@ -28,6 +28,10 @@ interface DocumentViewerProps {
   tags: ITags;
 }
 
+interface IPreviewResponse {
+  document: ISourceData;
+}
+
 export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   apiData,
   tags,
@@ -193,13 +197,22 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
-
-  const documentId = query.id;
-  let response: IResponse = {};
-
-  try {
+const getData = async ({
+  documentId,
+  isPreview,
+}: {
+  documentId: string;
+  isPreview?: boolean;
+}): Promise<ISourceData> => {
+  if (isPreview) {
+    const response = (await fetchJson(
+      `${process.env.APP_API_URL}${Api.EditorialRecords}/${documentId}/document`,
+      {
+        method: 'GET',
+      },
+    )) as IPreviewResponse;
+    return response.document;
+  } else {
     const payload = {
       query: {
         match: {
@@ -208,17 +221,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
     const sPayload = JSON.stringify(payload);
-    response = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
+    const response = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
     })) as IResponse;
+
+    return response.es_response?.hits.hits[0]._source || {};
+  }
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { query } = context;
+
+  const documentId = query.id as string;
+  let apiData: ISourceData = {};
+
+  try {
+    apiData = await getData({ documentId, isPreview: query.preview === 'true' });
   } catch (error) {
     console.error(error);
   }
 
-  const apiData = response.es_response?.hits.hits[0]._source;
-
-  if (!apiData) {
+  if (!Object.keys(apiData || {}).length) {
     return {
       notFound: true,
     };
