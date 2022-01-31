@@ -105,7 +105,14 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
 
   const onSchedule = async (dateAndTime: Date) => {
     setLoading(true);
-    await scheduleEditorial({ cron: dateToCron(dateAndTime), documentId: articleId[0] });
+
+    // Todo: use response to update the UI
+    // const response = await scheduleEditorial({
+    await scheduleEditorial({
+      cron: dateToCron(dateAndTime),
+      documentId: articleId[0],
+    });
+
     setShowScheduleModal(false);
     setLoading(false);
     addNotification({

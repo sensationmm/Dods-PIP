@@ -54,7 +54,7 @@ export const scheduleEditorial = async (payload: {
   cron: string;
   documentId: string;
 }): Promise<EditorialRecordResponse> => {
-  const results = await fetchJson(
+  const result = await fetchJson(
     `${BASE_URI}${Api.EditorialRecords}/${payload.documentId}/schedule`,
     {
       method: 'POST',
@@ -62,7 +62,7 @@ export const scheduleEditorial = async (payload: {
     },
   );
 
-  return results.data as unknown as EditorialRecordResponse; // No idea what the response is yet
+  return result as unknown as EditorialRecordResponse; // No idea what the response is yet
 };
 
 export const getMetadataSelections = async (): Promise<MetadataSelection> => {

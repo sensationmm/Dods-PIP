@@ -15,6 +15,7 @@ export default withSession(async (req, res) => {
         }),
       },
     );
+
     res.json(result);
   } catch (error) {
     const { response } = error;
