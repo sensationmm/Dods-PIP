@@ -20,8 +20,10 @@ def run(event, context):
     try:
         if event["date"] == "today":
             logger.info(f"Got special date 'today'")
-            import_content(datetime.today().strftime(
-                '%Y-%m-%d'), event["house"])
+            import_content(
+                datetime.today().strftime('%Y-%m-%d'),
+                event["house"]
+            )
         else:
             import_content(event["date"], event["house"])
     except Exception:  # no-qa

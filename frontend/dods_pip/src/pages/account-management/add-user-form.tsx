@@ -5,7 +5,7 @@ import InputTelephone from '../../components/_form/InputTelephone';
 import InputText from '../../components/_form/InputText';
 import SearchDropdown from '../../components/_form/SearchDropdown';
 import { SelectProps } from '../../components/_form/Select';
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import * as Validation from '../../utils/validation';
 import { ClientAccount, ClientAccounts } from './accounts.page';
@@ -99,7 +99,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
         } else {
           url = `${BASE_URI}${Api.ClientAccount}/${account}`;
         }
-        const results = await fetchJson(url, {
+        const results = await fetchJson<CustomResponse>(url, {
           method: 'GET',
         });
         const { data = [] } = results;

@@ -5,9 +5,10 @@ import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
 import ProgressTracker from '@dods-ui/components/ProgressTracker';
 import color from '@dods-ui/globals/color';
 import { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
-import fetchJson from '@dods-ui/lib/fetchJson';
+import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import useUser from '@dods-ui/lib/useUser';
 import { DropdownValue } from '@dods-ui/pages/account-management/add-client/type';
+import { UserAccount } from '@dods-ui/pages/account-management/users.page';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -23,7 +24,8 @@ export type Alert = {
   title: string;
 };
 
-type AlertResultProps = {
+export type AlertResultProps = {
+  uuid: string;
   query: string;
   informationTypes: string;
   contentSources: string;
@@ -31,6 +33,8 @@ type AlertResultProps = {
 
 type AlertRecipient = {
   userId: string;
+  label: string;
+  value: string;
 };
 
 export interface AlertSetupType extends Alert {
@@ -38,7 +42,7 @@ export interface AlertSetupType extends Alert {
   accountName: string;
   collectionId: string;
   collectionName: string;
-  queries: AlertQueryProps[];
+  queries: AlertResultProps[];
   alertQueries?: AlertResultProps[];
   updatedBy?: string;
   recipients?: AlertRecipient[];
@@ -79,16 +83,23 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
   const [isCreate] = React.useState<boolean>(alert.title === '');
   const alertName = isCreate ? 'Create Alert' : alert.title;
 
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeStep]);
+
   const createAlert = async () => {
     setLoading(true);
     try {
-      const result = await fetchJson(`${BASE_URI}${Api.Collections}/${collectionId}/alerts`, {
-        method: 'POST',
-        body: JSON.stringify({
-          title: alert.title,
-          createdBy: user.id,
-        }),
-      });
+      const result = await fetchJson<CustomResponse>(
+        `${BASE_URI}${Api.Collections}/${collectionId}/alerts`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            title: alert.title,
+            createdBy: user.id,
+          }),
+        },
+      );
       setActiveStep(2);
       setAlert({
         ...alert,
@@ -135,14 +146,26 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
     body.updatedBy = user.id;
 
     try {
-      const result = await fetchJson(
+      const result = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.Collections}/${collectionId}/alerts/${alert.uuid}${urlSlug}`,
         {
           method: 'PUT',
           body: JSON.stringify(body),
         },
       );
-      setAlert({ ...alert, ...(result.alert as any) });
+
+      const newAlert = {
+        ...result.alert,
+        recipients: (result.alert?.recipients as UserAccount[]).map((recipient: UserAccount) => ({
+          label: recipient.name,
+          value: recipient.uuid,
+          icon: recipient.isDodsUser ? 'consultant' : 'client',
+          userData: {
+            accountName: recipient.clientAccount?.name || '',
+          },
+        })),
+      };
+      setAlert({ ...alert, ...(newAlert as any) });
       activeStep < 4 ? setActiveStep(activeStep + 1) : router.push(`/collections/${collectionId}`);
       setLoading(false);
     } catch (e) {

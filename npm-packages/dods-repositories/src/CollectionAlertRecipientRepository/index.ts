@@ -197,7 +197,9 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
 
         await CollectionAlertRecipient.bulkCreate(alertRecipients, { ignoreDuplicates: true });
 
-        await collectionAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertRecipients }, { where: { lastStepCompleted: LastStepCompleted.SetAlertQueries } });
+        if (collectionAlert.lastStepCompleted === LastStepCompleted.SetAlertQueries) {
+            await collectionAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertRecipients });
+        }
 
         await collectionAlert.update({ updatedBy: updatedByUser.id });
 
@@ -224,7 +226,7 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
             timezone: collectionAlert.timezone || '',
             searchQueriesCount: await collectionAlert.countAlertQueries() || 0,
             recipientsCount: alertRecipients.length,
-            lastStepCompleted: 2,
+            lastStepCompleted: collectionAlert.lastStepCompleted,
             isPublished: false,
             createdBy: {
                 uuid: collectionAlert.createdById?.uuid || '',

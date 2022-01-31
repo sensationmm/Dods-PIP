@@ -7,21 +7,22 @@ import { breakpoints } from '../../globals/media';
 import Button from '../Button';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
-import RepositoryStatus, { RepositoryStatusProps } from '../RepositoryStatus';
+import RepositoryStatus, { RepositoryStatusTypes } from '../RepositoryStatus';
 import Text from '../Text';
 import Tooltip from '../Tooltip';
 import * as Styled from './RepositoryTable.styles';
 
-type RepositoryRowData = {
+export type RepositoryRowData = {
   id: string;
   documentName: string;
-  status: RepositoryStatusProps['type'];
+  status: RepositoryStatusTypes;
   updated: Date;
   assignedEditor?: string;
 };
 
 export interface RepositoryTableProps {
   data: RepositoryRowData[];
+  onView: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
@@ -29,6 +30,7 @@ export interface RepositoryTableProps {
 export interface RepositoryRowProps {
   data: RepositoryRowData;
   keyString: string;
+  onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -36,6 +38,7 @@ export interface RepositoryRowProps {
 export const RepositoryRow: React.FC<RepositoryRowProps> = ({
   keyString,
   data,
+  onView,
   onEdit,
   onDelete,
 }) => {
@@ -72,7 +75,9 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
               />
             )}
             <Styled.titleText locked={rowIsLocked}>
-              <Text bold>{data.documentName}</Text>
+              <Text bold>
+                <span onClick={onView}>{data.documentName}</span>
+              </Text>
             </Styled.titleText>
           </Styled.tableTitle>
 
@@ -117,7 +122,7 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
   );
 };
 
-const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onEdit, onDelete }) => {
+const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onView, onEdit, onDelete }) => {
   return (
     <Styled.wrapper data-test="component-repository-table">
       <Styled.header>
@@ -130,18 +135,17 @@ const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onEdit, onDelet
           </Text>
         </Styled.tableHeadingStatus>
       </Styled.header>
-      {data.map((item, count) => {
-        return (
-          <RepositoryRow
-            key={`repository-row-${count}`}
-            keyString={`repository-row-${count}`}
-            data-test={`repository-row-${count}`}
-            data={item}
-            onEdit={() => onEdit(item.id)}
-            onDelete={() => onDelete(item.id)}
-          />
-        );
-      })}
+      {data.map((item, count) => (
+        <RepositoryRow
+          key={`repository-row-${count}`}
+          keyString={`repository-row-${count}`}
+          data-test={`repository-row-${count}`}
+          data={item}
+          onView={() => onView(item.id)}
+          onEdit={() => onEdit(item.id)}
+          onDelete={() => onDelete(item.id)}
+        />
+      ))}
     </Styled.wrapper>
   );
 };
