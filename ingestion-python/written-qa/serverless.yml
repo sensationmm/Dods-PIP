@@ -78,12 +78,12 @@ functions:
           schedule: cron(15 08-22/2 ? * MON-FRI *)
           input:
             date: today
-            answered_state: true
+            answered_state: questions
       - eventBridge:
           schedule: cron(15 08-22/2 ? * MON-FRI *)
           input:
             date: today
-            answered_state: false
+            answered_state: answers
 
 resources:
    Resources:
