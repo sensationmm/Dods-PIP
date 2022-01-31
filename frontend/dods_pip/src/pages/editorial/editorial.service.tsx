@@ -93,16 +93,19 @@ export const deleteEditorialRecord = async (
 };
 
 export const scheduleEditorial = async (payload: {
-  // TODO: Payload contract not confirmed
-  date: string;
+  // Payload contract not confirmed
+  cron: string;
   documentId: string;
 }): Promise<EditorialRecordResponse> => {
-  const response = await fetchJson(`${BASE_URI}${Api.EditorialRecords}`, {
-    method: 'PUT',
-    body: JSON.stringify(payload),
-  });
+  const result = await fetchJson(
+    `${BASE_URI}${Api.EditorialRecords}/${payload.documentId}/schedule`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+  );
 
-  return response as unknown as EditorialRecordResponse; // No idea what the response is yet
+  return result as unknown as EditorialRecordResponse; // No idea what the response is yet
 };
 
 export const getMetadataSelections = async (): Promise<MetadataSelection> => {
