@@ -118,7 +118,7 @@ type ModalBodyProps = {
   canOverflow: boolean;
 };
 export const modalBody = styled.div<ModalBodyProps>`
-  overflow-y: ${({ canOverflow }) => (canOverflow ? 'visible' : 'scroll')};
+  overflow-y: ${({ canOverflow }) => (canOverflow ? 'visible' : 'auto')};
   padding: 0 ${spacing(4)};
   height: 100%;
 

@@ -18,6 +18,7 @@ import {
   setEditorialPublishState,
   updateRecord,
 } from '@dods-ui/pages/editorial/editorial.service';
+import dateToCron from '@dods-ui/utils/dateToCron';
 import getContentSources from '@dods-ui/utils/getContentSources';
 import getInformationTypes from '@dods-ui/utils/getInformationTypes';
 import getJurisdiction from '@dods-ui/utils/getJurisdiction';
@@ -27,6 +28,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import EditorialForm, { EditorialFormFields } from './editorial-form';
+import ScheduleModal from './schedule-modal';
 
 interface EditorialProps extends LoadingHOCProps {}
 
@@ -52,6 +54,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   });
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [savedDocumentContent, setSavedDocumentContent] = useStateWithCallback<string | undefined>(
     undefined,
   );
@@ -147,6 +150,19 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       setLoading(false);
     })();
   }, []);
+
+  const onPublish = async (documentId: string) => {
+    if (!documentId) return;
+    setLoading(true);
+    await setEditorialPublishState(documentId)
+      .then(() => {
+        addNotification({ title: 'Document successfully published', type: 'confirm' });
+      })
+      .then(() => {
+        router.push('/editorial');
+      });
+    setLoading(false);
+  };
 
   const onSave = async (publish = false, preview = false) => {
     const { title, sourceName, sourceUrl, informationType, content } = fieldData;
@@ -260,17 +276,26 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     });
   };
 
-  const onPublish = async (documentId: string) => {
-    if (!documentId) return;
+  const onSchedule = async (dateAndTime: Date) => {
     setLoading(true);
-    await setEditorialPublishState(documentId)
-      .then(() => {
-        addNotification({ title: 'Document successfully published', type: 'confirm' });
-      })
-      .then(() => {
-        router.push('/editorial');
-      });
+
+    // Todo: use response to update the UI
+    // const response = await scheduleEditorial({
+    await scheduleEditorial({
+      cron: dateToCron(dateAndTime),
+      documentId: articleId[0],
+    });
+
+    setShowScheduleModal(false);
     setLoading(false);
+    addNotification({
+      title: `Document successfully scheduled for ${dateAndTime}`,
+      type: 'confirm',
+    });
+
+    setTimeout(() => {
+      router.push('/editorial');
+    }, 600);
   };
 
   const onSaveAndPublish = async () => {
@@ -310,15 +335,6 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     }
   };
 
-  const onSchedule = async () => {
-    const date = new Date().toISOString();
-    setLoading(true);
-    // TODO: populate with data once back end is correct
-    await scheduleEditorial({ date, documentId: 'guid-here' });
-    setLoading(false);
-    addNotification({ title: `Document successfully scheduled for ${date}`, type: 'confirm' });
-  };
-
   return (
     <div data-testid="page-editorial">
       <Head>
@@ -356,7 +372,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             onPublish={isEditMode ? onUpdateAndPublish : onSaveAndPublish}
             onPreview={isEditMode ? onPreviewUpdate : onPreview}
             onDelete={onDelete}
-            onSchedule={onSchedule}
+            onSchedule={() => setShowScheduleModal(true)}
             onUnschedule={() => {
               console.info('<><><> Not supported');
             }}
@@ -390,6 +406,10 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           />
         </main>
       </Panel>
+
+      {showScheduleModal && (
+        <ScheduleModal onClose={() => setShowScheduleModal(false)} onSchedule={onSchedule} />
+      )}
     </div>
   );
 };
