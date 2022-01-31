@@ -76,10 +76,15 @@ functions:
     handler: handler.run
     events:
       - eventBridge:
-          schedule: cron(00 08-22/2 ? * MON-FRI *)
+          schedule: cron(58 08-23 ? * MON-FRI *)
           input:
             date: today
             house: commons
+      - eventBridge:
+          schedule: cron(58 08-23 ? * MON-FRI *)
+          input:
+            date: today
+            house: lords
 
 
 resources:
