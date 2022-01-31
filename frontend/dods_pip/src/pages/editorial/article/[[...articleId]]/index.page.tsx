@@ -119,6 +119,10 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       title: `Document successfully scheduled for ${dateAndTime}`,
       type: 'confirm',
     });
+
+    setTimeout(() => {
+      router.push('/editorial');
+    }, 600);
   };
 
   const onDelete = async () => {
