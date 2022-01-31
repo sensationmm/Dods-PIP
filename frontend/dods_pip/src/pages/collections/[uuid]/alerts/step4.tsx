@@ -262,7 +262,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
           inline
           label="Back"
           icon={Icons.ChevronLeftBold}
-          onClick={() => setActiveStep(2)}
+          onClick={() => setActiveStep(3)}
         />
         <Button
           inline

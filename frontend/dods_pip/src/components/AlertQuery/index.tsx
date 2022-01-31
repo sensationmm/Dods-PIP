@@ -10,6 +10,7 @@ import Button from '../Button';
 import TagBrowser, { TagsData } from '../ContentTagger/TagBrowser';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
+import Modal from '../Modal';
 import TagSelector from '../TagSelector';
 import Text from '../Text';
 import * as Styled from './AlertQuery.styles';
@@ -60,6 +61,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const [isDone, setIsDone] = React.useState<boolean>(done);
   const [isEdit, setIsEdit] = React.useState<boolean>(edit);
   const [preview, setPreview] = React.useState<JSX.Element[]>([]);
+  const [showDelete, setShowDelete] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (searchTerms === '') {
@@ -265,7 +267,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
             label="Delete"
             icon={Icons.Bin}
             disabled={numQueries < 2}
-            onClick={onDelete}
+            onClick={() => setShowDelete(true)}
           />
           <Button type="secondary" label="Duplicate" icon={Icons.Duplicate} onClick={onDuplicate} />
           <Button type="secondary" label="Copy to" icon={Icons.Copy} disabled />
@@ -292,6 +294,35 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
           operator={operator}
           setOperator={setOperator}
         />
+      )}
+
+      {showDelete && (
+        <Modal
+          title="Do you wish to delete this query?"
+          titleIcon={Icons.Bin}
+          size="large"
+          onClose={() => {
+            setShowDelete(false);
+          }}
+          buttons={[
+            {
+              isSmall: true,
+              type: 'secondary',
+              label: 'Back',
+              onClick: () => setShowDelete(false),
+            },
+            {
+              isSmall: true,
+              type: 'primary',
+              label: 'Confirm and delete',
+              icon: Icons.Bin,
+              onClick: onDelete,
+            },
+          ]}
+          buttonAlignment="right"
+        >
+          <Text>This query will be permanently removed</Text>
+        </Modal>
       )}
     </Styled.wrapper>
   );

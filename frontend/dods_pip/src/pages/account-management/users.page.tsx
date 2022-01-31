@@ -48,6 +48,7 @@ export type UserAccount = {
   uuid: string;
   firstName: string;
   lastName: string;
+  name?: string;
   clientAccount: ClientAccount;
   primaryEmail: string;
   role: Role;
