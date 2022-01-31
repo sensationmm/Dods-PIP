@@ -505,7 +505,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let parsedQuery;
 
   try {
-    const response = await fetchJson<CustomResponse>(
+    const response: CustomResponse = await fetchJson(
       `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}`,
       {
         method: 'GET',

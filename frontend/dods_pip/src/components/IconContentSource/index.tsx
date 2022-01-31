@@ -6,8 +6,8 @@ import * as Styled from './IconContentSource.styles';
 
 export interface IconProps {
   icon?: IconType;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 }
 
 const IconContentSource: React.FC<IconProps> = ({ icon = 'Dods', height = 26, width = 26 }) => {
