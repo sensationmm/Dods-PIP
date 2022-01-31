@@ -15,10 +15,17 @@ terraform {
 // --------------------------------------------------------------------------------------------------------------------
 // - Dev environment
 // --------------------------------------------------------------------------------------------------------------------
+module "dev-premodule" {
+  source      = "./premodule"
+  providers = {
+    aws = aws.dev
+  }
+}
+
 module "dev" {
   source      = "./environments/deployment"
   environment = "dev"
-  app_image   = "390773179818.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:83d2d90"
+  app_image   = module.dev-premodule.app_image #"390773179818.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:83d2d90"
   account_id  = "390773179818"
   db_password = var.db_password
   providers = {
