@@ -36,10 +36,17 @@ module "dev" {
 // --------------------------------------------------------------------------------------------------------------------
 // - prod environment
 // --------------------------------------------------------------------------------------------------------------------
+module "prod-premodule" {
+  source      = "./premodule"
+  providers = {
+    aws = aws.prod
+  }
+}
+
 module "production" {
   source      = "./environments/deployment"
   environment = "production"
-  app_image   = "186202231680.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:9a79045"
+  app_image   =  module.prod-premodule.app_image #"186202231680.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:9a79045"
   account_id  = "186202231680"
   db_password = var.db_password
   providers = {
@@ -50,10 +57,17 @@ module "production" {
 // --------------------------------------------------------------------------------------------------------------------
 // - qa environment
 // --------------------------------------------------------------------------------------------------------------------
+module "qa-premodule" {
+  source      = "./premodule"
+  providers = {
+    aws = aws.qa
+  }
+}
+
 module "qa" {
   source      = "./environments/deployment"
   environment = "qa"
-  app_image   = "817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:83d2d90"
+  app_image   = module.qa-premodule.app_image #"817206606893.dkr.ecr.eu-west-1.amazonaws.com/pip/frontend:83d2d90"
   account_id  = "817206606893"
   db_password = var.db_password
   providers = {
