@@ -448,7 +448,7 @@ def get_document_content(document: dict) -> str:
 
     output += "</div>"
 
-    logger.info(f"Extracted output={output}")
+    #logger.debug(f"Extracted output={output}")
     return output
 
 
