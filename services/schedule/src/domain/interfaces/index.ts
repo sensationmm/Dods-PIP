@@ -5,6 +5,13 @@ export interface deleteScheduleParameters {
     scheduleId: string;
 }
 
+export interface createAlertScheduleParameters extends deleteScheduleParameters {
+    collectionId: string;
+    cron: string;
+    baseURL?: string;
+    apiKey?: string;
+}
+
 export interface createScheduleParameters extends deleteScheduleParameters {
     scheduleType: Type;
     cron: string;

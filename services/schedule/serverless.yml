@@ -58,6 +58,7 @@ provider:
     ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
     ES_KEY_ID: ${ssm:/infra/elastic/key_id}
     ES_API_KEY: ${ssm:/infra/elastic/api_key}
+    ALERT_API_KEY: ${ssm:/infra/elastic/hook_key}
 
 custom:
   webpack:
@@ -103,6 +104,15 @@ functions:
       - http:
           method: post
           path: scheduler
+          cors: true
+
+  createAlertSchedule:
+    handler: src/handlers/createAlertSchedule/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: scheduler/alert
           cors: true
 
   get_watcher:
