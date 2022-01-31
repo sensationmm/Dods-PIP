@@ -1,6 +1,7 @@
 service: graphologi-integration
 
 frameworkVersion: '2'
+variablesResolutionMode: 20210326
 
 projectDir: ../
 
@@ -54,7 +55,8 @@ functions:
   taxonomy:
     handler: taxonomyImport.handle
     runtime: python3.7
-    timeout: 180
+    timeout: 900
+    memorySize: 5120
     events:
       - sqs:
           arn:
