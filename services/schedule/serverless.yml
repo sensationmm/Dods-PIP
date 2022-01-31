@@ -58,7 +58,7 @@ provider:
     ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
     ES_KEY_ID: ${ssm:/infra/elastic/key_id}
     ES_API_KEY: ${ssm:/infra/elastic/api_key}
-    ALERT_API_KEY: ${file(../env-config.${self:provider.stage}.js):apiKeys, file(../env-config.dev.js):apiKeys}
+    ALERT_API_KEY: ${ssm:/infra/elastic/hook_key}
 
 custom:
   webpack:
