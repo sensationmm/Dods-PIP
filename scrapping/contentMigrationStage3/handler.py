@@ -94,8 +94,7 @@ def consumer(event, context):
                         logger.exception(e)
                         return False
 
-                    #if 'taxonomyTerms' in auto_tagging_response and len(auto_tagging_response['taxonomyTerms']) > 0:
-                        #document['taxonomyTerms'] = auto_tagging_response['taxonomyTerms']
+                    document['taxonomyTerms'].extend(auto_tagging_response['taxonomyTerms'])
 
                     logger.info('Auto tagging response: %s', auto_tagging_response)
                     document['documentContent'] = auto_tagging_response['content']
