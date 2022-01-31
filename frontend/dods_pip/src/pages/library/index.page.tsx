@@ -18,7 +18,7 @@ import Icon, { IconSize } from '../../components/Icon/';
 import { Icons } from '../../components/Icon/assets';
 import Text from '../../components/Text';
 import color from '../../globals/color';
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import { Api } from '../../utils/api';
 import { BucketType, IAggregations, IResponse, ISourceData, QueryObject } from './index';
 import * as Styled from './library.styles';
@@ -491,7 +491,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let parsedQuery;
 
   try {
-    const response = await fetchJson(
+    const response = await fetchJson<CustomResponse>(
       `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}`,
       {
         method: 'GET',

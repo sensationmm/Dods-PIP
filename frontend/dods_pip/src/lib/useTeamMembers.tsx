@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 
-import fetchJson from '../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../lib/fetchJson';
 import {
   DropdownValue,
   TeamMember,
@@ -36,7 +36,7 @@ export default function useTeamMembers({
 
   const load = async () => {
     try {
-      const results = await fetchJson(
+      const results = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMember}`,
         {
           method: 'GET',

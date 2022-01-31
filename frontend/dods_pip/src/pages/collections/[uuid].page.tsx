@@ -15,7 +15,7 @@ import SectionAccordion from '@dods-ui/components/SectionAccordion';
 import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
-import fetchJson from '@dods-ui/lib/fetchJson';
+import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import useUser from '@dods-ui/lib/useUser';
 import { Api, BASE_URI, toQueryString } from '@dods-ui/utils/api';
 import Head from 'next/head';
@@ -61,7 +61,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
     setLoading(true);
     const queryString = getFilterQueryString();
     try {
-      const result = await fetchJson(
+      const result = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.Collections}/${collectionId}/alerts${queryString}`,
         {
           method: 'GET',
@@ -79,7 +79,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
   const loadCollection = async (id: Collection['uuid']) => {
     setLoading(true);
     try {
-      const result = await fetchJson(`${BASE_URI}${Api.CollectionDetails}/${id}`, {
+      const result = await fetchJson<CustomResponse>(`${BASE_URI}${Api.CollectionDetails}/${id}`, {
         method: 'GET',
       });
       const { data = {} } = result;
@@ -113,10 +113,13 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
   const editCollection = async () => {
     setLoading(true);
     try {
-      const result = await fetchJson(`${BASE_URI}${Api.CollectionDetails}/${collection.uuid}`, {
-        method: 'PUT',
-        body: JSON.stringify({ name: editTitle }),
-      });
+      const result = await fetchJson<CustomResponse>(
+        `${BASE_URI}${Api.CollectionDetails}/${collection.uuid}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({ name: editTitle }),
+        },
+      );
       const { data = {} } = result;
 
       setCollection(data as Collection);
