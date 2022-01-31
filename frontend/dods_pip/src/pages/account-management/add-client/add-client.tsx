@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import { PushNotificationProps } from '../../../hoc/LoadingHOC';
-import fetchJson from '../../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
 import AccountInfo, { Errors as ErrorsStep1 } from './account-info';
 import Subscription, { Errors as ErrorsStep2 } from './subscription';
@@ -180,9 +180,12 @@ const AddClient: React.FC<AddClientProps> = ({
 
     // get account info
     setLoading(true);
-    const response = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}`, {
-      method: 'GET',
-    });
+    const response = await fetchJson<CustomResponse>(
+      `${BASE_URI}${Api.ClientAccount}/${accountId}`,
+      {
+        method: 'GET',
+      },
+    );
     const { data = {} } = response;
     const { uuid = '' } = data;
 

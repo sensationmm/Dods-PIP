@@ -201,7 +201,16 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
     }
 
     async createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput> {
-        const { roleId, title, firstName, lastName, primaryEmail, secondaryEmail } = parameters;
+        const {
+            roleId,
+            title,
+            firstName,
+            lastName,
+            primaryEmail,
+            secondaryEmail,
+            telephoneNumber1,
+            telephoneNumber2,
+        } = parameters;
 
         const roleRecord = await Role.findOne({ where: { uuid: roleId } });
 
@@ -211,13 +220,14 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
 
         const newUser = await User.create({
             ...parameters,
-            telephoneNumber1: parameters.telephoneNumber,
+            telephoneNumber1,
+            telephoneNumber2,
             roleId: roleRecord?.id,
             title: title?.trim() ?? null,
             firstName: firstName?.trim(),
             lastName: lastName?.trim(),
             primaryEmail: primaryEmail?.trim(),
-            secondaryEmail: secondaryEmail?.trim()
+            secondaryEmail: secondaryEmail?.trim(),
         });
 
         return newUser;

@@ -3,7 +3,15 @@ import { UserInput, UserOutput } from '@dodsgroup/dods-model';
 import { RequestOutput } from '.';
 import { UserProfileModelAttributes } from '../../db';
 
-export type CreateUserPersisterInput = Pick<UserInput, 'title' | 'firstName' | 'lastName' | 'primaryEmail' | 'secondaryEmail'> & { telephoneNumber?: string; roleId: string; clientAccountId: string; }
+export type CreateUserPersisterInput = Pick<
+    UserInput,
+    'title' | 'firstName' | 'lastName' | 'primaryEmail' | 'secondaryEmail'
+> & {
+    telephoneNumber1?: string;
+    telephoneNumber2?: string;
+    roleId: string;
+    clientAccountId: string;
+};
 export type CreateUserPersisterOutput = UserOutput;
 
 export type CreateUserOutput = {

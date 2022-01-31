@@ -25,6 +25,7 @@ import {
     AlertDocumentInput,
     AlertInput,
     AlertQueryInput,
+    ClientAccount,
     Collection,
     CollectionAlert,
     CollectionAlertDocument,
@@ -183,7 +184,9 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
 
         try {
-            await alert.update({ lastStepCompleted: LastStepCompleted.ScheduleAlert }, { where: { lastStepCompleted: LastStepCompleted.SetAlertRecipients } });
+            if (alert.lastStepCompleted === LastStepCompleted.SetAlertRecipients) {
+                await alert.update({ lastStepCompleted: LastStepCompleted.ScheduleAlert });
+            }
             await alert.update({
                 isScheduled: isScheduled,
                 hasKeywordsHighlight: hasKeywordHighlight,
@@ -220,7 +223,16 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                 collectionId: collection.id,
                 isActive: true,
             },
-            include: ['collection', 'createdById', 'updatedById', 'alertTemplate'],
+            include: [{
+                model: Collection,
+                as: 'collection',
+                include: [
+                    {
+                        model: ClientAccount,
+                        as: 'clientAccount',
+                    }
+                ]
+            }, 'createdById', 'updatedById', 'alertTemplate'],
         });
 
         if (!alert) {
@@ -621,7 +633,9 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Error: Alert with uuid: ${alertId} does not exist`);
         }
 
-        await updatedAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertQueries }, { where: { lastStepCompleted: LastStepCompleted.CreateAlert } });
+        if (updatedAlert.lastStepCompleted === LastStepCompleted.CreateAlert) {
+            await updatedAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertQueries });
+        }
         await updatedAlert.update({
             updatedBy: alertUpdater.id
         });

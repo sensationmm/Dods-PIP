@@ -4,8 +4,14 @@ import color from '../../globals/color';
 import { Icons } from '../Icon/assets';
 import Tag, { TagProps } from '../Tag';
 
+export type RepositoryStatusTypes =
+  | 'ingested'
+  | 'draft'
+  | 'in_progress'
+  | 'scheduled'
+  | 'published';
 export interface RepositoryStatusProps extends Pick<TagProps, 'width' | 'size'> {
-  type: 'ingested' | 'draft' | 'in_progress' | 'scheduled' | 'published';
+  type: RepositoryStatusTypes;
 }
 
 const RepositoryStatus: React.FC<RepositoryStatusProps> = ({ type, width, size }) => {
