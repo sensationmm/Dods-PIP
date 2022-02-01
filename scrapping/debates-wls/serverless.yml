@@ -76,9 +76,9 @@ functions:
     name: scraper-debates-wls-${sls:stage}
     # description: 
     handler: handler.run
-    events:
+    #events:
       ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(30 02 ? * MON-FRI *)
+      #- schedule: cron(30 02 ? * MON-FRI *)
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 
