@@ -605,7 +605,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const alertOwner = await this.collectionModel.findOne({
             where: {
                 uuid: collectionId,
-                isActive: true
+                isActive: true,
             },
         });
         if (!alertOwner) {
@@ -627,7 +627,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             where: {
                 uuid: alertId,
             },
-            include: ['collection', 'createdById', 'updatedById']
+            include: ['collection', 'createdById', 'updatedById'],
         });
         if (!updatedAlert) {
             throw new CollectionError(`Error: Alert with uuid: ${alertId} does not exist`);
@@ -637,31 +637,42 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             await updatedAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertQueries });
         }
         await updatedAlert.update({
-            updatedBy: alertUpdater.id
+            updatedBy: alertUpdater.id,
         });
 
         await updatedAlert.reload({ include: ['collection', 'createdById', 'updatedById'] });
 
-        await Promise.all(alertQueries.map((alertQuery) => {
+        await this.alertQueryModel.destroy({
+            where: {
+                alertId: updatedAlert.id,
+            },
+        });
 
-            const createAlertQueryParameters = {
-                alertId: updatedAlert.uuid,
-                query: alertQuery.query,
-                informationTypes: alertQuery.informationTypes,
-                contentSources: alertQuery.contentSources,
-                createdBy: updatedBy
-            }
-            return CollectionAlertsRepository.defaultInstance.createQuery(createAlertQueryParameters);
-        }))
+        await Promise.all(
+            alertQueries.map((alertQuery) => {
+                const createAlertQueryParameters = {
+                    alertId: updatedAlert.uuid,
+                    query: alertQuery.query,
+                    informationTypes: alertQuery.informationTypes,
+                    contentSources: alertQuery.contentSources,
+                    createdBy: updatedBy,
+                };
+                return CollectionAlertsRepository.defaultInstance.createQuery(
+                    createAlertQueryParameters
+                );
+            })
+        );
 
-        const createdQueries = await updatedAlert.getAlertQueries({ include: ['createdById', 'updatedById'] });
+        const createdQueries = await updatedAlert.getAlertQueries({
+            include: ['createdById', 'updatedById'],
+        });
 
         return {
             alert: await mapAlert(updatedAlert),
             queries: await Promise.all(
                 createdQueries.map((query) => mapAlertQuery(query, updatedAlert))
             ),
-        }
+        };
     }
 
     async updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput> {
