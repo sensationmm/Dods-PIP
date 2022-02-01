@@ -1,10 +1,5 @@
 import { NextIronRequest } from './session';
 
-interface CustomError extends Error {
-  response?: Response;
-  data?: Record<string, unknown>;
-}
-
 export type UserResponse = {
   id?: string;
   userId?: string;
@@ -15,9 +10,11 @@ export type UserResponse = {
   displayName?: string;
 };
 
-interface CustomResponse extends Response, UserResponse {
+// @deprecated - You need to define the type you are fetching with fetchJson<ResponseType>
+export interface CustomResponse extends Response, UserResponse {
   data?: Record<string, unknown>;
   alerts?: Record<string, unknown>;
+  queries?: Array<Record<string, unknown>>;
   alert?: Record<string, unknown>;
   totalRecords?: number;
   filteredRecords?: number;
@@ -29,52 +26,51 @@ interface CustomResponse extends Response, UserResponse {
   geographies: Record<string, unknown>;
 }
 
-export default async function fetchJson(
+export interface CustomError extends CustomResponse {
+  ok: boolean;
+  code: number;
+  statusText: string;
+  error: Error;
+}
+
+type AuthHeader = {
+  Authorization?: string;
+};
+
+const requestDefaults = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
+  },
+};
+
+export default async function fetchJson<T>(
   url: string,
   args?: RequestInit,
   req?: NextIronRequest,
-): Promise<CustomResponse> {
+): Promise<T | CustomError> {
+  const isExemptRoute = /signin|signout$/i.test(url);
+  const accessToken = req?.session?.get('user')?.accessToken;
+  const authHeader: AuthHeader =
+    !isExemptRoute && accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+
+  let response, data;
   try {
-    let headers = {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
-    };
-    const isAuthPath = /signin|signout$/i.test(url);
-
-    if (!isAuthPath && req?.session) {
-      const { accessToken = undefined } = req.session.get('user');
-
-      headers = {
-        ...headers,
-        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-      };
-    }
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { ...args?.headers, ...headers },
+    response = await fetch(url, {
+      ...requestDefaults,
       ...args,
+      headers: { ...requestDefaults.headers, ...authHeader, ...args?.headers },
     });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      return data;
-    }
-    const error = new Error(response.statusText) as CustomError;
-    error.response = response;
-    error.data = {
-      ...data,
-      ...response,
-      name: data?.name || 'UnknownException',
-      code: response.status,
-      message: data?.message || 'An error happened. Please try again.',
-    };
-    throw error;
+    data = await response.json();
+    return data as T;
   } catch (error) {
-    if (!error.data) {
-      error.data = { message: `!!${error.message}` };
-    }
-    throw error;
+    return {
+      ok: response?.ok as boolean,
+      code: response?.status as number,
+      statusText: response?.statusText as string,
+      error,
+      ...(data || {}),
+    };
   }
 }

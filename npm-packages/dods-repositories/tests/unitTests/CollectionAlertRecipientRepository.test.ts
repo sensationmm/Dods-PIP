@@ -12,7 +12,7 @@ const defaultAlert: any = {
         "uuid": "newUUID",
         "name": "T"
     },
-    "template": {},
+    "template": undefined,
     "schedule": null,
     "timezone": null,
     "createdBy": {
@@ -23,7 +23,7 @@ const defaultAlert: any = {
     },
     "createdAt": new Date("2022-01-13T16:26:41.000Z"),
     "updatedAt": new Date("2022-01-13T16:26:41.000Z"),
-    "updatedBy": {},
+    "updatedBy": undefined,
     "hasKeywordsHighlight": false,
     "isScheduled": false,
     "lastStepCompleted": 1,
@@ -45,7 +45,7 @@ const defaultCollection: any = {
         "isDodsUser": false
     },
     "updatedAt": "2022-01-05T09:14:45.000Z",
-    "updatedBy": {},
+    "updatedBy": undefined,
     "alertsCount": 1,
     "queriesCount": 0,
     "documentsCount": 0
@@ -114,7 +114,7 @@ const initializeRepositoryMocks = () => {
     )
 }
 
-beforeEach(() => {
+beforeAll(() => {
     initializeRepositoryMocks();
 });
 

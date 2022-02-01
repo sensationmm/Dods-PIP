@@ -64,7 +64,7 @@ export interface IamPersister {
 export type CreateUserPersisterInput = Pick<
     UserInput,
     'title' | 'firstName' | 'lastName' | 'primaryEmail' | 'secondaryEmail'
-> & { telephoneNumber?: string; roleId: string };
+> & { telephoneNumber1?: string; telephoneNumber2?: string; roleId: string };
 
 export type CreateUserPersisterOutput = UserOutput;
 

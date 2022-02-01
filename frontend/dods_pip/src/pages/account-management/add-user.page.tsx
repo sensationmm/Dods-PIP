@@ -11,7 +11,7 @@ import Button from '../../components/Button';
 import { Icons } from '../../components/Icon/assets';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import useUser from '../../lib/useUser';
 import { Api, BASE_URI } from '../../utils/api';
 import { RoleType } from './add-client/type';
@@ -87,7 +87,7 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
     };
 
     try {
-      const result = await fetchJson(
+      const result = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.ClientAccount}/${user?.clientAccountId}${Api.TeamMemberCreate}`,
         {
           method: 'POST',

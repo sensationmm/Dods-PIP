@@ -1,10 +1,10 @@
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import withSession from '../../lib/session';
 import { Api } from '../../utils/api';
 
 export default withSession(async (req, res) => {
   try {
-    const result = await fetchJson(
+    const result = await fetchJson<CustomResponse>(
       `${process.env.APP_API_URL}${Api.ForgotPassword}`,
       {
         method: 'POST',
