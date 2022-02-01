@@ -1,6 +1,6 @@
 {
   "name": "@dodsgroup/dods-repositories",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -20,6 +20,7 @@
     "@aws-sdk/client-s3": "^3.48.0",
     "@dodsgroup/dods-domain": "1.0.4",
     "@dodsgroup/dods-model": "^1.1.8",
+    "aws-sdk": "^2.1066.0",
     "axios": "^0.25.0",
     "sequelize": "^7.0.0-alpha.3"
   },

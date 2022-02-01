@@ -1,12 +1,7 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-
 import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 
 import { config } from '../../domain';
-
-const { dods: { downstreamEndpoints: { userProfile } } } = config;
-
-const documentRepository = new DocumentRepository(userProfile);
 
 export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = async ({ recordId }) => {
 
@@ -24,13 +19,14 @@ export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = 
 
     let lambdaReponse = false;
 
-    const bucketResponse = await documentRepository.getDocumentByArn(documentARN);
+    const bucketResponse = await DocumentRepository.defaultInstance.getDocumentByArnV1(documentARN);
 
     if (bucketResponse.payload) {
 
-        const dataPayload = { data: bucketResponse.payload };
-        lambdaReponse = await documentRepository.publishDocument(config.aws.lambdas.contentIndexer, JSON.stringify(dataPayload));
+        const dataPayload = { body: JSON.parse(bucketResponse.payload) }
+        lambdaReponse = await DocumentRepository.defaultInstance.publishDocumentV1(config.aws.lambdas.contentIndexer, JSON.stringify(dataPayload))
     }
+
 
     if (bucketResponse.success && lambdaReponse) {
 
@@ -46,8 +42,7 @@ export const publishEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = 
     else {
         return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
             success: false,
-            message: bucketResponse.payload,
-
+            message: 'Editorial Record not published',
         });
     }
 };

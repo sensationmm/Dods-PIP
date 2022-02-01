@@ -1,7 +1,9 @@
-import axios from 'axios';
 import { AwsService, DefaultAwsService } from '../shared/DefaultAwsService';
+import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleWebhookParameters } from './domain';
+import { Lambda, S3 } from 'aws-sdk';
+
 import { ScheduleEditorialRecordParamateres } from '../EditorialRecordRepository';
-import { DocumentPayloadResponse, DocumentPersister, ScheduleWebhookParameters, } from './domain';
+import axios from 'axios';
 
 export * from './domain';
 
@@ -52,9 +54,81 @@ export class DocumentRepository implements DocumentPersister {
         return { success: typeof content === 'string', payload: content };
     }
 
+    async getDocumentByArnV1(documentARN: string): Promise<DocumentPayloadResponseV1> {
+
+        let response: DocumentPayloadResponseV1 = { success: undefined, payload: undefined }
+
+
+        const region = process.env.AWS_REGION
+        const s3Client = new S3({ region: region });
+        const keyName = documentARN.substring(documentARN.indexOf("/") + 1, documentARN.length);
+        const bucket = documentARN.substring(documentARN.lastIndexOf(":") + 1, documentARN.indexOf("/"))
+        const getFileParams = {
+            Bucket: bucket,
+            Key: keyName
+        }
+
+        let bucketErr = false;
+        let errorCode;
+
+        const content = await s3Client.getObject(getFileParams, function (err) {
+
+            if (err) {
+                errorCode = err.code;
+                bucketErr = true;
+            }
+
+        }).promise();
+
+        const documentContent = content.Body?.toString('utf-8');
+
+        if (!bucketErr) {
+
+            response = {
+                success: true,
+                payload: documentContent
+            }
+        }
+
+        else {
+
+            response = {
+                success: false,
+                payload: errorCode
+            }
+        }
+
+        return response;
+
+
+    }
+
     async scheduleWebhook(parameters: ScheduleEditorialRecordParamateres): Promise<object> {
         const scheduleWebhook: ScheduleWebhookParameters = { ...parameters, scheduleType: 'publish', scheduleId: parameters.recordId }
         const response = await axios.post(`${this.baseURL}/scheduler`, scheduleWebhook);
         return { response };
+    }
+
+    async publishDocumentV1(lambdaName: string, payload: string): Promise<boolean> {
+
+        const lambdaClient = new Lambda({ region: process.env.AWS_REGION });
+
+        const lambdaReponse = await lambdaClient.invoke({ FunctionName: lambdaName, Payload: payload }, function (error, data) {
+            if (error) {
+                console.log(error);
+            }
+            if (data) {
+                console.log(data);
+            }
+        }).promise();
+
+        if (lambdaReponse.Payload === 'true') {
+            return true
+        }
+
+        else {
+            return false
+        }
+
     }
 }
