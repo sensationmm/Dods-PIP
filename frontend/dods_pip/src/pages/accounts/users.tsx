@@ -13,7 +13,7 @@ import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import { Api, BASE_URI } from '../../utils/api';
 import { getUserName } from '../../utils/string';
 import { TeamMemberType } from '../account-management/add-client/type';
@@ -60,9 +60,12 @@ const Users: React.FC<UsersProps> = ({
   // featching remainin seats
   const fetchRemainingSeats = async () => {
     setLoading(true);
-    const result = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}${Api.Seats}`, {
-      method: 'GET',
-    });
+    const result = await fetchJson<CustomResponse>(
+      `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.Seats}`,
+      {
+        method: 'GET',
+      },
+    );
     const { data } = result;
     setRemainingSeats(Number(data));
     setLoading(false);
@@ -90,7 +93,7 @@ const Users: React.FC<UsersProps> = ({
     }
 
     // get account info
-    const response = await fetchJson(
+    const response = await fetchJson<CustomResponse>(
       `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMember}`,
       {
         method: 'GET',

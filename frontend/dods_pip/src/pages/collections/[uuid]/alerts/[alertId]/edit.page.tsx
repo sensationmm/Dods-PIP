@@ -1,6 +1,6 @@
 import { AlertQueryProps } from '@dods-ui/components/AlertQuery';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
-import fetchJson from '@dods-ui/lib/fetchJson';
+import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import { ClientAccount } from '@dods-ui/pages/account-management/accounts.page';
 import { UserAccount } from '@dods-ui/pages/account-management/users.page';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
@@ -21,7 +21,7 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
   const loadAlert = async (collectionId: Collection['uuid'], alertId: Alert['uuid']) => {
     setLoading(true);
     try {
-      const result = await fetchJson(
+      const result = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.Collections}/${collectionId}${Api.Alerts}/${alertId}`,
         {
           method: 'GET',
@@ -29,7 +29,7 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
       );
       const { alert = {} as AlertSetupType } = result;
 
-      const alertQueries = await fetchJson(
+      const alertQueries = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.Collections}/${collectionId}${Api.Alerts}/${alertId}${Api.Queries}`,
         {
           method: 'GET',
@@ -37,7 +37,7 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
       );
       const { queries = [] as AlertQueryProps[] } = alertQueries;
 
-      const alertRecipients = await fetchJson(
+      const alertRecipients = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.Collections}/${collectionId}${Api.Alerts}/${alertId}${Api.Recipients}`,
         {
           method: 'GET',
