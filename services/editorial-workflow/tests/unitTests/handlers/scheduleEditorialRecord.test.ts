@@ -1,6 +1,6 @@
+import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
-import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { mocked } from 'ts-jest/utils';
 import { scheduleEditorialRecord } from '../../../src/handlers/scheduleEditorialRecord/scheduleEditorialRecord';
 
@@ -9,7 +9,6 @@ const defaultContext = createContext();
 const defaultUpdatedRecord: any = {
     uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
     documentName: 'NewDocument',
-    s3Location: 'SomeLocation',
 };
 
 jest.mock('@dodsgroup/dods-repositories');

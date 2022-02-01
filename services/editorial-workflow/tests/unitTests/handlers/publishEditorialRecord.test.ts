@@ -1,7 +1,7 @@
+import { DocumentPayloadResponseV1, DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { BadParameterError } from '../../../src/domain';
-import { DocumentRepository, EditorialRecordRepository, DocumentPayloadResponse } from '@dodsgroup/dods-repositories';
 import { mocked } from 'ts-jest/utils';
 import { publishEditorialRecord } from '../../../src/handlers/publishEditorialRecord/publishEditorialRecord';
 
@@ -20,9 +20,9 @@ const isPublishedRecord: any = {
     isPublished: true
 };
 
-const defaultBucketResponse: DocumentPayloadResponse = {
+const defaultBucketResponse: DocumentPayloadResponseV1 = {
     success: true,
-    payload: JSON.stringify({ data: {} })
+    payload: JSON.stringify({ body: {} })
 }
 
 jest.mock('@dodsgroup/dods-repositories');
@@ -49,8 +49,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
         };
-        mockedDocumentRepository.defaultInstance.publishDocument.mockResolvedValue(true);
-        mockedDocumentRepository.defaultInstance.getDocumentByArn.mockResolvedValue(defaultBucketResponse);
+        mockedDocumentRepository.defaultInstance.publishDocumentV1.mockResolvedValue(true);
+        mockedDocumentRepository.defaultInstance.getDocumentByArnV1.mockResolvedValue(defaultBucketResponse);
 
         const response = await publishEditorialRecord(requestParams, defaultContext);
 
@@ -70,8 +70,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da170',
         };
-        mockedDocumentRepository.defaultInstance.publishDocument.mockResolvedValue(true);
-        mockedDocumentRepository.defaultInstance.getDocumentByArn.mockResolvedValue(defaultBucketResponse);
+        mockedDocumentRepository.defaultInstance.publishDocumentV1.mockResolvedValue(true);
+        mockedDocumentRepository.defaultInstance.getDocumentByArnV1.mockResolvedValue(defaultBucketResponse);
 
         const response = await publishEditorialRecord(requestParams, defaultContext);
 
@@ -91,14 +91,14 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
         };
-        mockedDocumentRepository.defaultInstance.publishDocument.mockResolvedValue(false);
-        mockedDocumentRepository.defaultInstance.getDocumentByArn.mockResolvedValue(defaultBucketResponse);
+        mockedDocumentRepository.defaultInstance.publishDocumentV1.mockResolvedValue(false);
+        mockedDocumentRepository.defaultInstance.getDocumentByArnV1.mockResolvedValue(defaultBucketResponse);
 
         const response = await publishEditorialRecord(requestParams, defaultContext);
 
         const expectedBadResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
             success: false,
-            message: defaultBucketResponse.payload
+            message: 'Editorial Record not published'
         });
 
         expect(EditorialRecordRepository.defaultInstance.getEditorialRecord).toBeCalledWith(
@@ -113,17 +113,17 @@ describe(`${FUNCTION_NAME} handler`, () => {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
         };
 
-        const BadBucketResponse: DocumentPayloadResponse = {
+        const BadBucketResponse: DocumentPayloadResponseV1 = {
             success: false,
             payload: ''
         };
 
-        mockedDocumentRepository.defaultInstance.publishDocument.mockResolvedValue(true);
-        mockedDocumentRepository.defaultInstance.getDocumentByArn.mockResolvedValue(BadBucketResponse);
+        mockedDocumentRepository.defaultInstance.publishDocumentV1.mockResolvedValue(true);
+        mockedDocumentRepository.defaultInstance.getDocumentByArnV1.mockResolvedValue(BadBucketResponse);
 
         const response = await publishEditorialRecord(requestParams, defaultContext);
 
-        const expectedBadResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, { success: false, message: '' });
+        const expectedBadResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, { success: false, message: 'Editorial Record not published' });
 
         expect(EditorialRecordRepository.defaultInstance.getEditorialRecord).toBeCalledWith(requestParams.recordId);
 
