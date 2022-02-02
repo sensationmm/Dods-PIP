@@ -15,7 +15,6 @@ __blobstorage__
 __queuestorage__
 __azurite*
 .env*
-.npmrc
 
 # Compiled Java class files
 *.class
