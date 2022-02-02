@@ -47,6 +47,15 @@ export interface AlertSetupType extends Alert {
   updatedBy?: string;
   recipients?: AlertRecipient[];
   collection?: Partial<Collection>;
+  isPublished?: boolean;
+  isScheduled?: boolean;
+  schedule?: string;
+  timezone?: string;
+  hasKeywordsHighlight?: boolean;
+  template?: {
+    id: number;
+    name: string;
+  };
 }
 
 export interface AlertSetupProps {
@@ -57,6 +66,7 @@ export interface AlertSetupProps {
   accountName: string;
   alert: AlertSetupType;
   setAlert: (alert: AlertSetupType) => void;
+  addNotification: LoadingHOCProps['addNotification'];
 }
 
 export type AlertStepProps = {
@@ -74,6 +84,7 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
   collectionName,
   accountName,
   setLoading,
+  addNotification,
 }) => {
   const { user } = useUser({ redirectTo: '/' });
   const router = useRouter();
@@ -156,18 +167,52 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
 
       const newAlert = {
         ...result.alert,
-        recipients: (result.alert?.recipients as UserAccount[]).map((recipient: UserAccount) => ({
-          label: recipient.name,
-          value: recipient.uuid,
-          icon: recipient.isDodsUser ? 'consultant' : 'client',
-          userData: {
-            accountName: recipient.clientAccount?.name || '',
-          },
-        })),
+        recipients: result.alert?.recipients
+          ? (result.alert?.recipients as UserAccount[]).map((recipient: UserAccount) => ({
+              label: recipient.name,
+              value: recipient.uuid,
+              icon: recipient.isDodsUser ? 'consultant' : 'client',
+              userData: {
+                accountName: recipient.clientAccount?.name || '',
+              },
+            }))
+          : alert.recipients,
       };
       setAlert({ ...alert, ...(newAlert as any) });
       activeStep < 4 ? setActiveStep(activeStep + 1) : router.push(`/collections/${collectionId}`);
       setLoading(false);
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
+  };
+
+  const copyQuery = async (
+    queryId: Alert['uuid'],
+    copyCollectionId: Collection['uuid'],
+    copyAlertId: Alert['uuid'],
+  ) => {
+    setLoading(true);
+    try {
+      await fetchJson(
+        `${BASE_URI}${Api.Collections}/${collectionId}${Api.Alerts}/${alert.uuid}/queries/${queryId}/copyto`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            destinationAlertId: copyAlertId,
+            createdBy: user.id,
+          }),
+        },
+      );
+      setLoading(false);
+      addNotification({
+        title: 'Query copied sucessfully',
+        text: 'Copied to new alert',
+        type: 'confirm',
+        action: () =>
+          router.push(`/collections/${copyCollectionId}/alerts/${copyAlertId}/edit?step=2`),
+        actionLabel: 'View Alert',
+      });
     } catch (e) {
       console.log(e);
       setLoading(false);
@@ -219,6 +264,7 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
             setAlert={setAlert}
             setActiveStep={setActiveStep}
             editAlert={editAlert}
+            copyQuery={copyQuery}
           />
         )}
         {activeStep === 3 && (

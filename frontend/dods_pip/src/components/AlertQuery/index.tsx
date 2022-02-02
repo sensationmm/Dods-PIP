@@ -1,9 +1,17 @@
 import color from '@dods-ui/globals/color';
 import { DropdownValue } from '@dods-ui/pages/account-management/add-client/type';
+import loadAccounts from '@dods-ui/pages/accounts/load-accounts';
+import { Alert } from '@dods-ui/pages/collections/[uuid]/alerts/alert-setup';
 import ContentSources from '@dods-ui/pages/collections/content-sources.json';
+import { Collection } from '@dods-ui/pages/collections/index.page';
 import InformationTypes from '@dods-ui/pages/collections/information-types.json';
+import loadAlerts from '@dods-ui/pages/collections/load-alerts';
+import loadCollections from '@dods-ui/pages/collections/load-collections';
+import validateField from '@dods-ui/utils/validateField';
 import React from 'react';
 
+import SearchDropdown from '../_form/SearchDropdown';
+import { SelectProps } from '../_form/Select';
 import TextArea from '../_form/TextArea';
 import Spacer from '../_layout/Spacer';
 import Button from '../Button';
@@ -31,9 +39,21 @@ export interface AlertQueryScreenProps extends AlertQueryProps {
   onDuplicate: () => void;
   onEdit: () => void;
   onCancel: () => void;
+  onCancelEdit: () => void;
+  onCopyQuery: (
+    queryId: Alert['uuid'],
+    copyCollectionId: Collection['uuid'],
+    copyAlertId: Alert['uuid'],
+  ) => void;
   onDelete: () => void;
   numQueries: number;
 }
+
+type Errors = {
+  account?: string;
+  collection?: string;
+  alert?: string;
+};
 
 const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   id,
@@ -47,6 +67,8 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   onEdit,
   onDelete,
   onCancel,
+  onCopyQuery,
+  onCancelEdit,
   numQueries,
 }) => {
   const [sources, setSources] = React.useState<DropdownValue[]>(source || []);
@@ -61,7 +83,17 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const [isDone, setIsDone] = React.useState<boolean>(done);
   const [isEdit, setIsEdit] = React.useState<boolean>(edit);
   const [preview, setPreview] = React.useState<JSX.Element[]>([]);
+  const [accounts, setAccounts] = React.useState<SelectProps['options']>([]);
+  const [collections, setCollections] = React.useState<SelectProps['options']>([]);
+  const [alerts, setAlerts] = React.useState<SelectProps['options']>([]);
   const [showDelete, setShowDelete] = React.useState<boolean>(false);
+  const [showCopy, setShowCopy] = React.useState<boolean>(false);
+  const [copyAccount, setCopyAccount] = React.useState<string>('');
+  const [copyCollection, setCopyCollection] = React.useState<string>('');
+  const [copyAlert, setCopyAlert] = React.useState<string>('');
+  const [loadingCollections, setLoadingCollections] = React.useState<boolean>(false);
+  const [loadingAlerts, setLoadingAlerts] = React.useState<boolean>(false);
+  const [errors, setErrors] = React.useState<Errors>({});
 
   React.useEffect(() => {
     if (searchTerms === '') {
@@ -83,13 +115,13 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
 
     selectedLabels.forEach((selected, count) => {
       final.push(
-        <Text key={`label-${count}`} color={color.base.greyDark}>
+        <Text key={`label-${selected.value}`} color={color.base.greyDark}>
           {selected.label}
         </Text>,
       );
       if (count + 1 < selectedLabels.length) {
         final.push(
-          <Text key={`label-${count}-or`} bold color={color.theme.blueLight}>
+          <Text key={`label-${selected.value}-or`} bold color={color.theme.blueLight}>
             {' OR '}
           </Text>,
         );
@@ -130,7 +162,46 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
     return final;
   };
 
+  const copyQuery = () => {
+    onCopyQuery(id as unknown as string, copyCollection, copyAlert);
+    resetCopy();
+  };
+
+  const resetCopy = () => {
+    setShowCopy(false);
+    setCopyAccount('');
+    setCopyCollection('');
+    setCopyAlert('');
+    setCollections([]);
+    setAlerts([]);
+  };
+
+  React.useEffect(() => {
+    const getAccountCollections = async () => {
+      setCollections([]);
+      setLoadingCollections(true);
+      await loadCollections(setCollections, copyAccount);
+      setLoadingCollections(false);
+    };
+    if (copyAccount !== '') {
+      getAccountCollections();
+    }
+  }, [copyAccount]);
+
+  React.useEffect(() => {
+    const getAccountCollectionAlerts = async () => {
+      setAlerts([]);
+      setLoadingAlerts(true);
+      await loadAlerts(setAlerts, copyCollection);
+      setLoadingAlerts(false);
+    };
+    if (copyCollection !== '') {
+      getAccountCollectionAlerts();
+    }
+  }, [copyCollection]);
+
   const isComplete = sources.length > 0 && infoTypes.length > 0 && terms !== '';
+  const isCopyComplete = copyAccount !== '' && copyCollection !== '' && copyAlert !== '';
 
   return (
     <Styled.wrapper data-test="component-alert-query">
@@ -228,7 +299,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
             type="text"
             label="Cancel"
             icon={Icons.CrossBold}
-            onClick={onCancel}
+            onClick={!isDone ? onCancel : onCancelEdit}
             disabled={numQueries === 0 && !isEdit}
           />
           {!isValidated ? (
@@ -270,7 +341,13 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
             onClick={() => setShowDelete(true)}
           />
           <Button type="secondary" label="Duplicate" icon={Icons.Duplicate} onClick={onDuplicate} />
-          <Button type="secondary" label="Copy to" icon={Icons.Copy} disabled />
+          <Button
+            type="secondary"
+            label={typeof id !== 'number' ? 'Copy to' : 'Requires save'}
+            icon={Icons.Copy}
+            onClick={() => setShowCopy(true)}
+            disabled={typeof id === 'number'}
+          />
           <Button type="secondary" label="Edit" icon={Icons.Pencil} onClick={onEdit} />
           <Button
             label="View Results"
@@ -322,6 +399,95 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
           buttonAlignment="right"
         >
           <Text>This query will be permanently removed</Text>
+        </Modal>
+      )}
+
+      {showCopy && (
+        <Modal
+          title="Where do you want to copy to?"
+          size="large"
+          onClose={resetCopy}
+          buttons={[
+            {
+              isSmall: true,
+              type: 'secondary',
+              label: 'Cancel',
+              onClick: resetCopy,
+            },
+            {
+              isSmall: true,
+              type: 'primary',
+              label: 'Confirm and copy',
+              icon: Icons.Copy,
+              iconAlignment: 'right',
+              onClick: copyQuery,
+              disabled: !isCopyComplete,
+            },
+          ]}
+          buttonAlignment="right"
+          bodyOverflow
+        >
+          <Text>Search for a destination where to paste a copy of this query</Text>
+          <Spacer size={4} />
+
+          <div>
+            <SearchDropdown
+              isFilter
+              id="account"
+              testId={'account'}
+              value={copyAccount}
+              values={accounts}
+              placeholder="Select an account"
+              onChange={(value: string) => {
+                setCopyAccount(value);
+                validateField('account', 'Account', value, errors, setErrors);
+              }}
+              required
+              label="Account"
+              error={errors.account}
+              onBlur={() => validateField('account', 'Account', copyAccount, errors, setErrors)}
+              onKeyPress={(val, search?: string) => loadAccounts(setAccounts, search)}
+              onKeyPressHasSearch
+            />
+            <SearchDropdown
+              isFilter
+              id="collection"
+              testId={'collection'}
+              value={copyCollection}
+              values={collections}
+              placeholder="Select a collection"
+              onChange={(value: string) => {
+                setCopyCollection(value);
+                validateField('collection', 'Collection', value, errors, setErrors);
+              }}
+              required
+              label="Collection"
+              error={errors.collection}
+              onBlur={() =>
+                validateField('collection', 'Collection', copyCollection, errors, setErrors)
+              }
+              onKeyPressHasSearch
+              isDisabled={collections.length === 0 || loadingCollections}
+            />
+            <SearchDropdown
+              isFilter
+              id="alert"
+              testId={'alert'}
+              value={copyAlert}
+              values={alerts}
+              placeholder="Select an alert"
+              onChange={(value: string) => {
+                setCopyAlert(value);
+                validateField('alert', 'Alert', value, errors, setErrors);
+              }}
+              required
+              label="Alert"
+              error={errors.alert}
+              onBlur={() => validateField('alert', 'Alert', copyAlert, errors, setErrors)}
+              onKeyPressHasSearch
+              isDisabled={alerts.length === 0 || loadingCollections || loadingAlerts}
+            />
+          </div>
         </Modal>
       )}
     </Styled.wrapper>
