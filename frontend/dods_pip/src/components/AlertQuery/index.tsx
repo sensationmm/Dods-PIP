@@ -31,6 +31,7 @@ export interface AlertQueryScreenProps extends AlertQueryProps {
   onDuplicate: () => void;
   onEdit: () => void;
   onCancel: () => void;
+  onCancelEdit: () => void;
   onDelete: () => void;
   numQueries: number;
 }
@@ -47,6 +48,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   onEdit,
   onDelete,
   onCancel,
+  onCancelEdit,
   numQueries,
 }) => {
   const [sources, setSources] = React.useState<DropdownValue[]>(source || []);
@@ -83,13 +85,13 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
 
     selectedLabels.forEach((selected, count) => {
       final.push(
-        <Text key={`label-${count}`} color={color.base.greyDark}>
+        <Text key={`label-${selected.value}`} color={color.base.greyDark}>
           {selected.label}
         </Text>,
       );
       if (count + 1 < selectedLabels.length) {
         final.push(
-          <Text key={`label-${count}-or`} bold color={color.theme.blueLight}>
+          <Text key={`label-${selected.value}-or`} bold color={color.theme.blueLight}>
             {' OR '}
           </Text>,
         );
@@ -228,7 +230,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
             type="text"
             label="Cancel"
             icon={Icons.CrossBold}
-            onClick={onCancel}
+            onClick={!isDone ? onCancel : onCancelEdit}
             disabled={numQueries === 0 && !isEdit}
           />
           {!isValidated ? (

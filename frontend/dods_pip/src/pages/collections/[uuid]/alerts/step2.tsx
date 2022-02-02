@@ -140,6 +140,10 @@ const AlertStep2: React.FC<AlertStepProps> = ({ alert, editAlert, setActiveStep 
               setAdding(false);
               query.edit && !query.done ? editQuery(count, false) : setQueries(queries.slice(1));
             }}
+            onCancelEdit={() => {
+              setAdding(false);
+              editQuery(count, false);
+            }}
             onDuplicate={() => {
               duplicateQuery(count);
             }}

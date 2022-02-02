@@ -65,7 +65,7 @@ const AlertStep1: React.FC<AlertStepProps> = ({ alert, setAlert, editAlert, crea
           inline
           label="Back"
           icon={Icons.ChevronLeftBold}
-          onClick={() => router.back()}
+          onClick={() => router.push(`/collections/${alert.collectionId}`)}
         />
         <Button
           inline

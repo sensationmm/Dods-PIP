@@ -47,6 +47,15 @@ export interface AlertSetupType extends Alert {
   updatedBy?: string;
   recipients?: AlertRecipient[];
   collection?: Partial<Collection>;
+  isPublished?: boolean;
+  isScheduled?: boolean;
+  schedule?: string;
+  timezone?: string;
+  hasKeywordsHighlight?: boolean;
+  template?: {
+    id: number;
+    name: string;
+  };
 }
 
 export interface AlertSetupProps {
