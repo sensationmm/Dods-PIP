@@ -1,5 +1,6 @@
 import {
     AlertByIdOutput,
+    AlertDocumentParameters,
     AlertOutput,
     AlertQueryResponse,
     AlertWithQueriesOutput,
@@ -722,6 +723,34 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
 
         return mapAlert(alert);
+    }
+
+    async createAlertDocumentRecord(parameters: AlertDocumentParameters): Promise<Boolean> {
+        const { documentId, alertId } = parameters;
+        const TbcNumber = 100;
+        const recordsByAlert = await CollectionAlertDocument.count({
+            where: {
+                alertId: alertId
+            }
+        })
+        if (recordsByAlert === TbcNumber) {
+
+            const oldestRecord = await CollectionAlertDocument.findAll({
+                limit: 1,
+                where: {
+                    alertId: alertId
+                },
+                order: [['createdAt', 'ASC']]
+            })
+
+            await oldestRecord[0].destroy()
+        }
+
+        await CollectionAlertDocument.create({
+            alertId,
+            documentId
+        });
+        return true;
     }
 
 }
