@@ -152,7 +152,7 @@ pipelines:
             - cd npm-packages/$SERVICE
             - |
               if [[ -e .ci/build.sh ]]; then
-                echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
+                echo "Running special building definitions from npm-packages/$SERVICE/.ci/build.sh"
                 bash .ci/build.sh
               else
                 echo "Running default npm-package building definitions"
@@ -233,6 +233,32 @@ pipelines:
                 echo "Running default service deployment definitions"
                 npx serverless deploy --stage ${ENVIRONMENT,,}
               fi 
+
+    deploy_npm-packages:
+      - variables:
+        - name: ENVIRONMENT
+          default: "DO NOT CHANGE"
+        - name: SERVICE
+          default: dods-model
+      - step:
+          name: "NPM Package: Deploy to NPM"
+          image: gioatsomoglobal/devopstools:0.4.6
+          script:
+            - 'echo "Running deployment for npm-package: ${SERVICE}"'
+            - cd npm-packages/$SERVICE
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from npm-packages/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default npm-package building definitions"
+                if [[ -e 'package.json' ]]; then
+                    npm install
+                    ../validate_npm.sh
+                    npm run build
+                    npm publish
+                fi
+              fi
 
     deploy_scrapping:
       - variables:
