@@ -255,8 +255,8 @@ pipelines:
               else
                 echo "Running default npm-package building definitions"
                 if [[ -e 'package.json' ]]; then
-                    npm install
                     ../tools/validate_npm.sh
+                    npm install
                     npm run build
                     npm publish
                 fi
