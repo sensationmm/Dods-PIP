@@ -11,8 +11,25 @@ import React from 'react';
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep1: React.FC<AlertStepProps> = ({ alert, setAlert, editAlert, createAlert }) => {
+const AlertStep1: React.FC<AlertStepProps> = ({
+  alert,
+  setAlert,
+  editAlert,
+  createAlert,
+  setActiveStep,
+}) => {
   const router = useRouter();
+  const firstRun = React.useRef(true);
+  const [changed, setChanged] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    } else {
+      setChanged(true);
+    }
+  }, [alert.title]);
 
   return (
     <>
@@ -73,7 +90,11 @@ const AlertStep1: React.FC<AlertStepProps> = ({ alert, setAlert, editAlert, crea
           icon={Icons.ChevronRightBold}
           iconAlignment="right"
           onClick={() =>
-            alert.uuid ? editAlert({ title: alert.title }) : createAlert && createAlert()
+            !changed
+              ? setActiveStep(2)
+              : alert.uuid
+              ? editAlert({ title: alert.title })
+              : createAlert && createAlert()
           }
           disabled={alert.title === ''}
         />

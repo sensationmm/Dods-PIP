@@ -45,10 +45,12 @@ const AlertStep2: React.FC<AlertStepProps> = ({ alert, editAlert, setActiveStep 
         ],
   );
   const [adding, setAdding] = React.useState<boolean>(!alert.queries || alert.queries.length === 0);
+  const [changed, setChanged] = React.useState<boolean>(false);
 
   const numQueries = adding ? queries.length - 1 : queries.length;
 
   const addQuery = () => {
+    setChanged(true);
     setQueries([
       {
         id: Date.now(),
@@ -66,6 +68,7 @@ const AlertStep2: React.FC<AlertStepProps> = ({ alert, editAlert, setActiveStep 
   };
 
   const editQuery = (i: number, setEdit = true) => {
+    setChanged(true);
     const existing = queries.slice();
     setQueries(
       existing.map((query, count) => {
@@ -174,7 +177,7 @@ const AlertStep2: React.FC<AlertStepProps> = ({ alert, editAlert, setActiveStep 
           label={'Next'}
           icon={Icons.ChevronRightBold}
           iconAlignment="right"
-          onClick={() => editAlert(queries)}
+          onClick={() => (!changed ? setActiveStep(3) : editAlert(queries))}
           disabled={adding || queries.length === 0}
         />
       </Styled.actions>

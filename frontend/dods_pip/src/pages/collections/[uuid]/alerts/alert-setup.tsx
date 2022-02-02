@@ -165,14 +165,16 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
 
       const newAlert = {
         ...result.alert,
-        recipients: (result.alert?.recipients as UserAccount[]).map((recipient: UserAccount) => ({
-          label: recipient.name,
-          value: recipient.uuid,
-          icon: recipient.isDodsUser ? 'consultant' : 'client',
-          userData: {
-            accountName: recipient.clientAccount?.name || '',
-          },
-        })),
+        recipients: result.alert?.recipients
+          ? (result.alert?.recipients as UserAccount[]).map((recipient: UserAccount) => ({
+              label: recipient.name,
+              value: recipient.uuid,
+              icon: recipient.isDodsUser ? 'consultant' : 'client',
+              userData: {
+                accountName: recipient.clientAccount?.name || '',
+              },
+            }))
+          : alert.recipients,
       };
       setAlert({ ...alert, ...(newAlert as any) });
       activeStep < 4 ? setActiveStep(activeStep + 1) : router.push(`/collections/${collectionId}`);
