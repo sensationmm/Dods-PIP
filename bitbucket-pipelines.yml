@@ -116,6 +116,30 @@ pipelines:
                 fi
               fi
 
+    build_ingestion-python:
+      - variables:
+        - name: SERVICE
+          default: hansard-api
+      - step:
+          name: "New Ingestion: Test and Build"
+          image: public.ecr.aws/a6i2o1l2/ingestion:1.0.0
+          script:
+            - 'echo "Running build for ingestion: ${SERVICE}"'
+            - cd ingestion-python/$SERVICE
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default scrapping building definitions"
+                if [[ -e 'package.json' ]]; then
+                    npm install
+                fi
+                if [[ -e 'serverless.yml' ]]; then
+                  npx serverless package
+                fi
+              fi
+
     deploy_frontend:
       - variables:
         - name: ENVIRONMENT
@@ -147,6 +171,7 @@ pipelines:
             - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
             - docker push ${IMAGE_NAME}
             - ../../tools/ecs_deploy --service-name frontend-service --cluster pip-${ENVIRONMENT,,}-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
+            - aws ssm put-parameter --name "frontend-image" --value $IMAGE_NAME --type String --overwrite
 
     deploy_services:
       - variables:
@@ -214,6 +239,34 @@ pipelines:
                 fi
                 if [[ -e 'serverless.yml' ]]; then
                   sls deploy --stage ${ENVIRONMENT,,}
+                fi
+              fi
+
+    deploy_ingestion-python:
+      - variables:
+        - name: ENVIRONMENT
+          default: "DEV"
+        - name: SERVICE
+          default: hansard-api
+      - step:
+          name: "Ingestion: Deploy to Environment"
+          image: public.ecr.aws/a6i2o1l2/ingestion:1.0.0
+          script:
+            - 'echo "Running deployment for ingestion: ${SERVICE}"'
+            - cd ingestion-python/$SERVICE
+    # Set credentials for the target environment
+            - ../../tools/set-deployer.sh && source credentials.txt
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from scrapping/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default scrapping building definitions"
+                if [[ -e 'package.json' ]]; then
+                    npm install
+                fi
+                if [[ -e 'serverless.yml' ]]; then
+                  npx serverless deploy --stage ${ENVIRONMENT,,}
                 fi
               fi
 

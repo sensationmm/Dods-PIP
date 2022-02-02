@@ -15,15 +15,16 @@ import * as Styled from './TagSelector.styles';
 
 export interface TagSelectorProps extends Omit<SearchDropdownProps, 'onChange'> {
   title: string;
-  emptyMessage: string;
+  emptyMessage?: string;
   onChange: (vals: Array<string | DropdownValue>) => void;
-  onKeyPress: (val: string) => void;
-  icon: UserType | Icons;
+  onKeyPress?: (val: string) => void;
+  icon?: UserType | Icons;
+  isQuery?: boolean;
 }
 
 const TagSelector: React.FC<TagSelectorProps> = ({
   title,
-  emptyMessage,
+  emptyMessage = 'No tag added',
   helperText,
   placeholder,
   values,
@@ -33,6 +34,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   selectedValues = [],
   icon,
   error,
+  isQuery = false,
 }) => {
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
@@ -80,7 +82,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
     <Styled.wrapper data-test="component-tag-selector">
       <Styled.containerHeader>
         <Styled.containerHeaderTitle>
-          <Text type="h3" headingStyle="titleSmall">
+          <Text type={!isQuery ? 'h3' : 'body'} headingStyle="titleSmall">
             {title}:
           </Text>
         </Styled.containerHeaderTitle>
@@ -93,6 +95,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
         )}
         <Styled.tags>
           {selectedValues.map((item, count) => {
+            item = item as DropdownValue;
             const key = typeof item === 'string' ? `chip-${count}` : `chip-${item.value}`;
             const label = typeof item === 'string' ? item : item.label;
             const value = typeof item === 'string' ? '' : item.value;
@@ -103,7 +106,8 @@ const TagSelector: React.FC<TagSelectorProps> = ({
                 label={label}
                 value={value}
                 onCloseClick={handleRemove}
-                avatarType={icon as UserType}
+                avatarType={(item.icon || icon) as UserType}
+                theme="dark"
               />
             );
           })}
@@ -112,7 +116,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
 
       <Spacer size={1} />
 
-      <Styled.container focused={isFocused}>
+      <Styled.container focused={isFocused} isQuery={isQuery}>
         <SearchDropdown
           id="search-team-member"
           onChange={handleAdd}

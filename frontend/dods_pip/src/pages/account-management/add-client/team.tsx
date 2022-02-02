@@ -19,7 +19,7 @@ import * as TagSelectorStyles from '../../../components/TagSelector/TagSelector.
 import Text from '../../../components/Text';
 import color from '../../../globals/color';
 import { PushNotificationProps } from '../../../hoc/LoadingHOC';
-import fetchJson from '../../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../../lib/fetchJson';
 import useTeamMembers from '../../../lib/useTeamMembers';
 import { Api, BASE_URI } from '../../../utils/api';
 import { getUserName } from '../../../utils/string';
@@ -44,10 +44,11 @@ type PutPayload = {
   teamMemberType: number;
 };
 
-type User = {
+export type User = {
   uuid: string;
   firstName: string;
   lastName: string;
+  isDodsUser: boolean;
 };
 
 export interface TeamProps {
@@ -170,7 +171,7 @@ const Team: React.FC<TeamProps> = ({
         });
       });
 
-      const response = await fetchJson(
+      const response = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMember}`,
         { method: 'PUT', body: JSON.stringify({ teamMembers: payload }) },
       );
@@ -200,7 +201,9 @@ const Team: React.FC<TeamProps> = ({
 
   const debounceSearchUsers = debounce(async (name) => {
     try {
-      const response = await fetchJson(`${BASE_URI}${Api.Users}?name=${name}`, { method: 'GET' });
+      const response = await fetchJson<CustomResponse>(`${BASE_URI}${Api.Users}?name=${name}`, {
+        method: 'GET',
+      });
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {
@@ -310,7 +313,7 @@ const Team: React.FC<TeamProps> = ({
         },
         teamMemberType: TeamMemberType.ClientUser,
       };
-      const results = await fetchJson(
+      const results = await fetchJson<CustomResponse>(
         `${BASE_URI}${Api.ClientAccount}/${accountId}${Api.TeamMemberCreate}`,
         {
           method: 'POST',

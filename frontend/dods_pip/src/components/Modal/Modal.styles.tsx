@@ -99,6 +99,10 @@ export const modalHeaderTitle = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+
+  > ${Icon} {
+    margin-right: ${spacing(5)};
+  }
 `;
 
 export const titleAside = styled.div`
@@ -114,7 +118,7 @@ type ModalBodyProps = {
   canOverflow: boolean;
 };
 export const modalBody = styled.div<ModalBodyProps>`
-  overflow-y: ${({ canOverflow }) => (canOverflow ? 'visible' : 'scroll')};
+  overflow-y: ${({ canOverflow }) => (canOverflow ? 'visible' : 'auto')};
   padding: 0 ${spacing(4)};
   height: 100%;
 

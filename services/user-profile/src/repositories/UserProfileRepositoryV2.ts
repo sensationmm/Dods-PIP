@@ -201,7 +201,16 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
     }
 
     async createUser(parameters: CreateUserPersisterInput): Promise<CreateUserPersisterOutput> {
-        const { roleId } = parameters;
+        const {
+            roleId,
+            title,
+            firstName,
+            lastName,
+            primaryEmail,
+            secondaryEmail,
+            telephoneNumber1,
+            telephoneNumber2,
+        } = parameters;
 
         const roleRecord = await Role.findOne({ where: { uuid: roleId } });
 
@@ -211,8 +220,14 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
 
         const newUser = await User.create({
             ...parameters,
-            telephoneNumber1: parameters.telephoneNumber,
+            telephoneNumber1,
+            telephoneNumber2,
             roleId: roleRecord?.id,
+            title: title?.trim() ?? null,
+            firstName: firstName?.trim(),
+            lastName: lastName?.trim(),
+            primaryEmail: primaryEmail?.trim(),
+            secondaryEmail: secondaryEmail?.trim(),
         });
 
         return newUser;
@@ -237,10 +252,10 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         }
 
         return await updatedUser.update({
-            title,
-            firstName,
-            lastName,
-            secondaryEmail,
+            title: title?.trim(),
+            firstName: firstName?.trim(),
+            lastName: lastName?.trim(),
+            secondaryEmail: secondaryEmail?.trim(),
             telephoneNumber1,
             telephoneNumber2,
             isActive,

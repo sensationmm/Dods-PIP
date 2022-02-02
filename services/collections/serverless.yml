@@ -67,8 +67,8 @@ provider:
     DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
     DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
     DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
-    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/eu-west-1_KSdDYoclx/.well-known/jwks.json'
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
 
 custom:
   webpack:
@@ -99,6 +99,10 @@ custom:
   apiGatewayCaching:
     enabled: true
 
+  apiKeys:
+    - name: webhook-api-key
+      value: ${ssm:/infra/elastic/hook_key}
+
 plugins:
   - serverless-webpack
   - serverless-prune-plugin
@@ -106,6 +110,7 @@ plugins:
   - serverless-dependson-plugin
   - serverless-offline
   - serverless-api-gateway-caching
+  - serverless-add-api-key
 
 functions:
   searchCollections:
@@ -310,5 +315,25 @@ functions:
       - http:
           method: put
           path: /collections/{collectionId}/alerts/{alertId}
+          caching:
+            enabled: false
+
+  processAlert:
+    handler: src/handlers/processAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/process
+          private: true
+          caching:
+            enabled: false
+  updateRecipient:
+    handler: src/handlers/updateRecipient/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: put
+          path: /collections/{collectionId}/alerts/{alertId}/recipients/{userId}
           caching:
             enabled: false

@@ -67,42 +67,6 @@ def handle(event, context):
         # Top concept is a list with only one item so we can pull it out and make it a string
         taxo_df_labeled['topConceptOf'] = taxo_df_labeled.apply(extractTopConcept, axis=1)
 
-        # Create hierarchy
-        def updateHierarchy(df, taxonomy_short):
-            alternative_labels = []
-            if 'altLabel.fr' in df.columns:
-                row_alt_labels = df[['altLabel.en', 'altLabel.fr', 'altLabel.de']].iloc()[0].values.tolist()
-                for labels in row_alt_labels:
-                    if labels == '':
-                        continue
-                    if type(labels) == str:
-                        alternative_labels.append(labels)
-                    else:
-                        alternative_labels.extend(labels)
-            branch_node = {
-                "termLabel": df['label'].iloc()[0],
-                "facetType": taxonomy_short.capitalize(),
-                "inScheme": df['inScheme'].iloc()[0],
-                "alternative_labels": alternative_labels,
-                "tagId": df['id'].iloc()[0],
-                "childTerms": [],
-            }
-            if (df['narrower'].empty or df['narrower'].astype(str).iloc[0] == 'nan'):
-                return branch_node
-            for narrower in df['narrower'].iloc()[0]:
-                hierarchy = df['hierarchy'].iloc()[0] + '->' + df['label'].iloc()[0]
-                ancestorTerms = json.loads(df['ancestorTerms'].iloc()[0])
-                ancestorTerms.append({
-                  "tagId": df['id'].iloc()[0],
-                  "termLabel": df['label'].iloc()[0],
-                  "rank": len(ancestorTerms)
-                })
-                taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
-                taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
-                branch_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short))
-
-            return branch_node
-
         taxonomies = taxo_df_labeled['topConceptOf'].dropna().unique()
         if 'altLabel.fr' in taxo_df_labeled.columns:
             taxo_df_labeled[['altLabel.en', 'altLabel.fr', 'altLabel.de']] = taxo_df_labeled[['altLabel.en', 'altLabel.fr', 'altLabel.de']].fillna("")
@@ -145,7 +109,7 @@ def handle(event, context):
                     })
                     taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
                     taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
-                    tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short))
+                    tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short, taxo_df_labeled))
                     tree_node['ancestorTerms'] = ancestorTerms
                 tree.append(tree_node)
             s3.put_object(Body=(bytes(json.dumps(tree).encode('UTF-8'))), Bucket=os.environ['TAXONOMY_TREE_BUCKET'], Key=taxonomy_short + '.json')
@@ -165,6 +129,42 @@ def handle(event, context):
 
     return {}
 
+# Create hierarchy
+def updateHierarchy(df, taxonomy_short, taxo_df_labeled):
+    ancestorTerms = json.loads(df['ancestorTerms'].iloc()[0])
+    alternative_labels = []
+    if 'altLabel.fr' in df.columns:
+        row_alt_labels = df[['altLabel.en', 'altLabel.fr', 'altLabel.de']].iloc()[0].values.tolist()
+        for labels in row_alt_labels:
+            if labels == '':
+                continue
+            if type(labels) == str:
+                alternative_labels.append(labels)
+            else:
+                alternative_labels.extend(labels)
+    branch_node = {
+        "termLabel": df['label'].iloc()[0],
+        "facetType": taxonomy_short.capitalize(),
+        "inScheme": df['inScheme'].iloc()[0],
+        "alternative_labels": alternative_labels,
+        "tagId": df['id'].iloc()[0],
+        "childTerms": [],
+        "ancestorTerms": ancestorTerms,
+    }
+    if (df['narrower'].empty or df['narrower'].astype(str).iloc[0] == 'nan'):
+        return branch_node
+    for narrower in df['narrower'].iloc()[0]:
+        hierarchy = df['hierarchy'].iloc()[0] + '->' + df['label'].iloc()[0]
+        ancestorTerms.append({
+          "tagId": df['id'].iloc()[0],
+          "termLabel": df['label'].iloc()[0],
+          "rank": len(ancestorTerms)
+        })
+        taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
+        taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
+        branch_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short, taxo_df_labeled))
+
+    return branch_node
 
 def gendata(taxonomy):
     for row in taxonomy:

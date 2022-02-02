@@ -7,12 +7,12 @@ import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useCallback, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import color from '../../../globals/color';
 import fetchJson from '../../../lib/fetchJson';
 import { Api } from '../../../utils/api';
-import { IResponse, ISourceData } from '../index.page';
+import { IResponse, ISourceData } from '../index';
 import * as Styled from './document.styles';
 import Header from './header';
 
@@ -28,6 +28,10 @@ interface DocumentViewerProps {
   tags: ITags;
 }
 
+interface IPreviewResponse {
+  document: ISourceData;
+}
+
 export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   apiData,
   tags,
@@ -41,7 +45,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const { documentTitle, contentSource, sourceReferenceUri, informationType, documentContent } =
     apiData;
 
-  const renderDetails = useCallback(() => {
+  const renderDetails = useMemo(() => {
     const { contentLocation, informationType, originator, version } = apiData;
     const tableData = [
       {
@@ -105,7 +109,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     );
   }, [apiData]);
 
-  const renderTags = useCallback(() => {
+  const renderTags = useMemo(() => {
     return (
       <Styled.tags>
         <Styled.headingButton type="button" onClick={() => setExpandedTags(!expandedTags)}>
@@ -136,6 +140,27 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     );
   }, [tags, expandedTags]);
 
+  const taggedContent = useMemo(() => {
+    interface ITag {
+      key: string;
+      value: string;
+    }
+
+    const wordsToTag: ITag[] = Object.keys(tags).reduce((carry: ITag[], key) => {
+      return [...carry, ...tags[key].map(({ value }) => ({ value, key }))];
+    }, []);
+
+    const tagged = wordsToTag.reduce((carry = '', { key, value }) => {
+      const regex = new RegExp(value, 'g');
+      return carry?.replace(
+        regex,
+        `<span class="tag" style="background-image: url('/tag-icons/icon-${key}.svg')">${value}</span>`,
+      );
+    }, documentContent);
+
+    return <Styled.inlinedTags dangerouslySetInnerHTML={{ __html: tagged || '' }} />;
+  }, [documentContent, tags]);
+
   return (
     <Panel>
       <Header
@@ -147,7 +172,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         documentId={documentId}
       />
       <Styled.body>
-        {renderTags()}
+        {renderTags}
         <Styled.main>
           <Styled.tabs>
             <Styled.tab
@@ -165,28 +190,29 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
               Details
             </Styled.tab>
           </Styled.tabs>
-          {selectedTab === 'content' ? (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: documentContent || '',
-              }}
-            />
-          ) : (
-            renderDetails()
-          )}
+          {selectedTab === 'content' ? taggedContent : renderDetails}
         </Styled.main>
       </Styled.body>
     </Panel>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
-
-  const documentId = query.id;
-  let response: IResponse = {};
-
-  try {
+const getData = async ({
+  documentId,
+  isPreview,
+}: {
+  documentId: string;
+  isPreview?: boolean;
+}): Promise<ISourceData> => {
+  if (isPreview) {
+    const response = (await fetchJson(
+      `${process.env.APP_API_URL}${Api.EditorialRecords}/${documentId}/document`,
+      {
+        method: 'GET',
+      },
+    )) as IPreviewResponse;
+    return response.document;
+  } else {
     const payload = {
       query: {
         match: {
@@ -195,17 +221,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
     const sPayload = JSON.stringify(payload);
-    response = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
+    const response = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
       body: JSON.stringify({ query: sPayload }),
       method: 'POST',
     })) as IResponse;
+
+    return response.es_response?.hits.hits[0]._source || {};
+  }
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { query } = context;
+
+  const documentId = query.id as string;
+  let apiData: ISourceData = {};
+
+  try {
+    apiData = await getData({ documentId, isPreview: query.preview === 'true' });
   } catch (error) {
     console.error(error);
   }
 
-  const apiData = response.es_response?.hits.hits[0]._source;
-
-  if (!apiData) {
+  if (!Object.keys(apiData || {}).length) {
     return {
       notFound: true,
     };
@@ -214,8 +251,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const date = apiData.contentDateTime ? new Date(apiData.contentDateTime) : '';
   const publishedDateTime = date ? format(date, "d MMMM yyyy 'at' hh:mm") : '';
 
-  const tags: ITags = Object.keys(apiData.aggs_fields).reduce((carry, key) => {
-    const values = apiData.aggs_fields[key].map((value) => {
+  const tags: ITags = Object.keys(apiData.aggs_fields || {}).reduce((carry, key) => {
+    const values = apiData.aggs_fields?.[key].map((value) => {
       const regEx = new RegExp(value, 'g');
       return {
         value,

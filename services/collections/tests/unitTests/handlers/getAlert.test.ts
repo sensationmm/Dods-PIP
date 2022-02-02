@@ -26,7 +26,7 @@ const answerMock: AlertByIdOutput = {
             name: 'Test collection',
         },
         template: {
-            id: '2',
+            id: 2,
             name: 'Test Template 2',
         },
         schedule: 'CRON 1',
@@ -35,10 +35,11 @@ const answerMock: AlertByIdOutput = {
             uuid: '6c16a036-2439-4b78-bf29-8069f4cd6c0b',
             name: 'Joe Myers',
             emailAddress: 'joe@ex.com',
+            isDodsUser: false
         },
         createdAt: new Date(),
         updatedAt: null,
-        updatedBy: {},
+        updatedBy: undefined,
         hasKeywordsHighlight: true,
         isScheduled: true,
         lastStepCompleted: 1,

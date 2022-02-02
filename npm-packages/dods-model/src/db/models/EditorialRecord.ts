@@ -95,6 +95,6 @@ EditorialRecord.init(
         underscored: true,
         timestamps: true,
         sequelize: sequelizeConnection,
-        // paranoid: true
+        paranoid: true
     }
 );

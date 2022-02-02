@@ -114,7 +114,8 @@ describe(`Schedule repository percolator tests`, () => {
         }
         await SearchRepository.defaultInstance.updatePercolator(data)
 
-        expect(mockUpdate).toHaveBeenCalled();
+        expect(mockDelete).toHaveBeenCalled();
+        expect(mockIndex).toHaveBeenCalled();
     });
 
     test(`deletePercolator deletes a percolator`, async () => {

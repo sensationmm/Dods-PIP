@@ -63,6 +63,7 @@ const Modal: FC<ModalProps> = ({
       // extraneous coverage reporting - implicitly tested
       /* istanbul ignore next */
       window.removeEventListener('keydown', closeOnEscapeKeyDown);
+      document.body.style.overflow = 'unset';
     };
   }, []);
 
@@ -71,7 +72,7 @@ const Modal: FC<ModalProps> = ({
       <Styled.modal {...{ size }} data-test="modal">
         <Styled.modalHeader>
           <Styled.modalHeaderTitle>
-            {titleIcon && <Icon src={titleIcon} size={IconSize.xlarge} />}
+            {titleIcon && <Icon src={titleIcon} size={IconSize.xxlarge} />}
             <Text type="h2" headingStyle="titleLarge">
               {title}
             </Text>

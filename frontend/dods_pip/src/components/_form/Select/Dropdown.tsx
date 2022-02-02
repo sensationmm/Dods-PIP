@@ -1,3 +1,4 @@
+import Avatar, { UserType } from '@dods-ui/components/Avatar';
 import find from 'lodash/find';
 import React from 'react';
 
@@ -19,6 +20,7 @@ export interface DropdownProps {
   setValue: (val: string, item?: DropdownValue) => void;
   isFilter?: boolean;
   testId?: string;
+  inline?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -31,6 +33,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   setValue,
   isFilter = false,
   testId,
+  inline = false,
 }) => {
   return (
     <Styled.dropdown
@@ -40,6 +43,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       hasHelper={hasHelper}
       hasError={hasError}
       isFilter={isFilter}
+      inline={inline}
     >
       {options.map((item, count) => {
         const isActive =
@@ -63,7 +67,10 @@ const Dropdown: React.FC<DropdownProps> = ({
             active={isActive}
             isFilter={isFilter}
           >
-            {item.label}
+            <Styled.dropdownItemTitle>
+              {item.icon && <Avatar type={item.icon as UserType} size="small" />}
+              {item.label}
+            </Styled.dropdownItemTitle>
             {isActive && (
               <Icon
                 data-test="selected-icon"

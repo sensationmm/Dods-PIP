@@ -29,6 +29,7 @@ const Template: Story<StickyEffectProps> = (args) => (
     {/*Dummy content here for demo purposes*/}
     <Spacer size={3} />
     <RepositoryTable
+      onView={(e) => console.log(e)}
       onEdit={(e) => console.log(e)}
       onDelete={(e) => console.log(e)}
       data={Array(20).fill({

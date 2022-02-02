@@ -1,6 +1,6 @@
 import { HttpResponse, HttpStatusCode, createContext, createApiGatewayProxyEvent } from '@dodsgroup/dods-lambda';
 
-import { EditorialRecordStatusesRepository } from '../../../src/repositories/EditorialRecordStatusesRepository';
+import { EditorialRecordStatusesRepository } from '@dodsgroup/dods-repositories';
 import { getEditorialRecordStatusList } from '../../../src/handlers/getEditorialRecordStatusList/getEditorialRecordStatusList';
 import { mocked } from 'ts-jest/utils';
 
@@ -30,7 +30,7 @@ const defaultSatusesRecord: any = [{
     "name": "Scheduled"
 }];
 
-jest.mock('../../../src/repositories/EditorialRecordStatusesRepository');
+jest.mock('@dodsgroup/dods-repositories');
 
 const mockedEditorialRecordStatusesRepository = mocked(EditorialRecordStatusesRepository, true);
 

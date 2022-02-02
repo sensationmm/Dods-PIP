@@ -38,10 +38,12 @@ class Validator:
             return False
 
     @staticmethod
-    def migration_content_root_paths_validator(body: dict):
+    def migration_content_root_paths_validator(body: dict, is_step1: bool = False):
         required_paths = {
             'root_path': ''
         }
+        if is_step1:
+            required_paths.update({'jurisdiction': ''})
         if required_paths.keys() <= body.keys():
             logger.info(f'Root path: {body["root_path"]}')
             return True

@@ -155,7 +155,22 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
           
-          
+  /collections/{collectionId}/alerts/{alertId}/process:
+    put:
+      operationId: processAlert
+      summary: "Process Alert"
+      description: "Process Alert Webhook endpoint"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateAlertResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
   /collections/{collectionId}/alerts/{alertId}/schedule:
     put:
       operationId: setAlertSchedule
@@ -171,6 +186,25 @@ paths:
           $ref: "#/components/responses/setAlertScheduleResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+
+  /collections/{collectionId}/alerts/{alertId}/recipients/{userId}:
+    put:
+      operationId: updateRecipient
+      summary: "Update Recipient"
+      description: "Update an individual recipient"
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/alertId'
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateRecipient"
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdateRecipientResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /collections/{collectionId}/alerts/{alertId}/recipients:
     put:
@@ -657,6 +691,21 @@ components:
       required:
         - createdBy
         - destinationAlertId
+    
+    UpdateRecipientInput:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+          example: false
+        updatedBy:
+          type: string
+          format: uuid
+          example: 205c79df-3484-47c2-927b-df39d3e6af4b
+          minLength: 1
+      required:
+        - isActive
+        - updatedBy
 
     CollectionOutput:
       type: object
@@ -823,10 +872,17 @@ components:
         format: uuid
       required: true
       example: d290f1ss-6c54-4b01-98e6-d701748f7151
-      
     queryId:
       in: path
       name: queryId
+      schema:
+        type: string
+        format: uuid
+      required: true
+      example: d290f1ss-6c54-4b01-98e6-d701748f7151
+    userId:
+      in: path
+      name: userId
       schema:
         type: string
         format: uuid
@@ -1207,6 +1263,34 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/QueryOutput"
+    
+    UpdateRecipientResponse:
+      description: "Update Recipient Response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: The recipient was updated successfully
+              recipient:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  emailAddress:
+                    type: string
+                  isDodsUser:
+                    type: boolean
+                  isActive:
+                    type: boolean
 
   requestBodies:
     CreateCollection:
@@ -1288,3 +1372,10 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CopyQueryInput"
+    
+    UpdateRecipient:
+      description: "Payload to update a recipient"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateRecipientInput"

@@ -1,8 +1,15 @@
 export interface AlertOutput {
     id: number;
     uuid: string;
-    collection: { uuid?: string, name?: string } | {}
-    template: { id?: string, name?: string } | {}
+    collection?: {
+        uuid: string,
+        name: string,
+        clientAccount?: {
+            uuid: string,
+            name: string,
+        }
+    }
+    template?: { id: number, name: string }
     title: string;
     description?: string | null;
     schedule?: string | null;
@@ -12,10 +19,11 @@ export interface AlertOutput {
     lastStepCompleted?: number;
     isScheduled?: boolean;
     hasKeywordsHighlight?: boolean;
-    createdBy: { uuid?: string, name?: string, emailAddress?: string, isDodsUser?: boolean } | {}
+    createdBy?: { uuid: string, name: string, emailAddress: string, isDodsUser: boolean }
     createdAt?: Date;
-    updatedBy: { uuid?: string, name?: string, emailAddress?: string, isDodsUser?: boolean } | {}
+    updatedBy?: { uuid: string, name: string, emailAddress: string, isDodsUser: boolean }
     updatedAt?: Date | null;
+    lastExecutedAt?: Date;
 }
 
 export interface SearchCollectionAlertsParameters {
@@ -197,4 +205,9 @@ export interface UpdateAlertParameters {
     alertId: string;
     updatedBy: string;
     title: string;
+}
+
+export interface AlertWithQueriesOutput {
+    alert: AlertOutput,
+    queries: AlertQueryResponse[]
 }
