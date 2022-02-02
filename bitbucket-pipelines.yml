@@ -235,6 +235,8 @@ pipelines:
               fi 
 
     deploy_npm-packages:
+# This job deploys packages to private NPM repository, so the concept of "envrionment"
+# is moot, asumming always "production" since it is a single NPM instance at the end of the day.
       - variables:
         - name: ENVIRONMENT
           default: "DO NOT CHANGE"
