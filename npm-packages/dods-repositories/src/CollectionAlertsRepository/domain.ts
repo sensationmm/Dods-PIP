@@ -63,6 +63,7 @@ export interface CollectionAlertsPersister {
         parameters: SearchCollectionAlertsParameters
     ): Promise<getAlertsByCollectionResponse>;
     updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput>;
+    createAlertDocumentRecord(parameters: AlertDocumentParameters): Promise<Boolean>;
 }
 
 export interface CreateAlertParameters {
@@ -210,4 +211,9 @@ export interface UpdateAlertParameters {
 export interface AlertWithQueriesOutput {
     alert: AlertOutput,
     queries: AlertQueryResponse[]
+}
+
+export interface AlertDocumentParameters {
+    alertId: number;
+    documentId: string;
 }
