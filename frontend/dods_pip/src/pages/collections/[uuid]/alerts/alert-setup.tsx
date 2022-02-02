@@ -66,6 +66,7 @@ export interface AlertSetupProps {
   accountName: string;
   alert: AlertSetupType;
   setAlert: (alert: AlertSetupType) => void;
+  addNotification: LoadingHOCProps['addNotification'];
 }
 
 export type AlertStepProps = {
@@ -83,6 +84,7 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
   collectionName,
   accountName,
   setLoading,
+  addNotification,
 }) => {
   const { user } = useUser({ redirectTo: '/' });
   const router = useRouter();
@@ -185,6 +187,38 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
     }
   };
 
+  const copyQuery = async (
+    queryId: Alert['uuid'],
+    copyCollectionId: Collection['uuid'],
+    copyAlertId: Alert['uuid'],
+  ) => {
+    setLoading(true);
+    try {
+      await fetchJson(
+        `${BASE_URI}${Api.Collections}/${collectionId}${Api.Alerts}/${alert.uuid}/queries/${queryId}/copyto`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            destinationAlertId: copyAlertId,
+            createdBy: user.id,
+          }),
+        },
+      );
+      setLoading(false);
+      addNotification({
+        title: 'Query copied sucessfully',
+        text: 'Copied to new alert',
+        type: 'confirm',
+        action: () =>
+          router.push(`/collections/${copyCollectionId}/alerts/${copyAlertId}/edit?step=2`),
+        actionLabel: 'View Alert',
+      });
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
+  };
+
   return (
     <main>
       <PageHeader
@@ -230,6 +264,7 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
             setAlert={setAlert}
             setActiveStep={setActiveStep}
             editAlert={editAlert}
+            copyQuery={copyQuery}
           />
         )}
         {activeStep === 3 && (

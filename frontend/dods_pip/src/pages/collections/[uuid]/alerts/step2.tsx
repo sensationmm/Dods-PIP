@@ -8,10 +8,18 @@ import Popover from '@dods-ui/components/Popover';
 import Text from '@dods-ui/components/Text';
 import React from 'react';
 
-import { AlertResultProps, AlertStepProps } from './alert-setup';
+import { Collection } from '../../index.page';
+import { Alert, AlertResultProps, AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep2: React.FC<AlertStepProps> = ({ alert, editAlert, setActiveStep }) => {
+interface AlertStep2Props extends AlertStepProps {
+  copyQuery: (
+    queryId: Alert['uuid'],
+    copyCollectionId: Collection['uuid'],
+    copyAlertId: Alert['uuid'],
+  ) => void;
+}
+const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep, copyQuery }) => {
   const query = {
     source: [],
     informationType: [],
@@ -62,6 +70,7 @@ const AlertStep2: React.FC<AlertStepProps> = ({ alert, editAlert, setActiveStep 
   };
 
   const duplicateQuery = (i: number) => {
+    setChanged(true);
     const src = queries.slice(i, 1)[0];
     setQueries([{ ...src, id: Date.now(), done: false }, ...queries]);
     setAdding(true);
@@ -155,9 +164,11 @@ const AlertStep2: React.FC<AlertStepProps> = ({ alert, editAlert, setActiveStep 
               editQuery(count);
             }}
             onDelete={() => {
+              setChanged(true);
               setQueries(queries.filter((del) => query.id !== del.id));
             }}
             numQueries={numQueries}
+            onCopyQuery={copyQuery}
           />,
           <Spacer key={`spacer-${query.id}`} size={6} />,
         ])}
