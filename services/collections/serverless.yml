@@ -67,9 +67,9 @@ provider:
     DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
     DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
     DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
+    FRONTEND_URL: ${file(../env-config.${self:provider.stage}.js):frontendURL, file(../env-config.dev.js):frontendURL}
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
-
 custom:
   webpack:
     webpackConfig: ./webpack.config.js
@@ -335,5 +335,15 @@ functions:
       - http:
           method: put
           path: /collections/{collectionId}/alerts/{alertId}/recipients/{userId}
+          caching:
+            enabled: false
+
+  /collections/processImmediateAlert:
+    handler: src/handlers/processImmediateAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: /collections/processImmediateAlert
           caching:
             enabled: false

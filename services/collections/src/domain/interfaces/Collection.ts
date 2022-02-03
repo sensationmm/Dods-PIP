@@ -24,3 +24,8 @@ export interface ProcessAlertParameters {
     collectionId: string;
     alertId: string;
 }
+
+export interface ProcessImmediateAlertParameters {
+    alertId: string;
+    documentId: string;
+}
