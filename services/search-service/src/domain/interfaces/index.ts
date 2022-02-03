@@ -4,9 +4,9 @@ export interface GetContentParameters {
 
 export interface RawQueryParameters {
     query: object;
-    aggregations: object;
-    size: number;
-    from: number;
+    aggregations?: object;
+    size?: number;
+    from?: number;
 }
 
 export interface createPercolatorParameters {
