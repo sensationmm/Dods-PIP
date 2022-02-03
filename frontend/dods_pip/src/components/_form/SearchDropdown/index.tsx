@@ -50,7 +50,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       (item) =>
         item.label && val !== '' && item.label.toLowerCase().indexOf(val.toLowerCase()) > -1,
     );
-    setResults(res.slice(0, 5));
+    setResults(res);
   };
 
   const handleChange = (val: string, item?: DropdownValue) => {

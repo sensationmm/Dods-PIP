@@ -24,7 +24,6 @@ describe('SearchDropdown', () => {
       { value: 'option3', label: 'abcd' },
       { value: 'option4', label: 'abdec' },
       { value: 'option5', label: 'abc' },
-      { value: 'option5', label: 'abc' },
       { value: 'option6', label: 'abc' },
       { value: 'option7', label: 'abc' },
       { value: 'option8', label: 'abc' },
@@ -67,6 +66,10 @@ describe('SearchDropdown', () => {
       { value: 'option3', label: 'abcd' },
       { value: 'option4', label: 'abdec' },
       { value: 'option5', label: 'abc' },
+      { value: 'option6', label: 'abc' },
+      { value: 'option7', label: 'abc' },
+      { value: 'option8', label: 'abc' },
+      { value: 'option9', label: 'abc' },
     ]);
   });
 
@@ -81,6 +84,10 @@ describe('SearchDropdown', () => {
       { value: 'option3', label: 'abcd' },
       { value: 'option4', label: 'abdec' },
       { value: 'option5', label: 'abc' },
+      { value: 'option6', label: 'abc' },
+      { value: 'option7', label: 'abc' },
+      { value: 'option8', label: 'abc' },
+      { value: 'option9', label: 'abc' },
     ]);
   });
 
