@@ -62,7 +62,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "sqs:*"
-      Resource: "arn:aws:sqs:${self:custom.region}:*:pip-${self:provider.stage}-migration-stage-1-queue.fifo"
+      Resource: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-1-queue.fifo
 
 functions:
   migrate:
