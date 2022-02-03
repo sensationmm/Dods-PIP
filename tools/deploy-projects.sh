@@ -43,6 +43,10 @@ PROJECTS=()
 for PROJECT in $@; do
     PROJECT_NAME=${PROJECT##*/}
     PROJECT_FOLDER=${PROJECT%/*}
+    if [[ ! -d $DIR/../$PROJECT ]]; then
+       echo "$PROJECT is not a folder, skipping ..."
+       continue
+    fi
 
     # Get environments where this project needs to be deployed on
     echo "Working on $PROJECT..."

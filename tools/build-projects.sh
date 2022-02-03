@@ -37,8 +37,13 @@ fi
 # Trigger build for all given projects
 PROJECTS=()
 for PROJECT in $@; do
+    echo "Working with $PROJECT from $DIR"
     PROJECT_NAME=${PROJECT##*/}  #basename
     PROJECT_FOLDER=${PROJECT%/*}   #dirname
+    if [[ ! -d $DIR/../$PROJECT ]]; then
+       echo "$PROJECT is not a folder, skipping ..."
+       continue
+    fi
     JOB_NAME="build_${PROJECT_FOLDER}"
     echo "Triggering 'build' job $JOB_NAME with ENV $PROJECT_NAME"
     BUILD_NUM=$(${CI_PLUGIN} build $JOB_NAME $PROJECT_NAME)    
