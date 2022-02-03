@@ -13,6 +13,7 @@ import {
     DeleteAlertParameters,
     DeleteAlertQueryParameters,
     SearchAlertParameters,
+    SearchAlertParametersById,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
     SetAlertQueriesParameters,
@@ -222,6 +223,50 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             where: {
                 uuid: alertId,
                 collectionId: collection.id,
+                isActive: true,
+            },
+            include: [{
+                model: Collection,
+                as: 'collection',
+                include: [
+                    {
+                        model: ClientAccount,
+                        as: 'clientAccount',
+                    }
+                ]
+            }, 'createdById', 'updatedById', 'alertTemplate'],
+        });
+
+        if (!alert) {
+            throw new CollectionError(`Unable to retrieve Alert with uuid: ${alertId}`);
+        }
+
+        const alertQueryResponse = await this.alertQueryModel.findAndCountAll({
+            where: {
+                alertId: alert.id,
+                isActive: true,
+            },
+        });
+
+        const alertRecipientResponse = await this.recipientModel.findAndCountAll({
+            where: {
+                alertId: alert.id,
+            },
+        });
+
+        return {
+            alert: await mapAlert(alert),
+            searchQueriesCount: alertQueryResponse.count,
+            recipientsCount: alertRecipientResponse.count,
+        };
+    }
+
+    async getAlertById(parameters: SearchAlertParametersById): Promise<AlertByIdOutput> {
+        const { alertId } = parameters;
+
+        const alert = await this.model.findOne({
+            where: {
+                uuid: alertId,
                 isActive: true,
             },
             include: [{
