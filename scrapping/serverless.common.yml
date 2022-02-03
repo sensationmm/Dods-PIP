@@ -5,6 +5,11 @@ custom:
   content_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
   new_content_bucket: pip-${self:custom.stage}-content-extraction
   region: eu-west-1
+  organizations:
+    dev: 390773179818
+    test: 072266309162
+    qa: 817206606893
+    production: 186202231680
 
 lambdaPolicyS3:
     Effect: Allow
