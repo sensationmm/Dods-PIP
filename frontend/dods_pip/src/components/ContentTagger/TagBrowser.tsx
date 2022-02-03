@@ -340,11 +340,14 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
                       center
                     >
                       {ucFirst(type.label)}
-                      {isBrowsing && hasTagTree && tagsData
+                      {isBrowsing && hasTagTree && tagsData && Object.keys(tagsData).length > 0
                         ? ` (${new Intl.NumberFormat().format(
                             flatten(tagsData[type.label as TagTreeDataType] as TagsData[]).length,
                           )})`
-                        : !isBrowsing && !searchingTagsData && tagsSearch
+                        : !isBrowsing &&
+                          !searchingTagsData &&
+                          tagsSearch &&
+                          Object.keys(tagsSearch).length > 0
                         ? ` (${new Intl.NumberFormat().format(
                             flatten(tagsSearch[type.label as TagTreeDataType].results as TagsData[])
                               .length,
@@ -382,7 +385,9 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
                 <Styled.tabContent isSearch>
                   {!hasSearchResults && !searchingTagsData ? (
                     <Text center color={color.base.greyDark}>
-                      Start searching to see results
+                      {taxonomySearch !== ''
+                        ? 'No results found'
+                        : 'Start searching to see results'}
                     </Text>
                   ) : searchingTagsData ? (
                     <Loader inline />
@@ -484,7 +489,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
               <Text type="span" color={color.base.greyDark}>
                 Total{' '}
                 <strong style={{ color: color.theme.blueMid }}>
-                  {tagsSearch
+                  {tagsSearch && Object.keys(tagsSearch).length > 0
                     ? flatten(
                         tagsSearch[tagTypes[activeTab].label as TagTreeDataType]
                           .results as TagsData[],
@@ -515,7 +520,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
         </Styled.box>
 
         {!highlight && (
-          <Styled.box tags={false} operator>
+          <Styled.box tags={false} hasOperator={true}>
             <Styled.header>
               <Styled.headerText>
                 <Icon src={Icons.Checklist} size={IconSize.xlarge} />
