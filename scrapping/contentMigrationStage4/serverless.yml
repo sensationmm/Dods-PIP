@@ -17,10 +17,10 @@ custom:
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  s3_input_bucket: pip-dev-migration-stage-3-output
-  s3_output_bucket: pip-dev-migration-stage-4-output
+  s3_input_bucket: pip-${self:provider.stage}-migration-stage-3-output
+  s3_output_bucket: pip-${self:provider.stage}-migration-stage-4-output
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
-  queue_name: pip-dev-migration-stage-4-queue.fifo
+  queue_name: pip-${self:provider.stage}-migration-stage-4-queue.fifo
   pythonRequirements:
     pythonBin: python3
 
@@ -84,5 +84,5 @@ functions:
     timeout: 30
     events:
       - sqs:
-          arn: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-4-queue.fifo
+          arn: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-4-queue.fifo
           batchSize: 1
