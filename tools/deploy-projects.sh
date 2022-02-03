@@ -41,6 +41,11 @@ declare -A project_envs
 
 PROJECTS=()
 for PROJECT in $@; do
+    if [[ ! -d $DIR/../$PROJECT ]]; then
+       echo "$PROJECT is not a folder, skipping ..."
+       continue
+    fi
+
     PROJECT_NAME=${PROJECT##*/}
     PROJECT_FOLDER=${PROJECT%/*}
 
