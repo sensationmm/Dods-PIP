@@ -41,16 +41,14 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {
-        const values = data
-          .filter((item) => (item as UserAccount).isDodsUser)
-          .map((item: UserAccount) => ({
-            value: item.uuid,
-            label: getUserName(item),
-            icon: item.isDodsUser ? 'consultant' : 'client',
-            userData: {
-              accountName: item.clientAccount.name as string,
-            },
-          }));
+        const values = data.map((item: UserAccount) => ({
+          value: item.uuid,
+          label: getUserName(item),
+          icon: item.isDodsUser ? 'consultant' : 'client',
+          userData: {
+            accountName: item.clientAccount.name as string,
+          },
+        }));
 
         setUserResults(values);
       }
