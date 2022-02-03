@@ -68,7 +68,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "lambda:InvokeFunction"
-      Resource: "arn:aws:lambda:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}:function:dods-auto-tagging-${self:provider.stage}-auto-tagging"
+      Resource: "arn:aws:lambda:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:function:dods-auto-tagging-${self:provider.stage}-auto-tagging"
 
 functions:
   migrate:
