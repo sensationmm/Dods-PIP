@@ -39,9 +39,11 @@ export class SearchRepository implements Search {
         };
     }
 
-    async rawQuery(query: RawQueryParameters) {
+    async rawQuery(params: RawQueryParameters) {
+        const { query, aggregations, size, from } = params;
+        
+        const fullQuery = { index: 'content', body: { query, aggs: aggregations, size, from } }
 
-        const fullQuery = { index: 'content', body: { query: query } }
         const response = await this.elasticsearch.search(fullQuery)
 
         return response['body']
@@ -62,7 +64,7 @@ export class SearchRepository implements Search {
     }
 
     async deletePercolator(data: deletePercolatorParameters): Promise<any> {
-        const response = await this.elasticsearch.delete({index: 'alerts', id: data.alertId})
+        const response = await this.elasticsearch.delete({ index: 'alerts', id: data.alertId })
 
         return response['body']
     }
