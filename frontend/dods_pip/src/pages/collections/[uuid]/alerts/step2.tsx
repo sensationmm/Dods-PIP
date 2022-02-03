@@ -52,12 +52,23 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
           },
         ],
   );
+  const firstRun = React.useRef(true);
   const [adding, setAdding] = React.useState<boolean>(!alert.queries || alert.queries.length === 0);
   const [changed, setChanged] = React.useState<boolean>(false);
 
   const numQueries = adding ? queries.length - 1 : queries.length;
 
+  React.useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    } else {
+      setChanged(true);
+    }
+  }, [numQueries]);
+
   const addQuery = () => {
+    console.log('addQuery');
     setChanged(true);
     setQueries([
       {
@@ -70,6 +81,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
   };
 
   const duplicateQuery = (i: number) => {
+    console.log('duplicateQuery');
     setChanged(true);
     const src = queries.slice(i, 1)[0];
     setQueries([{ ...src, id: Date.now(), done: false }, ...queries]);
@@ -77,6 +89,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
   };
 
   const editQuery = (i: number, setEdit = true) => {
+    console.log('editQuery');
     setChanged(true);
     const existing = queries.slice();
     setQueries(
@@ -92,7 +105,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
       }),
     );
   };
-
+  console.log('changed', changed);
   return (
     <>
       <Styled.sectionHeaderContainer>
