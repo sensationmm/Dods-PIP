@@ -12,15 +12,14 @@ custom:
   resource_prefix: migration-step-4
   app_acronym: migration-step-4-bucket
   default_stage: dev
-  account_id: 390773179818
   stage: ${opt:stage, self:custom.default_stage}
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  s3_input_bucket: pip-dev-migration-stage-3-output
-  s3_output_bucket: pip-dev-migration-stage-4-output
+  s3_input_bucket: pip-${self:provider.stage}-migration-stage-3-output
+  s3_output_bucket: pip-${self:provider.stage}-migration-stage-4-output
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
-  queue_name: pip-dev-migration-stage-4-queue.fifo
+  queue_name: pip-${self:provider.stage}-migration-stage-4-queue.fifo
   pythonRequirements:
     pythonBin: python3
 
@@ -53,7 +52,7 @@ provider:
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
     CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
-    LAMBDA_CONTENT_INDEXER_ARN: arn:aws:lambda:${self:custom.region}:${self:custom.account_id}:function:content-indexer-dev
+    LAMBDA_CONTENT_INDEXER_ARN: arn:aws:lambda:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:function:content-indexer-${self:provider.stage}
 
   iamRoleStatements:
     - Effect: Allow
@@ -64,12 +63,12 @@ provider:
     - Effect: "Allow"
       Action:
         - "sqs:*"
-      Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-4-queue.fifo"
+      Resource: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-4-queue.fifo
 
     - Effect: "Allow"
       Action:
         - "lambda:InvokeFunction"
-      Resource: "arn:aws:lambda:eu-west-1:390773179818:function:content-indexer-dev"
+      Resource: "arn:aws:lambda:eu-west-1:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:function:content-indexer-${self:provider.stage}"
 
 functions:
   migrate:
@@ -84,5 +83,5 @@ functions:
     timeout: 30
     events:
       - sqs:
-          arn: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-4-queue.fifo
+          arn: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-4-queue.fifo
           batchSize: 1
