@@ -38,4 +38,5 @@ export interface MultipleEmailTemplateInput extends AlertEmail {
 
 export interface SingleEmailTemplateInput extends AlertEmail {
     section: SingleArticleSection;
+    url: string;
 }

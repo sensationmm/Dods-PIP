@@ -1,4 +1,5 @@
 import Joi, { Schema } from 'joi';
+
 import { resolve } from 'path';
 
 const loadConfig = (schema: Schema) => {
@@ -28,6 +29,7 @@ const envVarsSchema = Joi.object()
         DB_PASSWORD: Joi.string().required(),
         DB_CONNECTION_LIMIT: Joi.number().default(5),
         API_GATEWAY_BASE_URL: Joi.string().required(),
+        FRONTEND_URL: Joi.string().required(),
     })
     .unknown();
 
@@ -45,6 +47,7 @@ export const config = {
     dods: {
         downstreamEndpoints: {
             apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
+            frontEndURL: envVars.FRONTEND_URL as string,
         }
     },
     aws: {

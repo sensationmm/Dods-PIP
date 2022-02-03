@@ -378,6 +378,22 @@ paths:
           $ref: "#/components/responses/GetAlertResponse"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+  /collections/processImmediateAlert:
+    post:
+      operationId: processImmediateAlert
+      summary: "Send Email Info Related to alert"
+      description: "Email Alert"
+      requestBody:
+        $ref: "#/components/requestBodies/processInmediateAlert"
+      responses:
+        "200":
+          $ref: "#/components/responses/SentAlertResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  
 
 components:
   securitySchemes:
@@ -397,6 +413,16 @@ components:
           type: string
           format: uuid
         createdById:
+          type: string
+          format: uuid
+          
+    ProcessAlert:
+      type: object
+      properties:
+        alertId:
+          type: string
+          format: uuid
+        documentId:
           type: string
           format: uuid
           
@@ -938,6 +964,19 @@ components:
                 example: The alert scheduling was set successfully
               alert:
                 $ref: "#/components/schemas/AlertOutput"
+                
+    SentAlertResponse:
+      description: "Response Process Alert"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                example: Inmetiadte Alert uuid with document uuid triggered
     
     CopyAlertResponse:
       description: "Response with single collection"
@@ -1293,6 +1332,14 @@ components:
                     type: boolean
 
   requestBodies:
+  
+    processInmediateAlert:
+        description: "Payload to send InmediateAlert"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessAlert"
+  
     CreateCollection:
       description: "Payload to create a new collection"
       content:
