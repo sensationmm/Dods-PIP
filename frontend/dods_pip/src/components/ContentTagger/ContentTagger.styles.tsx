@@ -24,7 +24,7 @@ export const wrapper = styled.div<WrapperProps>`
 
 type BoxProps = {
   tags: boolean;
-  operator?: boolean;
+  hasOperator?: boolean;
 };
 
 export const box = styled.div<BoxProps>`
@@ -35,7 +35,8 @@ export const box = styled.div<BoxProps>`
   width: 100%;
   padding: 0;
   height: ${({ tags }) => (tags ? 'calc(70vh - 92px)' : 'auto')};
-  overflow: ${({ operator = false, tags }) => (operator ? 'visible' : tags ? 'scroll' : 'auto')}; ;
+  overflow: ${({ hasOperator = false, tags }) =>
+    hasOperator ? 'visible' : tags ? 'scroll' : 'auto'}; ;
 `;
 
 export const collapsed = styled.div`
