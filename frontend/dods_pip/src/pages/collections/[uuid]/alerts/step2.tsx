@@ -68,7 +68,6 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
   }, [numQueries]);
 
   const addQuery = () => {
-    console.log('addQuery');
     setChanged(true);
     setQueries([
       {
@@ -81,7 +80,6 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
   };
 
   const duplicateQuery = (i: number) => {
-    console.log('duplicateQuery');
     setChanged(true);
     const src = queries.slice(i, 1)[0];
     setQueries([{ ...src, id: Date.now(), done: false }, ...queries]);
@@ -89,7 +87,6 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
   };
 
   const editQuery = (i: number, setEdit = true) => {
-    console.log('editQuery');
     setChanged(true);
     const existing = queries.slice();
     setQueries(
@@ -105,7 +102,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
       }),
     );
   };
-  console.log('changed', changed);
+
   return (
     <>
       <Styled.sectionHeaderContainer>
