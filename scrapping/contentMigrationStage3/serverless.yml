@@ -52,7 +52,6 @@ provider:
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
     LAMBDA_AUTO_TAGGING_ARN: arn:aws:lambda:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:function:dods-auto-tagging-${self:provider.stage}-auto-tagging
-    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
 
   iamRoleStatements:
     - Effect: Allow
