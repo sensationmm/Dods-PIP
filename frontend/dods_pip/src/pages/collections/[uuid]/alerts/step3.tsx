@@ -47,6 +47,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
           icon: item.isDodsUser ? 'consultant' : 'client',
           userData: {
             accountName: item.clientAccount.name as string,
+            isActive: item.isActive,
           },
         }));
 
@@ -118,7 +119,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                 .toLowerCase()
                 .search(filter.toLowerCase()) > -1,
           )
-          .map((recipient) => [
+          .map((recipient, count) => [
             recipient.value,
             <Styled.sectionHeader key="title1">
               <Avatar type={recipient.icon as UserType} size="small" />
@@ -128,7 +129,12 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
               <Text>{recipient.userData?.accountName as string}</Text>
             </>,
             <>
-              <Checkbox id="active1" isChecked onChange={console.log} />
+              <Checkbox
+                id={`active-${count}`}
+                isDisabled
+                isChecked={recipient.userData?.isActive === 1}
+                onChange={console.log}
+              />
             </>,
             <>
               <Button

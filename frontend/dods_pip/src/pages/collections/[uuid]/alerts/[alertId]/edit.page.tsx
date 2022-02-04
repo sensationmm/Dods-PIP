@@ -63,6 +63,7 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading, addNotificatio
           icon: recipient.isDodsUser ? 'consultant' : 'client',
           userData: {
             accountName: recipient.clientAccount.name,
+            isActive: recipient.isActive ? 1 : 0,
           },
         })),
       } as AlertSetupType);
