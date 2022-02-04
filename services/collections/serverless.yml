@@ -338,7 +338,7 @@ functions:
           caching:
             enabled: false
 
-  /collections/processImmediateAlert:
+  processImmediateAlert:
     handler: src/handlers/processImmediateAlert/index.handle
     description: Triggered when http request comes
     events:
