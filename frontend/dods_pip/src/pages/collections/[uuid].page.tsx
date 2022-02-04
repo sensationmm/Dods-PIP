@@ -117,7 +117,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
         `${BASE_URI}${Api.CollectionDetails}/${collection.uuid}`,
         {
           method: 'PUT',
-          body: JSON.stringify({ name: editTitle }),
+          body: JSON.stringify({ name: editTitle, updatedBy: user.id }),
         },
       );
       const { data = {} } = result;
