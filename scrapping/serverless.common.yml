@@ -2,7 +2,7 @@ custom:
   # Our stage is based on what is passed in when running serverless
   # commands. Or falls back to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
-  content_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+  #content_bucket: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
   new_content_bucket: pip-${self:custom.stage}-content-extraction
   region: eu-west-1
   organizations:
@@ -17,4 +17,4 @@ lambdaPolicyS3:
       - s3:PutObject
       - s3:GetObject
       - s3:*
-    Resource: "arn:aws:s3:::infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9"
+    Resource: "arn:aws:s3:::*"
