@@ -15,6 +15,13 @@ export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertPara
 
         const alertResponse = await CollectionAlertsRepository.defaultInstance.getAlertById({ alertId: alertId });
 
+        if (!alertResponse.alert.title) {
+            return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+                success: false,
+                message: 'Alert must have title'
+            });
+        }
+
         const recipients = await CollectionAlertRecipientRepository.defaultInstance.listAlertRecipients(alertId);
 
         if (recipients.length > 0) {

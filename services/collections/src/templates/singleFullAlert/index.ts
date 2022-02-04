@@ -1,5 +1,6 @@
 import HandleBars from 'handlebars';
 import { SingleEmailTemplateInput } from '../../domain';
+import { config } from '../../domain';
 import { readFile } from 'fs/promises';
 
 // const date = new Date().toLocaleDateString('en-GB', {
@@ -58,7 +59,8 @@ export const singleEmailBodyHandler = async (alertInput: SingleEmailTemplateInpu
 }
 
 export const getSingleEmailBody = async (alertInput: SingleEmailTemplateInput): Promise<string> => {
-    const templateSource = (await readFile(__dirname + '/template.handlebars')).toString();
+    //const templateSource = (await readFile(__dirname + '/template.handlebars')).toString();
+    const templateSource = (await readFile(config.singleFullAlertPath)).toString();
     const template = HandleBars.compile(templateSource);
     return template(alertInput);
 };

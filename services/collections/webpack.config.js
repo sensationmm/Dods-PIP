@@ -9,7 +9,7 @@ module.exports = {
   entry: slsw.lib.entries,
   devtool: 'source-map',//slsw.lib.webpack.isLocal ? 'eval-cheap-module-source-map' : 'source-map',
   resolve: {
-    extensions: ['.mjs', '.json', '.ts', '.yml'],
+    extensions: ['.mjs', '.json', '.ts', '.yml','.handlebars'],
     symlinks: false,
     cacheWithContext: false,
   },
@@ -51,6 +51,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: "src/openApi.yml", to: 'src/openApi.yml' },
+        { from: "src/handlers/processImmediateAlert/template.handlebars", to: 'src/handlers/processImmediateAlert/template.handlebars' }
       ],
     })
   ],
