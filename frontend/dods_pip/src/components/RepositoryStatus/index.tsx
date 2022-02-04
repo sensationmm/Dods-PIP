@@ -15,7 +15,7 @@ export interface RepositoryStatusProps extends Pick<TagProps, 'width' | 'size'> 
 }
 
 const RepositoryStatus: React.FC<RepositoryStatusProps> = ({ type, width, size }) => {
-  switch (type) {
+  switch (type.toLowerCase()) {
     case 'ingested':
       return (
         <Tag
@@ -29,6 +29,7 @@ const RepositoryStatus: React.FC<RepositoryStatusProps> = ({ type, width, size }
         />
       );
     case 'draft':
+    case 'created':
       return (
         <Tag
           label="Draft"
