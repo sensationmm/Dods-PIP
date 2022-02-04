@@ -71,6 +71,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const requestParameters: ProcessImmediateAlertParameters = {
             alertId: 'alertUuid',
             documentId: 'documentUuid',
+
         }
 
 
@@ -143,6 +144,49 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
             success: false,
             message: 'There are not recipients for these alert',
+        });
+
+        expect(response).toEqual(expectedResponse);
+    });
+
+    it('No Alert Title', async () => {
+
+        const requestParameters: ProcessImmediateAlertParameters = {
+            alertId: 'alertUuid',
+            documentId: 'documentUuid',
+        }
+
+        const recipients: any = []
+
+        const document = {
+            success: true,
+            data: {
+                documentId: 'id',
+                documentTitle: 'title',
+                contentDateTime: '04 Dec 1995 00:12:00 GMT',
+                documentContent: 'document content'
+            }
+        }
+
+        const alertOutput = {
+            alert: {
+                id: 1,
+                uuid: 'alertUUID'
+            }
+        } as any
+
+        mockedCollectionAlertsRepository.defaultInstance.getAlertById.mockResolvedValue(alertOutput);
+        mockedCollectionAlertRecipientRepository.defaultInstance.listAlertRecipients.mockResolvedValue(recipients);
+        mockedDocumentRepository.defaultInstance.getDocumentById.mockResolvedValue(document)
+        mockedDocumentRepository.defaultInstance.sendEmail.mockResolvedValue(true)
+        mockedCollectionAlertsRepository.defaultInstance.createAlertDocumentRecord.mockResolvedValue(true);
+        mockedValue.mockResolvedValue('string')
+
+        const response = await processImmediateAlert(requestParameters, defaultContext);
+
+        const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+            success: false,
+            message: 'Alert must have title',
         });
 
         expect(response).toEqual(expectedResponse);
