@@ -1,6 +1,3 @@
-import { EditorialRecordError, EditorialRecordStatusError, UserProfileError } from '@dodsgroup/dods-domain';
-import { EditorialRecord, EditorialRecordStatus, Op, Sequelize, User, WhereOptions, } from '@dodsgroup/dods-model';
-
 import {
     ArchiveEditorialRecordParameters,
     CreateEditorialRecordParameters,
@@ -9,10 +6,12 @@ import {
     EditorialRecordPersister,
     LockEditorialRecordParameters,
     RecordStatuses,
+    ScheduleEditorialRecordParamateres,
     SearchEditorialRecordParameters,
     UpdateEditorialRecordParameters,
-    ScheduleEditorialRecordParamateres,
 } from './domain';
+import { EditorialRecord, EditorialRecordStatus, Op, Sequelize, User, WhereOptions, } from '@dodsgroup/dods-model';
+import { EditorialRecordError, EditorialRecordStatusError, UserProfileError } from '@dodsgroup/dods-domain';
 
 export * from './domain';
 
@@ -305,7 +304,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             sortDirection,
         } = parameters;
 
-        const whereRecord: WhereOptions = { isArchived: false };
+        const whereRecord: WhereOptions = { isArchived: false, isPublished: false };
 
         // Search by document name case insensitive coincidences
         if (searchTerm) {
@@ -356,7 +355,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             orderBy = ['status', 'status', sortDirection];
         }
 
-        const totalRecords = await this.editorialRecordModel.count();
+        const totalRecords = await this.editorialRecordModel.count({ where: { isArchived: false, isPublished: false } });
 
         const { count: filteredRecords, rows } = await this.editorialRecordModel.findAndCountAll({
             where: whereRecord,
