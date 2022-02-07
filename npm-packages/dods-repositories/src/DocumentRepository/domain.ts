@@ -5,6 +5,11 @@ export interface DocumentPayloadResponse {
     payload: string | Error;
 }
 
+export interface DocumentPayloadResponseV1 {
+    success: boolean | undefined;
+    payload: string | undefined;
+}
+
 export interface ScheduleWebhookParameters extends DocumentParameters {
     scheduleType: string;
     scheduleId: string;
@@ -16,5 +21,7 @@ export interface DocumentPersister {
     updateDocument(parameters: any): Promise<Object>;
     getDocument(documentARN: string): Promise<Object>;
     getDocumentByArn(documentARN: string): Promise<DocumentPayloadResponse>;
+    getDocumentByArnV1(documentARN: string): Promise<DocumentPayloadResponseV1>;
     scheduleWebhook(parameters: ScheduleEditorialRecordParamateres): Promise<object>;
+    publishDocumentV1(lambdaName: string, payload: string): Promise<boolean>
 }

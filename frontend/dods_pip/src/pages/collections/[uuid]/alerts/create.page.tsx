@@ -1,5 +1,5 @@
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
-import fetchJson from '@dods-ui/lib/fetchJson';
+import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -26,7 +26,7 @@ export const AddAlert: React.FC<AddAlertProps> = ({ setLoading }) => {
   const loadCollection = async (id: Collection['uuid']) => {
     setLoading(true);
     try {
-      const result = await fetchJson(`${BASE_URI}${Api.CollectionDetails}/${id}`, {
+      const result = await fetchJson<CustomResponse>(`${BASE_URI}${Api.CollectionDetails}/${id}`, {
         method: 'GET',
       });
       const { data = {} } = result;

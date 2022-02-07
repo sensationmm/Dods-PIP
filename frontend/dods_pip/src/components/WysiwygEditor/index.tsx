@@ -30,6 +30,7 @@ export interface WysiwygEditorProps {
   toolbarConfig?: [];
   onTextChange: (value: string) => void;
   onSelection?: (selection: ContentSelection) => void;
+  savedContent?: string;
   tags?: ContentTag[];
 }
 
@@ -71,6 +72,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   children,
   onTextChange,
   onSelection,
+  savedContent,
   tags = [],
 }) => {
   const [quillInstance, setQuillInstance] = useState<Quill>();
@@ -109,28 +111,34 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!tags.length || !quillInstance) return;
+    if (savedContent && quillInstance) {
+      quillInstance.clipboard.dangerouslyPasteHTML(savedContent);
+    }
+  }, [savedContent, quillInstance]);
 
+  /** TODO: RTE content tagging 
+  useEffect(() => {
+    if (!quillInstance) return;
     quillInstance.focus();
 
+    if (!tags.length) return;
     tags
       .sort((a, b) => b.value.length - a.value.length)
       .forEach((tag) => {
         if (!tag.value.length) return;
 
-        /** TODO: RTE content tagging */
         // embed matching tags
-        // const matches = quillInstance.getText().matchAll(RegExp(`${tag.value}`, 'igm'));
-        // Array.from(matches)
-        //   .reverse()
-        //   .forEach((match) => {
-        //     console.info('<><><> match', match);
-        //     if (match && typeof match.index === 'number') {
-        //       const matchedText = quillInstance.getText(match.index, match[0].length);
-        //       quillInstance.deleteText(match.index, match[0].length);
-        //       quillInstance.insertEmbed(match.index, 'content-tag', { ...tag, value: matchedText });
-        //     }
-        //   });
+        const matches = quillInstance.getText().matchAll(RegExp(`${tag.value}`, 'igm'));
+        Array.from(matches)
+          .reverse()
+          .forEach((match) => {
+            console.info('<><><> match', match);
+            if (match && typeof match.index === 'number') {
+              const matchedText = quillInstance.getText(match.index, match[0].length);
+              quillInstance.deleteText(match.index, match[0].length);
+              quillInstance.insertEmbed(match.index, 'content-tag', { ...tag, value: matchedText });
+            }
+          });
 
         // embed tag over selected text
         const selection = quillInstance.getSelection();
@@ -143,6 +151,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
         }
       });
   }, [tags.length, quillInstance]);
+  end content tagging */
 
   return (
     <Styled.wrapper data-testid="wysiwyg-editor">

@@ -1,0 +1,608 @@
+{
+  "ukContentSources": [
+    {
+      "contentSource": "Dods UK",
+      "informationTypes": [
+        "Reports",
+        "Dods Test",
+        "Event Summary",
+        "Westminster Weekly Business",
+        "News",
+        "Brexit Bulletin",
+        "Consultation Tracker",
+        "Devolved Weekly Business",
+        "Question Time Summary",
+        "Week in Politics",
+        "Committee Summary",
+        "Debate Summary",
+        "Reviews",
+        "New and Change to Business",
+        "Breaking Announcements",
+        "Dods Monitoring Daily",
+        "Dods Marketing"
+      ]
+    },
+    {
+      "contentSource": "Greater London Authority",
+      "informationTypes": [
+        "Written Answers",
+        "Press Releases",
+        "Consultations"
+      ]
+    },
+    {
+      "contentSource": "House of Commons",
+      "informationTypes": [
+        "Appointments",
+        "Explanatory Notes",
+        "Correspondence",
+        "Written Questions Tabled",
+        "Oral Answers",
+        "Selection of Amendments",
+        "Future Business",
+        "Associated Memorandum",
+        "Written Ministerial Statements",
+        "Debate Summary",
+        "Marshalled List of Amendments",
+        "Debates",
+        "Petitions",
+        "Register of Interests",
+        "Votes and Proceedings",
+        "Press Releases",
+        "Papers",
+        "Uncorrected Oral Evidence",
+        "Inquiries",
+        "Amendments",
+        "Bills",
+        "New and Change to Business",
+        "Early Day Motions",
+        "Standard Note",
+        "Oral Questions Tabled",
+        "Written Answers",
+        "Written Evidence",
+        "Reports",
+        "Register of All-Party Groups",
+        "Order of Oral Questions",
+        "Committee Summary"
+      ]
+    },
+    {
+      "contentSource": "House of Lords",
+      "informationTypes": [
+        "Written Evidence",
+        "New and Change to Business",
+        "Oral Evidence",
+        "Committee Summary",
+        "Written Ministerial Statements",
+        "Explanatory Notes",
+        "Unscheduled Business",
+        "Bills",
+        "Press Releases",
+        "Register of Interests",
+        "Papers",
+        "Debates",
+        "Oral Answers",
+        "Oral Questions Tabled",
+        "Uncorrected Oral Evidence",
+        "Amendments",
+        "Marshalled List of Amendments",
+        "Inquiries",
+        "Reports",
+        "Debate Summary",
+        "Written Answers",
+        "Written Questions Tabled",
+        "Correspondence",
+        "Future Business"
+      ]
+    },
+    {
+      "contentSource": "HM Government",
+      "informationTypes": [
+        "Written Ministerial Statements",
+        "Statement Text",
+        "Papers",
+        "Explanatory Notes",
+        "Reports",
+        "Press Releases",
+        "Research Papers",
+        "Statistics",
+        "Speeches",
+        "Fatality Notices",
+        "Impact Assessments",
+        "Consultations"
+      ]
+    },
+    {
+      "contentSource": "Local Government",
+      "informationTypes": [
+        "Speeches",
+        "Papers",
+        "Reports",
+        "Consultations",
+        "Press Releases"
+      ]
+    },
+    {
+      "contentSource": "Local Stakeholder",
+      "informationTypes": [
+        "Reports",
+        "Consultations",
+        "Press Releases"
+      ]
+    },
+    {
+      "contentSource": "London Assembly",
+      "informationTypes": [
+        "Inquiries",
+        "Committee Summary",
+        "Written Answers",
+        "Question Time Summary",
+        "Minutes",
+        "Press Releases",
+        "Debate Summary",
+        "Reports",
+        "Future Business",
+        "Consultations"
+      ]
+    },
+    {
+      "contentSource": "Northern Ireland Assembly",
+      "informationTypes": [
+        "Oral Answers",
+        "Grouping of Amendments",
+        "Written Ministerial Statements",
+        "Press Releases",
+        "Written Evidence",
+        "Future Business",
+        "Oral Evidence",
+        "Marshalled List of Amendments",
+        "Consultations",
+        "Explanatory Notes",
+        "Statement Text",
+        "New and Change to Business",
+        "Written Questions Tabled",
+        "Bills",
+        "Debates",
+        "Reports",
+        "Inquiries",
+        "Amendments",
+        "Uncorrected Oral Evidence",
+        "Oral Questions Tabled",
+        "Minutes",
+        "Debate Summary",
+        "Research Papers",
+        "Motions",
+        "Written Answers"
+      ]
+    },
+    {
+      "contentSource": "Northern Ireland Executive",
+      "informationTypes": [
+        "Statistics",
+        "Speeches",
+        "Statement Text",
+        "Consultations",
+        "Reports",
+        "Press Releases"
+      ]
+    },
+    {
+      "contentSource": "Northern Ireland Stakeholder",
+      "informationTypes": [
+        "Consultations",
+        "Press Releases",
+        "Statistics",
+        "Speeches",
+        "Reports"
+      ]
+    },
+    {
+      "contentSource": "Scottish Government",
+      "informationTypes": [
+        "Speeches",
+        "Statement Text",
+        "Statistics",
+        "Consultations",
+        "Reports",
+        "Press Releases",
+        "Research Papers"
+      ]
+    },
+    {
+      "contentSource": "Scotland Stakeholder",
+      "informationTypes": [
+        "Statistics",
+        "Speeches",
+        "Consultations",
+        "Reports",
+        "Press Releases"
+      ]
+    },
+    {
+      "contentSource": "Scottish Parliament",
+      "informationTypes": [
+        "Associated Memorandum",
+        "Motions",
+        "Written Questions Tabled",
+        "Inquiries",
+        "Reports",
+        "Written Answers",
+        "Petitions",
+        "Written Evidence",
+        "Papers",
+        "Debates",
+        "New and Change to Business",
+        "Bills",
+        "Uncorrected Oral Evidence",
+        "Oral Evidence",
+        "Future Business",
+        "Marshalled List of Amendments",
+        "Debate Summary",
+        "Oral Answers",
+        "Statement Text",
+        "Explanatory Notes",
+        "Research Papers",
+        "Oral Questions Tabled",
+        "Consultations",
+        "Press Releases",
+        "Grouping of Amendments"
+      ]
+    },
+    {
+      "contentSource": "UK Media",
+      "informationTypes": [
+        "News"
+      ]
+    },
+    {
+      "contentSource": "UK Media",
+      "informationTypes": [
+        "Speeches",
+        "Reports",
+        "Statistics",
+        "Consultations",
+        "Press Releases",
+        "News"
+      ]
+    },
+    {
+      "contentSource": "UK Parliament",
+      "informationTypes": [
+        "Press Releases",
+        "Register of All-Party Groups",
+        "Written Evidence",
+        "Committee Summary",
+        "Inquiries",
+        "Uncorrected Oral Evidence",
+        "Reports",
+        "Statutory Instruments",
+        "Corrected Oral Evidence",
+        "Bills"
+      ]
+    },
+    {
+      "contentSource": "Welsh Government",
+      "informationTypes": [
+        "Statistics",
+        "Speeches",
+        "Consultations",
+        "Reports",
+        "Research Papers",
+        "Statement Text",
+        "Responses",
+        "Press Releases"
+      ]
+    },
+    {
+      "contentSource": "Welsh Parliament",
+      "informationTypes": [
+        "Explanatory Notes",
+        "Written Evidence",
+        "Statements of Opinion",
+        "Consultations",
+        "Written Answers",
+        "Motions",
+        "Future Business",
+        "New and Change to Business",
+        "Bills",
+        "Uncorrected Oral Evidence",
+        "Marshalled List of Amendments",
+        "Inquiries",
+        "Press Releases",
+        "Reports",
+        "Oral Questions Tabled",
+        "Oral Answers",
+        "Oral Evidence",
+        "Debate Summary",
+        "Written Questions Tabled",
+        "Grouping of Amendments",
+        "Debates",
+        "Amendments"
+      ]
+    },
+    {
+      "contentSource": "Wales Stakeholder",
+      "informationTypes": [
+        "Statistics",
+        "Reports",
+        "Press Releases",
+        "Speeches",
+        "Consultations"
+      ]
+    }
+  ],
+  "euContentSoruces": [
+    {
+      "contentSource": "Committee of the Regions",
+      "informationTypes": [
+        "Opinions",
+        "Agenda and Events",
+        "Press Releases",
+        "Reports",
+        "Summaries"
+      ]
+    },
+    {
+      "contentSource": "Council of the EU",
+      "informationTypes": [
+        "Draft Directives",
+        "Notices",
+        "Reports",
+        "Background Documents",
+        "Statement Text",
+        "Information",
+        "Decisions",
+        "Press Releases",
+        "Conclusions",
+        "Speeches",
+        "Draft Regulations",
+        "Draft Conclusions",
+        "Draft Decisions",
+        "Announcements",
+        "Recommendations",
+        "Agenda and Events",
+        "General Approaches",
+        "Directives",
+        "Regulations"
+      ]
+    },
+    {
+      "contentSource": "Court of Justice of the EU",
+      "informationTypes": [
+        "Notices",
+        "Opinions",
+        "Information",
+        "Judgements",
+        "Agenda and Events",
+        "Announcements",
+        "Press Releases"
+      ]
+    },
+    {
+      "contentSource": "Dods EU",
+      "informationTypes": [
+        "Reports",
+        "Fortnightly Update",
+        "Question Time Summary",
+        "New and Change to Business",
+        "Dods Monitoring Daily",
+        "Dods Marketing",
+        "The Grid",
+        "Breaking Announcements",
+        "Weekly Update",
+        "Brexit Bulletin",
+        "Reviews",
+        "Committee Summary",
+        "Consultation Tracker",
+        "Westminster Weekly Business",
+        "Monthly Update",
+        "Stakeholder Bullet",
+        "Week in Politics",
+        "Debate Summary",
+        "Dods Test",
+        "Devolved Weekly Business",
+        "News"
+      ]
+    },
+    {
+      "contentSource": "EFTA Surveillance Authority",
+      "informationTypes": [
+        "Decisions"
+      ]
+    },
+    {
+      "contentSource": "EU Agencies and Other Bodies",
+      "informationTypes": [
+        "Consultations",
+        "Speeches",
+        "Reports",
+        "Decisions",
+        "Agenda and Events",
+        "Notices",
+        "Press Releases",
+        "Announcements",
+        "Information",
+        "Statement Text",
+        "Opinions",
+        "Tenders and Calls",
+        "Summaries"
+      ]
+    },
+    {
+      "contentSource": "EU and Non EU Bodies",
+      "informationTypes": [
+        "International Agreements",
+        "Decisions",
+        "Regulations",
+        "Announcements",
+        "Information",
+        "Notices"
+      ]
+    },
+    {
+      "contentSource": "EU Media",
+      "informationTypes": [
+        "News"
+      ]
+    },
+    {
+      "contentSource": "European Central Bank",
+      "informationTypes": [
+        "Decisions",
+        "Notices",
+        "Announcements",
+        "Speeches",
+        "Press Releases",
+        "Reports",
+        "Information",
+        "Statement Text",
+        "Guidelines",
+        "Opinions",
+        "Agenda and Events"
+      ]
+    },
+    {
+      "contentSource": "European Commission",
+      "informationTypes": [
+        "Notices",
+        "Draft Decisions",
+        "Directives",
+        "Decisions",
+        "Information",
+        "Speeches",
+        "Announcements",
+        "Draft Regulations",
+        "Press Releases",
+        "Statement Text",
+        "Recommendations",
+        "Background Documents",
+        "Agenda and Events",
+        "Reports",
+        "Minutes",
+        "Consultations",
+        "Tenders and Calls",
+        "Regulations",
+        "Draft Directives",
+        "Communications"
+      ]
+    },
+    {
+      "contentSource": "European Council",
+      "informationTypes": [
+        "Speeches",
+        "Information",
+        "Announcements",
+        "Conclusions",
+        "Notices",
+        "Statement Text",
+        "Agenda and Events"
+      ]
+    },
+    {
+      "contentSource": "European Court of Auditors",
+      "informationTypes": [
+        "Announcements",
+        "Statement Text",
+        "Press Releases",
+        "Speeches",
+        "Notices",
+        "Agenda and Events",
+        "Reports",
+        "Opinions",
+        "Information"
+      ]
+    },
+    {
+      "contentSource": "European Economic and Social Committee",
+      "informationTypes": [
+        "Summaries",
+        "Opinions",
+        "Reports",
+        "Agenda and Events",
+        "Press Releases"
+      ]
+    },
+    {
+      "contentSource": "European External Action Services",
+      "informationTypes": [
+        "Press Releases",
+        "Agenda and Events",
+        "Speeches",
+        "Statement Text",
+        "Reports"
+      ]
+    },
+    {
+      "contentSource": "European Parliament",
+      "informationTypes": [
+        "Agenda and Events",
+        "Written Questions",
+        "Draft Reports",
+        "Information",
+        "Minutes",
+        "Notices",
+        "Reports",
+        "Research Papers",
+        "Opinions",
+        "Draft Motions",
+        "Oral Questions Tabled",
+        "Draft Opinions",
+        "Press Releases",
+        "Written Answers",
+        "Texts Adopted",
+        "Amendments",
+        "Motions",
+        "Background Documents",
+        "Announcements"
+      ]
+    },
+    {
+      "contentSource": "European Parliament and Council of the EU",
+      "informationTypes": [
+        "Directives",
+        "Regulations"
+      ]
+    },
+    {
+      "contentSource": "EU Stakeholder",
+      "informationTypes": [
+        "Consultations",
+        "Agenda and Events",
+        "Speeches",
+        "Press Releases",
+        "Statement Text",
+        "Reports"
+      ]
+    },
+    {
+      "contentSource": "International Organisations",
+      "informationTypes": [
+        "Speeche",
+        "Reports",
+        "Agenda and Events",
+        "Press Releases"
+      ]
+    },
+    {
+      "contentSource": "Member States",
+      "informationTypes": [
+        "Decisions",
+        "Information",
+        "Notices",
+        "Announcements"
+      ]
+    },
+    {
+      "contentSource": "Non EU Bodies",
+      "informationTypes": [
+        "Information",
+        "Announcements",
+        "Recommendations",
+        "Decisions",
+        "Notices",
+        "International Agreements",
+        "Regulations"
+      ]
+    }
+  ]
+}

@@ -11,10 +11,10 @@ import SectionAccordion from '@dods-ui/components/SectionAccordion';
 import { ContentTag } from '@dods-ui/components/WysiwygEditor';
 import * as Validation from '@dods-ui/utils/validation';
 import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import JsxParser from 'react-jsx-parser';
 
-import * as Styled from './editorial-from.styles';
+import * as Styled from './editorial-form.styles';
 
 export interface EditorialFormFields {
   sourceName: string;
@@ -33,7 +33,9 @@ export interface EditorialFormProps {
   contentSourceValues: SelectItem[];
   tags?: TagsData[];
   onTagsChange: (tags: TagsData[]) => void;
-  isEdit?: boolean;
+  articleId?: string;
+  savedContent?: string;
+  savedDocumentTags?: TagsData[];
 }
 
 type TextSelection = {
@@ -55,6 +57,8 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   contentSourceValues,
   tags = [],
   onTagsChange,
+  savedContent,
+  savedDocumentTags,
 }) => {
   const [selectedText, setSelectedText] = useState<string>();
   const [selectedTextOccurrences, setSelectedTextOccurrences] = useState<number>();
@@ -64,7 +68,6 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
     !Validation.validateRequired(value as string)
       ? (formErrors[fieldName] = 'This field is required')
       : delete formErrors[fieldName];
-
     setErrors(formErrors);
   };
 
@@ -87,6 +90,21 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
     setSelectedText(undefined);
     setSelectedTextOccurrences(undefined);
   };
+
+  const editor = useMemo(
+    () => (
+      <WysiwygEditor
+        placeholder={'Type or paste your content here'}
+        onTextChange={(value) => onFieldChange('content', value)}
+        tags={getContentTags(tags)}
+        onSelection={onEditorTextSelection}
+        savedContent={savedContent}
+      >
+        <JsxParser jsx={fieldData.content} />
+      </WysiwygEditor>
+    ),
+    [tags, fieldData.content],
+  );
 
   return (
     <Styled.mainColumns>
@@ -142,16 +160,12 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
             />
           </Styled.inputFields>
         </SectionAccordion>
-
         <Spacer size={10} />
-
         <SectionHeader
           title="Edit content"
           icon={<Icon src={Icons.Edit} size={IconSize.xlarge} />}
         />
-
         <Spacer size={7.5} />
-
         <InputText
           id="title"
           testId={'title'}
@@ -162,23 +176,16 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
           required
           onChange={(value) => onFieldChange('title', value)}
         />
-
         <Spacer size={7.5} />
-
-        <WysiwygEditor
-          placeholder={'Type or paste your content here'}
-          onTextChange={(value) => onFieldChange('content', value)}
-          tags={getContentTags(tags)}
-          onSelection={onEditorTextSelection}
-        >
-          <JsxParser jsx={fieldData.content.toString()} />
-        </WysiwygEditor>
+        {editor}
       </div>
-
       <ContentTagger
         highlight={selectedText}
         highlightWordCount={selectedTextOccurrences}
-        tags={tags}
+        tags={[
+          ...(savedDocumentTags || []).map((tag) => ({ ...tag, type: tag.facetType })),
+          ...tags,
+        ]}
         setTags={onTagsChange}
       />
     </Styled.mainColumns>

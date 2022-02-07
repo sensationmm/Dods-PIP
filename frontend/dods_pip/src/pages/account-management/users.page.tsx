@@ -19,7 +19,7 @@ import Pagination from '../../components/Pagination';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import useDebounce from '../../lib/useDebounce';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
 import { getUserName } from '../../utils/string';
@@ -98,7 +98,7 @@ export const Users: React.FC<UsersProps> = ({ setLoading, addNotification }) => 
     setLoading(true);
     const queryString = getFilterQueryString();
     try {
-      const results = await fetchJson(`${BASE_URI}${Api.Users}${queryString}`, {
+      const results = await fetchJson<CustomResponse>(`${BASE_URI}${Api.Users}${queryString}`, {
         method: 'GET',
       });
       const { data = [], totalRecords } = results;

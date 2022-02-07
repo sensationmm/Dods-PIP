@@ -13,7 +13,7 @@ import Button from '../../../components/Button';
 import { Icons } from '../../../components/Icon/assets';
 import color from '../../../globals/color';
 import { PushNotificationProps } from '../../../hoc/LoadingHOC';
-import fetchJson from '../../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../../lib/fetchJson';
 import { Api, BASE_URI } from '../../../utils/api';
 import * as Validation from '../../../utils/validation';
 import * as Styled from './index.styles';
@@ -111,7 +111,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
     }
 
     try {
-      const response = await fetchJson(uri, {
+      const response = await fetchJson<CustomResponse>(uri, {
         method,
         body: JSON.stringify(body),
       });
@@ -152,7 +152,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
       delete formErrors.accountName;
     } else {
       delete formErrors.accountName;
-      const response = await fetchJson(`${BASE_URI}${Api.CheckAccountName}`, {
+      const response = await fetchJson<CustomResponse>(`${BASE_URI}${Api.CheckAccountName}`, {
         body: JSON.stringify({ name: trim(accountName) }),
       });
 

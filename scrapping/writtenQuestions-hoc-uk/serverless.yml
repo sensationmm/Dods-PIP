@@ -78,9 +78,9 @@ functions:
     name: scraper-writtenQuestions-hoc-uk-${sls:stage}
     description: Ingest Written Questions HOC (UK) data
     handler: handler.run
-    events:
+    #events:
       ## Invoke Lambda function on Mon-Fri at 15:05
-      - schedule: cron(00 22 ? * MON-FRI *)
+    #  - schedule: cron(00 22 ? * MON-FRI *)
       ## Invoke lambda once a day
       # - schedule: rate(1 day)
 

@@ -14,7 +14,7 @@ import Popover from '../../components/Popover';
 import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
 import { PushNotificationProps } from '../../hoc/LoadingHOC';
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import { Api, BASE_URI } from '../../utils/api';
 import { getUserName } from '../../utils/string';
@@ -74,9 +74,12 @@ const Summary: React.FC<SummaryProps> = ({
     }
 
     // get account info
-    const response = await fetchJson(`${BASE_URI}${Api.ClientAccount}/${accountId}`, {
-      method: 'GET',
-    });
+    const response = await fetchJson<CustomResponse>(
+      `${BASE_URI}${Api.ClientAccount}/${accountId}`,
+      {
+        method: 'GET',
+      },
+    );
     const { data = {} } = response;
     const { uuid = '' } = data;
     if (uuid === accountId) {

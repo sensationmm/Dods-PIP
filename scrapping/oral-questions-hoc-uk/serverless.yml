@@ -75,8 +75,8 @@ functions:
     name: scraper-oral-questions-hoc-uk-${sls:stage}
     description: Ingest Oral Questions HOC (UK) data
     handler: handler.run
-    events:
-      - schedule: cron(00 22 ? * MON-FRI *)
+    #events:
+     # - schedule: cron(00 22 ? * MON-FRI *)
 
 resources:
   Resources:

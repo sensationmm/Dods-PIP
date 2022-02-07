@@ -19,7 +19,7 @@ import Pagination from '../../components/Pagination';
 import Text from '../../components/Text';
 import color from '../../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../../hoc/LoadingHOC';
-import fetchJson from '../../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../../lib/fetchJson';
 import useDebounce from '../../lib/useDebounce';
 import useSubscriptionTypes from '../../lib/useSubscriptionTypes';
 import { Api, BASE_URI, toQueryString } from '../../utils/api';
@@ -152,9 +152,12 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
     setLoading(true);
     const queryString = getFilterQueryString();
     try {
-      const results = await fetchJson(`${BASE_URI}${Api.ClientAccount}${queryString}`, {
-        method: 'GET',
-      });
+      const results = await fetchJson<CustomResponse>(
+        `${BASE_URI}${Api.ClientAccount}${queryString}`,
+        {
+          method: 'GET',
+        },
+      );
       const { data = [], totalRecords } = results;
       setAccountsList(data as ClientAccounts);
       setTotal(totalRecords as number);
