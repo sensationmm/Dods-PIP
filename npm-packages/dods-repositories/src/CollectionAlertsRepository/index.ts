@@ -19,7 +19,9 @@ import {
     UpdateAlertQuery,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters
+    setAlertScheduleParameters,
+    createESQueryParameters,
+    updateAlertElasticQueryParameters,
 } from './domain';
 import {
     AlertDocumentInput,
@@ -442,6 +444,10 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         const newAlertQuery = await CollectionAlertQuery.create(createAlertQuery);
         await newAlertQuery.reload({ include: ['createdById'] });
+
+        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alert.uuid}
+        await this.updateAlertElasticQuery(alertUpdateParams)
+
         return await mapAlertQuery(newAlertQuery, alert);
     }
 
@@ -596,6 +602,9 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             include: ['createdById', 'updatedById'],
         });
 
+        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alert.uuid}
+        await this.updateAlertElasticQuery(alertUpdateParams)
+
         return await mapAlertQuery(updateQuery, alert);
     }
 
@@ -656,6 +665,9 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         const createdQueries = await updatedAlert.getAlertQueries({ include: ['createdById', 'updatedById'] });
 
+        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alertId}
+        await this.updateAlertElasticQuery(alertUpdateParams)
+
         return {
             alert: await mapAlert(updatedAlert),
             queries: await Promise.all(
@@ -711,6 +723,116 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
 
         return mapAlert(alert);
+    }
+
+    async updateAlertElasticQuery(alertParam: updateAlertElasticQueryParameters) {
+        const alertId = alertParam.alertId
+        const alert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true,
+            },
+        });
+        if (!alert) {
+            throw new CollectionError(`Error: could not retrieve alert with uuid: ${alertId}`);
+        }
+
+        const getAlertQueriesParams: SearchAlertQueriesParameters = {alertId: alertId, limit: "100", offset: "0"}
+        const alertQueries = await this.getAlertQueries(getAlertQueriesParams)
+        const alertQueriesString = alertQueries.queries.map(o => o.query).join(" ");
+
+        const createESParams: createESQueryParameters = {query: alertQueriesString}
+        const elasticQuery = await this.createElasticQuery(createESParams)
+
+        await alert.update({
+            elasticQuery
+        })
+    }
+
+    async createElasticQuery(queryString: createESQueryParameters) {
+        const notTopicsRe = /not topics\((.*?)\)/ig
+        const notKeywordsRe = /not keywords\((.*?)\)/ig
+        const topicsRe = /topics\((.*?)\)/ig
+        const keywordsRe = /keywords\((.*?)\)/ig
+
+        const notTopicMatches = Array.from(queryString.query.matchAll(notTopicsRe), m => m[1]);
+        const cleanNotTopics = notTopicMatches.map((query_string) => this.clean_query_strings(query_string));
+        const notTopics = ([] as string[]).concat.apply([], cleanNotTopics)
+
+        const notKeywordMatches = Array.from(queryString.query.matchAll(notKeywordsRe), m => m[1]);
+        const cleanNotKeywords = notKeywordMatches.map((query_string) => this.clean_query_strings(query_string));
+        const notKeywords = ([] as string[]).concat.apply([], cleanNotKeywords)
+
+        const positiveString = queryString.query.replace(notTopicsRe, '').replace(notKeywordsRe, '')
+
+        const topicMatches = Array.from(positiveString.matchAll(topicsRe), m => m[1]);
+        const cleanTopics = topicMatches.map((query_string) => this.clean_query_strings(query_string));
+        const topics = ([] as string[]).concat.apply([], cleanTopics)
+
+        const keywordMatches = Array.from(positiveString.matchAll(keywordsRe), m => m[1]);
+        let cleanKeywords = keywordMatches.map((query_string) => this.clean_query_strings(query_string));
+        const keywords = ([] as string[]).concat.apply([], cleanKeywords)
+
+        let query: any = {
+            query: {
+                bool: {
+                    should: [],
+                    must_not: []
+                }
+            }
+        }
+
+
+        notKeywords.forEach(notKeyword => {
+            query.query.bool.must_not.push(...[
+                {term: {documentTitle: notKeyword}},
+                {term: {documentContent: notKeyword}}
+            ])
+        })
+        notTopics.forEach(notTopic => {
+            query.query.bool.must_not.push(...[
+                {
+                    nested: {
+                        path: "taxonomyTerms",
+                        query: {
+                            match: { "taxonomyTerms.termLabel.keyword": notTopic }
+                        }
+                    }
+                }
+            ])
+        })
+
+        keywords.forEach(keyword => {
+            query.query.bool.should.push(...[
+                {term: {documentTitle: keyword}},
+                {term: {documentContent: keyword}}
+            ])
+        })
+        topics.forEach(topic => {
+            query.query.bool.should.push(...[
+                {
+                    nested: {
+                        path: "taxonomyTerms",
+                        query: {
+                            match: { "taxonomyTerms.termLabel.keyword": topic }
+                        }
+                    }
+                }
+            ])
+        })
+
+        return JSON.stringify(query)
+    }
+
+    clean_query_strings(query_string: string): Array<string> {
+        let cleaned_queries: string[] = []
+        let queries = query_string.split('OR')
+        queries.forEach(query => {
+            query = query.trim().replace(/"$/, '').replace(/^"/, '')
+            cleaned_queries.push(query)
+        })
+
+        return cleaned_queries
     }
 
 }

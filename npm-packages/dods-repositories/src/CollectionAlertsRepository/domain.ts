@@ -10,6 +10,7 @@ export interface AlertOutput {
         }
     }
     template?: { id: number, name: string }
+    elasticQuery?: string;
     title: string;
     description?: string | null;
     schedule?: string | null;
@@ -210,4 +211,12 @@ export interface UpdateAlertParameters {
 export interface AlertWithQueriesOutput {
     alert: AlertOutput,
     queries: AlertQueryResponse[]
+}
+
+export interface createESQueryParameters {
+    query: string;
+}
+
+export interface updateAlertElasticQueryParameters {
+    alertId: string;
 }
