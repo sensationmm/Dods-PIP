@@ -255,17 +255,6 @@
       ]
     },
     {
-      "contentSource": "UK Media",
-      "informationTypes": [
-        "Speeches",
-        "Reports",
-        "Statistics",
-        "Consultations",
-        "Press Releases",
-        "News"
-      ]
-    },
-    {
       "contentSource": "UK Parliament",
       "informationTypes": [
         "Press Releases",
@@ -278,6 +267,17 @@
         "Statutory Instruments",
         "Corrected Oral Evidence",
         "Bills"
+      ]
+    },
+    {
+      "contentSource": "UK Stakeholder",
+      "informationTypes": [
+        "Speeches",
+        "Reports",
+        "Statistics",
+        "Consultations",
+        "Press Releases",
+        "News"
       ]
     },
     {
