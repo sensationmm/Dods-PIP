@@ -633,6 +633,8 @@ components:
               type: string
             sourceReferenceUri:
               type: string
+            originator:
+              type: string
             taxonomyTerms:
               items:
                 $ref: '#/components/schemas/TaxonomyTerm'
