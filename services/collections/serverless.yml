@@ -347,3 +347,13 @@ functions:
           path: /collections/processImmediateAlert
           caching:
             enabled: false
+
+  triggerInstantAlert:
+    handler: src/handlers/triggerInstantAlert/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: /collections/triggerInstantAlert
+          caching:
+            enabled: false
