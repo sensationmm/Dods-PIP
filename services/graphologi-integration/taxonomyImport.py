@@ -107,6 +107,7 @@ def handle(event, context):
                       "termLabel": row['label'],
                       "rank": len(ancestorTerms)
                     })
+                    ancestorTerms = list(set(ancestorTerms))
                     taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
                     taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
                     tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short, taxo_df_labeled))
@@ -160,6 +161,7 @@ def updateHierarchy(df, taxonomy_short, taxo_df_labeled):
           "termLabel": df['label'].iloc()[0],
           "rank": len(ancestorTerms)
         })
+        ancestorTerms = list(set(ancestorTerms))
         taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
         taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
         branch_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short, taxo_df_labeled))

@@ -7,6 +7,7 @@ import Radio from '@dods-ui/components/_form/Radio';
 import Select from '@dods-ui/components/_form/Select';
 import Toggle from '@dods-ui/components/_form/Toggle';
 import Spacer from '@dods-ui/components/_layout/Spacer';
+import { parseScheduleCron } from '@dods-ui/components/Alert';
 import Button from '@dods-ui/components/Button';
 import DayPicker, { DayType } from '@dods-ui/components/DayPicker';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
@@ -18,14 +19,26 @@ import React from 'react';
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep4: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
-  const [isScheduled, setIsScheduled] = React.useState<boolean>(true);
+const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert }) => {
+  const [isScheduled, setIsScheduled] = React.useState<boolean>(
+    alert.isScheduled ? alert.isScheduled : true,
+  );
   const [isSpecific, setIsSpecific] = React.useState<boolean>(true);
-  const [timezone, setTimezone] = React.useState<string>('');
+  const [timezone, setTimezone] = React.useState<string>(alert.timezone || '');
   const [days, setDays] = React.useState<DayType[]>([]);
   const [times, setTimes] = React.useState<Array<string>>([]);
-  const [hasKeywordHighlight, setHasKeywordHighlight] = React.useState<string>('');
-  const [alertTemplateId, setAlertTemplateId] = React.useState<string>('');
+  const [hasKeywordHighlight, setHasKeywordHighlight] = React.useState<string>(
+    alert.hasKeywordsHighlight ? (alert.hasKeywordsHighlight === true ? 'yes' : 'no') : '',
+  );
+  const [alertTemplateId, setAlertTemplateId] = React.useState<string>(
+    alert.template?.id ? (alert.template.id === 1 ? 'full' : 'snippet') : '',
+  );
+
+  React.useEffect(() => {
+    const { deliveryDays, deliveryTimes } = parseScheduleCron(alert.schedule as string);
+    setDays(deliveryDays);
+    setTimes(deliveryTimes);
+  }, []);
 
   React.useEffect(() => {
     if (!isSpecific) {
@@ -266,7 +279,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ setActiveStep, editAlert }) => {
         />
         <Button
           inline
-          label="Publish Alert"
+          label={alert.isPublished ? 'Save Alert' : 'Publish Alert'}
           icon={Icons.ChevronRightBold}
           iconAlignment="right"
           onClick={() =>

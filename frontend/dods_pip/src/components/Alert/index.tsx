@@ -29,10 +29,15 @@ export interface AlertProps extends AlertData {
   onViewResults: () => void;
 }
 
-const parseScheduleCron = (schedule: string) => {
+type ScheduleCron = {
+  deliveryDays: DayType[];
+  deliveryTimes: Array<string>;
+};
+
+export const parseScheduleCron = (schedule: string): ScheduleCron => {
   if (schedule) {
     const cronParts = schedule.split(' ');
-    const deliveryDays = cronParts[5].split(',');
+    const deliveryDays = cronParts[5].split(',') as ScheduleCron['deliveryDays'];
     const deliveryTimes = cronParts[2].split(',').map((time) => `${time}:00`);
 
     return { deliveryDays, deliveryTimes };

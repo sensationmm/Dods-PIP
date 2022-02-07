@@ -365,10 +365,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             publish
             schedule
             showDeleteButton={isEditMode}
-            publishDisabled={!isValidForm}
-            scheduleDisabled={!isValidForm}
-            saveAndExitDisabled={!isValidForm}
-            onSaveAndExit={isEditMode ? onUpdateAndExit : onSaveAndExit}
+            isValidForm={isValidForm}
+            onSaveAndExit={() => (isEditMode ? onUpdateAndExit() : onSaveAndExit())}
             onPublish={isEditMode ? onUpdateAndPublish : onSaveAndPublish}
             onPreview={isEditMode ? onPreviewUpdate : onPreview}
             onDelete={onDelete}

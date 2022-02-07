@@ -4,6 +4,7 @@ import {
     BelongsToGetAssociationMixin,
     BelongsToSetAssociationMixin,
     DataTypes,
+    HasManyRemoveAssociationsMixin,
     Model,
     Optional,
 } from 'sequelize';
@@ -105,6 +106,7 @@ export class CollectionAlert extends Model<AlertAttributes, AlertInput> implemen
     public getAlertQueries!: HasManyGetAssociationsMixin<CollectionAlertQuery>;
     public hasAlertQuery!: HasManyHasAssociationMixin<CollectionAlertQuery, number>;
     public countAlertQueries!: HasManyCountAssociationsMixin;
+    public removeAlertQueries!: HasManyRemoveAssociationsMixin<CollectionAlertQuery, number>;
 
     public static associations: {
         collection: Association<CollectionAlert, Collection>;
@@ -121,9 +123,9 @@ export class CollectionAlert extends Model<AlertAttributes, AlertInput> implemen
     // Custom Methods
     public async updateQueryExecution(): Promise<void> {
         this.setAttributes({
-            lastExecutedAt: new Date()
+            lastExecutedAt: new Date(),
         });
-        await this.save()
+        await this.save();
     }
 }
 

@@ -10,7 +10,7 @@ import AlertSetup, { AlertSetupType } from './alert-setup';
 
 interface AddAlertProps extends LoadingHOCProps {}
 
-export const AddAlert: React.FC<AddAlertProps> = ({ setLoading }) => {
+export const AddAlert: React.FC<AddAlertProps> = ({ setLoading, addNotification }) => {
   const router = useRouter();
   const { uuid: collectionId = '' } = router.query;
   const [collection, setCollection] = React.useState<Collection>();
@@ -67,6 +67,7 @@ export const AddAlert: React.FC<AddAlertProps> = ({ setLoading }) => {
         accountName={collection.clientAccount.name}
         alert={alert}
         setAlert={setAlert}
+        addNotification={addNotification}
       />
     </div>
   );

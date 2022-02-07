@@ -547,7 +547,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const sPayload = JSON.stringify(payload.payload);
     apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
-      body: JSON.stringify({ query: sPayload }),
+      body: JSON.stringify(sPayload),
       method: 'POST',
     })) as IResponse;
   } catch (error) {

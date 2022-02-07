@@ -2,9 +2,10 @@ const { Client } = require('@elastic/elasticsearch')
 
 import {
     GetContentParameters,
+    updatePercolatorParameters,
+    deletePercolatorParameters,
     RawQueryParameters,
     createPercolatorParameters,
-    updatePercolatorParameters
 } from "../domain";
 
 import { Search } from "./Search"
@@ -38,9 +39,10 @@ export class SearchRepository implements Search {
         };
     }
 
-    async rawQuery(query: RawQueryParameters) {
-
-        const fullQuery = { index: 'content', body: query.query }
+    async rawQuery(params: RawQueryParameters) {
+        const { query, aggregations, size, from } = params;
+        
+        const fullQuery = { index: 'content', body: { query, aggs: aggregations, size, from } }
 
         const response = await this.elasticsearch.search(fullQuery)
 
@@ -48,6 +50,7 @@ export class SearchRepository implements Search {
     }
 
     async createPercolator(data: createPercolatorParameters): Promise<any> {
+        console.log({ index: 'alerts', id: data.alertId, body: data.query })
         const response = await this.elasticsearch.index({ index: 'alerts', id: data.alertId, body: data.query })
 
         return response['body']
@@ -58,5 +61,11 @@ export class SearchRepository implements Search {
         const createParameters: createPercolatorParameters = { alertId: data.alertId, query: data.query }
 
         return await this.createPercolator(createParameters)
+    }
+
+    async deletePercolator(data: deletePercolatorParameters): Promise<any> {
+        const response = await this.elasticsearch.delete({ index: 'alerts', id: data.alertId })
+
+        return response['body']
     }
 }

@@ -1,5 +1,6 @@
 import {
     AlertByIdOutput,
+    AlertDocumentParameters,
     AlertOutput,
     AlertQueryResponse,
     AlertWithQueriesOutput,
@@ -12,6 +13,7 @@ import {
     DeleteAlertParameters,
     DeleteAlertQueryParameters,
     SearchAlertParameters,
+    SearchAlertParametersById,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
     SetAlertQueriesParameters,
@@ -223,6 +225,50 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             where: {
                 uuid: alertId,
                 collectionId: collection.id,
+                isActive: true,
+            },
+            include: [{
+                model: Collection,
+                as: 'collection',
+                include: [
+                    {
+                        model: ClientAccount,
+                        as: 'clientAccount',
+                    }
+                ]
+            }, 'createdById', 'updatedById', 'alertTemplate'],
+        });
+
+        if (!alert) {
+            throw new CollectionError(`Unable to retrieve Alert with uuid: ${alertId}`);
+        }
+
+        const alertQueryResponse = await this.alertQueryModel.findAndCountAll({
+            where: {
+                alertId: alert.id,
+                isActive: true,
+            },
+        });
+
+        const alertRecipientResponse = await this.recipientModel.findAndCountAll({
+            where: {
+                alertId: alert.id,
+            },
+        });
+
+        return {
+            alert: await mapAlert(alert),
+            searchQueriesCount: alertQueryResponse.count,
+            recipientsCount: alertRecipientResponse.count,
+        };
+    }
+
+    async getAlertById(parameters: SearchAlertParametersById): Promise<AlertByIdOutput> {
+        const { alertId } = parameters;
+
+        const alert = await this.model.findOne({
+            where: {
+                uuid: alertId,
                 isActive: true,
             },
             include: [{
@@ -614,7 +660,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const alertOwner = await this.collectionModel.findOne({
             where: {
                 uuid: collectionId,
-                isActive: true
+                isActive: true,
             },
         });
         if (!alertOwner) {
@@ -636,7 +682,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             where: {
                 uuid: alertId,
             },
-            include: ['collection', 'createdById', 'updatedById']
+            include: ['collection', 'createdById', 'updatedById'],
         });
         if (!updatedAlert) {
             throw new CollectionError(`Error: Alert with uuid: ${alertId} does not exist`);
@@ -646,24 +692,35 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             await updatedAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertQueries });
         }
         await updatedAlert.update({
-            updatedBy: alertUpdater.id
+            updatedBy: alertUpdater.id,
         });
 
         await updatedAlert.reload({ include: ['collection', 'createdById', 'updatedById'] });
 
-        await Promise.all(alertQueries.map((alertQuery) => {
+        await this.alertQueryModel.destroy({
+            where: {
+                alertId: updatedAlert.id,
+            },
+        });
 
-            const createAlertQueryParameters = {
-                alertId: updatedAlert.uuid,
-                query: alertQuery.query,
-                informationTypes: alertQuery.informationTypes,
-                contentSources: alertQuery.contentSources,
-                createdBy: updatedBy
-            }
-            return CollectionAlertsRepository.defaultInstance.createQuery(createAlertQueryParameters);
-        }))
+        await Promise.all(
+            alertQueries.map((alertQuery) => {
+                const createAlertQueryParameters = {
+                    alertId: updatedAlert.uuid,
+                    query: alertQuery.query,
+                    informationTypes: alertQuery.informationTypes,
+                    contentSources: alertQuery.contentSources,
+                    createdBy: updatedBy,
+                };
+                return CollectionAlertsRepository.defaultInstance.createQuery(
+                    createAlertQueryParameters
+                );
+            })
+        );
 
-        const createdQueries = await updatedAlert.getAlertQueries({ include: ['createdById', 'updatedById'] });
+        const createdQueries = await updatedAlert.getAlertQueries({
+            include: ['createdById', 'updatedById'],
+        });
 
         const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alertId}
         await this.updateAlertElasticQuery(alertUpdateParams)
@@ -673,7 +730,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             queries: await Promise.all(
                 createdQueries.map((query) => mapAlertQuery(query, updatedAlert))
             ),
-        }
+        };
     }
 
     async updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput> {
@@ -723,6 +780,34 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
 
         return mapAlert(alert);
+    }
+
+    async createAlertDocumentRecord(parameters: AlertDocumentParameters): Promise<Boolean> {
+        const { documentId, alertId } = parameters;
+        const TbcNumber = 100;
+        const recordsByAlert = await CollectionAlertDocument.count({
+            where: {
+                alertId: alertId
+            }
+        })
+        if (recordsByAlert === TbcNumber) {
+
+            const oldestRecord = await CollectionAlertDocument.findAll({
+                limit: 1,
+                where: {
+                    alertId: alertId
+                },
+                order: [['createdAt', 'ASC']]
+            })
+
+            await oldestRecord[0].destroy()
+        }
+
+        await CollectionAlertDocument.create({
+            alertId,
+            documentId
+        });
+        return true;
     }
 
     async updateAlertElasticQuery(alertParam: updateAlertElasticQueryParameters) {
