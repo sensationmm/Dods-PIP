@@ -133,19 +133,14 @@ export class DocumentRepository implements DocumentPersister {
     }
 
     async sendEmail(parameters: any, baseURL: string): Promise<Object> {
-        console.log(baseURL);
         const response = await axios.post(`${baseURL}/email`, parameters);
         const { data: { success, data, error } } = response;
-
         return { success, data: data, error };
     }
 
     async getDocumentById(documentId: string, baseURL: string): Promise<Object> {
-        console.log(baseURL);
         const response = await axios.get(`${baseURL}/search/contents/${documentId}`);
-        console.log(response);
         const { data: { success, data, error } } = response;
-
         return { success, data: data, error };
     }
 }
