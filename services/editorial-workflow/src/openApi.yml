@@ -245,6 +245,27 @@ paths:
                     $ref: '#/components/responses/Unauthenticated'
                 '403':
                     $ref: '#/components/responses/Unauthorized'
+                    
+    /editorial-record/document/{documentId}/versions:
+        post:
+            summary: Edit over published document
+            parameters:
+                - 
+                    name: documentId
+                    in: path
+                    required: true
+                    description: Document UUID
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    $ref: '#/components/responses/EditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
 
 components:
     parameters:
@@ -772,3 +793,4 @@ components:
                     type: string
                 documentContent:
                     type: string
+                    

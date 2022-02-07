@@ -65,7 +65,7 @@ provider:
         BUCKET_EDITORIAL: dods-${self:provider.stage}-editorial-record-documents
         CONTENT_INDEXER_LAMBDA: content-indexer-${self:provider.stage}
         JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
-
+        
 custom:
     webpack:
         webpackConfig: ./webpack.config.js
@@ -232,5 +232,15 @@ functions:
             - http:
                   method: delete        
                   path: /editorial-record/{recordId}
+                #   caching:
+                    #   enabled: false
+
+    editPublishedDocument:
+        handler: src/handlers/editPublishedDocument/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: post        
+                  path: /editorial-record/document/{documentId}/versions
                 #   caching:
                     #   enabled: false
