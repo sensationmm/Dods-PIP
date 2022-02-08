@@ -193,12 +193,13 @@ const Summary: React.FC<SummaryProps> = ({
     setTeam(team);
   };
 
+  React.useEffect(() => {
+    loadAccount();
+  }, [accountId]);
+
   const subscriptionPlaceholder = 'Subscription type';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
-  const { PaginationButtons, PaginationStats, activePage, numPerPage } = Pagination(
-    consultantsComplete.length,
-    ['5', '10', '20'],
-  );
+
   const initConsultTable = () => {
     const accountManagers = team.filter(
       (team: TeamMember) => team.teamMemberType === TeamMemberType.AccountManager,
@@ -219,13 +220,22 @@ const Summary: React.FC<SummaryProps> = ({
     }
   };
 
+  const customStatsOptions = [
+    { value: '5', label: '5' },
+    { value: '10', label: '10' },
+    { value: '20', label: '20' },
+  ];
+
+  const { PaginationButtons, PaginationStats, activePage, numPerPage } = Pagination(
+    consultantsComplete.length,
+    '5',
+    customStatsOptions,
+    false,
+  );
+
   React.useEffect(() => {
     initConsultTable();
   }, [activePage, team, ready, numPerPage]);
-
-  React.useEffect(() => {
-    loadAccount();
-  }, [accountId]);
 
   const onCloseEditModal = (type: 'editAccountSettings' | 'editSubscription' | 'editTeam') => {
     document.body.style.height = '';
@@ -584,6 +594,7 @@ const Summary: React.FC<SummaryProps> = ({
                 <PaginationStats />
                 <PaginationButtons />
               </Styled.footerPagination>
+              <Spacer size={4} />
             </>
           )}
         </SectionAccordion>
