@@ -1,6 +1,6 @@
 import fetchJson from '../../../lib/fetchJson';
 import withSession, { NextIronRequest } from '../../../lib/session';
-import { Api } from '../../../utils/api';
+import { Api, toQueryString } from '../../../utils/api';
 
 export default withSession(async (req, res) => {
   try {
@@ -18,8 +18,9 @@ export default withSession(async (req, res) => {
 });
 
 const getEditorial = async (req: NextIronRequest) => {
+  const { query } = req;
   return await fetchJson(
-    `${process.env.APP_API_URL}${Api.EditorialRecords}?sortBy=creationDate&sortDirection=desc&limit=1000`,
+    `${process.env.APP_API_URL}${Api.EditorialRecords}${toQueryString(query)}`,
     {
       method: 'GET',
     },
