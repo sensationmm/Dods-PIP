@@ -20,6 +20,7 @@ export interface EditorialRecordAttributes {
     isPublished?: boolean;
     isArchived?: boolean;
     assignedEditorId?: number | null;
+    scheduleDate?: Date | null;
 }
 
 export interface EditorialRecordInput
@@ -40,7 +41,7 @@ export class EditorialRecord
     public contentSource?: string;
     public isPublished?: boolean;
     public isArchived?: boolean;
-
+    public scheduleDate?: Date;
     // mixins for association (optional)
     public assignedEditor?: User;
     public getAssignedEditor!: BelongsToGetAssociationMixin<User>;
@@ -89,6 +90,11 @@ EditorialRecord.init(
             allowNull: false,
             defaultValue: false,
         },
+        scheduleDate: {
+            type: DataTypes.DATE,
+            defaultValue: null,
+            allowNull: true,
+        }
     },
     {
         tableName: 'dods_editorial_records',
