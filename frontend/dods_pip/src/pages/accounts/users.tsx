@@ -9,6 +9,7 @@ import { Icons } from '../../components/Icon/assets';
 import IconButton from '../../components/IconButton';
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
+import Pagination from '../../components/Pagination';
 import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
 import color from '../../globals/color';
@@ -52,9 +53,10 @@ const Users: React.FC<UsersProps> = ({
   setRefetchSeats,
   canAddNewUser = true,
 }) => {
-  const [users, setUsers] = React.useState<TeamUser[]>();
+  const [users, setUsers] = React.useState<TeamUser[]>([]);
   const [remainingSeats, setRemainingSeats] = React.useState<number>();
   const [noRemainingSeatsModal, setNoRemainingSeatsModal] = React.useState(false);
+  const [filteredClientUsers, setFilteredClientUsers] = React.useState<TeamUser[]>([]);
   const router = useRouter();
 
   // featching remainin seats
@@ -117,6 +119,32 @@ const Users: React.FC<UsersProps> = ({
       ? activeUsers + remainingSeats
       : 0;
 
+  const filteredUsersTable = () => {
+    const totalOfElements = activePage * numPerPage;
+    const lastIndex = totalOfElements + numPerPage;
+    const currentItems = clientUsers.slice(totalOfElements, lastIndex);
+    if (currentItems.length > 0) {
+      setFilteredClientUsers(currentItems);
+    }
+  };
+
+  const customStatsOptions = [
+    { value: '5', label: '5' },
+    { value: '10', label: '10' },
+    { value: '20', label: '20' },
+  ];
+
+  const { PaginationButtons, PaginationStats, activePage, numPerPage } = Pagination(
+    clientUsers.length,
+    '5',
+    customStatsOptions,
+    false,
+  );
+
+  React.useEffect(() => {
+    filteredUsersTable();
+  }, [activePage, users, numPerPage]);
+
   const handleAddUser = async () => {
     if (remainingSeats && remainingSeats > 0) {
       router.push(
@@ -174,7 +202,7 @@ const Users: React.FC<UsersProps> = ({
             <PlainTable
               headings={['Name', 'Email', 'Role', '']}
               colWidths={[4, 3, 2, 1]}
-              rows={clientUsers?.map((user, userCount) => {
+              rows={filteredClientUsers?.map((user, userCount) => {
                 const name = getUserName(user);
                 return [
                   accountId,
@@ -199,9 +227,8 @@ const Users: React.FC<UsersProps> = ({
               })}
             />
             <Styled.sumUserNav>
-              <Text type="bodySmall">Total {clientUsers.length} Items</Text>
-              <Text type="bodySmall">Viewing page 1 of 1</Text>
-              <Text type="bodySmall">Items per page 10</Text>
+              <PaginationStats />
+              <PaginationButtons />
             </Styled.sumUserNav>
           </>
         )}
