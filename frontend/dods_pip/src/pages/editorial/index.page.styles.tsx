@@ -13,15 +13,21 @@ export const row = styled.div`
   `}
 `;
 
+export const filters = styled.div`
+  display: grid;
+  grid-template-columns: 3fr 3fr 2fr 2fr 3fr;
+  grid-column-gap: ${spacing(2)};
+`;
+
 export const column = styled.div`
-  *:not(:last-child) {
+  > *:not(:last-child) {
     margin-bottom: ${spacing(3)};
   }
 
   ${media.greaterThan('sm')`
     display: flex;
   
-    *:not(:last-child) {
+    > *:not(:last-child) {
       margin-right: ${spacing(3)};
       margin-bottom: 0
     }
