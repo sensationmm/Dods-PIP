@@ -10,6 +10,7 @@ export interface AlertOutput {
         }
     }
     template?: { id: number, name: string }
+    elasticQuery?: string;
     title: string;
     description?: string | null;
     schedule?: string | null;
@@ -221,4 +222,12 @@ export interface AlertWithQueriesOutput {
 export interface AlertDocumentParameters {
     alertId: number;
     documentId: string;
+}
+
+export interface createESQueryParameters {
+    query: string;
+}
+
+export interface updateAlertElasticQueryParameters {
+    alertId: string;
 }

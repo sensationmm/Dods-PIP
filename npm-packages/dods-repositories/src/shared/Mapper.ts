@@ -31,7 +31,7 @@ export function cloneArray<T, E>(target: T[],
 }
 
 export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => {
-    const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted, lastExecutedAt } = model;
+    const { id, uuid, title, description, schedule, timezone, createdAt, updatedAt, collection, createdById, updatedById, alertTemplate, hasKeywordsHighlight, isScheduled, isPublished, lastStepCompleted, lastExecutedAt, elasticQuery } = model;
 
     return {
         id,
@@ -45,6 +45,7 @@ export const mapAlert = async (model: CollectionAlert): Promise<AlertOutput> => 
             } : undefined
         } : undefined,
         template: alertTemplate ? { id: alertTemplate.id, name: alertTemplate.name } : undefined,
+        elasticQuery,
         schedule,
         timezone,
         createdAt,
