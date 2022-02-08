@@ -27,7 +27,7 @@ taxonomyIRIs = [
 ]
 
 def handle(event, context):
-
+    trees = dict()
     for taxonomyIRI in taxonomyIRIs:
 
         authRequest = requests.post(
@@ -112,6 +112,7 @@ def handle(event, context):
                     tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short, taxo_df_labeled))
                     tree_node['ancestorTerms'] = ancestorTerms
                 tree.append(tree_node)
+            trees[taxonomy_short] = tree
             s3.put_object(Body=(bytes(json.dumps(tree).encode('UTF-8'))), Bucket=os.environ['TAXONOMY_TREE_BUCKET'], Key=taxonomy_short + '.json')
 
 
@@ -127,6 +128,8 @@ def handle(event, context):
 
         print("Imported " + str(taxo_df_labeled.shape[0]))
 
+    s3.put_object(Body=(bytes(json.dumps(trees).encode('UTF-8'))), Bucket=os.environ['TAXONOMY_TREE_BUCKET'], Key='Combined.json')
+    print(f"Added {len(trees)} trees to the combined file")
     return {}
 
 # Create hierarchy
@@ -153,13 +156,13 @@ def updateHierarchy(df, taxonomy_short, taxo_df_labeled):
     }
     if (df['narrower'].empty or df['narrower'].astype(str).iloc[0] == 'nan'):
         return branch_node
+    ancestorTerms.append({
+      "tagId": df['id'].iloc()[0],
+      "termLabel": df['label'].iloc()[0],
+      "rank": len(ancestorTerms)
+    })
     for narrower in df['narrower'].iloc()[0]:
         hierarchy = df['hierarchy'].iloc()[0] + '->' + df['label'].iloc()[0]
-        ancestorTerms.append({
-          "tagId": df['id'].iloc()[0],
-          "termLabel": df['label'].iloc()[0],
-          "rank": len(ancestorTerms)
-        })
         taxo_df_labeled['ancestorTerms'] = np.where(taxo_df_labeled['id'] == narrower, json.dumps(ancestorTerms), taxo_df_labeled['ancestorTerms'])
         taxo_df_labeled['hierarchy'] = np.where(taxo_df_labeled['id'] == narrower, hierarchy, taxo_df_labeled['hierarchy'])
         branch_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short, taxo_df_labeled))
