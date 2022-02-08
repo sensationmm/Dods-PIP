@@ -26,4 +26,5 @@ export interface DocumentPersister {
     publishDocumentV1(lambdaName: string, payload: string): Promise<boolean>;
     sendEmail(parameters: any, baseURL: string): Promise<Object>;
     getDocumentById(documentId: string, baseURL: string): Promise<Object>;
+    deleteSchedule(recordId: string): Promise<object>;
 }

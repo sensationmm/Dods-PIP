@@ -109,6 +109,11 @@ export class DocumentRepository implements DocumentPersister {
         return { response };
     }
 
+    async deleteSchedule(recordId: string): Promise<object> {
+        const response = await axios.delete(`${this.baseURL}/scheduler/${recordId}`);
+        return { response };
+    }
+
     async publishDocumentV1(lambdaName: string, payload: string): Promise<boolean> {
 
         const lambdaClient = new Lambda({ region: process.env.AWS_REGION });

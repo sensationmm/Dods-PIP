@@ -22,6 +22,7 @@ export interface EditorialRecordOutput extends EditorialRecordBase {
     };
     isPublished?: boolean,
     isArchived?: boolean,
+    scheduleDate?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -67,6 +68,11 @@ export interface UpdateEditorialRecordParameters extends Partial<CreateEditorial
 export interface ScheduleEditorialRecordParamateres {
     recordId: string;
     cron: string;
+    date: Date;
+}
+
+export interface UnscheduleEditorialRecordParamateres {
+    recordId: string;
 }
 
 export interface DocumentParameters {
@@ -126,4 +132,6 @@ export interface EditorialRecordPersister {
     archiveEditorialRecord(parameters: ArchiveEditorialRecordParameters): Promise<void>;
 
     scheduleEditorialRecord(parameters: ScheduleEditorialRecordParamateres): Promise<EditorialRecordOutput>;
+
+    unscheduleEditorialRecord(recordId: string): Promise<void>;
 }
