@@ -39,6 +39,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             assignedEditor,
             createdAt,
             updatedAt,
+            scheduleDate,
         } = model;
 
         return {
@@ -61,6 +62,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
                 : undefined,
             isPublished: isPublished ? true : false,
             isArchived: isArchived ? true : false,
+            scheduleDate: scheduleDate,
             createdAt,
             updatedAt,
         };
@@ -192,7 +194,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
     }
 
     async scheduleEditorialRecord(parameters: ScheduleEditorialRecordParamateres): Promise<EditorialRecordOutput> {
-        const { recordId } = parameters;
+        const { recordId, date } = parameters;
 
         const record = await this.editorialRecordModel.findOne({
             where: {
@@ -214,6 +216,7 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
         }
 
         await this.setStatusToRecord(record, this.recordStatuses.scheduled)
+        await record?.update({ 'scheduleDate': date })
 
         await record.reload({
             include: ['status', 'assignedEditor'],
@@ -286,7 +289,25 @@ export class EditorialRecordRepository implements EditorialRecordPersister {
             }
         });
 
+
         await record?.update({ 'assignedEditorId': null })
+
+    }
+
+    async unscheduleEditorialRecord(recordId: string): Promise<void> {
+
+        const record = await this.editorialRecordModel.findOne({
+            where: {
+                uuid: recordId,
+            }
+        });
+        if (!record) {
+            throw new EditorialRecordError(`Unable to retrieve Editorial Record with uuid: ${recordId}`);
+        }
+
+        await this.setStatusToRecord(record, this.recordStatuses.draft)
+
+        await record?.update({ 'scheduleDate': null })
 
     }
 
