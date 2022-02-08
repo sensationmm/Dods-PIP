@@ -79,7 +79,7 @@ def consumer(event, context):
                 content["jurisdiction"] = message['jurisdiction'] if 'jurisdiction' in message else 'UK'
                 content["documentTitle"] = item.revision.localisation.title.text \
                     if item.revision.localisation.title is not None else ""
-                content["organisationName"] = item.organisationname.text if item.organisationname is not None else ""
+                content["originator"] = item.organisationname.text if item.organisationname is not None else ""
                 content["sourceReferenceFormat"] = item.revision.localisation.referenceformat.text \
                     if item.revision.localisation.referenceformat is not None else ""
                 content["sourceReferenceUri"] = item.revision.localisation.referenceuri.text \
