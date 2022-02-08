@@ -96,6 +96,10 @@ export interface UpdateEditorialRecordDocumentParameter extends DocumentParamete
     recordId: string;
 }
 
+export interface EditPublishedDocumentParameters {
+    documentId: string;
+}
+
 export const RecordStatuses = {
     draft: '89cf96f7-d380-4c30-abcf-74c57843f50c',
     ingested: 'b54bea83-fa06-4bd4-852d-08e5908c55b5',

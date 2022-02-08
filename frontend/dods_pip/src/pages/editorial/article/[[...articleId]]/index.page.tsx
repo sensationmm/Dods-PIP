@@ -27,6 +27,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
+import Modal from '../../../../components/Modal';
 import EditorialForm, { EditorialFormFields } from './editorial-form';
 import ScheduleModal from './schedule-modal';
 
@@ -45,6 +46,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   });
   const [tags, setTags] = React.useState<TagsData[]>([]);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [isAskPublish, setIsAskPublish] = useState<boolean>(false);
   const [fieldData, setFieldData] = useState<EditorialFormFields>({
     content: '',
     title: '',
@@ -341,6 +343,26 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
         <title>Dods PIP | Editorial Repository | {isEditMode ? 'Edit' : 'Create'}</title>
       </Head>
 
+      {isAskPublish && (
+        <Modal
+          title="Do you want to publish this article?"
+          size="large"
+          buttons={[
+            { label: 'Cancel', type: 'secondary', onClick: () => setIsAskPublish(false) },
+            {
+              label: 'Publish now',
+              type: 'primary',
+              onClick: isEditMode ? onUpdateAndPublish : onSaveAndPublish,
+            },
+          ]}
+          buttonAlignment="right"
+          onClose={() => setIsAskPublish(false)}
+          isDismissible={true}
+        >
+          <Text type="bodyLarge">The article will be pusblished and visible to all clients.</Text>
+        </Modal>
+      )}
+
       <Panel bgColor={color.base.white}>
         <Breadcrumbs
           history={[
@@ -367,7 +389,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             showDeleteButton={isEditMode}
             isValidForm={isValidForm}
             onSaveAndExit={() => (isEditMode ? onUpdateAndExit() : onSaveAndExit())}
-            onPublish={isEditMode ? onUpdateAndPublish : onSaveAndPublish}
+            onPublish={() => setIsAskPublish(true)}
             onPreview={isEditMode ? onPreviewUpdate : onPreview}
             onDelete={onDelete}
             onSchedule={() => setShowScheduleModal(true)}
