@@ -1,14 +1,11 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-
-import { EditorialRecordRepository, CreateEditorialRecordParameters, DefaultAwsService, AwsService } from '@dodsgroup/dods-repositories';
-
+import { AwsService, CreateEditorialRecordParameters, DefaultAwsService, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { EditorialDocument, config, } from '../../domain';
 
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 
 const { aws: { region, buckets: { documents: documentsBucket } } } = config;
-
 const awsService: AwsService = new DefaultAwsService(region);
 
 export const isCreateEditorialRecordParameters = (params: any): params is CreateEditorialRecordParameters => 's3Location' in params;
@@ -67,6 +64,7 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
         version: '1.0',
         language: 'en',
         originalContent: '',
+        originator: params.originator ? params.originator : null
     }
     if (!params.taxonomyTerms) {
         params.taxonomyTerms = [];
