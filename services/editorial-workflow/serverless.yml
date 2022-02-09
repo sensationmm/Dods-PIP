@@ -244,3 +244,13 @@ functions:
                   path: /editorial-record/document/{documentId}/versions
                 #   caching:
                     #   enabled: false
+
+    unscheduleEditorialRecord:
+        handler: src/handlers/unscheduleEditorialRecord/index.handle
+        description: Triggered on HTTP request
+        events:
+            - http:
+                  method: delete        
+                  path: /editorial-record/{recordId}/schedule
+                #   caching:
+                    #   enabled: false
