@@ -10,6 +10,7 @@ import { Icons } from '../../components/Icon/assets';
 import IconButton from '../../components/IconButton';
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
+import Pagination from '../../components/Pagination';
 import Popover from '../../components/Popover';
 import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
@@ -67,6 +68,11 @@ const Summary: React.FC<SummaryProps> = ({
   const [editAccountSettings, setEditAccountSettings] = React.useState<boolean>(false);
   const [editSubscription, setEditSubscription] = React.useState<boolean>(false);
   const [editTeam, setEditTeam] = React.useState<boolean>(false);
+
+  const [consultantsComplete, setConsultantsComplete] = React.useState<Array<TeamMember>>([]);
+  const [teamMembers, setTeamMembers] = React.useState<Array<TeamMember>>([]);
+  const [accountManagers, setAccountManagers] = React.useState<Array<TeamMember>>([]);
+  const [consultantsToShow, setConsultantsToShow] = React.useState<Array<TeamMember>>([]);
 
   const loadAccount = async () => {
     if (accountId === '') {
@@ -194,14 +200,42 @@ const Summary: React.FC<SummaryProps> = ({
   const subscriptionPlaceholder = 'Subscription type';
   const { subscriptionList } = useSubscriptionTypes({ placeholder: subscriptionPlaceholder });
 
-  const accountManagers = team.filter(
-    (team: TeamMember) => team.teamMemberType === TeamMemberType.AccountManager,
+  const initConsultTable = () => {
+    const accountManagers = team.filter(
+      (team: TeamMember) => team.teamMemberType === TeamMemberType.AccountManager,
+    );
+
+    const teamMembers = team.filter(
+      (team: TeamMember) => team.teamMemberType === TeamMemberType.TeamMember,
+    );
+    setAccountManagers(accountManagers);
+    setTeamMembers(teamMembers);
+    setConsultantsComplete([...accountManagers, ...teamMembers]);
+
+    const totalOfElements = activePage * numPerPage;
+    const lastIndex = totalOfElements + numPerPage;
+    const currentItems = consultantsComplete.slice(totalOfElements, lastIndex);
+    if (currentItems.length > 0) {
+      setConsultantsToShow(currentItems);
+    }
+  };
+
+  const customStatsOptions = [
+    { value: '5', label: '5' },
+    { value: '10', label: '10' },
+    { value: '20', label: '20' },
+  ];
+
+  const { PaginationButtons, PaginationStats, activePage, numPerPage } = Pagination(
+    consultantsComplete.length,
+    '5',
+    customStatsOptions,
+    false,
   );
 
-  const teamMembers = team.filter(
-    (team: TeamMember) => team.teamMemberType === TeamMemberType.TeamMember,
-  );
-  const consultantsComplete = [...accountManagers, ...teamMembers];
+  React.useEffect(() => {
+    initConsultTable();
+  }, [activePage, team, ready, numPerPage]);
 
   const onCloseEditModal = (type: 'editAccountSettings' | 'editSubscription' | 'editTeam') => {
     document.body.style.height = '';
@@ -492,7 +526,7 @@ const Summary: React.FC<SummaryProps> = ({
               <PlainTable
                 headings={['Consultant', 'Contact', '']}
                 colWidths={[5, 5, 1]}
-                rows={consultantsComplete.map((consultant, consultantCount) => [
+                rows={consultantsToShow.map((consultant, consultantCount) => [
                   accountId,
                   <Styled.sumConsultantAvatar key={`avatar-${consultantCount}`}>
                     <Avatar type="consultant" size="small" alt="consultant" />
@@ -556,6 +590,10 @@ const Summary: React.FC<SummaryProps> = ({
                   />,
                 ])}
               />
+              <Styled.footerPagination>
+                <PaginationStats />
+                <PaginationButtons />
+              </Styled.footerPagination>
               <Spacer size={4} />
             </>
           )}
