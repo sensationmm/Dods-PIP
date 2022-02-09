@@ -1,8 +1,9 @@
-import { CollectionAlertError, CollectionAlertRecipientError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
 import { AlertRecipientInput, ClientAccount, Collection, CollectionAlert, CollectionAlertRecipient, Op, Sequelize, User, WhereOptions } from "@dodsgroup/dods-model";
-import { mapRecipient } from "..";
+import { AlertRecipientsOutput, CollectionAlertRecipientPersister, DeleteAlertRecipientInput, SearchAlertRecipientsInput, SearchAlertRecipientsOutput, SetAlertRecipientsInput, SetAlertRecipientsOutput, UpdateRecipientParameters } from "./domain";
+import { CollectionAlertError, CollectionAlertRecipientError, CollectionError, UserProfileError } from "@dodsgroup/dods-domain";
+
 import { LastStepCompleted } from "../shared/Constants";
-import { CollectionAlertRecipientPersister, SetAlertRecipientsInput, SetAlertRecipientsOutput, DeleteAlertRecipientInput, SearchAlertRecipientsInput, SearchAlertRecipientsOutput, UpdateRecipientParameters, AlertRecipientsOutput } from "./domain";
+import { mapRecipient } from "..";
 
 export * from './domain';
 
@@ -339,5 +340,45 @@ export class CollectionAlertRecipientRepository implements CollectionAlertRecipi
         });
         await updatedRecipient.reload({ include: ['user', 'updatedById', 'createdById'] })
         return await mapRecipient(updatedRecipient);
+    }
+
+    async listAlertRecipients(alertId: string): Promise<Array<AlertRecipientsOutput>> {
+
+        const collectionAlert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true
+            },
+        });
+
+        if (!collectionAlert) {
+            throw new Error('Collection Alert not found');
+        }
+
+
+        const alertRecipents = await CollectionAlertRecipient.findAll({
+            where: { alertId: collectionAlert.id },
+            include: [
+                {
+                    model: User,
+                    as: 'updatedById'
+                },
+                {
+                    model: User,
+                    as: 'createdById'
+                },
+                {
+                    model: User,
+                    as: 'user',
+                    required: true
+                },
+            ],
+        });
+
+
+        const data = await Promise.all(alertRecipents.map(async (row) => await mapRecipient(row)));
+
+
+        return data;
     }
 }

@@ -41,15 +41,26 @@ declare -A project_envs
 
 PROJECTS=()
 for PROJECT in $@; do
+    if [[ ! -d $DIR/../$PROJECT ]]; then
+       echo "$PROJECT is not a folder, skipping ..."
+       continue
+    fi
+
     PROJECT_NAME=${PROJECT##*/}
     PROJECT_FOLDER=${PROJECT%/*}
 
     # Get environments where this project needs to be deployed on
     echo "Working on $PROJECT..."
     if [[ ! -v  'project_envs[$PROJECT_FOLDER]' ]]; then
-       echo "Reading list of environments for $PROJECT_FOLDER"
-       ENVIRONMENTS=$($DIR/list-envs-to-deploy.sh $PROJECT_FOLDER)
-       project_envs[$PROJECT_FOLDER]=$ENVIRONMENTS
+       if [[ -n "$CI_DEPLOY_TO" ]]; then
+          echo "Environments from env-var for $PROJECT_FOLDER"
+          ENVIRONMENTS=$CI_DEPLOY_TO
+          project_envs[$PROJECT_FOLDER]=$ENVIRONMENTS
+       else
+          echo "Reading list of environments for $PROJECT_FOLDER"
+          ENVIRONMENTS=$($DIR/list-envs-to-deploy.sh $PROJECT_FOLDER)
+          project_envs[$PROJECT_FOLDER]=$ENVIRONMENTS
+       fi
     fi
 
     JOB_NAME="deploy_${PROJECT_FOLDER}"

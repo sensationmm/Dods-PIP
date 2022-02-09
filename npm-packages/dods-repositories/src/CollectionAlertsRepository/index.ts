@@ -1,5 +1,6 @@
 import {
     AlertByIdOutput,
+    AlertDocumentParameters,
     AlertOutput,
     AlertQueryResponse,
     AlertWithQueriesOutput,
@@ -12,6 +13,7 @@ import {
     DeleteAlertParameters,
     DeleteAlertQueryParameters,
     SearchAlertParameters,
+    SearchAlertParametersById,
     SearchAlertQueriesParameters,
     SearchCollectionAlertsParameters,
     SetAlertQueriesParameters,
@@ -19,7 +21,9 @@ import {
     UpdateAlertQuery,
     getAlertsByCollectionResponse,
     getQueriesResponse,
-    setAlertScheduleParameters
+    setAlertScheduleParameters,
+    createESQueryParameters,
+    updateAlertElasticQueryParameters,
 } from './domain';
 import {
     AlertDocumentInput,
@@ -259,6 +263,50 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         };
     }
 
+    async getAlertById(parameters: SearchAlertParametersById): Promise<AlertByIdOutput> {
+        const { alertId } = parameters;
+
+        const alert = await this.model.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true,
+            },
+            include: [{
+                model: Collection,
+                as: 'collection',
+                include: [
+                    {
+                        model: ClientAccount,
+                        as: 'clientAccount',
+                    }
+                ]
+            }, 'createdById', 'updatedById', 'alertTemplate'],
+        });
+
+        if (!alert) {
+            throw new CollectionError(`Unable to retrieve Alert with uuid: ${alertId}`);
+        }
+
+        const alertQueryResponse = await this.alertQueryModel.findAndCountAll({
+            where: {
+                alertId: alert.id,
+                isActive: true,
+            },
+        });
+
+        const alertRecipientResponse = await this.recipientModel.findAndCountAll({
+            where: {
+                alertId: alert.id,
+            },
+        });
+
+        return {
+            alert: await mapAlert(alert),
+            searchQueriesCount: alertQueryResponse.count,
+            recipientsCount: alertRecipientResponse.count,
+        };
+    }
+
     async copyQuery(parameters: CopyQueryParameters): Promise<AlertQueryResponse> {
         const { queryId, destinationAlertId, createdBy } = parameters;
 
@@ -442,6 +490,10 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         const newAlertQuery = await CollectionAlertQuery.create(createAlertQuery);
         await newAlertQuery.reload({ include: ['createdById'] });
+
+        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alert.uuid}
+        await this.updateAlertElasticQuery(alertUpdateParams)
+
         return await mapAlertQuery(newAlertQuery, alert);
     }
 
@@ -596,6 +648,9 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             include: ['createdById', 'updatedById'],
         });
 
+        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alert.uuid}
+        await this.updateAlertElasticQuery(alertUpdateParams)
+
         return await mapAlertQuery(updateQuery, alert);
     }
 
@@ -605,7 +660,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const alertOwner = await this.collectionModel.findOne({
             where: {
                 uuid: collectionId,
-                isActive: true
+                isActive: true,
             },
         });
         if (!alertOwner) {
@@ -627,7 +682,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             where: {
                 uuid: alertId,
             },
-            include: ['collection', 'createdById', 'updatedById']
+            include: ['collection', 'createdById', 'updatedById'],
         });
         if (!updatedAlert) {
             throw new CollectionError(`Error: Alert with uuid: ${alertId} does not exist`);
@@ -637,31 +692,45 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             await updatedAlert.update({ lastStepCompleted: LastStepCompleted.SetAlertQueries });
         }
         await updatedAlert.update({
-            updatedBy: alertUpdater.id
+            updatedBy: alertUpdater.id,
         });
 
         await updatedAlert.reload({ include: ['collection', 'createdById', 'updatedById'] });
 
-        await Promise.all(alertQueries.map((alertQuery) => {
+        await this.alertQueryModel.destroy({
+            where: {
+                alertId: updatedAlert.id,
+            },
+        });
 
-            const createAlertQueryParameters = {
-                alertId: updatedAlert.uuid,
-                query: alertQuery.query,
-                informationTypes: alertQuery.informationTypes,
-                contentSources: alertQuery.contentSources,
-                createdBy: updatedBy
-            }
-            return CollectionAlertsRepository.defaultInstance.createQuery(createAlertQueryParameters);
-        }))
+        await Promise.all(
+            alertQueries.map((alertQuery) => {
+                const createAlertQueryParameters = {
+                    alertId: updatedAlert.uuid,
+                    query: alertQuery.query,
+                    informationTypes: alertQuery.informationTypes,
+                    contentSources: alertQuery.contentSources,
+                    createdBy: updatedBy,
+                };
+                return CollectionAlertsRepository.defaultInstance.createQuery(
+                    createAlertQueryParameters
+                );
+            })
+        );
 
-        const createdQueries = await updatedAlert.getAlertQueries({ include: ['createdById', 'updatedById'] });
+        const createdQueries = await updatedAlert.getAlertQueries({
+            include: ['createdById', 'updatedById'],
+        });
+
+        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alertId}
+        await this.updateAlertElasticQuery(alertUpdateParams)
 
         return {
             alert: await mapAlert(updatedAlert),
             queries: await Promise.all(
                 createdQueries.map((query) => mapAlertQuery(query, updatedAlert))
             ),
-        }
+        };
     }
 
     async updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput> {
@@ -711,6 +780,144 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         await alert.reload({ include: ['collection', 'createdById', 'updatedById', 'alertTemplate'] })
 
         return mapAlert(alert);
+    }
+
+    async createAlertDocumentRecord(parameters: AlertDocumentParameters): Promise<Boolean> {
+        const { documentId, alertId } = parameters;
+        const TbcNumber = 100;
+        const recordsByAlert = await CollectionAlertDocument.count({
+            where: {
+                alertId: alertId
+            }
+        })
+        if (recordsByAlert === TbcNumber) {
+
+            const oldestRecord = await CollectionAlertDocument.findAll({
+                limit: 1,
+                where: {
+                    alertId: alertId
+                },
+                order: [['createdAt', 'ASC']]
+            })
+
+            await oldestRecord[0].destroy()
+        }
+
+        await CollectionAlertDocument.create({
+            alertId,
+            documentId
+        });
+        return true;
+    }
+
+    async updateAlertElasticQuery(alertParam: updateAlertElasticQueryParameters) {
+        const alertId = alertParam.alertId
+        const alert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true,
+            },
+        });
+        if (!alert) {
+            throw new CollectionError(`Error: could not retrieve alert with uuid: ${alertId}`);
+        }
+
+        const getAlertQueriesParams: SearchAlertQueriesParameters = {alertId: alertId, limit: "100", offset: "0"}
+        const alertQueries = await this.getAlertQueries(getAlertQueriesParams)
+        const alertQueriesString = alertQueries.queries.map(o => o.query).join(" ");
+
+        const createESParams: createESQueryParameters = {query: alertQueriesString}
+        const elasticQuery = await this.createElasticQuery(createESParams)
+
+        await alert.update({
+            elasticQuery
+        })
+    }
+
+    async createElasticQuery(queryString: createESQueryParameters) {
+        const notTopicsRe = /not topics\((.*?)\)/ig
+        const notKeywordsRe = /not keywords\((.*?)\)/ig
+        const topicsRe = /topics\((.*?)\)/ig
+        const keywordsRe = /keywords\((.*?)\)/ig
+
+        const notTopicMatches = Array.from(queryString.query.matchAll(notTopicsRe), m => m[1]);
+        const cleanNotTopics = notTopicMatches.map((query_string) => this.clean_query_strings(query_string));
+        const notTopics = ([] as string[]).concat.apply([], cleanNotTopics)
+
+        const notKeywordMatches = Array.from(queryString.query.matchAll(notKeywordsRe), m => m[1]);
+        const cleanNotKeywords = notKeywordMatches.map((query_string) => this.clean_query_strings(query_string));
+        const notKeywords = ([] as string[]).concat.apply([], cleanNotKeywords)
+
+        const positiveString = queryString.query.replace(notTopicsRe, '').replace(notKeywordsRe, '')
+
+        const topicMatches = Array.from(positiveString.matchAll(topicsRe), m => m[1]);
+        const cleanTopics = topicMatches.map((query_string) => this.clean_query_strings(query_string));
+        const topics = ([] as string[]).concat.apply([], cleanTopics)
+
+        const keywordMatches = Array.from(positiveString.matchAll(keywordsRe), m => m[1]);
+        let cleanKeywords = keywordMatches.map((query_string) => this.clean_query_strings(query_string));
+        const keywords = ([] as string[]).concat.apply([], cleanKeywords)
+
+        let query: any = {
+            query: {
+                bool: {
+                    should: [],
+                    must_not: []
+                }
+            }
+        }
+
+
+        notKeywords.forEach(notKeyword => {
+            query.query.bool.must_not.push(...[
+                {term: {documentTitle: notKeyword}},
+                {term: {documentContent: notKeyword}}
+            ])
+        })
+        notTopics.forEach(notTopic => {
+            query.query.bool.must_not.push(...[
+                {
+                    nested: {
+                        path: "taxonomyTerms",
+                        query: {
+                            match: { "taxonomyTerms.termLabel.keyword": notTopic }
+                        }
+                    }
+                }
+            ])
+        })
+
+        keywords.forEach(keyword => {
+            query.query.bool.should.push(...[
+                {term: {documentTitle: keyword}},
+                {term: {documentContent: keyword}}
+            ])
+        })
+        topics.forEach(topic => {
+            query.query.bool.should.push(...[
+                {
+                    nested: {
+                        path: "taxonomyTerms",
+                        query: {
+                            match: { "taxonomyTerms.termLabel.keyword": topic }
+                        }
+                    }
+                }
+            ])
+        })
+
+        return JSON.stringify(query)
+    }
+
+    clean_query_strings(query_string: string): Array<string> {
+        let cleaned_queries: string[] = []
+        let queries = query_string.split('OR')
+        queries.forEach(query => {
+            query = query.trim().replace(/"$/, '').replace(/^"/, '')
+            cleaned_queries.push(query)
+        })
+
+        return cleaned_queries
     }
 
 }

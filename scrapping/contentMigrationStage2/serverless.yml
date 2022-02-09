@@ -17,10 +17,10 @@ custom:
   stack_name: ${self:custom.app_acronym}-${self:custom.stage}
   region: ${opt:region, self:provider.region}
   deletion_policy: Delete
-  s3_input_bucket: pip-dev-migration-stage-1-output
-  s3_output_bucket: pip-dev-migration-stage-2-output
+  s3_input_bucket: pip-${self:provider.stage}-migration-stage-1-output
+  s3_output_bucket: pip-${self:provider.stage}-migration-stage-2-output
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
-  queue_name: pip-dev-migration-stage-2-queue.fifo
+  queue_name: pip-${self:provider.stage}-migration-stage-2-queue.fifo
   pythonRequirements:
     pythonBin: python3
 
@@ -52,7 +52,6 @@ provider:
     OUTPUT_BUCKET: ${self:custom.s3_output_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
-    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
     ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
     ES_KEY_ID: ${ssm:/infra/elastic/key_id}
     ES_API_KEY: ${ssm:/infra/elastic/api_key}
@@ -66,7 +65,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "sqs:*"
-      Resource: "arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-2-queue.fifo"
+      Resource: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-2-queue.fifo
 
 functions:
   migrate:
@@ -81,5 +80,5 @@ functions:
     timeout: 30
     events:
       - sqs:
-          arn: arn:aws:sqs:eu-west-1:390773179818:pip-dev-migration-stage-2-queue.fifo
+          arn: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-2-queue.fifo
           batchSize: 1

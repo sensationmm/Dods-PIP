@@ -140,6 +140,29 @@ pipelines:
                 fi
               fi
 
+    build_npm-packages:
+      - variables:
+        - name: SERVICE
+          default: dods-model
+      - step:
+          name: "NPM Packages: Test and Build"
+          image: gioatsomoglobal/devopstools:0.4.5
+          script:
+            - 'echo "Running build for npm-package: ${SERVICE}"'
+            - cd npm-packages/$SERVICE
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from npm-packages/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default npm-package building definitions"
+                if [[ -e 'package.json' ]]; then
+                    ../tools/validate_npm.sh
+                    npm install
+                    npm run build
+                fi
+              fi
+
     deploy_frontend:
       - variables:
         - name: ENVIRONMENT
@@ -170,7 +193,7 @@ pipelines:
             - docker build -t "${IMAGE_NAME}" .
             - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username ${AWS_ECR_USER} --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
             - docker push ${IMAGE_NAME}
-            - ../../tools/ecs_deploy --service-name frontend-service --cluster pip-${ENVIRONMENT,,}-fargate-cluster --image $IMAGE_NAME --skip-deployments-check
+            - ../../tools/ecs_deploy --service-name frontend-service --cluster pip-${ENVIRONMENT,,}-fargate-cluster --image $IMAGE_NAME --skip-deployments-check --timeout 300
             - aws ssm put-parameter --name "frontend-image" --value $IMAGE_NAME --type String --overwrite
 
     deploy_services:
@@ -210,6 +233,34 @@ pipelines:
                 echo "Running default service deployment definitions"
                 npx serverless deploy --stage ${ENVIRONMENT,,}
               fi 
+
+    deploy_npm-packages:
+# This job deploys packages to private NPM repository, so the concept of "envrionment"
+# is moot, asumming always "production" since it is a single NPM instance at the end of the day.
+      - variables:
+        - name: ENVIRONMENT
+          default: "DO NOT CHANGE"
+        - name: SERVICE
+          default: dods-model
+      - step:
+          name: "NPM Package: Deploy to NPM"
+          image: gioatsomoglobal/devopstools:0.4.6
+          script:
+            - 'echo "Running deployment for npm-package: ${SERVICE}"'
+            - cd npm-packages/$SERVICE
+            - |
+              if [[ -e .ci/build.sh ]]; then
+                echo "Running special building definitions from npm-packages/$SERVICE/.ci/build.sh"
+                bash .ci/build.sh
+              else
+                echo "Running default npm-package building definitions"
+                if [[ -e 'package.json' ]]; then
+                    ../tools/validate_npm.sh
+                    npm install
+                    npm run build
+                    npm publish
+                fi
+              fi
 
     deploy_scrapping:
       - variables:

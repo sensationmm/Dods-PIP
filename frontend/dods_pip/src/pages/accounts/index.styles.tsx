@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { secondary, wrapper as btnWrapper } from '../../components/Button/Button.styles';
+import { pages } from '../../components/Pagination/Pagination.styles';
 import {
   content as sectionContent,
   header as sectionHeader,
@@ -93,9 +94,15 @@ export const sumAvatarName = styled.div`
 `;
 
 export const sumUserNav = styled.div`
-  display: flex;
-  justify-content: space-between;
   padding: ${spacing(5)} ${spacing(8)};
+  position: relative;
+
+  ${pages} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 `;
 
 type SumAccountWrapperProps = {
@@ -193,4 +200,19 @@ export const loader = styled.div`
   width: 100%;
   height: 100px;
   margin-bottom: ${spacing(12)};
+`;
+
+export const footerPagination = styled.div`
+  margin-top: ${spacing(10)};
+  margin-bottom: ${spacing(4)};
+  padding-right: ${spacing(10)};
+  padding-left: ${spacing(10)};
+  position: relative;
+
+  ${pages} {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 `;

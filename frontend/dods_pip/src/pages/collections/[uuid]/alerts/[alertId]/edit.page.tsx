@@ -13,7 +13,7 @@ import AlertSetup, { Alert, AlertSetupType } from '../alert-setup';
 
 interface EditAlertProps extends LoadingHOCProps {}
 
-export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
+export const EditAlert: React.FC<EditAlertProps> = ({ setLoading, addNotification }) => {
   const router = useRouter();
   const { uuid: collectionId = '', alertId = '' } = router.query;
   const [alert, setAlert] = React.useState<AlertSetupType>();
@@ -63,6 +63,7 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
           icon: recipient.isDodsUser ? 'consultant' : 'client',
           userData: {
             accountName: recipient.clientAccount.name,
+            isActive: recipient.isActive ? 1 : 0,
           },
         })),
       } as AlertSetupType);
@@ -92,6 +93,7 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading }) => {
         accountName={alert.accountName}
         alert={alert}
         setAlert={setAlert}
+        addNotification={addNotification}
       />
     </div>
   );

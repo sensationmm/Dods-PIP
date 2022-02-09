@@ -15,9 +15,11 @@ import {
 } from '@dods-ui/pages/editorial/editorial.models';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 
-export const getRecords = async (): Promise<EditorialRecordListResponse | undefined> => {
+export const getRecords = async (
+  filters?: string,
+): Promise<EditorialRecordListResponse | undefined> => {
   const response = await fetchJson<EditorialRecordListResponse>(
-    `${BASE_URI}${Api.EditorialRecords}`,
+    `${BASE_URI}${Api.EditorialRecords}${filters}`,
     {
       method: 'GET',
     },

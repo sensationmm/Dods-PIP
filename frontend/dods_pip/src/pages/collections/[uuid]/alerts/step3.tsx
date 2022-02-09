@@ -31,6 +31,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
     alert.recipients && alert.recipients.length > 0 ? alert.recipients : [],
   );
   const [deleteTarget, setDeleteTarget] = React.useState<string>('');
+  const [changed, setChanged] = React.useState<boolean>(false);
 
   const debounceSearchUsers = debounce(async (name: string) => {
     try {
@@ -40,16 +41,15 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {
-        const values = data
-          .filter((item) => (item as UserAccount).isDodsUser)
-          .map((item: UserAccount) => ({
-            value: item.uuid,
-            label: getUserName(item),
-            icon: item.isDodsUser ? 'consultant' : 'client',
-            userData: {
-              accountName: item.clientAccount.name as string,
-            },
-          }));
+        const values = data.map((item: UserAccount) => ({
+          value: item.uuid,
+          label: getUserName(item),
+          icon: item.isDodsUser ? 'consultant' : 'client',
+          userData: {
+            accountName: item.clientAccount.name as string,
+            isActive: item.isActive,
+          },
+        }));
 
         setUserResults(values);
       }
@@ -74,6 +74,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
     setRecipients(recipients.filter((rec) => rec.value !== deleteTarget));
     setShowRemove(false);
     setDeleteTarget('');
+    setChanged(true);
   };
 
   return (
@@ -118,7 +119,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                 .toLowerCase()
                 .search(filter.toLowerCase()) > -1,
           )
-          .map((recipient) => [
+          .map((recipient, count) => [
             recipient.value,
             <Styled.sectionHeader key="title1">
               <Avatar type={recipient.icon as UserType} size="small" />
@@ -128,7 +129,12 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
               <Text>{recipient.userData?.accountName as string}</Text>
             </>,
             <>
-              <Checkbox id="active1" isChecked onChange={console.log} />
+              <Checkbox
+                id={`active-${count}`}
+                isDisabled
+                isChecked={recipient.userData?.isActive === 1}
+                onChange={console.log}
+              />
             </>,
             <>
               <Button
@@ -166,7 +172,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
           label={'Next'}
           icon={Icons.ChevronRightBold}
           iconAlignment="right"
-          onClick={() => editAlert(recipients)}
+          onClick={() => (!changed ? setActiveStep(4) : editAlert(recipients))}
           disabled={recipients.length === 0}
         />
       </Styled.actions>
@@ -195,6 +201,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                 reset();
                 setRecipients([...recipients, ...newRecipients]);
                 setShowAdd(false);
+                setChanged(true);
               },
               disabled: newRecipients.length === 0,
             },

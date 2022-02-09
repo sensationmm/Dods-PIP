@@ -6,9 +6,7 @@ import { SearchRepository } from "../../repositories/SearchRepository";
 
 export const rawQuery = async (requestPayload: RawQueryParameters): Promise<APIGatewayProxyResultV2> => {
 
-    //const query = JSON.parse(JSON.stringify(requestPayload.query).replace(/'/g, '"'))
-    const query = requestPayload.query
-    let es_response = await SearchRepository.defaultInstance.rawQuery(query);
+    let es_response = await SearchRepository.defaultInstance.rawQuery(requestPayload);
 
     return new HttpResponse(HttpStatusCode.OK, {
         es_response

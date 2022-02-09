@@ -16,6 +16,7 @@ export type TeamMember = {
   telephoneNumber1?: string;
   telephoneNumber2?: string;
   accountName?: string;
+  isActive?: number;
 };
 
 export enum TeamMemberType {

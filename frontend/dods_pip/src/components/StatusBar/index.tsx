@@ -19,16 +19,13 @@ export interface StatusBarProps {
   statusBarType?: statusBarTypes;
   dateScheduled?: string;
   saveAndExit?: boolean;
-  scheduleDisabled?: boolean;
   schedule?: boolean;
-  publishDisabled?: boolean;
-  saveAndExitDisabled?: boolean;
   publish?: boolean;
   unschedule?: boolean;
   unpublish?: boolean;
   updateArticle?: boolean;
   showDeleteButton?: boolean;
-
+  isValidForm: boolean;
   onPreview?: () => void;
   onDelete?: () => void;
   onSchedule?: () => void;
@@ -45,9 +42,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
   saveAndExit,
   schedule,
   publish,
-  publishDisabled,
-  scheduleDisabled,
-  saveAndExitDisabled,
+  isValidForm,
   unschedule,
   unpublish,
   updateArticle,
@@ -75,7 +70,13 @@ export const MainContent: React.FC<StatusBarProps> = ({
           bgColor="white"
         />
       </Styled.tagWrapper>
-      <Button type="text" icon={Icons.Show} onClick={onPreview} label="Preview" />
+      <Button
+        type="text"
+        icon={Icons.Show}
+        onClick={onPreview}
+        label="Preview"
+        disabled={!isValidForm}
+      />
       {showDeleteButton && (
         <Button type="text" icon={Icons.Bin} onClick={onDelete} label="Delete" />
       )}
@@ -93,7 +94,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
           <Button
             label="Save and Exit"
             type="secondary"
-            disabled={saveAndExitDisabled}
+            disabled={!isValidForm}
             onClick={onSaveAndExit}
             icon={Icons.Exit}
           />
@@ -106,7 +107,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
             label="Schedule"
             type="secondary"
             icon={Icons.Clock}
-            disabled={scheduleDisabled}
+            disabled={!isValidForm}
             onClick={onSchedule}
           />
         </Styled.buttonSeparator>
@@ -129,7 +130,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
             label="Publish now"
             iconAlignment="right"
             icon={Icons.ChevronRight}
-            disabled={publishDisabled}
+            disabled={!isValidForm}
           />
         </Styled.buttonSeparator>
       )}

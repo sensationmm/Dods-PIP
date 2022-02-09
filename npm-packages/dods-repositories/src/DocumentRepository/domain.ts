@@ -23,5 +23,8 @@ export interface DocumentPersister {
     getDocumentByArn(documentARN: string): Promise<DocumentPayloadResponse>;
     getDocumentByArnV1(documentARN: string): Promise<DocumentPayloadResponseV1>;
     scheduleWebhook(parameters: ScheduleEditorialRecordParamateres): Promise<object>;
-    publishDocumentV1(lambdaName: string, payload: string): Promise<boolean>
+    publishDocumentV1(lambdaName: string, payload: string): Promise<boolean>;
+    sendEmail(parameters: any, baseURL: string): Promise<Object>;
+    getDocumentById(documentId: string, baseURL: string): Promise<Object>;
+    deleteSchedule(recordId: string): Promise<object>;
 }

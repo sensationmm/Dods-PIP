@@ -1,3 +1,5 @@
+import Icon, { IconSize } from '@dods-ui/components/Icon';
+import { Icons } from '@dods-ui/components/Icon/assets';
 import React from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
@@ -50,7 +52,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       (item) =>
         item.label && val !== '' && item.label.toLowerCase().indexOf(val.toLowerCase()) > -1,
     );
-    setResults(res.slice(0, 5));
+    setResults(res);
   };
 
   const handleChange = (val: string, item?: DropdownValue) => {
@@ -105,6 +107,17 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           setValue={handleChange}
         />
       </OutsideClickHandler>
+
+      {isFilter && value && (
+        <Styled.clear
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange('');
+          }}
+        >
+          <Icon src={Icons.Bin} size={IconSize.large} />
+        </Styled.clear>
+      )}
     </Styled.wrapper>
   );
 };

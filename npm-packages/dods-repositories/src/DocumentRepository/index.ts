@@ -109,6 +109,11 @@ export class DocumentRepository implements DocumentPersister {
         return { response };
     }
 
+    async deleteSchedule(recordId: string): Promise<object> {
+        const response = await axios.delete(`${this.baseURL}/scheduler/${recordId}`);
+        return { response };
+    }
+
     async publishDocumentV1(lambdaName: string, payload: string): Promise<boolean> {
 
         const lambdaClient = new Lambda({ region: process.env.AWS_REGION });
@@ -130,5 +135,17 @@ export class DocumentRepository implements DocumentPersister {
             return false
         }
 
+    }
+
+    async sendEmail(parameters: any, baseURL: string): Promise<Object> {
+        const response = await axios.post(`${baseURL}/email`, parameters);
+        const { data: { success, data, error } } = response;
+        return { success, data: data, error };
+    }
+
+    async getDocumentById(documentId: string, baseURL: string): Promise<Object> {
+        const response = await axios.get(`${baseURL}/search/contents/${documentId}`);
+        const { data: { success, data, error } } = response;
+        return { success, data: data, error };
     }
 }

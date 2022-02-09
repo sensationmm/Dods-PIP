@@ -10,6 +10,11 @@ import * as Styled from './Pagination.styles';
 
 type NumPerPage = '5' | '10' | '30' | '60' | '90';
 
+export interface PaginationStatsOpions {
+  value: string;
+  label: string;
+}
+
 export type PaginationProps = {
   dataLength: number;
 };
@@ -22,7 +27,20 @@ export type PaginationType = {
   PaginationButtons: React.FC;
 };
 
-const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): PaginationType => {
+const defaultStatsOptions = [
+  { value: '5', label: '5' },
+  { value: '10', label: '10' },
+  { value: '30', label: '30' },
+  { value: '60', label: '60' },
+  { value: '90', label: '90' },
+];
+
+const Pagination = (
+  dataLength: number,
+  numPerPageOverride: NumPerPage = '30',
+  paginationStatsOptions: PaginationStatsOpions[] = defaultStatsOptions,
+  isScrollTop = true,
+): PaginationType => {
   const [activePage, setActivePage] = React.useState<number>(0);
   const [numPerPage, setNumPerPage] = React.useState<NumPerPage>(numPerPageOverride);
   const numPages = Math.ceil(dataLength / parseInt(numPerPage));
@@ -43,7 +61,9 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
             className={classNames({ active: activePage === i })}
             onClick={() => {
               setActivePage(i);
-              window.scrollTo(0, 0);
+              if (isScrollTop) {
+                window.scrollTo(0, 0);
+              }
             }}
           >
             {i + 1}
@@ -78,7 +98,9 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
           options={inlinePages}
           onChange={(e) => {
             setActivePage(parseInt(e) - 1);
-            window.scrollTo(0, 0);
+            if (isScrollTop) {
+              window.scrollTo(0, 0);
+            }
           }}
           placeholder=""
           value={(activePage + 1).toString()}
@@ -99,11 +121,13 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
     const changeLayout = (num: string) => {
       setNumPerPage(num as NumPerPage);
       setActivePage(0);
-      window.scrollTo(0, 0);
+      if (isScrollTop) {
+        window.scrollTo(0, 0);
+      }
     };
 
-    const start = activePage * parseInt(numPerPage);
-    const end = start + parseInt(numPerPage);
+    const start = activePage * Number(numPerPage);
+    const end = start + Number(numPerPage);
 
     return (
       <Styled.stats data-test="component-pagination-stats">
@@ -127,16 +151,10 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
             id="pagination-pp"
             data-test="set-page-count"
             size="small"
-            options={[
-              { value: '5', label: '5' },
-              { value: '10', label: '10' },
-              { value: '30', label: '30' },
-              { value: '60', label: '60' },
-              { value: '90', label: '90' },
-            ]}
+            options={paginationStatsOptions}
             onChange={changeLayout}
             placeholder=""
-            value={numPerPage}
+            value={String(numPerPage)}
             isFullWidth={false}
             isFilter
           />
@@ -147,13 +165,13 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const PaginationContent = (data: any) => {
-    const start = activePage * parseInt(numPerPage);
-    const end = start + numPerPage;
+    const start = activePage * Number(numPerPage);
+    const end = start + Number(numPerPage);
     return data.slice(start, end);
   };
 
   const PaginationButtons: React.FC = () => {
-    const numPages = Math.ceil(dataLength / parseInt(numPerPage));
+    const numPages = Math.ceil(dataLength / Number(numPerPage));
     const hasPrev = activePage > 0;
     const hasNext = activePage < numPages - 1;
     return (
@@ -164,7 +182,9 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
             className={classNames({ disabled: !hasPrev })}
             onClick={() => {
               setActivePage(activePage - 1);
-              window.scrollTo(0, 0);
+              if (isScrollTop) {
+                window.scrollTo(0, 0);
+              }
             }}
           >
             <Icon
@@ -181,7 +201,9 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
             className={classNames({ disabled: !hasNext })}
             onClick={() => {
               setActivePage(activePage + 1);
-              window.scrollTo(0, 0);
+              if (isScrollTop) {
+                window.scrollTo(0, 0);
+              }
             }}
           >
             <Icon
@@ -197,7 +219,7 @@ const Pagination = (dataLength: number, numPerPageOverride: NumPerPage = '30'): 
 
   return {
     activePage,
-    numPerPage: parseInt(numPerPage, 10),
+    numPerPage: Number(numPerPage),
     PaginationStats,
     PaginationContent,
     PaginationButtons,

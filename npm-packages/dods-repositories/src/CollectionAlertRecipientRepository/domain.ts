@@ -100,5 +100,6 @@ export interface CollectionAlertRecipientPersister {
     list(parameters: SearchAlertRecipientsInput): Promise<SearchAlertRecipientsOutput>;
     setAlertRecipients(parameters: SetAlertRecipientsInput): Promise<SetAlertRecipientsOutput>;
     delete(parameters: DeleteAlertRecipientInput): Promise<boolean>;
-    update(parameters: UpdateRecipientParameters): Promise<AlertRecipientsOutput>
+    update(parameters: UpdateRecipientParameters): Promise<AlertRecipientsOutput>;
+    listAlertRecipients(alertId: string): Promise<Array<AlertRecipientsOutput>>;
 }
