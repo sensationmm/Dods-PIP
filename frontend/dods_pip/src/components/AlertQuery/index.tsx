@@ -117,7 +117,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
           const newTags = groupedTags[tagLabel as TagTreeKeys]
             .map((tag: TagsData) => `"${tag.termLabel}" ${operator} `)
             .join('');
-          formattedString += `${tagLabel.toLowerCase()} (${newTags.slice(0, -4)}) ${operator} `;
+          formattedString += `${tagLabel.toLowerCase()}(${newTags.slice(0, -4)}) ${operator} `;
         }
       });
 
