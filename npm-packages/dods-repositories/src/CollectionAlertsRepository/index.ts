@@ -19,10 +19,10 @@ import {
     SetAlertQueriesParameters,
     UpdateAlertParameters,
     UpdateAlertQuery,
+    createESQueryParameters,
     getAlertsByCollectionResponse,
     getQueriesResponse,
     setAlertScheduleParameters,
-    createESQueryParameters,
     updateAlertElasticQueryParameters,
 } from './domain';
 import {
@@ -491,7 +491,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const newAlertQuery = await CollectionAlertQuery.create(createAlertQuery);
         await newAlertQuery.reload({ include: ['createdById'] });
 
-        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alert.uuid}
+        const alertUpdateParams: updateAlertElasticQueryParameters = { alertId: alert.uuid }
         await this.updateAlertElasticQuery(alertUpdateParams)
 
         return await mapAlertQuery(newAlertQuery, alert);
@@ -648,7 +648,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             include: ['createdById', 'updatedById'],
         });
 
-        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alert.uuid}
+        const alertUpdateParams: updateAlertElasticQueryParameters = { alertId: alert.uuid }
         await this.updateAlertElasticQuery(alertUpdateParams)
 
         return await mapAlertQuery(updateQuery, alert);
@@ -722,7 +722,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             include: ['createdById', 'updatedById'],
         });
 
-        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alertId}
+        const alertUpdateParams: updateAlertElasticQueryParameters = { alertId: alertId }
         await this.updateAlertElasticQuery(alertUpdateParams)
 
         return {
@@ -782,6 +782,35 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return mapAlert(alert);
     }
 
+    async updateLastExecute(alertId: string): Promise<Boolean> {
+
+        const alert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true
+            }
+        });
+        if (!alert) {
+            throw new Error(
+                `Unable to retrieve Alert with uuid: ${alertId}`
+            );
+        }
+
+        const updatedALert = await alert.update({
+            lastExecutedAt: new Date()
+        })
+
+        if (updatedALert) {
+            return true
+        }
+
+        else {
+            return false;
+        }
+
+
+    }
+
     async createAlertDocumentRecord(parameters: AlertDocumentParameters): Promise<Boolean> {
         const { documentId, alertId } = parameters;
         const TbcNumber = 100;
@@ -822,11 +851,11 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Error: could not retrieve alert with uuid: ${alertId}`);
         }
 
-        const getAlertQueriesParams: SearchAlertQueriesParameters = {alertId: alertId, limit: "100", offset: "0"}
+        const getAlertQueriesParams: SearchAlertQueriesParameters = { alertId: alertId, limit: "100", offset: "0" }
         const alertQueries = await this.getAlertQueries(getAlertQueriesParams)
         const alertQueriesString = alertQueries.queries.map(o => o.query).join(" ");
 
-        const createESParams: createESQueryParameters = {query: alertQueriesString}
+        const createESParams: createESQueryParameters = { query: alertQueriesString }
         const elasticQuery = await this.createElasticQuery(createESParams)
 
         await alert.update({
@@ -870,8 +899,8 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         notKeywords.forEach(notKeyword => {
             query.query.bool.must_not.push(...[
-                {term: {documentTitle: notKeyword}},
-                {term: {documentContent: notKeyword}}
+                { term: { documentTitle: notKeyword } },
+                { term: { documentContent: notKeyword } }
             ])
         })
         notTopics.forEach(notTopic => {
@@ -889,8 +918,8 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         keywords.forEach(keyword => {
             query.query.bool.should.push(...[
-                {term: {documentTitle: keyword}},
-                {term: {documentContent: keyword}}
+                { term: { documentTitle: keyword } },
+                { term: { documentContent: keyword } }
             ])
         })
         topics.forEach(topic => {
