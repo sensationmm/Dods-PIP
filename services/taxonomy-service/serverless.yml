@@ -101,10 +101,18 @@ custom:
         method: get
         action: GetObject
         bucket:
-          Ref: pip-${self:provider.stage}-taxonomy-data
+          Ref: S3Bucket
         key:
           pathParam: Combined.json
 #        cors: true
+
+resources:
+  Resources:
+    S3Bucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: taxonomy-trees-${self:provider.stage}
+
 
 plugins:
   - serverless-webpack

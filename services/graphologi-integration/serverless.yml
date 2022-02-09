@@ -19,11 +19,10 @@ provider:
 
   environment:
     SERVERLESS_STAGE: ${self:provider.stage}
-    S3_TAXONOMY_BUCKET: ${self:service}-${opt:stage, self:provider.stage}-taxonomies
+    S3_TAXONOMY_BUCKET: taxonomy-trees-${self:provider.stage}
     GRAPHIFY_USERNAME: ${env:GRAPHIFY_USERNAME}
     GRAPHIFY_PASSWORD: ${env:GRAPHIFY_PASSWORD}
     TAXONOMY_IMPORT_SQS: { Ref: graphologiImportQueue }
-    TAXONOMY_TREE_BUCKET: pip-${self:provider.stage}-taxonomy-data
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
     ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
     ES_KEY_ID: ${ssm:/infra/elastic/key_id}
