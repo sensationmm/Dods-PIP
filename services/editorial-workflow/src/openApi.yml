@@ -246,6 +246,27 @@ paths:
                 '403':
                     $ref: '#/components/responses/Unauthorized'
                     
+        delete:
+            summary: unschedule Publish Editorial Record
+            parameters:
+                -   
+                    name: recordId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+                        example: d290f1ss-6c54-4b01-98e6-d701748f7151
+            responses:
+                '200':
+                    $ref: '#/components/responses/UnscheduleEditorialRecordResponse'
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '401':
+                    $ref: '#/components/responses/Unauthenticated'
+                '403':
+                    $ref: '#/components/responses/Unauthorized'
+                    
     /editorial-record/document/{documentId}/versions:
         post:
             summary: Edit over published document
@@ -340,6 +361,18 @@ components:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/EditorialRecordResponse"
+        UnscheduleEditorialRecordResponse:
+            description: Unschedule Editorial Record Response 
+            content: 
+                application/json:
+                  schema:
+                      type: object
+                      properties: 
+                        success:
+                          type: boolean
+                        message: 
+                          type: string
+                          example: The Editorial Record was unscheduled successfully
         EditorialRecordStatusListResponse:
             description: Editorial Records status in editorial records table
             content:
@@ -795,4 +828,3 @@ components:
                     type: string
                 documentContent:
                     type: string
-                    
