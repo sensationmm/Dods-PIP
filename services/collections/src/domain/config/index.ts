@@ -40,6 +40,7 @@ export const config = {
     isTestEnv: envVars.NODE_ENV !== 'test',
     openApiPath: resolve(process.cwd(), 'src/openApi.yml'),
     singleFullAlertPath: resolve(process.cwd(), 'src/handlers/processImmediateAlert/template.handlebars'),
+    multipleSnippetAlertPath: resolve(process.cwd(), 'src/handlers/processAlert/template.handlebars'),
     test: {
         stage: envVars.SERVERLESS_STAGE as string,
         port: envVars.SERVERLESS_PORT as number,

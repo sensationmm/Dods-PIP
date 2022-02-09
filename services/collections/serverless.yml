@@ -70,6 +70,7 @@ provider:
     FRONTEND_URL: ${file(../env-config.${self:provider.stage}.js):frontendURL, file(../env-config.dev.js):frontendURL}
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
+
 custom:
   webpack:
     webpackConfig: ./webpack.config.js
@@ -325,7 +326,7 @@ functions:
       - http:
           method: put
           path: /collections/{collectionId}/alerts/{alertId}/process
-          private: true
+          #private: true
           caching:
             enabled: false
   updateRecipient:

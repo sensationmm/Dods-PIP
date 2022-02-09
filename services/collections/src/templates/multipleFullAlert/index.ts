@@ -62,6 +62,7 @@ const alertInput: MultipleEmailTemplateInput = {
     date,
     headline: 'The Alert',
     sections: [section1, section2],
+    url: 'test_url'
 };
 
 //* Function to test template
