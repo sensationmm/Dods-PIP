@@ -1,5 +1,5 @@
 import { AwsService, DefaultAwsService } from '../shared/DefaultAwsService';
-import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleWebhookParameters } from './domain';
+import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleWebhookParameters, searchContentParameters } from './domain';
 import { Lambda, S3 } from 'aws-sdk';
 
 import { ScheduleEditorialRecordParamateres } from '../EditorialRecordRepository';
@@ -147,5 +147,11 @@ export class DocumentRepository implements DocumentPersister {
         const response = await axios.get(`${baseURL}/search/contents/${documentId}`);
         const { data: { success, data, error } } = response;
         return { success, data: data, error };
+    }
+
+    async searchContent(parameters: searchContentParameters): Promise<object> {
+        const { query, baseURL } = parameters;
+        const response = await axios.post(`${baseURL}/search/contents/query`, query);
+        return { response };
     }
 }
