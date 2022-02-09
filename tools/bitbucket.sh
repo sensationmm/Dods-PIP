@@ -106,7 +106,7 @@ function post {
     if [[ ! -z $DATA ]]; then
         DATA="-H 'Content-Type: application/json' -d '$DATA'"
     fi
-    eval "curl -XPOST -s -g -u ${BITBUCKET_USER}:${BITBUCKET_PASSWORD} ${DATA} ${BITBUCKET_URL}/${URL}"
+    eval "curl -XPOST -s -g -u '${BITBUCKET_USER}:${BITBUCKET_PASSWORD}' ${DATA} ${BITBUCKET_URL}/${URL}"
 }
 
 ##
