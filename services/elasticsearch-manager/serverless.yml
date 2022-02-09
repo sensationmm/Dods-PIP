@@ -40,13 +40,21 @@ provider:
     name: pip-${self:provider.stage}-services-lambdas
 
   environment:
-    SERVERLESS_STAGE: ${self:provider.stage}
-    KEY_PREFIX: ${self:custom.resource_prefix}
-    REGION: eu-west-1
-    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
+    ALERT_Q_URL: https://sqs.${aws:region}.amazonaws.com/${aws:accountId}/${self:provider.stage}-instant-alert-queue.fifo
     ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
     ES_KEY_ID: ${ssm:/infra/elastic/key_id}
     ES_API_KEY: ${ssm:/infra/elastic/api_key}
+    JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
+    KEY_PREFIX: ${self:custom.resource_prefix}
+    REGION: eu-west-1
+    SERVERLESS_STAGE: ${self:provider.stage}
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+      Resource: arn:aws:sqs:${aws:region}:${aws:accountId}:${self:provider.stage}-instant-alert-queue.fifo
+
 
 functions:
   elastic-run:
