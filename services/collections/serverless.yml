@@ -350,10 +350,16 @@ functions:
 
   triggerInstantAlert:
     handler: src/handlers/triggerInstantAlert/index.handle
-    description: Triggered when http request comes
+    description: Triggered with events on SQS
     events:
-      - http:
-          method: post
-          path: /collections/triggerInstantAlert
-          caching:
-            enabled: false
+      - sqs:
+          batchSize: 1
+          arn:
+            Fn::Join:
+              - ':'
+              - - arn
+                - aws
+                - sqs
+                - Ref: AWS::Region
+                - Ref: AWS::AccountId
+                - ${self:provider.stage}-instant-alert-queue.fifo
