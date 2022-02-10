@@ -79,7 +79,7 @@ functions:
     name: migration-step-3-receiver-${sls:stage}
     description: Receive filepath to SQS for migration content from DODS step-3
     handler: handler.consumer
-    timeout: 30
+    timeout: 900
     events:
       - sqs:
           arn: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-3-queue.fifo
