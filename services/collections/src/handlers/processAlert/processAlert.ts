@@ -6,7 +6,6 @@ import { getMultipleSnippetEmailBody, groupByFunction } from '../../templates/mu
 import moment from "moment";
 
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL } } } = config;
-
 export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
     data
 ) => {
@@ -80,7 +79,12 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
         }
     })
 
-    const groupedArticles = groupByFunction(articles, 'source')
+    const uniqueArticles = Array.from(new Set(articles.map(a => a.id)))
+        .map(id => {
+            return articles.find(a => a.id === id)
+        })
+
+    const groupedArticles = groupByFunction(uniqueArticles, 'source')
 
     const sectionsTitles = Object.keys(groupedArticles)
 
@@ -112,7 +116,6 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
 
     const emailContent = await getMultipleSnippetEmailBody(emailBodyHandler);
 
-
     const emailParameters = {
         to: emailRecipients,
         from: "test@somoglobal.com",
@@ -126,14 +129,14 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
     //const emailResponse = { success: true }
 
     if (emailResponse.success) {
+
         await CollectionAlertsRepository.defaultInstance.updateLastExecute(alertId)
 
-        const uniqueArticles = [... new Set(articles.map(article => article.id))]
-
-        await Promise.all(uniqueArticles.map((article) => CollectionAlertsRepository.defaultInstance.createAlertDocumentRecord({
+        await Promise.all(uniqueArticles.map((article: any) => CollectionAlertsRepository.defaultInstance.createAlertDocumentRecord({
             alertId: alertResponse.alert.id,
-            documentId: article
+            documentId: article.id
         })))
+
 
         return new HttpResponse(HttpStatusCode.OK, {
             success: true,
