@@ -13,7 +13,6 @@ locals {
 }
 
 resource "aws_sqs_queue" "queue" {
-  name                        = "${local.prefix}.standard"
-
+  name = local.prefix
   tags = local.common_tags
 }
