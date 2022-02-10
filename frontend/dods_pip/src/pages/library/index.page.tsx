@@ -116,7 +116,6 @@ export const Library: React.FC<ILibraryProps> = ({
     setContentSources(updateWithBasicFilters(contentSource?.buckets));
     setInformationTypes(updateWithBasicFilters(informationType?.buckets));
     setOriginators(updateWithBasicFilters(originator?.buckets));
-    setGroups(updateWithBasicFilters(group?.buckets));
 
     const updateWithNestedFilters = (items: BucketType[] = []): BucketType[] => {
       return items.filter?.(checkEmptyAggregation)?.map((props) => {
@@ -211,17 +210,6 @@ export const Library: React.FC<ILibraryProps> = ({
             onChange={(value) => {
               setBasicQuery({
                 key: AggTypes.informationType,
-                value,
-              });
-            }}
-          />
-          <Facet
-            title={'Group'}
-            records={groups}
-            onClearSelection={() => unsetBasicQuery(groups)}
-            onChange={(value) => {
-              setBasicQuery({
-                key: AggTypes.organisationName,
                 value,
               });
             }}
