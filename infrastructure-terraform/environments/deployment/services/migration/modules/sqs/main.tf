@@ -13,9 +13,6 @@ locals {
 }
 
 resource "aws_sqs_queue" "queue" {
-  name                        = "${local.prefix}.fifo"
-  fifo_queue                  = true
-  content_based_deduplication = true
-
+  name = local.prefix
   tags = local.common_tags
 }
