@@ -15,10 +15,12 @@ export const searchValue = styled.div`
 `;
 
 export const clear = styled.div`
+  width: 30px;
+  height: 30px;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  right: ${spacing(3)};
+  right: ${spacing(4)};
   z-index: 2;
   cursor: pointer;
 `;
