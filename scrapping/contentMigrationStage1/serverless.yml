@@ -61,7 +61,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "sqs:*"
-      Resource: arn:aws:sqs:${aws:region}:${aws:organizationId}:pip-${self:provider.stage}-migration-stage-1-queue
+      Resource: arn:aws:sqs:${aws:region}:${aws:accountId}:pip-${self:provider.stage}-migration-stage-1-queue
 
 functions:
   migrate:
