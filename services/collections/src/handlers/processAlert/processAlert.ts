@@ -6,6 +6,7 @@ import { getMultipleSnippetEmailBody, groupByFunction } from '../../templates/mu
 import moment from "moment";
 
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL } } } = config;
+
 export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
     data
 ) => {
@@ -79,6 +80,13 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
         }
     })
 
+    if (!articles.length) {
+        return new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'Not Documents for this period of time'
+        });
+    }
+
     const uniqueArticles = Array.from(new Set(articles.map(a => a.id)))
         .map(id => {
             return articles.find(a => a.id === id)
@@ -147,7 +155,7 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
 
         return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
             success: false,
-            message: 'problem sending email'
+            message: 'Problem Sending email'
         });
 
     }
