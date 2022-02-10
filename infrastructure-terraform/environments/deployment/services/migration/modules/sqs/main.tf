@@ -13,6 +13,7 @@ locals {
 }
 
 resource "aws_sqs_queue" "queue" {
-  name = local.prefix
-  tags = local.common_tags
+  name                       = local.prefix
+  tags                       = local.common_tags
+  visibility_timeout_seconds = 915
 }
