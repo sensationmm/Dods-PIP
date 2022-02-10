@@ -67,7 +67,7 @@ for PROJECT in $@; do
     for ENV in ${project_envs[$PROJECT_FOLDER]}; do
         echo "Triggering 'deploy' job $JOB_NAME with service $PROJECT_NAME and environment ${ENV}..."
         BUILD_NUM=$(${CI_PLUGIN} deploy $JOB_NAME $PROJECT_NAME $ENV)    
-        if [[ -z ${BUILD_NUM} ]] || [[ ${BUILD_NUM} -eq "null" ]]; then
+        if [[ -z ${BUILD_NUM} ]] || [[ ${BUILD_NUM} == "null" ]]; then
             echo "WARN: No deployment triggered for project '$PROJECT'. Please check if pipeline $JOB_NAME is defined in your build tool."
         else 
             echo "Build triggered for project '$PROJECT' on $ENV with number '$BUILD_NUM'"    
