@@ -9,10 +9,12 @@ import Button from '@dods-ui/components/Button';
 import DataCount from '@dods-ui/components/DataCount';
 import Icon from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
+import Pagination from '@dods-ui/components/Pagination';
 import RepositoryTable, { RepositoryRowData } from '@dods-ui/components/RepositoryTable';
 import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
+import useDebounce from '@dods-ui/lib/useDebounce';
 import {
   EditorialRecordListResponse,
   MetadataSelection,
@@ -22,6 +24,8 @@ import {
   getMetadataSelections,
   getRecords,
 } from '@dods-ui/pages/editorial/editorial.service';
+import { toQueryString } from '@dods-ui/utils/api';
+import { add, format } from 'date-fns';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -36,6 +40,10 @@ interface Filters {
   date?: string;
   status?: string;
   itemsPerPage?: number;
+  limit?: number;
+  offset?: number;
+  sortBy?: string;
+  sortDirection?: string;
 }
 
 export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotification }) => {
@@ -43,26 +51,60 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
   const [filters, setFilters] = useState<Filters>({});
   const [editorialRecords, setEditorialRecords] = useState<EditorialRecordListResponse>();
   const [editorialData, setEditorialData] = useState<RepositoryRowData[]>([]);
+  const [total, setTotal] = React.useState<number>(0);
   const [selectFilterValues, setSelectFilterValues] = useState<MetadataSelection>({
     contentSources: [],
     informationTypes: [],
     status: [],
   });
+  const debouncedValue = useDebounce<string>(filters.searchQuery as string, 850);
   const router = useRouter();
+
+  const { activePage, numPerPage, PaginationButtons, PaginationStats } = Pagination(total);
+
+  const getFilterQueryString = () => {
+    const params: Filters = {
+      sortBy: 'creationDate',
+      sortDirection: 'desc',
+      limit: numPerPage,
+      offset: activePage * numPerPage,
+      ...(filters?.contentSource && { contentSource: encodeURI(filters?.contentSource) }),
+      ...(filters.informationType && { informationType: filters.informationType }),
+      ...(filters.status && { status: filters.status }),
+      ...(filters.searchQuery && { searchTerm: filters.searchQuery }),
+
+      ...(filters.date && { startDate: format(new Date(filters.date), 'yyyy-MM-dd') }),
+      ...(filters.date && {
+        endDate: format(add(new Date(filters.date), { days: 1 }), 'yyyy-MM-dd'),
+      }),
+    };
+
+    return toQueryString(params);
+  };
 
   useEffect(() => {
     const getEditorialRecords = async () => {
+      const queryString = getFilterQueryString();
       setLoading(true);
-      await getRecords()
+      await getRecords(queryString)
         .then((response) => {
           setEditorialRecords(response);
+          setTotal(response?.data?.filteredRecords || 0);
         })
         .finally(() => {
           setLoading(false);
         });
     };
     getEditorialRecords();
-  }, []);
+  }, [
+    debouncedValue,
+    filters.contentSource,
+    filters.informationType,
+    filters.status,
+    filters.date,
+    numPerPage,
+    activePage,
+  ]);
 
   useEffect(() => {
     if (editorialRecords?.data?.results?.length) {
@@ -76,6 +118,8 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
         }),
       );
       setEditorialData(data);
+    } else {
+      setEditorialData([]);
     }
   }, [editorialRecords]);
 
@@ -99,6 +143,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
   }, []);
 
   const addFilters = (newFilters: Filters) => setFilters({ ...filters, ...newFilters });
+
   const removeFilter = (filterKey: keyof Filters) => {
     // eslint-disable-next-line no-prototype-builtins
     if (filters.hasOwnProperty(filterKey)) delete filters[filterKey];
@@ -167,46 +212,48 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
         <Spacer size={6} />
 
         {isActiveFilter && (
-          <Styled.row data-test="filter-content">
-            <Styled.column>
-              <SearchDropdown
-                testId="editorial-content-source-filter"
-                size={'medium'}
-                id={'content-source-filter'}
-                placeholder="Content source"
-                selectedValues={[filters.contentSource || '']}
-                values={selectFilterValues.contentSources}
-                onChange={(value) => onFilterChange('contentSource', value)}
-              />
-              <SearchDropdown
-                testId="editorial-info-type-filter"
-                size={'medium'}
-                id={'info-type'}
-                selectedValues={[filters.informationType || '']}
-                placeholder="Information type"
-                values={selectFilterValues.informationTypes}
-                onChange={(value) => onFilterChange('informationType', value)}
-              />
-              <SearchDropdown
-                testId="editorial-status-filter"
-                size={'medium'}
-                id={'status'}
-                selectedValues={[filters.status || '']}
-                placeholder="Status"
-                values={selectFilterValues.status}
-                onChange={(value) => onFilterChange('status', value)}
-              />
-            </Styled.column>
-
-            <Styled.searchWrapper>
-              <InputSearch
-                id="search-filter"
-                onChange={(value) => onFilterChange('searchQuery', value)}
-                value={filters.searchQuery || ''}
-                size="medium"
-              />
-            </Styled.searchWrapper>
-          </Styled.row>
+          <Styled.filters data-test="filter-content">
+            <SearchDropdown
+              testId="editorial-content-source-filter"
+              size={'medium'}
+              id={'content-source-filter'}
+              placeholder="Content source"
+              value={filters.contentSource || ''}
+              selectedValues={[filters.contentSource || '']}
+              values={selectFilterValues.contentSources}
+              onChange={(value) => onFilterChange('contentSource', value)}
+              isFilter
+            />
+            <SearchDropdown
+              testId="editorial-info-type-filter"
+              size={'medium'}
+              id={'info-type'}
+              value={filters.informationType || ''}
+              selectedValues={[filters.informationType || '']}
+              placeholder="Information type"
+              values={selectFilterValues.informationTypes}
+              onChange={(value) => onFilterChange('informationType', value)}
+              isFilter
+            />
+            <SearchDropdown
+              testId="editorial-status-filter"
+              size={'medium'}
+              id={'status'}
+              value={filters.status || ''}
+              selectedValues={[filters.status || '']}
+              placeholder="Status"
+              values={selectFilterValues.status}
+              onChange={(value) => onFilterChange('status', value)}
+              isFilter
+            />
+            <div />
+            <InputSearch
+              id="search-filter"
+              onChange={(value) => onFilterChange('searchQuery', value)}
+              value={filters.searchQuery || ''}
+              size="medium"
+            />
+          </Styled.filters>
         )}
 
         <Spacer size={3} />
@@ -239,6 +286,10 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
               onDelete={onDeleteDocument}
               onEdit={navigateToEditDocument}
             />
+            <Spacer size={4} />
+            <PaginationStats>
+              <PaginationButtons />
+            </PaginationStats>
           </Box>
         </main>
       </Panel>

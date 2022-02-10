@@ -183,4 +183,11 @@ describe(`${CLASS_NAME}.${UPDATE_ALERT_NAME}`, () => {
             expect(error).toHaveProperty('statusCode', HttpStatusCode.NOT_FOUND);
         }
     });
+
+    test('clean_query_strings separates and cleans', async () => {
+        const cleaned_string = repository.clean_query_strings('"material of animal origin" OR "3e5a9c5dd27a9a4081c0f95599c8b58e" OR "Garfield"')
+        expect(cleaned_string).toHaveLength(3)
+        expect(cleaned_string).toEqual(['material of animal origin', '3e5a9c5dd27a9a4081c0f95599c8b58e', 'Garfield'])
+    })
+
 });

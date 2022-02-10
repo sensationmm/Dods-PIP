@@ -95,6 +95,25 @@ custom:
         - schedule: cron(0/5 * ? * MON-SUN *)
       concurrency: 1
 
+  apiGatewayServiceProxies:
+    - s3:
+        path: /taxonomy/tree
+        method: get
+        action: GetObject
+        bucket:
+          Ref: S3Bucket
+        key:
+          pathParam: Combined.json
+#        cors: true
+
+resources:
+  Resources:
+    S3Bucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: taxonomy-trees-${self:provider.stage}
+
+
 plugins:
   - serverless-webpack
   - serverless-prune-plugin
@@ -102,7 +121,7 @@ plugins:
   - serverless-dependson-plugin
   - serverless-offline
   - serverless-plugin-warmup
-  # - serverless-api-gateway-caching
+  - serverless-apigateway-service-proxy
 package:
   include:
     - node_modules/**
@@ -118,16 +137,16 @@ functions:
           path: taxonomies
           # caching:
             # enabled: false
-  taxonomyTree:
-    handler: src/handlers/taxonomyTree/index.handle
-    description: Return the tree of all taxonomy topics
-    timeout: 20
-    events:
-      - http:
-          method: get
-          path: taxonomy/tree
-          # caching:
-            # enabled: true
+#  taxonomyTree:
+#    handler: src/handlers/taxonomyTree/index.handle
+#    description: Return the tree of all taxonomy topics
+#    timeout: 20
+#    events:
+#      - http:
+#          method: get
+#          path: taxonomy/tree
+#          # caching:
+#            # enabled: true
   taxonomyTopicsTree:
     handler: src/handlers/taxonomyTopicsTree/index.handle
     description: Triggered when http request comes

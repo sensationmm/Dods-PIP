@@ -38,8 +38,7 @@ def s3_list_folders(prefix: str, jurisdiction: str):
                 try:
                     sqs_client.send_message(
                         QueueUrl=SQS_QUEUE,
-                        MessageBody=string_message,
-                        MessageGroupId='migration-step1-group-id'
+                        MessageBody=string_message
                     )
                     logger.info('Message has sent to SQS')
                 except Exception as e:
@@ -79,7 +78,7 @@ def consumer(event, context):
                 content["jurisdiction"] = message['jurisdiction'] if 'jurisdiction' in message else 'UK'
                 content["documentTitle"] = item.revision.localisation.title.text \
                     if item.revision.localisation.title is not None else ""
-                content["organisationName"] = item.organisationname.text if item.organisationname is not None else ""
+                content["originator"] = item.organisationname.text if item.organisationname is not None else ""
                 content["sourceReferenceFormat"] = item.revision.localisation.referenceformat.text \
                     if item.revision.localisation.referenceformat is not None else ""
                 content["sourceReferenceUri"] = item.revision.localisation.referenceuri.text \

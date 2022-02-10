@@ -2,6 +2,7 @@ import { Article, MultipleArticleSection, MultipleEmailTemplateInput } from '../
 import { readFile, writeFile } from 'fs/promises';
 
 import HandleBars from 'handlebars';
+import { config } from '../../domain';
 
 const date = new Date().toLocaleDateString('en-GB', {
     year: 'numeric',
@@ -66,6 +67,7 @@ const alertInput: MultipleEmailTemplateInput = {
     date,
     headline: 'The Alert',
     sections: [section1, section2],
+    url: 'testURL'
 };
 
 //* Function to test template
@@ -87,11 +89,12 @@ const reduceArticleMatrix = (rows: Article[][], article: Article, index: number)
 export const getMultipleSnippetEmailBody = async (
     alertInput: MultipleEmailTemplateInput
 ): Promise<string> => {
-    const templateSource = (await readFile(__dirname + '/template.handlebars')).toString();
+    //const templateSource = (await readFile(__dirname + '/template.handlebars')).toString();
+    const templateSource = (await readFile(config.multipleSnippetAlertPath)).toString();
     const template = HandleBars.compile(templateSource);
     return template({
         ...alertInput,
-        sections: alertInput.sections.map((section) => ({
+        sections: alertInput.sections.map((section: any) => ({
             ...section,
             articles: section.articles.reduce(reduceArticleMatrix, []),
         })),
@@ -101,3 +104,19 @@ export const getMultipleSnippetEmailBody = async (
 generateHTMLFile(
     '/Users/Juan.Riano/dev-dods/dodsmlp/services/email-templates/generated-multipleSnippet.html'
 );
+
+export function groupByFunction(xs: any, key: any) {
+    return xs.reduce(function (rv: any, x: any) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+    }, {});
+};
+
+export function avoidDuplicates(arr: any) {
+    arr.reduce((unique: any, o: any) => {
+        if (!unique.some((obj: any) => obj.label === o.label && obj.value === o.value)) {
+            unique.push(o);
+        }
+        return unique;
+    }, []);
+}

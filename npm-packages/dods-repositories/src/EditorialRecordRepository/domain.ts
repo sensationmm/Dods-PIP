@@ -22,6 +22,7 @@ export interface EditorialRecordOutput extends EditorialRecordBase {
     };
     isPublished?: boolean,
     isArchived?: boolean,
+    scheduleDate?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -67,6 +68,11 @@ export interface UpdateEditorialRecordParameters extends Partial<CreateEditorial
 export interface ScheduleEditorialRecordParamateres {
     recordId: string;
     cron: string;
+    date: Date;
+}
+
+export interface UnscheduleEditorialRecordParamateres {
+    recordId: string;
 }
 
 export interface DocumentParameters {
@@ -96,6 +102,10 @@ export interface UpdateEditorialRecordDocumentParameter extends DocumentParamete
     recordId: string;
 }
 
+export interface EditPublishedDocumentParameters {
+    documentId: string;
+}
+
 export const RecordStatuses = {
     draft: '89cf96f7-d380-4c30-abcf-74c57843f50c',
     ingested: 'b54bea83-fa06-4bd4-852d-08e5908c55b5',
@@ -122,4 +132,6 @@ export interface EditorialRecordPersister {
     archiveEditorialRecord(parameters: ArchiveEditorialRecordParameters): Promise<void>;
 
     scheduleEditorialRecord(parameters: ScheduleEditorialRecordParamateres): Promise<EditorialRecordOutput>;
+
+    unscheduleEditorialRecord(recordId: string): Promise<void>;
 }

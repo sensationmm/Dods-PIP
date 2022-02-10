@@ -34,6 +34,8 @@ export interface AlertQueryProps {
 
 export type Operators = 'OR' | 'AND' | 'NOT';
 
+type TagTreeKeys = 'Organisations' | 'People' | 'Topics' | 'Geographies';
+
 export interface AlertQueryScreenProps extends AlertQueryProps {
   onSave: (query: AlertQueryProps) => void;
   onDuplicate: () => void;
@@ -97,10 +99,36 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
 
   React.useEffect(() => {
     if (searchTerms === '') {
-      const formattedTags = tags.map((tag) => `${tag.termLabel} ${operator} `).join('');
-      setTerms(formattedTags.slice(0, -4));
+      const groupedTags = {
+        Organisations: [] as TagsData[],
+        Topics: [] as TagsData[],
+        People: [] as TagsData[],
+        Geographies: [] as TagsData[],
+      };
+      tags.forEach((tag: TagsData) => {
+        groupedTags[tag.type as TagTreeKeys].push(tag as TagsData);
+      });
+
+      let formattedString = '';
+      Object.keys(groupedTags).forEach((tagLabel) => {
+        const hasTags = (groupedTags[tagLabel as TagTreeKeys] as TagsData[]).length > 0;
+
+        if (hasTags) {
+          const newTags = groupedTags[tagLabel as TagTreeKeys]
+            .map((tag: TagsData) => `"${tag.termLabel}" ${operator} `)
+            .join('');
+          formattedString += `${tagLabel.toLowerCase()}(${newTags.slice(0, -4)}) ${operator} `;
+        }
+      });
+
+      setTerms(formattedString.slice(0, -4));
     }
   }, [tags]);
+
+  React.useEffect(() => {
+    setIsValidated(false);
+    setPreview([]);
+  }, [terms]);
 
   React.useEffect(() => {
     setIsDone(done);
@@ -133,29 +161,39 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const formatTerms = () => {
     const final: Array<JSX.Element> = [];
 
-    terms.split(' ').forEach((term) => {
+    terms.split(' ').forEach((term, count) => {
       if (term.toLowerCase() === 'or') {
         final.push(
-          <Text bold color={color.theme.blueLight}>
+          <Text key={`term-${count}`} bold color={color.theme.blueLight}>
             {term.toUpperCase()}
           </Text>,
         );
       } else if (term.toLowerCase() === 'and') {
         final.push(
-          <Text bold color={color.alert.green}>
+          <Text key={`term-${count}`} bold color={color.alert.green}>
             {term.toUpperCase()}
           </Text>,
         );
       } else if (term.toLowerCase() === 'not') {
         final.push(
-          <Text bold color={color.alert.red}>
+          <Text key={`term-${count}`} bold color={color.alert.red}>
             {term.toUpperCase()}
           </Text>,
         );
-      } else if (term.slice(0, 1) === '"' || term.slice(-1) === '"') {
-        final.push(<Text color={color.accent.orange}>{term.replaceAll('"', '')}</Text>);
+      } else if (
+        ['topics', 'geographies', 'organisations', 'people', 'keywords'].indexOf(term) > -1
+      ) {
+        final.push(
+          <Text key={`term-${count}`} color={color.accent.orange}>
+            {term}
+          </Text>,
+        );
       } else {
-        final.push(<Text color={color.base.greyDark}>{term}</Text>);
+        final.push(
+          <Text key={`term-${count}`} color={color.base.greyDark}>
+            {term}
+          </Text>,
+        );
       }
     });
 
@@ -265,7 +303,11 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
                 />
               </Styled.termsHeader>
               <Spacer size={2} />
-              <TextArea value={terms} onChange={setTerms} />
+              <TextArea
+                value={terms}
+                onChange={setTerms}
+                helperText={`NOTE: For non-tags use 'keywords ("first" OR "second")'`}
+              />
             </div>
 
             <div>

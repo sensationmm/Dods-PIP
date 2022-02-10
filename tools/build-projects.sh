@@ -48,7 +48,7 @@ for PROJECT in $@; do
     echo "Triggering 'build' job $JOB_NAME with ENV $PROJECT_NAME"
     BUILD_NUM=$(${CI_PLUGIN} build $JOB_NAME $PROJECT_NAME)    
 
-    if [[ -z ${BUILD_NUM} ]] || [[ ${BUILD_NUM} -eq "null" ]]; then
+    if [[ -z ${BUILD_NUM} ]] || [[ ${BUILD_NUM} == "null" ]]; then
         echo "WARN: No build triggered for project '$PROJECT'. Please check if pipeline $JOB_NAME is defined in your build tool."
     else 
         echo "Build triggered for project '$PROJECT' with number '$BUILD_NUM'"    

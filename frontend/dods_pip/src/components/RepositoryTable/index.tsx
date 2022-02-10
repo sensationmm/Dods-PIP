@@ -129,6 +129,10 @@ const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onView, onEdit,
         <Styled.tableHeadingTitle>
           <Text bold>Title</Text>
         </Styled.tableHeadingTitle>
+        <div />
+        <Styled.tableHeadingTitle>
+          <Text bold>Date</Text>
+        </Styled.tableHeadingTitle>
         <Styled.tableHeadingStatus>
           <Text bold center>
             Status
@@ -146,6 +150,7 @@ const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onView, onEdit,
           onDelete={() => onDelete(item.id)}
         />
       ))}
+      {data.length === 0 && <Text center>No records to show</Text>}
     </Styled.wrapper>
   );
 };

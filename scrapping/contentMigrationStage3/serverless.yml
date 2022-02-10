@@ -19,7 +19,7 @@ custom:
   s3_input_bucket: pip-${self:provider.stage}-migration-stage-2-output
   s3_output_bucket: pip-${self:provider.stage}-migration-stage-3-output
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
-  queue_name: pip-${self:provider.stage}-migration-stage-3-queue.fifo
+  queue_name: pip-${self:provider.stage}-migration-stage-3-queue
   pythonRequirements:
     pythonBin: python3
 
@@ -52,7 +52,6 @@ provider:
     S3_KEY_BASE: ${self:custom.s3_key_base}
     SQS_QUEUE: ${self:custom.queue_name}
     LAMBDA_AUTO_TAGGING_ARN: arn:aws:lambda:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:function:dods-auto-tagging-${self:provider.stage}-auto-tagging
-    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
 
   iamRoleStatements:
     - Effect: Allow
@@ -63,12 +62,12 @@ provider:
     - Effect: "Allow"
       Action:
         - "sqs:*"
-      Resource: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-3-queue.fifo
+      Resource: arn:aws:sqs:${aws:region}:${aws:accountId}:pip-${self:provider.stage}-migration-stage-3-queue
 
     - Effect: "Allow"
       Action:
         - "lambda:InvokeFunction"
-      Resource: "arn:aws:lambda:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:function:dods-auto-tagging-${self:provider.stage}-auto-tagging"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:dods-auto-tagging-${self:provider.stage}-auto-tagging"
 
 functions:
   migrate:
@@ -80,9 +79,9 @@ functions:
     name: migration-step-3-receiver-${sls:stage}
     description: Receive filepath to SQS for migration content from DODS step-3
     handler: handler.consumer
-    timeout: 30
+    timeout: 900
     events:
       - sqs:
-          arn: arn:aws:sqs:${self:custom.region}:${file(../serverless.common.yml):custom.organizations.${self:provider.stage}}:pip-${self:provider.stage}-migration-stage-3-queue.fifo
+          arn: arn:aws:sqs:${aws:region}:${aws:accountId}:pip-${self:provider.stage}-migration-stage-3-queue
           batchSize: 1
 

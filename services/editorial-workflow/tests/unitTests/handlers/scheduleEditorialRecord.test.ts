@@ -1,4 +1,4 @@
-import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
+import { DocumentRepository, EditorialRecordOutput, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { mocked } from 'ts-jest/utils';
@@ -11,6 +11,14 @@ const defaultUpdatedRecord: any = {
     documentName: 'NewDocument',
 };
 
+const EditorialRecordResponse = {
+    status: { status: 'Created' }
+} as EditorialRecordOutput;
+
+const EditorialRecordBadResponse = {
+    status: { status: 'Scheduled' }
+} as EditorialRecordOutput;
+
 jest.mock('@dodsgroup/dods-repositories');
 
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
@@ -22,11 +30,13 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input - response should be "healthy"', async () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            cron: '0,1,20 0 0 L * ? *'
+            cron: '0 0 12 ? * SUN,SAT',
+            date: new Date()
         };
 
         mockedDocumentPublishRepository.defaultInstance.scheduleWebhook.mockResolvedValue({ response: { data: { success: true } } });
         mockedEditorialRecordRepository.defaultInstance.scheduleEditorialRecord.mockResolvedValue(defaultUpdatedRecord);
+        mockedEditorialRecordRepository.defaultInstance.getEditorialRecord.mockResolvedValue(EditorialRecordResponse);
 
         const response = await scheduleEditorialRecord(requestParams, defaultContext);
 
@@ -36,16 +46,14 @@ describe(`${FUNCTION_NAME} handler`, () => {
             editorialRecord: defaultUpdatedRecord,
         });
 
-        expect(EditorialRecordRepository.defaultInstance.scheduleEditorialRecord).toBeCalledWith(
-            requestParams
-        );
         expect(response).toEqual(expectedHealthyResponse);
     });
 
     test('Invalid input - imposible to schedule', async () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            cron: '0,1,20 0 0 L * ? *'
+            cron: '0 0 12 ? * SUN,SAT',
+            date: new Date()
         };
 
         mockedDocumentPublishRepository.defaultInstance.scheduleWebhook.mockResolvedValue({ response: { data: { success: false } } });
@@ -65,7 +73,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test('Service Error - should throw', async () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            cron: '0,1,20 0 0 L * ? *'
+            cron: '0 0 12 ? * SUN,SAT',
+            date: new Date()
         };
 
 
@@ -80,5 +89,26 @@ describe(`${FUNCTION_NAME} handler`, () => {
         });
         expect(response).toEqual(expectedBadResponse);
 
+    });
+
+    test('Already Scheduled Editorial Record', async () => {
+        const requestParams = {
+            recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
+            cron: '0 0 12 ? * SUN,SAT',
+            date: new Date()
+        };
+
+        mockedDocumentPublishRepository.defaultInstance.scheduleWebhook.mockResolvedValue({ response: { data: { success: true } } });
+        mockedEditorialRecordRepository.defaultInstance.scheduleEditorialRecord.mockResolvedValue(defaultUpdatedRecord);
+        mockedEditorialRecordRepository.defaultInstance.getEditorialRecord.mockResolvedValue(EditorialRecordBadResponse);
+
+        const response = await scheduleEditorialRecord(requestParams, defaultContext);
+
+        const expectedHealthyResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
+            success: false,
+            message: `Error: Editorial Record with uuid: ${requestParams.recordId} is already scheduled`
+        });
+
+        expect(response).toEqual(expectedHealthyResponse);
     });
 });

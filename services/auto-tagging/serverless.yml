@@ -65,4 +65,5 @@ functions:
     handler: autoTagging.handle
     description: Triggered when http request comes
     runtime: python3.7
-    timeout: 300
+    timeout: 900
+    memorySize: 4096

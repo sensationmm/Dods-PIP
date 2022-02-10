@@ -1,5 +1,5 @@
 import { AwsService, DefaultAwsService } from '../shared/DefaultAwsService';
-import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleWebhookParameters } from './domain';
+import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleAlertParameters, ScheduleWebhookParameters, searchContentParameters } from './domain';
 import { Lambda, S3 } from 'aws-sdk';
 
 import { ScheduleEditorialRecordParamateres } from '../EditorialRecordRepository';
@@ -109,6 +109,16 @@ export class DocumentRepository implements DocumentPersister {
         return { response };
     }
 
+    async scheduleAlertWebhook(parameters: ScheduleAlertParameters): Promise<object> {
+        const response = await axios.post(`${this.baseURL}/scheduler/alert`, parameters);
+        return { response };
+    }
+
+    async deleteSchedule(recordId: string): Promise<object> {
+        const response = await axios.delete(`${this.baseURL}/scheduler/${recordId}`);
+        return { response };
+    }
+
     async publishDocumentV1(lambdaName: string, payload: string): Promise<boolean> {
 
         const lambdaClient = new Lambda({ region: process.env.AWS_REGION });
@@ -133,19 +143,20 @@ export class DocumentRepository implements DocumentPersister {
     }
 
     async sendEmail(parameters: any, baseURL: string): Promise<Object> {
-        console.log(baseURL);
         const response = await axios.post(`${baseURL}/email`, parameters);
         const { data: { success, data, error } } = response;
-
         return { success, data: data, error };
     }
 
     async getDocumentById(documentId: string, baseURL: string): Promise<Object> {
-        console.log(baseURL);
         const response = await axios.get(`${baseURL}/search/contents/${documentId}`);
-        console.log(response);
         const { data: { success, data, error } } = response;
-
         return { success, data: data, error };
+    }
+
+    async searchContent(parameters: searchContentParameters): Promise<object> {
+        const { query, baseURL } = parameters;
+        const response = await axios.post(`${baseURL}/search/contents/query`, query);
+        return { response };
     }
 }

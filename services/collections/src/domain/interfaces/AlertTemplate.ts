@@ -24,6 +24,10 @@ export interface Article {
     content: string;
 }
 
+export interface ArticleSource extends Article {
+    source: string
+}
+
 export interface SingleArticleSection extends Section {
     article: Article;
 }
@@ -34,8 +38,10 @@ export interface MultipleArticleSection extends Section {
 
 export interface MultipleEmailTemplateInput extends AlertEmail {
     sections: MultipleArticleSection[];
+    url: string;
 }
 
 export interface SingleEmailTemplateInput extends AlertEmail {
     section: SingleArticleSection;
+    url: string;
 }

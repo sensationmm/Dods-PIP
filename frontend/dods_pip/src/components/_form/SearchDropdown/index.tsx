@@ -118,6 +118,17 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           setValue={handleChange}
         />
       </OutsideClickHandler>
+
+      {isFilter && value && (
+        <Styled.clear
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange('');
+          }}
+        >
+          <Icon src={Icons.Bin} size={IconSize.large} />
+        </Styled.clear>
+      )}
     </Styled.wrapper>
   );
 };

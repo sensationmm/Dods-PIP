@@ -1,4 +1,5 @@
 import Joi, { Schema } from 'joi';
+
 import { resolve } from 'path';
 
 const loadConfig = (schema: Schema) => {
@@ -28,6 +29,7 @@ const envVarsSchema = Joi.object()
         DB_PASSWORD: Joi.string().required(),
         DB_CONNECTION_LIMIT: Joi.number().default(5),
         API_GATEWAY_BASE_URL: Joi.string().required(),
+        FRONTEND_URL: Joi.string().required(),
     })
     .unknown();
 
@@ -37,6 +39,8 @@ export const config = {
     env: envVars.NODE_ENV as string,
     isTestEnv: envVars.NODE_ENV !== 'test',
     openApiPath: resolve(process.cwd(), 'src/openApi.yml'),
+    singleFullAlertPath: resolve(process.cwd(), 'src/handlers/processImmediateAlert/template.handlebars'),
+    multipleSnippetAlertPath: resolve(process.cwd(), 'src/handlers/processAlert/template.handlebars'),
     test: {
         stage: envVars.SERVERLESS_STAGE as string,
         port: envVars.SERVERLESS_PORT as number,
@@ -45,6 +49,7 @@ export const config = {
     dods: {
         downstreamEndpoints: {
             apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
+            frontEndURL: envVars.FRONTEND_URL as string,
         }
     },
     aws: {

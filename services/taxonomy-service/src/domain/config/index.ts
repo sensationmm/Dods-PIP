@@ -58,7 +58,7 @@ const stages = ['production', 'development', 'test'];
 const envVarsSchema = Joi.object()
     .keys({
         NODE_ENV: Joi.string().valid(...stages).default('test'),
-        SERVERLESS_STAGE: Joi.string().required().valid('prod', 'dev', 'test').default('test'),
+        SERVERLESS_STAGE: Joi.string().required().valid('production', 'dev', 'test').default('test'),
         SERVERLESS_PORT: Joi.number().required().default(3000),
         ES_CLOUD_ID: Joi.string().required(),
         ES_KEY_ID: Joi.string().required(),
