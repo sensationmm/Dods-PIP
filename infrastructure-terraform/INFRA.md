@@ -16,8 +16,11 @@ No providers.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_dev"></a> [dev](#module\_dev) | ./environments/deployment | n/a |
+| <a name="module_dev-premodule"></a> [dev-premodule](#module\_dev-premodule) | ./premodule | n/a |
+| <a name="module_prod-premodule"></a> [prod-premodule](#module\_prod-premodule) | ./premodule | n/a |
 | <a name="module_production"></a> [production](#module\_production) | ./environments/deployment | n/a |
 | <a name="module_qa"></a> [qa](#module\_qa) | ./environments/deployment | n/a |
+| <a name="module_qa-premodule"></a> [qa-premodule](#module\_qa-premodule) | ./premodule | n/a |
 | <a name="module_test"></a> [test](#module\_test) | ./environments/deployment | n/a |
 
 ## Resources
