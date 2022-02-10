@@ -5,6 +5,7 @@ import Chips from '@dods-ui/components/Chips';
 import DateFacet from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
 import IconContentSource from '@dods-ui/components/IconContentSource';
+import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -26,7 +27,7 @@ import * as Styled from './library.styles';
 import getPayload from './utils/getSearchPayload';
 import useSearchQueries, { AggTypes } from './utils/useSearchQueries';
 
-interface ILibraryProps {
+interface ILibraryProps extends LoadingHOCProps {
   parsedQuery: QueryObject;
   results: { _source: ISourceData }[];
   totalDocs: number;
@@ -43,6 +44,7 @@ export const Library: React.FC<ILibraryProps> = ({
   aggregations,
   parsedQuery,
   apiErrorMessage,
+  setLoading,
 }) => {
   const {
     setKeywordQuery,
@@ -57,13 +59,13 @@ export const Library: React.FC<ILibraryProps> = ({
   const [contentSources, setContentSources] = useState<BucketType[]>([]);
   const [informationTypes, setInformationTypes] = useState<BucketType[]>([]);
   const [originators, setOriginators] = useState<BucketType[]>([]);
-  const [groups, setGroups] = useState<BucketType[]>([]);
   const [topics, setTopics] = useState<BucketType[]>([]);
   const [people, setPeople] = useState<BucketType[]>([]);
   const [organizations, setOrganizations] = useState<BucketType[]>([]);
   const [geography, setGeography] = useState<BucketType[]>([]);
   const [searchText, setSearchText] = useState(parsedQuery.searchTerm || '');
   const [filtersVisible, setFiltersVisible] = useState(true);
+  const [filtersReady, setFiltersReady] = useState(false);
 
   const { currentPage = 1, resultSize = DEFAULT_RESULT_SIZE } = parsedQuery;
 
@@ -84,16 +86,8 @@ export const Library: React.FC<ILibraryProps> = ({
   }, [totalDocs, resultSize]);
 
   useEffect(() => {
-    const {
-      contentSource,
-      informationType,
-      people,
-      organizations,
-      geography,
-      topics,
-      originator,
-      group,
-    } = aggregations || {};
+    const { contentSource, informationType, people, organizations, geography, topics, originator } =
+      aggregations || {};
 
     const checkEmptyAggregation = (aggregation: { doc_count: number }) => {
       return aggregation.doc_count !== 0;
@@ -134,6 +128,9 @@ export const Library: React.FC<ILibraryProps> = ({
     setOrganizations(updateWithNestedFilters(organizations?.buckets));
     setGeography(updateWithNestedFilters(geography?.buckets));
     setTopics(updateWithNestedFilters(topics?.buckets));
+    setFiltersReady(true);
+    setLoading(false);
+    window.scroll(0, 0);
   }, [parsedQuery, aggregations]);
 
   const recordsPerPage = useMemo(() => {
@@ -186,7 +183,10 @@ export const Library: React.FC<ILibraryProps> = ({
       <FacetContainer heading={'Filters'}>
         <Styled.filtersContent>
           <DateFacet
-            onChange={setDateQuery}
+            onChange={(value) => {
+              setLoading(true);
+              setDateQuery(value);
+            }}
             values={{
               min: parsedQuery?.dateRange?.min,
               max: parsedQuery?.dateRange?.max,
@@ -195,8 +195,12 @@ export const Library: React.FC<ILibraryProps> = ({
           <Facet
             title={'Content Source'}
             records={contentSources}
-            onClearSelection={() => unsetBasicQuery(contentSources)}
+            onClearSelection={() => {
+              setLoading(true);
+              unsetBasicQuery(contentSources);
+            }}
             onChange={(value) => {
+              setLoading(true);
               setBasicQuery({
                 key: AggTypes.contentSource,
                 value,
@@ -206,8 +210,12 @@ export const Library: React.FC<ILibraryProps> = ({
           <Facet
             title={'Information Type'}
             records={informationTypes}
-            onClearSelection={() => unsetBasicQuery(informationTypes)}
+            onClearSelection={() => {
+              setLoading(true);
+              unsetBasicQuery(informationTypes);
+            }}
             onChange={(value) => {
+              setLoading(true);
               setBasicQuery({
                 key: AggTypes.informationType,
                 value,
@@ -217,8 +225,12 @@ export const Library: React.FC<ILibraryProps> = ({
           <Facet
             title={'Originator'}
             records={originators}
-            onClearSelection={() => unsetBasicQuery(originators)}
+            onClearSelection={() => {
+              setLoading(true);
+              unsetBasicQuery(originators);
+            }}
             onChange={(value) => {
+              setLoading(true);
               setBasicQuery({
                 key: AggTypes.originator,
                 value,
@@ -228,8 +240,12 @@ export const Library: React.FC<ILibraryProps> = ({
           <Facet
             title={'Topics'}
             records={topics}
-            onClearSelection={() => unsetNestedQuery(topics)}
+            onClearSelection={() => {
+              setLoading(true);
+              unsetNestedQuery(topics);
+            }}
             onChange={(value) => {
+              setLoading(true);
               setNestedQuery({
                 path: 'taxonomyTerms',
                 key: 'taxonomyTerms.termLabel',
@@ -240,8 +256,12 @@ export const Library: React.FC<ILibraryProps> = ({
           <Facet
             title={'Organizations'}
             records={organizations}
-            onClearSelection={() => unsetNestedQuery(organizations)}
+            onClearSelection={() => {
+              setLoading(true);
+              unsetNestedQuery(organizations);
+            }}
             onChange={(value) => {
+              setLoading(true);
               setNestedQuery({
                 path: 'taxonomyTerms',
                 key: 'taxonomyTerms.termLabel',
@@ -252,8 +272,12 @@ export const Library: React.FC<ILibraryProps> = ({
           <Facet
             title={'People'}
             records={people}
-            onClearSelection={() => unsetNestedQuery(people)}
+            onClearSelection={() => {
+              setLoading(true);
+              unsetNestedQuery(people);
+            }}
             onChange={(value) => {
+              setLoading(true);
               setNestedQuery({
                 path: 'taxonomyTerms',
                 key: 'taxonomyTerms.termLabel',
@@ -264,8 +288,12 @@ export const Library: React.FC<ILibraryProps> = ({
           <Facet
             title={'Geography'}
             records={geography}
-            onClearSelection={() => unsetNestedQuery(geography)}
+            onClearSelection={() => {
+              setLoading(true);
+              unsetNestedQuery(geography);
+            }}
             onChange={(value) => {
+              setLoading(true);
               setNestedQuery({
                 path: 'taxonomyTerms',
                 key: 'taxonomyTerms.termLabel',
@@ -276,7 +304,17 @@ export const Library: React.FC<ILibraryProps> = ({
         </Styled.filtersContent>
       </FacetContainer>
     );
-  }, [filtersVisible]);
+  }, [
+    filtersVisible,
+    filtersReady,
+    contentSources,
+    informationTypes,
+    originators,
+    topics,
+    organizations,
+    people,
+    geography,
+  ]);
 
   const renderBottomPagination = useMemo(() => {
     return (
@@ -348,7 +386,8 @@ export const Library: React.FC<ILibraryProps> = ({
           <Icon src={Icons.Search} size={IconSize.xxlarge} color={color.base.greyDark} />
           <div>
             <Text color={color.base.greyDark} type={'h2'} headingStyle={'titleLarge'}>
-              No results for <span>{searchText}</span>
+              No results {searchText !== '' ? 'for ' : 'found'}
+              {searchText !== '' && <span>{searchText}</span>}
             </Text>
             <p>Try checking your spelling or adjusting the filters</p>
           </div>
@@ -535,7 +574,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const sPayload = JSON.stringify(payload.payload);
     apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
-      body: JSON.stringify(sPayload),
+      body: sPayload,
       method: 'POST',
     })) as IResponse;
   } catch (error) {
@@ -570,4 +609,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default Library;
+export default LoadingHOC(Library);
