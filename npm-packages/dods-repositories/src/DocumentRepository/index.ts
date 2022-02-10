@@ -1,5 +1,5 @@
 import { AwsService, DefaultAwsService } from '../shared/DefaultAwsService';
-import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleWebhookParameters, searchContentParameters } from './domain';
+import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleAlertParameters, ScheduleWebhookParameters, searchContentParameters } from './domain';
 import { Lambda, S3 } from 'aws-sdk';
 
 import { ScheduleEditorialRecordParamateres } from '../EditorialRecordRepository';
@@ -106,6 +106,11 @@ export class DocumentRepository implements DocumentPersister {
     async scheduleWebhook(parameters: ScheduleEditorialRecordParamateres): Promise<object> {
         const scheduleWebhook: ScheduleWebhookParameters = { ...parameters, scheduleType: 'publish', scheduleId: parameters.recordId }
         const response = await axios.post(`${this.baseURL}/scheduler`, scheduleWebhook);
+        return { response };
+    }
+
+    async scheduleAlertWebhook(parameters: ScheduleAlertParameters): Promise<object> {
+        const response = await axios.post(`${this.baseURL}/scheduler/alert`, parameters);
         return { response };
     }
 

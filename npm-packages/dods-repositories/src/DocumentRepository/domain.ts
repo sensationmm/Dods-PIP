@@ -19,6 +19,12 @@ export interface searchContentParameters {
     baseURL: string;
 }
 
+export interface ScheduleAlertParameters {
+    scheduleId: string;
+    collectionId: string;
+    cron: string;
+}
+
 export interface DocumentPersister {
     publishDocument(lambdaName: string, payload: string): Promise<boolean>;
     updateDocument(parameters: any): Promise<Object>;
@@ -26,6 +32,7 @@ export interface DocumentPersister {
     getDocumentByArn(documentARN: string): Promise<DocumentPayloadResponse>;
     getDocumentByArnV1(documentARN: string): Promise<DocumentPayloadResponseV1>;
     scheduleWebhook(parameters: ScheduleEditorialRecordParamateres): Promise<object>;
+    scheduleAlertWebhook(parameters: ScheduleAlertParameters): Promise<object>
     publishDocumentV1(lambdaName: string, payload: string): Promise<boolean>;
     sendEmail(parameters: any, baseURL: string): Promise<Object>;
     getDocumentById(documentId: string, baseURL: string): Promise<Object>;
