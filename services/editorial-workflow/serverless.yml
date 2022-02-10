@@ -26,6 +26,11 @@ provider:
     tracing:
         lambda: true
     iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - "lambda:InvokeFunction"
+          Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:content-indexer-${self:provider.stage}"
+
         - Effect: 'Allow'
           Action:
             -  'rds:*'
@@ -62,7 +67,7 @@ provider:
         DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'root' }
         DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'rootPass'}
         BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/
-        BUCKET_EDITORIAL: dods-${self:provider.stage}-editorial-record-documents
+        BUCKET_EDITORIAL: pip-${self:provider.stage}-editorial-doc-store
         CONTENT_INDEXER_LAMBDA: content-indexer-${self:provider.stage}
         JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
         
