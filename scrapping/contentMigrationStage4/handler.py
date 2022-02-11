@@ -67,7 +67,7 @@ def consumer(event, context):
                     response = lambda_client.invoke(
                         FunctionName=LAMBDA_CONTENT_INDEXER_ARN,
                         InvocationType='RequestResponse',
-                        Payload=json.dumps({"data": document})
+                        Payload=json.dumps({"body": document})
                     )
                     if response['Payload'].read():
                         logger.info('Document has been indexed.')
