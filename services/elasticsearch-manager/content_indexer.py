@@ -14,7 +14,6 @@ ES_API_KEY = os.environ['ES_API_KEY']
 es_client = Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=(ES_KEY_ID, ES_API_KEY))
 
 def run(event, context):
-    logger.debug(dumps(event))
     if 'body' not in event:
         raise ValueError(f'Data object is empty!')
     content = event['body']
