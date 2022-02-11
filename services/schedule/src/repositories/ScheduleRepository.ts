@@ -51,7 +51,7 @@ export class ScheduleRepository implements Schedule {
                     webhook: {
                         webhook: {
                             method: "PUT",
-                            url: `${data.baseURL}/collections/${data.collectionId}/alerts/${data.scheduleId}/process/`,
+                            url: `${data.baseURL}/collections/${data.collectionId}/alerts/${data.scheduleId}/process`,
                             headers : {
                                 "schedule-api-key" : data.apiKey
                             },

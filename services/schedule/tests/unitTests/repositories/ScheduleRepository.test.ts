@@ -87,7 +87,7 @@ describe(`Schedule repository tests`, () => {
                     webhook: {
                         webhook: {
                             method: "PUT",
-                            url: `${CREATE_ALERT_SCHEDULE_INPUT.baseURL}/collections/${CREATE_ALERT_SCHEDULE_INPUT.collectionId}/alerts/${CREATE_ALERT_SCHEDULE_INPUT.scheduleId}/process/`,
+                            url: `${CREATE_ALERT_SCHEDULE_INPUT.baseURL}/collections/${CREATE_ALERT_SCHEDULE_INPUT.collectionId}/alerts/${CREATE_ALERT_SCHEDULE_INPUT.scheduleId}/process`,
                             headers : {
                                 "schedule-api-key" : CREATE_ALERT_SCHEDULE_INPUT.apiKey
                             },
