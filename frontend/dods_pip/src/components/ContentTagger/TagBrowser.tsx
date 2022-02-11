@@ -121,7 +121,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   const debounceSearchTags = debounce(async (tag: string) => {
     setSearchingTagsData(true);
 
-    if (tag !== '') {
+    if (tag.trim() !== '') {
       const response = await fetchJson(`${BASE_URI}${Api.TaxonomySearch}/${tag}`);
       setTagsSearch(response as unknown as TagSearchData);
     } else {
@@ -248,18 +248,21 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
 
   const highlightSearch = (val: string) => {
     const found = val.toLowerCase().indexOf(taxonomySearch.toLowerCase());
-
-    const pre = val.substring(0, found);
-    const highlight = val.substring(found, found + taxonomySearch.length);
-    const post = val.substring(found + taxonomySearch.length, val.length);
-
-    return (
-      <>
-        {pre}
-        <strong>{highlight}</strong>
-        {post}
-      </>
-    );
+    console.log(val, found);
+    if (found >= 0) {
+      const pre = val.substring(0, found);
+      const highlight = val.substring(found, found + taxonomySearch.length);
+      const post = val.substring(found + taxonomySearch.length, val.length);
+      console.log('matched', found, pre, highlight, post);
+      return (
+        <>
+          {pre}
+          <strong>{highlight}</strong>
+          {post}
+        </>
+      );
+    }
+    return val;
   };
 
   const controls = (
