@@ -1,5 +1,6 @@
 from lib.logger import logger
 import boto3
+import botocore
 import os
 from lib.configs import Config
 from lib.validation import Validator
@@ -15,7 +16,8 @@ s3_client = boto3.client('s3')
 sqs_client = boto3.client('sqs')
 config = Config().config_read(("config.ini"))
 
-lambda_client = boto3.client('lambda')
+config = botocore.config.Config(connect_timeout=300, read_timeout=900)
+lambda_client = boto3.client('lambda', region_name='eu-west-1', config=config)
 
 
 def s3_list_folders(prefix: str):
