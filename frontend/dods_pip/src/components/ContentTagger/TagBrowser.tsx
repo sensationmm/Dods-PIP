@@ -120,8 +120,13 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
 
   const debounceSearchTags = debounce(async (tag: string) => {
     setSearchingTagsData(true);
-    const response = await fetchJson(`${BASE_URI}${Api.TaxonomySearch}/${tag}`);
-    setTagsSearch(response as unknown as TagSearchData);
+
+    if (tag !== '') {
+      const response = await fetchJson(`${BASE_URI}${Api.TaxonomySearch}/${tag}`);
+      setTagsSearch(response as unknown as TagSearchData);
+    } else {
+      setTagsSearch(undefined);
+    }
     setSearchingTagsData(false);
   }, 500);
 
@@ -138,7 +143,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   }, [active, isBrowsing]);
 
   useEffect(() => {
-    taxonomySearch !== '' && searchTags(taxonomySearch);
+    searchTags(taxonomySearch);
   }, [taxonomySearch]);
 
   useEffect(() => {
