@@ -122,7 +122,7 @@ pipelines:
           default: hansard-api
       - step:
           name: "New Ingestion: Test and Build"
-          image: public.ecr.aws/a6i2o1l2/ingestion:1.0.0
+          image: public.ecr.aws/dods-cicd/ingestion:1.1.0
           script:
             - 'echo "Running build for ingestion: ${SERVICE}"'
             - cd ingestion-python/$SERVICE
@@ -301,7 +301,7 @@ pipelines:
           default: hansard-api
       - step:
           name: "Ingestion: Deploy to Environment"
-          image: public.ecr.aws/a6i2o1l2/ingestion:1.0.0
+          image: public.ecr.aws/dods-cicd/ingestion:1.1.0
           script:
             - 'echo "Running deployment for ingestion: ${SERVICE}"'
             - cd ingestion-python/$SERVICE

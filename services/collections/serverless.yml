@@ -97,8 +97,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
-  apiGatewayCaching:
-    enabled: true
+  # apiGatewayCaching:
+  #   enabled: true
 
   apiKeys:
     - name: webhook-api-key
