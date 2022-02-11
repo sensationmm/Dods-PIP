@@ -24,6 +24,8 @@ export interface CustomResponse extends Response, UserResponse {
   organisations: Record<string, unknown>;
   topics: Record<string, unknown>;
   geographies: Record<string, unknown>;
+  isActive?: boolean;
+  isLoggedIn?: boolean;
 }
 
 export interface CustomError extends CustomResponse {

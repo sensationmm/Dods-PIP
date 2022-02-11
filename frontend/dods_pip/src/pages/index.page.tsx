@@ -16,7 +16,7 @@ import Button from '../components/Button';
 import Text from '../components/Text';
 import color from '../globals/color';
 import LoadingHOC, { LoadingHOCProps } from '../hoc/LoadingHOC';
-import fetchJson from '../lib/fetchJson';
+import fetchJson, { CustomResponse } from '../lib/fetchJson';
 import useUser from '../lib/useUser';
 import { Api, BASE_URI } from '../utils/api';
 import * as Validation from '../utils/validation';
@@ -49,6 +49,11 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
       setRemember(true);
     }
   }, [storedEmail]);
+
+  useEffect(() => {
+    setShowInactiveMsg(false);
+    setErrors({});
+  }, [emailAddress, password]);
 
   const { mutateUser } = useUser({
     redirectTo: '/dashboard',
@@ -87,16 +92,32 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
     };
 
     try {
-      const user = await fetchJson(`${BASE_URI}${Api.Login}`, {
+      const user = (await fetchJson(`${BASE_URI}${Api.Login}`, {
         body: JSON.stringify(body),
-      });
-      await mutateUser(user);
+      })) as CustomResponse;
 
-      if (remember) {
-        cookieCutter.set('dods-login-username', emailAddress);
-        cookieCutter.set('dods-login-password', password);
+      if (user.isLoggedIn) {
+        await mutateUser(user);
+
+        if (remember) {
+          cookieCutter.set('dods-login-username', emailAddress);
+          cookieCutter.set('dods-login-password', password);
+        }
+        setLoading(false);
+      } else {
+        if (
+          user.data?.name === 'NotAuthorizedException' ||
+          user.data?.name === 'UserNotFoundException'
+        ) {
+          if (user.data?.isActive === false) {
+            setShowInactiveMsg(true);
+          } else {
+            setFailureCount(failureCount + 1);
+          }
+        } else {
+          setErrors({ form: 'FAIL' });
+        }
       }
-      setLoading(false);
     } catch (error) {
       if (
         error.data.name === 'NotAuthorizedException' ||
