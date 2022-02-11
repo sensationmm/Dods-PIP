@@ -97,7 +97,7 @@
         vertical-align: top;
       }
 
-      @media all and (max-width: 600px) {
+      @media all and (max-width: 650px) {
         .btn {
           width: 100%;
           margin: 0 0 10px 0;
@@ -109,6 +109,9 @@
         }
         .content-col-right {
           max-width: 100% !important;
+        }
+        .contentContainer {
+          padding: 0 20px 60px !important;
         }
       }
 
@@ -137,21 +140,6 @@
           padding: 20px 0 0 0 !important;
         }
       }
-
-      @media all and (max-width: 900px) {
-        .column {
-          max-width: 100% !important;
-        }
-        .column-first {
-          margin: 0 0 20px 0;
-        }
-      }
-
-      @media all and (max-width: 1060px) {
-        .contentContainer {
-          padding: 0 20px 60px !important;
-        }
-      }
     </style>
   </head>
   <body>
@@ -161,32 +149,32 @@
         border="0"
         cellpadding="0"
         cellspacing="0"
+        valign="center"
         width="100%"
         class="main"
         style="background-color: #f8f8f8; width: 100%; margin: 0 auto"
       >
         <tr>
-          <td>
-            <!--[if gte mso 9]><table width="600" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
+          <td align="center">
+            <!--[if (gte mso 9) | (IE)]><table width="600" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
             <table
               role="presentation"
               width="100%"
               style="
                 margin: 0 auto;
                 width: 100%;
-                max-width: 1040px;
+                max-width: 600px;
                 padding: 0 0 60px 0;
               "
               class="contentContainer"
             >
               <!-- Logo -->
               <tr>
-                <td style="padding: 50px 0 45px">
+                <td style="padding: 20px 0 15px">
                   <a name="top"></a>
                   <img
                     src="{{url}}/email/logo.png"
-                    width="146"
-                    height="90"
+                    width="80"
                     alt="DODS"
                   />
                 </td>
@@ -195,40 +183,13 @@
               <tr>
                 <td
                   class="two-columns"
-                  style="padding: 0 0 32px 0"
+                  style="padding: 0 0 12px 0"
                   width="100%"
                 >
                   <table
                     role="presentation"
-                    width="64"
-                    style="
-                      border-collapse: separate;
-                      width: 100%;
-                      max-width: 75px;
-                      mso-table-lspace: 0pt;
-                      mso-table-rspace: 0pt;
-                      text-align: center;
-                    "
-                    class="column"
-                  >
-                    <tr>
-                      <td
-                        style="
-                          background: #ffffff;
-                          border-radius: 8px;
-                          box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
-                          padding: 14px;
-                        "
-                      >
-                        <!-- Headline icon if it changes -->
-                        <img src="{{url}}/email/icon-document.png" alt="" />
-                      </td>
-                    </tr>
-                  </table>
-                  <table
-                    role="presentation"
                     width="100%"
-                    style="width: 100%; max-width: 86%"
+                    style="width: 100%;"
                     class="column"
                   >
                     <tr>
@@ -274,7 +235,7 @@
               <!-- Jump Links -->
               {{#each sections}}
               <tr>
-                <td style="padding: 0 0 30px 0">
+                <td style="padding: 0 0 20px 0">
                   <!-- Container box with drop shadow repeatable section -->
                   <table
                     role="presentation"
@@ -291,17 +252,21 @@
                   >
                     <tr>
                       <td
-                        style="padding: 30px 10px 30px 30px"
-                        class="two-columns"
+                        style="padding: 30px 30px 30px 30px"
                       >
                         <table
                           role="presentation"
                           width="100%"
-                          style="width: 100%; max-width: 90%"
-                          class="column"
+                          style="width: 100%;"
                         >
                           <tr>
                             <td style="padding: 0 0 20px 0">
+                              <!-- Section logo or icon -->
+                              <img
+                                class="section-logo-right"
+                                src="{{icon}}"
+                                alt=""
+                              />
                               <!-- Section Title -->
                               <h2
                                 style="
@@ -342,23 +307,6 @@
                             </td>
                           </tr>
                         </table>
-                        <table
-                          role="presentation"
-                          width="100%"
-                          style="width: 100%; max-width: 48px"
-                          class="column"
-                        >
-                          <tr>
-                            <td>
-                              <!-- Section logo or icon -->
-                              <img
-                                class="section-logo-right"
-                                src="{{icon}}"
-                                alt=""
-                              />
-                            </td>
-                          </tr>
-                        </table>
                       </td>
                     </tr>
                   </table>
@@ -367,50 +315,18 @@
               {{/each}}
               <!-- Actions -->
               <tr>
-                <td style="padding: 0 0 60px 0">
+                <td style="padding: 0 0 30px 0">
                   <table role="presentation" width="100%">
                     <tr>
                       <td class="two-columns">
                         <table
                           role="presentation"
-                          style="width: 100%; max-width: 54%"
+                          style="width: 100%;"
                           width="100%"
                           class="column col-info"
                         >
                           <tr>
-                            <td
-                              style="
-                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
-                                  sans-serif;
-                                font-size: 18px;
-                                line-height: 24px;
-                                color: #757575;
-                              "
-                            >
-                              <!-- if this needs updating, information statement -->
-                              <img
-                                style="vertical-align: middle; width: 16px"
-                                src="{{url}}/email/icon-info.png"
-                                width="16"
-                              />
-                              <span
-                                >To change any preferences, please contact your
-                                consultant.</span
-                              >
-                            </td>
-                          </tr>
-                        </table>
-                        <table
-                          role="presentation"
-                          width="100%"
-                          style="width: 100%; max-width: 312px"
-                          class="column col-action"
-                        >
-                          <tr>
-                            <td
-                              class="col-action-inner"
-                              style="text-align: right"
-                            >
+                            <td style="padding: 0px 0px 10px 0px;">
                               <!-- Email button, needs link to email -->
                               <button
                                 style="
@@ -476,6 +392,28 @@
                               </button>
                             </td>
                           </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 18px;
+                                line-height: 24px;
+                                color: #757575;
+                              "
+                            >
+                              <!-- if this needs updating, information statement -->
+                              <img
+                                style="vertical-align: middle; width: 16px"
+                                src="{{url}}/email/icon-info.png"
+                                width="16"
+                              />
+                              <span
+                                >To change any preferences, please contact your
+                                consultant.</span
+                              >
+                            </td>
+                          </tr>
                         </table>
                       </td>
                     </tr>
@@ -530,7 +468,7 @@
                   {{#each this}}
                   <table
                     role="presentation"
-                    class="column column-first"
+                    class="column"
                     style="
                       border-collapse: separate;
                       mso-table-lspace: 0pt;
@@ -538,8 +476,8 @@
                       background: #ffffff;
                       border-radius: 8px;
                       box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      margin: 0 0 20px 0;
                       width: 100%;
-                      max-width: 49%;
                     "
                     width="100%"
                   >
@@ -697,76 +635,51 @@
               {{/each}}
               <!-- Main Footer Header -->
               <tr>
-                <td style="padding: 0 0 30px 0">
+                <td style="padding: 0 0 10px 0">
                   <!-- Footer Title -->
-                  <h1
+                  <h2
                     style="
                       font-family: 'Libre Baskerville', Georgia,
                         'Times New Roman', Times, serif;
                       font-weight: 400;
-                      font-size: 32px;
-                      line-height: 40px;
+                      font-size: 24px;
+                      line-height: 30px;
                     "
                   >
-                    Contact Dods
-                  </h1>
+                    Customer Service
+                  </h2>
                 </td>
               </tr>
               <!-- Footer Section -->
               <tr>
                 <td
                   style="
-                    background-color: #124384;
+                    background-color: #202c54;
                     color: #ffffff;
                     padding: 24px;
                   "
-                  class="two-columns footer-columns"
+                  class="footer-columns"
                 >
                   <table
                     role="presentation"
-                    width="50%"
-                    style="width: 100%; max-width: 49%"
-                    class="column footer-col footer-col-first"
-                  >
-                    <tr>
-                      <td>
-                        <!-- Footer left side title -->
-                        <p style="font-weight: 700; margin: 0 0 20px 0">
-                          Change your preferences
-                        </p>
-                        <!-- Footer left side content -->
-                        <p>
-                          To change any preferences,<br />
-                          please contact your consultant.
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
-                  <table
-                    role="presentation"
-                    width="50%"
+                    width="100%"
                     style="
-                      border-left: 1px solid #c7c7c7;
                       width: 100%;
-                      max-width: 49%;
                     "
                     class="column footer-col footer-col-last"
                   >
                     <tr>
-                      <td class="footer-col-right" style="padding: 0 0 0 30px">
-                        <!-- Footer right side title -->
-                        <p style="font-weight: 700; margin: 0 0 20px 0">
-                          Custom Service
-                        </p>
+                      <td class="footer-col-right">
                         <!-- Footer right side phone number -->
                         <p>
-                          <img src="{{url}}/email/icon-mobile.png" /> +44 207 593
-                          5500
+                          <img src="./images/icon-mobile.png" /> <a href="tel:+44 207 593
+                          5500" style="color:#ffffff; text-decoration: none; font-size: 14px;">+44 207 593
+                          5500</a>
                         </p>
                         <p>
                           <img
                             style="vertical-align: middle; margin: 0 2px 0 0"
-                            src="{{url}}/email/icon-sm-email.png"
+                            src="./images/icon-sm-email.png"
                           />
                           <!-- Footer right side email -->
                           <a
@@ -782,7 +695,7 @@
               </tr>
               <!-- Footer Text -->
               <tr>
-                <td style="padding: 30px 0 0 0">
+                <td style="padding: 10px 0 0 0">
                   <!-- Foote small text -->
                   <p
                     style="
@@ -820,7 +733,7 @@
                 </td>
               </tr>
             </table>
-            <!--[if gte mso 9]></td></tr></table><![endif]-->
+            <!--[if (gte mso 9) | (IE)]></td></tr></table><![endif]-->
           </td>
         </tr>
       </table>
