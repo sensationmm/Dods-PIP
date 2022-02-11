@@ -1,0 +1,535 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Template: Single Full UI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Open+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Libre Baskerville", Georgia, "Times New Roman", Times,
+          serif;
+        font-weight: 400;
+      }
+
+      html,
+      body,
+      table,
+      tbody,
+      tr,
+      td,
+      div,
+      p,
+      ul,
+      ol,
+      li,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Open Sans", "Segoe UI", Tahoma, sans-serif;
+        background-color: #f8f8f8;
+        color: #222955;
+        margin: 0;
+        padding: 0;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      table {
+        border-spacing: 0;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+
+      table td {
+        border-collapse: collapse;
+      }
+
+      .ExternalClass {
+        width: 100%;
+      }
+
+      .ExternalClass,
+      .ExternalClass p,
+      .ExternalClass span,
+      .ExternalClass font,
+      .ExternalClass td,
+      .ExternalClass div {
+        line-height: 100%;
+      }
+      /* Outermost container in Outlook.com */
+
+      a {
+        color: #124384;
+      }
+
+      img {
+        -ms-interpolation-mode: bicubic;
+      }
+
+      .wrapper {
+        width: 100%;
+        table-layout: fixed;
+        background-color: #f8f8f8;
+      }
+
+      .column {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      @media all and (max-width: 650px) {
+        .btn {
+          width: 100%;
+          margin: 0 0 10px 0;
+        }
+        .content-col-left {
+          margin: 0 0 10px 0;
+          max-width: 100% !important;
+          text-align: center;
+        }
+        .content-col-right {
+          max-width: 100% !important;
+        }
+        .contentContainer {
+          padding: 0 20px 60px !important;
+        }
+      }
+
+      @media all and (max-width: 700px) {
+        .section-logo-right {
+          display: none;
+        }
+        .col-info {
+          max-width: 100% !important;
+          padding: 0 0 20px 0;
+        }
+        .col-action {
+          max-width: 100% !important;
+        }
+        .footer-col {
+          max-width: 100% !important;
+          padding: 0 0 20px 0;
+        }
+        .footer-col-first {
+          border-bottom: 1px solid #c7c7c7;
+        }
+        .footer-col-last {
+          border: 0 !important;
+        }
+        .footer-col-right {
+          padding: 20px 0 0 0 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <center class="wrapper">
+      <table
+        role="presentation"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        valign="center"
+        width="100%"
+        class="main"
+        style="background-color: #f8f8f8; width: 100%; margin: 0 auto"
+      >
+        <tr>
+          <td align="center">
+            <!--[if (gte mso 9) | (IE)]><table width="600" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
+            <table
+              role="presentation"
+              width="100%"
+              style="
+                margin: 0 auto;
+                width: 100%;
+                max-width: 600px;
+                padding: 0 0 60px 0;
+              "
+              class="contentContainer"
+            >
+              <!-- Logo -->
+              <tr>
+                <td style="padding: 20px 0 15px">
+                  <a name="top"></a>
+                  <img
+                    src="{{url}}/email/logo.png"
+                    width="80"
+                    alt="DODS"
+                  />
+                </td>
+              </tr>
+              <!-- Main Header -->
+              <tr>
+                <td
+                  class="two-columns"
+                  style="padding: 0 0 12px 0"
+                  width="100%"
+                >
+                  <table
+                    role="presentation"
+                    width="100%"
+                    style="width: 100%;"
+                    class="column"
+                  >
+                    <tr>
+                      <td
+                        style="
+                          font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                            sans-serif;
+                          font-size: 18px;
+                          line-height: 24px;
+                          padding: 0 0 10px 0;
+                        "
+                      >
+                        <img
+                          style="vertical-align: middle; width: 16px"
+                          src="{{url}}/email/icon-clock.png"
+                          width="16"
+                        />
+                        <!-- Headline Date -->
+                        <span style="display: inline-block; padding: 0 0 0 0"
+                          >{{date}}</span
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <!-- Email Template Headline -->
+                        <h1
+                          style="
+                            font-family: 'Libre Baskerville', Georgia,
+                              'Times New Roman', Times, serif;
+                            font-weight: 400;
+                            font-size: 32px;
+                            line-height: 40px;
+                          "
+                        >
+                          {{headline}}
+                        </h1>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Separator -->
+              <tr>
+                <td
+                  style="
+                    background-image: url('{{url}}/email/line.png');
+                    background-position: 0 20px;
+                    background-repeat: repeat-x;
+                    padding: 0 0 30px 0;
+                  "
+                >
+                  <!-- Separator Title -->
+                  <h2
+                    style="
+                      font-family: 'Libre Baskerville', Georgia,
+                        'Times New Roman', Times, serif;
+                      font-weight: 400;
+                      font-size: 24px;
+                      line-height: 32px;
+                      display: inline-block;
+                      background-color: #f8f8f8;
+                      padding: 0 30px 0 0;
+                    "
+                  >
+                    <!-- Image logo or icon based on section content -->
+                    <img
+                      style="vertical-align: middle; margin: 0 5px 0 0"
+                      src="{{section.icon}}"
+                      width="40"
+                      height="40"
+                    />
+                    {{section.title}}
+                  </h2>
+                </td>
+              </tr>
+              <!-- Content Block -->
+              <tr>
+                <td style="padding: 0 0 30px 0">
+                  <!-- Container box with drop shadow -->
+                  <table
+                    role="presentation"
+                    style="
+                      border-collapse: separate;
+                      mso-table-lspace: 0pt;
+                      mso-table-rspace: 0pt;
+                      background: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
+                      width: 100%;
+                    "
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 30px">
+                        <table role="presentation" width="100%">
+                          <tr>
+                            <td style="padding: 0 0 20px 0">
+                              <!-- Article Title -->
+                              <h1
+                                style="
+                                  font-family: 'Libre Baskerville', Georgia,
+                                    'Times New Roman', Times, serif;
+                                  font-weight: 400;
+                                  font-size: 32px;
+                                  line-height: 40px;
+                                "
+                              >
+                                <a
+                                  style="color: #222955; text-decoration: none"
+                                  name="{{section.article.id}}"
+                                  >{{section.article.title}}</a
+                                >
+                              </h1>
+                            </td>
+                          </tr>
+                          <tr>
+                            <!-- Meta data section -->
+                            <td style="color: #757575; padding: 0 0 30px 0">
+                              <!-- Category/type image -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="{{section.article.contentSource.icon}}"
+                              />
+                              <!-- Category/type title -->
+                              <span>{{section.article.contentSource.name}}</span> <span>|</span>
+                              <!-- Image/tag and category type based on content -->
+                              <img
+                                style="
+                                  vertical-align: middle;
+                                  margin-right: 5px;
+                                "
+                                src="{{section.article.informationType.icon}}"
+                              /><!-- category type --><span>{{section.article.informationType.name}}</span> <span>|</span>
+                              <!-- Meta Date -->
+                              <span>{{section.article.date}}</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="
+                                font-family: 'Open Sans', 'Segoe UI', Tahoma,
+                                  sans-serif;
+                                font-size: 16px;
+                                line-height: 22px;
+                                padding: 0 0 30px 0;
+                              "
+                            >
+                              <!-- Article Content paragraphs -->
+                              {{{section.article.content}}}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                role="presentation"
+                                width="100%"
+                                style="width: 100%"
+                              >
+                                <tr>
+                                  <td
+                                    class="column content-col-left"
+                                    width="50%"
+                                    style="width: 100%; max-width: 50%"
+                                  >
+                                    <a
+                                      style="
+                                        font-weight: 700;
+                                        color: #124384;
+                                        text-decoration: none;
+                                      "
+                                      href="#top"
+                                      ><img
+                                        style="vertical-align: middle"
+                                        src="{{url}}/email/icon-chevron-up.png"
+                                      />
+                                      Back to top</a
+                                    >
+                                  </td>
+                                  <td
+                                    class="column content-col-right"
+                                    width="50%"
+                                    style="
+                                      width: 100%;
+                                      max-width: 50%;
+                                      text-align: right;
+                                    "
+                                  >
+                                    <!-- button link to article -->
+                                    <a href="{{section.article.url}}" style="text-decoration: none;">
+                                      <button
+                                        style="
+                                          font-family: 'Open Sans', 'Segoe UI',
+                                            Tahoma, sans-serif;
+                                          font-size: 16px;
+                                          font-weight: 700;
+                                          line-height: 12px;
+                                          background: #124384;
+                                          border: 0;
+                                          border-radius: 8px;
+                                          box-shadow: 0px 1px 8px
+                                            rgba(0, 0, 0, 0.1);
+                                          color: #ffffff;
+                                          cursor: pointer;
+                                          padding: 14px 12px 12px;
+                                        "
+                                        class="btn"
+                                      >
+                                        <span
+                                          style="
+                                            display: inline-block;
+                                            margin-right: 4px;
+                                          "
+                                          >Go to article</span
+                                        >
+                                        <img
+                                          style="vertical-align: middle"
+                                          src="{{url}}/email/icon-chevron-right.png"
+                                          width="16"
+                                        />
+                                      </button>
+                                    </a>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Main Footer Header -->
+              <tr>
+                <td style="padding: 0 0 10px 0">
+                  <!-- Footer Title -->
+                  <h1
+                    style="
+                      font-family: 'Libre Baskerville', Georgia,
+                        'Times New Roman', Times, serif;
+                      font-weight: 400;
+                      font-size: 32px;
+                      line-height: 40px;
+                    "
+                  >
+                    Customer Service
+                  </h1>
+                </td>
+              </tr>
+              <!-- Footer Section -->
+              <tr>
+                <td
+                  style="
+                    background-color: #202c54;
+                    color: #ffffff;
+                    padding: 24px;
+                  "
+                  class="footer-columns"
+                >
+                  <table
+                    role="presentation"
+                    width="100%"
+                    style="
+                      width: 100%;
+                    "
+                    class="column footer-col footer-col-last"
+                  >
+                    <tr>
+                      <td class="footer-col-right">
+                        <!-- Footer right side phone number -->
+                        <p>
+                          <img src="{{url}}/email/icon-mobile.png" /> <a href="tel:+44 207 593
+                          5500" style="color:#ffffff; text-decoration: none; font-size: 14px;">+44 207 593
+                          5500</a>
+                        </p>
+                        <p>
+                          <img
+                            style="vertical-align: middle; margin: 0 2px 0 0"
+                            src="{{url}}/email/icon-sm-email.png"
+                          />
+                          <!-- Footer right side email -->
+                          <a
+                            style="color: #ffffff; text-decoration: none"
+                            href="mailto:customer.service@dodsgroup.com"
+                            >customer.service@dodsgroup.com</a
+                          >
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Footer Text -->
+              <tr>
+                <td style="padding: 10px 0 0 0">
+                  <!-- Foote small text -->
+                  <p
+                    style="
+                      font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;
+                      font-size: 12px;
+                      line-height: 16px;
+                      color: #222955;
+                      margin: 0 0 22px 0;
+                    "
+                  >
+                    This email may contain Parliamentary information licensed
+                    under the Open Parliament Licence v1.0, public sector
+                    information licensed under the Open Government Licence v1.0;
+                    information subject to copyright of the National Assembly
+                    for Wales Commission and/or information reproduced under the
+                    terms of the Click-Use Licence; European Commission
+                    information; reproduction is authorised, provided the source
+                    is acknowledged, save where otherwise stated. For further
+                    info see http://europa.eu/geninfo/legal_notices_en.htm. All
+                    other material may be subject to copyright.
+                  </p>
+                  <!-- Footer extra small text -->
+                  <p
+                    style="
+                      font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;
+                      font-size: 10px;
+                      line-height: 16px;
+                      color: #222955;
+                    "
+                  >
+                    Merit Group plc 2021 Registered in England under Company
+                    number 04267888 Registered Office: 11th Floor, The Shard, 32
+                    London Bridge Street, London SE1 9SG.
+                  </p>
+                </td>
+              </tr>
+            </table>
+            <!--[if (gte mso 9) | (IE)]></td></tr></table><![endif]-->
+          </td>
+        </tr>
+      </table>
+    </center>
+  </body>
+</html>
