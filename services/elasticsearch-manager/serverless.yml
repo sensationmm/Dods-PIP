@@ -41,6 +41,7 @@ provider:
 
   environment:
     ALERT_Q_URL: https://sqs.${aws:region}.amazonaws.com/${aws:accountId}/${self:provider.stage}-instant-alert-queue.fifo
+    ALERT_Q_NAME: ${self:provider.stage}-instant-alert-queue.fifo
     ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
     ES_KEY_ID: ${ssm:/infra/elastic/key_id}
     ES_API_KEY: ${ssm:/infra/elastic/api_key}
