@@ -81,9 +81,10 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
 
   const duplicateQuery = (i: number) => {
     setChanged(true);
-    const src = queries.slice(i, 1)[0];
+    const src = queries[i];
     setQueries([{ ...src, id: Date.now(), done: false }, ...queries]);
     setAdding(true);
+    window.scrollTo(0, 0);
   };
 
   const editQuery = (i: number, setEdit = true) => {
@@ -179,6 +180,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
             }}
             numQueries={numQueries}
             onCopyQuery={copyQuery}
+            isDisabled={adding}
           />,
           <Spacer key={`spacer-${query.id}`} size={6} />,
         ])}
