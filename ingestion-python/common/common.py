@@ -53,7 +53,9 @@ def store_document(document: dict):
     # aws dynamodb list-tables --endpoint-url http://localhost:8000
     # aws dynamodb delete-table --table-name=hansard-api --endpoint-url http://localhost:8000
 
-    external_id = document["model"]["external_id"]
+    # Some documents have this as an integer value (e.g. EDM), enforce consistency
+    external_id = str(document["model"]["external_id"])
+
     should_create_new_document = False
 
     try:
