@@ -148,6 +148,7 @@ def get_document_title(document: dict) -> str:
     MAX_TITLE_LENGTH = 65
 
     title = document["heading"]
+
     if not title:
         title = document["questionText"][:MAX_TITLE_LENGTH]
 
@@ -188,26 +189,64 @@ def map_document(document: dict, answered_state: str) -> dict:
 
     return mapped_document
 
+def get_tabled_on_content(document: dict) -> str:
+
+    tabled_on = format_raw_date_for_content(document["dateTabled"])
+    tabled_on = f"<h2>{tabled_on}</h2>"
+
+    return tabled_on
+
+def get_answered_on_content(document: dict) -> str:
+
+    if not document["dateAnswered"]:
+        return ""
+
+    answered_date = format_raw_date_for_content(document["dateAnswered"])
+
+    if not answered_date:
+        return ""
+
+    return f"<h2>Answered on: {answered_date}</h2>"
+
+
+def get_member_content(document: dict, key: str) -> str:
+    member = document.get(key)
+
+    if not member:
+        logger.error(f"Missing {key} data")
+        return ""
+
+    name = member["name"]
+    party = member["party"]
+    response = document["questionText"] if key == "askingMember" else document["answerText"]
+
+    # Answers come wrapped in p tags already as they are longer. Remove the
+    # opening and closing tags so that our content p tags are the start/end.
+
+    if response[:3] == "<p>" and response[-4:] == "</p>":
+        response = response[3:-4]
+
+    member_content = f"<p>{name} ({party}): {response}</p>"
+
+    return member_content
+
 
 def get_document_content(document: dict) -> str:
 
-    title = ""
-    tabled_on = format_raw_date_for_content(document["dateTabled"])
-    question_content = "TODO"
-
-    answered_on = "TODO"
-    answer_content = ""
+    title = get_document_title(document)
+    tabled_on = get_tabled_on_content(document)
+    answered_on = get_answered_on_content(document)
+    question_content = get_member_content(document, "askingMember")
+    answer_content = get_member_content(document, "answeringMember")
 
     output = f"""<div>
         <h1>{title}</h1>
-        <h2>Tabled on: {tabled_on}</h2>
+        {tabled_on}
         {answered_on}
         {question_content}
         {answer_content}
     </div>
     """
-
-    raise Exception("TODO - dog walk")
 
     return output
 
