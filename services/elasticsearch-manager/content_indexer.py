@@ -21,7 +21,7 @@ def run(event, context):
     if Validator().data_validator(mappings, content):
         content = set_aggs_fields_content(content)
         try:
-            docId = content['documentId']
+            docId = loads(content)['documentId']
             res = es_client.index(index="content", id=docId, document=content)
             logger.info(f"ES response with documentId is {loads(content)['documentId']} : {res['result']}")
             return True
