@@ -104,6 +104,17 @@ def parse_date(date: str) -> datetime.date:
         return date
 
 
+def clean_date_argument(input_date) -> str:
+
+    if not input_date:
+        return None
+
+    if input_date.upper() == "TODAY":
+        return datetime.today().strftime('%Y-%m-%d')
+
+    return input_date
+
+
 def format_raw_date_for_content(raw_date: str) -> Optional[str]:
     """Returns a formatted date converted from the given `date` ISO format-like str."""
 
