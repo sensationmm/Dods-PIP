@@ -104,6 +104,7 @@ def import_content(date: str, answered_state: str) -> int:
 
     for summary in data["results"]:
         import_document(summary, date, answered_state)
+        total += 1
 
     logger.info(f"Written {answered_state} - Created {total} documents")
 
