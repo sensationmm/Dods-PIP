@@ -93,8 +93,9 @@ def import_content(date: str) -> int:
 
     for summary in data["Response"]:
         import_document(summary, date)
+        total += 1
 
-    logger.info(f"HoC EDM - Created {total} documents")
+    logger.info(f"HoC EDM - Processed {total} documents")
 
     return total
 
