@@ -28,6 +28,7 @@ export enum Api {
   Taxonomies = '/taxonomies',
   TaxonomySearch = '/taxonomy',
   TaxonomyTree = '/taxonomy/tree',
+  Content = '/search/contents',
   ContentSearch = '/search/contents/query',
   ContentSearchApp = '/library',
 }
