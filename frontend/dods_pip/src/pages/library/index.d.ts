@@ -63,6 +63,7 @@ export interface IAggregations {
 
 export interface IResponse {
   sourceReferenceUri?: string;
+  data?: Record<string, unknown>;
   es_response?: {
     hits: {
       hits: { _source: ISourceData }[];
