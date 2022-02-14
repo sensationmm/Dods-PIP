@@ -670,6 +670,8 @@ components:
           properties:
             contentSource:
               type: string
+            contentDateTime:
+              type: string
             informationType:
               type: string
             jurisdiction:
