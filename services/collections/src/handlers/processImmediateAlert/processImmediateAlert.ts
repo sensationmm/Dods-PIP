@@ -82,9 +82,17 @@ export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertPara
                     content: emailContent
                 }
 
-                await DocumentRepository.defaultInstance.sendEmail(emailParameters, apiGatewayBaseURL);
+                try {
+                    await CollectionAlertsRepository.defaultInstance.createAlertDocumentRecord({ documentId: documentData.documentId, alertId: alertResponse.alert.id });
+                } catch (error) {
+                    return new HttpResponse(HttpStatusCode.OK, {
+                        success: false,
+                        message: 'This document has already been sent to the same recipients.'
+                    });
 
-                await CollectionAlertsRepository.defaultInstance.createAlertDocumentRecord({ documentId: documentData.documentId, alertId: alertResponse.alert.id });
+                }
+
+                await DocumentRepository.defaultInstance.sendEmail(emailParameters, apiGatewayBaseURL);
 
                 return new HttpResponse(HttpStatusCode.OK, {
                     success: true,
