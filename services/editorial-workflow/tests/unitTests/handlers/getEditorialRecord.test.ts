@@ -1,7 +1,7 @@
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { BadParameterError } from '../../../src/domain';
-import { EditorialRecordRepository } from '@dodsgroup/dods-repositories';
+import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { getEditorialRecord } from '../../../src/handlers/getEditorialRecord/getEditorialRecord';
 import { mocked } from 'ts-jest/utils';
 
@@ -11,11 +11,19 @@ const defaultCreatedRecord: any = {
     uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
     documentName: 'NewDocument',
     s3Location: 'SomeLocation',
+    document: {
+        documentTitle: "Test Document"
+    }
 };
 
 jest.mock('@dodsgroup/dods-repositories');
 
+const defaultgetDocumentRecord = {
+    response: { data: { payload: { documentTitle: "Test Document" } } }
+};
+
 const mockedEditorialRecordRepository = mocked(EditorialRecordRepository, true);
+const mockedDocumentServiceRepository = mocked(DocumentRepository, true);
 
 mockedEditorialRecordRepository.defaultInstance.getEditorialRecord.mockImplementation(
     (recordId) => {
@@ -24,6 +32,8 @@ mockedEditorialRecordRepository.defaultInstance.getEditorialRecord.mockImplement
         throw Error('Generic Error');
     }
 );
+
+mockedDocumentServiceRepository.defaultInstance.getDocument.mockResolvedValue(defaultgetDocumentRecord);
 
 const FUNCTION_NAME = getEditorialRecord.name;
 
