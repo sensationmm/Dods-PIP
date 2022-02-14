@@ -47,7 +47,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
         )
       : [
           {
-            id: Date.now(),
+            id: `aaaa${Date.now()}`,
             ...query,
           },
         ],
@@ -71,7 +71,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
     setChanged(true);
     setQueries([
       {
-        id: Date.now(),
+        id: `aaaa${Date.now()}`,
         ...query,
       },
       ...queries,
@@ -82,7 +82,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
   const duplicateQuery = (i: number) => {
     setChanged(true);
     const src = queries[i];
-    setQueries([{ ...src, id: Date.now(), done: false }, ...queries]);
+    setQueries([{ ...src, id: `aaaa${Date.now()}`, done: false }, ...queries]);
     setAdding(true);
     window.scrollTo(0, 0);
   };
@@ -141,7 +141,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
       <Spacer size={8} />
 
       {queries
-        .sort((a, b) => (a.id < b.id ? 1 : -1))
+        // .sort((a, b) => (a.id < b.id ? 1 : -1))
         .map((query, count) => [
           <AlertQuery
             key={`query-${query.id}`}
