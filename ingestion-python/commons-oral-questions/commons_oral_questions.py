@@ -1,8 +1,8 @@
 """
-Early Day Motions ingester.
+Commons Oral Questions Tabled Feed API ingester.
 
-* https://dods-support.atlassian.net/browse/DOD-1350
-* https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/682295301/Early+Day+Motions+EDMs
+* https://dods-support.atlassian.net/browse/DOD-1477
+* https://dods-documentation.atlassian.net/wiki/spaces/M2D/pages/691765309/Commons+Oral+Questions
 """
 
 import argparse
