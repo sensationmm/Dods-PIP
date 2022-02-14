@@ -27,8 +27,8 @@ export class DocumentRepository implements DocumentPersister {
 
     async updateDocument(parameters: any): Promise<Object> {
         const response = await axios.put(`${this.baseURL}documents`, parameters);
-        const { data: { success } } = response;
-        return { success };
+        const { data: { success, payload } } = response;
+        return { success, payload };
     }
 
     async getDocument(documentARN: string): Promise<Object> {
