@@ -249,12 +249,10 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
 
   const highlightSearch = (val: string) => {
     const found = val.toLowerCase().indexOf(taxonomySearch.toLowerCase());
-    console.log(val, found);
     if (found >= 0) {
       const pre = val.substring(0, found);
       const highlight = val.substring(found, found + taxonomySearch.length);
       const post = val.substring(found + taxonomySearch.length, val.length);
-      console.log('matched', found, pre, highlight, post);
       return (
         <>
           {pre}
