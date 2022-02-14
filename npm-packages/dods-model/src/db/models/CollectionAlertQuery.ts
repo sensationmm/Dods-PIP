@@ -1,79 +1,79 @@
 import {
-  Association,
-  BelongsToGetAssociationMixin,
-  BelongsToSetAssociationMixin,
-  DataTypes,
-  Model,
-  Optional,
+    Association,
+    BelongsToGetAssociationMixin,
+    BelongsToSetAssociationMixin,
+    DataTypes,
+    Model,
+    Optional,
 } from 'sequelize';
 
 import { User } from '.';
 import sequelizeConnection from '../config/sequelizeConnection';
 
 interface AlertQueryAttributes {
-  id: number;
-  uuid: string;
-  alertId: number;
-  name: string;
-  query: string;
-  isActive: boolean;
-  informationTypes: string;
-  contentSources: string;
-  createdBy: number;
-  updatedBy: number;
+    id: number;
+    uuid: string;
+    alertId: number;
+    name: string;
+    query: string;
+    isActive: boolean;
+    informationTypes: string;
+    contentSources: string;
+    createdBy: number;
+    updatedBy: number;
 }
 
 export interface AlertQueryInput
-  extends Optional<
-  AlertQueryAttributes,
-  | 'id'
-  | 'uuid'
-  | 'alertId'
-  | 'name'
-  | 'query'
-  | 'createdBy'
-  | 'informationTypes'
-  | 'contentSources'
-  > { }
+    extends Optional<
+    AlertQueryAttributes,
+    | 'id'
+    | 'uuid'
+    | 'alertId'
+    | 'name'
+    | 'query'
+    | 'createdBy'
+    | 'informationTypes'
+    | 'contentSources'
+    > { }
 
 
 export interface AlertQueryOutput extends Required<AlertQueryAttributes> { }
 
 export class CollectionAlertQuery
-  extends Model<AlertQueryAttributes, AlertQueryInput>
-  implements AlertQueryAttributes, AlertQueryOutput {
+    extends Model<AlertQueryAttributes, AlertQueryInput>
+    implements AlertQueryAttributes, AlertQueryOutput {
 
-  public id!: number;
-  public uuid!: string;
-  public alertId!: number;
-  public name!: string;
-  public query!: string;
-  public createdBy!: number;
-  public updatedBy!: number;
-  informationTypes!: string;
-  contentSources!: string;
+    public id!: number;
+    public uuid!: string;
+    public alertId!: number;
+    public name!: string;
+    public query!: string;
+    public createdBy!: number;
+    public updatedBy!: number;
+    informationTypes!: string;
+    contentSources!: string;
 
-  public isActive!: boolean;
+    public isActive!: boolean;
 
-  // mixins for association (optional)
+    // mixins for association (optional)
 
-  public readonly createdById!: User;
-  public getCreatedBy!: BelongsToGetAssociationMixin<User>;
-  public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
+    public readonly createdById!: User;
+    public getCreatedBy!: BelongsToGetAssociationMixin<User>;
+    public setCreatedBy!: BelongsToSetAssociationMixin<User, number>;
 
-  public readonly updatedById!: User;
-  public getUpdatedById!: BelongsToGetAssociationMixin<User>;
-  public setUpdatedById!: BelongsToSetAssociationMixin<User, number>;
+    public readonly updatedById!: User;
+    public getUpdatedById!: BelongsToGetAssociationMixin<User>;
+    public setUpdatedById!: BelongsToSetAssociationMixin<User, number>;
 
-  public static associations: {
-    createdById: Association<CollectionAlertQuery, User>;
-    updatedById: Association<CollectionAlertQuery, User>;
-  };
+    public static associations: {
+        createdById: Association<CollectionAlertQuery, User>;
+        updatedById: Association<CollectionAlertQuery, User>;
+    };
 
-  // Timestamps
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-  public readonly deletedAt!: Date | null;
+    // Timestamps
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+    public readonly deletedAt!: Date | null;
 }
 
 CollectionAlertQuery.init(
@@ -136,12 +136,14 @@ CollectionAlertQuery.init(
             onDelete: 'SET NULL',
         },
         informationTypes: {
-            type: DataTypes.STRING({ length: 255 }),
+            type: DataTypes.TEXT,
             allowNull: true,
+            defaultValue: null
         },
         contentSources: {
-            type: DataTypes.STRING({ length: 255 }),
+            type: DataTypes.TEXT,
             allowNull: true,
+            defaultValue: null
         },
     },
     {
