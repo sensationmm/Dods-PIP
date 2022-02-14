@@ -30,6 +30,7 @@ const envVarsSchema = Joi.object()
         DB_CONNECTION_LIMIT: Joi.number().default(5),
         API_GATEWAY_BASE_URL: Joi.string().required(),
         FRONTEND_URL: Joi.string().required(),
+        SQS_URL: Joi.string().required(),
     })
     .unknown();
 
@@ -50,6 +51,7 @@ export const config = {
         downstreamEndpoints: {
             apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
             frontEndURL: envVars.FRONTEND_URL as string,
+            sqsURL: envVars.SQS_URL as string,
         }
     },
     aws: {
