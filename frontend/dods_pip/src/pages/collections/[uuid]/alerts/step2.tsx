@@ -103,7 +103,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
       }),
     );
   };
-
+  console.log(queries);
   return (
     <>
       <Styled.sectionHeaderContainer>
