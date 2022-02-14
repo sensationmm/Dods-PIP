@@ -361,6 +361,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
               disabled={!isComplete}
               onClick={() => {
                 setIsDone(true);
+                setIsValidated(false);
                 onSave({
                   id,
                   source: sources,
