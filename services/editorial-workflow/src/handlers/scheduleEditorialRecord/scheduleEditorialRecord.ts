@@ -2,7 +2,7 @@ import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dod
 import { DocumentRepository, EditorialRecordRepository, ScheduleEditorialRecordParamateres } from '@dodsgroup/dods-repositories';
 
 import { config } from '../../domain';
-import { parseExpression as parser } from 'cron-parser'
+import parser from 'cron-parser'
 
 const { dods: { downstreamEndpoints: { userProfile } } } = config;
 
@@ -10,7 +10,8 @@ const documentRepository = new DocumentRepository(userProfile);
 
 export const scheduleEditorialRecord: AsyncLambdaHandler<ScheduleEditorialRecordParamateres> = async (params) => {
 
-    const { cron, recordId } = params
+    let { cron, recordId } = params
+
     try {
         const record = await EditorialRecordRepository.defaultInstance.getEditorialRecord(recordId);
 
@@ -28,8 +29,13 @@ export const scheduleEditorialRecord: AsyncLambdaHandler<ScheduleEditorialRecord
             tz: 'Europe/London'
         }
 
-        const scheduleDate = parser(cron, parserOptions);
-        const publishDate = new Date(scheduleDate.next().toString());
+
+        const cronDate = cron.substring(0, cron.lastIndexOf(' '))
+        const publicationYear = cron.substring(cron.lastIndexOf(' '), cron.length)
+        const scheduleDate = parser.parseExpression(cronDate, parserOptions);
+
+        let publishDate = new Date(scheduleDate.next().toString());
+        publishDate.setFullYear(parseInt(publicationYear))
 
         const schedulePublishingResponse: any = await documentRepository.scheduleWebhook(params);
 
