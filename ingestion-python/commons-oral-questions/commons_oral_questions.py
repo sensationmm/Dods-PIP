@@ -63,8 +63,13 @@ DOCUMENT_TEMPLATE = {
 
 def import_content(source_date: str, offset_date: str) -> int:
     """
-    Import available content for the given start and end dates.
-        """
+    Import available content for the given source and offset dates.
+
+    The offset can be an integer value which will add or substract from the
+    source date. If two actual dates are given then these will be mapped to
+    the start and end by which of the two is greater. Both date strings
+    can be given as "today" to use the current system date.
+    """
 
     logger.info(f"Importing {source_date} to {offset_date}...")
     source_date = parse_date(source_date).date()
