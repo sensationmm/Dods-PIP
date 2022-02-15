@@ -155,6 +155,7 @@ export const Library: React.FC<ILibraryProps> = ({
           <InputSearch
             onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
               if (e.key === 'Enter') {
+                setLoading(true);
                 setKeywordQuery(searchText);
               }
             }}
@@ -162,7 +163,11 @@ export const Library: React.FC<ILibraryProps> = ({
             label="What are you looking for?"
             value={searchText}
             onChange={(val) => setSearchText(val)}
-            onClear={() => setKeywordQuery('')}
+            onClear={() => {
+              setLoading(true);
+              setKeywordQuery('');
+            }}
+            helperText={searchText !== '' ? 'Hit Enter to search' : ''}
           />
         </section>
         <aside>
@@ -184,6 +189,7 @@ export const Library: React.FC<ILibraryProps> = ({
         <Styled.filtersContent>
           <DateFacet
             onChange={(value) => {
+              console.log(value);
               setLoading(true);
               setDateQuery(value);
             }}
