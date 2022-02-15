@@ -197,7 +197,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       })
         .then((response) => {
           global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
-          addNotification({ title: 'Record added successfully', type: 'confirm' });
+          !preview && addNotification({ title: 'Record added successfully', type: 'confirm' });
           if (publish) {
             onPublish(response.data.uuid);
           }
@@ -256,7 +256,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       })
         .then((response) => {
           global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
-          addNotification({ title: 'Record updated successfully', type: 'confirm' });
+          !preview && addNotification({ title: 'Record updated successfully', type: 'confirm' });
           if (publish) {
             onPublish(response.data.uuid);
           }

@@ -110,6 +110,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   }, [apiData]);
 
   const renderTags = useMemo(() => {
+    if (Object.keys(tags).length === 0) {
+      return;
+    }
     return (
       <Styled.tags>
         <Styled.headingButton type="button" onClick={() => setExpandedTags(!expandedTags)}>
