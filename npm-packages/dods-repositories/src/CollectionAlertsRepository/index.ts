@@ -835,76 +835,171 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
     }
 
     async createElasticQuery(queryString: createESQueryParameters) {
-        const notTopicsRe = /not topics\((.*?)\)/ig
-        const notKeywordsRe = /not keywords\((.*?)\)/ig
-        const topicsRe = /topics\((.*?)\)/ig
-        const keywordsRe = /keywords\((.*?)\)/ig
+        const facets = [
+            'topics',
+            'keywords',
+            'people',
+            'organisations',
+            'geographies'
+        ]
 
-        const notTopicMatches = Array.from(queryString.query.matchAll(notTopicsRe), m => m[1]);
-        const cleanNotTopics = notTopicMatches.map((query_string) => this.clean_query_strings(query_string));
-        const notTopics = ([] as string[]).concat.apply([], cleanNotTopics)
-
-        const notKeywordMatches = Array.from(queryString.query.matchAll(notKeywordsRe), m => m[1]);
-        const cleanNotKeywords = notKeywordMatches.map((query_string) => this.clean_query_strings(query_string));
-        const notKeywords = ([] as string[]).concat.apply([], cleanNotKeywords)
-
-        const positiveString = queryString.query.replace(notTopicsRe, '').replace(notKeywordsRe, '')
-
-        const topicMatches = Array.from(positiveString.matchAll(topicsRe), m => m[1]);
-        const cleanTopics = topicMatches.map((query_string) => this.clean_query_strings(query_string));
-        const topics = ([] as string[]).concat.apply([], cleanTopics)
-
-        const keywordMatches = Array.from(positiveString.matchAll(keywordsRe), m => m[1]);
-        let cleanKeywords = keywordMatches.map((query_string) => this.clean_query_strings(query_string));
-        const keywords = ([] as string[]).concat.apply([], cleanKeywords)
+        const requiredMatches: any = {};
+        const optionalMatches: any = {};
+        const negativeMatches: any = {};
 
         let query: any = {
             query: {
                 bool: {
-                    should: [],
+                    must: [{should: []}],
                     must_not: []
                 }
             }
         }
 
-
-        notKeywords.forEach(notKeyword => {
-            query.query.bool.must_not.push(...[
-                {term: {documentTitle: notKeyword}},
-                {term: {documentContent: notKeyword}}
-            ])
-        })
-        notTopics.forEach(notTopic => {
-            query.query.bool.must_not.push(...[
-                {
-                    nested: {
-                        path: "taxonomyTerms",
-                        query: {
-                            match: { "taxonomyTerms.termLabel.keyword": notTopic }
-                        }
+        let userQuery = queryString.query
+        facets.forEach(facet => {
+            const not = new RegExp("not " + facet + "\\s?\\((.*?)\\)", "ig");
+            const negativeMatchStrings = Array.from(userQuery.matchAll(not), m => m[1]);
+            negativeMatchStrings.forEach(negMatch => {
+                const cleanNegMatches = this.clean_query_strings(negMatch)
+                cleanNegMatches.forEach(cleanNegMatch =>{
+                    if(facet === 'keyword') {
+                        query.query.bool.must_not.push(...[
+                            {term: {documentTitle: cleanNegMatch}},
+                            {term: {documentContent: cleanNegMatch}}
+                        ])
+                        return;
                     }
-                }
-            ])
-        })
-
-        keywords.forEach(keyword => {
-            query.query.bool.should.push(...[
-                {term: {documentTitle: keyword}},
-                {term: {documentContent: keyword}}
-            ])
-        })
-        topics.forEach(topic => {
-            query.query.bool.should.push(...[
-                {
-                    nested: {
-                        path: "taxonomyTerms",
-                        query: {
-                            match: { "taxonomyTerms.termLabel.keyword": topic }
+                    query.query.bool.must_not.push(...[
+                        {
+                            nested: {
+                                path: "taxonomyTerms",
+                                query: {
+                                    match: { "taxonomyTerms.termLabel.keyword": cleanNegMatch }
+                                }
+                            }
                         }
-                    }
+                    ])
+
+                })
+            });
+            userQuery = userQuery.replace(not, '')
+
+            const required = new RegExp("and " + facet + "\\s?\\((.*?)\\)", "ig");
+            const requiredMatchStrings = Array.from(userQuery.matchAll(required), m => m[1]);
+            requiredMatchStrings.forEach(requiredMatchString => {
+                if(requiredMatchString.includes('" OR "')) {
+                    let orQuery: any = []
+                    this.clean_query_strings(requiredMatchString).forEach(cleanedRequiredOr => {
+                        if (facet === 'keyword') {
+                            orQuery.push(...[
+                                {term: {documentTitle: cleanedRequiredOr}},
+                                {term: {documentContent: cleanedRequiredOr}}
+                            ])
+                            return;
+                        }
+                        orQuery.push(...[
+                            {
+                                nested: {
+                                    path: "taxonomyTerms",
+                                    query: {
+                                        match: { "taxonomyTerms.termLabel.keyword": cleanedRequiredOr }
+                                    }
+                                }
+                            }
+                        ])
+
+                    })
+                    query.query.bool.must.push({bool: {should: orQuery}})
+                    return;
                 }
-            ])
-        })
+                this.clean_query_strings(requiredMatchString).forEach(cleanedRequiredAnd => {
+                    if (facet === 'keyword') {
+                        query.query.bool.must.push(...[
+                            {term: {documentTitle: cleanedRequiredAnd}},
+                            {term: {documentContent: cleanedRequiredAnd}}
+                        ])
+                        return;
+                    }
+                    query.query.bool.must.push(...[
+                        {
+                            nested: {
+                                path: "taxonomyTerms",
+                                query: {
+                                    match: { "taxonomyTerms.termLabel.keyword": cleanedRequiredAnd }
+                                }
+                            }
+                        }
+                    ])
+                });
+
+
+
+            })
+            userQuery = userQuery.replace(required, '');
+
+            const optional = new RegExp(facet + "\\s?\\((.*?)\\)", "ig");
+            const optionalMatchStrings = Array.from(userQuery.matchAll(optional), m => m[1]);
+            if (optionalMatchStrings.length > 0) {
+                let shouldMatches: any = []
+                optionalMatchStrings.forEach(optionalMatchString => {
+                    const cleanNegMatches = this.clean_query_strings(optionalMatchString)
+                    cleanNegMatches.forEach(cleanNegMatch =>{
+                        if(facet === 'keyword') {
+                            shouldMatches.push(...[
+                                {term: {documentTitle: cleanNegMatch}},
+                                {term: {documentContent: cleanNegMatch}}
+                            ])
+                            return;
+                        }
+                        shouldMatches.push(...[
+                            {
+                                nested: {
+                                    path: "taxonomyTerms",
+                                    query: {
+                                        match: { "taxonomyTerms.termLabel.keyword": cleanNegMatch }
+                                    }
+                                }
+                            }
+                        ])
+
+                    })
+                });
+                query.query.bool.must.push({bool: {should: shouldMatches}})
+            }
+
+        });
+
+
+        facets.forEach(facet => {
+            let userQuery = queryString.query
+            const not = new RegExp("not " + facet + "\\s?\\((.*?)\\)", "ig");
+            const negativeMatchStrings = Array.from(userQuery.matchAll(not), m => m[1]);
+            const cleanNegativeMatches = negativeMatchStrings.map((query_string) => this.clean_query_strings(query_string));
+            negativeMatches[facet] = ([] as string[]).concat.apply([], cleanNegativeMatches);
+            userQuery = userQuery.replace(not, '')
+
+            requiredMatches[facet] = {requiredOr: [], requiredAnd: []}
+            const required = new RegExp("and " + facet + "\\s?\\((.*?)\\)", "ig");
+            const requiredMatchStrings = Array.from(userQuery.matchAll(required), m => m[1]);
+            requiredMatchStrings.forEach(requiredMatchString => {
+                if(requiredMatchString.includes('" OR "')) {
+                    requiredMatches[facet]['requiredOr'].push(this.clean_query_strings(requiredMatchString))
+                    return;
+                }
+                const cleanedAndString = this.clean_query_strings(requiredMatchString)
+                requiredMatches[facet]['requiredAnd'] = ([] as string[]).concat.apply([], cleanedAndString);
+
+            })
+            userQuery = userQuery.replace(required, '');
+
+            const optional = new RegExp(facet + "\\s?\\((.*?)\\)", "ig");
+            const optionalMatchStrings = Array.from(userQuery.matchAll(optional), m => m[1]);
+            const cleanOptionalMatches = optionalMatchStrings.map((query_string) => this.clean_query_strings(query_string));
+            optionalMatches[facet] = ([] as string[]).concat.apply([], cleanOptionalMatches);
+        });
+
+
 
         return JSON.stringify(query)
     }
