@@ -1,7 +1,7 @@
+import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { BadParameterError } from '../../../src/domain';
-import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { mocked } from 'ts-jest/utils';
 import { updateEditorialRecordDocument } from '../../../src/handlers/updateEditorialRecordDocument/updateEditorialRecordDocument';
 
@@ -10,6 +10,7 @@ const defaultContext = createContext();
 const defaultCreatedRecord: any = {
     uuid: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
     documentName: 'NewDocument',
+    contentDateTime: "2022-02-14T20:56:30.654Z"
 };
 
 jest.mock('@dodsgroup/dods-repositories');
@@ -44,7 +45,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             document: { documentTitle: "new title" }
         };
 
-        mockedDocumentServiceRepository.defaultInstance.updateDocument.mockResolvedValue(true);
+        mockedDocumentServiceRepository.defaultInstance.updateDocument.mockResolvedValue({ success: true, payload: { contentDateTime: "2022-02-14T20:56:30.654Z" } });
 
         const response = await updateEditorialRecordDocument(requestParams, defaultContext);
 
@@ -65,7 +66,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             document: { documentTitle: "new title" }
         };
 
-        mockedDocumentServiceRepository.defaultInstance.updateDocument.mockResolvedValue(false);
+        mockedDocumentServiceRepository.defaultInstance.updateDocument.mockResolvedValue({ success: false, payload: { contentDateTime: "2022-02-14T20:56:30.654Z" } });
 
         const response = await updateEditorialRecordDocument(requestParams, defaultContext);
 

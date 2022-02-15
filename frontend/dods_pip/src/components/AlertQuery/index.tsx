@@ -24,7 +24,7 @@ import Text from '../Text';
 import * as Styled from './AlertQuery.styles';
 
 export interface AlertQueryProps {
-  id: number;
+  id: string;
   source: DropdownValue[];
   informationType: DropdownValue[];
   searchTerms: string;
@@ -361,6 +361,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
               disabled={!isComplete}
               onClick={() => {
                 setIsDone(true);
+                setIsValidated(false);
                 onSave({
                   id,
                   source: sources,

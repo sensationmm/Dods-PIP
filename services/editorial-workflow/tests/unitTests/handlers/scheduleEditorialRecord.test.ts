@@ -30,7 +30,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test('Valid input - response should be "healthy"', async () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            cron: '0 0 12 ? * SUN,SAT',
+            cron: '0 0 13 26 JAN ? 2022',
             date: new Date()
         };
 
@@ -52,7 +52,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test('Invalid input - imposible to schedule', async () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            cron: '0 0 12 ? * SUN,SAT',
+            cron: '0 0 13 26 JAN ? 2022',
             date: new Date()
         };
 
@@ -73,7 +73,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
     test('Service Error - should throw', async () => {
         const requestParams = {
             recordId: 'f9d1482a-77e8-440e-a370-7e06fa0da176',
-            cron: '0 0 12 ? * SUN,SAT',
+            cron: '0 0 13 26 JAN ? 2022',
             date: new Date()
         };
 

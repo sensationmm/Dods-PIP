@@ -1,18 +1,29 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 
-import { EditorialRecordRepository } from '@dodsgroup/dods-repositories';
+import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 
 import { BadParameterError } from '../../domain';
+import { config } from '../../domain';
 
 export const getEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = async ({
     recordId,
 }) => {
+    const { dods: { downstreamEndpoints: { userProfile } } } = config;
+    const documentRepository = new DocumentRepository(userProfile);
+
     try {
+
         const record = await EditorialRecordRepository.defaultInstance.getEditorialRecord(recordId);
+        const response: any = await documentRepository.getDocument(record.s3Location);
+        const document = response.response.data.payload;
+
         return new HttpResponse(HttpStatusCode.OK, {
             success: true,
             message: 'Editorial Record found.',
-            data: record,
+            data: {
+                ...record,
+                document
+            },
         });
     } catch (error) {
         if (error instanceof BadParameterError) {

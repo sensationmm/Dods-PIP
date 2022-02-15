@@ -213,27 +213,18 @@ const getData = async ({
     )) as IPreviewResponse;
     return response.document;
   } else {
-    const payload = {
-      query: {
-        match: {
-          documentId,
-        },
-      },
-    };
-    const sPayload = JSON.stringify(payload);
-    const response = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
-      body: JSON.stringify({ query: sPayload }),
-      method: 'POST',
+    const response = (await fetchJson(`${process.env.APP_API_URL}${Api.Content}/${documentId}`, {
+      method: 'get',
     })) as IResponse;
 
-    return response.es_response?.hits.hits[0]._source || {};
+    return response.data || {};
   }
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
+  const { query, params } = context;
+  const documentId = params?.id as string;
 
-  const documentId = query.id as string;
   let apiData: ISourceData = {};
 
   try {

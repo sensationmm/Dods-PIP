@@ -119,15 +119,16 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   };
 
   const debounceSearchTags = debounce(async (tag: string) => {
-    setSearchingTagsData(true);
+    const sanitizedTag = tag.trim().replaceAll(/[^\w\s]/gi, '');
+    if (sanitizedTag.length > 0) {
+      setSearchingTagsData(true);
 
-    if (tag.trim() !== '') {
-      const response = await fetchJson(`${BASE_URI}${Api.TaxonomySearch}/${tag}`);
+      const response = await fetchJson(`${BASE_URI}${Api.TaxonomySearch}/${sanitizedTag}`);
       setTagsSearch(response as unknown as TagSearchData);
+      setSearchingTagsData(false);
     } else {
       setTagsSearch(undefined);
     }
-    setSearchingTagsData(false);
   }, 500);
 
   const searchTags = useMemo(() => debounceSearchTags, []);

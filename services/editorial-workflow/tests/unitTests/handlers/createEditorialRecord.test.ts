@@ -22,6 +22,7 @@ const basicCreatedRecord: any = {
     },
     createdAt: '2021-11-08T16:20:58.000Z',
     updatedAt: '2021-11-08T16:20:58.000Z',
+    contentDateTime: "2022-02-14T20:47:57.367Z",
     reload: () => { },
     setAssignedEditor: () => { },
     setStatus: () => { },
@@ -172,6 +173,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             createdBy: "string",
             internallyCreated: true,
             schemaType: "Internal",
+            contentDateTime: new Date("2022-02-14T20:47:57.367Z"),
             taxonomyTerms: [
                 {
                     tagId: "sdfsdfsdf",
@@ -223,8 +225,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
             createdBy: "string",
             internallyCreated: true,
             schemaType: "Internal",
-            documentContent: "html content of the document"
-
+            documentContent: "html content of the document",
+            contentDateTime: new Date("2022-02-14T20:47:57.367Z"),
         };
         const response = await createEditorialRecord(requestParams, defaultContext);
 
