@@ -87,7 +87,9 @@ const CollectionAlert: React.FC<CollectionAlertProps> = ({
         onDelete={() => setShowDelete(true)}
         onCopy={() => setShowCopy(true)}
         onViewResults={() => router.push(`/collections/${collectionId}`)}
-        onViewSettings={() => router.push(`/collections/${collectionId}/alerts/${uuid}/edit`)}
+        onViewSettings={(step?: string) =>
+          router.push(`/collections/${collectionId}/alerts/${uuid}/edit${step}`)
+        }
       />
 
       {showDelete && (
