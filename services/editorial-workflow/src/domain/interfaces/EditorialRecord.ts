@@ -83,4 +83,5 @@ export interface EditorialDocument {
     contentDateTime?: Date;
     ingestedDateTime?: Date;
     originalContent?: string;
+    originator?: string | null;
 }

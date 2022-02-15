@@ -19,10 +19,10 @@ import {
     SetAlertQueriesParameters,
     UpdateAlertParameters,
     UpdateAlertQuery,
+    createESQueryParameters,
     getAlertsByCollectionResponse,
     getQueriesResponse,
     setAlertScheduleParameters,
-    createESQueryParameters,
     updateAlertElasticQueryParameters,
 } from './domain';
 import {
@@ -491,7 +491,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const newAlertQuery = await CollectionAlertQuery.create(createAlertQuery);
         await newAlertQuery.reload({ include: ['createdById'] });
 
-        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alert.uuid}
+        const alertUpdateParams: updateAlertElasticQueryParameters = { alertId: alert.uuid }
         await this.updateAlertElasticQuery(alertUpdateParams)
 
         return await mapAlertQuery(newAlertQuery, alert);
@@ -648,7 +648,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             include: ['createdById', 'updatedById'],
         });
 
-        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alert.uuid}
+        const alertUpdateParams: updateAlertElasticQueryParameters = { alertId: alert.uuid }
         await this.updateAlertElasticQuery(alertUpdateParams)
 
         return await mapAlertQuery(updateQuery, alert);
@@ -720,9 +720,11 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         const createdQueries = await updatedAlert.getAlertQueries({
             include: ['createdById', 'updatedById'],
+            order: [['createdAt', 'DESC']]
+
         });
 
-        const alertUpdateParams: updateAlertElasticQueryParameters = {alertId: alertId}
+        const alertUpdateParams: updateAlertElasticQueryParameters = { alertId: alertId }
         await this.updateAlertElasticQuery(alertUpdateParams)
 
         return {
@@ -782,6 +784,35 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return mapAlert(alert);
     }
 
+    async updateLastExecute(alertId: string): Promise<Boolean> {
+
+        const alert = await CollectionAlert.findOne({
+            where: {
+                uuid: alertId,
+                isActive: true
+            }
+        });
+        if (!alert) {
+            throw new Error(
+                `Unable to retrieve Alert with uuid: ${alertId}`
+            );
+        }
+
+        const updatedALert = await alert.update({
+            lastExecutedAt: new Date()
+        })
+
+        if (updatedALert) {
+            return true
+        }
+
+        else {
+            return false;
+        }
+
+
+    }
+
     async createAlertDocumentRecord(parameters: AlertDocumentParameters): Promise<Boolean> {
         const { documentId, alertId } = parameters;
         const TbcNumber = 100;
@@ -822,11 +853,11 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             throw new CollectionError(`Error: could not retrieve alert with uuid: ${alertId}`);
         }
 
-        const getAlertQueriesParams: SearchAlertQueriesParameters = {alertId: alertId, limit: "100", offset: "0"}
+        const getAlertQueriesParams: SearchAlertQueriesParameters = { alertId: alertId, limit: "100", offset: "0" }
         const alertQueries = await this.getAlertQueries(getAlertQueriesParams)
         const alertQueriesString = alertQueries.queries.map(o => o.query).join(" ");
 
-        const createESParams: createESQueryParameters = {query: alertQueriesString}
+        const createESParams: createESQueryParameters = { query: alertQueriesString }
         const elasticQuery = await this.createElasticQuery(createESParams)
 
         await alert.update({
@@ -842,10 +873,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             'organisations',
             'geographies'
         ]
-
-        const requiredMatches: any = {};
-        const optionalMatches: any = {};
-        const negativeMatches: any = {};
 
         let query: any = {
             query: {
@@ -968,35 +995,6 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                 query.query.bool.must.push({bool: {should: shouldMatches}})
             }
 
-        });
-
-
-        facets.forEach(facet => {
-            let userQuery = queryString.query
-            const not = new RegExp("not " + facet + "\\s?\\((.*?)\\)", "ig");
-            const negativeMatchStrings = Array.from(userQuery.matchAll(not), m => m[1]);
-            const cleanNegativeMatches = negativeMatchStrings.map((query_string) => this.clean_query_strings(query_string));
-            negativeMatches[facet] = ([] as string[]).concat.apply([], cleanNegativeMatches);
-            userQuery = userQuery.replace(not, '')
-
-            requiredMatches[facet] = {requiredOr: [], requiredAnd: []}
-            const required = new RegExp("and " + facet + "\\s?\\((.*?)\\)", "ig");
-            const requiredMatchStrings = Array.from(userQuery.matchAll(required), m => m[1]);
-            requiredMatchStrings.forEach(requiredMatchString => {
-                if(requiredMatchString.includes('" OR "')) {
-                    requiredMatches[facet]['requiredOr'].push(this.clean_query_strings(requiredMatchString))
-                    return;
-                }
-                const cleanedAndString = this.clean_query_strings(requiredMatchString)
-                requiredMatches[facet]['requiredAnd'] = ([] as string[]).concat.apply([], cleanedAndString);
-
-            })
-            userQuery = userQuery.replace(required, '');
-
-            const optional = new RegExp(facet + "\\s?\\((.*?)\\)", "ig");
-            const optionalMatchStrings = Array.from(userQuery.matchAll(optional), m => m[1]);
-            const cleanOptionalMatches = optionalMatchStrings.map((query_string) => this.clean_query_strings(query_string));
-            optionalMatches[facet] = ([] as string[]).concat.apply([], cleanOptionalMatches);
         });
 
 

@@ -32,8 +32,7 @@ def s3_list_folders(prefix: str):
                 try:
                     sqs_client.send_message(
                         QueueUrl=SQS_QUEUE,
-                        MessageBody=string_message,
-                        MessageGroupId='migration-step3-group-id'
+                        MessageBody=string_message
                     )
                     logger.info('Message has sent to SQS')
                 except Exception as e:
@@ -68,7 +67,7 @@ def consumer(event, context):
                     response = lambda_client.invoke(
                         FunctionName=LAMBDA_CONTENT_INDEXER_ARN,
                         InvocationType='RequestResponse',
-                        Payload=json.dumps({"data": document})
+                        Payload=json.dumps({"body": document})
                     )
                     if response['Payload'].read():
                         logger.info('Document has been indexed.')

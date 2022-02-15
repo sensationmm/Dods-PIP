@@ -47,7 +47,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
         )
       : [
           {
-            id: Date.now(),
+            id: `aaaa${Date.now()}`,
             ...query,
           },
         ],
@@ -71,7 +71,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
     setChanged(true);
     setQueries([
       {
-        id: Date.now(),
+        id: `aaaa${Date.now()}`,
         ...query,
       },
       ...queries,
@@ -81,9 +81,10 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
 
   const duplicateQuery = (i: number) => {
     setChanged(true);
-    const src = queries.slice(i, 1)[0];
-    setQueries([{ ...src, id: Date.now(), done: false }, ...queries]);
+    const src = queries[i];
+    setQueries([{ ...src, id: `aaaa${Date.now()}`, done: false }, ...queries]);
     setAdding(true);
+    window.scrollTo(0, 0);
   };
 
   const editQuery = (i: number, setEdit = true) => {
@@ -139,49 +140,48 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
 
       <Spacer size={8} />
 
-      {queries
-        .sort((a, b) => (a.id < b.id ? 1 : -1))
-        .map((query, count) => [
-          <AlertQuery
-            key={`query-${query.id}`}
-            {...query}
-            onSave={(query) => {
-              const existing = queries.slice();
-              setQueries(
-                existing.map((ex) => {
-                  if (ex.id === query.id) {
-                    return query;
-                  } else {
-                    return ex;
-                  }
-                }),
-              );
-              setAdding(false);
-            }}
-            onCancel={() => {
-              setAdding(false);
-              query.edit && !query.done ? editQuery(count, false) : setQueries(queries.slice(1));
-            }}
-            onCancelEdit={() => {
-              setAdding(false);
-              editQuery(count, false);
-            }}
-            onDuplicate={() => {
-              duplicateQuery(count);
-            }}
-            onEdit={() => {
-              setAdding(true);
-              editQuery(count);
-            }}
-            onDelete={() => {
-              setChanged(true);
-              setQueries(queries.filter((del) => query.id !== del.id));
-            }}
-            numQueries={numQueries}
-            onCopyQuery={copyQuery}
-          />,
-          <Spacer key={`spacer-${query.id}`} size={6} />,
-        ])}
+      {queries.map((query, count) => [
+        <AlertQuery
+          key={`query-${query.id}`}
+          {...query}
+          onSave={(query) => {
+            const existing = queries.slice();
+            setQueries(
+              existing.map((ex) => {
+                if (ex.id === query.id) {
+                  return query;
+                } else {
+                  return ex;
+                }
+              }),
+            );
+            setAdding(false);
+          }}
+          onCancel={() => {
+            setAdding(false);
+            query.edit && !query.done ? editQuery(count, false) : setQueries(queries.slice(1));
+          }}
+          onCancelEdit={() => {
+            setAdding(false);
+            editQuery(count, false);
+          }}
+          onDuplicate={() => {
+            duplicateQuery(count);
+          }}
+          onEdit={() => {
+            setAdding(true);
+            editQuery(count);
+          }}
+          onDelete={() => {
+            setChanged(true);
+            setQueries(queries.filter((del) => query.id !== del.id));
+          }}
+          numQueries={numQueries}
+          onCopyQuery={copyQuery}
+          isDisabled={adding}
+        />,
+        <Spacer key={`spacer-${query.id}`} size={6} />,
+      ])}
 
       <Spacer size={15} />
 

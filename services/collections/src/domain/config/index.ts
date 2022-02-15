@@ -30,6 +30,7 @@ const envVarsSchema = Joi.object()
         DB_CONNECTION_LIMIT: Joi.number().default(5),
         API_GATEWAY_BASE_URL: Joi.string().required(),
         FRONTEND_URL: Joi.string().required(),
+        SQS_URL: Joi.string().required(),
     })
     .unknown();
 
@@ -40,6 +41,7 @@ export const config = {
     isTestEnv: envVars.NODE_ENV !== 'test',
     openApiPath: resolve(process.cwd(), 'src/openApi.yml'),
     singleFullAlertPath: resolve(process.cwd(), 'src/handlers/processImmediateAlert/template.handlebars'),
+    multipleSnippetAlertPath: resolve(process.cwd(), 'src/handlers/processAlert/template.handlebars'),
     test: {
         stage: envVars.SERVERLESS_STAGE as string,
         port: envVars.SERVERLESS_PORT as number,
@@ -49,6 +51,7 @@ export const config = {
         downstreamEndpoints: {
             apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
             frontEndURL: envVars.FRONTEND_URL as string,
+            sqsURL: envVars.SQS_URL as string,
         }
     },
     aws: {

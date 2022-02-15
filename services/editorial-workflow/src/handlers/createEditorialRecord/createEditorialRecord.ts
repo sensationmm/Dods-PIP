@@ -1,14 +1,11 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-
-import { EditorialRecordRepository, CreateEditorialRecordParameters, DefaultAwsService, AwsService } from '@dodsgroup/dods-repositories';
-
+import { AwsService, CreateEditorialRecordParameters, DefaultAwsService, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 import { EditorialDocument, config, } from '../../domain';
 
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 
 const { aws: { region, buckets: { documents: documentsBucket } } } = config;
-
 const awsService: AwsService = new DefaultAwsService(region);
 
 export const isCreateEditorialRecordParameters = (params: any): params is CreateEditorialRecordParameters => 's3Location' in params;
@@ -61,22 +58,24 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
         sourceReferenceFormat: 'text/html',
         internallyCreated: true,
         schemaType: 'Internal',
-        contentDateTime: new Date(),
+        contentDateTime: params.contentDateTime ? new Date(params.contentDateTime) : new Date(),
         createdDateTime: new Date(),
         ingestedDateTime: new Date(),
         version: '1.0',
         language: 'en',
         originalContent: '',
+        originator: params.originator ? params.originator : null
     }
     if (!params.taxonomyTerms) {
         params.taxonomyTerms = [];
     }
 
     const documentName: any = params.documentTitle;
+    const documentFileName = documentName.replace(/[\/\\#, |+()$~%.'":*!?<>{}^`.@=;+\[\]]/g, '_')
 
     const { contentSource, informationType, createdDateTime } = params as EditorialDocument;
 
-    const fileKey = `${contentSource}/${informationType}/${moment(createdDateTime).format('DD-MM-YYYY')}/${documentName}.json`;
+    const fileKey = `${contentSource}/${informationType}/${moment(createdDateTime).format('DD-MM-YYYY')}/${documentFileName}.json`;
 
     const document = params;
     const documentId = uuidv4();
@@ -93,9 +92,11 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
         statusId: config.dods.recordStatuses.created
     }
 
-    const newRecord = await EditorialRecordRepository.defaultInstance.createEditorialRecord(createEditorialRecordParams);
+    const newRecord: any = await EditorialRecordRepository.defaultInstance.createEditorialRecord(createEditorialRecordParams);
 
     let { s3Location, ...recordResponse } = newRecord;
+
+    recordResponse = { ...recordResponse, contentDateTime: params.contentDateTime }
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,

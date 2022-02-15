@@ -51,7 +51,8 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: "src/openApi.yml", to: 'src/openApi.yml' },
-        { from: "src/handlers/processImmediateAlert/template.handlebars", to: 'src/handlers/processImmediateAlert/template.handlebars' }
+        { from: "src/handlers/processImmediateAlert/template.handlebars", to: 'src/handlers/processImmediateAlert/template.handlebars' },
+        { from: "src/handlers/processAlert/template.handlebars", to: 'src/handlers/processAlert/template.handlebars' }
       ],
     })
   ],

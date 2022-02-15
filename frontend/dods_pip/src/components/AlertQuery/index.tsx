@@ -24,7 +24,7 @@ import Text from '../Text';
 import * as Styled from './AlertQuery.styles';
 
 export interface AlertQueryProps {
-  id: number;
+  id: string;
   source: DropdownValue[];
   informationType: DropdownValue[];
   searchTerms: string;
@@ -49,6 +49,7 @@ export interface AlertQueryScreenProps extends AlertQueryProps {
   ) => void;
   onDelete: () => void;
   numQueries: number;
+  isDisabled: boolean;
 }
 
 type Errors = {
@@ -72,6 +73,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   onCopyQuery,
   onCancelEdit,
   numQueries,
+  isDisabled = false,
 }) => {
   const [sources, setSources] = React.useState<DropdownValue[]>(source || []);
   const [infoTypes, setInfoTypes] = React.useState<DropdownValue[]>(informationType || []);
@@ -98,7 +100,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const [errors, setErrors] = React.useState<Errors>({});
 
   React.useEffect(() => {
-    if (searchTerms === '') {
+    if (searchTerms === '' || tags.length > 0) {
       const groupedTags = {
         Organisations: [] as TagsData[],
         Topics: [] as TagsData[],
@@ -117,7 +119,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
           const newTags = groupedTags[tagLabel as TagTreeKeys]
             .map((tag: TagsData) => `"${tag.termLabel}" ${operator} `)
             .join('');
-          formattedString += `${tagLabel.toLowerCase()} (${newTags.slice(0, -4)}) ${operator} `;
+          formattedString += `${tagLabel.toLowerCase()}(${newTags.slice(0, -4)}) ${operator} `;
         }
       });
 
@@ -327,9 +329,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
             </div>
           </Styled.terms>
         ) : (
-          <Styled.formattedLabels>
-            <Text>{formatTerms()}</Text>
-          </Styled.formattedLabels>
+          <Styled.formattedLabels>{formatTerms()}</Styled.formattedLabels>
         )}
       </Styled.box>
 
@@ -361,6 +361,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
               disabled={!isComplete}
               onClick={() => {
                 setIsDone(true);
+                setIsValidated(false);
                 onSave({
                   id,
                   source: sources,
@@ -379,18 +380,30 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
             type="text"
             label="Delete"
             icon={Icons.Bin}
-            disabled={numQueries < 2}
+            disabled={numQueries < 2 || isDisabled}
             onClick={() => setShowDelete(true)}
           />
-          <Button type="secondary" label="Duplicate" icon={Icons.Duplicate} onClick={onDuplicate} />
+          <Button
+            type="secondary"
+            label="Duplicate"
+            icon={Icons.Duplicate}
+            onClick={onDuplicate}
+            disabled={isDisabled}
+          />
           <Button
             type="secondary"
             label={typeof id !== 'number' ? 'Copy to' : 'Requires save'}
             icon={Icons.Copy}
             onClick={() => setShowCopy(true)}
-            disabled={typeof id === 'number'}
+            disabled={typeof id === 'number' || isDisabled}
           />
-          <Button type="secondary" label="Edit" icon={Icons.Pencil} onClick={onEdit} />
+          <Button
+            type="secondary"
+            label="Edit"
+            icon={Icons.Pencil}
+            onClick={onEdit}
+            disabled={isDisabled}
+          />
           <Button
             label="View Results"
             icon={Icons.ChevronRightBold}

@@ -26,8 +26,8 @@ export const wrapper = styled.div`
 `;
 
 export const header = styled.div`
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr 100px 180px;
 
   ${media.lessThan('md')`
     display: none;

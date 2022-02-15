@@ -119,10 +119,16 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   };
 
   const debounceSearchTags = debounce(async (tag: string) => {
-    setSearchingTagsData(true);
-    const response = await fetchJson(`${BASE_URI}${Api.TaxonomySearch}/${tag}`);
-    setTagsSearch(response as unknown as TagSearchData);
-    setSearchingTagsData(false);
+    const sanitizedTag = tag.trim().replaceAll(/[^\w\s]/gi, '');
+    if (sanitizedTag.length > 0) {
+      setSearchingTagsData(true);
+
+      const response = await fetchJson(`${BASE_URI}${Api.TaxonomySearch}/${sanitizedTag}`);
+      setTagsSearch(response as unknown as TagSearchData);
+      setSearchingTagsData(false);
+    } else {
+      setTagsSearch(undefined);
+    }
   }, 500);
 
   const searchTags = useMemo(() => debounceSearchTags, []);
@@ -138,7 +144,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   }, [active, isBrowsing]);
 
   useEffect(() => {
-    taxonomySearch !== '' && searchTags(taxonomySearch);
+    searchTags(taxonomySearch);
   }, [taxonomySearch]);
 
   useEffect(() => {
@@ -243,18 +249,19 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
 
   const highlightSearch = (val: string) => {
     const found = val.toLowerCase().indexOf(taxonomySearch.toLowerCase());
-
-    const pre = val.substring(0, found);
-    const highlight = val.substring(found, found + taxonomySearch.length);
-    const post = val.substring(found + taxonomySearch.length, val.length);
-
-    return (
-      <>
-        {pre}
-        <strong>{highlight}</strong>
-        {post}
-      </>
-    );
+    if (found >= 0) {
+      const pre = val.substring(0, found);
+      const highlight = val.substring(found, found + taxonomySearch.length);
+      const post = val.substring(found + taxonomySearch.length, val.length);
+      return (
+        <>
+          {pre}
+          <strong>{highlight}</strong>
+          {post}
+        </>
+      );
+    }
+    return val;
   };
 
   const controls = (

@@ -52,16 +52,22 @@ for PROJECT in $@; do
     # Get environments where this project needs to be deployed on
     echo "Working on $PROJECT..."
     if [[ ! -v  'project_envs[$PROJECT_FOLDER]' ]]; then
-       echo "Reading list of environments for $PROJECT_FOLDER"
-       ENVIRONMENTS=$($DIR/list-envs-to-deploy.sh $PROJECT_FOLDER)
-       project_envs[$PROJECT_FOLDER]=$ENVIRONMENTS
+       if [[ -n "$CI_DEPLOY_TO" ]]; then
+          echo "Environments from env-var for $PROJECT_FOLDER"
+          ENVIRONMENTS=$CI_DEPLOY_TO
+          project_envs[$PROJECT_FOLDER]=$ENVIRONMENTS
+       else
+          echo "Reading list of environments for $PROJECT_FOLDER"
+          ENVIRONMENTS=$($DIR/list-envs-to-deploy.sh $PROJECT_FOLDER)
+          project_envs[$PROJECT_FOLDER]=$ENVIRONMENTS
+       fi
     fi
 
     JOB_NAME="deploy_${PROJECT_FOLDER}"
     for ENV in ${project_envs[$PROJECT_FOLDER]}; do
         echo "Triggering 'deploy' job $JOB_NAME with service $PROJECT_NAME and environment ${ENV}..."
         BUILD_NUM=$(${CI_PLUGIN} deploy $JOB_NAME $PROJECT_NAME $ENV)    
-        if [[ -z ${BUILD_NUM} ]] || [[ ${BUILD_NUM} -eq "null" ]]; then
+        if [[ -z ${BUILD_NUM} ]] || [[ ${BUILD_NUM} == "null" ]]; then
             echo "WARN: No deployment triggered for project '$PROJECT'. Please check if pipeline $JOB_NAME is defined in your build tool."
         else 
             echo "Build triggered for project '$PROJECT' on $ENV with number '$BUILD_NUM'"    

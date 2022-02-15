@@ -68,8 +68,10 @@ provider:
     DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
     DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
     FRONTEND_URL: ${file(../env-config.${self:provider.stage}.js):frontendURL, file(../env-config.dev.js):frontendURL}
+    SQS_URL: ${self:provider.stage}-instant-alert-queue.fifo
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
+
 custom:
   webpack:
     webpackConfig: ./webpack.config.js
@@ -96,8 +98,8 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
-  apiGatewayCaching:
-    enabled: true
+  # apiGatewayCaching:
+  #   enabled: true
 
   apiKeys:
     - name: webhook-api-key
@@ -325,7 +327,7 @@ functions:
       - http:
           method: put
           path: /collections/{collectionId}/alerts/{alertId}/process
-          private: true
+          #private: true
           caching:
             enabled: false
   updateRecipient:
@@ -347,3 +349,19 @@ functions:
           path: /collections/processImmediateAlert
           caching:
             enabled: false
+
+  triggerInstantAlert:
+    handler: src/handlers/triggerInstantAlert/index.handle
+    description: Triggered with events on SQS
+    events:
+      - sqs:
+          batchSize: 1
+          arn:
+            Fn::Join:
+              - ':'
+              - - arn
+                - aws
+                - sqs
+                - Ref: AWS::Region
+                - Ref: AWS::AccountId
+                - ${self:provider.stage}-instant-alert-queue.fifo
