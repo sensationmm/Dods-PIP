@@ -98,8 +98,37 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const [loadingCollections, setLoadingCollections] = React.useState<boolean>(false);
   const [loadingAlerts, setLoadingAlerts] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Errors>({});
+  const [tagsHelper, setTagsHelper] = React.useState('');
 
   React.useEffect(() => {
+    const existingTerms = terms;
+    let existingKeywords =
+      existingTerms.indexOf('keywords(') > -1
+        ? existingTerms.substring(existingTerms.indexOf('keywords('))
+        : '';
+
+    let countBracket = 0;
+    let endChar = 0;
+    existingKeywords.split('').forEach((char, count) => {
+      if (count >= existingKeywords.indexOf('(') && endChar === 0) {
+        if (char === '(') {
+          countBracket++;
+        } else if (char === ')') {
+          countBracket--;
+        }
+
+        if (countBracket === 0) {
+          endChar = count;
+        }
+      }
+    });
+
+    existingKeywords = existingKeywords.substring(0, endChar + 1);
+
+    if (existingKeywords.length > 0) {
+      existingKeywords = ` OR ${existingKeywords}`;
+    }
+
     if (searchTerms === '' || tags.length > 0) {
       const groupedTags = {
         Organisations: [] as TagsData[],
@@ -123,7 +152,11 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
         }
       });
 
-      setTerms(formattedString.slice(0, -4));
+      if (!edit) {
+        setTerms(`${formattedString.slice(0, -4)} ${existingKeywords}`);
+      } else {
+        setTagsHelper(formattedString.slice(0, -4));
+      }
     }
   }, [tags]);
 
@@ -162,35 +195,52 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
 
   const formatTerms = () => {
     const final: Array<JSX.Element> = [];
+    let isMidTerm = false;
+
+    const toggleMidTerms = (quotes: number) => {
+      if (quotes === 1 && !isMidTerm) {
+        isMidTerm = !isMidTerm;
+      } else if (quotes === 1) {
+        isMidTerm = !isMidTerm;
+      }
+    };
 
     terms.split(' ').forEach((term, count) => {
-      if (term.toLowerCase() === 'or') {
+      const quotes = (term.match(/"/g) || []).length;
+      if (term.toLowerCase() === 'or' && !isMidTerm) {
         final.push(
           <Text key={`term-${count}`} bold color={color.theme.blueLight}>
             {term.toUpperCase()}
           </Text>,
         );
-      } else if (term.toLowerCase() === 'and') {
+      } else if (term.toLowerCase() === 'and' && !isMidTerm) {
         final.push(
           <Text key={`term-${count}`} bold color={color.alert.green}>
             {term.toUpperCase()}
           </Text>,
         );
-      } else if (term.toLowerCase() === 'not') {
+      } else if (term.toLowerCase() === 'not' && !isMidTerm) {
         final.push(
           <Text key={`term-${count}`} bold color={color.alert.red}>
             {term.toUpperCase()}
           </Text>,
         );
       } else if (
-        ['topics', 'geographies', 'organisations', 'people', 'keywords'].indexOf(term) > -1
+        ['topics', 'geographies', 'organisations', 'people', 'keywords'].indexOf(
+          term.substring(0, term.indexOf('(')),
+        ) > -1
       ) {
+        toggleMidTerms(quotes);
         final.push(
-          <Text key={`term-${count}`} color={color.accent.orange}>
-            {term}
+          <Text key={`term-${count}`} color={color.accent.orange} bold>
+            {term.substring(0, term.indexOf('('))}
+          </Text>,
+          <Text key={`term-${count}-rest`} color={color.base.greyDark}>
+            {term.substring(term.indexOf('('))}
           </Text>,
         );
       } else {
+        toggleMidTerms(quotes);
         final.push(
           <Text key={`term-${count}`} color={color.base.greyDark}>
             {term}
@@ -299,7 +349,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
                 <Button
                   isSmall
                   type="secondary"
-                  label="Browse and add"
+                  label={edit ? 'Browse' : 'Browse and add'}
                   icon={Icons.Search}
                   onClick={() => setShowBrowser(true)}
                 />
@@ -333,6 +383,16 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
         )}
       </Styled.box>
 
+      {tagsHelper !== '' && (
+        <>
+          <Spacer size={2} />
+          <Styled.box>
+            <Text bold>Add terms to box above to save:</Text>
+            <Styled.preview>{tagsHelper}</Styled.preview>
+          </Styled.box>
+        </>
+      )}
+
       <Spacer size={4} />
 
       {!isDone || isEdit ? (
@@ -360,6 +420,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
               icon={Icons.Tick}
               disabled={!isComplete}
               onClick={() => {
+                setTagsHelper('');
                 setIsDone(true);
                 setIsValidated(false);
                 onSave({
