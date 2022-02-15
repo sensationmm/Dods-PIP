@@ -1,6 +1,7 @@
-import { TextDecoder } from "util";
-import { Lambda } from '@aws-sdk/client-lambda';
 import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+
+import { Lambda } from '@aws-sdk/client-lambda';
+import { TextDecoder } from "util";
 
 const { AWS_REGION, NODE_ENV, _endpoint = NODE_ENV === 'development' ? 'http://localhost:3002' : undefined } = process.env;
 
@@ -52,7 +53,10 @@ export class DefaultAwsService implements AwsService {
     async putInS3(Bucket: string, Key: string, body: any): Promise<boolean | Error> {
         try {
             const Body = typeof body === 'string' ? body : JSON.stringify(body);
-            this.s3Client.send(new PutObjectCommand({ Bucket, Key, Body }));
+            console.log('In S3 Bucket------>');
+            console.log(Body);
+            const responseBucket = await this.s3Client.send(new PutObjectCommand({ Bucket, Key, Body }));
+            console.log(responseBucket);
         } catch (error: any) {
             return error;
         }
