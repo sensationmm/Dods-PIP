@@ -73,7 +73,7 @@ const DateFacet: React.FC<DateFacetProps> = ({ onChange, values }) => {
       return presetValue;
     }
 
-    if (values.min && values.max) {
+    if (values.min || values.max) {
       return 'custom-range';
     }
 

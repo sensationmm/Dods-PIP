@@ -139,7 +139,11 @@ const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
 
       let newQuery: QueryObject = rest;
 
-      if (min && max) {
+      if (min && !max) {
+        newQuery = { ...rest, dateRange: { min }, currentPage: 1 };
+      } else if (!min && max) {
+        newQuery = { ...rest, dateRange: { max }, currentPage: 1 };
+      } else if (min && max) {
         newQuery = { ...rest, dateRange: { min, max }, currentPage: 1 };
       }
 
