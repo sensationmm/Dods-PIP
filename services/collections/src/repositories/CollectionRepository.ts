@@ -2,9 +2,12 @@ import { ClientAccount, Collection, User } from '@dodsgroup/dods-model';
 import {
     CollectionPersister,
     CollectionResponse,
-    CreateCollectionPersisterParameters
+    CreateCollectionPersisterParameters,
+    ProcessImmediateAlertParametersURL
 } from '../domain';
 import { HttpError, HttpStatusCode } from '@dodsgroup/dods-lambda';
+
+import axios from 'axios';
 
 export class CollectionRepository implements CollectionPersister {
     static defaultInstance: CollectionRepository = new CollectionRepository(
@@ -74,5 +77,12 @@ export class CollectionRepository implements CollectionPersister {
             createdAt,
             updatedAt,
         };
+    }
+
+    async processImmediateAlert(parameters: ProcessImmediateAlertParametersURL): Promise<object> {
+        const { alertId, documentId, baseURL } = parameters;
+        const response = await axios.post(`${baseURL}/collections/processImmediateAlert`, { alertId, documentId });
+
+        return { response };
     }
 }

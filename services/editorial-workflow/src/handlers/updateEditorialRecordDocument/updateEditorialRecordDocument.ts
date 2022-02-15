@@ -1,6 +1,5 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-
-import { DocumentRepository, EditorialRecordRepository, UpdateEditorialRecordParameters, UpdateEditorialRecordDocumentParameter } from '@dodsgroup/dods-repositories';
+import { DocumentRepository, EditorialRecordRepository, UpdateEditorialRecordDocumentParameter, UpdateEditorialRecordParameters } from '@dodsgroup/dods-repositories';
 
 import { config } from '../../domain';
 
@@ -20,9 +19,11 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
         document: document
     };
 
-    const updatedResponse = await documentRepository.updateDocument(updateDocumentsParams);
+    const updatedResponse: any = await documentRepository.updateDocument(updateDocumentsParams);
 
-    if (updatedResponse) {
+    const contentDateTime = updatedResponse.payload.contentDateTime
+
+    if (updatedResponse.success) {
         await EditorialRecordRepository.defaultInstance.unassignEditorToRecord(params.recordId);
 
         const statusId = config.dods.recordStatuses.draft;
@@ -34,7 +35,7 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
 
         const updatedEditorialRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams);
 
-        const response: any = { ...updatedEditorialRecord };
+        const response: any = { ...updatedEditorialRecord, contentDateTime: contentDateTime };
         delete response.s3Location;
 
         return new HttpResponse(HttpStatusCode.OK, {

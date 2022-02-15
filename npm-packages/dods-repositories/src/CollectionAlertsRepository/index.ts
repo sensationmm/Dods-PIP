@@ -720,6 +720,8 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         const createdQueries = await updatedAlert.getAlertQueries({
             include: ['createdById', 'updatedById'],
+            order: [['createdAt', 'DESC']]
+
         });
 
         const alertUpdateParams: updateAlertElasticQueryParameters = { alertId: alertId }

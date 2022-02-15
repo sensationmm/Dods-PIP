@@ -58,7 +58,7 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
         sourceReferenceFormat: 'text/html',
         internallyCreated: true,
         schemaType: 'Internal',
-        contentDateTime: new Date(),
+        contentDateTime: params.contentDateTime ? new Date(params.contentDateTime) : new Date(),
         createdDateTime: new Date(),
         ingestedDateTime: new Date(),
         version: '1.0',
@@ -71,10 +71,11 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
     }
 
     const documentName: any = params.documentTitle;
+    const documentFileName = documentName.replace(/[\/\\#, |+()$~%.'":*!?<>{}^`.@=;+\[\]]/g, '_')
 
     const { contentSource, informationType, createdDateTime } = params as EditorialDocument;
 
-    const fileKey = `${contentSource}/${informationType}/${moment(createdDateTime).format('DD-MM-YYYY')}/${documentName}.json`;
+    const fileKey = `${contentSource}/${informationType}/${moment(createdDateTime).format('DD-MM-YYYY')}/${documentFileName}.json`;
 
     const document = params;
     const documentId = uuidv4();
@@ -91,9 +92,11 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
         statusId: config.dods.recordStatuses.created
     }
 
-    const newRecord = await EditorialRecordRepository.defaultInstance.createEditorialRecord(createEditorialRecordParams);
+    const newRecord: any = await EditorialRecordRepository.defaultInstance.createEditorialRecord(createEditorialRecordParams);
 
     let { s3Location, ...recordResponse } = newRecord;
+
+    recordResponse = { ...recordResponse, contentDateTime: params.contentDateTime }
 
     return new HttpResponse(HttpStatusCode.OK, {
         success: true,
