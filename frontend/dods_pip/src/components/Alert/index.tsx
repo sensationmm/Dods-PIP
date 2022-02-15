@@ -25,7 +25,7 @@ export interface AlertProps extends AlertData {
   isConsultant?: boolean;
   onDelete: () => void;
   onCopy: () => void;
-  onViewSettings: () => void;
+  onViewSettings: (step?: string) => void;
   onViewResults: () => void;
 }
 
@@ -63,6 +63,7 @@ const Alert: React.FC<AlertProps> = ({
 }) => {
   const router = useRouter();
   const [showAllTimes, setShowAllTimes] = React.useState<boolean>(false);
+  const [showEditOptions, setShowEditOptions] = React.useState<boolean>(false);
 
   const isComplete = lastStepCompleted === 4;
   const immediateDelivery = !isScheduled;
@@ -168,23 +169,40 @@ const Alert: React.FC<AlertProps> = ({
 
         {isComplete ? (
           <Styled.actionsButtons>
-            <Button
-              type="secondary"
-              isSmall
-              inline
-              label="View settings"
-              icon={Icons.Pencil}
-              onClick={onViewSettings}
-            />
-            <Button
-              isSmall
-              inline
-              label="View Results"
-              icon={Icons.ChevronRightBold}
-              iconAlignment="right"
-              onClick={onViewResults}
-              disabled
-            />
+            {!showEditOptions ? (
+              <>
+                <Button
+                  type="secondary"
+                  isSmall
+                  inline
+                  label="Edit settings"
+                  icon={Icons.Pencil}
+                  onClick={() => setShowEditOptions(true)}
+                />
+                <Button
+                  isSmall
+                  inline
+                  label="View Results"
+                  icon={Icons.ChevronRightBold}
+                  iconAlignment="right"
+                  onClick={onViewResults}
+                  disabled
+                />
+              </>
+            ) : (
+              <>
+                <Button
+                  type="text"
+                  isSmall
+                  label="Cancel"
+                  onClick={() => setShowEditOptions(false)}
+                />
+                <Button isSmall label="Edit Info" onClick={() => onViewSettings('?step=1')} />
+                <Button isSmall label="Edit Queries" onClick={() => onViewSettings('?step=2')} />
+                <Button isSmall label="Edit Recipients" onClick={() => onViewSettings('?step=3')} />
+                <Button isSmall label="Edit Schedule" onClick={() => onViewSettings('?step=4')} />
+              </>
+            )}
           </Styled.actionsButtons>
         ) : (
           <Styled.actionsButtons>
