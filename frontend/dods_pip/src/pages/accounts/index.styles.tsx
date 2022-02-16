@@ -216,3 +216,18 @@ export const footerPagination = styled.div`
     transform: translateX(-50%);
   }
 `;
+
+export const itemsCol = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+type AddCollectionContentProps = {
+  stacked: boolean;
+};
+export const addCollectionContent = styled.div<AddCollectionContentProps>`
+  display: ${({ stacked }) => (stacked ? 'block' : 'grid')};
+  grid-template-columns: 1fr 1fr;
+  column-gap: ${spacing(10)};
+`;
