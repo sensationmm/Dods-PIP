@@ -1,4 +1,4 @@
-service: ingestion-motions-edm-uk
+service: ingestion-commons-oral-questions
 
 frameworkVersion: '2'
 projectDir: ../
