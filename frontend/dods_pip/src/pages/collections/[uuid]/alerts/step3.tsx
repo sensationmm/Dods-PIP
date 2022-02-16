@@ -152,7 +152,6 @@ const AlertStep3: React.FC<AlertStepProps> = ({
                   onClick={() => onDelete(recipient.value)}
                 />
               )}
-              ,
             </>,
           ])}
         emptyMessage="You need to do at least one recipient"
