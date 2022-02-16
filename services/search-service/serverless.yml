@@ -52,6 +52,12 @@ provider:
     ES_CLOUD_ID: ${ssm:/infra/elastic/cloud_id}
     ES_KEY_ID: ${ssm:/infra/elastic/key_id}
     ES_API_KEY: ${ssm:/infra/elastic/api_key}
+    DB_CONNECTION_LIMIT: 5
+    DB_DRIVER: mariadb
+    DB_NAME: dods
+    DB_HOST: ${ssm:/infra/${self:provider.stage}/rds/endpoint, 'localhost'}
+    DB_USER: ${ssm:/infra/${self:provider.stage}/rds/username, 'dods' }
+    DB_PASSWORD: ${ssm:/infra/${self:provider.stage}/rds/password, 'dods'}
 
 custom:
   webpack:
@@ -135,4 +141,13 @@ functions:
       - http:
           method: delete
           path: percolator/{alertId}
+          cors: true
+
+  createESQuery:
+    handler: src/handlers/createESQuery/index.handle
+    description: Create ES query from UI Query String
+    events:
+      - http:
+          method: post
+          path: search/create-query
           cors: true
