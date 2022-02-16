@@ -77,7 +77,8 @@ functions:
       - eventBridge:
           schedule: cron(10 08-22/2 ? * MON-FRI *)
           input:
-            date: today
+            source_date: today
+            offset_date: today
 
 resources:
    Resources:

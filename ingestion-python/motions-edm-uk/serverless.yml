@@ -8,6 +8,7 @@ configValidationMode: error
 plugins:
   - serverless-python-requirements
   - serverless-offline
+
 custom:
   resource_prefix: hansard-api
   default_stage: dev

@@ -70,8 +70,8 @@ provider:
         - Fn::GetAtt: [ assetDynamoDbTable, Arn ]
 
 functions:
-  scrape:
-    name: ${self:service}-${sls:stage}
+  ingest-written-questions:
+    name: ${self:service}-${sls:stage}-questions
     handler: handler.run
     events:
       - eventBridge:
@@ -79,6 +79,11 @@ functions:
           input:
             date: today
             answered_state: questions
+
+  ingest-written-answers:
+    name: ${self:service}-${sls:stage}-answers
+    handler: handler.run
+    events:
       - eventBridge:
           schedule: cron(15 08-22/2 ? * MON-FRI *)
           input:
