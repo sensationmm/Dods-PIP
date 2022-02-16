@@ -463,21 +463,19 @@ const Summary: React.FC<SummaryProps> = ({
                   </div>
                   <div>
                     <Text type="body" bold={true}>
-                      User Seats
+                      Maximum Users
                     </Text>
-                    <Text>{userSeats} Seats</Text>
-                    <Popover title="User Seats Title" body="Lorem ipsum info text." />
+                    <Text>{userSeats}</Text>
                   </div>
                   <div>
                     <Text type="body" bold={true}>
-                      Consutant Hours
+                      Consultant Hours
                     </Text>
-                    <Text>{consultantHours} Hours</Text>
-                    <Popover title="Consultant Hours Title" body="Lorem ipsum info text" />
+                    <Text>{consultantHours} per year</Text>
                   </div>
                   <div>
                     <Text type="body" bold={true}>
-                      Period:
+                      Renewal Date:
                     </Text>
                     <Text>
                       {startDate !== '' && format(new Date(startDate), DateFormat.UI)}
