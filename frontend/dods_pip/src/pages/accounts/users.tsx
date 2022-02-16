@@ -207,8 +207,10 @@ const Users: React.FC<UsersProps> = ({
                 return [
                   accountId,
                   <Styled.sumAvatarName key={`team-${name}`}>
-                    <Avatar type="client" size="small" alt={name} />
-                    <Text bold={true}>{name}</Text>
+                    <Avatar type="client" size="small" alt={name} disabled={!user.isActive} />
+                    <Text bold={true} color={!user.isActive ? color.base.grey : color.theme.blue}>
+                      {name}
+                    </Text>
                   </Styled.sumAvatarName>,
                   <Text key={`user-${userCount}-email`}>
                     <a key={`user-${userCount}`} href={'mailto:' + user.primaryEmailAddress}>
