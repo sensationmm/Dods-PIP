@@ -35,9 +35,12 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
 
   const debounceSearchUsers = debounce(async (name: string) => {
     try {
-      const response = await fetchJson<CustomResponse>(`${BASE_URI}${Api.Users}?name=${name}`, {
-        method: 'GET',
-      });
+      const response = await fetchJson<CustomResponse>(
+        `${BASE_URI}${Api.Users}?name=${name}&clientAccountId=${alert.accountId}`,
+        {
+          method: 'GET',
+        },
+      );
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {
