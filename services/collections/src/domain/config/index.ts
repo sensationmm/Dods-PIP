@@ -31,6 +31,7 @@ const envVarsSchema = Joi.object()
         API_GATEWAY_BASE_URL: Joi.string().required(),
         FRONTEND_URL: Joi.string().required(),
         SQS_URL: Joi.string().required(),
+        CLIENT_FACING_APP_URL: Joi.string().required(),
     })
     .unknown();
 
@@ -52,6 +53,7 @@ export const config = {
             apiGatewayBaseURL: envVars.API_GATEWAY_BASE_URL as string,
             frontEndURL: envVars.FRONTEND_URL as string,
             sqsURL: envVars.SQS_URL as string,
+            clientURL: envVars.CLIENT_FACING_APP_URL as string,
         }
     },
     aws: {
