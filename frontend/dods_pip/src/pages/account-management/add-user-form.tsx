@@ -29,6 +29,7 @@ export interface AddUserFormProps {
   errors: Partial<FormFields>;
   setErrors: (errors: Partial<FormFields>) => void;
   isEdit?: boolean;
+  disabled?: boolean;
 }
 
 export type FormFields = {
@@ -50,6 +51,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   errors,
   setErrors,
   isEdit = false,
+  disabled = false,
 }) => {
   const router = useRouter();
   const [accounts, setAccounts] = React.useState<SelectProps['options']>([]);
@@ -148,6 +150,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
         placeholder="Type the first name"
         onBlur={() => validateField('firstName', fieldData.firstName, [ValidationType.Required])}
         error={errors.firstName}
+        isDisabled={disabled}
       />
       <InputText
         id="lastName"
@@ -159,6 +162,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
         placeholder="Type the last name"
         onBlur={() => validateField('lastName', fieldData.lastName, [ValidationType.Required])}
         error={errors.lastName}
+        isDisabled={disabled}
       />
       {isClientUser && (
         <>
@@ -177,7 +181,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             label="Account"
             error={errors.account}
             onBlur={validateAccount}
-            isDisabled={isEdit || disabledAccount}
+            isDisabled={isEdit || disabledAccount || disabled}
             helperText={isEdit ? 'Account cannot be edited' : ''}
             onKeyPress={(val, search?: string) => loadAccounts(val, search)}
             onKeyPressHasSearch
@@ -190,6 +194,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
             label="Job Title"
             placeholder="Type the job title"
             error={errors.jobTitle}
+            isDisabled={disabled}
           />
         </>
       )}
@@ -209,7 +214,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
           ])
         }
         error={errors.emailAddress}
-        isDisabled={isEdit}
+        isDisabled={isEdit || disabled}
       />
       <InputText
         id="emailAddress2"
@@ -223,6 +228,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
           validateField('emailAddress2', fieldData.emailAddress2, [ValidationType.Email], true)
         }
         error={errors.emailAddress2}
+        isDisabled={disabled}
       />
       <InputTelephone
         id="telephoneNumber"
@@ -240,6 +246,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
           ])
         }
         error={errors.telephoneNumber}
+        isDisabled={disabled}
       />
       <InputTelephone
         id="telephoneNumber2"
@@ -258,6 +265,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
           )
         }
         error={errors.telephoneNumber2}
+        isDisabled={disabled}
       />
     </div>
   );

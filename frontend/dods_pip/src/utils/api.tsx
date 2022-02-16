@@ -3,6 +3,7 @@ export const BASE_URI = '/api';
 export enum Api {
   Alerts = '/alerts',
   CheckAccountName = '/checkaccountname',
+  ChangePassword = '/changePassword',
   ClientAccount = '/clientaccount',
   ClientAccounts = '/client-accounts',
   Collections = '/collections',

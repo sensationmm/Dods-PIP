@@ -51,8 +51,10 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   const [showDelete, setShowDelete] = React.useState<boolean>(false);
   const [assocAccounts, setAssocAccounts] = React.useState<ClientAccount[]>();
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);
   const [isActive, setIsActive] = React.useState<boolean>(true);
   const [password, setPassword] = React.useState<string>('');
+  const [confirmPassword, setConfirmPassword] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Partial<FormFields>>({});
   const [userData, setUserData] = React.useState<User>();
   const [formFields, setFormFields] = useState<FormFields>({
@@ -226,6 +228,38 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
     setLoading(false);
   };
 
+  const onUpdatePassword = async () => {
+    setLoading(true);
+    const data = {
+      newPassword: password,
+      email: formFields.emailAddress,
+      password: confirmPassword,
+    };
+
+    console.log(data);
+
+    try {
+      const result = await fetchJson<CustomResponse>(`${BASE_URI}${Api.ChangePassword}`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+
+      if (result.success) {
+        addNotification({
+          title: 'Password updated',
+          type: 'confirm',
+        });
+        setShowEdit(false);
+        setShowConfirmPassword(false);
+        setPassword('');
+        setConfirmPassword('');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
+  };
+
   const onReset = async (email: string) => {
     setShowReset(false);
     setLoading(true);
@@ -331,6 +365,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               type: 'secondary',
               label: 'Cancel',
               onClick: () => setShowEdit(false),
+              disabled: showConfirmPassword,
             },
             {
               type: 'primary',
@@ -338,6 +373,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               onClick: onUpdate,
               icon: Icons.Tick,
               iconAlignment: 'right',
+              disabled: showConfirmPassword,
             },
           ]}
           buttonAlignment="right"
@@ -350,6 +386,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
               errors={errors}
               setErrors={setErrors}
               isEdit={true}
+              disabled={showConfirmPassword}
             />
 
             <Spacer size={6} />
@@ -357,12 +394,27 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
             <div>
               <InputPassword
                 id="user-password"
-                label="Password"
-                value={password}
-                onChange={setPassword}
+                label={!showConfirmPassword ? 'Password' : 'Confirm Current Password'}
+                value={!showConfirmPassword ? password : confirmPassword}
+                onChange={!showConfirmPassword ? setPassword : setConfirmPassword}
               />
               <Styled.passwordReset>
-                <Button type="secondary" label="Reset password" icon={Icons.Refresh} />
+                <Button
+                  type="secondary"
+                  label={!showConfirmPassword ? 'Update password' : 'Confirm password'}
+                  icon={Icons.Refresh}
+                  disabled={password === '' || (showConfirmPassword && confirmPassword === '')}
+                  onClick={
+                    !showConfirmPassword ? () => setShowConfirmPassword(true) : onUpdatePassword
+                  }
+                />
+                {showConfirmPassword && (
+                  <Button
+                    type="text"
+                    label="Cancel"
+                    onClick={() => setShowConfirmPassword(false)}
+                  />
+                )}
               </Styled.passwordReset>
             </div>
 
@@ -375,6 +427,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
                   onChange={setIsActive}
                   labelOff="Inactive"
                   labelOn="Active"
+                  isDisabled={showConfirmPassword}
                 />
               </Styled.activeToggle>
             </div>
