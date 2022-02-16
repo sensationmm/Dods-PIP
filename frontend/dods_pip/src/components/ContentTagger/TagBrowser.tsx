@@ -106,7 +106,7 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
   const [closeWarning, setCloseWarning] = React.useState<boolean>(false);
   const [multipleWarning, setMultipleWarning] = React.useState<boolean>(false);
   const [taxonomySearch, setTaxonomySearch] = React.useState<string>('');
-  const [highlightApply, setHighlightApply] = React.useState<string>('one');
+  const [highlightApply, setHighlightApply] = React.useState<string>('all');
 
   const hasTagTree = tagsData && Object.keys(tagsData).length !== 0;
   const hasSearchResults = tagsSearch && Object.keys(tagsSearch).length !== 0;
@@ -677,7 +677,6 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
                 <Button
                   type="primary"
                   isSmall
-                  icon={Icons.Bin}
                   label="Confirm and close"
                   onClick={confirmAndClose}
                 />
@@ -753,7 +752,6 @@ const TagBrowser: React.FC<TagBrowserProps> = ({
                 <Button
                   type="primary"
                   isSmall
-                  icon={Icons.Bin}
                   label="Confirm and close"
                   onClick={() => handleSaveToHighlight()}
                 />
