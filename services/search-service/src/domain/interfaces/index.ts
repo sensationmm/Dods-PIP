@@ -20,3 +20,7 @@ export interface updatePercolatorParameters extends createPercolatorParameters {
 export interface deletePercolatorParameters {
     alertId: string;
 }
+
+export interface CreateESQueryParameters {
+    queryString: string;
+}
