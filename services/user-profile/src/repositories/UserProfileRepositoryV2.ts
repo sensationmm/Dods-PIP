@@ -84,12 +84,25 @@ export class UserProfileRepositoryV2 implements UserProfilePersisterV2 {
         let whereClause: any = {};
 
         if (name) {
-            whereClause = {
-                [Op.or]: [
-                    { firstName: { [Op.like]: `%${name}%` } },
-                    { lastName: { [Op.like]: `%${name}%` } },
-                ],
-            };
+            const fullName = name.split(/[ ]+/)
+
+            if (fullName.length == 1) {
+                whereClause = {
+                    [Op.or]: [
+                        { firstName: { [Op.like]: `%${name}%` } },
+                        { lastName: { [Op.like]: `%${name}%` } },
+                    ],
+                };
+            }
+            else {
+                whereClause = {
+                    [Op.and]: [
+                        { firstName: { [Op.like]: `%${fullName[0]}%` } },
+                        { lastName: { [Op.like]: `%${fullName[1]}%` } },
+                    ],
+                };
+            }
+
         }
 
         if (startsWith) {
