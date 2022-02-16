@@ -78,7 +78,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
 
           <Spacer size={4} />
 
-          <Collections canAddCollection={user?.isDodsUser} />
+          <Collections accountId={accountId} canAddCollection={user?.isDodsUser} />
 
           <Spacer size={4} />
 
