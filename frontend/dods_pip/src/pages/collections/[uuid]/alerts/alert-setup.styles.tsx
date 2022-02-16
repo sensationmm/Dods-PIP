@@ -137,15 +137,25 @@ export const time = styled.div<TimeOptions>`
   border: 1px solid ${({ disabled }) => (disabled ? color.base.greyDark : color.base.greyLight)};
   border-radius: 60px;
   background: ${({ active = false, disabled }) =>
-    disabled ? color.base.greyLight : active ? color.theme.blueMid : color.base.ivory};
+    disabled
+      ? active
+        ? color.base.greyDark
+        : color.base.greyLight
+      : active
+      ? color.theme.blueMid
+      : color.base.ivory};
   color: ${({ active = false }) => (active ? color.base.white : color.base.greyDark)};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (!disabled ? 'pointer' : 'default')};
   margin-right: ${spacing(4)};
   margin-bottom: ${spacing(2)};
 
+  ${({ disabled }) =>
+    !disabled &&
+    `
   &:hover {
     background: ${({ active = false }) => (active ? color.theme.blueDark : color.base.greyLight)};
   }
+  `}
 `;
 
 export const highlightOptions = styled.div`

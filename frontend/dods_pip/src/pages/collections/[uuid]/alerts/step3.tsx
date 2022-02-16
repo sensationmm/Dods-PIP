@@ -21,7 +21,12 @@ import React, { useMemo } from 'react';
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert }) => {
+const AlertStep3: React.FC<AlertStepProps> = ({
+  alert,
+  setActiveStep,
+  editAlert,
+  disabled = false,
+}) => {
   const [filter, setFilter] = React.useState<string>('');
   const [showAdd, setShowAdd] = React.useState<boolean>(false);
   const [showRemove, setShowRemove] = React.useState<boolean>(false);
@@ -96,13 +101,15 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
             value={filter}
             onChange={setFilter}
           />
-          <Button
-            type="secondary"
-            label="Add Recipients"
-            icon={Icons.Add}
-            iconAlignment="right"
-            onClick={() => setShowAdd(true)}
-          />
+          {!disabled && (
+            <Button
+              type="secondary"
+              label="Add Recipients"
+              icon={Icons.Add}
+              iconAlignment="right"
+              onClick={() => setShowAdd(true)}
+            />
+          )}
         </Styled.sectionHeader>
       </Styled.sectionHeaderContainer>
 
@@ -137,12 +144,15 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
               />
             </>,
             <>
-              <Button
-                type="text"
-                label="Remove"
-                icon={Icons.Bin}
-                onClick={() => onDelete(recipient.value)}
-              />
+              {!disabled && (
+                <Button
+                  type="text"
+                  label="Remove"
+                  icon={Icons.Bin}
+                  onClick={() => onDelete(recipient.value)}
+                />
+              )}
+              ,
             </>,
           ])}
         emptyMessage="You need to do at least one recipient"
@@ -157,25 +167,29 @@ const AlertStep3: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
         }
       />
 
-      <Spacer size={15} />
+      {!disabled && (
+        <>
+          <Spacer size={15} />
 
-      <Styled.actions>
-        <Button
-          type="text"
-          inline
-          label="Back"
-          icon={Icons.ChevronLeftBold}
-          onClick={() => setActiveStep(2)}
-        />
-        <Button
-          inline
-          label={'Next'}
-          icon={Icons.ChevronRightBold}
-          iconAlignment="right"
-          onClick={() => (!changed ? setActiveStep(4) : editAlert(recipients))}
-          disabled={recipients.length === 0}
-        />
-      </Styled.actions>
+          <Styled.actions>
+            <Button
+              type="text"
+              inline
+              label="Back"
+              icon={Icons.ChevronLeftBold}
+              onClick={() => setActiveStep(2)}
+            />
+            <Button
+              inline
+              label={'Next'}
+              icon={Icons.ChevronRightBold}
+              iconAlignment="right"
+              onClick={() => (!changed ? setActiveStep(4) : editAlert && editAlert(recipients))}
+              disabled={recipients.length === 0}
+            />
+          </Styled.actions>
+        </>
+      )}
 
       {showAdd && (
         <Modal

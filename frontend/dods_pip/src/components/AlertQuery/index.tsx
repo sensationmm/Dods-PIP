@@ -50,6 +50,7 @@ export interface AlertQueryScreenProps extends AlertQueryProps {
   onDelete: () => void;
   numQueries: number;
   isDisabled: boolean;
+  hideButtons?: boolean;
 }
 
 type Errors = {
@@ -74,6 +75,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   onCancelEdit,
   numQueries,
   isDisabled = false,
+  hideButtons = false,
 }) => {
   const [sources, setSources] = React.useState<DropdownValue[]>(source || []);
   const [infoTypes, setInfoTypes] = React.useState<DropdownValue[]>(informationType || []);
@@ -393,85 +395,89 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
         </>
       )}
 
-      <Spacer size={4} />
+      {!hideButtons && (
+        <>
+          <Spacer size={4} />
 
-      {!isDone || isEdit ? (
-        <Styled.actions>
-          <Button
-            type="text"
-            label="Cancel"
-            icon={Icons.CrossBold}
-            onClick={!isDone ? onCancel : onCancelEdit}
-            disabled={numQueries === 0 && !isEdit}
-          />
-          {!isValidated ? (
-            <Button
-              label="Validate"
-              icon={Icons.Validate}
-              onClick={() => {
-                setPreview(formatTerms());
-                setIsValidated(true);
-              }}
-              disabled={terms === ''}
-            />
+          {!isDone || isEdit ? (
+            <Styled.actions>
+              <Button
+                type="text"
+                label="Cancel"
+                icon={Icons.CrossBold}
+                onClick={!isDone ? onCancel : onCancelEdit}
+                disabled={numQueries === 0 && !isEdit}
+              />
+              {!isValidated ? (
+                <Button
+                  label="Validate"
+                  icon={Icons.Validate}
+                  onClick={() => {
+                    setPreview(formatTerms());
+                    setIsValidated(true);
+                  }}
+                  disabled={terms === ''}
+                />
+              ) : (
+                <Button
+                  label="Done"
+                  icon={Icons.Tick}
+                  disabled={!isComplete}
+                  onClick={() => {
+                    setTagsHelper('');
+                    setIsDone(true);
+                    setIsValidated(false);
+                    onSave({
+                      id,
+                      source: sources,
+                      informationType: infoTypes,
+                      searchTerms: terms,
+                      done: true,
+                      edit: false,
+                    });
+                  }}
+                />
+              )}
+            </Styled.actions>
           ) : (
-            <Button
-              label="Done"
-              icon={Icons.Tick}
-              disabled={!isComplete}
-              onClick={() => {
-                setTagsHelper('');
-                setIsDone(true);
-                setIsValidated(false);
-                onSave({
-                  id,
-                  source: sources,
-                  informationType: infoTypes,
-                  searchTerms: terms,
-                  done: true,
-                  edit: false,
-                });
-              }}
-            />
+            <Styled.actions>
+              <Button
+                type="text"
+                label="Delete"
+                icon={Icons.Bin}
+                disabled={numQueries < 2 || isDisabled}
+                onClick={() => setShowDelete(true)}
+              />
+              <Button
+                type="secondary"
+                label="Duplicate"
+                icon={Icons.Duplicate}
+                onClick={onDuplicate}
+                disabled={isDisabled}
+              />
+              <Button
+                type="secondary"
+                label={typeof id !== 'number' ? 'Copy to' : 'Requires save'}
+                icon={Icons.Copy}
+                onClick={() => setShowCopy(true)}
+                disabled={typeof id === 'number' || isDisabled}
+              />
+              <Button
+                type="secondary"
+                label="Edit"
+                icon={Icons.Pencil}
+                onClick={onEdit}
+                disabled={isDisabled}
+              />
+              <Button
+                label="View Results"
+                icon={Icons.ChevronRightBold}
+                iconAlignment="right"
+                disabled
+              />
+            </Styled.actions>
           )}
-        </Styled.actions>
-      ) : (
-        <Styled.actions>
-          <Button
-            type="text"
-            label="Delete"
-            icon={Icons.Bin}
-            disabled={numQueries < 2 || isDisabled}
-            onClick={() => setShowDelete(true)}
-          />
-          <Button
-            type="secondary"
-            label="Duplicate"
-            icon={Icons.Duplicate}
-            onClick={onDuplicate}
-            disabled={isDisabled}
-          />
-          <Button
-            type="secondary"
-            label={typeof id !== 'number' ? 'Copy to' : 'Requires save'}
-            icon={Icons.Copy}
-            onClick={() => setShowCopy(true)}
-            disabled={typeof id === 'number' || isDisabled}
-          />
-          <Button
-            type="secondary"
-            label="Edit"
-            icon={Icons.Pencil}
-            onClick={onEdit}
-            disabled={isDisabled}
-          />
-          <Button
-            label="View Results"
-            icon={Icons.ChevronRightBold}
-            iconAlignment="right"
-            disabled
-          />
-        </Styled.actions>
+        </>
       )}
 
       {showBrowser && (
