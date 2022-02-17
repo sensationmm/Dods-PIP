@@ -114,7 +114,7 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
   return (
     <Styled.wrapper data-testid="page-add-user">
       <Head>
-        <title>Dods PIP | Account Management | Add User</title>
+        <title>Dods | Account Management | Add User</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

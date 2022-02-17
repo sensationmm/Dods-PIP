@@ -340,7 +340,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   return (
     <div data-testid="page-editorial">
       <Head>
-        <title>Dods PIP | Editorial Repository | {isEditMode ? 'Edit' : 'Create'}</title>
+        <title>Dods | Editorial Repository | {isEditMode ? 'Edit' : 'Create'}</title>
       </Head>
 
       {isAskPublish && (

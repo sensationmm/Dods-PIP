@@ -12,7 +12,7 @@ export const TermsConditions: React.FC<TermsConditionsProps> = () => {
   return (
     <div data-test="page-privacy-policy">
       <Head>
-        <title>Dods PIP | Terms &amp; Conditions</title>
+        <title>Dods | Terms &amp; Conditions</title>
       </Head>
 
       <main>

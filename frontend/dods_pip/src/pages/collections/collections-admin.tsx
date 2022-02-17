@@ -34,7 +34,7 @@ export const CollectionsAdmin: React.FC<CollectionsScreenProps> = ({
   return (
     <div data-testid="page-account-management-users">
       <Head>
-        <title>Dods PIP | Collections</title>
+        <title>Dods | Collections</title>
       </Head>
 
       <main>
