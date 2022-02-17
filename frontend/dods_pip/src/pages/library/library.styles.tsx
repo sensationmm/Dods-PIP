@@ -312,6 +312,13 @@ export const librarySearchWrapper = styled.div`
   }
 `;
 
+export const titleLink = styled.a`
+  font-family: 'Open Sans Bold', sans-serif;
+  text-align: center;
+  color: ${color.theme.blue};
+  text-decoration: none;
+`;
+
 export const readMore = styled.a`
   display: flex;
   font-family: 'Open Sans Bold', sans-serif;
