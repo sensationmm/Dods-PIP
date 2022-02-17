@@ -1,14 +1,12 @@
 import styled from 'styled-components';
 
 import color from '../../../globals/color';
-import spacing from '../../../globals/spacing';
 import { PageHeaderProps } from '.';
 
 export const wrapper = styled.header`
   display: flex;
   width: 100%;
   border-bottom: 1px solid ${color.base.greyLight};
-  padding-top: ${spacing(1)};
   position: relative;
   z-index: 1;
   background: ${color.base.white};
@@ -27,4 +25,10 @@ export const container = styled.div<ContainerProps>`
   > div {
     display: inline-block;
   }
+`;
+
+export const footer = styled.div`
+  position: absolute;
+  width: 100%;
+  bottom: 0;
 `;

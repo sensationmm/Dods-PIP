@@ -93,7 +93,7 @@ const AlertStep1: React.FC<AlertStepProps> = ({
             !changed
               ? setActiveStep(2)
               : alert.uuid
-              ? editAlert({ title: alert.title })
+              ? editAlert && editAlert({ title: alert.title })
               : createAlert && createAlert()
           }
           disabled={alert.title === ''}

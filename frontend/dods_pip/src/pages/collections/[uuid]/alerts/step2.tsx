@@ -19,7 +19,13 @@ interface AlertStep2Props extends AlertStepProps {
     copyAlertId: Alert['uuid'],
   ) => void;
 }
-const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep, copyQuery }) => {
+const AlertStep2: React.FC<AlertStep2Props> = ({
+  alert,
+  editAlert,
+  setActiveStep,
+  copyQuery,
+  disabled = false,
+}) => {
   const query = {
     source: [],
     informationType: [],
@@ -115,27 +121,29 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
           <Badge number={numQueries} label="Search queries" size="small" />
         </Styled.sectionHeader>
 
-        <Styled.sectionHeader>
-          <Popover
-            title="Queries Keys"
-            body={
-              <>
-                <Styled.keyOr>Or</Styled.keyOr>
-                <Styled.keyAnd>And</Styled.keyAnd>
-                <Styled.keyNot>Not</Styled.keyNot>
-                <Styled.keyKeywords>Keywords</Styled.keyKeywords>
-              </>
-            }
-          />
-          <Button
-            type="secondary"
-            label="Add Search Query"
-            icon={Icons.Add}
-            iconAlignment="right"
-            onClick={addQuery}
-            disabled={adding}
-          />
-        </Styled.sectionHeader>
+        {!disabled && (
+          <Styled.sectionHeader>
+            <Popover
+              title="Queries Keys"
+              body={
+                <>
+                  <Styled.keyOr>Or</Styled.keyOr>
+                  <Styled.keyAnd>And</Styled.keyAnd>
+                  <Styled.keyNot>Not</Styled.keyNot>
+                  <Styled.keyKeywords>Keywords</Styled.keyKeywords>
+                </>
+              }
+            />
+            <Button
+              type="secondary"
+              label="Add Search Query"
+              icon={Icons.Add}
+              iconAlignment="right"
+              onClick={addQuery}
+              disabled={adding}
+            />
+          </Styled.sectionHeader>
+        )}
       </Styled.sectionHeaderContainer>
 
       <Spacer size={8} />
@@ -179,29 +187,34 @@ const AlertStep2: React.FC<AlertStep2Props> = ({ alert, editAlert, setActiveStep
           numQueries={numQueries}
           onCopyQuery={copyQuery}
           isDisabled={adding}
+          hideButtons={disabled}
         />,
         <Spacer key={`spacer-${query.id}`} size={6} />,
       ])}
 
-      <Spacer size={15} />
+      {!disabled && (
+        <>
+          <Spacer size={15} />
 
-      <Styled.actions>
-        <Button
-          type="text"
-          inline
-          label="Back"
-          icon={Icons.ChevronLeftBold}
-          onClick={() => setActiveStep(1)}
-        />
-        <Button
-          inline
-          label={'Next'}
-          icon={Icons.ChevronRightBold}
-          iconAlignment="right"
-          onClick={() => (!changed ? setActiveStep(3) : editAlert(queries))}
-          disabled={adding || queries.length === 0}
-        />
-      </Styled.actions>
+          <Styled.actions>
+            <Button
+              type="text"
+              inline
+              label="Back"
+              icon={Icons.ChevronLeftBold}
+              onClick={() => setActiveStep(1)}
+            />
+            <Button
+              inline
+              label={'Next'}
+              icon={Icons.ChevronRightBold}
+              iconAlignment="right"
+              onClick={() => (!changed ? setActiveStep(3) : editAlert && editAlert(queries))}
+              disabled={adding || queries.length === 0}
+            />
+          </Styled.actions>
+        </>
+      )}
     </>
   );
 };

@@ -74,7 +74,8 @@ export type AlertStepProps = {
   setAlert: AlertSetupProps['setAlert'];
   setActiveStep: (set: number) => void;
   createAlert?: () => Promise<void>;
-  editAlert: (data: any) => Promise<void>;
+  editAlert?: (data: any) => Promise<void>;
+  disabled?: boolean;
 };
 
 const AlertSetup: React.FC<AlertSetupProps> = ({

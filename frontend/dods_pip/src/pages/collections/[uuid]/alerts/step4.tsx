@@ -19,7 +19,12 @@ import React from 'react';
 import { AlertStepProps } from './alert-setup';
 import * as Styled from './alert-setup.styles';
 
-const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert }) => {
+const AlertStep4: React.FC<AlertStepProps> = ({
+  alert,
+  setActiveStep,
+  editAlert,
+  disabled = false,
+}) => {
   const [isScheduled, setIsScheduled] = React.useState<boolean>(
     alert.isScheduled ? alert.isScheduled : true,
   );
@@ -28,7 +33,11 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
   const [days, setDays] = React.useState<DayType[]>([]);
   const [times, setTimes] = React.useState<Array<string>>([]);
   const [hasKeywordHighlight, setHasKeywordHighlight] = React.useState<string>(
-    alert.hasKeywordsHighlight ? (alert.hasKeywordsHighlight === true ? 'yes' : 'no') : '',
+    alert.hasKeywordsHighlight !== undefined
+      ? alert.hasKeywordsHighlight === true
+        ? 'yes'
+        : 'no'
+      : '',
   );
   const [alertTemplateId, setAlertTemplateId] = React.useState<string>(
     alert.template?.id ? (alert.template.id === 1 ? 'full' : 'snippet') : '',
@@ -109,6 +118,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
               labelOn="Scheduled"
               isActive={isScheduled}
               onChange={setIsScheduled}
+              isDisabled={disabled}
             />
             <div>
               <Styled.schedule>
@@ -119,11 +129,15 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                   labelOn="Specific days"
                   isActive={isSpecific}
                   onChange={setIsSpecific}
-                  isDisabled={!isScheduled}
+                  isDisabled={!isScheduled || disabled}
                 />
               </Styled.schedule>
               <Spacer size={3} />
-              <DayPicker selected={days} onClick={handleSetDays} disabled={!isScheduled} />
+              <DayPicker
+                selected={days}
+                onClick={handleSetDays}
+                disabled={!isScheduled || disabled}
+              />
             </div>
           </Styled.schedule>
 
@@ -140,7 +154,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
               { label: 'GMT+1', value: 'Berlin' },
               { label: 'GMT+2', value: 'Amsterdam' },
             ]}
-            isDisabled={!isScheduled}
+            isDisabled={!isScheduled || disabled}
           />
 
           <Spacer size={7} />
@@ -157,8 +171,8 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                 <Styled.time
                   key={`time${time}`}
                   active={times.findIndex((t) => t === `${time}:00`) > -1}
-                  onClick={() => handleClick(`${time}:00`)}
-                  disabled={!isScheduled}
+                  onClick={() => !disabled && handleClick(`${time}:00`)}
+                  disabled={!isScheduled || disabled}
                 >
                   {time}:00
                 </Styled.time>
@@ -175,8 +189,8 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                   <Styled.time
                     key={`time${time}`}
                     active={times.findIndex((t) => t === `${time}:00`) > -1}
-                    onClick={() => handleClick(`${time}:00`)}
-                    disabled={!isScheduled}
+                    onClick={() => !disabled && handleClick(`${time}:00`)}
+                    disabled={!isScheduled || disabled}
                   >
                     {time}:00
                   </Styled.time>
@@ -193,8 +207,8 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                 <Styled.time
                   key={`time${time}`}
                   active={times.findIndex((t) => t === `${time}:00`) > -1}
-                  onClick={() => handleClick(`${time}:00`)}
-                  disabled={!isScheduled}
+                  onClick={() => !disabled && handleClick(`${time}:00`)}
+                  disabled={!isScheduled || disabled}
                 >
                   {time}:00
                 </Styled.time>
@@ -221,6 +235,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
               value="no"
               isChecked={hasKeywordHighlight === 'no'}
               onChange={setHasKeywordHighlight}
+              isDisabled={!isScheduled || disabled}
             />
             <HightlightActive width="40px" height="40px" />
             <Radio
@@ -229,6 +244,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
               value="yes"
               isChecked={hasKeywordHighlight === 'yes'}
               onChange={setHasKeywordHighlight}
+              isDisabled={!isScheduled || disabled}
             />
           </Styled.highlightOptions>
 
@@ -243,6 +259,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                 value="full"
                 isChecked={alertTemplateId === 'full'}
                 onChange={setAlertTemplateId}
+                isDisabled={!isScheduled || disabled}
               />
               <Spacer size={2} />
               <Text type="bodySmall" color={color.base.greyDark}>
@@ -257,6 +274,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
                 value="snippet"
                 isChecked={alertTemplateId === 'snippet'}
                 onChange={setAlertTemplateId}
+                isDisabled={!isScheduled || disabled}
               />
               <Spacer size={2} />
               <Text type="bodySmall" color={color.base.greyDark}>
@@ -267,33 +285,38 @@ const AlertStep4: React.FC<AlertStepProps> = ({ alert, setActiveStep, editAlert 
         </div>
       </Styled.scheduleColumns>
 
-      <Spacer size={15} />
+      {!disabled && (
+        <>
+          <Spacer size={15} />
 
-      <Styled.actions>
-        <Button
-          type="text"
-          inline
-          label="Back"
-          icon={Icons.ChevronLeftBold}
-          onClick={() => setActiveStep(3)}
-        />
-        <Button
-          inline
-          label={alert.isPublished ? 'Save Alert' : 'Publish Alert'}
-          icon={Icons.ChevronRightBold}
-          iconAlignment="right"
-          onClick={() =>
-            editAlert({
-              isScheduled,
-              hasKeywordHighlight: hasKeywordHighlight === 'yes' ? true : false,
-              timezone,
-              alertTemplateId: alertTemplateId === 'full' ? 1 : 2,
-              schedule: cronTime(),
-            })
-          }
-          disabled={!isComplete}
-        />
-      </Styled.actions>
+          <Styled.actions>
+            <Button
+              type="text"
+              inline
+              label="Back"
+              icon={Icons.ChevronLeftBold}
+              onClick={() => setActiveStep(3)}
+            />
+            <Button
+              inline
+              label={alert.isPublished ? 'Save Alert' : 'Publish Alert'}
+              icon={Icons.ChevronRightBold}
+              iconAlignment="right"
+              onClick={() =>
+                editAlert &&
+                editAlert({
+                  isScheduled,
+                  hasKeywordHighlight: hasKeywordHighlight === 'yes' ? true : false,
+                  timezone,
+                  alertTemplateId: alertTemplateId === 'full' ? 1 : 2,
+                  schedule: cronTime(),
+                })
+              }
+              disabled={!isComplete}
+            />
+          </Styled.actions>
+        </>
+      )}
     </>
   );
 };
