@@ -9,7 +9,6 @@ import useUser, { User } from '@dods-ui/lib/useUser';
 import loadAccounts from '@dods-ui/pages/accounts/load-accounts';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -201,9 +200,7 @@ const Collections: React.FC<CollectionsProps> = ({ accountId, canAddCollection =
               return [
                 accountId,
                 <Text key={uuid}>
-                  <Link href={`/collections/${uuid}`}>
-                    <a>{name}</a>
-                  </Link>
+                  <Styled.NavLink href={`/collections/${uuid}`} name={name} />
                 </Text>,
                 <Text key={uuid}>{formattedDate}</Text>,
                 <Styled.itemsCol key={uuid}>
