@@ -180,7 +180,8 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
               </Text>
               <Spacer size={12} />
               <Text>
-                Don&apos;t have a login? <a href="">Click here to find out more</a>
+                Don&apos;t have a login?{' '}
+                <a href="https://www.dodspoliticalintelligence.com/">Click here to find out more</a>
               </Text>
             </div>
 
@@ -240,9 +241,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
                             <Text type={'bodySmall'} data-test={'warning-1'}>
                               Try re-typing your password, or reset your password below. If you’ve
                               forgotten your username, please{' '}
-                              <Link href="">
-                                <a>Contact Us</a>
-                              </Link>{' '}
+                              <a href="mailto:customer.service@dodsgroup.com">Contact Us</a>{' '}
                               directly.
                             </Text>
                             {failureCount == 2 && (
@@ -310,10 +309,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
 
                       <Text type="span" center color={color.theme.blueMid}>
                         If you’ve forgotten your username, please{' '}
-                        <Link href="">
-                          <a>Contact Us</a>
-                        </Link>{' '}
-                        directly.
+                        <a href="mailto:customer.service@dodsgroup.com">Contact Us</a> directly.
                       </Text>
                     </>
                   )}
