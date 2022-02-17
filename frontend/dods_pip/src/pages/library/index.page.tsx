@@ -536,7 +536,7 @@ export const Library: React.FC<ILibraryProps> = ({
   return (
     <Styled.pageLibrary data-test="page-library">
       <Head>
-        <title>Dods PIP | Library</title>
+        <title>Dods | Library</title>
       </Head>
 
       <main>

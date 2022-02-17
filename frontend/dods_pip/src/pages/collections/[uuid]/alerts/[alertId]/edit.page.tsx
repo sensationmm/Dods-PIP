@@ -83,7 +83,7 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading, addNotificatio
   return (
     <div data-test="page-people">
       <Head>
-        <title>Dods PIP | Edit Alert</title>
+        <title>Dods | Edit Alert</title>
       </Head>
 
       <AlertSetup

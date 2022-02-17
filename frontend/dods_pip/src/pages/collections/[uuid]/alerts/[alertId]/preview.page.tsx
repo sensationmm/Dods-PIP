@@ -95,7 +95,7 @@ export const PreviewAlert: React.FC<PreviewAlertProps> = ({ setLoading }) => {
   return (
     <div data-test="page-people">
       <Head>
-        <title>Dods PIP | Alert Overview</title>
+        <title>Dods | Alert Overview</title>
       </Head>
 
       <main>

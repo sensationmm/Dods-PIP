@@ -155,7 +155,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
   return (
     <div data-test="page-home">
       <Head>
-        <title>Dods PIP | Welcome to Dods</title>
+        <title>Dods | Welcome to Dods</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

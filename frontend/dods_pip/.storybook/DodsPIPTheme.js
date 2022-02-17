@@ -3,6 +3,6 @@ import Logo from '../src/assets/images/logo-white-dods-pip.png';
 
 export default create({
   appBorderRadius: 2,
-  brandTitle: 'Dods PIP Components',
+  brandTitle: 'Dods Components',
   brandImage: Logo,
 });
