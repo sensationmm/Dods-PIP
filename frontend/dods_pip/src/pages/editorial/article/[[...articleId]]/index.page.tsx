@@ -60,7 +60,6 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   const [savedDocumentContent, setSavedDocumentContent] = useStateWithCallback<string | undefined>(
     undefined,
   );
-  const [savedDocumentTags, setSavedDocumentTags] = useState<TagsData[] | undefined>();
   const [jurisdiction, setJurisdiction] = useState<string>();
   const [validContentSources, setValidContentSources] = useState<string[] | undefined>();
   const [validInfoTypes, setValidInfoTypes] = useState<string[] | undefined>();
@@ -123,7 +122,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             documentContent,
             (content: string) => content.length && setLoading(false),
           );
-          setSavedDocumentTags(taxonomyTerms);
+          setTags((taxonomyTerms || []).map((tag) => ({ ...tag, type: tag.facetType })));
           setJurisdiction(getJurisdiction({ contentSource }));
           setValidInfoTypes(getInformationTypes({ contentSource, informationType }));
           setFieldData(fieldData);
@@ -422,7 +421,6 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             tags={tags}
             articleId={articleId.length ? articleId[0] : undefined}
             savedContent={savedDocumentContent}
-            savedDocumentTags={savedDocumentTags}
           />
         </main>
       </Panel>

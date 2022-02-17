@@ -58,7 +58,6 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   tags = [],
   onTagsChange,
   savedContent,
-  savedDocumentTags,
 }) => {
   const [selectedText, setSelectedText] = useState<string>();
   const [selectedTextOccurrences, setSelectedTextOccurrences] = useState<number>();
@@ -182,10 +181,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
       <ContentTagger
         highlight={selectedText}
         highlightWordCount={selectedTextOccurrences}
-        tags={[
-          ...(savedDocumentTags || []).map((tag) => ({ ...tag, type: tag.facetType })),
-          ...tags,
-        ]}
+        tags={tags}
         setTags={onTagsChange}
       />
     </Styled.mainColumns>
