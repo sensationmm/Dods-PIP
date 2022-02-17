@@ -4,7 +4,7 @@ import { CollectionAlertRecipientRepository, CollectionAlertsRepository, Documen
 
 import { singleEmailBodyHandler } from '../../templates/singleFullAlert';
 
-const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL } } } = config;
+const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL, clientURL } } } = config;
 
 export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertParameters> = async (
     parameters
@@ -55,7 +55,7 @@ export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertPara
                         name: documentData.contentSource,
                     },
                     date: documentDate,
-                    url: `${frontEndURL}/library/document/${documentData.documentId}`,
+                    url: `${clientURL}/library/document/${documentData.documentId}`,
                     content: documentData.documentContent,
                 }
 
