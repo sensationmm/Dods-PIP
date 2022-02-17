@@ -427,7 +427,11 @@ export const Library: React.FC<ILibraryProps> = ({
                     </Styled.imageContainer>
                     <Styled.searchResultHeader>
                       <Styled.searchResultHeading>
-                        <h2>{documentTitle}</h2>
+                        <h2>
+                          <Link href={`/library/document/${documentId}`} passHref>
+                            <Styled.titleLink>{documentTitle}</Styled.titleLink>
+                          </Link>
+                        </h2>
                         <Styled.date className={'mobileOnly'}>{formattedTime}</Styled.date>
                         <Styled.contentSource>
                           <Icon

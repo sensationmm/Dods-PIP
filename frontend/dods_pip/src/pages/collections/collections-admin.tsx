@@ -12,6 +12,7 @@ import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
 import { format } from 'date-fns';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -104,7 +105,9 @@ export const CollectionsAdmin: React.FC<CollectionsScreenProps> = ({
             rows={collectionsList.map(({ uuid, name, updatedAt, clientAccount, alertsCount }) => [
               name.substring(0, 1),
               <Text key={`collection-${uuid}-name`} bold>
-                {name}
+                <Link href={`/collections/${uuid}`} passHref>
+                  <Styled.titleLink>{name}</Styled.titleLink>
+                </Link>
               </Text>,
               <Text key={`collection-${uuid}-updated`}>{clientAccount.name}</Text>,
               <Text key={`collection-${uuid}-updated`}>
