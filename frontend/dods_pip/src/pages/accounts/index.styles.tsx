@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styled from 'styled-components';
 
 import { secondary, wrapper as btnWrapper } from '../../components/Button/Button.styles';
@@ -231,3 +232,22 @@ export const addCollectionContent = styled.div<AddCollectionContentProps>`
   grid-template-columns: 1fr 1fr;
   column-gap: ${spacing(10)};
 `;
+
+const StyledLink = styled.a`
+  font-weight: bold;
+  color: rgb(34, 41, 85) !important;
+  text-decoration: none;
+`;
+
+interface NavLinkProps {
+  href: string;
+  name: string;
+}
+
+export const NavLink: React.FC<NavLinkProps> = ({ href, name }) => {
+  return (
+    <Link href={href} passHref>
+      <StyledLink>{name}</StyledLink>
+    </Link>
+  );
+};
