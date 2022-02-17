@@ -877,7 +877,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         let query: any = {
             query: {
                 bool: {
-                    must: [{should: []}],
+                    must: [],
                     must_not: []
                 }
             }
