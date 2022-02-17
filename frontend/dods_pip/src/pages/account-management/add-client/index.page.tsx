@@ -20,7 +20,7 @@ export const AddClientPage: React.FC<AddClientProps> = ({ addNotification, setLo
   return (
     <div data-test="page-account-management-add-client">
       <Head>
-        <title>Dods PIP | Account Management | Add Client</title>
+        <title>Dods | Account Management | Add Client</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

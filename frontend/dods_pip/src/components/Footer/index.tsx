@@ -39,7 +39,7 @@ const Footer: React.FC<FooterProps> = () => {
 
           <Styled.branding>
             <Styled.logo>
-              <LogoWhite alt={'Dods PiP Logo'} />
+              <LogoWhite alt={'Dods Logo'} />
             </Styled.logo>
             <Text type="bodyLarge" bold uppercase color={color.base.white}>
               Political
