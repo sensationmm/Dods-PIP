@@ -62,3 +62,10 @@ export const searchFilter = styled.div`
   width: 100%;
   max-width: 340px;
 `;
+
+export const titleLink = styled.a`
+  font-family: 'Open Sans Bold', sans-serif;
+  text-align: center;
+  color: ${color.theme.blue};
+  text-decoration: none;
+`;
