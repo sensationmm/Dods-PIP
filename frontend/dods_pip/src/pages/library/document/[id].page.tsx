@@ -229,9 +229,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const documentId = params?.id as string;
 
   let apiData: ISourceData = {};
+  const isPreview = query.preview === 'true';
 
   try {
-    apiData = await getData({ documentId, isPreview: query.preview === 'true' });
+    apiData = await getData({ documentId, isPreview: isPreview });
   } catch (error) {
     console.error(error);
   }
@@ -245,8 +246,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const date = apiData.contentDateTime ? new Date(apiData.contentDateTime) : '';
   const publishedDateTime = date ? format(date, "d MMMM yyyy 'at' hh:mm") : '';
 
-  const tags: ITags = Object.keys(apiData.aggs_fields || {}).reduce((carry, key) => {
-    const values = apiData.aggs_fields?.[key].map((value) => {
+  const formatTaxonomyTerms = () => {
+    const terms: any = {};
+
+    apiData?.taxonomyTerms?.map((term: any) => {
+      if (terms.hasOwnProperty(term.facetType)) {
+        terms[term.facetType].push(term.termLabel);
+      } else {
+        terms[term.facetType] = [];
+        terms[term.facetType].push(term.termLabel);
+      }
+    });
+
+    return terms;
+  };
+
+  const tagsSource = !isPreview ? apiData.aggs_fields : formatTaxonomyTerms();
+  const tags: ITags = Object.keys(tagsSource || {}).reduce((carry, key) => {
+    const values = tagsSource?.[key].map((value: string) => {
       const regEx = new RegExp(value, 'g');
       return {
         value,
