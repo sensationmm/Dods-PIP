@@ -40,7 +40,7 @@
       h4,
       h5,
       h6 {
-        margin: 0;
+        margin-top: 0;
         padding: 0;
       }
 
@@ -109,6 +109,10 @@
         }
         .content-col-right {
           max-width: 100% !important;
+          text-align: center !important;
+        }
+        .btn-style {
+          width: 100% !important;
         }
         .contentContainer {
           padding: 0 20px 60px !important;
@@ -324,73 +328,6 @@
                           class="column col-info"
                         >
                           <tr>
-                            <td style="padding: 0px 0px 10px 0px;">
-                              <!-- Email button, needs link to email -->
-                              <button
-                                style="
-                                  font-family: 'Open Sans', 'Segoe UI', Tahoma,
-                                    sans-serif;
-                                  font-size: 16px;
-                                  font-weight: 700;
-                                  line-height: 12px;
-                                  background: #ffffff;
-                                  border: 0;
-                                  border-radius: 8px;
-                                  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
-                                  color: #124384;
-                                  cursor: pointer;
-                                  margin-right: 10px;
-                                  padding: 14px 12px 12px;
-                                "
-                                class="btn"
-                              >
-                                <span
-                                  style="
-                                    display: inline-block;
-                                    margin-right: 4px;
-                                  "
-                                  >Email us</span
-                                >
-                                <img
-                                  style="vertical-align: middle"
-                                  src="./images/icon-email.png"
-                                  width="16"
-                                />
-                              </button>
-                              <!-- Link back to read in platform -->
-                              <button
-                                style="
-                                  font-family: 'Open Sans', 'Segoe UI', Tahoma,
-                                    sans-serif;
-                                  font-size: 16px;
-                                  font-weight: 700;
-                                  line-height: 12px;
-                                  background: #124384;
-                                  border: 0;
-                                  border-radius: 8px;
-                                  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);
-                                  color: #ffffff;
-                                  cursor: pointer;
-                                  padding: 14px 12px 12px;
-                                "
-                                class="btn"
-                              >
-                                <span
-                                  style="
-                                    display: inline-block;
-                                    margin-right: 4px;
-                                  "
-                                  >Read in platform</span
-                                >
-                                <img
-                                  style="vertical-align: middle"
-                                  src="./images/icon-chevron-right.png"
-                                  width="16"
-                                />
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
                             <td
                               style="
                                 font-family: 'Open Sans', 'Segoe UI', Tahoma,
@@ -547,7 +484,7 @@
                                   <td
                                     class="column content-col-left"
                                     width="50%"
-                                    style="width: 100%; max-width: 50%"
+                                    style="width: 100%; max-width: 70%"
                                   >
                                     <a
                                       style="
@@ -568,44 +505,21 @@
                                     width="50%"
                                     style="
                                       width: 100%;
-                                      max-width: 50%;
+                                      max-width: 30%;
                                       text-align: right;
                                     "
                                   >
                                     <!-- button link to article -->
-                                    <a href="{{url}}" style="text-decoration: none;">
-                                      <button
-                                        style="
-                                          font-family: 'Open Sans', 'Segoe UI',
-                                            Tahoma, sans-serif;
-                                          font-size: 16px;
-                                          font-weight: 700;
-                                          line-height: 12px;
-                                          background: #124384;
-                                          border: 0;
-                                          border-radius: 8px;
-                                          box-shadow: 0px 1px 8px
-                                            rgba(0, 0, 0, 0.1);
-                                          color: #ffffff;
-                                          cursor: pointer;
-                                          padding: 14px 12px 12px;
-                                        "
-                                        class="btn"
-                                      >
-                                        <span
-                                          style="
-                                            display: inline-block;
-                                            margin-right: 4px;
-                                          "
-                                          >Go to article</span
-                                        >
-                                        <img
-                                          style="vertical-align: middle"
-                                          src="./images/icon-chevron-right.png"
-                                          width="16"
-                                        />
-                                      </button>
-                                    </a>
+                                    <div><!--[if mso]>
+                                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://" style="height:50px;v-text-anchor:middle;width:160px;" arcsize="10%" stroke="f" fillcolor="#124384">
+                                    <w:anchorlock/>
+                                    <center>
+                                    <![endif]-->
+                                    <a class="btn-style" href="{{url}}" style="background-color:#124384;border-radius:8px;color:#ffffff;box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1);display:inline-block;font-size: 16px; font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;font-weight:700;line-height:50px;text-align:center;text-decoration:none;width:160px;-webkit-text-size-adjust:none;">Go to article &rsaquo;</a>
+                                    <!--[if mso]>
+                                    </center>
+                                    </v:roundrect>
+                                    <![endif]--></div>
                                   </td>
                                 </tr>
                               </table>
