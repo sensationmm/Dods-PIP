@@ -15,3 +15,8 @@ variable "project" {
   default     = "pip"
   type        = string
 }
+
+variable "taxonomy_bucket" {
+  description = "Bucket with content files"
+  type        = string
+}

@@ -63,6 +63,14 @@ module "alerts" {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+// - Taxonomy Resources
+// --------------------------------------------------------------------------------------------------------------------
+module "taxonomy" {
+  source      = "./services/taxonomy"
+  environment = var.environment
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 // - Primary PIP Frontend Network
 // --------------------------------------------------------------------------------------------------------------------
 module "pip-network" {
@@ -71,19 +79,13 @@ module "pip-network" {
 
   app_image          = var.app_image
   api_gateway        = module.api-gateway.api_gateway_url
+  api_taxonomy       = module.taxonomy.taxonomy-api
   fe_api_key         = module.api-gateway.api_key_front
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnet_ids
   public_subnet_ids  = module.vpc.public_subnet_ids
 }
 
-// --------------------------------------------------------------------------------------------------------------------
-// - Taxonomy Resources
-// --------------------------------------------------------------------------------------------------------------------
-module "taxonomy" {
-  source      = "./services/taxonomy"
-  environment = var.environment
-}
 
 // --------------------------------------------------------------------------------------------------------------------
 // - Main VPC

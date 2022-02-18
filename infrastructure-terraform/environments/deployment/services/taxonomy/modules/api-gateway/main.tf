@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 locals {
   main_resource_name = "taxonomy"
+  bucket_to_read     = var.taxonomy_bucket
 }
 
 # Read-only access policy for buckets
@@ -101,7 +102,7 @@ resource "aws_api_gateway_integration" "get-s3-all" {
   integration_http_method = "GET"
 
   # See uri description: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
-  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/taxonomy-trees-dev/Combined.json"
+  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/${local.bucket_to_read}/Combined.json"
   credentials = aws_iam_role.s3_api_gateway_role.arn
 }
 
@@ -207,7 +208,7 @@ resource "aws_api_gateway_integration" "get-s3-geography" {
   integration_http_method = "GET"
 
   # See uri description: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
-  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/taxonomy-trees-dev/Geography.json"
+  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/${local.bucket_to_read}/Geography.json"
   credentials = aws_iam_role.s3_api_gateway_role.arn
 
 }
@@ -313,7 +314,7 @@ resource "aws_api_gateway_integration" "get-s3-organisations" {
   integration_http_method = "GET"
 
   # See uri description: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
-  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/taxonomy-trees-dev/Organisations.json"
+  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/${local.bucket_to_read}/Organisations.json"
   credentials = aws_iam_role.s3_api_gateway_role.arn
 
 }
@@ -419,7 +420,7 @@ resource "aws_api_gateway_integration" "get-s3-people" {
   integration_http_method = "GET"
 
   # See uri description: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
-  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/taxonomy-trees-dev/People.json"
+  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/${local.bucket_to_read}/People.json"
   credentials = aws_iam_role.s3_api_gateway_role.arn
 
 }
@@ -525,7 +526,7 @@ resource "aws_api_gateway_integration" "get-s3-topics" {
   integration_http_method = "GET"
 
   # See uri description: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
-  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/taxonomy-trees-dev/Topics.json"
+  uri         = "arn:aws:apigateway:${var.aws_region}:s3:path/${local.bucket_to_read}/Topics.json"
   credentials = aws_iam_role.s3_api_gateway_role.arn
 
 }
