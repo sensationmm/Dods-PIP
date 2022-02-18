@@ -1,5 +1,5 @@
 import { AlertOutput, CollectionAlertsRepository, DocumentRepository, mapAlert, setAlertScheduleParameters } from '@dodsgroup/dods-repositories';
-import { CollectionAlertQuery, CollectionAlertRecipient } from '@dodsgroup/dods-model';
+import { CollectionAlert, CollectionAlertQuery, CollectionAlertRecipient } from '@dodsgroup/dods-model';
 import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
 
 import { mocked } from 'jest-mock';
@@ -102,15 +102,15 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
     });
 
-    it('invalid cron input', async () => {
+    it('Valid input not scheduled', async () => {
 
         const requestParams: setAlertScheduleParameters = {
             alertId: 'alertUUID',
             collectionId: 'collectionUUD',
-            isScheduled: true,
+            isScheduled: false,
             hasKeywordHighlight: true,
             timezone: "string",
-            schedule: "string",
+            schedule: "0 0 13,14,15,16,17,18 ? * MON,TUE,WED,THU,FRI *",
             updatedBy: "6340c08f-0a01-41c1-8434-421f1fff3d1e",
             alertTemplateId: 1
         };
@@ -120,8 +120,98 @@ describe(`${FUNCTION_NAME} handler`, () => {
         mockedMapAlert.mockReturnValue(new Promise((resolve, _reject) => {
             resolve(answerMock)
         }));
+        const alertResponse = {
+            elasticQuery: '{"query":{}}',
+            isPublished: true
+        } as CollectionAlert;
+        mockedCollectionAlertsRepository.defaultInstance.validateSchedule.mockResolvedValue(alertResponse);
         mockedCollectionAlertsRepository.defaultInstance.setAlertSchedule.mockResolvedValue(defaultSheduleCollection);
+        mockedCollectionAlertsRepository.defaultInstance.getQueriesByAlert.mockResolvedValue(
+            querysByAlert
+        );
+        mockedCollectionAlertsRepository.defaultInstance.getRecipientsByAlert.mockResolvedValue(recipientsByAlert);
+        mockedDocumentRepository.defaultInstance.scheduleAlertWebhook.mockResolvedValue({ success: true });
 
+
+        const response = await setAlertSchedule(requestParams, defaultContext);
+
+        const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'The alert scheduling was set successfully',
+            alert: answerMock
+        });
+
+        expect(response).toEqual(expectedResponse);
+
+    });
+
+    it('Valid input not scheduled v2', async () => {
+
+        const requestParams: setAlertScheduleParameters = {
+            alertId: 'alertUUID',
+            collectionId: 'collectionUUD',
+            isScheduled: false,
+            hasKeywordHighlight: true,
+            timezone: "string",
+            schedule: "0 0 13,14,15,16,17,18 ? * MON,TUE,WED,THU,FRI *",
+            updatedBy: "6340c08f-0a01-41c1-8434-421f1fff3d1e",
+            alertTemplateId: 1
+        };
+
+        const querysByAlert: Array<CollectionAlertQuery> = [] as Array<CollectionAlertQuery>;
+        const recipientsByAlert = [] as Array<CollectionAlertRecipient>;
+        mockedMapAlert.mockReturnValue(new Promise((resolve, _reject) => {
+            resolve(answerMock)
+        }));
+        const alertResponse = {
+            elasticQuery: '{"query":{}}',
+            isPublished: false
+        } as CollectionAlert;
+        mockedCollectionAlertsRepository.defaultInstance.validateSchedule.mockResolvedValue(alertResponse);
+        mockedCollectionAlertsRepository.defaultInstance.setAlertSchedule.mockResolvedValue(defaultSheduleCollection);
+        mockedCollectionAlertsRepository.defaultInstance.getQueriesByAlert.mockResolvedValue(
+            querysByAlert
+        );
+        mockedCollectionAlertsRepository.defaultInstance.getRecipientsByAlert.mockResolvedValue(recipientsByAlert);
+        mockedDocumentRepository.defaultInstance.scheduleAlertWebhook.mockResolvedValue({ success: true });
+
+
+        const response = await setAlertSchedule(requestParams, defaultContext);
+
+        const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
+            success: true,
+            message: 'The alert scheduling was set successfully',
+            alert: answerMock
+        });
+
+        expect(response).toEqual(expectedResponse);
+
+    });
+
+    it('Valid input not elastic query', async () => {
+
+        const requestParams: setAlertScheduleParameters = {
+            alertId: 'alertUUID',
+            collectionId: 'collectionUUD',
+            isScheduled: false,
+            hasKeywordHighlight: true,
+            timezone: "string",
+            schedule: "0 0 13,14,15,16,17,18 ? * MON,TUE,WED,THU,FRI *",
+            updatedBy: "6340c08f-0a01-41c1-8434-421f1fff3d1e",
+            alertTemplateId: 1
+        };
+
+        const querysByAlert: Array<CollectionAlertQuery> = [] as Array<CollectionAlertQuery>;
+        const recipientsByAlert = [] as Array<CollectionAlertRecipient>;
+        mockedMapAlert.mockReturnValue(new Promise((resolve, _reject) => {
+            resolve(answerMock)
+        }));
+        const alertResponse = {
+            elasticQuery: '',
+            isPublished: false
+        } as CollectionAlert;
+        mockedCollectionAlertsRepository.defaultInstance.validateSchedule.mockResolvedValue(alertResponse);
+        mockedCollectionAlertsRepository.defaultInstance.setAlertSchedule.mockResolvedValue(defaultSheduleCollection);
         mockedCollectionAlertsRepository.defaultInstance.getQueriesByAlert.mockResolvedValue(
             querysByAlert
         );
@@ -132,12 +222,13 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const response = await setAlertSchedule(requestParams, defaultContext);
 
         const expectedResponse = new HttpResponse(HttpStatusCode.BAD_REQUEST, {
-            success: true,
-            message: 'Please set a valid cron expression',
+            success: false,
+            message: 'Elastic Query not set',
         });
 
         expect(response).toEqual(expectedResponse);
 
     });
+
 
 });
