@@ -510,10 +510,8 @@ export const Library: React.FC<ILibraryProps> = ({
     return (
       <Styled.pagination>
         <div>
-          Showing
-          <span className={'pageCount'}>
-            {(currentPage - 1) * resultSize} - {(currentPage - 1) * resultSize + resultSize}
-          </span>
+          Showing {(currentPage - 1) * resultSize + 1} -{' '}
+          {(currentPage - 1) * resultSize + resultSize}
           <Styled.totalRecords>
             Total <b className={'totalDocs'}>{totalDocs.toLocaleString('en-US')}</b> Items
           </Styled.totalRecords>
