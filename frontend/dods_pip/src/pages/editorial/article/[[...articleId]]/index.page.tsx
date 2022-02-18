@@ -155,7 +155,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
         `${BASE_URI}${Api.TaxonomySearch}/organisations/tree`,
       );
       setOriginatorValues(
-        originators[0].childTerms
+        originators
           .map((term: any) => ({
             value: term.termLabel,
             label: term.termLabel,
