@@ -929,8 +929,14 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         const getAlertQueriesParams: SearchAlertQueriesParameters = { alertId: alertId, limit: "100", offset: "0" }
         const alertQueries = await this.getAlertQueries(getAlertQueriesParams)
         const alertQueriesString = alertQueries.queries.map(o => o.query).join(" ");
+        const informationTypesString = alertQueries.queries.map(o => o.informationTypes).join(",");
+        const contentSourcesString = alertQueries.queries.map(o => o.contentSources).join(",");
 
-        const createESParams: createESQueryParameters = { query: alertQueriesString }
+        const createESParams: createESQueryParameters = {
+            query: alertQueriesString,
+            informationType: informationTypesString,
+            contentSource: contentSourcesString
+        }
         const elasticQuery = await this.createElasticQuery(createESParams)
 
         await alert.update({
@@ -938,7 +944,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         })
     }
 
-    async createElasticQuery(queryString: createESQueryParameters) {
+    async createElasticQuery(queryObject: createESQueryParameters) {
         const facets = [
             'topics',
             'keywords',
@@ -956,7 +962,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             }
         }
 
-        let userQuery = queryString.query
+        let userQuery = queryObject.query
         facets.forEach(facet => {
             const not = new RegExp("not " + facet + "\\s?\\((.*?)\\)", "ig");
             const negativeMatchStrings = Array.from(userQuery.matchAll(not), m => m[1]);
@@ -1069,6 +1075,28 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             }
 
         });
+
+        if('contentSource' in queryObject) {
+            let sourcesQuery: any = []
+            const contentSources = queryObject.contentSource!.split(',')
+            contentSources.forEach(source => {
+                sourcesQuery.push(...[
+                    { term: { contentSource: source } },
+                ])
+            })
+            query.query.bool.must.push({ bool: { should: sourcesQuery } })
+        }
+
+        if('informationType' in queryObject) {
+            let typesQuery: any = []
+            const informationTypes = queryObject.informationType!.split(',')
+            informationTypes.forEach(infoType => {
+                typesQuery.push(...[
+                    { term: { informationType: infoType } },
+                ])
+            })
+            query.query.bool.must.push({ bool: { should: typesQuery } })
+        }
 
 
 

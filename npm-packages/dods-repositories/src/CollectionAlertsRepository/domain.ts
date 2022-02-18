@@ -231,6 +231,8 @@ export interface AlertDocumentParameters {
 
 export interface createESQueryParameters {
     query: string;
+    informationType?: string;
+    contentSource?: string;
 }
 
 export interface updateAlertElasticQueryParameters {
