@@ -23,7 +23,8 @@ import {
     getAlertsByCollectionResponse,
     getQueriesResponse,
     setAlertScheduleParameters,
-    updateAlertElasticQueryParameters,
+    setPublishAlertParameters,
+    updateAlertElasticQueryParameters
 } from './domain';
 import {
     AlertDocumentInput,
@@ -41,6 +42,7 @@ import { cloneArray, cloneObject, mapAlert, mapAlertQuery } from '..';
 
 import { CollectionError } from '@dodsgroup/dods-domain';
 import { LastStepCompleted } from '../shared/Constants';
+import cronValidator from "cron-expression-validator";
 
 export * from './domain';
 
@@ -146,6 +148,55 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         return await mapAlert(newAlert)
     }
 
+    async validateSchedule(parameters: setAlertScheduleParameters): Promise<CollectionAlert> {
+        const {
+            isScheduled,
+            schedule,
+            alertId,
+            updatedBy,
+            collectionId,
+        } = parameters;
+
+        if (isScheduled) {
+            if (!schedule) {
+                throw new CollectionError(`Must provide a schedule `);
+            }
+            const cronResult = cronValidator.isValidCronExpression(schedule)
+
+            if (!cronResult) {
+                throw new CollectionError(`Please set a valid cron expression`);
+            }
+
+        }
+
+        const alert = await this.model.findOne({
+            where: {
+                uuid: alertId,
+            },
+            include: ['collection', 'createdById', 'updatedById', 'alertTemplate'],
+        });
+
+        if (!alert) {
+            throw new CollectionError(`Could not found Alert with uuid: ${alertId}`);
+        }
+
+        if (alert.collection.uuid !== collectionId) {
+            throw new CollectionError(`This alert does not belong to the collection `);
+        }
+
+        const alertOwner = await this.userModel.findOne({
+            where: {
+                uuid: updatedBy,
+            },
+        });
+
+        if (!alertOwner) {
+            throw new CollectionError(`Error: User with uuid: ${updatedBy} does not exist`);
+        }
+
+        return alert
+    }
+
     async setAlertSchedule(parameters: setAlertScheduleParameters): Promise<CollectionAlert> {
         const {
             isScheduled,
@@ -158,8 +209,16 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             collectionId,
         } = parameters;
 
-        if (isScheduled && !schedule) {
-            throw new CollectionError(`Must provide a schedule `);
+        if (isScheduled) {
+            if (!schedule) {
+                throw new CollectionError(`Must provide a schedule `);
+            }
+            const cronResult = cronValidator.isValidCronExpression(schedule)
+
+            if (!cronResult) {
+                throw new CollectionError(`Please set a valid cron expression`);
+            }
+
         }
 
         const alert = await this.model.findOne({
@@ -198,6 +257,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                 schedule: schedule,
                 updatedBy: alertOwner.id,
                 templateId: alertTemplateId,
+                isPublished: true,
             });
 
             await alert.reload({
@@ -208,6 +268,19 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
         }
 
         return alert;
+    }
+
+    async setPublishAlert(parameters: setPublishAlertParameters): Promise<Boolean> {
+        const { alertId, isPublished } = parameters
+        const alert = await this.model.findOne({
+            where: { uuid: alertId }
+        })
+        try {
+            await alert?.update({ isPublished: isPublished })
+        } catch (error) {
+            throw new CollectionError(`Error Scheduling Alert Update`);
+        }
+        return true
     }
 
     async getAlert(parameters: SearchAlertParameters): Promise<AlertByIdOutput> {
@@ -889,11 +962,11 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             const negativeMatchStrings = Array.from(userQuery.matchAll(not), m => m[1]);
             negativeMatchStrings.forEach(negMatch => {
                 const cleanNegMatches = this.clean_query_strings(negMatch)
-                cleanNegMatches.forEach(cleanNegMatch =>{
-                    if(facet === 'keyword') {
+                cleanNegMatches.forEach(cleanNegMatch => {
+                    if (facet === 'keyword') {
                         query.query.bool.must_not.push(...[
-                            {term: {documentTitle: cleanNegMatch}},
-                            {term: {documentContent: cleanNegMatch}}
+                            { term: { documentTitle: cleanNegMatch } },
+                            { term: { documentContent: cleanNegMatch } }
                         ])
                         return;
                     }
@@ -915,13 +988,13 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             const required = new RegExp("and " + facet + "\\s?\\((.*?)\\)", "ig");
             const requiredMatchStrings = Array.from(userQuery.matchAll(required), m => m[1]);
             requiredMatchStrings.forEach(requiredMatchString => {
-                if(requiredMatchString.includes('" OR "')) {
+                if (requiredMatchString.includes('" OR "')) {
                     let orQuery: any = []
                     this.clean_query_strings(requiredMatchString).forEach(cleanedRequiredOr => {
                         if (facet === 'keyword') {
                             orQuery.push(...[
-                                {term: {documentTitle: cleanedRequiredOr}},
-                                {term: {documentContent: cleanedRequiredOr}}
+                                { term: { documentTitle: cleanedRequiredOr } },
+                                { term: { documentContent: cleanedRequiredOr } }
                             ])
                             return;
                         }
@@ -937,14 +1010,14 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                         ])
 
                     })
-                    query.query.bool.must.push({bool: {should: orQuery}})
+                    query.query.bool.must.push({ bool: { should: orQuery } })
                     return;
                 }
                 this.clean_query_strings(requiredMatchString).forEach(cleanedRequiredAnd => {
                     if (facet === 'keyword') {
                         query.query.bool.must.push(...[
-                            {term: {documentTitle: cleanedRequiredAnd}},
-                            {term: {documentContent: cleanedRequiredAnd}}
+                            { term: { documentTitle: cleanedRequiredAnd } },
+                            { term: { documentContent: cleanedRequiredAnd } }
                         ])
                         return;
                     }
@@ -971,11 +1044,11 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                 let shouldMatches: any = []
                 optionalMatchStrings.forEach(optionalMatchString => {
                     const cleanNegMatches = this.clean_query_strings(optionalMatchString)
-                    cleanNegMatches.forEach(cleanNegMatch =>{
-                        if(facet === 'keyword') {
+                    cleanNegMatches.forEach(cleanNegMatch => {
+                        if (facet === 'keyword') {
                             shouldMatches.push(...[
-                                {term: {documentTitle: cleanNegMatch}},
-                                {term: {documentContent: cleanNegMatch}}
+                                { term: { documentTitle: cleanNegMatch } },
+                                { term: { documentContent: cleanNegMatch } }
                             ])
                             return;
                         }
@@ -992,7 +1065,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
                     })
                 });
-                query.query.bool.must.push({bool: {should: shouldMatches}})
+                query.query.bool.must.push({ bool: { should: shouldMatches } })
             }
 
         });

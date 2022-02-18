@@ -25,6 +25,22 @@ export interface ScheduleAlertParameters {
     cron: string;
 }
 
+export interface UpdateScheduleAlertParameters {
+    scheduleId: string;
+    cron: string;
+}
+
+export interface createPercolatorParameters {
+
+    alertId: string;
+    query: object | string;
+}
+
+export interface updatePercolatorParameters {
+    alertId: string;
+    query: object | string;
+}
+
 export interface DocumentPersister {
     publishDocument(lambdaName: string, payload: string): Promise<boolean>;
     updateDocument(parameters: any): Promise<Object>;
