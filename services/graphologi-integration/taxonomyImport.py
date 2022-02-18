@@ -113,6 +113,8 @@ def handle(event, context):
                     tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short, taxo_df_labeled))
                     tree_node['ancestorTerms'] = ancestorTerms
                 tree.append(tree_node)
+            if tree[0]['termLabel'] == 'Companies & Organisations':
+                tree = tree[0]['childTerms']
             trees[taxonomy_short] = tree
             s3.put_object(
                 Body=gzip.compress(json.dumps(tree).encode('UTF-8')),
