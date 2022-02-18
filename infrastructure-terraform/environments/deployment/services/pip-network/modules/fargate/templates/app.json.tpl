@@ -8,6 +8,7 @@
     "environment": [
         {"name": "ENVIRONMENT", "value": "${environment}"},
         {"name": "APP_API_URL", "value": "${api_gateway}"},
+        {"name": "APP_TAXONOMY_URL", "value": "${api_taxonomy}"},
         {"name": "BACKEND_API_KEY", "value": "${fe_api_key}"},
         {"name": "NODE_ENV", "value": "${environment}"},
         {"name": "SECRET_COOKIE_PASSWORD", "value": "2gyZ3GDw3LHZQKDhPmPDL3sjREVRXPr8"}
