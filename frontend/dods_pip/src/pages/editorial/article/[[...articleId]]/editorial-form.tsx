@@ -22,6 +22,7 @@ export interface EditorialFormFields {
   informationType: string;
   title: string;
   content: string;
+  originator: string;
 }
 
 export interface EditorialFormProps {
@@ -31,6 +32,7 @@ export interface EditorialFormProps {
   setErrors: (errors: Partial<EditorialFormFields>) => void;
   infoTypeValues: SelectItem[];
   contentSourceValues: SelectItem[];
+  originatorValues: SelectItem[];
   tags?: TagsData[];
   onTagsChange: (tags: TagsData[]) => void;
   articleId?: string;
@@ -55,6 +57,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
   onFieldChange,
   infoTypeValues,
   contentSourceValues,
+  originatorValues,
   tags = [],
   onTagsChange,
   savedContent,
@@ -122,7 +125,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
               testId="editorial-content-source"
               size={'medium'}
               id={'content-source'}
-              placeholder={fieldData.sourceName || 'Content source'}
+              placeholder={fieldData.sourceName || 'Pick a content source'}
               selectedValues={[fieldData.sourceName]}
               label={'Content source'}
               values={contentSourceValues}
@@ -132,13 +135,14 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
                 validateField('sourceName', fieldData.sourceName);
               }}
               onBlur={() => validateField('sourceName', fieldData.sourceName)}
+              isFilter
             />
             <SearchDropdown
               testId="editorial-info-type"
               size={'medium'}
               id={'info-type'}
               selectedValues={[fieldData.informationType]}
-              placeholder={fieldData.informationType || 'Information type'}
+              placeholder={fieldData.informationType || 'Pick an information type'}
               label={'Information type'}
               values={infoTypeValues}
               required
@@ -147,6 +151,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
                 validateField('informationType', fieldData.informationType);
               }}
               onBlur={() => validateField('informationType', fieldData.informationType)}
+              isFilter
             />
             <InputText
               id="contentSourceUrl"
@@ -154,8 +159,25 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
               value={fieldData.sourceUrl}
               optional
               label="Content Source (URL)"
-              placeholder="www.api-link-source.com"
+              placeholder="Paste the content source url here"
               onChange={(value) => onFieldChange('sourceUrl', value)}
+            />
+            <SearchDropdown
+              testId="editorial-originator"
+              size={'medium'}
+              id={'originator'}
+              selectedValues={[fieldData.originator]}
+              placeholder={fieldData.originator || 'Pick an originator'}
+              label={'Originator'}
+              values={originatorValues}
+              optional
+              onChange={(value) => {
+                onFieldChange('originator', value);
+                validateField('originator', fieldData.originator);
+              }}
+              onBlur={() => validateField('originator', fieldData.originator)}
+              isDisabled={originatorValues.length === 0}
+              isFilter
             />
           </Styled.inputFields>
         </SectionAccordion>
@@ -170,7 +192,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
           testId={'title'}
           value={fieldData.title}
           label="Content title"
-          placeholder="Add a title for this content"
+          placeholder="Type a title for this content"
           onBlur={() => validateField('title', fieldData.title)}
           required
           onChange={(value) => onFieldChange('title', value)}

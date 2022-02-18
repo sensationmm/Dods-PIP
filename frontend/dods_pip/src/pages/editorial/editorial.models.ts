@@ -7,6 +7,7 @@ export type EditorialRecord = {
   jurisdiction: string;
   contentSource: string;
   informationType: string;
+  originator: string;
   documentTitle: string;
   sourceReferenceUri: string;
   createdBy: string;
@@ -59,6 +60,7 @@ export type EditorialRecordPreviewResponse = {
     internallyCreated: string;
     schemaType: string;
     contentSource: string;
+    originator: string;
     sourceReferenceUri?: string;
     informationType: string;
     taxonomyTerms: TaxonomyTerm[];
@@ -77,6 +79,7 @@ export type CreateEditorialRecordResponse = {
     documentName: string;
     informationType: string;
     contentSource: string;
+    originator: string;
     status: {
       uuid: string;
       status: 'Created' | 'Draft' | string; // TODO: define properly
