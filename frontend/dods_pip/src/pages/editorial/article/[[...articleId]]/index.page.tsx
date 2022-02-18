@@ -192,7 +192,12 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     setLoading(false);
   };
 
-  const onSave = async (publish = false, preview = false) => {
+  const onSave = async (
+    publish = false,
+    preview = false,
+    schedule = false,
+    scheduleDate: Date | undefined = undefined,
+  ) => {
     const { title, sourceName, sourceUrl, informationType, content, originator } = fieldData;
     if (title?.length && sourceName?.length && informationType?.length && content?.length) {
       setLoading(true);
@@ -224,12 +229,18 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       })
         .then((response) => {
           global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
-          !preview && addNotification({ title: 'Record added successfully', type: 'confirm' });
+          !preview &&
+            !schedule &&
+            addNotification({ title: 'Record added successfully', type: 'confirm' });
           if (publish) {
             onPublish(response.data.uuid);
           }
           if (preview) {
             router.push(`/library/document/${response.data.uuid}?preview=true`);
+          }
+
+          if (schedule && scheduleDate) {
+            onSchedule(scheduleDate, response.data.uuid);
           }
         })
         .finally(() => {
@@ -306,14 +317,12 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     });
   };
 
-  const onSchedule = async (dateAndTime: Date) => {
+  const onSchedule = async (dateAndTime: Date, documentId: string) => {
     setLoading(true);
 
-    // Todo: use response to update the UI
-    // const response = await scheduleEditorial({
     await scheduleEditorial({
       cron: dateToCron(dateAndTime),
-      documentId: articleId[0],
+      documentId: documentId,
     });
 
     setShowScheduleModal(false);
@@ -326,6 +335,14 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     setTimeout(() => {
       router.push('/editorial');
     }, 600);
+  };
+
+  const onSaveAndSchedule = async (dateAndTime: Date) => {
+    if (isEditMode) {
+      await onSchedule(dateAndTime, articleId[0]);
+    } else {
+      await onSave(false, false, true, dateAndTime);
+    }
   };
 
   const onSaveAndPublish = async () => {
@@ -456,7 +473,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       </Panel>
 
       {showScheduleModal && (
-        <ScheduleModal onClose={() => setShowScheduleModal(false)} onSchedule={onSchedule} />
+        <ScheduleModal onClose={() => setShowScheduleModal(false)} onSchedule={onSaveAndSchedule} />
       )}
     </div>
   );
