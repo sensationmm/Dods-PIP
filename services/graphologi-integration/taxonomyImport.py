@@ -1,4 +1,5 @@
 import json
+import gzip
 import os
 
 from elasticsearch import Elasticsearch
@@ -112,8 +113,16 @@ def handle(event, context):
                     tree_node['childTerms'].append(updateHierarchy(taxo_df_labeled[taxo_df_labeled['id'] == narrower], taxonomy_short, taxo_df_labeled))
                     tree_node['ancestorTerms'] = ancestorTerms
                 tree.append(tree_node)
+            if tree[0]['termLabel'] == 'Companies & Organisations':
+                tree = tree[0]['childTerms']
             trees[taxonomy_short] = tree
-            s3.put_object(Body=(bytes(json.dumps(tree).encode('UTF-8'))), Bucket=os.environ['S3_TAXONOMY_BUCKET'], Key=taxonomy_short + '.json')
+            s3.put_object(
+                Body=gzip.compress(json.dumps(tree).encode('UTF-8')),
+                Bucket=os.environ['S3_TAXONOMY_BUCKET'],
+                Key=taxonomy_short + '.json',
+                ContentEncoding="gzip",
+                ContentType="application/json"
+            )
 
 
         taxo_df_labeled['ancestorTerms'] = taxo_df_labeled['ancestorTerms'].apply(lambda x: json.loads(x))
@@ -128,7 +137,13 @@ def handle(event, context):
 
         print("Imported " + str(taxo_df_labeled.shape[0]))
 
-    s3.put_object(Body=(bytes(json.dumps(trees).encode('UTF-8'))), Bucket=os.environ['S3_TAXONOMY_BUCKET'], Key='Combined.json')
+    s3.put_object(
+        Body=gzip.compress(json.dumps(trees).encode('UTF-8')),
+        Bucket=os.environ['S3_TAXONOMY_BUCKET'],
+        Key='Combined.json',
+        ContentEncoding="gzip",
+        ContentType="application/json"
+    )
     print(f"Added {len(trees)} trees to the combined file")
     return {}
 
