@@ -253,7 +253,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
 
   const onSaveAndExit = async (publish = false) => {
     await onSave(publish).then(() => {
-      router.push('/editorial');
+      !publish && router.push('/editorial');
     });
   };
 
@@ -313,7 +313,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
 
   const onUpdateAndExit = async (publish = false) => {
     await onUpdate(publish).then(() => {
-      router.push('/editorial');
+      !publish && router.push('/editorial');
     });
   };
 
@@ -404,7 +404,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           onClose={() => setIsAskPublish(false)}
           isDismissible={true}
         >
-          <Text type="bodyLarge">The article will be pusblished and visible to all clients.</Text>
+          <Text type="bodyLarge">The article will be published and visible to all clients.</Text>
         </Modal>
       )}
 

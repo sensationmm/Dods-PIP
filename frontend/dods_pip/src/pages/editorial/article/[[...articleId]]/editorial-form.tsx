@@ -161,6 +161,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
               label="Content Source (URL)"
               placeholder="Paste the content source url here"
               onChange={(value) => onFieldChange('sourceUrl', value)}
+              size="medium"
             />
             <SearchDropdown
               testId="editorial-originator"
