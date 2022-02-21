@@ -2,10 +2,10 @@ const { Client } = require('@elastic/elasticsearch')
 
 import {
     GetContentParameters,
-    updatePercolatorParameters,
-    deletePercolatorParameters,
     RawQueryParameters,
     createPercolatorParameters,
+    deletePercolatorParameters,
+    updatePercolatorParameters,
 } from "../domain";
 
 import { Search } from "./Search"
@@ -40,9 +40,20 @@ export class SearchRepository implements Search {
     }
 
     async rawQuery(params: RawQueryParameters) {
-        const { query, aggregations, size, from } = params;
-        
-        const fullQuery = { index: 'content', body: { query, aggs: aggregations, size, from } }
+
+        let { query, aggregations, size, from, sort } = params;
+
+        if (!sort) {
+            sort = [{ contentDateTime: { order: 'desc' } }]
+        }
+        if (!size) {
+            size = 20
+        }
+        if (!from) {
+            from = 0
+        }
+
+        const fullQuery = { index: 'content', body: { query, aggs: aggregations, size, from, sort } }
 
         const response = await this.elasticsearch.search(fullQuery)
 
