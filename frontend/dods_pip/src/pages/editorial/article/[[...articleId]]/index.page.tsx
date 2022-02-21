@@ -177,6 +177,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     })();
 
     loadOriginators();
+    global.localStorage.removeItem(EDITORIAL_STORAGE_KEY); // clear any existing save
   }, []);
 
   const onPublish = async (documentId: string) => {
@@ -324,7 +325,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       cron: dateToCron(dateAndTime),
       documentId: documentId,
     });
-
+    global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
     setShowScheduleModal(false);
     setLoading(false);
     addNotification({
