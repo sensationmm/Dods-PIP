@@ -48,7 +48,7 @@ provider:
     FAILED_LOGIN_ATTEMPT_COUNT: 3
     LOGIN_LAST_PASSWORDS_NOT_REUSE_MINUTES: 262800 # 6 months
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
-    RESET_PASSWORD_URL: ${file(../env-config.${self:provider.stage}.js):frontendURL}/password-reset
+    RESET_PASSWORD_URL: ${self:custom.env.${self:provider.stage}.reset-password-url}
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
 
   eventBridge:
@@ -113,18 +113,22 @@ custom:
       ses_from: michael.brown@somoglobal.com
       ses_source_arn: arn:aws:ses:eu-west-1:390773179818:identity/michael.brown@somoglobal.com
       cognito_reply_to: donotreply@somoglobal.com
+      reset-password-url: ${file(../env-config.${self:provider.stage}.js):frontendURL}/password-reset
     qa:
       ses_from: giovanni.espinosa@somoglobal.com
       ses_source_arn: arn:aws:ses:eu-west-1:817206606893:identity/giovanni.espinosa@somoglobal.com
       cognito_reply_to: donotreply@somoglobal.com
+      reset-password-url: ${file(../env-config.${self:provider.stage}.js):frontendURL}/password-reset
     test:
       ses_from: giovanni.espinosa@somoglobal.com
       ses_source_arn: arn:aws:ses:eu-west-1:072266309162:identity/giovanni.espinosa@somoglobal.com
       cognito_reply_to: donotreply@somoglobal.com
+      reset-password-url: ${file(../env-config.${self:provider.stage}.js):frontendURL}/password-reset
     production:
       ses_from: no-reply@dodspoliticalintelligence.com
       ses_source_arn: arn:aws:ses:eu-west-1:186202231680:identity/no-reply@dodspoliticalintelligence.com
       cognito_reply_to: no-reply@dodspoliticalintelligence.com
+      reset-password-url: 'https://app.dodspoliticalintelligence.com/password-reset'
 
   localstack:
     stages:
