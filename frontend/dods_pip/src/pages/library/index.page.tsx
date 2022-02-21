@@ -67,7 +67,7 @@ export const Library: React.FC<ILibraryProps> = ({
   const [filtersVisible, setFiltersVisible] = useState(true);
   const [filtersReady, setFiltersReady] = useState(false);
 
-  const { currentPage = 1, resultSize = DEFAULT_RESULT_SIZE } = parsedQuery;
+  const { currentPage = 0, resultSize = DEFAULT_RESULT_SIZE } = parsedQuery;
 
   useEffect(() => {
     if (apiErrorMessage) {
