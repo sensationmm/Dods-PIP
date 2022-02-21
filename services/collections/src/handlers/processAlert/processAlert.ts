@@ -28,7 +28,7 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
         lastExecuteDate = moment().subtract(7, 'd').format('YYYY-MM-DD');
     }
 
-    mapElasticQuery.query.bool.must = [{
+    mapElasticQuery.query.bool.must.push({
         bool: {
             filter: {
                 range: {
@@ -39,7 +39,7 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
                 }
             }
         }
-    }]
+    })
 
     const searchContentParameters = {
         query: mapElasticQuery,

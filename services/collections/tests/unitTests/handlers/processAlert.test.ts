@@ -34,7 +34,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 id: 1,
                 uuid: 'alertUUID',
                 title: 'alert title',
-                elasticQuery: '{"query":{"bool":{}}}'
+                elasticQuery: "{\"query\":{\"bool\":{\"must\": []}}}"
             }
         } as any
 
@@ -89,7 +89,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 id: 1,
                 uuid: 'alertUUID',
                 title: 'alert title',
-                elasticQuery: '{"query":{"bool":{}}}'
+                elasticQuery: "{\"query\":{\"bool\":{\"must\": []}}}"
             }
         } as any
 
@@ -135,7 +135,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 id: 1,
                 uuid: 'alertUUID',
                 title: 'alert title',
-                elasticQuery: '{"query":{"bool":{}}}'
+                elasticQuery: "{\"query\":{\"bool\":{\"must\": []}}}"
             }
         } as any
 
@@ -190,7 +190,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
                 id: 1,
                 uuid: 'alertUUID',
                 title: 'alert title',
-                elasticQuery: '{"query":{"bool":{}}}'
+                elasticQuery: "{\"query\":{\"bool\":{\"must\": []}}}"
             }
         } as any
 
