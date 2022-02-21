@@ -4,6 +4,7 @@ export interface GetContentParameters {
 
 export interface RawQueryParameters {
     query: object;
+    sort?: object;
     aggregations?: object;
     size?: number;
     from?: number;
