@@ -80,8 +80,8 @@ export class CollectionRepository implements CollectionPersister {
     }
 
     async processImmediateAlert(parameters: ProcessImmediateAlertParametersURL): Promise<object> {
-        const { alertId, documentId, baseURL } = parameters;
-        const response = await axios.post(`${baseURL}/collections/processImmediateAlert`, { alertId, documentId });
+        const { alertId, docId, baseURL } = parameters;
+        const response = await axios.post(`${baseURL}/collections/processImmediateAlert`, { alertId, docId });
 
         return { response };
     }
