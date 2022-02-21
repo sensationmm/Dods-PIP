@@ -18,6 +18,8 @@ export default withSession(async (req, res) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          accept: 'application/json',
+          'accept-encoding': 'gzip',
         },
       },
       req,
