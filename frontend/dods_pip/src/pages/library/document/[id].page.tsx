@@ -125,7 +125,11 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         <Styled.tagsContent className={expandedTags ? 'expanded' : ''}>
           {Object.keys(tags).map((key) => {
             const tagElements = tags[key].map(({ value, count }) => {
-              return <Chips key={value} label={`${value} (${count})`} />;
+              let label = value;
+              if (count.toString() !== '0') {
+                label += ` (${count})`;
+              }
+              return <Chips key={value} label={label} />;
             });
 
             return (
