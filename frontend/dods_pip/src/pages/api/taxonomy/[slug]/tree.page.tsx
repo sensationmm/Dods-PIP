@@ -11,8 +11,9 @@ interface newResultTypes extends resultTypes {
 export default withSession(async (req, res) => {
   const { slug } = req.query;
   try {
+    const url = `${process.env.APP_TAXONOMY_URL}/${process.env.ENVIRONMENT}${Api.TaxonomySearch}/${slug}/tree`;
     const result = (await fetchJson(
-      `${process.env.APP_TAXONOMY_URL}${Api.TaxonomySearch}/${slug}/tree`,
+      url,
       {
         method: 'GET',
         headers: {
