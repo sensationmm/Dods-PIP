@@ -23,4 +23,6 @@ export interface deletePercolatorParameters {
 
 export interface CreateESQueryParameters {
     queryString: string;
+    informationTypes: string;
+    contentSources: string;
 }
