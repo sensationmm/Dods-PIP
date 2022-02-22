@@ -14,6 +14,18 @@ session = boto3.session.Session()
 s3_client = session.client('s3')
 es = Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=(ES_KEY_ID, ES_API_KEY))
 
+exclusion_list = [
+    "Deal",
+    "Crisis",
+    "Reform",
+    "Advance",
+    "Frontline",
+    "Metro",
+    "Landmark",
+    "Center",
+    "Unity",
+]
+
 def handle(event, context):
     if 'Records' in event:
         content = event['Records'][0]['body']['content']
@@ -33,6 +45,8 @@ def handle(event, context):
             if taxonomy_type == 'Organisations' and 'narrower' in taxonomy['_source']:
                 continue
             taxonomy_term = taxonomy['_source']['label']
+            if taxonomy_term in exclusion_list:
+                continue
             safe_taxonomy_term = taxonomy_term.replace('(', '\(').replace(')', '\)').replace('|', '\|')
             taxonomy_replacement = '<a href=”#”>' + taxonomy_term + '<span class=”tooltip”>' + taxonomy_type + ' -> ' + taxonomy_term + '</span></a>'
             post_match_content = re.sub(r'(\s|^)(' + safe_taxonomy_term + ')(\.|,|$|\s|\?)', r'\1' +taxonomy_replacement + r'\3', content)
