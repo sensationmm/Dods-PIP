@@ -30,6 +30,8 @@ def handle(event, context):
         taxonomy_response = es.search(index='taxonomy', query={"bool": {"must": [{"match": {"inScheme": taxonomy_type}}, {"match": {"deprecated": false}}]}}, size=10000)
         logging.info(f"Total Count : {taxonomy_response['hits']['total']['value']}")
         for taxonomy in taxonomy_response['hits']['hits']:
+            if taxonomy_type == 'Organisations' and 'narrower' in taxonomy['_source']:
+                continue
             taxonomy_term = taxonomy['_source']['label']
             safe_taxonomy_term = taxonomy_term.replace('(', '\(').replace(')', '\)').replace('|', '\|')
             taxonomy_replacement = '<a href=”#”>' + taxonomy_term + '<span class=”tooltip”>' + taxonomy_type + ' -> ' + taxonomy_term + '</span></a>'
