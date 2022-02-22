@@ -28,18 +28,37 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
         lastExecuteDate = moment().subtract(7, 'd').format('YYYY-MM-DD');
     }
 
-    mapElasticQuery.query.bool.must.push({
-        bool: {
-            filter: {
-                range: {
-                    contentDateTime: {
-                        gte: lastExecuteDate,
-                        lte: moment(today).format('YYYY-MM-DD')
+    if (mapElasticQuery.query.bool.must) {
+        mapElasticQuery.query.bool.must.push({
+            bool: {
+                filter: {
+                    range: {
+                        contentDateTime: {
+                            gte: lastExecuteDate,
+                            lte: moment(today).format('YYYY-MM-DD')
+                        }
                     }
                 }
             }
-        }
-    })
+        })
+
+    }
+    else {
+        mapElasticQuery.query.bool.must = [{
+            bool: {
+                filter: {
+                    range: {
+                        contentDateTime: {
+                            gte: lastExecuteDate,
+                            lte: moment(today).format('YYYY-MM-DD')
+                        }
+                    }
+                }
+            }
+        }]
+    }
+
+
 
     const searchContentParameters = {
         query: mapElasticQuery,
