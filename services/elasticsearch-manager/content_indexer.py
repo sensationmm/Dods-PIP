@@ -28,6 +28,7 @@ def run(event, context):
         try:
             docId = loads(content)['documentId']
             res = es_client.index(index="content", id=docId, document=content)
+            check_percolator(docId)
             logger.info(f"ES response with documentId is {loads(content)['documentId']} : {res['result']}")
             return True
         except Exception as e:
@@ -83,7 +84,7 @@ def create_percolate_query(documentId: str):
 def check_percolator(documentId: str):
     percolate_query = create_percolate_query(documentId)
     print(percolate_query)
-    percolate_response = es_client.search(percolate_query)
+    percolate_response = es_client.search(index='alerts', query=percolate_query)
     print(percolate_response)
     for hit in percolate_response['hits']['hits']:
         payload = {"alertId": hit['_id'], "docId": documentId, "MessageGroupId": str(hit['_id']) +  str(documentId)}
