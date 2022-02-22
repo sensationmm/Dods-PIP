@@ -12,7 +12,7 @@ export const People: React.FC<PeopleProps> = () => {
   return (
     <div data-test="page-people">
       <Head>
-        <title>Dods PIP | Library</title>
+        <title>Dods | Library</title>
       </Head>
 
       <main>

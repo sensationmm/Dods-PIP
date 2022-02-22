@@ -69,7 +69,7 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ setLoading }) => {
   return (
     <div data-test="page-reset-password">
       <Head>
-        <title>Dods PIP | Password Reset Request</title>
+        <title>Dods | Password Reset Request</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

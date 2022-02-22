@@ -1,5 +1,5 @@
 import { AwsService, DefaultAwsService } from '../shared/DefaultAwsService';
-import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleAlertParameters, ScheduleWebhookParameters, searchContentParameters } from './domain';
+import { DocumentPayloadResponse, DocumentPayloadResponseV1, DocumentPersister, ScheduleAlertParameters, ScheduleWebhookParameters, createPercolatorParameters, searchContentParameters, updatePercolatorParameters } from './domain';
 import { Lambda, S3 } from 'aws-sdk';
 
 import { ScheduleEditorialRecordParamateres } from '../EditorialRecordRepository';
@@ -113,6 +113,23 @@ export class DocumentRepository implements DocumentPersister {
         const response = await axios.post(`${this.baseURL}/scheduler/alert`, parameters);
         return { response };
     }
+
+    async createPercolator(parameters: createPercolatorParameters): Promise<object> {
+        const response = await axios.post(`${this.baseURL}/percolator`, parameters);
+        return { response };
+    }
+
+    async updatePercolator(parameters: updatePercolatorParameters): Promise<object> {
+        const { alertId } = parameters
+        const response = await axios.put(`${this.baseURL}/percolator/${alertId}`, parameters);
+        return { response };
+    }
+
+    async deletePercolator(alertId: string): Promise<object> {
+        const response = await axios.delete(`${this.baseURL}/percolator/${alertId}`);
+        return { response };
+    }
+
 
     async deleteSchedule(recordId: string): Promise<object> {
         const response = await axios.delete(`${this.baseURL}/scheduler/${recordId}`);

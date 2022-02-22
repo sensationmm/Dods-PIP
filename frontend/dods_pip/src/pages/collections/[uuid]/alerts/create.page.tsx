@@ -57,7 +57,7 @@ export const AddAlert: React.FC<AddAlertProps> = ({ setLoading, addNotification 
   return (
     <div data-test="page-people">
       <Head>
-        <title>Dods PIP | Create Alert</title>
+        <title>Dods | Create Alert</title>
       </Head>
 
       <AlertSetup

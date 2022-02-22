@@ -45,7 +45,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
   return (
     <div data-test="page-account-management-add-client">
       <Head>
-        <title>Dods PIP | Account Management | Client Account</title>
+        <title>Dods | Account Management | Client Account</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

@@ -5,7 +5,7 @@ import { getMultipleSnippetEmailBody, groupByFunction } from '../../templates/mu
 
 import moment from "moment";
 
-const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL } } } = config;
+const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL, clientURL } } } = config;
 
 export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
     data
@@ -28,7 +28,7 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
         lastExecuteDate = moment().subtract(7, 'd').format('YYYY-MM-DD');
     }
 
-    mapElasticQuery.query.bool.must = [{
+    mapElasticQuery.query.bool.must.push({
         bool: {
             filter: {
                 range: {
@@ -39,7 +39,7 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
                 }
             }
         }
-    }]
+    })
 
     const searchContentParameters = {
         query: mapElasticQuery,
@@ -65,7 +65,7 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
             id: article.documentId,
             title: article.documentTitle,
             date: documentDate,
-            url: `${frontEndURL}/library/document/${article.documentId}`,
+            url: `${clientURL}/library/document/${article.documentId}`,
             content: article.documentContent,
             informationType: {
                 name: article.informationType,

@@ -1,6 +1,6 @@
 {
     "name": "@dodsgroup/dods-repositories",
-    "version": "1.7.9",
+    "version": "1.8.1-1",
     "description": "",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -22,6 +22,7 @@
         "@dodsgroup/dods-model": "^1.2.1",
         "aws-sdk": "^2.1066.0",
         "axios": "^0.25.0",
+        "cron-expression-validator": "^1.0.20",
         "sequelize": "^7.0.0-alpha.3"
     },
     "devDependencies": {

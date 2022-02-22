@@ -37,6 +37,11 @@ variable "api_gateway" {
   default     = ""
 }
 
+variable "api_taxonomy" {
+  description = "API Gateway serving taxonomy data"
+  default     = ""
+}
+
 variable "fe_api_key" {
   description = "API Key authorized to reach backend services"
   default     = ""

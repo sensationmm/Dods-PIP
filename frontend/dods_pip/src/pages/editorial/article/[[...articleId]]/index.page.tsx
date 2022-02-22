@@ -1,3 +1,4 @@
+import { SelectItem } from '@dods-ui/components/_form/Select';
 import Panel from '@dods-ui/components/_layout/Panel';
 import Spacer from '@dods-ui/components/_layout/Spacer';
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
@@ -7,6 +8,7 @@ import TeleportOnScroll from '@dods-ui/components/TeleportOnScroll';
 import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
+import fetchJson from '@dods-ui/lib/fetchJson';
 import useUser from '@dods-ui/lib/useUser';
 import { MetadataSelection } from '@dods-ui/pages/editorial/editorial.models';
 import {
@@ -18,6 +20,7 @@ import {
   setEditorialPublishState,
   updateRecord,
 } from '@dods-ui/pages/editorial/editorial.service';
+import { Api, BASE_URI } from '@dods-ui/utils/api';
 import dateToCron from '@dods-ui/utils/dateToCron';
 import getContentSources from '@dods-ui/utils/getContentSources';
 import getInformationTypes from '@dods-ui/utils/getInformationTypes';
@@ -53,6 +56,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     sourceUrl: '',
     sourceName: '',
     informationType: '',
+    originator: '',
   });
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
@@ -60,10 +64,10 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   const [savedDocumentContent, setSavedDocumentContent] = useStateWithCallback<string | undefined>(
     undefined,
   );
-  const [savedDocumentTags, setSavedDocumentTags] = useState<TagsData[] | undefined>();
   const [jurisdiction, setJurisdiction] = useState<string>();
   const [validContentSources, setValidContentSources] = useState<string[] | undefined>();
   const [validInfoTypes, setValidInfoTypes] = useState<string[] | undefined>();
+  const [originatorValues, setOriginatorValues] = React.useState<SelectItem[]>([]);
 
   const setFieldValue = (field: keyof EditorialFormFields, value: string) => {
     const savedFieldData = JSON.parse(global.localStorage.getItem(EDITORIAL_STORAGE_KEY) || '{}');
@@ -109,6 +113,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             documentContent,
             informationType,
             contentSource,
+            originator,
             sourceReferenceUri,
             taxonomyTerms,
           } = response.document;
@@ -118,12 +123,13 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             informationType,
             sourceName: contentSource,
             sourceUrl: sourceReferenceUri || '',
+            originator: originator,
           };
           setSavedDocumentContent(
             documentContent,
             (content: string) => content.length && setLoading(false),
           );
-          setSavedDocumentTags(taxonomyTerms);
+          setTags((taxonomyTerms || []).map((tag) => ({ ...tag, type: tag.facetType })));
           setJurisdiction(getJurisdiction({ contentSource }));
           setValidInfoTypes(getInformationTypes({ contentSource, informationType }));
           setFieldData(fieldData);
@@ -143,6 +149,24 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     }
   }, [isEditMode, articleId]);
 
+  const loadOriginators = async () => {
+    try {
+      const originators: any = await fetchJson(
+        `${BASE_URI}${Api.TaxonomySearch}/organisations/tree`,
+      );
+      setOriginatorValues(
+        originators
+          .map((term: any) => ({
+            value: term.termLabel,
+            label: term.termLabel,
+          }))
+          .sort((a: SelectItem, b: SelectItem) => (a.label > b.label ? 1 : -1)),
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -151,6 +175,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       setValidContentSources(getContentSources());
       setLoading(false);
     })();
+
+    loadOriginators();
+    global.localStorage.removeItem(EDITORIAL_STORAGE_KEY); // clear any existing save
   }, []);
 
   const onPublish = async (documentId: string) => {
@@ -166,13 +193,19 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     setLoading(false);
   };
 
-  const onSave = async (publish = false, preview = false) => {
-    const { title, sourceName, sourceUrl, informationType, content } = fieldData;
+  const onSave = async (
+    publish = false,
+    preview = false,
+    schedule = false,
+    scheduleDate: Date | undefined = undefined,
+  ) => {
+    const { title, sourceName, sourceUrl, informationType, content, originator } = fieldData;
     if (title?.length && sourceName?.length && informationType?.length && content?.length) {
       setLoading(true);
       await createRecord({
         jurisdiction: jurisdiction || '',
         contentSource: sourceName,
+        originator: originator,
         informationType,
         documentTitle: title,
         sourceReferenceUri: sourceUrl || '',
@@ -197,12 +230,18 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       })
         .then((response) => {
           global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
-          !preview && addNotification({ title: 'Record added successfully', type: 'confirm' });
+          !preview &&
+            !schedule &&
+            addNotification({ title: 'Record added successfully', type: 'confirm' });
           if (publish) {
             onPublish(response.data.uuid);
           }
           if (preview) {
             router.push(`/library/document/${response.data.uuid}?preview=true`);
+          }
+
+          if (schedule && scheduleDate) {
+            onSchedule(scheduleDate, response.data.uuid);
           }
         })
         .finally(() => {
@@ -215,12 +254,12 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
 
   const onSaveAndExit = async (publish = false) => {
     await onSave(publish).then(() => {
-      router.push('/editorial');
+      !publish && router.push('/editorial');
     });
   };
 
   const onUpdate = async (publish = false, preview = false) => {
-    const { title, sourceName, sourceUrl, informationType, content } = fieldData;
+    const { title, sourceName, sourceUrl, informationType, content, originator } = fieldData;
     if (
       articleId?.length &&
       title?.length &&
@@ -233,6 +272,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
         jurisdiction: jurisdiction || '',
         contentSource: sourceName,
         informationType,
+        originator: originator,
         documentTitle: title,
         sourceReferenceUri: sourceUrl || '',
         createdBy: user.displayName || user.emailAddress || '',
@@ -274,20 +314,18 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
 
   const onUpdateAndExit = async (publish = false) => {
     await onUpdate(publish).then(() => {
-      router.push('/editorial');
+      !publish && router.push('/editorial');
     });
   };
 
-  const onSchedule = async (dateAndTime: Date) => {
+  const onSchedule = async (dateAndTime: Date, documentId: string) => {
     setLoading(true);
 
-    // Todo: use response to update the UI
-    // const response = await scheduleEditorial({
     await scheduleEditorial({
       cron: dateToCron(dateAndTime),
-      documentId: articleId[0],
+      documentId: documentId,
     });
-
+    global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
     setShowScheduleModal(false);
     setLoading(false);
     addNotification({
@@ -298,6 +336,14 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     setTimeout(() => {
       router.push('/editorial');
     }, 600);
+  };
+
+  const onSaveAndSchedule = async (dateAndTime: Date) => {
+    if (isEditMode) {
+      await onSchedule(dateAndTime, articleId[0]);
+    } else {
+      await onSave(false, false, true, dateAndTime);
+    }
   };
 
   const onSaveAndPublish = async () => {
@@ -340,7 +386,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   return (
     <div data-testid="page-editorial">
       <Head>
-        <title>Dods PIP | Editorial Repository | {isEditMode ? 'Edit' : 'Create'}</title>
+        <title>Dods | Editorial Repository | {isEditMode ? 'Edit' : 'Create'}</title>
       </Head>
 
       {isAskPublish && (
@@ -359,7 +405,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           onClose={() => setIsAskPublish(false)}
           isDismissible={true}
         >
-          <Text type="bodyLarge">The article will be pusblished and visible to all clients.</Text>
+          <Text type="bodyLarge">The article will be published and visible to all clients.</Text>
         </Modal>
       )}
 
@@ -414,6 +460,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
               validInfoTypes?.map((val) => ({ label: val, value: val })) ||
               metadataSelectionValues.informationTypes
             }
+            originatorValues={originatorValues}
             fieldData={fieldData}
             errors={errors}
             setErrors={setErrors}
@@ -422,13 +469,12 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             tags={tags}
             articleId={articleId.length ? articleId[0] : undefined}
             savedContent={savedDocumentContent}
-            savedDocumentTags={savedDocumentTags}
           />
         </main>
       </Panel>
 
       {showScheduleModal && (
-        <ScheduleModal onClose={() => setShowScheduleModal(false)} onSchedule={onSchedule} />
+        <ScheduleModal onClose={() => setShowScheduleModal(false)} onSchedule={onSaveAndSchedule} />
       )}
     </div>
   );

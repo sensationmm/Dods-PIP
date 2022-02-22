@@ -12,7 +12,7 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = () => {
   return (
     <div data-test="page-privacy-policy">
       <Head>
-        <title>Dods PIP | Privacy Policy</title>
+        <title>Dods | Privacy Policy</title>
       </Head>
 
       <main>

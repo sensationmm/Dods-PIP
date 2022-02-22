@@ -2,7 +2,8 @@ const { Client } = require('@elastic/elasticsearch')
 
 import {
     activateScheduleParameters,
-    config, createAlertScheduleParameters,
+    config,
+    createAlertScheduleParameters,
     createScheduleParameters,
     deactivateScheduleParameters,
     deleteScheduleParameters,
@@ -28,7 +29,7 @@ export class ScheduleRepository implements Schedule {
             id: data.scheduleId,
             active: true,
             body: {
-                trigger: {schedule: { "cron": data.cron }},
+                trigger: { schedule: { "cron": data.cron } },
                 actions: {
                     webhook: {
                         webhook: {
@@ -46,14 +47,14 @@ export class ScheduleRepository implements Schedule {
             id: data.scheduleId,
             active: true,
             body: {
-                trigger: {schedule: { "cron": data.cron }},
+                trigger: { schedule: { "cron": data.cron } },
                 actions: {
                     webhook: {
                         webhook: {
                             method: "PUT",
                             url: `${data.baseURL}/collections/${data.collectionId}/alerts/${data.scheduleId}/process`,
-                            headers : {
-                                "schedule-api-key" : data.apiKey
+                            headers: {
+                                "schedule-api-key": data.apiKey
                             },
                         }
 
@@ -76,7 +77,7 @@ export class ScheduleRepository implements Schedule {
         data.apiKey = this.alertApiKey
         const query = ScheduleRepository.createAlertSearchQuery(data);
 
-        return this.elasticsearch.watcher.putWatch(query);
+        return await this.elasticsearch.watcher.putWatch(query);
     }
 
     async deleteSchedule(data: deleteScheduleParameters): Promise<void> {
@@ -86,8 +87,10 @@ export class ScheduleRepository implements Schedule {
     async updateSchedule(data: updateScheduleParameters): Promise<void> {
         const schedule = await this.elasticsearch.watcher.getWatch({ id: data.scheduleId });
         if (schedule.statusCode == 200) {
-            data.scheduleType = (schedule.body.watch.actions.webhook.webhook.path.split('/'))[3]
-            const query = ScheduleRepository.createSearchQuery(data);
+            //data.scheduleType = (schedule.body.watch.actions.webhook.webhook.path.split('/'))[3]
+            const collectionId = schedule.body.watch.actions.webhook.webhook.path.split('/')[3]
+            const updateAlertParameters = { ...data, collectionId }
+            const query = await ScheduleRepository.createAlertSearchQuery(updateAlertParameters);
             await this.elasticsearch.watcher.putWatch(query);
         }
     }

@@ -6,7 +6,11 @@ import { CreateESQueryParameters } from '../../domain';
 export const createESQuery = async (requestPayload: CreateESQueryParameters): Promise<APIGatewayProxyResultV2> => {
 
     // @ts-ignore
-    const esQuery = await new CollectionAlertsRepository().createElasticQuery({query: requestPayload.queryString})
+    const esQuery = await new CollectionAlertsRepository().createElasticQuery({
+        query: requestPayload.queryString,
+        informationType: requestPayload.informationTypes,
+        contentSource: requestPayload.contentSources
+    })
 
     return new HttpResponse(HttpStatusCode.OK, {
         query: esQuery

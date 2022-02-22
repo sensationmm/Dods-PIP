@@ -211,7 +211,7 @@ export const Accounts: React.FC<AccountsProps> = ({ setLoading }) => {
   return (
     <div data-testid="page-account-management-clients">
       <Head>
-        <title>Dods PIP | Account Management | Clients</title>
+        <title>Dods | Account Management | Clients</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

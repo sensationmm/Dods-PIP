@@ -358,7 +358,7 @@ export const pagination = styled.div`
   color: ${color.base.grey};
 
   .pageCount {
-    margin-left: ${spacing(4)};
+    /* margin-left: ${spacing(4)}; */
   }
 
   b {
