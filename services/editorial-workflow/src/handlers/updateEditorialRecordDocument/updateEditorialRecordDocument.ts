@@ -14,6 +14,8 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
 
     let { recordId, ...document } = params;
 
+    const { contentSource, informationType, documentTitle } = params
+
     const updateDocumentsParams = {
         arn: documentARN,
         document: document
@@ -31,6 +33,10 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
         const updateParams: UpdateEditorialRecordParameters = {
             recordId: params.recordId,
             statusId: statusId,
+            documentName: documentTitle,
+            contentSource,
+            informationType
+
         };
 
         const updatedEditorialRecord = await EditorialRecordRepository.defaultInstance.updateEditorialRecord(updateParams);
