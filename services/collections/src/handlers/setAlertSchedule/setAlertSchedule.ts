@@ -2,7 +2,6 @@ import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dod
 import { CollectionAlertsRepository, DocumentRepository, mapAlert, setAlertScheduleParameters } from '@dodsgroup/dods-repositories';
 
 import { config } from '../../domain';
-import cronValidator from "cron-expression-validator";
 
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL } } } = config;
 //const baseURL = 'https://hxyqgu6qy7.execute-api.eu-west-1.amazonaws.com/dev'
@@ -11,32 +10,48 @@ const documentRepository = new DocumentRepository(apiGatewayBaseURL);
 export const setAlertSchedule: AsyncLambdaHandler<setAlertScheduleParameters> = async (
     parameters
 ) => {
-
     const { collectionId, alertId, schedule, isScheduled } = parameters
-    // just validate schedule if is scheduled
-    if (isScheduled) {
-        const cronResult = cronValidator.isValidCronExpression(schedule)
 
-        if (!cronResult) {
+    const currentAlert = await CollectionAlertsRepository.defaultInstance.validateSchedule(parameters);
+
+    let percolatorParameters;
+
+    if (!isScheduled) {
+
+        if (currentAlert.elasticQuery) {
+            const elasticQuery: string = currentAlert.elasticQuery
+            const mapElasticQuery = JSON.parse(elasticQuery)
+
+            percolatorParameters = {
+                alertId: alertId,
+                query: mapElasticQuery
+            }
+        }
+        else {
             return new HttpResponse(HttpStatusCode.BAD_REQUEST, {
-                success: true,
-                message: 'Please set a valid cron expression',
+                success: false,
+                message: 'Elastic Query not set',
             });
         }
+
+        if (currentAlert.isPublished) {
+            await documentRepository.updatePercolator(percolatorParameters)
+        }
+        else {
+            await documentRepository.createPercolator(percolatorParameters)
+        }
+
     }
-
-    const response = await CollectionAlertsRepository.defaultInstance.setAlertSchedule(parameters)
-
-    // This is call after if fail in serAlertSchedule previuosly
-    if (isScheduled) {
+    else {
         const scheduleParameters = {
             scheduleId: alertId,
             collectionId: collectionId,
             cron: schedule
         }
         await documentRepository.scheduleAlertWebhook(scheduleParameters)
-
     }
+
+    const response = await CollectionAlertsRepository.defaultInstance.setAlertSchedule(parameters)
 
     const alertResponse: any = await mapAlert(response)
 

@@ -4,12 +4,12 @@ import { CollectionAlertRecipientRepository, CollectionAlertsRepository, Documen
 
 import { singleEmailBodyHandler } from '../../templates/singleFullAlert';
 
-const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL } } } = config;
+const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL, clientURL } } } = config;
 
 export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertParameters> = async (
     parameters
 ) => {
-    const { alertId, documentId } = parameters;
+    const { alertId, docId } = parameters;
 
     try {
 
@@ -28,7 +28,7 @@ export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertPara
 
             const emailRecipients = recipients.map((recipient) => { return recipient.emailAddress })
 
-            const documentResponse: any = await DocumentRepository.defaultInstance.getDocumentById(documentId, apiGatewayBaseURL);
+            const documentResponse: any = await DocumentRepository.defaultInstance.getDocumentById(docId, apiGatewayBaseURL);
 
             if (documentResponse.success) {
 
@@ -55,7 +55,7 @@ export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertPara
                         name: documentData.contentSource,
                     },
                     date: documentDate,
-                    url: `${frontEndURL}/library/document/${documentData.documentId}`,
+                    url: `${clientURL}/library/document/${documentData.documentId}`,
                     content: documentData.documentContent,
                 }
 
@@ -96,7 +96,7 @@ export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertPara
 
                 return new HttpResponse(HttpStatusCode.OK, {
                     success: true,
-                    message: 'Inmetiadte Alert ' + parameters.alertId + ' with document  ' + parameters.documentId + ' triggered'
+                    message: 'Inmetiadte Alert ' + parameters.alertId + ' with document  ' + parameters.docId + ' triggered'
                 });
             }
         }

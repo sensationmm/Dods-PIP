@@ -248,6 +248,7 @@ data "template_file" "app" {
     app_image      = var.app_image
     app_port       = var.app_port
     api_gateway    = var.api_gateway
+    api_taxonomy   = var.api_taxonomy
     aws_region     = var.aws_region
     environment    = var.environment
     fargate_cpu    = var.fargate_cpu

@@ -26,7 +26,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const requestParameters: ProcessImmediateAlertParameters = {
             alertId: 'alertUuid',
-            documentId: 'documentUuid',
+            docId: 'documentUuid',
         }
 
         const alertOutput = {
@@ -60,7 +60,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const expectedResponse = new HttpResponse(HttpStatusCode.OK, {
             success: true,
-            message: 'Inmetiadte Alert ' + requestParameters.alertId + ' with document  ' + requestParameters.documentId + ' triggered',
+            message: 'Inmetiadte Alert ' + requestParameters.alertId + ' with document  ' + requestParameters.docId + ' triggered',
         });
 
         expect(response).toEqual(expectedResponse);
@@ -70,7 +70,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const requestParameters: ProcessImmediateAlertParameters = {
             alertId: 'alertUuid',
-            documentId: 'documentUuid',
+            docId: 'documentUuid',
 
         }
 
@@ -80,7 +80,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
         const document = {
             success: true,
             data: {
-                documentId: 'id',
+                docId: 'id',
                 documentTitle: 'title',
                 contentDateTime: '04 Dec 1995 00:12:00 GMT',
                 documentContent: 'document content'
@@ -108,7 +108,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const requestParameters: ProcessImmediateAlertParameters = {
             alertId: 'alertUuid',
-            documentId: 'documentUuid',
+            docId: 'documentUuid',
         }
 
 
@@ -153,7 +153,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
 
         const requestParameters: ProcessImmediateAlertParameters = {
             alertId: 'alertUuid',
-            documentId: 'documentUuid',
+            docId: 'documentUuid',
         }
 
         const recipients: any = []

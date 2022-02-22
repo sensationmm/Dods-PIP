@@ -27,7 +27,7 @@ export interface ProcessAlertParameters {
 
 export interface ProcessImmediateAlertParameters {
     alertId: string;
-    documentId: string;
+    docId: string;
 }
 
 export interface ProcessImmediateAlertParametersURL extends ProcessImmediateAlertParameters {

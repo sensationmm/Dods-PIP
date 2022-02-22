@@ -257,7 +257,7 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
   return (
     <div data-test="page-account-management-add-client">
       <Head>
-        <title>Dods PIP | Account Management | User Profile</title>
+        <title>Dods | Account Management | User Profile</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

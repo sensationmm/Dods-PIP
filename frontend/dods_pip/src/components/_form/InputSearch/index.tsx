@@ -65,7 +65,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
         />
         {children}
 
-        {!isDisabled && (
+        {value !== '' && !isDisabled && (
           <Styled.clear
             data-test="input-clear"
             onClick={() => {
@@ -73,11 +73,7 @@ const InputSearch: React.FC<InputSearchProps> = ({
               onClear?.();
             }}
           >
-            <Icon
-              src={Icons.Cross}
-              size={IconSize.medium}
-              color={isFilled ? color.theme.blue : 'transparent'}
-            />
+            <Icon src={Icons.Cross} size={IconSize.medium} color={color.theme.blue} />
           </Styled.clear>
         )}
       </Input>

@@ -18,6 +18,11 @@ output "dev_backend_url" {
   value       = module.dev.api_url
 }
 
+output "dev_taxonomy_api" {
+  description = "'Dev' Environment Base URL for Taxonomy data"
+  value = module.dev.taxonomy-api
+}
+
 // --------------------------------
 
 output "prod_db_address" {
@@ -40,6 +45,10 @@ output "prod_backend_url" {
   value       = module.production.api_url
 }
 
+output "prod_taxonomy_api" {
+  description = "'Prod' Environment Base URL Taxonomy data"
+  value       = module.production.taxonomy-api
+}
 // --------------------------------
 
 output "qa_db_address" {
@@ -62,6 +71,11 @@ output "qa_backend_url" {
   value       = module.qa.api_url
 }
 
+output "qa_taxonomy_api" {
+  description = "'qa' Environment Base URL for Taxonomy data"
+  value       = module.qa.taxonomy-api
+}
+
 // --------------------------------
 
 output "test_db_address" {
@@ -82,4 +96,9 @@ output "test_frontend_url" {
 output "test_backend_url" {
   description = "'test' Environment Base URL Backend"
   value       = module.test.api_url
+}
+
+output "test_taxonomy_api" {
+  description = "'test' Environment Base URL for Taxonomy data"
+  value       = module.test.taxonomy-api
 }

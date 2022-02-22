@@ -155,7 +155,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
   return (
     <div data-test="page-home">
       <Head>
-        <title>Dods PIP | Welcome to Dods</title>
+        <title>Dods | Welcome to Dods</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -164,22 +164,25 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
           <Columns isWelcome>
             <div>
               <Text type={'h1'} headingStyle="heroExtraLarge">
-                Political Intelligence Platform
+                Dods Political Intelligence
               </Text>
               <Spacer size={12} />
-              <Text bold>Better decisions. For a better tomorrow.</Text>
+              <Text bold>Intelligence, Insight, Impact</Text>
               <Spacer size={4} />
               <Text>
-                We harness insights from over two centuries of experience, through the specialised
-                knowledge of our Consultants, and our innovative technologies.
+                Dods is the market leading political intelligence service for the EU and the UK
+                delivering policy monitoring, expert insights and stakeholder management tools.
               </Text>
               <Spacer size={4} />
               <Text>
-                Dods PIP is the market leading, Global political intelligence service, facilitating
-                comprehensive monitoring of people, political and policy developments.
+                Get access to 13,000+ content sources, 25,000+ stakeholders, 35+ sectors and 30+
+                policy consultants.
               </Text>
               <Spacer size={12} />
-              <Button type={'secondary'} inline label={'Find out more'} />
+              <Text>
+                Don&apos;t have a login?{' '}
+                <a href="https://www.dodspoliticalintelligence.com/">Click here to find out more</a>
+              </Text>
             </div>
 
             <div>
@@ -238,9 +241,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
                             <Text type={'bodySmall'} data-test={'warning-1'}>
                               Try re-typing your password, or reset your password below. If you’ve
                               forgotten your username, please{' '}
-                              <Link href="">
-                                <a>Contact Us</a>
-                              </Link>{' '}
+                              <a href="mailto:customer.service@dodsgroup.com">Contact Us</a>{' '}
                               directly.
                             </Text>
                             {failureCount == 2 && (
@@ -308,10 +309,7 @@ export const Home: React.FC<HomeProps> = ({ setLoading }) => {
 
                       <Text type="span" center color={color.theme.blueMid}>
                         If you’ve forgotten your username, please{' '}
-                        <Link href="">
-                          <a>Contact Us</a>
-                        </Link>{' '}
-                        directly.
+                        <a href="mailto:customer.service@dodsgroup.com">Contact Us</a> directly.
                       </Text>
                     </>
                   )}

@@ -21,6 +21,7 @@ module "ecs" {
   //container variables
   app_image   = var.app_image
   api_gateway = var.api_gateway
+  api_taxonomy = var.api_taxonomy
   fe_api_key  = var.fe_api_key
 
 

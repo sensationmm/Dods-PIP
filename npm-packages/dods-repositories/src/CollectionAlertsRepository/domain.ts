@@ -58,6 +58,11 @@ export interface getAlertsByCollectionResponse {
     alerts: Array<Object>
 }
 
+export interface setPublishAlertParameters {
+    isPublished: boolean;
+    alertId: string;
+}
+
 export interface CollectionAlertsPersister {
     copyQuery(parameters: CopyQueryParameters): Promise<AlertQueryResponse>;
     getCollectionAlerts(
@@ -65,7 +70,7 @@ export interface CollectionAlertsPersister {
     ): Promise<getAlertsByCollectionResponse>;
     updateAlert(parameters: UpdateAlertParameters): Promise<AlertOutput>;
     createAlertDocumentRecord(parameters: AlertDocumentParameters): Promise<Boolean>;
-    getAlertById(parameters: SearchAlertParametersById): Promise<AlertByIdOutput>
+    getAlertById(parameters: SearchAlertParametersById): Promise<AlertByIdOutput>;
 }
 
 export interface CreateAlertParameters {
@@ -226,6 +231,8 @@ export interface AlertDocumentParameters {
 
 export interface createESQueryParameters {
     query: string;
+    informationType?: string;
+    contentSource?: string;
 }
 
 export interface updateAlertElasticQueryParameters {

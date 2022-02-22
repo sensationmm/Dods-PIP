@@ -67,7 +67,7 @@ export const Library: React.FC<ILibraryProps> = ({
   const [filtersVisible, setFiltersVisible] = useState(true);
   const [filtersReady, setFiltersReady] = useState(false);
 
-  const { currentPage = 1, resultSize = DEFAULT_RESULT_SIZE } = parsedQuery;
+  const { currentPage = 0, resultSize = DEFAULT_RESULT_SIZE } = parsedQuery;
 
   useEffect(() => {
     if (apiErrorMessage) {
@@ -510,10 +510,8 @@ export const Library: React.FC<ILibraryProps> = ({
     return (
       <Styled.pagination>
         <div>
-          Showing
-          <span className={'pageCount'}>
-            {(currentPage - 1) * resultSize} - {(currentPage - 1) * resultSize + resultSize}
-          </span>
+          Showing {(currentPage - 1) * resultSize + 1} -{' '}
+          {(currentPage - 1) * resultSize + resultSize}
           <Styled.totalRecords>
             Total <b className={'totalDocs'}>{totalDocs.toLocaleString('en-US')}</b> Items
           </Styled.totalRecords>
@@ -536,7 +534,7 @@ export const Library: React.FC<ILibraryProps> = ({
   return (
     <Styled.pageLibrary data-test="page-library">
       <Head>
-        <title>Dods PIP | Library</title>
+        <title>Dods | Library</title>
       </Head>
 
       <main>

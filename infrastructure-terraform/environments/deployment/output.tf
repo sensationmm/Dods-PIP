@@ -48,3 +48,7 @@ output "api_key_test" {
 output "api_url" {
   value = module.api-gateway.api_gateway_url
 }
+
+output "taxonomy-api" {
+  value = module.taxonomy.taxonomy-api
+}

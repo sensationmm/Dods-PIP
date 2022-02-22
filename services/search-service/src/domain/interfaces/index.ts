@@ -4,6 +4,7 @@ export interface GetContentParameters {
 
 export interface RawQueryParameters {
     query: object;
+    sort?: object;
     aggregations?: object;
     size?: number;
     from?: number;
@@ -23,4 +24,6 @@ export interface deletePercolatorParameters {
 
 export interface CreateESQueryParameters {
     queryString: string;
+    informationTypes: string;
+    contentSources: string;
 }

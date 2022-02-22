@@ -12,6 +12,15 @@ export const searchValue = styled.div`
   top: 50%;
   transform: translateY(-50%);
   left: ${spacing(11)};
+  padding-right: ${spacing(11)};
+  white-space: nowrap;
+  overflow: hidden;
+  width: calc(100% - ${spacing(11)});
+
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 export const clear = styled.div`

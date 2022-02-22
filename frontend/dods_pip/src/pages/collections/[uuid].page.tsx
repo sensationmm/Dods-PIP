@@ -202,7 +202,7 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
   return (
     <div data-test="page-people">
       <Head>
-        <title>Dods PIP | Collection Details</title>
+        <title>Dods | Collection Details</title>
       </Head>
 
       <main>

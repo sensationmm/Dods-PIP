@@ -165,7 +165,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
   return (
     <div data-testid="page-editorial">
       <Head>
-        <title>Dods PIP | Editorial Repository</title>
+        <title>Dods | Editorial Repository</title>
       </Head>
       <Panel bgColor={color.base.ivory}>
         <Breadcrumbs
