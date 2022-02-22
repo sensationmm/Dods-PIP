@@ -119,7 +119,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({
       <Spacer size={8} />
 
       <PlainTable
-        headings={['Name', 'Account', 'Active', '']}
+        headings={['Name', 'Account', '']}
         colWidths={[7, 5, 1, 2]}
         rows={recipients
           .filter(
@@ -129,7 +129,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({
                 .toLowerCase()
                 .search(filter.toLowerCase()) > -1,
           )
-          .map((recipient, count) => [
+          .map((recipient) => [
             recipient.value,
             <Styled.sectionHeader key="title1">
               <Avatar type={recipient.icon as UserType} size="small" />
@@ -138,14 +138,14 @@ const AlertStep3: React.FC<AlertStepProps> = ({
             <>
               <Text>{recipient.userData?.accountName as string}</Text>
             </>,
-            <>
+            /*<>
               <Checkbox
                 id={`active-${count}`}
                 isDisabled
                 isChecked={recipient.userData?.isActive === 1}
                 onChange={console.log}
               />
-            </>,
+            </>,*/
             <>
               {!disabled && (
                 <Button
