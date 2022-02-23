@@ -53,8 +53,7 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "sqs:SendMessage"
-        - "sqs:GetQueueAttributes"
+        - "sqs:*"
       Resource: arn:aws:sqs:${aws:region}:${aws:accountId}:${self:provider.stage}-instant-alert-queue.fifo
 
 
