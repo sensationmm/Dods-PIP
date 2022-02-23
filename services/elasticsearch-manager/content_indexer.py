@@ -84,13 +84,13 @@ def create_percolate_query(documentId: str):
 def check_percolator(documentId: str):
     percolate_query = create_percolate_query(documentId)
     print(percolate_query)
-    percolate_response = es_client.search(index='alerts', query=percolate_query)
+    percolate_response = es_client.search(index='alerts', query=percolate_query['query'])
     print(percolate_response)
     for hit in percolate_response['hits']['hits']:
         payload = {"alertId": hit['_id'], "docId": documentId, "MessageGroupId": str(hit['_id']) +  str(documentId)}
         print(payload)
         queue = sqs_client.get_queue_by_name(QueueName=ALERT_Q_NAME)
-        queue.send_message(MessageBody=json.dumps(payload))
+        queue.send_message(MessageBody=json.dumps(payload),MessageGroupId= str(hit['_id']) +  str(documentId) )
 
 if __name__ == "__main__":
     run()
