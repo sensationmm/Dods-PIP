@@ -1076,23 +1076,23 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
 
         });
 
-        if('contentSource' in queryObject) {
+        if ('contentSource' in queryObject) {
             let sourcesQuery: any = []
             const contentSources = queryObject.contentSource!.split(',')
             contentSources.forEach(source => {
                 sourcesQuery.push(...[
-                    { term: { contentSource: source } },
+                    { term: { 'contentSource.keyword': source } },
                 ])
             })
             query.query.bool.must.push({ bool: { should: sourcesQuery } })
         }
 
-        if('informationType' in queryObject) {
+        if ('informationType' in queryObject) {
             let typesQuery: any = []
             const informationTypes = queryObject.informationType!.split(',')
             informationTypes.forEach(infoType => {
                 typesQuery.push(...[
-                    { term: { informationType: infoType } },
+                    { term: { 'informationType.keyword': infoType } },
                 ])
             })
             query.query.bool.must.push({ bool: { should: typesQuery } })
