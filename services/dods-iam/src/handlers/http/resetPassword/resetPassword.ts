@@ -23,11 +23,13 @@ export const resetPassword: AsyncLambdaMiddleware<ResetPasswordParameters> = asy
 
         if (validateLastPassword) {
 
-            const result = await AwsCognito.defaultInstance.resetPassword(decodedEmail, newPassword, verificationCode);
+            await AwsCognito.defaultInstance.resetPassword(decodedEmail, newPassword, verificationCode);
 
             await LoginRepository.defaultInstance.publishUpdatePassword({ userName: decodedEmail, lastPassword: newPassword });
 
-            response = new HttpResponse(HttpStatusCode.OK, result);
+            response = new HttpResponse(HttpStatusCode.OK, {
+                success: true
+            });
         }
         else {
             response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, { success: false, message: 'This password is used previously' });
