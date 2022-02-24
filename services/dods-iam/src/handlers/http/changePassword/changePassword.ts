@@ -1,7 +1,8 @@
 import { AsyncLambdaMiddleware, HttpError, HttpResponse, HttpStatusCode } from "@dodsgroup/dods-lambda";
+
+import { AwsCognito } from "../../../services";
 import { ChangePasswordParameters } from "../../../domain";
 import { LoginRepository } from "../../../repositories";
-import { AwsCognito } from "../../../services";
 
 export const changePassword: AsyncLambdaMiddleware<ChangePasswordParameters> = async ({ email, password, newPassword }) => {
 
@@ -21,11 +22,13 @@ export const changePassword: AsyncLambdaMiddleware<ChangePasswordParameters> = a
         const validateLastPasswordWithNewPassword = await LoginRepository.defaultInstance.validateLastPassword(email, newPassword);
 
         if (validateLastPasswordWithNewPassword) {
-            const result = await AwsCognito.defaultInstance.changePassword(email, password, newPassword)
+            await AwsCognito.defaultInstance.changePassword(email, password, newPassword)
 
             await LoginRepository.defaultInstance.publishUpdatePassword({ userName: email, lastPassword: newPassword });
 
-            response = new HttpResponse(HttpStatusCode.OK, result);
+            response = new HttpResponse(HttpStatusCode.OK, {
+                success: true
+            });
         }
         else {
             response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, 'This password is used previously');

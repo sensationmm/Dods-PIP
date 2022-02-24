@@ -1,6 +1,7 @@
-import { AsyncLambdaMiddleware, HttpStatusCode, HttpResponse, HttpError } from "@dodsgroup/dods-lambda";
-import { ResendConfirmationCodeParameters } from "../../../domain";
+import { AsyncLambdaMiddleware, HttpError, HttpResponse, HttpStatusCode } from "@dodsgroup/dods-lambda";
+
 import { AwsCognito } from "../../../services";
+import { ResendConfirmationCodeParameters } from "../../../domain";
 
 export const resendConfirmationCode: AsyncLambdaMiddleware<ResendConfirmationCodeParameters> = async ({ email }) => {
 
@@ -13,7 +14,9 @@ export const resendConfirmationCode: AsyncLambdaMiddleware<ResendConfirmationCod
     try {
         await AwsCognito.defaultInstance.resendConfirmationCode(email);
 
-        response = new HttpResponse(HttpStatusCode.OK, "SUCCESS");
+        response = new HttpResponse(HttpStatusCode.OK, {
+            success: true
+        });
     } catch (error: any) {
         response = new HttpResponse(HttpStatusCode.UNAUTHORIZED, error);
     }
