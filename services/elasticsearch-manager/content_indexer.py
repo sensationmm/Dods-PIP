@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from logger import logger
 from validator import Validator
 import boto3
+import json 
 
 session = boto3.session.Session()
 sqs_client = session.resource("sqs", region_name="eu-west-1")
