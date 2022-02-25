@@ -25,6 +25,7 @@ import * as Styled from './AlertQuery.styles';
 
 export interface AlertQueryProps {
   id: string;
+  uuid?: string;
   source: DropdownValue[];
   informationType: DropdownValue[];
   searchTerms: string;
@@ -48,6 +49,7 @@ export interface AlertQueryScreenProps extends AlertQueryProps {
     copyAlertId: Alert['uuid'],
   ) => void;
   onDelete: () => void;
+  onViewResults: () => void;
   numQueries: number;
   isDisabled: boolean;
   hideButtons?: boolean;
@@ -70,6 +72,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   onDuplicate,
   onEdit,
   onDelete,
+  onViewResults,
   onCancel,
   onCopyQuery,
   onCancelEdit,
@@ -473,7 +476,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
                 label="View Results"
                 icon={Icons.ChevronRightBold}
                 iconAlignment="right"
-                disabled
+                onClick={onViewResults}
               />
             </Styled.actions>
           )}

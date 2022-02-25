@@ -2,6 +2,7 @@ export const BASE_URI = '/api';
 
 export enum Api {
   Alerts = '/alerts',
+  AlertResultsQuery = '/search/create-query',
   CheckAccountName = '/checkaccountname',
   ClientAccount = '/clientaccount',
   ClientAccounts = '/client-accounts',

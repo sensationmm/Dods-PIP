@@ -56,6 +56,7 @@ export interface AlertSetupType extends Alert {
     id: number;
     name: string;
   };
+  elasticQuery?: Record<string, any>;
 }
 
 export interface AlertSetupProps {

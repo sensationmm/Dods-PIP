@@ -1,19 +1,15 @@
 import Facet from '@dods-ui/components/_form/Facet';
 import Select, { SelectItem } from '@dods-ui/components/_form/Select';
 import Toggle from '@dods-ui/components/_form/Toggle';
-import Chips from '@dods-ui/components/Chips';
 import DateFacet from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
-import IconContentSource from '@dods-ui/components/IconContentSource';
+import LibraryItem from '@dods-ui/components/LibraryItem';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
-import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InputSearch from '../../components/_form/InputSearch';
-import Box from '../../components/_layout/Box';
 import Panel from '../../components/_layout/Panel';
 import Spacer from '../../components/_layout/Spacer';
 import Icon, { IconSize } from '../../components/Icon/';
@@ -27,7 +23,7 @@ import * as Styled from './library.styles';
 import getPayload from './utils/getSearchPayload';
 import useSearchQueries, { AggTypes } from './utils/useSearchQueries';
 
-interface ILibraryProps extends LoadingHOCProps {
+export interface ILibraryProps extends LoadingHOCProps {
   parsedQuery: QueryObject;
   results: { _source: ISourceData }[];
   totalDocs: number;
@@ -36,7 +32,7 @@ interface ILibraryProps extends LoadingHOCProps {
 }
 
 const DEFAULT_RESULT_SIZE = 20;
-const TAXONOMY_TERMS_LENGTH = 5;
+export const TAXONOMY_TERMS_LENGTH = 5;
 
 export const Library: React.FC<ILibraryProps> = ({
   results,
@@ -344,7 +340,7 @@ export const Library: React.FC<ILibraryProps> = ({
             <span>Viewing page</span>
             <Select
               id={'pageSelect'}
-              value={currentPage?.toString() || '1'}
+              value={currentPage?.toString() || '0'}
               size={'small'}
               isFilter={true}
               onChange={(value) => {
@@ -414,89 +410,20 @@ export const Library: React.FC<ILibraryProps> = ({
             documentId,
             contentSource,
           } = item._source;
-          const formattedTime =
-            contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' hh:mm");
 
           return (
-            <Styled.searchResult key={`search-result${i}`}>
-              <Box size={'extraSmall'}>
-                <Styled.boxContent>
-                  <Styled.topRow>
-                    <Styled.imageContainer>
-                      <IconContentSource icon={contentSource} width={40} height={40} />
-                    </Styled.imageContainer>
-                    <Styled.searchResultHeader>
-                      <Styled.searchResultHeading>
-                        <h2>
-                          <Link href={`/library/document/${documentId}`} passHref>
-                            <Styled.titleLink>{documentTitle}</Styled.titleLink>
-                          </Link>
-                        </h2>
-                        <Styled.date className={'mobileOnly'}>{formattedTime}</Styled.date>
-                        <Styled.contentSource>
-                          <Icon
-                            src={Icons.Document}
-                            size={IconSize.medium}
-                            color={color.theme.blue}
-                          />
-                          <Styled.contentSourceText>
-                            {informationType} / {organisationName}
-                          </Styled.contentSourceText>
-                        </Styled.contentSource>
-                      </Styled.searchResultHeading>
-                    </Styled.searchResultHeader>
-                    <Styled.date>{formattedTime}</Styled.date>
-                  </Styled.topRow>
-                  {documentContent && (
-                    <Styled.contentPreview>
-                      <div dangerouslySetInnerHTML={{ __html: documentContent }} />
-                    </Styled.contentPreview>
-                  )}
-                  <Styled.bottomRow>
-                    <Styled.tagsWrapper>
-                      {taxonomyTerms?.slice(0, TAXONOMY_TERMS_LENGTH - 1).map((term, i) => {
-                        if (i > 5) {
-                          return;
-                        }
-
-                        const selectedIndex =
-                          parsedQuery?.nestedFilters?.findIndex(
-                            ({ value, path }) =>
-                              path === 'taxonomyTerms' && value === term.termLabel,
-                          ) ?? -1;
-
-                        return (
-                          <Chips
-                            key={`chip-${i}-${term.termLabel}`}
-                            label={term.termLabel}
-                            chipsSize={'dense'}
-                            theme={selectedIndex > -1 ? 'dark' : 'light'}
-                            bold={selectedIndex > -1}
-                          />
-                        );
-                      })}
-                      <div>
-                        {taxonomyTerms && taxonomyTerms.length > TAXONOMY_TERMS_LENGTH && (
-                          <span className={'extraChipsCount'}>
-                            +{taxonomyTerms.length - TAXONOMY_TERMS_LENGTH}
-                          </span>
-                        )}
-                      </div>
-                    </Styled.tagsWrapper>
-                    <Link href={`/library/document/${documentId}`} passHref>
-                      <Styled.readMore>
-                        <span>Read more</span>
-                        <Icon
-                          src={Icons.ChevronRightBold}
-                          size={IconSize.small}
-                          color={color.theme.blue}
-                        />
-                      </Styled.readMore>
-                    </Link>
-                  </Styled.bottomRow>
-                </Styled.boxContent>
-              </Box>
-            </Styled.searchResult>
+            <LibraryItem
+              key={`search-result${i}`}
+              parsedQuery={parsedQuery}
+              documentTitle={documentTitle}
+              documentContent={documentContent}
+              contentDateTime={contentDateTime}
+              organisationName={organisationName}
+              informationType={informationType}
+              taxonomyTerms={taxonomyTerms}
+              documentId={documentId}
+              contentSource={contentSource}
+            />
           );
         })}
         {renderBottomPagination}

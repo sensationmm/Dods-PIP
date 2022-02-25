@@ -6,6 +6,7 @@ import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Popover from '@dods-ui/components/Popover';
 import Text from '@dods-ui/components/Text';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import { Collection } from '../../index.page';
@@ -26,6 +27,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
   copyQuery,
   disabled = false,
 }) => {
+  const router = useRouter();
   const query = {
     source: [],
     informationType: [],
@@ -183,6 +185,11 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
           onDelete={() => {
             setChanged(true);
             setQueries(queries.filter((del) => query.id !== del.id));
+          }}
+          onViewResults={() => {
+            router.push(
+              `/collections/${alert.collectionId}/alerts/${alert.uuid}/results/${query.id}`,
+            );
           }}
           numQueries={numQueries}
           onCopyQuery={copyQuery}

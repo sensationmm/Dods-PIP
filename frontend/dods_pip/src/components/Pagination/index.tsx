@@ -111,7 +111,7 @@ const Pagination = (
           of
         </Text>
         <Text type="bodySmall" bold color={color.theme.blueMid} data-test="item-pages">
-          {numPages}
+          {numPages.toLocaleString('en-US')}
         </Text>
       </Styled.inlineNav>
     );
@@ -134,11 +134,12 @@ const Pagination = (
         <Text type="bodySmall" color={color.base.grey}>
           Showing{' '}
           <strong style={{ color: color.theme.blueMid }} data-test="item-count">
-            {dataLength > 0 ? start + 1 : 0}-{Math.min(dataLength, end)}
+            {(dataLength > 0 ? start + 1 : 0).toLocaleString('en-US')}-
+            {Math.min(dataLength, end).toLocaleString('en-US')}
           </strong>{' '}
           of{' '}
           <strong style={{ color: color.theme.blueMid }} data-test="item-total">
-            {dataLength}
+            {dataLength.toLocaleString('en-US')}
           </strong>
         </Text>
         {children}
