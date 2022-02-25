@@ -149,18 +149,33 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     }
   }, [isEditMode, articleId]);
 
+  const originatorValuesList: SelectItem[] = [];
+
+  const addTag = (term: TagsData) => {
+    if (term.childTerms && term.childTerms?.length > 0) {
+      term.childTerms?.forEach((child) => {
+        addTag(child);
+      });
+    } else {
+      originatorValuesList.push({
+        value: term.termLabel,
+        label: term.termLabel,
+      });
+    }
+  };
+
   const loadOriginators = async () => {
     try {
       const originators: any = await fetchJson(
         `${BASE_URI}${Api.TaxonomySearch}/organisations/tree`,
       );
+
+      originators.forEach((term: any) => {
+        addTag(term);
+      });
+
       setOriginatorValues(
-        originators
-          .map((term: any) => ({
-            value: term.termLabel,
-            label: term.termLabel,
-          }))
-          .sort((a: SelectItem, b: SelectItem) => (a.label > b.label ? 1 : -1)),
+        originatorValuesList.sort((a: SelectItem, b: SelectItem) => (a.label > b.label ? 1 : -1)),
       );
     } catch (e) {
       console.log(e);
