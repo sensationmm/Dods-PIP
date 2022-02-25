@@ -28,13 +28,13 @@ interface IUseSearch {
   setDateQuery: ({ min, max }: IDateRange) => void;
 }
 
-const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
+const useSearchQueries = (currentQuery: QueryObject, route = '/library'): IUseSearch => {
   const router = useRouter();
 
   const setQuery = useCallback((query: QueryObject) => {
     router.push(
       {
-        pathname: '/library',
+        pathname: route,
         query: { search: JSON.stringify(query) },
       },
       undefined,
@@ -44,7 +44,7 @@ const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
 
   const setKeywordQuery = useCallback(
     (searchTerm: string) => {
-      setQuery({ searchTerm, currentPage: 1 });
+      setQuery({ searchTerm, currentPage: 0 });
     },
     [setQuery],
   );
@@ -72,7 +72,7 @@ const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
         newBasicFilters = [...basicFilters, { key, value }]; // add
       }
 
-      const newQuery = { ...currentQuery, basicFilters: newBasicFilters, currentPage: 1 };
+      const newQuery = { ...currentQuery, basicFilters: newBasicFilters, currentPage: 0 };
 
       setQuery(newQuery);
     },
@@ -87,7 +87,7 @@ const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
         return !queries.find(({ key }) => value === key);
       });
 
-      const newQuery = { ...currentQuery, basicFilters: newBasicFilters, currentPage: 1 };
+      const newQuery = { ...currentQuery, basicFilters: newBasicFilters, currentPage: 0 };
       setQuery(newQuery);
     },
     [currentQuery],
@@ -111,7 +111,7 @@ const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
         newNestedFilters = [...nestedFilters, { path, key, value }];
       }
 
-      const newQuery = { ...currentQuery, nestedFilters: newNestedFilters, currentPage: 1 };
+      const newQuery = { ...currentQuery, nestedFilters: newNestedFilters, currentPage: 0 };
 
       setQuery(newQuery);
     },
@@ -126,7 +126,7 @@ const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
         return !queries.find(({ key }) => value === key);
       });
 
-      const newQuery = { ...currentQuery, nestedFilters: newNestedFilters, currentPage: 1 };
+      const newQuery = { ...currentQuery, nestedFilters: newNestedFilters, currentPage: 0 };
       setQuery(newQuery);
     },
     [currentQuery],
@@ -140,11 +140,11 @@ const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
       let newQuery: QueryObject = rest;
 
       if (min && !max) {
-        newQuery = { ...rest, dateRange: { min }, currentPage: 1 };
+        newQuery = { ...rest, dateRange: { min }, currentPage: 0 };
       } else if (!min && max) {
-        newQuery = { ...rest, dateRange: { max }, currentPage: 1 };
+        newQuery = { ...rest, dateRange: { max }, currentPage: 0 };
       } else if (min && max) {
-        newQuery = { ...rest, dateRange: { min, max }, currentPage: 1 };
+        newQuery = { ...rest, dateRange: { min, max }, currentPage: 0 };
       }
 
       setQuery(newQuery);
@@ -154,7 +154,7 @@ const useSearchQueries = (currentQuery: QueryObject): IUseSearch => {
 
   const setResultSize = useCallback(
     (resultSize: number) => {
-      const newQuery = { ...currentQuery, resultSize, currentPage: 1 };
+      const newQuery = { ...currentQuery, resultSize, currentPage: 0 };
       setQuery(newQuery);
     },
     [currentQuery],

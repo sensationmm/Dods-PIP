@@ -26,7 +26,6 @@ export interface AlertProps extends AlertData {
   onDelete: () => void;
   onCopy: () => void;
   onViewSettings: (step?: string) => void;
-  onViewResults: () => void;
 }
 
 type ScheduleCron = {
@@ -59,7 +58,6 @@ const Alert: React.FC<AlertProps> = ({
   onDelete,
   onCopy,
   onViewSettings,
-  onViewResults,
 }) => {
   const router = useRouter();
   const [showAllTimes, setShowAllTimes] = React.useState<boolean>(false);
@@ -193,8 +191,7 @@ const Alert: React.FC<AlertProps> = ({
                   label="View Results"
                   icon={Icons.ChevronRightBold}
                   iconAlignment="right"
-                  onClick={onViewResults}
-                  disabled
+                  onClick={() => router.push(`/collections/${collectionId}/alerts/${uuid}/results`)}
                 />
               </>
             ) : (
