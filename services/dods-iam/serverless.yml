@@ -320,6 +320,13 @@ functions:
             detail-type:
               - NewUserCreated
               - PasswordUpdated
+  customEmailTrigger:
+    description: Triggered when http request comes
+    handler: src/handlers/http/customEmailTrigger/index.handle
+    events:
+      - http:
+          method: post
+          path: customEmailTrigger
 
 resources:
   Resources:
