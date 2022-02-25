@@ -354,7 +354,7 @@ pipelines:
            # Define destination variable
            - export DEST="public.ecr.aws/dods-cicd/devops/somo-builder/${IMAGE}:latest"
            - echo "Running deployment for image $IMAGE to environment ${ENVIRONMENT^^}"
-           - cd docker-images/$IMAGE"
+           - cd docker-images/$IMAGE
            - docker build -t ${DEST}:latest .
            # Run actual deployment steps giving an option for custom definitions
            # Push to ECR
