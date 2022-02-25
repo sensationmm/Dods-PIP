@@ -353,12 +353,11 @@ pipelines:
          script:
            # Define destination variable
            - export DEST="public.ecr.aws/dods-cicd/devops/somo-builder/${IMAGE}:latest"
-           - echo "Running deployment for image $IMAGE to environment ${ENVIRONMENT^^}"
+           - echo "Running deployment for image $IMAGE to environment ${ENVIRONMENT^^} $DEST"
            - cd docker-images/$IMAGE
            - docker build -t ${DEST}:latest .
            # Run actual deployment steps giving an option for custom definitions
            # Push to ECR
-           - echo "Deploying to destination: $DEST"
            - aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin public.ecr.aws/dods-cicd
            - docker push $DEST
 
