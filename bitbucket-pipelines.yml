@@ -163,6 +163,23 @@ pipelines:
                 fi
               fi
 
+    build_docker-images:
+      - variables:
+        - name: IMAGE
+          default: bitbucket-builder
+      - step:
+          name: "Dockerimages: Test and Build"
+          image: gioatsomoglobal/devopstools:0.4.6
+          size: 2x
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - 'echo "Running build for image: ${IMAGE}"'
+            - cd docker-images/$IMAGE
+            - docker build -t $IMAGE .
+         
     deploy_frontend:
       - variables:
         - name: ENVIRONMENT
@@ -320,6 +337,30 @@ pipelines:
                   npx serverless deploy --stage ${ENVIRONMENT,,}
                 fi
               fi
+
+    deploy_docker-image:
+      - variables:
+          - name: ENVIRONMENT
+            default: "DEV"
+          - name: IMAGE
+            default: bitbucket-builder
+      - step:
+         name: "Dockerimages: Deploy to Environment"
+         image: gioatsomoglobal/devopstools:0.4.6
+         size: 2x
+         services:
+           - docker
+         script:
+           # Define destination variable
+           - export DEST="public.ecr.aws/dods-cicd/devops/somo-builder/${IMAGE}:latest"
+           - echo "Running deployment for image $IMAGE to environment ${ENVIRONMENT^^}"
+           - cd docker-images/$IMAGE"
+           - docker build -t $DEST:latest .
+           # Run actual deployment steps giving an option for custom definitions
+           # Push to ECR
+           - echo "Deploying to destination: $DEST"
+           - aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin public.ecr.aws/dods-cicd
+           - docker push $DEST
 
     storybook-deployment:
       - step:
