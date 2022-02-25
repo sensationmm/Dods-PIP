@@ -260,7 +260,7 @@ export const Library: React.FC<ILibraryProps> = ({
             }}
           />
           <Facet
-            title={'Organizations'}
+            title={'Organisations'}
             records={organizations}
             onClearSelection={() => {
               setLoading(true);
