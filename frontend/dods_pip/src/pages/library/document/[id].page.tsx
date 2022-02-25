@@ -132,6 +132,19 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
               return <Chips key={value} label={label} />;
             });
 
+            if (key === 'organizations') {
+              const spelling = key.replace('organizations', 'organisations');
+              return (
+                <div key={spelling}>
+                  <Text type="label" headingStyle="titleSmall" bold>
+                    {spelling}
+                  </Text>
+
+                  <Styled.tagsContainer>{tagElements}</Styled.tagsContainer>
+                </div>
+              );
+            }
+
             return (
               <div key={key}>
                 <Text type="label" headingStyle="titleSmall" bold>
