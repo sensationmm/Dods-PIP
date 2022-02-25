@@ -9,6 +9,7 @@ import IconButton from '@dods-ui/components/IconButton';
 import Text from '@dods-ui/components/Text';
 import { format } from 'date-fns';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -89,7 +90,9 @@ export const CollectionsUser: React.FC<CollectionsScreenProps> = ({
               rows={collectionsList.map(({ uuid, name, updatedAt, alertsCount }) => [
                 uuid,
                 <Text key={`collection-${uuid}-name`} bold>
-                  {name}
+                  <Link href={`/collections/${uuid}`} passHref>
+                    <Styled.titleLink>{name}</Styled.titleLink>
+                  </Link>
                 </Text>,
                 <Text key={`collection-${uuid}-updated`}>
                   {format(new Date(updatedAt), 'dd MMM yyyy')}
