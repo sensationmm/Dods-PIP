@@ -261,7 +261,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const date = apiData.contentDateTime ? new Date(apiData.contentDateTime) : '';
-  const publishedDateTime = date ? format(date, "d MMMM yyyy 'at' hh:mm") : '';
+  const publishedDateTime = date ? format(date, "d MMMM yyyy 'at' HH:mm") : '';
 
   const formatTaxonomyTerms = () => {
     const terms: any = {};
