@@ -350,6 +350,8 @@ pipelines:
          size: 2x
          services:
            - docker
+         caches:
+           - docker
          script:
            # Define destination variable
            - cd docker-images/${IMAGE}
