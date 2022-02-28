@@ -20,6 +20,7 @@ export interface TagSelectorProps extends Omit<SearchDropdownProps, 'onChange'> 
   onKeyPress?: (val: string) => void;
   icon?: UserType | Icons;
   isQuery?: boolean;
+  isFilter?: SearchDropdownProps['isDisabled'];
 }
 
 const TagSelector: React.FC<TagSelectorProps> = ({
@@ -35,6 +36,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   icon,
   error,
   isQuery = false,
+  isFilter = false,
 }) => {
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
@@ -129,6 +131,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           error={error}
+          isFilter={isFilter}
         />
       </Styled.container>
     </Styled.wrapper>
