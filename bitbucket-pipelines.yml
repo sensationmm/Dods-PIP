@@ -352,7 +352,7 @@ pipelines:
            - docker
          script:
            # Define destination variable
-           - export DEST="public.ecr.aws/dods-cicd/devops/somo-builder/${IMAGE}"
+           - export DEST="public.ecr.aws/dods-cicd/${IMAGE}"
            - echo "Running deployment for image $IMAGE to environment ${ENVIRONMENT^^} $DEST"
            - cd docker-images/$IMAGE
            - docker build -t ${DEST}:latest .
