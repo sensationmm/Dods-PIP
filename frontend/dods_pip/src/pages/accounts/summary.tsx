@@ -11,7 +11,6 @@ import IconButton from '../../components/IconButton';
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
 import Pagination from '../../components/Pagination';
-import Popover from '../../components/Popover';
 import SectionAccordion from '../../components/SectionAccordion';
 import Text from '../../components/Text';
 import { PushNotificationProps } from '../../hoc/LoadingHOC';
@@ -35,6 +34,7 @@ export interface SummaryProps {
   accountId: string;
   setPageAccountName?: (state: string) => void;
   editable?: boolean;
+  isDodsUser?: boolean;
   setRefetchSeats?: (refetch: boolean) => void;
 }
 
@@ -44,6 +44,7 @@ const Summary: React.FC<SummaryProps> = ({
   accountId,
   setPageAccountName,
   editable = true,
+  isDodsUser = true,
   setRefetchSeats,
 }) => {
   const router = useRouter();
@@ -408,18 +409,22 @@ const Summary: React.FC<SummaryProps> = ({
                     </div>
                   </Styled.sumAccountContentGrid>
                   <Spacer size={8} />
-                  <Styled.sumAccountContentNotes>
-                    <Text type="body" bold={true}>
-                      Account Notes
-                    </Text>
-                    <Text>{accountNotes}</Text>
-                  </Styled.sumAccountContentNotes>
-                  <Styled.sumUUIDContainer>
-                    <Text type="body" bold={true}>
-                      UUID
-                    </Text>
-                    <Text>{accountId}</Text>
-                  </Styled.sumUUIDContainer>
+                  {isDodsUser && (
+                    <Styled.sumAccountContentNotes>
+                      <Text type="body" bold={true}>
+                        Account Notes
+                      </Text>
+                      <Text>{accountNotes}</Text>
+                    </Styled.sumAccountContentNotes>
+                  )}
+                  {isDodsUser && (
+                    <Styled.sumUUIDContainer>
+                      <Text type="body" bold={true}>
+                        UUID
+                      </Text>
+                      <Text>{accountId}</Text>
+                    </Styled.sumUUIDContainer>
+                  )}
                 </Styled.sumAccountContentDetails>
                 {editable ? (
                   <IconButton

@@ -87,6 +87,7 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
             setLoading={setLoading}
             accountId={accountId}
             editable={user?.isDodsUser}
+            isDodsUser={user?.isDodsUser}
             setPageAccountName={setPageAccountName}
             setRefetchSeats={setRefetchSeats}
           />
