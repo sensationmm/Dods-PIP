@@ -134,6 +134,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           setValidInfoTypes(getInformationTypes({ contentSource, informationType }));
           setFieldData(fieldData);
           global.localStorage.setItem(EDITORIAL_STORAGE_KEY, JSON.stringify(fieldData));
+          setIsValidForm(true);
+          window.scrollTo(0, 0);
         } else {
           setLoading(false);
           addNotification({
