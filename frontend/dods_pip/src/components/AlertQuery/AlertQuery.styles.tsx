@@ -12,7 +12,7 @@ export const wrapper = styled.div`
 
 export const box = styled.div`
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 180px 1fr;
   grid-column-gap: ${spacing(2)};
   background: ${color.base.white};
   border-radius: 8px;

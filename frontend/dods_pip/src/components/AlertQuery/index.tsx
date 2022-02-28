@@ -2,14 +2,16 @@ import color from '@dods-ui/globals/color';
 import { DropdownValue } from '@dods-ui/pages/account-management/add-client/type';
 import loadAccounts from '@dods-ui/pages/accounts/load-accounts';
 import { Alert } from '@dods-ui/pages/collections/[uuid]/alerts/alert-setup';
-import ContentSources from '@dods-ui/pages/collections/content-sources.json';
 import { Collection } from '@dods-ui/pages/collections/index.page';
 import InformationTypes from '@dods-ui/pages/collections/information-types.json';
 import loadAlerts from '@dods-ui/pages/collections/load-alerts';
 import loadCollections from '@dods-ui/pages/collections/load-collections';
+import ContentSources from '@dods-ui/utils/contentSources.json';
+import getContentSources from '@dods-ui/utils/getContentSources';
 import validateField from '@dods-ui/utils/validateField';
 import React from 'react';
 
+import Checkbox from '../_form/Checkbox';
 import SearchDropdown from '../_form/SearchDropdown';
 import { SelectProps } from '../_form/Select';
 import TextArea from '../_form/TextArea';
@@ -103,7 +105,12 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const [loadingCollections, setLoadingCollections] = React.useState<boolean>(false);
   const [loadingAlerts, setLoadingAlerts] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Errors>({});
-  const [tagsHelper, setTagsHelper] = React.useState('');
+  const [tagsHelper, setTagsHelper] = React.useState<string>('');
+
+  const [sourceAddUK, setSourceAddUK] = React.useState<boolean>(false);
+  const [sourceAddEU, setSourceAddEU] = React.useState<boolean>(false);
+  const [infoTypeAddUK, setInfoTypeAddUK] = React.useState<boolean>(false);
+  const [infoTypeAddEU, setInfoTypeAddEU] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const existingTerms = terms;
@@ -177,6 +184,68 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   React.useEffect(() => {
     setIsEdit(edit);
   }, [edit]);
+
+  React.useEffect(() => {
+    if (sourceAddUK) {
+      const addSources: DropdownValue[] = [];
+      ContentSources.ukContentSources.forEach((item) => {
+        addSources.push({
+          value: item.contentSource,
+          label: item.contentSource,
+        });
+      });
+      setSources(sources.concat(addSources));
+    }
+  }, [sourceAddUK]);
+
+  React.useEffect(() => {
+    if (sourceAddEU) {
+      const addSources: DropdownValue[] = [];
+      ContentSources.euContentSoruces.forEach((item) => {
+        addSources.push({
+          value: item.contentSource,
+          label: item.contentSource,
+        });
+      });
+      setSources(sources.concat(addSources));
+    }
+  }, [sourceAddEU]);
+
+  React.useEffect(() => {
+    if (infoTypeAddUK) {
+      const addTypeList: string[] = [];
+      ContentSources.ukContentSources.forEach((source) => {
+        source.informationTypes.forEach((type) => {
+          if (
+            addTypeList.indexOf(type) === -1 &&
+            infoTypes.findIndex((ex) => ex.value === type) === -1
+          ) {
+            addTypeList.push(type);
+          }
+        });
+      });
+      const addTypes = addTypeList.map((type) => ({ value: type, label: type }));
+      setInfoTypes(infoTypes.concat(addTypes));
+    }
+  }, [infoTypeAddUK]);
+
+  React.useEffect(() => {
+    if (infoTypeAddEU) {
+      const addTypeList: string[] = [];
+      ContentSources.euContentSoruces.forEach((source) => {
+        source.informationTypes.forEach((type) => {
+          if (
+            addTypeList.indexOf(type) === -1 &&
+            infoTypes.findIndex((ex) => ex.value === type) === -1
+          ) {
+            addTypeList.push(type);
+          }
+        });
+      });
+      const addTypes = addTypeList.map((type) => ({ value: type, label: type }));
+      setInfoTypes(infoTypes.concat(addTypes));
+    }
+  }, [infoTypeAddEU]);
 
   const formatLabels = (selectedLabels: DropdownValue[]) => {
     const final: Array<JSX.Element> = [];
@@ -298,10 +367,35 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const isComplete = sources.length > 0 && infoTypes.length > 0 && terms !== '';
   const isCopyComplete = copyAccount !== '' && copyCollection !== '' && copyAlert !== '';
 
+  const quickAdd = (
+    id: string,
+    ukSelected: boolean,
+    euSelected: boolean,
+    setUK: (val: boolean) => void,
+    setEU: (val: boolean) => void,
+  ) => (
+    <>
+      <Spacer size={3} />
+      {!ukSelected && (
+        <>
+          <Checkbox id={`${id}-uk`} label="Add All UK" isChecked={ukSelected} onChange={setUK} />
+          <Spacer size={1} />
+        </>
+      )}
+      {!euSelected && (
+        <Checkbox id={`${id}-eu`} label="Add All EU" isChecked={euSelected} onChange={setEU} />
+      )}
+    </>
+  );
+
   return (
     <Styled.wrapper data-test="component-alert-query">
       <Styled.box>
-        <Text bold>Source:</Text>
+        <div>
+          <Text bold>Source:</Text>
+          {(!isDone || isEdit) &&
+            quickAdd('source', sourceAddUK, sourceAddEU, setSourceAddUK, setSourceAddEU)}
+        </div>
         {!isDone || isEdit ? (
           <TagSelector
             id="select-sources"
@@ -309,11 +403,12 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
             title="Added to selection"
             onChange={(vals) => setSources(vals as DropdownValue[])}
             placeholder="Search and add source"
-            values={ContentSources.map((item) => ({
-              label: item.label,
-              value: item.id,
+            values={getContentSources().map((item) => ({
+              label: item,
+              value: item,
             }))}
             selectedValues={sources}
+            isFilter
           />
         ) : (
           <Styled.formattedLabels>{formatLabels(sources)}</Styled.formattedLabels>
@@ -323,7 +418,11 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
       <Spacer size={2} />
 
       <Styled.box>
-        <Text bold>Information type:</Text>
+        <div>
+          <Text bold>Information type:</Text>
+          {(!isDone || isEdit) &&
+            quickAdd('infoType', infoTypeAddUK, infoTypeAddEU, setInfoTypeAddUK, setInfoTypeAddEU)}
+        </div>
         {!isDone || isEdit ? (
           <TagSelector
             id="select-infoTypes"
@@ -331,11 +430,12 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
             title="Added to selection"
             onChange={(vals) => setInfoTypes(vals as DropdownValue[])}
             placeholder="Search and add source"
-            values={InformationTypes.map((item) => ({
+            values={InformationTypes.sort((a, b) => (a.label > b.label ? 1 : -1)).map((item) => ({
               label: item.label,
-              value: item.id,
+              value: item.label,
             }))}
             selectedValues={infoTypes}
+            isFilter
           />
         ) : (
           <Styled.formattedLabels>{formatLabels(infoTypes)}</Styled.formattedLabels>
