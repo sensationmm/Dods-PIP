@@ -358,7 +358,7 @@ pipelines:
            - docker build -t ${DEST}:latest .
            # Run actual deployment steps giving an option for custom definitions
            # Push to ECR
-           - aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin public.ecr.aws/dods-cicd
+           - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/dods-cicd
            - docker push $DEST
 
     storybook-deployment:
