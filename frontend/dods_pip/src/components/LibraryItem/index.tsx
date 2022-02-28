@@ -36,7 +36,7 @@ const LibraryItem: React.FC<LibraryItemProps> = ({
   contentSource,
 }) => {
   const formattedTime =
-    contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' hh:mm");
+    contentDateTime && format(new Date(contentDateTime), "d MMMM yyyy 'at' HH:mm");
 
   return (
     <Styled.searchResult data-test="library-item">
