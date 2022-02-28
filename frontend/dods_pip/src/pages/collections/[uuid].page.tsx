@@ -256,17 +256,19 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
                     </Text>
                     <Badge number={totalAlerts} label="Alerts" size="small" />
                   </Styled.alertsHeaderTitle>
-                  <Button
-                    isSmall
-                    type="secondary"
-                    label="Add Alert"
-                    icon={Icons.Add}
-                    iconAlignment="right"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/collections/${collectionId}/alerts/create`);
-                    }}
-                  />
+                  {user?.isDodsUser && (
+                    <Button
+                      isSmall
+                      type="secondary"
+                      label="Add Alert"
+                      icon={Icons.Add}
+                      iconAlignment="right"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/collections/${collectionId}/alerts/create`);
+                      }}
+                    />
+                  )}
                 </Styled.alertsHeader>
               }
               isOpen
@@ -286,17 +288,19 @@ export const CollectionDetails: React.FC<CollectionDetailsProps> = ({
               ) : (
                 <Styled.noAlertsMessage>
                   <Text color={color.base.grey}>No alert has been added</Text>
-                  <Button
-                    isSmall
-                    type="text"
-                    label="Add Alert"
-                    icon={Icons.Add}
-                    iconAlignment="right"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/collections/${collectionId}/alerts/create`);
-                    }}
-                  />
+                  {user?.isDodsUser && (
+                    <Button
+                      isSmall
+                      type="text"
+                      label="Add Alert"
+                      icon={Icons.Add}
+                      iconAlignment="right"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/collections/${collectionId}/alerts/create`);
+                      }}
+                    />
+                  )}
                 </Styled.noAlertsMessage>
               )}
               <Spacer size={8} />
