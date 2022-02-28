@@ -356,7 +356,7 @@ pipelines:
            - VERSION=$(cat version)
            - export DEST="public.ecr.aws/dods-cicd/${IMAGE}:${VERSION}"
            - echo "Running deployment for image $IMAGE to environment ${ENVIRONMENT^^} $DEST"
-           - docker build -t ${DEST}: .
+           - docker build -t ${DEST} .
            # Run actual deployment steps giving an option for custom definitions
            # Push to ECR
            - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/dods-cicd
