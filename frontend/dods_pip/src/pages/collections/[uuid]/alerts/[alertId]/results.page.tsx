@@ -71,12 +71,12 @@ export const AlertResults: React.FC<AlertResultsProps> = ({
   return (
     <div data-test="page-people">
       <Head>
-        <title>Dods | Alert Query Results</title>
+        <title>Dods | Alert Results</title>
       </Head>
 
       <main>
         <PageHeader
-          title={`Alert Query Results`}
+          title={`Alert Results`}
           breadcrumbs={
             <Breadcrumbs
               history={[
@@ -100,8 +100,6 @@ export const AlertResults: React.FC<AlertResultsProps> = ({
               <Spacer size={5} />
             </>
           )}
-
-          <Spacer size={5} />
 
           {results.length === 0 ? (
             <Text>No results to show</Text>

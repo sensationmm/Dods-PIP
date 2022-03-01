@@ -82,6 +82,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   isDisabled = false,
   hideButtons = false,
 }) => {
+  const firstRun = React.useRef(true);
   const [sources, setSources] = React.useState<DropdownValue[]>(source || []);
   const [infoTypes, setInfoTypes] = React.useState<DropdownValue[]>(informationType || []);
   const [terms, setTerms] = React.useState<string>(searchTerms !== '' ? searchTerms : '');
@@ -106,11 +107,22 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
   const [loadingAlerts, setLoadingAlerts] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Errors>({});
   const [tagsHelper, setTagsHelper] = React.useState<string>('');
-
+  const [requiresSave, setRequiresSave] = React.useState<boolean>(false);
   const [sourceAddUK, setSourceAddUK] = React.useState<boolean>(false);
   const [sourceAddEU, setSourceAddEU] = React.useState<boolean>(false);
   const [infoTypeAddUK, setInfoTypeAddUK] = React.useState<boolean>(false);
   const [infoTypeAddEU, setInfoTypeAddEU] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+
+    if (!firstRun.current) {
+      setRequiresSave(true);
+    }
+  }, [sources, infoTypes, terms]);
 
   React.useEffect(() => {
     const existingTerms = terms;
@@ -560,10 +572,10 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
               />
               <Button
                 type="secondary"
-                label={typeof id !== 'number' ? 'Copy to' : 'Requires save'}
+                label={typeof id !== 'number' && !requiresSave ? 'Copy to' : 'Requires save'}
                 icon={Icons.Copy}
                 onClick={() => setShowCopy(true)}
-                disabled={typeof id === 'number' || isDisabled}
+                disabled={typeof id === 'number' || requiresSave || isDisabled}
               />
               <Button
                 type="secondary"
@@ -573,10 +585,11 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
                 disabled={isDisabled}
               />
               <Button
-                label="View Results"
+                label={requiresSave ? 'Requires Save' : 'View Results'}
                 icon={Icons.ChevronRightBold}
                 iconAlignment="right"
                 onClick={onViewResults}
+                disabled={requiresSave || isDisabled}
               />
             </Styled.actions>
           )}

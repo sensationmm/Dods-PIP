@@ -75,7 +75,7 @@ export type AlertStepProps = {
   setAlert: AlertSetupProps['setAlert'];
   setActiveStep: (set: number) => void;
   createAlert?: () => Promise<void>;
-  editAlert?: (data: any) => Promise<void>;
+  editAlert?: (data: any, redirect?: boolean) => Promise<void>;
   disabled?: boolean;
 };
 
@@ -124,7 +124,7 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
     }
   };
 
-  const editAlert = async (data: any) => {
+  const editAlert = async (data: any, redirect = true) => {
     setLoading(true);
     let body: Partial<AlertSetupType> = {},
       urlSlug = '';
@@ -181,7 +181,11 @@ const AlertSetup: React.FC<AlertSetupProps> = ({
           : alert.recipients,
       };
       setAlert({ ...alert, ...(newAlert as any) });
-      activeStep < 4 ? setActiveStep(activeStep + 1) : router.push(`/collections/${collectionId}`);
+      if (redirect) {
+        activeStep < 4
+          ? setActiveStep(activeStep + 1)
+          : router.push(`/collections/${collectionId}`);
+      }
       setLoading(false);
     } catch (e) {
       console.log(e);
