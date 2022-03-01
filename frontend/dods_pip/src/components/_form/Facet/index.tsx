@@ -71,10 +71,6 @@ const Facet: React.FC<FacetProps> = ({
     );
   }, [viewMore, sortedRecords]);
 
-  const searchHandler = (val: string) => {
-    setSearchText(val);
-  };
-
   return (
     <Styled.facet data-test="component-facet">
       <Styled.facetLayout data-test="component-facet-layout">
@@ -132,7 +128,9 @@ const Facet: React.FC<FacetProps> = ({
                   size="medium"
                   id={`search-${title}`}
                   value={searchText}
-                  onChange={searchHandler}
+                  onChange={(val) => {
+                    setSearchText(val);
+                  }}
                   onClear={() => {
                     setSearchText('');
                     setViewResults(false);
