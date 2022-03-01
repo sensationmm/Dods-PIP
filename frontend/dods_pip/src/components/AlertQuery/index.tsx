@@ -37,7 +37,7 @@ export interface AlertQueryProps {
 
 export type Operators = 'OR' | 'AND' | 'NOT';
 
-type TagTreeKeys = 'Organisations' | 'People' | 'Topics' | 'Geographies';
+type TagTreeKeys = 'Organisations' | 'People' | 'Topics' | 'Geography';
 
 export interface AlertQueryScreenProps extends AlertQueryProps {
   onSave: (query: AlertQueryProps) => void;
@@ -158,7 +158,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
         Organisations: [] as TagsData[],
         Topics: [] as TagsData[],
         People: [] as TagsData[],
-        Geographies: [] as TagsData[],
+        Geography: [] as TagsData[],
       };
       tags.forEach((tag: TagsData) => {
         groupedTags[tag.type as TagTreeKeys].push(tag as TagsData);
@@ -312,7 +312,7 @@ const AlertQuery: React.FC<AlertQueryScreenProps> = ({
           </Text>,
         );
       } else if (
-        ['topics', 'geographies', 'organisations', 'people', 'keywords'].indexOf(
+        ['topics', 'geography', 'organisations', 'people', 'keywords'].indexOf(
           term.substring(0, term.indexOf('(')),
         ) > -1
       ) {

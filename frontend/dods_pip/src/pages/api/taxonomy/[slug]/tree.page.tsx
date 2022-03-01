@@ -3,11 +3,6 @@ import withSession from '../../../../lib/session';
 import { Api } from '../../../../utils/api';
 import { resultTypes } from '../[...search].page';
 
-// @TODO remove once correct in API
-interface newResultTypes extends resultTypes {
-  Geography?: resultTypes['Geographies'];
-}
-
 export default withSession(async (req, res) => {
   const { slug } = req.query;
   try {
@@ -23,13 +18,7 @@ export default withSession(async (req, res) => {
         },
       },
       req,
-    )) as newResultTypes;
-
-    // @TODO remove once correct in API
-    if (result.hasOwnProperty('Geography')) {
-      result.Geographies = result.Geography;
-      delete result.Geography;
-    }
+    )) as resultTypes;
 
     res.json(result);
   } catch (error) {

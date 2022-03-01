@@ -38,13 +38,13 @@ export type TagsData = {
   score?: number;
 };
 
-type TagTreeDataType = 'people' | 'organisations' | 'topics' | 'geographies';
+type TagTreeDataType = 'people' | 'organisations' | 'topics' | 'geography';
 
 type TagTreeData = {
   people: TagsData[];
   organisations: TagsData[];
   topics: TagsData[];
-  geographies: TagsData[];
+  geography: TagsData[];
 };
 
 type TagsSearchDataItem = {
@@ -56,12 +56,12 @@ type TagSearchData = {
   people: TagsSearchDataItem;
   organisations: TagsSearchDataItem;
   topics: TagsSearchDataItem;
-  geographies: TagsSearchDataItem;
+  geography: TagsSearchDataItem;
 };
 
 export const tagTypes = [
   { id: 0, label: 'Topics' },
-  { id: 1, label: 'Geographies' },
+  { id: 1, label: 'Geography' },
   { id: 2, label: 'Organisations' },
   { id: 3, label: 'People' },
 ];

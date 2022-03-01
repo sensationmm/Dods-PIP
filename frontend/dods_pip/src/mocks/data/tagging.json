@@ -1,5 +1,5 @@
 {
-  "Geographies": [
+  "Geography": [
     {
       "termName":"A top level term",
       "id":"123445e6e",
@@ -15132,6 +15132,6 @@
     { "id": "http://www.dods.co.uk/taxonomy/instance/concept/529", "termName": "copyright", "type": "topics", "instances": 2},
     { "id": "http://www.dods.co.uk/taxonomy/instance/Topics/766ae897-849a-4018-ade1-3df2981e28aa", "termName": "accession", "type":"topics", "instances": 2},
     { "id": "http://www.dods.co.uk/taxonomy/instance/concept/09304fe8-824b-4563-80ff-a71cc30f079d", "termName": "Soft drinks industry levy", "type":"topics", "instances": 10},
-    { "id": "86sfgdgdfhjk786", "termName": "A third level term", "type": "geographies", "instances": 9}
+    { "id": "86sfgdgdfhjk786", "termName": "A third level term", "type": "geography", "instances": 9}
   ]
 }
