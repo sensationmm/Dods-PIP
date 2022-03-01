@@ -208,6 +208,7 @@ export const Library: React.FC<ILibraryProps> = ({
                 value,
               });
             }}
+            onSearch={true}
           />
           <Facet
             title={'Information Type'}
@@ -223,6 +224,7 @@ export const Library: React.FC<ILibraryProps> = ({
                 value,
               });
             }}
+            onSearch={true}
           />
           <Facet
             title={'Originator'}
@@ -238,6 +240,7 @@ export const Library: React.FC<ILibraryProps> = ({
                 value,
               });
             }}
+            onSearch={true}
           />
           <Facet
             title={'Topics'}
@@ -254,6 +257,7 @@ export const Library: React.FC<ILibraryProps> = ({
                 value,
               });
             }}
+            onSearch={true}
           />
           <Facet
             title={'Organisations'}
@@ -270,6 +274,7 @@ export const Library: React.FC<ILibraryProps> = ({
                 value,
               });
             }}
+            onSearch={true}
           />
           <Facet
             title={'People'}
@@ -286,6 +291,7 @@ export const Library: React.FC<ILibraryProps> = ({
                 value,
               });
             }}
+            onSearch={true}
           />
           <Facet
             title={'Geography'}
@@ -302,6 +308,7 @@ export const Library: React.FC<ILibraryProps> = ({
                 value,
               });
             }}
+            onSearch={true}
           />
         </Styled.filtersContent>
       </FacetContainer>
