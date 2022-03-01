@@ -4,6 +4,7 @@ import { getClientAccountTeamMembers } from './getClientAccountTeamMembers';
 
 export const handle = buildLambdaFunction(getClientAccountTeamMembers, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
+    validateSecurity: true
 });

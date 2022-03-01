@@ -4,6 +4,7 @@ import { getSubscriptionTypes } from './getSubscriptionTypes';
 
 export const handle = buildLambdaFunction(getSubscriptionTypes, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
+    validateSecurity: true
 });

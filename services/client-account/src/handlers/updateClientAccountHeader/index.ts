@@ -6,4 +6,5 @@ export const handle = buildLambdaFunction(updateClientAccountHeader, {
     openApiDocumentPath: config.openApiPath,
     validateRequests: true,
     validateResponses: false,
+    validateSecurity: true
 });
