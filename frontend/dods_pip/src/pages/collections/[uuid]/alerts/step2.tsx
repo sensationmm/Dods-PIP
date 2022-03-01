@@ -36,8 +36,8 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
     edit: false,
   } as Omit<AlertQueryProps, 'id' | 'numQueries'>;
 
-  const [queries, setQueries] = React.useState<AlertQueryProps[]>(
-    alert.queries && alert.queries.length > 0
+  const formatQueries = () => {
+    return alert.queries && alert.queries.length > 0
       ? (alert.queries as AlertResultProps[]).map(
           (query: AlertResultProps) =>
             ({
@@ -58,8 +58,10 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
             id: `aaaa${Date.now()}`,
             ...query,
           },
-        ],
-  );
+        ];
+  };
+
+  const [queries, setQueries] = React.useState<AlertQueryProps[]>(formatQueries());
   const firstRun = React.useRef(true);
   const [adding, setAdding] = React.useState<boolean>(!alert.queries || alert.queries.length === 0);
   const [changed, setChanged] = React.useState<boolean>(false);
@@ -74,6 +76,15 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
       setChanged(true);
     }
   }, [numQueries]);
+
+  React.useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    } else {
+      setQueries(formatQueries());
+    }
+  }, [alert.queries]);
 
   const addQuery = () => {
     setChanged(true);
@@ -195,6 +206,7 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
           onCopyQuery={copyQuery}
           isDisabled={adding}
           hideButtons={disabled}
+          // saved={!changed}
         />,
         <Spacer key={`spacer-${query.id}`} size={6} />,
       ])}
@@ -219,6 +231,16 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
               onClick={() => (!changed ? setActiveStep(3) : editAlert && editAlert(queries))}
               disabled={adding || queries.length === 0}
             />
+            {changed && !adding && (
+              <Button
+                type="text"
+                label="Save"
+                onClick={() => {
+                  editAlert?.(queries, false);
+                  setChanged(false);
+                }}
+              />
+            )}
           </Styled.actions>
         </>
       )}

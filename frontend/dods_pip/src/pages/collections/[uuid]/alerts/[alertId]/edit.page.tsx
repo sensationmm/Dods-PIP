@@ -56,7 +56,6 @@ export const EditAlert: React.FC<EditAlertProps> = ({ setLoading, addNotificatio
           (alert.collection as Partial<Collection>).clientAccount as Partial<ClientAccount>
         ).name,
         queries: queries,
-        // recipients: (recipients as UserAccount[]).map((recipient: UserAccount) => ({
         recipients: (recipients as any).map((recipient: UserAccount) => ({
           label: recipient.name,
           value: recipient.uuid,
