@@ -23,7 +23,7 @@ export interface CustomResponse extends Response, UserResponse {
   people: Record<string, unknown>;
   organisations: Record<string, unknown>;
   topics: Record<string, unknown>;
-  geographies: Record<string, unknown>;
+  geography: Record<string, unknown>;
   isActive?: boolean;
   isLoggedIn?: boolean;
   query?: Record<string, unknown>;

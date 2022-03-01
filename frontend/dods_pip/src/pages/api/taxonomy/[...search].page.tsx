@@ -3,7 +3,7 @@ import withSession from '../../../lib/session';
 import { Api } from '../../../utils/api';
 
 export type resultTypes = {
-  Geographies?: Record<string, unknown>;
+  Geography?: Record<string, unknown>;
   Topics?: Record<string, unknown>;
   People?: Record<string, unknown>;
   Organisations?: Record<string, unknown>;
@@ -26,10 +26,7 @@ export default withSession(async (req, res) => {
     const transformedResult: resultTypes = {};
     Array.isArray(result) &&
       result.forEach((result) => {
-        const label =
-          result.taxonomy != 'Grographies' && result.taxonomy != 'Geography'
-            ? result.taxonomy
-            : 'Geographies';
+        const label = result.taxonomy;
         delete result.taxonomy;
 
         transformedResult[label as keyof resultTypes] = result;
