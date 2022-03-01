@@ -4,6 +4,7 @@ import { getRemainingSeats } from './getRemainingSeats';
 
 export const handle = buildLambdaFunction(getRemainingSeats, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
+    validateSecurity: true,
 });

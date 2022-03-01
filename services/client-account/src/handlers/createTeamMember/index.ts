@@ -4,6 +4,7 @@ import { createTeamMember } from './createTeamMember';
 
 export const handle = buildLambdaFunction(createTeamMember, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
+    validateSecurity: true
 });
