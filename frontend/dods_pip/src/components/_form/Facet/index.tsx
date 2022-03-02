@@ -1,4 +1,5 @@
 import Checkbox from '@dods-ui/components/_form/Checkbox';
+import Spacer from '@dods-ui/components/_layout/Spacer';
 import Chips from '@dods-ui/components/Chips';
 import color from '@dods-ui/globals/color';
 import React, { useMemo } from 'react';
@@ -6,6 +7,7 @@ import React, { useMemo } from 'react';
 import Icon, { IconSize } from '../../Icon';
 import { Icons } from '../../Icon/assets';
 import Text from '../../Text';
+import InputSearch from '../InputSearch';
 import * as Styled from './Facet.styles';
 
 export interface FacetProps {
@@ -18,13 +20,22 @@ export interface FacetProps {
   onClearSelection?: () => void;
   onChange: (key: string) => void;
   checked?: never[];
+  onSearch?: boolean;
 }
 
 const defaultVisibleRecords = 5;
 
-const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], onChange }) => {
+const Facet: React.FC<FacetProps> = ({
+  title,
+  onClearSelection,
+  records = [],
+  onChange,
+  onSearch = false,
+}) => {
   const [expanded, setExpanded] = React.useState(true);
   const [viewMore, setViewMore] = React.useState(false);
+  const [searchText, setSearchText] = React.useState('');
+  const [viewResults, setViewResults] = React.useState(false);
   const expandedIcon = expanded ? Icons.ChevronDownBold : Icons.ChevronRightBold;
   const viewMoreIcon = viewMore ? Icons.ChevronRightBold : Icons.ChevronDownBold;
 
@@ -102,19 +113,61 @@ const Facet: React.FC<FacetProps> = ({ title, onClearSelection, records = [], on
         )}
         {expanded && recordsToShow.length > 0 && (
           <Styled.facetCollapsiblePanel>
-            {recordsToShow.map(({ key, doc_count, selected }, i: number) => {
-              return (
-                <Checkbox
-                  label={key}
-                  hint={doc_count}
-                  id={`content-source-${i}`}
-                  key={`content-source-${i}`}
-                  isChecked={selected || false}
-                  onChange={() => onChange(key)}
+            {onSearch && (
+              <>
+                <InputSearch
+                  onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                    console.log(e.key);
+                    if (e.key !== 'Shift') {
+                      setViewResults(true);
+                    }
+                    if (e.key === 'Backspace' && searchText.length < 2) {
+                      setViewResults(false);
+                    }
+                  }}
+                  size="medium"
+                  id={`search-${title}`}
+                  value={searchText}
+                  onChange={(val) => {
+                    setSearchText(val);
+                  }}
+                  onClear={() => {
+                    setSearchText('');
+                    setViewResults(false);
+                  }}
                 />
-              );
-            })}
-            {renderShowMore}
+                <Spacer size={5} />
+              </>
+            )}
+            {viewResults &&
+              sortedRecords
+                .filter(({ key }) => key.includes(searchText))
+                .map(({ key, doc_count, selected }, i: number) => {
+                  return (
+                    <Checkbox
+                      label={key}
+                      hint={doc_count}
+                      id={`content-source-${i}`}
+                      key={`content-source-${i}`}
+                      isChecked={selected || false}
+                      onChange={() => onChange(key)}
+                    />
+                  );
+                })}
+            {!viewResults &&
+              recordsToShow.map(({ key, doc_count, selected }, i: number) => {
+                return (
+                  <Checkbox
+                    label={key}
+                    hint={doc_count}
+                    id={`content-source-${i}`}
+                    key={`content-source-${i}`}
+                    isChecked={selected || false}
+                    onChange={() => onChange(key)}
+                  />
+                );
+              })}
+            {!viewResults && renderShowMore}
           </Styled.facetCollapsiblePanel>
         )}
       </Styled.facetLayout>
