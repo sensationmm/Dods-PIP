@@ -25,6 +25,8 @@ paths:
 
     /clientaccount/{clientAccountId}:
         get:
+            security:
+                - bearerAuth: []
             operationId: getClientAccount
             summary: 'Get Client Account'
             description: 'Get Client Account'
@@ -40,6 +42,8 @@ paths:
 
     /clientaccount:
         get:
+            security:
+                - bearerAuth: []
             operationId: searchClientAccount
             summary: 'Search Client Accounts'
             description: 'Search Client Accounts'
@@ -61,6 +65,8 @@ paths:
                 '404':
                     $ref: '#/components/responses/NotFound'
         post:
+            security:
+                - bearerAuth: []
             operationId: createClientAccount
             summary: 'Create Client Account'
             description: 'Create Client Account'
@@ -83,6 +89,8 @@ paths:
 
     /clientaccount/{clientAccountId}/seats:
         get:
+            security:
+                - bearerAuth: []
             operationId: getRemainingSeats
             summary: 'Get Remaining Seats'
             description: 'Get Client Account'
@@ -98,6 +106,8 @@ paths:
 
     /subscription-types:
         get:
+            security:
+                - bearerAuth: []
             operationId: getSubscriptionTypes
             summary: 'Get Subscription Types list'
             description: 'Get Subscription Types list'
@@ -111,6 +121,8 @@ paths:
 
     /clientaccount/{clientAccountId}/teammember:
         get:
+            security:
+                - bearerAuth: []
             operationId: getClientAccountTeamMembers
             summary: 'Get Team Members from Client Account'
             description: 'Add Team Member to Client Account'
@@ -122,6 +134,8 @@ paths:
                 '400':
                     $ref: '#/components/responses/BadRequest'
         put:
+            security:
+                - bearerAuth: []
             operationId: addTeamMemberToClientAccount
             summary: 'Add Team Member to Client Account'
             description: 'Add Team Member to Client Account'
@@ -135,6 +149,8 @@ paths:
                 '400':
                     $ref: '#/components/responses/BadRequest'
         delete:
+            security:
+                - bearerAuth: []
             operationId: removeTeamMember
             summary: 'Remove Team Member'
             description: 'Remove Team Member'
@@ -150,6 +166,8 @@ paths:
 
     /clientaccount/{clientAccountId}/teammember/new:
         post:
+            security:
+                - bearerAuth: []
             operationId: createTeamMember
             summary: 'Add Team Member to Client Account'
             description: 'Add Team Member to Client Account'
@@ -165,6 +183,8 @@ paths:
 
     /clientaccount/{clientAccountId}/subscription:
         put:
+            security:
+                - bearerAuth: []
             operationId: updateClientAccount
             summary: 'UpdateClient Account'
             description: 'Update Client Account'
@@ -182,6 +202,8 @@ paths:
 
     /checkaccountname:
         post:
+            security:
+                - bearerAuth: []
             operationId: checkClientAccountName
             summary: 'Checks if there is an account with the specified name.'
             description: 'Checks if there is an account with the specified name.'
@@ -195,6 +217,8 @@ paths:
                     
     /clientaccount/{clientAccountId}/header:
         put:
+            security:
+                - bearerAuth: []
             operationId: updateClientAccountHeader
             summary: 'Update ClientAccount Header'
             description: 'Update Client Account Header first step'
@@ -211,6 +235,13 @@ paths:
                     $ref: '#/components/responses/NameInvalid'
 
 components:
+
+    securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+
     schemas:
         InvalidName:
             type: object
