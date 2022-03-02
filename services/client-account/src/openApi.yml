@@ -498,14 +498,14 @@ components:
                     example: 10
                 contractStartDate:
                     type: string
-                    format: date-time
-                    example: '2000-01-01T01:01:01.001Z'
+                    format: date
+                    example: '2000-01-01'
                 contractRollover:
                     type: boolean
                 contractEndDate:
                     type: string
-                    format: date-time
-                    example: '2000-01-01T01:01:01.001Z'
+                    format: date
+                    example: '2000-01-01'
                 isUK:
                     type: boolean
                     example: true
