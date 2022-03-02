@@ -29,7 +29,7 @@ export interface WysiwygEditorProps {
   readOnly?: boolean;
   toolbarConfig?: [];
   onTextChange: (value: string) => void;
-  onSelection?: (selection: ContentSelection) => void;
+  onSelection?: (selection: ContentSelection | undefined) => void;
   savedContent?: string;
   tags?: ContentTag[];
 }
@@ -104,6 +104,8 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
             text: selectedText,
             occurrences: matches.length,
           });
+        } else {
+          onSelection(undefined);
         }
       });
 

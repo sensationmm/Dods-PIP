@@ -82,12 +82,14 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
     }));
   };
 
-  const onEditorTextSelection = (params: TextSelection) => {
-    const text = params.text.trim();
-    if (text.length > 0) {
-      setSelectedText(params.text);
-      setSelectedTextOccurrences(params.occurrences);
-      return;
+  const onEditorTextSelection = (params: TextSelection | undefined) => {
+    if (params) {
+      const text = params.text.trim();
+      if (text.length > 0) {
+        setSelectedText(params.text);
+        setSelectedTextOccurrences(params.occurrences);
+        return;
+      }
     }
     setSelectedText(undefined);
     setSelectedTextOccurrences(undefined);
