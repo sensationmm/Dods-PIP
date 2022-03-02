@@ -141,7 +141,9 @@ const Facet: React.FC<FacetProps> = ({
             )}
             {viewResults &&
               sortedRecords
-                .filter(({ key }) => key.includes(searchText))
+                .filter(({ key }) =>
+                  key.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
+                )
                 .map(({ key, doc_count, selected }, i: number) => {
                   return (
                     <Checkbox
