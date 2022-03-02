@@ -399,7 +399,7 @@ const Subscription: React.FC<SubscriptionProps> = ({
             label="Assign a start date"
             required
             value={startDate}
-            minDate={format(new Date(), DateFormat.API).toString()}
+            // minDate={format(new Date(), DateFormat.API).toString()}
             onChange={(val) => {
               setPristine(false);
               setStartDate(val);
