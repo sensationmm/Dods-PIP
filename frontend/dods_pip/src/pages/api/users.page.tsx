@@ -8,9 +8,13 @@ export default withSession(async (req, res) => {
   if (method === 'GET') {
     try {
       const queryString = toQueryString(req.query);
-      const result = await fetchJson(`${process.env.APP_API_URL}${Api.Users}${queryString}`, {
-        method,
-      });
+      const result = await fetchJson(
+        `${process.env.APP_API_URL}${Api.Users}${queryString}`,
+        {
+          method,
+        },
+        req,
+      );
       res.json(result);
     } catch (error) {
       const { response: fetchResponse } = error;

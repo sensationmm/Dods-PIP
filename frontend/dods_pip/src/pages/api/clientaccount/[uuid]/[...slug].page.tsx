@@ -38,6 +38,7 @@ export default withSession(async (req, res) => {
           method,
           body: JSON.stringify(req.body),
         },
+        req,
       );
 
       res.json(response);

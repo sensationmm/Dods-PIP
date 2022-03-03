@@ -14,6 +14,7 @@ export default withSession(async (req, res) => {
           cron,
         }),
       },
+      req,
     );
 
     res.json(result);
