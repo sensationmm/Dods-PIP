@@ -9,6 +9,8 @@ servers:
 paths:
   /user:
     get:
+      security:
+        - bearerAuth: []
       summary: List all User Profiles
       parameters:
         - $ref: "#/components/parameters/limit"
@@ -29,6 +31,8 @@ paths:
         "403":
           description: Does not have correct permissions
     post:
+      security:
+            - bearerAuth: []
       operationId: createUserProfile
       summary: Add new User Profile
       requestBody:
@@ -63,7 +67,17 @@ paths:
         required: true
         description: UUID of the User to get
     get:
+      security:
+        - bearerAuth: []
       summary: Get an User by UUID
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: UUID of the User to get
       operationId: getUser
       responses:
         "200":
@@ -81,7 +95,16 @@ paths:
         "404":
           description: Client Account not found
     put:
+      security:
+        - bearerAuth: []
       summary: Update User Profile
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
       requestBody:
         description: User Profile update
         required: true
@@ -113,6 +136,8 @@ paths:
         required: true
         description: Name or partial name to search by
     get:
+      security:
+        - bearerAuth: []
       summary: Get a User by name
       operationId: getUserByName
       responses:
@@ -132,6 +157,8 @@ paths:
           description: No Users found
   /users:
     get:
+      security:
+        - bearerAuth: []
       summary: Returns a list of users for a given first name and last name
       operationId: searchUsers
       parameters:
@@ -160,6 +187,8 @@ paths:
         "403":
           description: Does not have correct permissions
     post:
+      security:
+        - bearerAuth: []
       operationId: createUser
       summary: Add new User
       requestBody:
@@ -186,6 +215,8 @@ paths:
           description: an existing item already exists
   /role:
     get:
+      security:
+        - bearerAuth: []
       summary: List all Roles
       operationId: getRole
       parameters:
@@ -206,6 +237,8 @@ paths:
           
   /users/{userId}/client-accounts:
     get:
+      security:
+        - bearerAuth: []
       summary: Get Clients accounts related to a User
       operationId: getClientAccountsByUser
       parameters:
@@ -213,6 +246,7 @@ paths:
             name: userId
             schema:
               type: string
+              format: uuid
             required: true
             description: Name or partial name to search by
           - $ref: "#/components/parameters/limit"
@@ -250,6 +284,12 @@ paths:
           description: Does not have correct permissions
 
 components:
+
+  securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
   schemas:
     UserProfileBase:
       type: object

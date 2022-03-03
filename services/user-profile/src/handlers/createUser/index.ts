@@ -6,4 +6,5 @@ export const handle = buildLambdaFunction(createUser, {
     openApiDocumentPath: config.openApiPath,
     validateRequests: true,
     validateResponses: false,
+    validateSecurity: true
 });
