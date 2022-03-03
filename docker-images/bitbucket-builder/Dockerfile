@@ -27,10 +27,6 @@ RUN set -ex; \
    ; \
    rm -rf /var/lib/apt/lists/*;
 
-# The project will use Next.js so it makes sense to pre load it on the build image
-RUN set -ex; \
-   yarn add -g next react react-dom serverless
-
 RUN set -ex; \
    npm install npm@latest -g
 
@@ -110,6 +106,10 @@ RUN set -ex; \
    rm terraform-docs.tar.gz; \
    terraform-docs version \
    ;
+
+# Python goodies needed to build scrapers correctly
+RUN /bin/sh -c pip3 install setuptools wheel; \
+   pip3 install python-Levenshtein
 
 ENTRYPOINT [ "docker-entrypoint.sh" ]
 CMD ["node"]
