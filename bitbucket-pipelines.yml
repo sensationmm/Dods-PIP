@@ -101,7 +101,7 @@ pipelines:
       - step:
           name: "Scrapping: Test and Build"
           # image: gioatsomoglobal/devopstools:0.4.2
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.1.0
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           script:
             - 'echo "Running build for service: ${SERVICE}"'
             - cd scrapping/$SERVICE
@@ -298,7 +298,8 @@ pipelines:
           default: debates-hoc-uk
       - step:
           name: "Scrapping: Deploy to Environment"
-          image: gioatsomoglobal/devopstools:0.4.2
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
+          #image: gioatsomoglobal/devopstools:0.4.2
           script:
             - 'echo "Running deployment for scraper: ${SERVICE}"'
             - cd scrapping/$SERVICE
