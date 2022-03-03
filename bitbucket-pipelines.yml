@@ -196,7 +196,8 @@ pipelines:
           default: "dods_pip"
       - step:
           name: "Frontend: Build & Publish Container Image"
-          image: gioatsomoglobal/devopstools:0.4.5
+          # image: gioatsomoglobal/devopstools:0.4.5
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           services:
             - docker
@@ -229,7 +230,8 @@ pipelines:
           default: user-profile
       - step:
           name: "Backend Service: Deploy to Environment"
-          image: gioatsomoglobal/devopstools:0.4.6
+          # image: gioatsomoglobal/devopstools:0.4.6
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           services:
             - docker
@@ -385,7 +387,8 @@ pipelines:
     storybook-deployment:
       - step:
           name: Storybook deployment (dev)
-          image: gioatsomoglobal/devopstools:0.4.5
+          # image: gioatsomoglobal/devopstools:0.4.5
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           script:
             - cd ${FRONTEND_SRC}
