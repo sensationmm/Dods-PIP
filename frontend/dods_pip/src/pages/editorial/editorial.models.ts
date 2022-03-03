@@ -6,6 +6,7 @@ export type MetadataSelection = Record<metadataSelectionKey, { label: string; va
 export type EditorialRecord = {
   jurisdiction: string;
   contentSource: string;
+  contentDateTime: string;
   informationType: string;
   originator: string;
   documentTitle: string;
@@ -60,6 +61,7 @@ export type EditorialRecordPreviewResponse = {
     internallyCreated: string;
     schemaType: string;
     contentSource: string;
+    contentDateTime: string;
     originator: string;
     sourceReferenceUri?: string;
     informationType: string;

@@ -26,6 +26,7 @@ import getContentSources from '@dods-ui/utils/getContentSources';
 import getInformationTypes from '@dods-ui/utils/getInformationTypes';
 import getJurisdiction from '@dods-ui/utils/getJurisdiction';
 import useStateWithCallback from '@dods-ui/utils/useStateWithCallback';
+import { format } from 'date-fns';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -57,6 +58,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     sourceName: '',
     informationType: '',
     originator: '',
+    contentDateTime: format(new Date(), 'yyyy-MM-dd'),
   });
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
@@ -75,7 +77,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     setFieldData(updatedData);
     global.localStorage.setItem(EDITORIAL_STORAGE_KEY, JSON.stringify(updatedData));
 
-    const { title, sourceName, informationType, content } = updatedData;
+    const { title, sourceName, informationType, content, contentDateTime } = updatedData;
     setJurisdiction(getJurisdiction({ contentSource: sourceName }));
     setValidInfoTypes(getInformationTypes({ contentSource: sourceName, informationType }));
 
@@ -95,6 +97,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     if (Object.keys(errors).length) {
       setErrors(errors);
     }
+    if (!contentDateTime) {
+      Object.assign(errors, { contentDateTime });
+    }
 
     setIsValidForm(Object.keys(errors).length < 1);
   };
@@ -113,6 +118,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             documentContent,
             informationType,
             contentSource,
+            contentDateTime,
             originator,
             sourceReferenceUri,
             taxonomyTerms,
@@ -124,6 +130,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             sourceName: contentSource,
             sourceUrl: sourceReferenceUri || '',
             originator: originator,
+            contentDateTime: contentDateTime,
           };
           setSavedDocumentContent(
             documentContent,
@@ -194,7 +201,10 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     })();
 
     loadOriginators();
-    global.localStorage.removeItem(EDITORIAL_STORAGE_KEY); // clear any existing save
+    global.localStorage.setItem(
+      EDITORIAL_STORAGE_KEY,
+      JSON.stringify({ contentDateTime: fieldData.contentDateTime }),
+    ); // renitialise any existing save
   }, []);
 
   const onPublish = async (documentId: string) => {
@@ -216,12 +226,14 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     schedule = false,
     scheduleDate: Date | undefined = undefined,
   ) => {
-    const { title, sourceName, sourceUrl, informationType, content, originator } = fieldData;
+    const { title, sourceName, sourceUrl, informationType, content, originator, contentDateTime } =
+      fieldData;
     if (title?.length && sourceName?.length && informationType?.length && content?.length) {
       setLoading(true);
       await createRecord({
         jurisdiction: jurisdiction || '',
         contentSource: sourceName,
+        contentDateTime,
         originator: originator,
         informationType,
         documentTitle: title,
@@ -262,7 +274,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           }
         })
         .finally(() => {
-          setLoading(false);
+          if (!publish) {
+            setLoading(false);
+          }
         });
 
       return;
@@ -276,7 +290,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   };
 
   const onUpdate = async (publish = false, preview = false) => {
-    const { title, sourceName, sourceUrl, informationType, content, originator } = fieldData;
+    const { title, sourceName, sourceUrl, informationType, content, originator, contentDateTime } =
+      fieldData;
     if (
       articleId?.length &&
       title?.length &&
@@ -288,6 +303,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       await updateRecord(articleId[0], {
         jurisdiction: jurisdiction || '',
         contentSource: sourceName,
+        contentDateTime,
         informationType,
         originator: originator,
         documentTitle: title,
@@ -322,7 +338,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           }
         })
         .finally(() => {
-          setLoading(false);
+          if (!publish) {
+            setLoading(false);
+          }
         });
 
       return;
