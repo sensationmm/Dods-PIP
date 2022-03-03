@@ -108,8 +108,9 @@ RUN set -ex; \
    ;
 
 # Python goodies needed to build scrapers correctly
-RUN /bin/sh -c pip3 install setuptools wheel; \
-   pip3 install python-Levenshtein
+RUN /bin/sh -c pip3 install setuptools && \
+   /bin/sh -c pip3 install wheel && \
+   /bin/sh -c pip3 install python-Levenshtein
 
 ENTRYPOINT [ "docker-entrypoint.sh" ]
 CMD ["node"]
