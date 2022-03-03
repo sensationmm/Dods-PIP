@@ -1,4 +1,3 @@
-import Checkbox from '@dods-ui/components/_form/Checkbox';
 import InputSearch from '@dods-ui/components/_form/InputSearch';
 import Spacer from '@dods-ui/components/_layout/Spacer';
 import Avatar, { UserType } from '@dods-ui/components/Avatar';
@@ -10,6 +9,7 @@ import { Icons } from '@dods-ui/components/Icon/assets';
 import Modal from '@dods-ui/components/Modal';
 import TagSelector from '@dods-ui/components/TagSelector';
 import Text from '@dods-ui/components/Text';
+import color from '@dods-ui/globals/color';
 import fetchJson, { CustomResponse } from '@dods-ui/lib/fetchJson';
 import { DropdownValue } from '@dods-ui/pages/account-management/add-client/type';
 import { UserAccount } from '@dods-ui/pages/account-management/users.page';
@@ -40,24 +40,30 @@ const AlertStep3: React.FC<AlertStepProps> = ({
 
   const debounceSearchUsers = debounce(async (name: string) => {
     try {
-      const response = await fetchJson<CustomResponse>(
-        `${BASE_URI}${Api.Users}?name=${name}&clientAccountId=${alert.accountId}`,
-        {
-          method: 'GET',
-        },
-      );
+      let url = `${BASE_URI}${Api.Users}?clientAccountId=${alert.accountId}`;
+      if (name !== '') {
+        url += `&name=${name}`;
+      }
+      const response = await fetchJson<CustomResponse>(url, {
+        method: 'GET',
+      });
       const { success = false, data = [] } = response;
 
       if (success && Array.isArray(data)) {
-        const values = data.map((item: UserAccount) => ({
-          value: item.uuid,
-          label: getUserName(item),
-          icon: item.isDodsUser ? 'consultant' : 'client',
-          userData: {
-            accountName: item.clientAccount.name as string,
-            isActive: item.isActive,
-          },
-        }));
+        const values = data
+          .filter(
+            (item: UserAccount) => recipients.map((item) => item.value).indexOf(item.uuid) === -1,
+          )
+          .filter((item: UserAccount) => item.isActive)
+          .map((item: UserAccount) => ({
+            value: item.uuid,
+            label: getUserName(item),
+            icon: item.isDodsUser ? 'consultant' : 'client',
+            userData: {
+              accountName: item.clientAccount.name as string,
+              isActive: item.isActive,
+            },
+          }));
 
         setUserResults(values);
       }
@@ -67,6 +73,10 @@ const AlertStep3: React.FC<AlertStepProps> = ({
   }, 150);
 
   const searchUsers = useMemo(() => debounceSearchUsers, []);
+
+  React.useEffect(() => {
+    searchUsers('');
+  }, []);
 
   const reset = () => {
     setUserResults([]);
@@ -132,8 +142,17 @@ const AlertStep3: React.FC<AlertStepProps> = ({
           .map((recipient) => [
             recipient.value,
             <Styled.sectionHeader key="title1">
-              <Avatar type={recipient.icon as UserType} size="small" />
-              <Text bold>{recipient.label}</Text>
+              <Avatar
+                type={recipient.icon as UserType}
+                size="small"
+                disabled={recipient?.userData?.isActive === 0}
+              />
+              <Text
+                bold
+                color={recipient.userData?.isActive === 0 ? color.base.grey : color.theme.blue}
+              >
+                {recipient.label}
+              </Text>
             </Styled.sectionHeader>,
             <>
               <Text>{recipient.userData?.accountName as string}</Text>
@@ -235,6 +254,7 @@ const AlertStep3: React.FC<AlertStepProps> = ({
             emptyMessage=""
             onChange={(val) => setNewRecipients(val as DropdownValue[])}
             selectedValues={newRecipients}
+            isFilter
           />
         </Modal>
       )}
