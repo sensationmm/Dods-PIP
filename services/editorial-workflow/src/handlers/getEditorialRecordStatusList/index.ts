@@ -4,7 +4,7 @@ import { getEditorialRecordStatusList } from './getEditorialRecordStatusList';
 
 export const handle = buildLambdaFunction(getEditorialRecordStatusList, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
-    validateSecurity: false,
+    validateSecurity: true,
 });

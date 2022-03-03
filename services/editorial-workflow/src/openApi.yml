@@ -6,6 +6,8 @@ info:
 paths:
     /editorial-record:
         post:
+            security:
+                - bearerAuth: []
             operationId: createEditorialRecord
             summary: Create new Editorial Record
             requestBody:
@@ -20,6 +22,8 @@ paths:
                 "403":
                     $ref: "#/components/responses/Unauthorized"
         get:
+            security:
+                - bearerAuth: []
             summary: List Editorial Records found by search parameters
             parameters:
                 - in: query
@@ -85,6 +89,8 @@ paths:
                     $ref: "#/components/responses/Unauthorized"
     /editorial-record/{recordId}:
         put:
+            security:
+                - bearerAuth: []
             summary: Update Editorial Record
             parameters:
                 - $ref: "#/components/parameters/recordId"
@@ -100,6 +106,8 @@ paths:
                 "403":
                     $ref: "#/components/responses/Unauthorized"
         get:
+            security:
+                - bearerAuth: []
             summary: Get Editorial Record by UUID
             parameters:
                 - $ref: "#/components/parameters/recordId"
@@ -113,6 +121,8 @@ paths:
                 "403":
                     $ref: "#/components/responses/Unauthorized"
         delete:
+            security:
+                - bearerAuth: []
             operationId: archiveEditorialRecord
             summary: "Archive Editorial Record"
             description: "Archive Editorial Record"
@@ -125,6 +135,8 @@ paths:
                   $ref: "#/components/responses/NotFound"
     /editorial-record/{recordId}/lock:
         put:
+            security:
+                - bearerAuth: []
             summary: Update Editorial Record
             parameters:
                 - $ref: "#/components/parameters/recordId"
@@ -141,6 +153,8 @@ paths:
                     $ref: "#/components/responses/Unauthorized"
     /content-sources:
         get:
+            security:
+                - bearerAuth: []
             summary: List content sources based upon data in Editorial Records table
             responses:
                 "200":
@@ -153,6 +167,8 @@ paths:
                     $ref: "#/components/responses/Unauthorized"
     /information-types:
         get:
+            security:
+                - bearerAuth: []
             summary: List information types based upon data in Editorial Records table
             responses:
                 "200":
@@ -165,6 +181,8 @@ paths:
                     $ref: "#/components/responses/Unauthorized"
     /editorial-record-status:
         get:
+            security:
+                - bearerAuth: []
             summary: List of status based upon data in Editorial Records Statuses table
             responses:
                 "200":
@@ -177,6 +195,8 @@ paths:
                     $ref: "#/components/responses/Unauthorized"
     /editorial-record/{recordId}/publish:
         post:
+            security:
+                - bearerAuth: []
             summary: Publish Editorial Record
             parameters:
                 - $ref: "#/components/parameters/recordId"
@@ -194,6 +214,8 @@ paths:
 
     /editorial-record/{recordId}/document:
         put:
+            security:
+                - bearerAuth: []
             summary: Update Editorial Record Document
             parameters:
                 - $ref: "#/components/parameters/recordId"
@@ -209,6 +231,8 @@ paths:
                 "403":
                     $ref: "#/components/responses/Unauthorized"
         get:
+            security:
+                - bearerAuth: []
             summary: Get document from editorial record
             parameters:
                 - $ref: "#/components/parameters/recordId"
@@ -224,6 +248,8 @@ paths:
                     
     /editorial-record/{recordId}/schedule:
         post:
+            security:
+                - bearerAuth: []
             summary: Schedule Publish Editorial Record
             parameters:
                 -   
@@ -247,6 +273,8 @@ paths:
                     $ref: '#/components/responses/Unauthorized'
                     
         delete:
+            security:
+                - bearerAuth: []
             summary: unschedule Publish Editorial Record
             parameters:
                 -   
@@ -269,6 +297,8 @@ paths:
                     
     /editorial-record/document/{documentId}/versions:
         post:
+            security:
+                - bearerAuth: []
             summary: Edit over published document
             parameters:
                 - 
@@ -289,6 +319,11 @@ paths:
                     $ref: '#/components/responses/Unauthorized'
 
 components:
+    securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
     parameters:
         recordId:
             in: path
@@ -801,7 +836,7 @@ components:
                 contentDateTime:
                     type: string
                     format: date
-                    example: "2021-08-18T10:29:20.778+01:00"
+                    example: "2021-08-18"
                 createdDateTime:
                     type: string
                     format: date-time
