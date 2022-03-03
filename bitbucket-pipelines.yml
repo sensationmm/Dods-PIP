@@ -112,13 +112,13 @@ pipelines:
               else
                 echo "Running default scrapping building definitions"
                 if [[ -e 'package.json' ]]; then
-                    npm install
+                    npm ci
                 fi
                 if [[ -e 'requirements.txt' ]]; then
                     pip3 install -r requirements.txt
                 fi
                 if [[ -e 'serverless.yml' ]]; then
-                  sls package
+                  npx serverless package
                 fi
               fi
 
@@ -311,13 +311,13 @@ pipelines:
               else
                 echo "Running default scrapping building definitions"
                 if [[ -e 'package.json' ]]; then
-                    npm install
+                    npm ci
                 fi
                 if [[ -e 'requirements.txt' ]]; then
                     pip3 install -r requirements.txt
                 fi
                 if [[ -e 'serverless.yml' ]]; then
-                  sls deploy --stage ${ENVIRONMENT,,}
+                  npx serverless deploy --stage ${ENVIRONMENT,,}
                 fi
               fi
 
