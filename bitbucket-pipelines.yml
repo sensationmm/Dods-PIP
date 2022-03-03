@@ -10,7 +10,8 @@ pipelines:
     '**': # Run this step as default for any branch without an specific definition
       - step:
           name: Check changes to trigger builds
-          image: gioatsomoglobal/devopstools:0.4.6
+          # image: gioatsomoglobal/devopstools:0.4.6
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           script:
             - tools/on-changes.sh build
 
@@ -19,14 +20,16 @@ pipelines:
       - parallel:
         - step:
             name: Deploy projects to their envionments
-            image: gioatsomoglobal/devopstools:0.4.6
+            # image: gioatsomoglobal/devopstools:0.4.6
+            image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
             script:
               - tools/on-changes.sh deploy
           
         - step:
             name: Terraform Plan
             size: 2x
-            image: gioatsomoglobal/devopstools:0.4.6
+            # image: gioatsomoglobal/devopstools:0.4.6
+            image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
             condition:
               changesets:
                 includePaths:
@@ -47,7 +50,8 @@ pipelines:
           default: dods_pip
       - step:
           name: "Frontend: Test and Build"
-          image: gioatsomoglobal/devopstools:0.4.5
+          # image: gioatsomoglobal/devopstools:0.4.5
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           services:
             - docker
@@ -69,7 +73,8 @@ pipelines:
           default: user-profile
       - step:
           name: "Services: Test and Build"
-          image: gioatsomoglobal/devopstools:0.4.5
+          # image: gioatsomoglobal/devopstools:0.4.5
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           services:
             - docker
@@ -95,7 +100,8 @@ pipelines:
           default: debates-hoc-uk
       - step:
           name: "Scrapping: Test and Build"
-          image: gioatsomoglobal/devopstools:0.4.2
+          # image: gioatsomoglobal/devopstools:0.4.2
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           script:
             - 'echo "Running build for service: ${SERVICE}"'
             - cd scrapping/$SERVICE
@@ -122,7 +128,8 @@ pipelines:
           default: hansard-api
       - step:
           name: "New Ingestion: Test and Build"
-          image: public.ecr.aws/dods-cicd/ingestion:1.1.0
+          # image: public.ecr.aws/dods-cicd/ingestion:1.1.0
+          image: public.ecr.aws/dods-cicd/ingestion-python-builder:1.0.0
           script:
             - 'echo "Running build for ingestion: ${SERVICE}"'
             - cd ingestion-python/$SERVICE
@@ -146,7 +153,8 @@ pipelines:
           default: dods-model
       - step:
           name: "NPM Packages: Test and Build"
-          image: gioatsomoglobal/devopstools:0.4.5
+          # image: gioatsomoglobal/devopstools:0.4.5
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           script:
             - 'echo "Running build for npm-package: ${SERVICE}"'
             - cd npm-packages/$SERVICE
@@ -169,7 +177,8 @@ pipelines:
           default: bitbucket-builder
       - step:
           name: "Dockerimages: Test and Build"
-          image: gioatsomoglobal/devopstools:0.4.6
+          # image: gioatsomoglobal/devopstools:0.4.6
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           services:
             - docker
@@ -188,7 +197,8 @@ pipelines:
           default: "dods_pip"
       - step:
           name: "Frontend: Build & Publish Container Image"
-          image: gioatsomoglobal/devopstools:0.4.5
+          # image: gioatsomoglobal/devopstools:0.4.5
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           services:
             - docker
@@ -221,7 +231,8 @@ pipelines:
           default: user-profile
       - step:
           name: "Backend Service: Deploy to Environment"
-          image: gioatsomoglobal/devopstools:0.4.6
+          # image: gioatsomoglobal/devopstools:0.4.6
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           services:
             - docker
@@ -318,7 +329,8 @@ pipelines:
           default: hansard-api
       - step:
           name: "Ingestion: Deploy to Environment"
-          image: public.ecr.aws/dods-cicd/ingestion:1.1.0
+          # image: public.ecr.aws/dods-cicd/ingestion:1.1.0
+          image: public.ecr.aws/dods-cicd/ingestion-python-builder:1.0.0
           script:
             - 'echo "Running deployment for ingestion: ${SERVICE}"'
             - cd ingestion-python/$SERVICE
@@ -346,7 +358,8 @@ pipelines:
             default: bitbucket-builder
       - step:
          name: "Dockerimages: Deploy to Environment"
-         image: gioatsomoglobal/devopstools:0.4.6
+         # image: gioatsomoglobal/devopstools:0.4.6
+         image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
          size: 2x
          services:
            - docker
@@ -357,17 +370,27 @@ pipelines:
            - cd docker-images/${IMAGE}
            - VERSION=$(cat version)
            - export DEST="public.ecr.aws/dods-cicd/${IMAGE}:${VERSION}"
+           - echo "only push to ECR if that version doesn't yet exist"
+           - |
+             if AWS_DEFAULT_REGION=us-east-1 aws ecr-public describe-image-tags --registry-id 390773179818 --repository-name $IMAGE \
+               | jq '.imageTagDetails[].imageTag' \
+               | grep $VERSION
+             then
+               echo "version found, won't deploy"
+               exit 1
+             fi
            - echo "Running deployment for image $IMAGE to environment ${ENVIRONMENT^^} $DEST"
            - docker build -t ${DEST} .
            # Run actual deployment steps giving an option for custom definitions
-           # Push to ECR
+           # Push to ECR 
            - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/dods-cicd
            - docker push $DEST
 
     storybook-deployment:
       - step:
           name: Storybook deployment (dev)
-          image: gioatsomoglobal/devopstools:0.4.5
+          # image: gioatsomoglobal/devopstools:0.4.5
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
           size: 2x
           script:
             - cd ${FRONTEND_SRC}
