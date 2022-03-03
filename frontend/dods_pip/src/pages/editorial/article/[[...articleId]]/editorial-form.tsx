@@ -1,3 +1,4 @@
+import DatePicker from '@dods-ui/components/_form/DatePicker';
 import InputText from '@dods-ui/components/_form/InputText';
 import SearchDropdown from '@dods-ui/components/_form/SearchDropdown';
 import { SelectItem } from '@dods-ui/components/_form/Select';
@@ -23,6 +24,7 @@ export interface EditorialFormFields {
   title: string;
   content: string;
   originator: string;
+  contentDateTime: string;
 }
 
 export interface EditorialFormProps {
@@ -181,6 +183,17 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
               onBlur={() => validateField('originator', fieldData.originator)}
               isDisabled={originatorValues.length === 0}
               isFilter
+            />
+
+            <DatePicker
+              id="publication-date"
+              label="Publication date"
+              required
+              value={fieldData.contentDateTime || ''}
+              onChange={(value) => {
+                onFieldChange('contentDateTime', value);
+                validateField('contentDateTime', fieldData.contentDateTime);
+              }}
             />
           </Styled.inputFields>
         </SectionAccordion>

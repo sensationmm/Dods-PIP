@@ -139,7 +139,7 @@ const Pagination = (
           </strong>{' '}
           of{' '}
           <strong style={{ color: color.theme.blueMid }} data-test="item-total">
-            {dataLength.toLocaleString('en-US')}
+            {dataLength && dataLength.toLocaleString('en-US')}
           </strong>
         </Text>
         {children}

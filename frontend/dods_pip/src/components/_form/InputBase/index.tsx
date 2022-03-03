@@ -80,14 +80,14 @@ const InputBase: React.FC<InputBaseProps> = ({
             titleField: titleField,
           })}
           type={type}
-          value={value}
+          value={value || ''}
           onKeyDown={(e) => onKeyDown(e)}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           onFocus={onFocus}
           onBlur={onBlur}
           tabIndex={tabIndex}
-          size={Math.max(placeholder?.length || 1, length, value?.length)}
+          size={Math.max(placeholder?.length || 1, length || 1, value?.length || 1)}
           autoComplete="off"
         />
         {children}
