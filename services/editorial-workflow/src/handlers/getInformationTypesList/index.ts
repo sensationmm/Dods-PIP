@@ -4,7 +4,7 @@ import { getInformationTypesList } from './getInformationTypesList';
 
 export const handle = buildLambdaFunction(getInformationTypesList, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
-    validateSecurity: false,
+    validateSecurity: true,
 });

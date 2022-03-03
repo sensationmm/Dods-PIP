@@ -4,7 +4,7 @@ import { searchEditorialRecords } from './searchEditorialRecords';
 
 export const handle = buildLambdaFunction(searchEditorialRecords, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
-    validateSecurity: false,
+    validateSecurity: true,
 });

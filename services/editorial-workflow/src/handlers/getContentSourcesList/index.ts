@@ -4,7 +4,7 @@ import { getContentSourcesList } from './getContentSourcesList';
 
 export const handle = buildLambdaFunction(getContentSourcesList, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
-    validateSecurity: false,
+    validateSecurity: true,
 });
