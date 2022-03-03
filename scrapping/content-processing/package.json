@@ -1,0 +1,16 @@
+{
+  "name": "content-processing",
+  "version": "1.0.0",
+  "description": "Defines lambdas to process ingested content",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless": "2.72.2",
+    "serverless-lift": "^1.10.0",
+    "serverless-offline": "^8.0.0",
+    "serverless-python-requirements": "^5.1.1"
+  },
+  "dependencies": {
+    "serverless-shell": "^1.0.0"
+  }
+}
