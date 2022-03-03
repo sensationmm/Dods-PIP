@@ -800,7 +800,7 @@ components:
                     example: Press Releases
                 contentDateTime:
                     type: string
-                    format: date-time
+                    format: date
                     example: "2021-08-18T10:29:20.778+01:00"
                 createdDateTime:
                     type: string
