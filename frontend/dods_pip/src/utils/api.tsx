@@ -4,6 +4,7 @@ export enum Api {
   Alerts = '/alerts',
   AlertResultsQuery = '/search/create-query',
   CheckAccountName = '/checkaccountname',
+  ChangePassword = '/changePassword',
   ClientAccount = '/clientaccount',
   ClientAccounts = '/client-accounts',
   Collections = '/collections',
