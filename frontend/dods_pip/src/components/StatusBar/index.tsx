@@ -26,6 +26,7 @@ export interface StatusBarProps {
   updateArticle?: boolean;
   showDeleteButton?: boolean;
   isValidForm: boolean;
+  isFutureContentDate: boolean;
   onPreview?: () => void;
   onDelete?: () => void;
   onSchedule?: () => void;
@@ -43,11 +44,11 @@ export const MainContent: React.FC<StatusBarProps> = ({
   schedule,
   publish,
   isValidForm,
+  isFutureContentDate,
   unschedule,
   unpublish,
   updateArticle,
   showDeleteButton,
-
   onPreview,
   onDelete,
   onSchedule,
@@ -130,7 +131,7 @@ export const MainContent: React.FC<StatusBarProps> = ({
             label="Publish now"
             iconAlignment="right"
             icon={Icons.ChevronRight}
-            disabled={!isValidForm}
+            disabled={!isValidForm || isFutureContentDate}
           />
         </Styled.buttonSeparator>
       )}
@@ -151,6 +152,14 @@ export const MainContent: React.FC<StatusBarProps> = ({
         </Styled.buttonSeparator>
       )}
     </Styled.group>
+
+    {isFutureContentDate && (
+      <Styled.publishWarning>
+        <Text type="span" bold color={color.alert.red}>
+          Cannot publish now with publication date in the future
+        </Text>
+      </Styled.publishWarning>
+    )}
   </Styled.wrapper>
 );
 

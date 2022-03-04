@@ -8,6 +8,7 @@ export const wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 `;
 
 export const group = styled.div`
@@ -21,6 +22,10 @@ export const date = styled.div`
 
 export const buttonSeparator = styled.div`
   margin-right: ${spacing(2)};
+
+  &:last-child {
+    margin-right: 0;
+  }
 `;
 
 export const tagWrapper = styled.div`
@@ -40,10 +45,6 @@ export const card = styled.div<CardProps>`
     isTransparent ? color.base.transparent : color.base.white};
   display: flex;
   justify-content: center;
-
-  &:hover {
-    box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.25);
-  }
 `;
 
 type ContainerProps = {
@@ -74,4 +75,10 @@ export const inlineView = styled.div`
 
 export const text = styled.div`
   margin-left: ${spacing(2)};
+`;
+
+export const publishWarning = styled.div`
+  position: absolute;
+  right: 5px;
+  bottom: -25px;
 `;
