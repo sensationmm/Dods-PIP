@@ -58,7 +58,7 @@ export interface SearchClientAccountTotalRecords {
 export interface SearchClientAccountParameters extends Pagination {
     //locations?: number[] | null;
     locations?: string | null;
-    subscriptionTypes?: string | null;
+    subscriptionTypes?: Array<string> | null;
     searchTerm?: string | null;
     startsWith?: string | null;
     isCompleted?: string | null;
