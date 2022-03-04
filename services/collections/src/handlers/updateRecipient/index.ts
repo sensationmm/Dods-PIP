@@ -6,5 +6,5 @@ export const handle = buildLambdaFunction(updateRecipient, {
     openApiDocumentPath: config.openApiPath,
     validateRequests: true,
     validateResponses: false,
-    validateSecurity: false,
+    validateSecurity: true,
 });

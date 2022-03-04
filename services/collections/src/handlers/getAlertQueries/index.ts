@@ -5,5 +5,5 @@ import { getAlertQueries } from './getAlertQueries';
 export const handle = buildLambdaFunction(getAlertQueries, {
     openApiDocumentPath: config.openApiPath,
     validateRequests: true,
-    validateResponses: false,
+    validateResponses: true,
 });
