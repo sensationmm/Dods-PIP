@@ -23,7 +23,7 @@ export default {
 const Template: Story<StickyEffectProps> = (args) => (
   <div style={{ width: '100%' }}>
     <StickyEffect {...args}>
-      <StatusBar isValidForm />
+      <StatusBar isValidForm isFutureContentDate={false} />
     </StickyEffect>
 
     {/*Dummy content here for demo purposes*/}

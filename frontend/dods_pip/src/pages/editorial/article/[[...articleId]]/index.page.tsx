@@ -469,6 +469,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             schedule
             showDeleteButton={isEditMode}
             isValidForm={isValidForm}
+            isFutureContentDate={new Date(fieldData.contentDateTime) > new Date()}
             onSaveAndExit={() => (isEditMode ? onUpdateAndExit() : onSaveAndExit())}
             onPublish={() => setIsAskPublish(true)}
             onPreview={isEditMode ? onPreviewUpdate : onPreview}
