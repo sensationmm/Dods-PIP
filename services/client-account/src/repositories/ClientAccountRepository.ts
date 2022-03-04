@@ -46,7 +46,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
         private subsModel: typeof SubscriptionTypeModel,
         private userModel: typeof UserProfileModel,
         private teamModel: typeof ClientAccountTeamModel
-    ) {}
+    ) { }
 
     async createClientAccount(
         clientAccountParameters: ClientAccountParameters | null
@@ -191,9 +191,8 @@ export class ClientAccountRepository implements ClientAccountPersister {
             }
         }
         if (subscriptionTypes) {
-            let searchSubscriptions = subscriptionTypes.split(',');
             clientAccountWhere['$subscriptionType.uuid$'] = {
-                [Op.or]: searchSubscriptions.map((uuid) => uuid),
+                [Op.or]: subscriptionTypes.map((uuid) => uuid),
             };
             subscriptionInclude = {
                 model: this.subsModel,
@@ -341,7 +340,7 @@ export class ClientAccountRepository implements ClientAccountPersister {
                 clientAccountModel.team!.filter(
                     (teamMember) =>
                         teamMember.ClientAccountTeamModel?.teamMemberType ===
-                            TeamMemberTypes.ClientUser && teamMember.isActive
+                        TeamMemberTypes.ClientUser && teamMember.isActive
                 ).length
             );
         } else {
