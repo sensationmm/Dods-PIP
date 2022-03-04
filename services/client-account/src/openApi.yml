@@ -554,7 +554,7 @@ components:
             schema:
                 type: array
                 items:
-                    type: integer
+                    type: string
             examples:
                 oneId:
                     summary: Example of a single location's ID
