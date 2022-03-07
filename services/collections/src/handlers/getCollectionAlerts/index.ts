@@ -4,7 +4,7 @@ import { getCollectionAlerts } from './getCollectionAlerts';
 
 export const handle = buildLambdaFunction(getCollectionAlerts, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
-    validateSecurity: false,
+    validateSecurity: true,
 });

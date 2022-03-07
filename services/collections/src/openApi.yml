@@ -14,6 +14,8 @@ servers:
 paths:
   /collections:
     get:
+      security:
+        - bearerAuth: []
       operationId: searchCollections
       summary: "Returns a list of collections"
       description: "Returns a list of collections"
@@ -31,6 +33,8 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
     post:
+      security:
+        - bearerAuth: []
       operationId: createCollection
       summary: "Creates a collection associated to a Client Account"
       description: "Create Collection Endpoint"
@@ -46,6 +50,8 @@ paths:
           
   /collections/{collectionId}:
     put:
+      security:
+        - bearerAuth: []
       operationId: updateCollection
       summary: "Update a collection associated to a Client Account"
       description: "Update Collection Endpoint"
@@ -59,6 +65,8 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
     get:
+      security:
+        - bearerAuth: []
       operationId: getCollection
       summary: "Returns collection"
       description: "Returns collection"
@@ -70,6 +78,8 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
     delete:
+      security:
+        - bearerAuth: []
       operationId: deleteCollection
       summary: "Delete collection"
       description: "Delete collection"
@@ -83,6 +93,8 @@ paths:
           
   /collections/{collectionId}/alerts:
     get:
+      security:
+        - bearerAuth: []
       operationId: getCollectionAlerts
       summary: "Get the alerts associated to a Collection"
       description: "Get Alerts Associated to a Collection"
@@ -96,6 +108,8 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
     post:
+      security:
+        - bearerAuth: []
       operationId: createAlert
       summary: "Creates an alert associated to a Collection"
       description: "Create Alert Endpoint"
@@ -113,6 +127,8 @@ paths:
   
   /collections/{collectionId}/alerts/{alertId}:
     get:
+      security:
+        - bearerAuth: []
       operationId: getAlert
       summary: "Retrieve basic information of the alert"
       description: "Retrieve basic information of the alert"
@@ -126,6 +142,8 @@ paths:
           $ref: "#/components/responses/NotFound"
   
     delete:
+      security:
+        - bearerAuth: []
       operationId: deleteAlert
       summary: "Delete alert"
       description: "Delete an alert from the database"
@@ -141,6 +159,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
     
     put:
+      security:
+        - bearerAuth: []
       operationId: updateAlert
       summary: "Rename Alert"
       description: "Update Alert Title"
@@ -173,6 +193,8 @@ paths:
 
   /collections/{collectionId}/alerts/{alertId}/schedule:
     put:
+      security:
+        - bearerAuth: []
       operationId: setAlertSchedule
       summary: "Update Alert Schedule"
       description: "Update Alert Schedule Endpoint"
@@ -189,6 +211,8 @@ paths:
 
   /collections/{collectionId}/alerts/{alertId}/recipients/{userId}:
     put:
+      security:
+        - bearerAuth: []
       operationId: updateRecipient
       summary: "Update Recipient"
       description: "Update an individual recipient"
@@ -208,6 +232,8 @@ paths:
 
   /collections/{collectionId}/alerts/{alertId}/recipients:
     put:
+      security:
+        - bearerAuth: []
       operationId: setAlertRecipients
       summary: "Set Alert Recipients"
       description: "Set Alert Recipients"
@@ -224,6 +250,8 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
     delete:
+      security:
+        - bearerAuth: []
       operationId: deleteAlertRecipient
       summary: "Delete Alert Recipients"
       description: "Delete Alert Recipients"
@@ -240,6 +268,8 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
     get:
+      security:
+        - bearerAuth: []
       operationId: searchAlertRecipients
       summary: "Search Alert Recipients"
       description: "Search Alert Recipients"
@@ -261,6 +291,8 @@ paths:
 
   /collections/{collectionId}/alerts/{alertId}/copyto:
     post:
+      security:
+        - bearerAuth: []
       operationId: copyAlert
       summary: "Copy Existing Alert"
       description: "Copy existing alert from a collection to another collection"
@@ -277,6 +309,8 @@ paths:
 
   /collections/{collectionId}/alerts/{alertId}/queries:
     get:
+      security:
+        - bearerAuth: []
       operationId: getAlertQueries
       summary: "Get the Queries associated to a Alert"
       description: "Get the Queries associated to a Alert"
@@ -293,6 +327,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
           
     post:
+      security:
+        - bearerAuth: []
       operationId: createAlertQuery
       summary: "Creates a Query associated to a Alert"
       description: "Create Alert Query Endpoint"
@@ -310,6 +346,8 @@ paths:
           $ref: "#/components/responses/NotFound"
           
     put:
+      security:
+        - bearerAuth: []
       operationId: setAlertQueries
       summary: "Set multiple Queries associated to a Alert"
       description: "Set Alert Queries Endpoint"
@@ -330,6 +368,8 @@ paths:
           
   /collections/{collectionId}/alerts/{alertId}/queries/{queryId}:
     put:
+      security:
+        - bearerAuth: []
       operationId: updateAlertQuery
       summary: "Update an Alert Query "
       description: "Update an Alert Query "
@@ -347,6 +387,8 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
     delete:
+      security:
+        - bearerAuth: []
       operationId: deleteAlertQuery
       summary: "Delete an Alert Query"
       description: "Delete an Alert Query"
@@ -364,6 +406,8 @@ paths:
 
   /collections/{collectionId}/alerts/{alertId}/queries/{queryId}/copyto:
     post:
+      security:
+        - bearerAuth: []
       operationId: copyQuery
       summary: "Copy the specified query to a different alert"
       description: "Copy the specified query to a different alert"

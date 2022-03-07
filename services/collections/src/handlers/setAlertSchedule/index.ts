@@ -4,6 +4,7 @@ import { setAlertSchedule } from './setAlertSchedule';
 
 export const handle = buildLambdaFunction(setAlertSchedule, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: false,
+    validateRequests: true,
     validateResponses: false,
+    validateSecurity: true
 });
