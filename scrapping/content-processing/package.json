@@ -1,14 +1,14 @@
 {
-  "name": "migration-step-3",
+  "name": "content-processing",
   "version": "1.0.0",
-  "description": "Creating a function that runs as a cron job using the serverless `schedule` event",
+  "description": "Defines lambdas to process ingested content",
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "serverless": "2.72.2",
     "serverless-lift": "^1.10.0",
     "serverless-offline": "^8.0.0",
-    "serverless-python-requirements": "^5.3.0"
+    "serverless-python-requirements": "^5.1.1"
   },
   "dependencies": {
     "serverless-shell": "^1.0.0"

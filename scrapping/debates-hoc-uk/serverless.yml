@@ -51,7 +51,7 @@ provider:
     DYNAMODB_TABLE: ${self:custom.dynamodb_table}
     DYNAMODB_HOST: ${self:custom.dynamodb_host}
     REGION: ${file(../serverless.common.yml):custom.region}
-    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.content_bucket}
+    CONTENT_BUCKET: ${file(../serverless.common.yml):custom.new_content_bucket}
     S3_KEY_BASE: ${self:custom.s3_key_base}
 
   iamRoleStatements:
