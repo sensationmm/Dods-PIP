@@ -66,6 +66,10 @@ export default async function fetchJson<T>(
       headers: { ...requestDefaults.headers, ...authHeader, ...args?.headers },
     });
     data = await response.json();
+    if (data.message === 'Authorization is not verified') {
+      req?.session.destroy();
+      window.location.replace('/');
+    }
     return data as T;
   } catch (error) {
     return {
