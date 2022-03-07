@@ -11,7 +11,7 @@ pipelines:
       - step:
           name: Check changes to trigger builds
           # image: gioatsomoglobal/devopstools:0.4.6
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           script:
             - tools/on-changes.sh build
 
@@ -21,7 +21,7 @@ pipelines:
         - step:
             name: Deploy projects to their envionments
             # image: gioatsomoglobal/devopstools:0.4.6
-            image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+            image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
             script:
               - tools/on-changes.sh deploy
           
@@ -29,7 +29,7 @@ pipelines:
             name: Terraform Plan
             size: 2x
             # image: gioatsomoglobal/devopstools:0.4.6
-            image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+            image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
             condition:
               changesets:
                 includePaths:
@@ -51,7 +51,7 @@ pipelines:
       - step:
           name: "Frontend: Test and Build"
           # image: gioatsomoglobal/devopstools:0.4.5
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           size: 2x
           services:
             - docker
@@ -74,7 +74,7 @@ pipelines:
       - step:
           name: "Services: Test and Build"
           # image: gioatsomoglobal/devopstools:0.4.5
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           size: 2x
           services:
             - docker
@@ -154,7 +154,7 @@ pipelines:
       - step:
           name: "NPM Packages: Test and Build"
           # image: gioatsomoglobal/devopstools:0.4.5
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           script:
             - 'echo "Running build for npm-package: ${SERVICE}"'
             - cd npm-packages/$SERVICE
@@ -178,7 +178,7 @@ pipelines:
       - step:
           name: "Dockerimages: Test and Build"
           # image: gioatsomoglobal/devopstools:0.4.6
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           size: 2x
           services:
             - docker
@@ -198,7 +198,7 @@ pipelines:
       - step:
           name: "Frontend: Build & Publish Container Image"
           # image: gioatsomoglobal/devopstools:0.4.5
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           size: 2x
           services:
             - docker
@@ -232,7 +232,7 @@ pipelines:
       - step:
           name: "Backend Service: Deploy to Environment"
           # image: gioatsomoglobal/devopstools:0.4.6
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           size: 2x
           services:
             - docker
@@ -360,7 +360,7 @@ pipelines:
       - step:
          name: "Dockerimages: Deploy to Environment"
          # image: gioatsomoglobal/devopstools:0.4.6
-         image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+         image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
          size: 2x
          services:
            - docker
@@ -391,7 +391,7 @@ pipelines:
       - step:
           name: Storybook deployment (dev)
           # image: gioatsomoglobal/devopstools:0.4.5
-          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.0.1
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           size: 2x
           script:
             - cd ${FRONTEND_SRC}
