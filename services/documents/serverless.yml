@@ -32,10 +32,8 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - s3:PutObject
-        - s3:GetObject
-      Resource:
-        - "*"
+        - s3:*
+      Resource: 'arn:aws:s3:::*'
     - Effect: "Allow"
       Action:
         - "xray:PutTraceSegments"
