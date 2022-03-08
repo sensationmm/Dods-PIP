@@ -32,7 +32,7 @@ export class DocumentRepository implements DocumentPersister {
     }
 
     async getDocument(documentARN: string): Promise<Object> {
-        const response = await axios.get(`${this.baseURL}documents`, { params: { arn: documentARN } });
+        const response = await axios.get(`${this.baseURL}documents`, { params: { arn: documentARN }, headers: { 'x-api-key': 'jQmBaaaabN6E5p5N4PzNf9E6PBLmc6KfaZriGxqu' } });
         return { response };
     }
 
