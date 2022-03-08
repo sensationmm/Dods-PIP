@@ -115,6 +115,7 @@ functions:
       - http:
           method: post
           path: search/contents/query
+          #private: true
 
   createPercolator:
     handler: src/handlers/createPercolator/index.handle

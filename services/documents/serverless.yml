@@ -116,6 +116,7 @@ functions:
       - http:
           method: get
           path: documents
+          private: true
           # caching:
             # enabled: false
 
@@ -126,6 +127,7 @@ functions:
       - http:
           method: put
           path: documents
+          #private: true
           # caching:
             # enabled: false
 
@@ -136,6 +138,7 @@ functions:
       - http:
           method: post
           path: documents
+          #private: true
           # cors: true
           # caching:
             # enabled: false

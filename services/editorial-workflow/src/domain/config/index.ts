@@ -33,6 +33,7 @@ const envVarsSchema = Joi.object()
         BASE_URL: Joi.string().required(),
         BUCKET_EDITORIAL: Joi.string().required(),
         CONTENT_INDEXER_LAMBDA: Joi.string().required(),
+        API_KEY_BACKEND: Joi.string().required(),
     })
     .unknown();
 
@@ -75,5 +76,8 @@ export const config = {
         buckets: {
             documents: envVars.BUCKET_EDITORIAL as string,
         },
+        keys: {
+            api_key: envVars.API_KEY_BACKEND as string,
+        }
     },
 };

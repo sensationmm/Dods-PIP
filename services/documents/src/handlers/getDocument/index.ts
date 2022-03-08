@@ -4,6 +4,6 @@ import { getDocument } from './getDocument';
 
 export const handle = buildLambdaFunction(getDocument, {
     openApiDocumentPath: config.openApiPath,
-    validateRequests: true,
+    validateRequests: false,
     validateResponses: false,
 });

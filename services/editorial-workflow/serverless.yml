@@ -70,6 +70,7 @@ provider:
         BUCKET_EDITORIAL: pip-${self:provider.stage}-editorial-doc-store
         CONTENT_INDEXER_LAMBDA: content-indexer-${self:provider.stage}
         JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
+        API_KEY_BACKEND: ${ssm:/infra/${self:provider.stage}/apikey/front}
         
 custom:
     webpack:
