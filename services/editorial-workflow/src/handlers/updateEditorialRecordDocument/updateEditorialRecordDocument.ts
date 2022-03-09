@@ -4,7 +4,7 @@ import { DocumentRepository, EditorialRecordRepository, UpdateEditorialRecordDoc
 import { config } from '../../domain';
 
 const { dods: { downstreamEndpoints: { userProfile } } } = config;
-
+const { aws: { keys: { api_key } } } = config
 const documentRepository = new DocumentRepository(userProfile);
 
 export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRecordDocumentParameter> = async (params) => {
@@ -21,7 +21,7 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
         document: document
     };
 
-    const updatedResponse: any = await documentRepository.updateDocument(updateDocumentsParams);
+    const updatedResponse: any = await documentRepository.updateDocument(updateDocumentsParams, api_key);
 
     const contentDateTime = updatedResponse.payload.contentDateTime
 
