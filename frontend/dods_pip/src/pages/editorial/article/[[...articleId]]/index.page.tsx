@@ -215,7 +215,9 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
         addNotification({ title: 'Document successfully published', type: 'confirm' });
       })
       .then(() => {
-        router.push('/editorial');
+        setTimeout(() => {
+          router.push('/editorial');
+        }, 3000);
       });
     setLoading(false);
   };
