@@ -25,8 +25,8 @@ export class DocumentRepository implements DocumentPersister {
         return this.awsService.invokeLambda(lambdaName, payload, false);
     }
 
-    async updateDocument(parameters: any): Promise<Object> {
-        const response = await axios.put(`${this.baseURL}documents`, parameters);
+    async updateDocument(parameters: any, key: string): Promise<Object> {
+        const response = await axios.put(`${this.baseURL}documents`, { params: parameters, headers: { 'x-api-key': key } });
         const { data: { success, payload } } = response;
         return { success, payload };
     }
