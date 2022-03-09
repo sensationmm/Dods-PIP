@@ -1,5 +1,4 @@
 import { AsyncLambdaHandler, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
-
 import { DocumentRepository, EditorialRecordRepository } from '@dodsgroup/dods-repositories';
 
 import { BadParameterError } from '../../domain';
@@ -9,12 +8,13 @@ export const getEditorialRecord: AsyncLambdaHandler<{ recordId: string }> = asyn
     recordId,
 }) => {
     const { dods: { downstreamEndpoints: { userProfile } } } = config;
+    const { aws: { keys: { api_key } } } = config
     const documentRepository = new DocumentRepository(userProfile);
 
     try {
 
         const record = await EditorialRecordRepository.defaultInstance.getEditorialRecord(recordId);
-        const response: any = await documentRepository.getDocument(record.s3Location);
+        const response: any = await documentRepository.getDocument(record.s3Location, api_key);
         const document = response.response.data.payload;
 
         return new HttpResponse(HttpStatusCode.OK, {
