@@ -969,7 +969,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             negativeMatchStrings.forEach(negMatch => {
                 const cleanNegMatches = this.clean_query_strings(negMatch)
                 cleanNegMatches.forEach(cleanNegMatch => {
-                    if (facet === 'keyword') {
+                    if (facet === 'keywords') {
                         query.query.bool.must_not.push(...[
                             { term: { documentTitle: cleanNegMatch } },
                             { term: { documentContent: cleanNegMatch } }
@@ -997,7 +997,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                 if (requiredMatchString.includes('" OR "')) {
                     let orQuery: any = []
                     this.clean_query_strings(requiredMatchString).forEach(cleanedRequiredOr => {
-                        if (facet === 'keyword') {
+                        if (facet === 'keywords') {
                             orQuery.push(...[
                                 { term: { documentTitle: cleanedRequiredOr } },
                                 { term: { documentContent: cleanedRequiredOr } }
@@ -1020,7 +1020,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                     return;
                 }
                 this.clean_query_strings(requiredMatchString).forEach(cleanedRequiredAnd => {
-                    if (facet === 'keyword') {
+                    if (facet === 'keywords') {
                         query.query.bool.must.push(...[
                             { term: { documentTitle: cleanedRequiredAnd } },
                             { term: { documentContent: cleanedRequiredAnd } }
@@ -1051,7 +1051,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
                 optionalMatchStrings.forEach(optionalMatchString => {
                     const cleanNegMatches = this.clean_query_strings(optionalMatchString)
                     cleanNegMatches.forEach(cleanNegMatch => {
-                        if (facet === 'keyword') {
+                        if (facet === 'keywords') {
                             shouldMatches.push(...[
                                 { term: { documentTitle: cleanNegMatch } },
                                 { term: { documentContent: cleanNegMatch } }
