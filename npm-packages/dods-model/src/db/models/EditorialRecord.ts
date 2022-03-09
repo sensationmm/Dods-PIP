@@ -65,7 +65,7 @@ EditorialRecord.init(
             allowNull: false,
         },
         documentName: {
-            type: DataTypes.STRING({ length: 100 }),
+            type: DataTypes.STRING({ length: 200 }),
             allowNull: false,
         },
         s3Location: {
