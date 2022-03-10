@@ -201,6 +201,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
             addNotification={addNotification}
             setLoading={setLoading}
             editable={false}
+            isDodsUser={false}
           />
         </Panel>
       )}
