@@ -72,6 +72,7 @@ provider:
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
     CLIENT_FACING_APP_URL: 'https://app.dodspoliticalintelligence.com'
+    API_KEY_BACKEND: ${ssm:/infra/${self:provider.stage}/apikey/front}
     
 custom:
   webpack:

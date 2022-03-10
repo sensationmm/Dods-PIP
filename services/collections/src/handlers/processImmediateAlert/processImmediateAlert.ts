@@ -5,7 +5,7 @@ import { CollectionAlertRecipientRepository, CollectionAlertsRepository, Documen
 import { singleEmailBodyHandler } from '../../templates/singleFullAlert';
 
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL, clientURL } } } = config;
-
+const { aws: { keys: { api_key } } } = config
 export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertParameters> = async (
     parameters
 ) => {
@@ -92,7 +92,7 @@ export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertPara
 
                 }
 
-                await DocumentRepository.defaultInstance.sendEmail(emailParameters, apiGatewayBaseURL);
+                await DocumentRepository.defaultInstance.sendEmail(emailParameters, apiGatewayBaseURL, api_key);
 
                 return new HttpResponse(HttpStatusCode.OK, {
                     success: true,
