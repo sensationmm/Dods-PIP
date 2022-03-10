@@ -77,7 +77,7 @@ export interface TagBrowserProps {
   setAddedTagsToSave: (tags: TagsData[]) => void;
   highlight?: ContentTaggerProps['highlight'];
   highlightWordCount?: ContentTaggerProps['highlightWordCount'];
-  showHighlight?: (isWarning?: boolean) => JSX.Element;
+  showHighlight?: (isWarning?: boolean, showClear?: boolean) => JSX.Element;
   operator?: Operators;
   setOperator?: (op: Operators) => void;
 }
