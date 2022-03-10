@@ -85,28 +85,4 @@ describe('Status Bar', () => {
     const component = wrapper.find('[data-test="schedule-component"]');
     expect(component.length).toEqual(1);
   });
-
-  it('Should show the unschedule component ', () => {
-    const wrapper = shallow(<MainContent unschedule />);
-    const component = wrapper.find('[data-test="unschedule-component"]');
-    expect(component.length).toEqual(1);
-  });
-
-  it('Should show the unschedule component ', () => {
-    const wrapper = shallow(<MainContent publish />);
-    const component = wrapper.find('[data-test="publish-component"]');
-    expect(component.length).toEqual(1);
-  });
-
-  it('Should show the unschedule component ', () => {
-    const wrapper = shallow(<MainContent unpublish />);
-    const component = wrapper.find('[data-test="unpublish-component"]');
-    expect(component.length).toEqual(1);
-  });
-
-  it('Should show the unschedule component ', () => {
-    const wrapper = shallow(<MainContent updateArticle />);
-    const component = wrapper.find('[data-test="Update-article-component"]');
-    expect(component.length).toEqual(1);
-  });
 });

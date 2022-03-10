@@ -11,21 +11,32 @@ export const wrapper = styled.div`
   position: relative;
 `;
 
-export const group = styled.div`
+export const buttonSeparator = styled.div``;
+
+type GroupProps = {
+  reversed?: boolean;
+};
+export const group = styled.div<GroupProps>`
   display: flex;
+  flex-direction: ${({ reversed = false }) => (reversed ? 'row-reverse' : 'row')};
   align-items: center;
+
+  ${({ reversed = false }) =>
+    reversed
+      ? `${buttonSeparator} {margin-left: ${spacing(2)};
+
+        &:last-child {
+          margin-left: 0;
+        }}`
+      : `${buttonSeparator} {margin-right: ${spacing(2)};
+
+        &:last-child {
+          margin-right: 0;
+        }}`}
 `;
 
 export const date = styled.div`
   margin-right: ${spacing(5)};
-`;
-
-export const buttonSeparator = styled.div`
-  margin-right: ${spacing(2)};
-
-  &:last-child {
-    margin-right: 0;
-  }
 `;
 
 export const tagWrapper = styled.div`

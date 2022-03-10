@@ -12,6 +12,8 @@ export const tagConstructor = (type: string): TagConfigurationType => {
 
   switch (type) {
     case 'in_progress':
+    case 'draft':
+    case 'created':
       tagConfiguration.label = 'In progress';
       tagConfiguration.icon = Icons.Pencil;
       tagConfiguration.iconColor = color.theme.blueLight;

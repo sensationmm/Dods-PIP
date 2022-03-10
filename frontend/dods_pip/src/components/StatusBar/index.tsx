@@ -11,17 +11,14 @@ import Text from '../Text';
 import * as Styled from './StatusBar.styles';
 import { tagConstructor } from './tagConstructor';
 
-type statusBarTypes = 'in_progress' | 'scheduled' | 'published';
+export type StatusBarTypes = 'in_progress' | 'scheduled' | 'published';
 
 export interface StatusBarProps {
   isTransparent?: boolean;
   containerized?: boolean;
-  statusBarType?: statusBarTypes;
+  status?: StatusBarTypes;
   dateScheduled?: string;
   saveAndExit?: boolean;
-  schedule?: boolean;
-  publish?: boolean;
-  unschedule?: boolean;
   unpublish?: boolean;
   updateArticle?: boolean;
   showDeleteButton?: boolean;
@@ -30,7 +27,7 @@ export interface StatusBarProps {
   onPreview?: () => void;
   onDelete?: () => void;
   onSchedule?: () => void;
-  onUnschedule?: () => void;
+  onUnschedule?: () => Promise<void>;
   onPublish?: () => void;
   onUnpublish?: () => void;
   onSaveAndExit?: () => void;
@@ -38,130 +35,126 @@ export interface StatusBarProps {
 }
 
 export const MainContent: React.FC<StatusBarProps> = ({
-  statusBarType = 'in_progress',
+  status = 'in_progress',
   dateScheduled,
   saveAndExit,
-  schedule,
-  publish,
   isValidForm,
   isFutureContentDate,
-  unschedule,
-  unpublish,
-  updateArticle,
   showDeleteButton,
   onPreview,
   onDelete,
   onSchedule,
   onUnschedule,
   onPublish,
-  onUnpublish,
   onSaveAndExit,
   onUpdateArticle,
-}) => (
-  <Styled.wrapper data-test="statusbar-wrapper">
-    <Styled.group>
-      <Styled.tagWrapper>
-        <Text color={color.theme.blue}> Status: </Text>
-      </Styled.tagWrapper>
-      <Styled.tagWrapper>
-        <Tag
-          iconBgColor={tagConstructor(statusBarType).iconColor}
-          label={tagConstructor(statusBarType).label}
-          icon={tagConstructor(statusBarType).icon}
-          bgColor="white"
+}) => {
+  const schedule = status !== 'scheduled' && status !== 'published';
+  const publish = status !== 'published' && schedule;
+  const update = !publish && !schedule;
+
+  return (
+    <Styled.wrapper data-test="statusbar-wrapper">
+      <Styled.group>
+        <Styled.tagWrapper>
+          <Text color={color.theme.blue}> Status: </Text>
+        </Styled.tagWrapper>
+        <Styled.tagWrapper>
+          <Tag
+            iconBgColor={tagConstructor(status).iconColor}
+            label={tagConstructor(status).label}
+            icon={tagConstructor(status).icon}
+            bgColor="white"
+          />
+        </Styled.tagWrapper>
+        <Button
+          type="text"
+          icon={Icons.Show}
+          onClick={onPreview}
+          label="Preview"
+          disabled={!isValidForm}
         />
-      </Styled.tagWrapper>
-      <Button
-        type="text"
-        icon={Icons.Show}
-        onClick={onPreview}
-        label="Preview"
-        disabled={!isValidForm}
-      />
-      {showDeleteButton && (
-        <Button type="text" icon={Icons.Bin} onClick={onDelete} label="Delete" />
-      )}
-    </Styled.group>
+        {showDeleteButton && (
+          <Button type="text" icon={Icons.Bin} onClick={onDelete} label="Delete" />
+        )}
+      </Styled.group>
 
-    <Styled.group>
-      {dateScheduled && (
-        <Styled.date data-test="date-scheduled">
-          <Text>Scheduled : {dateScheduled}</Text>
-        </Styled.date>
-      )}
+      <Styled.group reversed={!publish && !schedule && !update}>
+        {dateScheduled && (
+          <Styled.date data-test="date-scheduled">
+            <Text>Scheduled : {dateScheduled}</Text>
+          </Styled.date>
+        )}
 
-      {saveAndExit && (
-        <Styled.buttonSeparator data-test="saveandexit-component">
-          <Button
-            label="Save and Exit"
-            type="secondary"
-            disabled={!isValidForm}
-            onClick={onSaveAndExit}
-            icon={Icons.Exit}
-          />
-        </Styled.buttonSeparator>
-      )}
+        {publish && saveAndExit && (
+          <Styled.buttonSeparator data-test="saveandexit-component">
+            <Button
+              label={!publish && !schedule ? 'Update article' : 'Save and Exit'}
+              type={update ? 'primary' : 'secondary'}
+              disabled={!isValidForm}
+              onClick={onSaveAndExit}
+              icon={update ? Icons.ChevronRight : Icons.Exit}
+              iconAlignment={update ? 'right' : 'left'}
+            />
+          </Styled.buttonSeparator>
+        )}
 
-      {schedule && (
-        <Styled.buttonSeparator data-test="schedule-component">
-          <Button
-            label="Schedule"
-            type="secondary"
-            icon={Icons.Clock}
-            disabled={!isValidForm}
-            onClick={onSchedule}
-          />
-        </Styled.buttonSeparator>
-      )}
-      {unschedule && (
-        <Styled.buttonSeparator data-test="unschedule-component">
-          <Button
-            label="Unscheduled"
-            onClick={onUnschedule}
-            type="secondary"
-            icon={Icons.Refresh}
-          />
-        </Styled.buttonSeparator>
-      )}
+        {publish &&
+          (schedule ? (
+            <Styled.buttonSeparator data-test="schedule-component">
+              <Button
+                label="Schedule"
+                type={!isFutureContentDate ? 'secondary' : 'primary'}
+                icon={Icons.Clock}
+                disabled={!isValidForm}
+                onClick={onSchedule}
+              />
+            </Styled.buttonSeparator>
+          ) : (
+            <Styled.buttonSeparator data-test="unschedule-component">
+              <Button
+                label="Unschedule"
+                onClick={onUnschedule}
+                type="secondary"
+                icon={Icons.Refresh}
+              />
+            </Styled.buttonSeparator>
+          ))}
 
-      {publish && (
-        <Styled.buttonSeparator data-test="publish-component">
-          <Button
-            onClick={onPublish}
-            label="Publish now"
-            iconAlignment="right"
-            icon={Icons.ChevronRight}
-            disabled={!isValidForm || isFutureContentDate}
-          />
-        </Styled.buttonSeparator>
-      )}
-      {unpublish && (
-        <Styled.buttonSeparator data-test="unpublish-component">
-          <Button type="secondary" onClick={onUnpublish} label="Unpublish" icon={Icons.Refresh} />
-        </Styled.buttonSeparator>
-      )}
+        {publish && !isFutureContentDate && (
+          <Styled.buttonSeparator data-test="publish-component">
+            <Button
+              onClick={onPublish}
+              label="Publish now"
+              iconAlignment="right"
+              icon={Icons.ChevronRight}
+              disabled={!isValidForm}
+            />
+          </Styled.buttonSeparator>
+        )}
 
-      {updateArticle && (
-        <Styled.buttonSeparator data-test="Update-article-component">
-          <Button
-            label="Update article"
-            onClick={onUpdateArticle}
-            iconAlignment="right"
-            icon={Icons.ChevronRight}
-          />
-        </Styled.buttonSeparator>
-      )}
-    </Styled.group>
+        {!publish && (
+          <Styled.buttonSeparator data-test="Update-article-component">
+            <Button
+              label="Update article!!"
+              onClick={onUpdateArticle}
+              iconAlignment="right"
+              icon={Icons.ChevronRight}
+            />
+          </Styled.buttonSeparator>
+        )}
+      </Styled.group>
 
-    {isFutureContentDate && (
-      <Styled.publishWarning>
-        <Text type="span" bold color={color.alert.red}>
-          Cannot publish now with publication date in the future
-        </Text>
-      </Styled.publishWarning>
-    )}
-  </Styled.wrapper>
-);
+      {isFutureContentDate && (
+        <Styled.publishWarning>
+          <Text type="span" bold color={color.alert.red}>
+            Cannot publish now with publication date in the future
+          </Text>
+        </Styled.publishWarning>
+      )}
+    </Styled.wrapper>
+  );
+};
 
 export const ReadOnlyMessage: React.FC = () => {
   return (

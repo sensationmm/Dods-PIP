@@ -18,11 +18,6 @@ export const Default = Template.bind({});
 
 Default.args = {
   isTransparent: false,
-  statusBarType: 'in_progress',
   saveAndExit: false,
-  schedule: true,
-  publish: true,
   updateArticle: false,
-  unschedule: false,
-  unpublish: false,
 };

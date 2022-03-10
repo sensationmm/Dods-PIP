@@ -125,6 +125,10 @@ export const searchResultHeading = styled.div`
     line-height: ${spacing(6)};
     display: flex;
     align-items: center;
+
+    a {
+      text-align: left;
+    }
   }
 `;
 

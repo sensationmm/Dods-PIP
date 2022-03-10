@@ -128,7 +128,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
   }, []);
 
   const navigateToEditDocument = useCallback((uuid) => {
-    router.push(`/editorial/article/${uuid}`);
+    router.push(`/editorial/record/${uuid}`);
   }, []);
 
   const onDeleteDocument = useCallback(async (uuid) => {
@@ -184,7 +184,7 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
             icon={Icons.Add}
             iconAlignment="left"
             inline
-            onClick={() => router.push('editorial/article')}
+            onClick={() => router.push('editorial/record')}
             width="auto"
             isSmall={true}
             label="Create Content"
