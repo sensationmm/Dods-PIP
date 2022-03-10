@@ -32,6 +32,7 @@ const envVarsSchema = Joi.object()
         FRONTEND_URL: Joi.string().required(),
         SQS_URL: Joi.string().required(),
         CLIENT_FACING_APP_URL: Joi.string().required(),
+        API_KEY_BACKEND: Joi.string().required(),
     })
     .unknown();
 
@@ -65,5 +66,8 @@ export const config = {
             password: envVars.DB_PASSWORD as string,
             connectionLimit: envVars.DB_CONNECTION_LIMIT as number,
         },
+        keys: {
+            api_key: envVars.API_KEY_BACKEND as string,
+        }
     }
 };

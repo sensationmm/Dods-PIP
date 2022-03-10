@@ -6,7 +6,7 @@ import { getMultipleSnippetEmailBody, groupByFunction } from '../../templates/mu
 import moment from "moment";
 
 const { dods: { downstreamEndpoints: { apiGatewayBaseURL, frontEndURL, clientURL } } } = config;
-
+const { aws: { keys: { api_key } } } = config
 export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
     data
 ) => {
@@ -151,7 +151,7 @@ export const processAlert: AsyncLambdaHandler<ProcessAlertParameters> = async (
         content: emailContent
     }
 
-    const emailResponse: any = await DocumentRepository.defaultInstance.sendEmail(emailParameters, apiGatewayBaseURL);
+    const emailResponse: any = await DocumentRepository.defaultInstance.sendEmail(emailParameters, apiGatewayBaseURL, api_key);
 
     //const emailResponse = { success: true }
 

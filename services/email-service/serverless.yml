@@ -105,5 +105,6 @@ functions:
       - http:
           method: post
           path: /email
+          private: true
           caching:
             enabled: false
