@@ -332,8 +332,9 @@ export const searchCheckbox = styled.div`
 
 export const highlight = styled.div`
   display: flex;
+  margin-bottom: ${spacing(1)};
 
-  > p:first-of-type {
+  > p:not(:last-child) {
     margin-right: ${spacing(1)};
   }
 `;

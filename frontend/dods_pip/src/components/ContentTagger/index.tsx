@@ -20,6 +20,7 @@ export interface ContentTaggerProps {
   tags: SelectedTags[];
   setTags: (tags: TagsData[]) => void;
   highlight?: string;
+  clearHighlight?: () => void;
   highlightWordCount?: number;
 }
 
@@ -27,6 +28,7 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
   tags,
   setTags,
   highlight,
+  clearHighlight,
   highlightWordCount,
 }) => {
   const [isFirstLoad, setIsFirstLoad] = React.useState<boolean>(true);
@@ -50,20 +52,34 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
     setTags(current);
   };
 
-  const showHighlight = (isWarning = false) => {
+  const showHighlight = (isWarning = false, showClear = false) => {
     return (
-      <Styled.highlight>
-        <Text type={isWarning ? 'body' : 'bodySmall'} color={color.base.greyDark}>
-          Highlighted word:
-        </Text>
-        <Text
-          type={isWarning ? 'body' : 'bodySmall'}
-          bold={highlight !== undefined}
-          color={highlight ? color.accent.orange : color.base.greyDark}
-        >
-          {highlight || 'No word highlighted'}
-        </Text>
-      </Styled.highlight>
+      <div>
+        <Styled.highlight>
+          <Text type={isWarning ? 'body' : 'bodySmall'} color={color.base.greyDark}>
+            Highlighted word:
+          </Text>
+          <Text
+            type={isWarning ? 'body' : 'bodySmall'}
+            bold={highlight !== undefined}
+            color={highlight ? color.accent.orange : color.base.greyDark}
+          >
+            {highlight || 'No word highlighted'}
+          </Text>
+        </Styled.highlight>
+        {showClear && highlight !== undefined && (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              clearHighlight && clearHighlight();
+            }}
+          >
+            <Text type="bodySmall" bold>
+              Clear highlighted word
+            </Text>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -105,8 +121,12 @@ const ContentTagger: React.FC<ContentTaggerProps> = ({
                   <Text type="bodyLarge" bold>
                     {searchInProgress ? 'Search in progress' : 'Search tags'}
                   </Text>
-                  <Spacer />
-                  {showHighlight()}
+                  {highlight !== undefined && (
+                    <>
+                      <Spacer />
+                      {showHighlight(false, true)}
+                    </>
+                  )}
                 </div>
                 <Styled.searchButton>
                   <Icon src={Icons.ChevronRightBold} size={IconSize.medium} />

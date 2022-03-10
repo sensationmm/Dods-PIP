@@ -218,6 +218,7 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
       </div>
       <ContentTagger
         highlight={selectedText}
+        clearHighlight={() => setSelectedText(undefined)}
         highlightWordCount={selectedTextOccurrences}
         tags={tags}
         setTags={onTagsChange}
