@@ -213,8 +213,8 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
           required
           onChange={(value) => onFieldChange('title', value)}
           error={
-            fieldData.title && fieldData.title.length > 100
-              ? 'Title should be less than 100 characters'
+            fieldData.title && fieldData.title.length > 200
+              ? 'Title should be less than 200 characters'
               : undefined
           }
         />
