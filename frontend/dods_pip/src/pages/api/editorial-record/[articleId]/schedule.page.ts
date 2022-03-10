@@ -3,17 +3,24 @@ import withSession from '@dods-ui/lib/session';
 import { Api } from '@dods-ui/utils/api';
 
 export default withSession(async (req, res) => {
-  const { cron, documentId } = req.body;
+  const { method } = req;
 
   try {
+    const config: RequestInit = {
+      method,
+    };
+
+    if (method === 'POST') {
+      config.body = JSON.stringify({
+        cron: req.body.cron,
+      });
+    }
+
+    const documentId = req.body.documentId || req.query.articleId;
+
     const result = await fetchJson(
       `${process.env.APP_API_URL}${Api.EditorialRecords}/${documentId}/schedule`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          cron,
-        }),
-      },
+      config,
       req,
     );
 

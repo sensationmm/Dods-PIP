@@ -110,9 +110,6 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   }, [apiData]);
 
   const renderTags = useMemo(() => {
-    if (Object.keys(tags).length === 0) {
-      return;
-    }
     return (
       <Styled.tags>
         <Styled.headingButton type="button" onClick={() => setExpandedTags(!expandedTags)}>
@@ -124,6 +121,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         </Styled.headingButton>
         <Styled.tagsContent className={expandedTags ? 'expanded' : ''}>
           {Object.keys(tags).map((key) => {
+            if (tags[key].length === 0) {
+              return;
+            }
             const tagElements = tags[key].map(({ value, count }) => {
               let label = value;
               if (count.toString() !== '0') {
@@ -132,23 +132,12 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
               return <Chips key={value} label={label} />;
             });
 
-            if (key === 'organizations') {
-              const spelling = key.replace('organizations', 'organisations');
-              return (
-                <div key={spelling}>
-                  <Text type="label" headingStyle="titleSmall" bold>
-                    {spelling}
-                  </Text>
-
-                  <Styled.tagsContainer>{tagElements}</Styled.tagsContainer>
-                </div>
-              );
-            }
+            const label = key !== 'organizations' ? key : 'organisations';
 
             return (
-              <div key={key}>
+              <div key={label}>
                 <Text type="label" headingStyle="titleSmall" bold>
-                  {key}
+                  {label}
                 </Text>
 
                 <Styled.tagsContainer>{tagElements}</Styled.tagsContainer>
