@@ -193,7 +193,13 @@ const Alert: React.FC<AlertProps> = ({
                   label="View Results"
                   icon={Icons.ChevronRightBold}
                   iconAlignment="right"
-                  onClick={() => router.push(`/collections/${collectionId}/alerts/${uuid}/results`)}
+                  onClick={() =>
+                    window.open(
+                      `/collections/${collectionId}/alerts/${uuid}/results`,
+                      '_blank',
+                      'width=800,height=500',
+                    )
+                  }
                 />
               </>
             ) : (
