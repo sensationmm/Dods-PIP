@@ -33,6 +33,9 @@ export class TaxonomyRepository implements Taxonomy {
                                     ]
                                 }
                             }
+                        ],
+                        "must_not": [
+                            {"match": {"deprecated": true}}
                         ]
                     }
                 }
