@@ -3,7 +3,7 @@ import Panel from '@dods-ui/components/_layout/Panel';
 import Spacer from '@dods-ui/components/_layout/Spacer';
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
 import { TagsData } from '@dods-ui/components/ContentTagger/TagBrowser';
-import StatusBar from '@dods-ui/components/StatusBar';
+import StatusBar, { StatusBarTypes } from '@dods-ui/components/StatusBar';
 import TeleportOnScroll from '@dods-ui/components/TeleportOnScroll';
 import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
@@ -15,9 +15,12 @@ import {
   createRecord,
   deleteEditorialRecord,
   getEditorialPreview,
+  getLibraryArticle,
   getMetadataSelections,
   scheduleEditorial,
   setEditorialPublishState,
+  unscheduleEditorial,
+  updatePublished,
   updateRecord,
 } from '@dods-ui/pages/editorial/editorial.service';
 import { Api, BASE_URI } from '@dods-ui/utils/api';
@@ -41,7 +44,7 @@ export const EDITORIAL_STORAGE_KEY = 'temp_editorial';
 
 export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotification }) => {
   const router = useRouter();
-  const { articleId = [] } = router.query;
+  const { articleId = [], type } = router.query;
   const { user } = useUser();
   const [metadataSelectionValues, setMetadataSelectionValues] = useState<MetadataSelection>({
     contentSources: [],
@@ -60,6 +63,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     originator: '',
     contentDateTime: format(new Date(), 'yyyy-MM-dd'),
   });
+  const [documentStatus, setDocumentStatus] = React.useState<string>();
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -82,7 +86,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     setValidInfoTypes(getInformationTypes({ contentSource: sourceName, informationType }));
 
     const errors = {};
-    if (!title || title.length > 100) {
+    if (!title) {
       Object.assign(errors, { title });
     }
     if (!sourceName) {
@@ -111,7 +115,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   useEffect(() => {
     const getDocData = async (uuid: string) => {
       setLoading(true);
-      await getEditorialPreview(uuid).then((response) => {
+      const getFunction = type === 'record' ? getEditorialPreview : getLibraryArticle;
+      await getFunction(uuid).then((response) => {
         if (response.success) {
           const {
             documentTitle,
@@ -122,7 +127,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             originator,
             sourceReferenceUri,
             taxonomyTerms,
-          } = response.document;
+            createdDateTime,
+          } = response.data.document;
           const fieldData = {
             title: documentTitle,
             content: documentContent,
@@ -130,8 +136,13 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             sourceName: contentSource,
             sourceUrl: sourceReferenceUri || '',
             originator: originator,
-            contentDateTime: contentDateTime,
+            contentDateTime: contentDateTime
+              ? contentDateTime
+              : documentStatus === 'draft' || documentStatus === 'Draft'
+              ? format(new Date(), 'yyyy-MM-dd')
+              : format(new Date(createdDateTime), 'yyyy-MM-dd'),
           };
+          setDocumentStatus(type === 'record' ? response.data.status.status : 'published');
           setSavedDocumentContent(
             documentContent,
             (content: string) => content.length && setLoading(false),
@@ -215,9 +226,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
         addNotification({ title: 'Document successfully published', type: 'confirm' });
       })
       .then(() => {
-        setTimeout(() => {
-          router.push('/editorial');
-        }, 3000);
+        router.push('/editorial');
       });
     setLoading(false);
   };
@@ -235,7 +244,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       await createRecord({
         jurisdiction: jurisdiction || '',
         contentSource: sourceName,
-        contentDateTime,
+        contentDateTime: format(new Date(contentDateTime), 'yyyy-MM-dd'),
         originator: originator,
         informationType,
         documentTitle: title,
@@ -292,6 +301,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   };
 
   const onUpdate = async (publish = false, preview = false) => {
+    console.log('onUpdate', type);
     const { title, sourceName, sourceUrl, informationType, content, originator, contentDateTime } =
       fieldData;
     if (
@@ -302,10 +312,11 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
       content?.length
     ) {
       setLoading(true);
-      await updateRecord(articleId[0], {
+      const updateFunction = type === 'record' ? updateRecord : updatePublished;
+      await updateFunction(articleId[0], {
         jurisdiction: jurisdiction || '',
         contentSource: sourceName,
-        contentDateTime,
+        contentDateTime: format(new Date(contentDateTime), 'yyyy-MM-dd'),
         informationType,
         originator: originator,
         documentTitle: title,
@@ -367,6 +378,24 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     setLoading(false);
     addNotification({
       title: `Document successfully scheduled for ${dateAndTime}`,
+      type: 'confirm',
+    });
+
+    setTimeout(() => {
+      router.push('/editorial');
+    }, 600);
+  };
+
+  const onUnschedule = async () => {
+    setLoading(true);
+    await unscheduleEditorial({
+      documentId: articleId as string,
+    });
+    global.localStorage.removeItem(EDITORIAL_STORAGE_KEY);
+    setShowScheduleModal(false);
+    setLoading(false);
+    addNotification({
+      title: `Document successfully unscheduled`,
       type: 'confirm',
     });
 
@@ -466,9 +495,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
 
         <TeleportOnScroll>
           <StatusBar
+            status={documentStatus?.toLowerCase() as StatusBarTypes}
             saveAndExit
-            publish
-            schedule
             showDeleteButton={isEditMode}
             isValidForm={isValidForm}
             isFutureContentDate={new Date(fieldData.contentDateTime) > new Date()}
@@ -477,12 +505,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             onPreview={isEditMode ? onPreviewUpdate : onPreview}
             onDelete={onDelete}
             onSchedule={() => setShowScheduleModal(true)}
-            onUnschedule={() => {
-              console.info('<><><> Not supported');
-            }}
-            onUnpublish={() => {
-              console.info('<><><> Not supported');
-            }}
+            onUnschedule={onUnschedule}
+            onUpdateArticle={onUpdate}
           />
         </TeleportOnScroll>
       </Panel>

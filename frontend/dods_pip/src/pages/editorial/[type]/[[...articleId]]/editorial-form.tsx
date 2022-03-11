@@ -212,17 +212,13 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
           onBlur={() => validateField('title', fieldData.title)}
           required
           onChange={(value) => onFieldChange('title', value)}
-          error={
-            fieldData.title && fieldData.title.length > 100
-              ? 'Title should be less than 100 characters'
-              : undefined
-          }
         />
         <Spacer size={7.5} />
         {editor}
       </div>
       <ContentTagger
         highlight={selectedText}
+        clearHighlight={() => setSelectedText(undefined)}
         highlightWordCount={selectedTextOccurrences}
         tags={tags}
         setTags={onTagsChange}

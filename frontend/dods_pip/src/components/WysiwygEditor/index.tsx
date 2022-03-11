@@ -73,7 +73,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   onTextChange,
   onSelection,
   savedContent,
-  tags = [],
+  // tags = [],
 }) => {
   const [quillInstance, setQuillInstance] = useState<Quill>();
 
@@ -104,7 +104,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
             text: selectedText,
             occurrences: matches.length,
           });
-        } else {
+        } else if (quill.hasFocus()) {
           onSelection(undefined);
         }
       });

@@ -43,14 +43,14 @@ export interface updatePercolatorParameters {
 
 export interface DocumentPersister {
     publishDocument(lambdaName: string, payload: string): Promise<boolean>;
-    updateDocument(parameters: any): Promise<Object>;
+    updateDocument(parameters: any, key: string): Promise<Object>;
     getDocument(documentARN: string, key: string): Promise<Object>;
     getDocumentByArn(documentARN: string): Promise<DocumentPayloadResponse>;
     getDocumentByArnV1(documentARN: string): Promise<DocumentPayloadResponseV1>;
     scheduleWebhook(parameters: ScheduleEditorialRecordParamateres): Promise<object>;
     scheduleAlertWebhook(parameters: ScheduleAlertParameters): Promise<object>
     publishDocumentV1(lambdaName: string, payload: string): Promise<boolean>;
-    sendEmail(parameters: any, baseURL: string): Promise<Object>;
+    sendEmail(parameters: any, baseURL: string, key: string): Promise<Object>;
     getDocumentById(documentId: string, baseURL: string): Promise<Object>;
     deleteSchedule(recordId: string): Promise<object>;
     searchContent(parameters: searchContentParameters): Promise<object>;

@@ -78,6 +78,18 @@ paths:
                       type: string
                       format: date
                   required: false
+                - in: query
+                  name: sortBy
+                  description: Sort Records By fields
+                  schema:
+                      type: string
+                  required: false
+                - in: query
+                  name: sortDirection
+                  description: Filter records until a specific date
+                  schema:
+                      type: string
+                  required: false
             responses:
                 "200":
                     $ref: "#/components/responses/EditorialRecordListResponse"

@@ -54,22 +54,27 @@ export type EditorialRecordStatuses = {
 export type EditorialRecordPreviewResponse = {
   success: boolean;
   message: string;
-  document: {
-    jurisdiction: string;
-    documentTitle: string;
-    createdBy: string;
-    internallyCreated: string;
-    schemaType: string;
-    contentSource: string;
-    contentDateTime: string;
-    originator: string;
-    sourceReferenceUri?: string;
-    informationType: string;
-    taxonomyTerms: TaxonomyTerm[];
-    documentContent: string;
-    createdDateTime: Date;
-    version: string;
-    documentId: string;
+  data: {
+    document: {
+      jurisdiction: string;
+      documentTitle: string;
+      createdBy: string;
+      internallyCreated: string;
+      schemaType: string;
+      contentSource: string;
+      contentDateTime: string;
+      originator: string;
+      sourceReferenceUri?: string;
+      informationType: string;
+      taxonomyTerms: TaxonomyTerm[];
+      documentContent: string;
+      createdDateTime: Date;
+      version: string;
+      documentId: string;
+    };
+    status: {
+      status: string;
+    };
   };
 };
 

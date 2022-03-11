@@ -25,8 +25,8 @@ export class DocumentRepository implements DocumentPersister {
         return this.awsService.invokeLambda(lambdaName, payload, false);
     }
 
-    async updateDocument(parameters: any): Promise<Object> {
-        const response = await axios.put(`${this.baseURL}documents`, parameters);
+    async updateDocument(parameters: any, key: string): Promise<Object> {
+        const response = await axios.put(`${this.baseURL}documents`, parameters, { headers: { 'x-api-key': key } });
         const { data: { success, payload } } = response;
         return { success, payload };
     }
@@ -159,8 +159,8 @@ export class DocumentRepository implements DocumentPersister {
 
     }
 
-    async sendEmail(parameters: any, baseURL: string): Promise<Object> {
-        const response = await axios.post(`${baseURL}/email`, parameters);
+    async sendEmail(parameters: any, baseURL: string, key: string): Promise<Object> {
+        const response = await axios.post(`${baseURL}/email`, parameters, { headers: { 'x-api-key': key } });
         const { data: { success, data, error } } = response;
         return { success, data: data, error };
     }

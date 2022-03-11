@@ -177,14 +177,16 @@ const Alert: React.FC<AlertProps> = ({
                   icon={Icons.Document}
                   onClick={() => router.push(`/collections/${collectionId}/alerts/${uuid}/preview`)}
                 />
-                <Button
-                  type="secondary"
-                  isSmall
-                  inline
-                  label="Edit settings"
-                  icon={Icons.Pencil}
-                  onClick={() => setShowEditOptions(true)}
-                />
+                {isConsultant && (
+                  <Button
+                    type="secondary"
+                    isSmall
+                    inline
+                    label="Edit settings"
+                    icon={Icons.Pencil}
+                    onClick={() => setShowEditOptions(true)}
+                  />
+                )}
                 <Button
                   isSmall
                   inline

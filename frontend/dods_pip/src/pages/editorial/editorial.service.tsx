@@ -58,11 +58,38 @@ export const updateRecord = async (
   return response as UpdateEditorialRecordResponse;
 };
 
+export const updatePublished = async (
+  documentID: string,
+  payload: EditorialRecord,
+): Promise<UpdateEditorialRecordResponse> => {
+  const response = await fetchJson<UpdateEditorialRecordResponse>(
+    `${BASE_URI}${Api.EditorialRecords}/document/${documentID}/versions`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+  );
+
+  return response as UpdateEditorialRecordResponse;
+};
+
+export const getLibraryArticle = async (
+  documentID: string,
+): Promise<EditorialRecordPreviewResponse> => {
+  const response = await fetchJson<EditorialRecordPreviewResponse>(
+    `${BASE_URI}${Api.Content}/${documentID}`,
+    {
+      method: 'GET',
+    },
+  );
+  return { ...response, data: { document: response.data } } as EditorialRecordPreviewResponse;
+};
+
 export const getEditorialPreview = async (
   documentID: string,
 ): Promise<EditorialRecordPreviewResponse> => {
   const response = await fetchJson<EditorialRecordPreviewResponse>(
-    `${BASE_URI}${Api.EditorialRecords}/${documentID}/document`,
+    `${BASE_URI}${Api.EditorialRecords}/${documentID}`,
     {
       method: 'GET',
     },
@@ -104,6 +131,19 @@ export const scheduleEditorial = async (payload: {
     {
       method: 'POST',
       body: JSON.stringify(payload),
+    },
+  );
+
+  return result as unknown as EditorialRecordResponse; // No idea what the response is yet
+};
+
+export const unscheduleEditorial = async (payload: {
+  documentId: string;
+}): Promise<EditorialRecordResponse> => {
+  const result = await fetchJson(
+    `${BASE_URI}${Api.EditorialRecords}/${payload.documentId}/schedule`,
+    {
+      method: 'DELETE',
     },
   );
 

@@ -8,7 +8,6 @@ import color from '@dods-ui/globals/color';
 import Link from 'next/link';
 import React from 'react';
 
-import useUser from '../../../lib/useUser';
 import * as Styled from './header.styles';
 
 export interface HeaderProps {
@@ -26,9 +25,7 @@ const Header: React.FC<HeaderProps> = ({
   sourceReferenceUri,
   informationType,
   publishedDateTime,
-  documentId,
 }) => {
-  const { user } = useUser();
   return (
     <Styled.header>
       <Styled.mainSection>
@@ -76,16 +73,13 @@ const Header: React.FC<HeaderProps> = ({
           </Styled.infoItem>
         </Styled.infoRow>
       </Styled.mainSection>
-      {documentId && user?.isDodsUser && (
-        <Styled.actionsSection>
-          <Link href={`/editorial/article/${documentId}`} passHref>
-            <Styled.editLink>
-              <Icon src={Icons.Pencil} color={color.base.white} size={IconSize.mediumLarge} />
-              <span>Edit</span>
-            </Styled.editLink>
-          </Link>
-        </Styled.actionsSection>
-      )}
+      {/* {documentId && user?.isDodsUser && (
+        <Button
+          onClick={() => router.push(`/editorial/article/${documentId}`)}
+          label="Edit"
+          icon={Icons.Pencil}
+        />
+      )} */}
     </Styled.header>
   );
 };

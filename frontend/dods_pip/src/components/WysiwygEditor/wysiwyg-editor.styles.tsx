@@ -6,6 +6,10 @@ import spacing from '../../globals/spacing';
 export const wrapper = styled.div`
   width: 100%;
 
+  b {
+    font-family: 'OpenSansBold', sans-serif;
+  }
+
   .ql-font-style {
     .ql-picker-item[data-value='body']::before {
       font-family: 'OpenSans', sans-serif;
@@ -108,6 +112,10 @@ export const wrapper = styled.div`
     font-family: 'Open Sans';
     font-size: 12px;
     line-height: 1.25;
+  }
+
+  .ql-editor b {
+    font-family: 'Open Sans Bold';
   }
 
   .ql-editor.ql-blank::before {

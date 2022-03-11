@@ -123,6 +123,9 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
     );
   };
 
+  const routeParts = router.route.split('/');
+  const isCreate = routeParts[routeParts.length - 1] === 'create';
+
   return (
     <>
       <Styled.sectionHeaderContainer>
@@ -198,15 +201,13 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
             setQueries(queries.filter((del) => query.id !== del.id));
           }}
           onViewResults={() => {
-            router.push(
-              `/collections/${alert.collectionId}/alerts/${alert.uuid}/results/${query.id}`,
-            );
+            const url = `/collections/${alert.collectionId}/alerts/${alert.uuid}/results/${query.id}`;
+            isCreate ? window.open(url, '_blank', 'width=800,height=500') : router.push(url);
           }}
           numQueries={numQueries}
           onCopyQuery={copyQuery}
           isDisabled={adding}
           hideButtons={disabled}
-          // saved={!changed}
         />,
         <Spacer key={`spacer-${query.id}`} size={6} />,
       ])}

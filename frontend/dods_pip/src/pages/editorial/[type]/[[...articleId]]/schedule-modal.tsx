@@ -122,7 +122,7 @@ const ScheduleModal: React.FC<IScheduleModalProps> = ({ onClose, onSchedule }) =
         <Button type="secondary" label="Cancel" onClick={onClose} />
         <Button
           icon={Icons.Clock}
-          type="secondary"
+          type="primary"
           label="Schedule Publishing"
           onClick={() => {
             const dateAndTime = addHours(parseISO(`${date}T${time}`), -parseInt(timezone));
