@@ -3,8 +3,10 @@ import Chips from '@dods-ui/components/Chips';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Text from '@dods-ui/components/Text';
+import withSession, { NextIronRequest } from '@dods-ui/lib/session';
 import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useMemo, useState } from 'react';
@@ -156,14 +158,20 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     }
 
     const wordsToTag: ITag[] = Object.keys(tags).reduce((carry: ITag[], key) => {
-      return [...carry, ...tags[key].map(({ value }) => ({ value, key }))];
+      return [
+        ...carry,
+        ...tags[key]
+          .slice()
+          .sort((a, b) => (a.value.split(' ').length > b.value.split(' ').length ? -1 : 1))
+          .map(({ value }) => ({ value, key })),
+      ];
     }, []);
 
     const tagged = wordsToTag.reduce((carry = '', { key, value }) => {
-      const regex = new RegExp(value, 'g');
+      const regex = new RegExp(` ${value} `, 'g');
       return carry?.replace(
         regex,
-        `<span class="tag" style="background-image: url('/tag-icons/icon-${key}.svg')">${value}</span>`,
+        ` <span class="tag" style="background-image: url('/tag-icons/icon-${key}.svg')">${value}</span> `,
       );
     }, documentContent);
 
@@ -172,6 +180,10 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
 
   return (
     <Panel>
+      <Head>
+        <title>{documentTitle} | Dods Library</title>
+      </Head>
+
       <Header
         documentTitle={documentTitle}
         contentSource={contentSource}
@@ -206,20 +218,26 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   );
 };
 
-const getData = async ({
-  documentId,
-  isPreview,
-}: {
-  documentId: string;
-  isPreview?: boolean;
-}): Promise<ISourceData> => {
+const getData = async (
+  {
+    documentId,
+    isPreview,
+  }: {
+    documentId: string;
+    isPreview?: boolean;
+  },
+  req: NextIronRequest,
+): Promise<ISourceData> => {
   if (isPreview) {
+    const url = `${process.env.APP_API_URL}${Api.EditorialRecords}/${documentId}/document`;
     const response = (await fetchJson(
-      `${process.env.APP_API_URL}${Api.EditorialRecords}/${documentId}/document`,
+      url,
       {
         method: 'GET',
       },
+      req,
     )) as IPreviewResponse;
+
     return response.document;
   } else {
     const response = (await fetchJson(`${process.env.APP_API_URL}${Api.Content}/${documentId}`, {
@@ -230,62 +248,65 @@ const getData = async ({
   }
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query, params } = context;
-  const documentId = params?.id as string;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+export const getServerSideProps: GetServerSideProps = /* @ts-ignore */ withSession(
+  async (context) => {
+    const { req, query, params } = context;
+    const documentId = params?.id as string;
 
-  let apiData: ISourceData = {};
-  const isPreview = query.preview === 'true';
+    let apiData: ISourceData = {};
+    const isPreview = query.preview === 'true';
 
-  try {
-    apiData = await getData({ documentId, isPreview: isPreview });
-  } catch (error) {
-    console.error(error);
-  }
+    try {
+      apiData = await getData({ documentId, isPreview: isPreview }, req);
+    } catch (error) {
+      console.error(error);
+    }
 
-  if (!Object.keys(apiData || {}).length) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const date = apiData.contentDateTime ? new Date(apiData.contentDateTime) : '';
-  const publishedDateTime = date ? format(date, "d MMMM yyyy 'at' HH:mm") : '';
-
-  const formatTaxonomyTerms = () => {
-    const terms: any = {};
-
-    apiData?.taxonomyTerms?.map((term: any) => {
-      if (terms.hasOwnProperty(term.facetType)) {
-        terms[term.facetType].push(term.termLabel);
-      } else {
-        terms[term.facetType] = [];
-        terms[term.facetType].push(term.termLabel);
-      }
-    });
-
-    return terms;
-  };
-
-  const tagsSource = !isPreview ? apiData.aggs_fields : formatTaxonomyTerms();
-  const tags: ITags = Object.keys(tagsSource || {}).reduce((carry, key) => {
-    const values = tagsSource?.[key].map((value: string) => {
-      const regEx = new RegExp(value, 'g');
+    if (!Object.keys(apiData || {}).length) {
       return {
-        value,
-        count: (apiData.documentContent?.match(regEx) || []).length || 0,
+        notFound: true,
       };
-    });
+    }
+
+    const date = apiData.contentDateTime ? new Date(apiData.contentDateTime) : '';
+    const publishedDateTime = date ? format(date, "d MMMM yyyy 'at' HH:mm") : '';
+
+    const formatTaxonomyTerms = () => {
+      const terms: any = {};
+
+      apiData?.taxonomyTerms?.map((term: any) => {
+        if (terms.hasOwnProperty(term.facetType)) {
+          terms[term.facetType].push(term.termLabel);
+        } else {
+          terms[term.facetType] = [];
+          terms[term.facetType].push(term.termLabel);
+        }
+      });
+
+      return terms;
+    };
+
+    const tagsSource = !isPreview ? apiData.aggs_fields : formatTaxonomyTerms();
+    const tags: ITags = Object.keys(tagsSource || {}).reduce((carry, key) => {
+      const values = tagsSource?.[key].map((value: string) => {
+        const regEx = new RegExp(value, 'g');
+        return {
+          value,
+          count: (apiData.documentContent?.match(regEx) || []).length || 0,
+        };
+      });
+
+      return {
+        ...carry,
+        [key]: values,
+      };
+    }, {});
 
     return {
-      ...carry,
-      [key]: values,
+      props: { apiData, tags, publishedDateTime },
     };
-  }, {});
-
-  return {
-    props: { apiData, tags, publishedDateTime },
-  };
-};
+  },
+);
 
 export default DocumentViewer;
