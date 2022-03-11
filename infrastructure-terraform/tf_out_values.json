@@ -19,6 +19,11 @@
     "type": "string",
     "value": "http://pip-dev-fargate-lb-1826645209.eu-west-1.elb.amazonaws.com"
   },
+  "dev_taxonomy_api": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://v3ffqdex6f.execute-api.eu-west-1.amazonaws.com/"
+  },
   "prod_backend_url": {
     "sensitive": false,
     "type": "string",
@@ -38,6 +43,11 @@
     "sensitive": false,
     "type": "string",
     "value": "http://pip-production-fargate-lb-1219860305.eu-west-1.elb.amazonaws.com"
+  },
+  "prod_taxonomy_api": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://t7lh1tmah9.execute-api.eu-west-1.amazonaws.com/"
   },
   "qa_backend_url": {
     "sensitive": false,
@@ -59,6 +69,11 @@
     "type": "string",
     "value": "http://pip-qa-fargate-lb-2136712671.eu-west-1.elb.amazonaws.com"
   },
+  "qa_taxonomy_api": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://fibcnu81b7.execute-api.eu-west-1.amazonaws.com/"
+  },
   "test_backend_url": {
     "sensitive": false,
     "type": "string",
@@ -78,5 +93,10 @@
     "sensitive": false,
     "type": "string",
     "value": "http://pip-test-fargate-lb-1817426860.eu-west-1.elb.amazonaws.com"
+  },
+  "test_taxonomy_api": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://rnm3m6le38.execute-api.eu-west-1.amazonaws.com/"
   }
 }
