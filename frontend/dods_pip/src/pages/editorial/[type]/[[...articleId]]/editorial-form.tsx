@@ -212,6 +212,11 @@ const EditorialForm: React.FC<EditorialFormProps> = ({
           onBlur={() => validateField('title', fieldData.title)}
           required
           onChange={(value) => onFieldChange('title', value)}
+          error={
+            fieldData.title && fieldData.title.length > 200
+              ? 'Title should be less than 200 characters'
+              : undefined
+          }
         />
         <Spacer size={7.5} />
         {editor}
