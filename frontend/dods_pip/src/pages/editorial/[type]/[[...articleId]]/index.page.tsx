@@ -86,7 +86,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     setValidInfoTypes(getInformationTypes({ contentSource: sourceName, informationType }));
 
     const errors = {};
-    if (!title) {
+    if (!title || title.length > 200) {
       Object.assign(errors, { title });
     }
     if (!sourceName) {
