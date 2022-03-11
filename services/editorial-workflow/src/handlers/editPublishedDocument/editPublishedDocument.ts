@@ -3,7 +3,8 @@ import { AwsService, DefaultAwsService, DocumentRepository, EditPublishedDocumen
 
 import { config } from '../../domain';
 import moment from 'moment';
-import { v4 as uuidv4 } from 'uuid';
+
+//import { v4 as uuidv4 } from 'uuid';
 
 const { dods: { downstreamEndpoints: { userProfile } } } = config;
 const { aws: { region, buckets: { documents: documentsBucket } } } = config;
@@ -14,9 +15,9 @@ export const editPublishedDocument: AsyncLambdaHandler<EditPublishedDocumentPara
         const documentId = params.documentId;
         const documentResponse: any = await DocumentRepository.defaultInstance.getDocumentById(documentId, userProfile);
         let editedDocumentResponse = documentResponse.data;
-        editedDocumentResponse.documentId = uuidv4().replace(/-/g, '');
+        //editedDocumentResponse.documentId = uuidv4().replace(/-/g, '');
         editedDocumentResponse.version = "2.0";
-        editedDocumentResponse.ingestedDateTime = "";
+        //editedDocumentResponse.ingestedDateTime = "";
         editedDocumentResponse.createdDateTime = new Date();
         delete editedDocumentResponse.aggs_fields;
 
