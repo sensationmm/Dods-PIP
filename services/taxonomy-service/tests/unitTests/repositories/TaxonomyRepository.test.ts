@@ -203,7 +203,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             {"wildcard": {"altLabel.en.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
             {"wildcard": {"altLabel.de.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
             {"wildcard": {"altLabel.fr.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}}
-        ]}}]}}}, "size": 500}
+        ]}}],"must_not": [{"match": {"deprecated": true}}]}}}, "size": 500}
 
         const taxonomy_query = await TaxonomyRepository.createSearchQuery(TAXONOMY_PARAMETERS)
 
@@ -217,7 +217,7 @@ describe(`${FUNCTION_NAME} handler`, () => {
             {"wildcard": {"altLabel.en.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
             {"wildcard": {"altLabel.de.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}},
             {"wildcard": {"altLabel.fr.keyword": {"value": "*" + TAXONOMY_PARAMETERS.tags + "*", "case_insensitive": true}}}
-        ]}}]}}}, "size": data.limit}
+        ]}}],"must_not": [{"match": {"deprecated": true}}]}}}, "size": data.limit}
 
             const taxonomy_query = await TaxonomyRepository.createSearchQuery(data)
 
