@@ -6,7 +6,6 @@ import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Popover from '@dods-ui/components/Popover';
 import Text from '@dods-ui/components/Text';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import { Collection } from '../../index.page';
@@ -27,7 +26,6 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
   copyQuery,
   disabled = false,
 }) => {
-  const router = useRouter();
   const query = {
     source: [],
     informationType: [],
@@ -123,9 +121,6 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
     );
   };
 
-  const routeParts = router.route.split('/');
-  const isCreate = routeParts[routeParts.length - 1] === 'create';
-
   return (
     <>
       <Styled.sectionHeaderContainer>
@@ -200,10 +195,13 @@ const AlertStep2: React.FC<AlertStep2Props> = ({
             setChanged(true);
             setQueries(queries.filter((del) => query.id !== del.id));
           }}
-          onViewResults={() => {
-            const url = `/collections/${alert.collectionId}/alerts/${alert.uuid}/results/${query.id}`;
-            isCreate ? window.open(url, '_blank', 'width=800,height=500') : router.push(url);
-          }}
+          onViewResults={() =>
+            window.open(
+              `/collections/${alert.collectionId}/alerts/${alert.uuid}/results/${query.id}`,
+              '_blank',
+              'width=800,height=500',
+            )
+          }
           numQueries={numQueries}
           onCopyQuery={copyQuery}
           isDisabled={adding}

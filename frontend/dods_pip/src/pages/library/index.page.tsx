@@ -5,6 +5,7 @@ import DateFacet from '@dods-ui/components/DateFacet';
 import FacetContainer from '@dods-ui/components/FacetContainer';
 import LibraryItem from '@dods-ui/components/LibraryItem';
 import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
+import withSession from '@dods-ui/lib/session';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -492,63 +493,67 @@ export const Library: React.FC<ILibraryProps> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+export const getServerSideProps: GetServerSideProps = /* @ts-ignore */ withSession(
+  async (context) => {
+    const { req, query } = context;
 
-  let apiResponse: IResponse = {};
+    let apiResponse: IResponse = {};
 
-  const accountId = context.req.cookies['account-id'];
-  let parsedQuery;
+    const accountId = context.req.cookies['account-id'];
+    let parsedQuery;
 
-  try {
-    const response: CustomResponse = await fetchJson(
-      `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}`,
-      {
-        method: 'GET',
-      },
-    );
-
-    const { data = {} } = response;
-    const { isEU, isUK } = data;
-
-    const payload = getPayload({ search: query.search, isEU, isUK });
-    parsedQuery = payload.parsedQuery;
-
-    const sPayload = JSON.stringify(payload.payload);
-    apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
-      body: sPayload,
-      method: 'POST',
-    })) as IResponse;
-  } catch (error) {
-    console.error(error);
-
-    if (!error.data.success) {
-      return {
-        props: {
-          apiErrorMessage: error.data.message,
-          parsedQuery: {},
-          results: [],
-          totalDocs: 0,
-          aggregations: [],
+    try {
+      const response: CustomResponse = await fetchJson(
+        `${process.env.APP_API_URL}${Api.ClientAccount}/${accountId}`,
+        {
+          method: 'GET',
         },
+        req,
+      );
+
+      const { data = {} } = response;
+      const { isEU, isUK } = data;
+
+      const payload = getPayload({ search: query.search, isEU, isUK });
+      parsedQuery = payload.parsedQuery;
+
+      const sPayload = JSON.stringify(payload.payload);
+      apiResponse = (await fetchJson(`${process.env.APP_API_URL}${Api.ContentSearch}`, {
+        body: sPayload,
+        method: 'POST',
+      })) as IResponse;
+    } catch (error) {
+      console.error(error);
+
+      if (!error.data.success) {
+        return {
+          props: {
+            apiErrorMessage: error.data.message,
+            parsedQuery: {},
+            results: [],
+            totalDocs: 0,
+            aggregations: [],
+          },
+        };
+      }
+    }
+
+    if (!apiResponse || !accountId) {
+      return {
+        notFound: true,
       };
     }
-  }
 
-  if (!apiResponse || !accountId) {
     return {
-      notFound: true,
+      props: {
+        results: apiResponse?.es_response?.hits?.hits || [],
+        totalDocs: apiResponse?.es_response?.hits?.total?.value || 0,
+        aggregations: apiResponse?.es_response?.aggregations || {},
+        parsedQuery,
+      },
     };
-  }
-
-  return {
-    props: {
-      results: apiResponse?.es_response?.hits?.hits || [],
-      totalDocs: apiResponse?.es_response?.hits?.total?.value || 0,
-      aggregations: apiResponse?.es_response?.aggregations || {},
-      parsedQuery,
-    },
-  };
-};
+  },
+);
 
 export default LoadingHOC(Library);

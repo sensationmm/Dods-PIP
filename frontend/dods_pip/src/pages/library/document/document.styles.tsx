@@ -104,7 +104,7 @@ export const inlinedTags = styled.div`
     font-weight: bold;
     background-repeat: no-repeat;
     background-position: 0 50%;
-    padding-left: 18px;
+    padding-left: 15px;
     margin-left: 2px;
     cursor: help;
   }
