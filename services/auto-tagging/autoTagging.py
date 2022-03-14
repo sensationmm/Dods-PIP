@@ -39,7 +39,7 @@ def handle(event, context):
     ]
 
     for taxonomy_type in taxonomy_types:
-        taxonomy_response = es.search(index='taxonomy', query={"bool": {"must": [{"match": {"inScheme": taxonomy_type}}, {"match": {"deprecated": true}}]}}, size=10000)
+        taxonomy_response = es.search(index='taxonomy', query={"bool": {"must": [{"match": {"inScheme": taxonomy_type}}, {"match": {"deprecated": True}}]}}, size=10000)
         logging.info(f"Total Count : {taxonomy_response['hits']['total']['value']}")
         for taxonomy in taxonomy_response['hits']['hits']:
             if taxonomy_type == 'Organisations' and 'narrower' in taxonomy['_source']:
