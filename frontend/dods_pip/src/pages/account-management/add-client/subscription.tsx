@@ -161,8 +161,10 @@ const Subscription: React.FC<SubscriptionProps> = ({
     const rollover = renewalType === RenewalType.Annual;
     const payload = {
       contractRollover: rollover,
-      contractStartDate: startDate,
-      contractEndDate: rollover ? '' : endDate,
+      contractStartDate: format(new Date(startDate), 'yyyy-MM-dd'),
+      contractEndDate: rollover
+        ? format(add(new Date(startDate), { years: 1 }), 'yyyy-MM-dd')
+        : format(new Date(endDate), 'yyyy-MM-dd'),
       subscriptionSeats: parseInt(userSeats, 10),
       consultantHours: parseInt(consultantHours, 10),
       isEU,
