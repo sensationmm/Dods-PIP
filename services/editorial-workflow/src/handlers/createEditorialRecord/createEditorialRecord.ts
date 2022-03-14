@@ -74,8 +74,9 @@ export const createEditorialRecordV2 = async (params: EditorialDocument) => {
     const documentFileName = documentName.replace(/[\/\\#, |+()$~%.'":*!?<>{}^`.@=;+\[\]]/g, '_')
 
     const { contentSource, informationType, createdDateTime } = params as EditorialDocument;
+    const arnFileName = documentFileName.substring(0, 99);
 
-    const fileKey = `${contentSource}/${informationType}/${moment(createdDateTime).format('DD-MM-YYYY')}/${documentFileName}.json`;
+    const fileKey = `${contentSource}/${informationType}/${moment(createdDateTime).format('DD-MM-YYYY')}/${arnFileName}.json`;
 
     const document = params;
     const documentId = uuidv4();
