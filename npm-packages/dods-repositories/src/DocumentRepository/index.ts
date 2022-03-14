@@ -176,4 +176,22 @@ export class DocumentRepository implements DocumentPersister {
         const response = await axios.post(`${baseURL}/search/contents/query`, query);
         return { response };
     }
+
+    async autoTagContent(lambdaName: string, payload: string): Promise<Object> {
+
+        const lambdaClient = new Lambda({ region: process.env.AWS_REGION });
+
+        const lambdaResponse = await lambdaClient.invoke({ FunctionName: lambdaName, Payload: payload }, function (error, data) {
+            if (error) {
+                console.log(error);
+            }
+            if (data) {
+                console.log(data);
+            }
+        }).promise();
+        return lambdaResponse;
+
+    }
+
+
 }

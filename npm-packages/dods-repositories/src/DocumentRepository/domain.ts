@@ -54,4 +54,5 @@ export interface DocumentPersister {
     getDocumentById(documentId: string, baseURL: string): Promise<Object>;
     deleteSchedule(recordId: string): Promise<object>;
     searchContent(parameters: searchContentParameters): Promise<object>;
+    autoTagContent(lambdaName: string, payload: string): Promise<Object>
 }
