@@ -201,6 +201,8 @@ export const getServerSideProps: GetServerSideProps = /* @ts-ignore */ withSessi
       }
     }
 
+    console.log('Results Response', apiResponse, alertDetails, accountId);
+
     if (!apiResponse || !alertDetails || !accountId) {
       return {
         notFound: true,
