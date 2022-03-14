@@ -159,8 +159,6 @@ export const getServerSideProps: GetServerSideProps = /* @ts-ignore */ withSessi
     let searchQuery: string;
     let parsedQuery;
 
-    const accountId = context.req.cookies['account-id'];
-
     try {
       const collectionAlert = await fetchJson<CustomResponse>(
         `${process.env.APP_API_URL}${Api.Collections}/${query.uuid}${Api.Alerts}/${query.alertId}`,
@@ -201,7 +199,7 @@ export const getServerSideProps: GetServerSideProps = /* @ts-ignore */ withSessi
       }
     }
 
-    if (!apiResponse || !alertDetails || !accountId) {
+    if (!apiResponse || !alertDetails) {
       return {
         notFound: true,
       };
