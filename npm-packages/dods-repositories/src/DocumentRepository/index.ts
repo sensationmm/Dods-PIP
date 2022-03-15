@@ -165,8 +165,8 @@ export class DocumentRepository implements DocumentPersister {
         return { success, data: data, error };
     }
 
-    async getDocumentById(documentId: string, baseURL: string): Promise<Object> {
-        const response = await axios.get(`${baseURL}/search/contents/${documentId}`);
+    async getDocumentById(documentId: string, baseURL: string, key: string): Promise<Object> {
+        const response = await axios.get(`${baseURL}/search/contents/internal/${documentId}`, { headers: { 'x-api-key': key } });
         const { data: { success, data, error } } = response;
         return { success, data: data, error };
     }
