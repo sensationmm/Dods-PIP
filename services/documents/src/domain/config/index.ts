@@ -1,6 +1,7 @@
 import Joi, { Schema } from 'joi';
-import { resolve } from 'path';
+
 import { DownstreamEndpoints } from '../interfaces';
+import { resolve } from 'path';
 
 const loadConfig = (schema: Schema) => {
 
@@ -25,6 +26,7 @@ const envVarsSchema = Joi.object()
         CORS_ORIGINS: Joi.string().required().default('*'),
         API_GATEWAY_BASE_URL: Joi.string().required(),
         CONTENT_BUCKET: Joi.string().required(),
+        AUTOTAGGING_LAMBDA: Joi.string().required(),
     })
     .unknown();
 
@@ -51,6 +53,10 @@ export const config = {
         region: envVars.SERVERLESS_REGION as string,
         buckets: {
             content: envVars.CONTENT_BUCKET as string,
+        },
+        lambdas: {
+            auto_tagging: envVars.AUTOTAGGING_LAMBDA as string,
         }
+
     }
 };

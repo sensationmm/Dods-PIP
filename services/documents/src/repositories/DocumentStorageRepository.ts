@@ -1,6 +1,5 @@
 import { DocumentPayloadResponse, DocumentStoragePersister } from '../domain/interfaces/DocumentStoragePersister';
-
-import { S3 } from 'aws-sdk';
+import { Lambda, S3 } from 'aws-sdk';
 
 export class DocumentStorageRepository implements DocumentStoragePersister {
 
@@ -79,6 +78,22 @@ export class DocumentStorageRepository implements DocumentStoragePersister {
         }).promise();
 
         return success;
+
+    }
+
+    async autoTagContent(lambdaName: string, payload: string): Promise<Object> {
+
+        const lambdaClient = new Lambda({ region: process.env.AWS_REGION });
+
+        const lambdaResponse = await lambdaClient.invoke({ FunctionName: lambdaName, Payload: payload }, function (error, data) {
+            if (error) {
+                console.log(error);
+            }
+            if (data) {
+                console.log(data);
+            }
+        }).promise();
+        return lambdaResponse;
 
     }
 

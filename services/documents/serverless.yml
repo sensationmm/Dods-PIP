@@ -56,6 +56,7 @@ provider:
     JWK_URL: 'https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:dods-iam-${self:provider.stage}.UserPoolId}/.well-known/jwks.json'
     API_GATEWAY_BASE_URL: https://${self:provider.apiGateway.restApiId}.execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}
     CONTENT_BUCKET: infrastackdev-dodscontentextractiondevf4214acc-fvgqm0rmzab9
+    AUTOTAGGING_LAMBDA: dods-auto-tagging-${self:provider.stage}-auto-tagging
 
 custom:
   webpack:
@@ -142,3 +143,14 @@ functions:
             # enabled: false
     # tags:
     #   foo: bar
+  autoTagging:
+    handler: src/handlers/autoTagging/index.handle
+    description: Triggered when http request comes
+    events:
+      - http:
+          method: post
+          path: documents/autotagging
+          #private: true
+          # cors: true
+          # caching:
+            # enabled: false

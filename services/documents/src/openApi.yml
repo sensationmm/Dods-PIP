@@ -62,8 +62,30 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+  /documents/autotagging:
+    post:
+        security:
+        - bearerAuth: []
+        operationId: AutoTag content
+        summary: "Auto Tag document's content"
+        description: "Auto Tag document's content"
+        requestBody:
+          $ref: "#/components/requestBodies/AutoTagDocument"
+        responses:
+          "200":
+            $ref: "#/components/responses/AutoTagResponse"
+          "400":
+            $ref: "#/components/responses/BadRequest"
+          "404":
+            $ref: "#/components/responses/NotFound"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Message:
       type: object
@@ -391,6 +413,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CreateDocumentSuccess"
+            
+    AutoTagResponse:
+      description: "Response of AutoTag"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
 
   requestBodies:
     CreateDocument:
@@ -402,3 +436,17 @@ components:
             anyOf:
               - $ref: "#/components/schemas/CreateDocumentRequest"
               - $ref: "#/components/schemas/CreateDocumentParametersV2"
+              
+                  
+    AutoTagDocument:
+      description: A JSON object containing content
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              content:
+                type: string
+            required:
+            - content
