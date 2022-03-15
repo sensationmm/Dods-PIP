@@ -92,6 +92,9 @@ export interface getDocumentParameters {
   arn: string;
 }
 
+export interface getAutoTaggingParameters {
+  content: string;
+}
 export interface CreateDocumentParameters {
   document: string;
 }
