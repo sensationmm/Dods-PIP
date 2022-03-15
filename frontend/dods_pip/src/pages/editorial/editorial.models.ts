@@ -72,6 +72,7 @@ export type EditorialRecordPreviewResponse = {
       version: string;
       documentId: string;
     };
+    scheduleDate: string;
     status: {
       status: string;
     };
