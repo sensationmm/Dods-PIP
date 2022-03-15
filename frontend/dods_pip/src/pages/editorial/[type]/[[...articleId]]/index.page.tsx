@@ -64,6 +64,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
     contentDateTime: format(new Date(), 'yyyy-MM-dd'),
   });
   const [documentStatus, setDocumentStatus] = React.useState<string>();
+  const [scheduleDate, setScheduleDate] = React.useState<string>('');
   const [isValidForm, setIsValidForm] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<EditorialFormFields>>({});
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -143,6 +144,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
               : format(new Date(createdDateTime), 'yyyy-MM-dd'),
           };
           setDocumentStatus(type === 'record' ? response.data.status.status : 'published');
+          setScheduleDate(response.data.scheduleDate);
           setSavedDocumentContent(
             documentContent,
             (content: string) => content.length && setLoading(false),
@@ -301,7 +303,6 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   };
 
   const onUpdate = async (publish = false, preview = false) => {
-    console.log('onUpdate', type);
     const { title, sourceName, sourceUrl, informationType, content, originator, contentDateTime } =
       fieldData;
     if (
@@ -507,6 +508,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
             onSchedule={() => setShowScheduleModal(true)}
             onUnschedule={onUnschedule}
             onUpdateArticle={onUpdate}
+            dateScheduled={scheduleDate}
           />
         </TeleportOnScroll>
       </Panel>

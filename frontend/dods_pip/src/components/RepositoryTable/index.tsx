@@ -83,9 +83,9 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
 
           <Styled.tableStats>
             <Text type="span" data-test="row-time">
-              {data.status === 'scheduled'
+              {data.status.toLowerCase() === 'scheduled'
                 ? 'Scheduled: '
-                : data.status === 'draft'
+                : data.status.toLowerCase() === 'draft'
                 ? 'Last edited: '
                 : ''}
               {format(date, "dd MMM yyyy 'at' HH:mm")}

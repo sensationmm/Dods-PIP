@@ -1,3 +1,4 @@
+import format from 'date-fns/format';
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 
@@ -79,47 +80,40 @@ export const MainContent: React.FC<StatusBarProps> = ({
         )}
       </Styled.group>
 
-      <Styled.group reversed={!publish && !schedule && !update}>
-        {dateScheduled && (
-          <Styled.date data-test="date-scheduled">
-            <Text>Scheduled : {dateScheduled}</Text>
-          </Styled.date>
-        )}
-
-        {publish && saveAndExit && (
+      <Styled.group reversed={!publish}>
+        {saveAndExit && (
           <Styled.buttonSeparator data-test="saveandexit-component">
             <Button
               label={!publish && !schedule ? 'Update article' : 'Save and Exit'}
               type={update ? 'primary' : 'secondary'}
               disabled={!isValidForm}
-              onClick={onSaveAndExit}
+              onClick={() => (!publish && !schedule ? onUpdateArticle?.() : onSaveAndExit?.())}
               icon={update ? Icons.ChevronRight : Icons.Exit}
               iconAlignment={update ? 'right' : 'left'}
             />
           </Styled.buttonSeparator>
         )}
 
-        {publish &&
-          (schedule ? (
-            <Styled.buttonSeparator data-test="schedule-component">
-              <Button
-                label="Schedule"
-                type={!isFutureContentDate ? 'secondary' : 'primary'}
-                icon={Icons.Clock}
-                disabled={!isValidForm}
-                onClick={onSchedule}
-              />
-            </Styled.buttonSeparator>
-          ) : (
-            <Styled.buttonSeparator data-test="unschedule-component">
-              <Button
-                label="Unschedule"
-                onClick={onUnschedule}
-                type="secondary"
-                icon={Icons.Refresh}
-              />
-            </Styled.buttonSeparator>
-          ))}
+        {schedule ? (
+          <Styled.buttonSeparator data-test="schedule-component">
+            <Button
+              label="Schedule"
+              type={!isFutureContentDate ? 'secondary' : 'primary'}
+              icon={Icons.Clock}
+              disabled={!isValidForm}
+              onClick={onSchedule}
+            />
+          </Styled.buttonSeparator>
+        ) : (
+          <Styled.buttonSeparator data-test="unschedule-component">
+            <Button
+              label="Unschedule"
+              onClick={onUnschedule}
+              type="secondary"
+              icon={Icons.Refresh}
+            />
+          </Styled.buttonSeparator>
+        )}
 
         {publish && !isFutureContentDate && (
           <Styled.buttonSeparator data-test="publish-component">
@@ -133,19 +127,16 @@ export const MainContent: React.FC<StatusBarProps> = ({
           </Styled.buttonSeparator>
         )}
 
-        {!publish && (
-          <Styled.buttonSeparator data-test="Update-article-component">
-            <Button
-              label="Update article!!"
-              onClick={onUpdateArticle}
-              iconAlignment="right"
-              icon={Icons.ChevronRight}
-            />
-          </Styled.buttonSeparator>
+        {!schedule && dateScheduled && (
+          <Styled.date data-test="date-scheduled">
+            <Text type="bodySmall">
+              Scheduled : {format(new Date(dateScheduled), 'do MMM YYY')}
+            </Text>
+          </Styled.date>
         )}
       </Styled.group>
 
-      {isFutureContentDate && (
+      {schedule && isFutureContentDate && (
         <Styled.publishWarning>
           <Text type="span" bold color={color.alert.red}>
             Cannot publish now with publication date in the future

@@ -66,16 +66,7 @@ export const container = styled.div<ContainerProps>`
   display: flex;
   align-items: center;
   height: 100%;
-  ${({ containerized }) =>
-    containerized
-      ? `
-      padding-right: 15px;
-      padding-left: 15px;
-      width: 1170px;
-  `
-      : `
-      width: 100%;
-  `}
+  ${({ containerized }) => (containerized ? `width: 1280px;` : `width: 100%;`)}
 `;
 
 export const inlineView = styled.div`

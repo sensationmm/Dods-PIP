@@ -69,7 +69,7 @@ describe('Status Bar', () => {
   });
 
   it('When dateScheduled is set is should show the date component ', () => {
-    const wrapper = shallow(<MainContent dateScheduled="12 December 2021 at 12:00" />);
+    const wrapper = shallow(<MainContent dateScheduled="2021-12-12 12:00:00" status="scheduled" />);
     const component = wrapper.find('[data-test="date-scheduled"]');
     expect(component.length).toEqual(1);
   });
