@@ -28,7 +28,7 @@ export const processImmediateAlert: AsyncLambdaHandler<ProcessImmediateAlertPara
 
             const emailRecipients = recipients.map((recipient) => { return recipient.emailAddress })
 
-            const documentResponse: any = await DocumentRepository.defaultInstance.getDocumentById(docId, apiGatewayBaseURL);
+            const documentResponse: any = await DocumentRepository.defaultInstance.getDocumentById(docId, apiGatewayBaseURL, api_key);
 
             if (documentResponse.success) {
 
