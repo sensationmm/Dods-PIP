@@ -7,13 +7,13 @@ import moment from 'moment';
 //import { v4 as uuidv4 } from 'uuid';
 
 const { dods: { downstreamEndpoints: { userProfile } } } = config;
-const { aws: { region, buckets: { documents: documentsBucket } } } = config;
+const { aws: { region, buckets: { documents: documentsBucket }, keys: { api_key } } } = config;
 const awsService: AwsService = new DefaultAwsService(region);
 export const editPublishedDocument: AsyncLambdaHandler<EditPublishedDocumentParameters> = async (params) => {
 
     try {
         const documentId = params.documentId;
-        const documentResponse: any = await DocumentRepository.defaultInstance.getDocumentById(documentId, userProfile);
+        const documentResponse: any = await DocumentRepository.defaultInstance.getDocumentById(documentId, userProfile, api_key);
         let editedDocumentResponse = documentResponse.data;
         //editedDocumentResponse.documentId = uuidv4().replace(/-/g, '');
         editedDocumentResponse.version = "2.0";
