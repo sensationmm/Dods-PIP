@@ -108,6 +108,15 @@ functions:
           method: get
           path: search/contents/{contentId}
 
+  getContentInternal:
+    handler: src/handlers/getContent/index.handleInternal
+    description: Get content detail by content id
+    events:
+      - http:
+          method: get
+          path: search/contents/internal/{contentId}
+          private: true
+
   rawQuery:
     handler: src/handlers/rawQuery/index.handle
     description: Process raw query

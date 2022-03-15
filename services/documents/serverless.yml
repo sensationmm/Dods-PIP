@@ -32,6 +32,11 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
+        - "lambda:InvokeFunction"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:dods-auto-tagging-${self:provider.stage}-auto-tagging"
+
+    - Effect: "Allow"
+      Action:
         - s3:*
       Resource: 'arn:aws:s3:::*'
     - Effect: "Allow"
