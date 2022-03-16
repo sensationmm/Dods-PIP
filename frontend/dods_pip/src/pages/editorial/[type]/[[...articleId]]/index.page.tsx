@@ -349,6 +349,8 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
           }
           if (preview) {
             router.push(`/library/document/${response.data.uuid}?preview=true`);
+          } else {
+            router.push(`/editorial`);
           }
         })
         .finally(() => {
