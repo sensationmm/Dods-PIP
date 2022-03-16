@@ -4,8 +4,9 @@ import {
     GetContentParameters,
     RawQueryParameters,
     createPercolatorParameters,
+    deleteContentParameters,
     deletePercolatorParameters,
-    updatePercolatorParameters,
+    updatePercolatorParameters
 } from "../domain";
 
 import { Search } from "./Search"
@@ -77,6 +78,11 @@ export class SearchRepository implements Search {
     async deletePercolator(data: deletePercolatorParameters): Promise<any> {
         const response = await this.elasticsearch.delete({ index: 'alerts', id: data.alertId })
 
+        return response['body']
+    }
+
+    async deleteContent(data: deleteContentParameters): Promise<any> {
+        const response = await this.elasticsearch.delete({ index: 'content', id: data.contentId })
         return response['body']
     }
 }
