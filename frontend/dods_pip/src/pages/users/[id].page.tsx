@@ -42,7 +42,7 @@ type ClientAccount = {
 };
 
 export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => {
-  const { user } = useUser({ redirectTo: '/' });
+  const { user, mutateUser } = useUser({ redirectTo: '/' });
   const router = useRouter();
   let { id: userId = '' } = router.query;
   userId = userId as string;
@@ -275,6 +275,9 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
           text: 'Please check your email and follow the instructions.',
           type: 'confirm',
         });
+
+        await mutateUser(await fetchJson(`${BASE_URI}${Api.Logout}`), false);
+        await router.push('/');
       } else {
         addNotification({
           title: 'Something went wrong',
