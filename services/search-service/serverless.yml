@@ -108,6 +108,14 @@ functions:
           method: get
           path: search/contents/{contentId}
 
+  deleteContent:
+    handler: src/handlers/deleteContent/index.handle
+    description: Delete content detail by content id
+    events:
+      - http:
+          method: delete
+          path: search/contents/{contentId}
+
   getContentInternal:
     handler: src/handlers/getContent/index.handleInternal
     description: Get content detail by content id

@@ -11,14 +11,29 @@ paths:
       summary: Get content detail by content id
       operationId: getContent
       parameters:
-        - $ref: '#/components/parameters/documentId'
+        - $ref: '#/components/parameters/contentId'
       responses:
         "200":
-          $ref: "#/components/responses/GetDocument"
+          $ref: "#/components/responses/GetContent"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+    delete:
+      security:
+          - bearerAuth: []
+      summary: Delete content detail by content id
+      operationId: deleteContent
+      parameters:
+        - $ref: '#/components/parameters/contentId'
+      responses:
+        "200":
+          $ref: "#/components/responses/GetContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    
   /search/query/:
     post:
       summary: Run a raw ES query
@@ -41,13 +56,18 @@ paths:
         - $ref: '#/components/parameters/percolatorQuery'
       responses:
         "200":
-          - $ref: "#/components/responses/createPercolate"
+          $ref: "#/components/responses/createPercolate"
         "400":
-          - $ref: "#/components/responses/BadRequest"
+          $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Message:
       type: object
@@ -164,6 +184,14 @@ components:
     documentId:
       in: path
       name: documentId
+      schema:
+        type: string
+      required: true
+      description: Document ID of interest
+      
+    contentId:
+      in: path
+      name: contentId
       schema:
         type: string
       required: true
