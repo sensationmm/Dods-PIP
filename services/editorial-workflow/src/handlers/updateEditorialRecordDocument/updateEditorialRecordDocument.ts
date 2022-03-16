@@ -28,7 +28,10 @@ export const updateEditorialRecordDocument: AsyncLambdaHandler<UpdateEditorialRe
     if (updatedResponse.success) {
         await EditorialRecordRepository.defaultInstance.unassignEditorToRecord(params.recordId);
 
-        const statusId = config.dods.recordStatuses.draft;
+        let statusId = record.status?.uuid
+        if (statusId !== config.dods.recordStatuses.scheduled) {
+            statusId = config.dods.recordStatuses.draft;
+        }
 
         const updateParams: UpdateEditorialRecordParameters = {
             recordId: params.recordId,
