@@ -272,7 +272,8 @@ pipelines:
           default: dods-model
       - step:
           name: "NPM Package: Deploy to NPM"
-          image: gioatsomoglobal/devopstools:0.4.6
+          # image: gioatsomoglobal/devopstools:0.4.6
+          image: public.ecr.aws/dods-cicd/bitbucket-builder:1.2.0
           script:
             - 'echo "Running deployment for npm-package: ${SERVICE}"'
             - cd npm-packages/$SERVICE
