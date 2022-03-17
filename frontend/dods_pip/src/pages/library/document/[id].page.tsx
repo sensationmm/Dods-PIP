@@ -3,7 +3,9 @@ import Chips from '@dods-ui/components/Chips';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import Text from '@dods-ui/components/Text';
+import LoadingHOC, { LoadingHOCProps } from '@dods-ui/hoc/LoadingHOC';
 import withSession, { NextIronRequest } from '@dods-ui/lib/session';
+import { UpdateEditorialRecordResponse } from '@dods-ui/pages/editorial/editorial.models';
 import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -13,7 +15,7 @@ import React, { useMemo, useState } from 'react';
 
 import color from '../../../globals/color';
 import fetchJson from '../../../lib/fetchJson';
-import { Api } from '../../../utils/api';
+import { Api, BASE_URI } from '../../../utils/api';
 import { IResponse, ISourceData } from '../index';
 import * as Styled from './document.styles';
 import Header from './header';
@@ -24,7 +26,7 @@ interface ITags {
     count: [];
   }[];
 }
-interface DocumentViewerProps {
+interface DocumentViewerProps extends LoadingHOCProps {
   apiData: ISourceData;
   publishedDateTime: string;
   tags: ITags;
@@ -38,6 +40,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   apiData,
   tags,
   publishedDateTime,
+  setLoading,
+  addNotification,
 }) => {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<'content' | 'details'>('content');
@@ -178,6 +182,34 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     return <Styled.inlinedTags dangerouslySetInnerHTML={{ __html: tagged || '' }} />;
   }, [documentContent, tags]);
 
+  const prepareEdit = async () => {
+    setLoading(true);
+    const editArticle = await fetchJson<UpdateEditorialRecordResponse>(
+      `${BASE_URI}${Api.EditorialRecords}/document/${documentId}/versions`,
+      {
+        method: 'POST',
+      },
+    );
+
+    router.push(`/editorial/record/${editArticle.data?.uuid}`);
+  };
+
+  const onDelete = async () => {
+    setLoading(true);
+    try {
+      await fetchJson<UpdateEditorialRecordResponse>(
+        `${BASE_URI}${Api.Content}/${apiData.documentId}`,
+        {
+          method: 'DELETE',
+        },
+      );
+
+      router.push(`/library`);
+    } catch (e) {
+      addNotification({ title: 'Error', text: e.data.message });
+    }
+  };
+
   return (
     <Panel>
       <Head>
@@ -190,7 +222,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         sourceReferenceUri={sourceReferenceUri}
         informationType={informationType}
         publishedDateTime={publishedDateTime}
-        documentId={documentId}
+        onEdit={prepareEdit}
+        onDelete={onDelete}
       />
       <Styled.body>
         {renderTags}
@@ -309,4 +342,4 @@ export const getServerSideProps: GetServerSideProps = /* @ts-ignore */ withSessi
   },
 );
 
-export default DocumentViewer;
+export default LoadingHOC(DocumentViewer);

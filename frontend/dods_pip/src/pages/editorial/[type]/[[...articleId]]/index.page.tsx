@@ -15,7 +15,6 @@ import {
   createRecord,
   deleteEditorialRecord,
   getEditorialPreview,
-  getLibraryArticle,
   getMetadataSelections,
   scheduleEditorial,
   setEditorialPublishState,
@@ -116,8 +115,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
   useEffect(() => {
     const getDocData = async (uuid: string) => {
       setLoading(true);
-      const getFunction = type === 'record' ? getEditorialPreview : getLibraryArticle;
-      await getFunction(uuid).then((response) => {
+      await getEditorialPreview(uuid).then((response) => {
         if (response.success) {
           const {
             documentTitle,
@@ -228,7 +226,7 @@ export const EditorialCreate: React.FC<EditorialProps> = ({ setLoading, addNotif
         addNotification({ title: 'Document successfully published', type: 'confirm' });
       })
       .then(() => {
-        router.push('/editorial');
+        router.push('/library');
       });
     setLoading(false);
   };
