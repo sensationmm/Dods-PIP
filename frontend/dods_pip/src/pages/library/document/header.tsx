@@ -1,10 +1,13 @@
 import Breadcrumbs from '@dods-ui/components/Breadcrumbs';
+import Button from '@dods-ui/components/Button';
 import Icon, { IconSize } from '@dods-ui/components/Icon';
 import { Icons } from '@dods-ui/components/Icon/assets';
 import IconContentSource from '@dods-ui/components/IconContentSource';
 import { IconType as ContentSourceIconType } from '@dods-ui/components/IconContentSource/assets';
+import Modal from '@dods-ui/components/Modal';
 import Text from '@dods-ui/components/Text';
 import color from '@dods-ui/globals/color';
+import useUser from '@dods-ui/lib/useUser';
 import Link from 'next/link';
 import React from 'react';
 
@@ -16,7 +19,8 @@ export interface HeaderProps {
   sourceReferenceUri?: string;
   informationType?: string;
   publishedDateTime?: string;
-  documentId?: string;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -25,7 +29,11 @@ const Header: React.FC<HeaderProps> = ({
   sourceReferenceUri,
   informationType,
   publishedDateTime,
+  onEdit,
+  onDelete,
 }) => {
+  const { user } = useUser({ redirectTo: '/' });
+  const [showDelete, setShowDelete] = React.useState<boolean>(false);
   return (
     <Styled.header>
       <Styled.mainSection>
@@ -73,13 +81,44 @@ const Header: React.FC<HeaderProps> = ({
           </Styled.infoItem>
         </Styled.infoRow>
       </Styled.mainSection>
-      {/* {documentId && user?.isDodsUser && (
-        <Button
-          onClick={() => router.push(`/editorial/article/${documentId}`)}
-          label="Edit"
-          icon={Icons.Pencil}
-        />
-      )} */}
+      {user?.isDodsUser && (
+        <>
+          <Button
+            onClick={() => setShowDelete(true)}
+            label="Delete"
+            icon={Icons.Bin}
+            type="secondary"
+          />
+          <Button onClick={onEdit} label="Edit" icon={Icons.Pencil} />
+        </>
+      )}
+
+      {showDelete && (
+        <Modal
+          title="Do you wish to delete this article?"
+          titleIcon={Icons.Bin}
+          size="large"
+          onClose={() => setShowDelete(false)}
+          buttons={[
+            {
+              isSmall: true,
+              type: 'secondary',
+              label: 'Cancel',
+              onClick: () => setShowDelete(false),
+            },
+            {
+              isSmall: true,
+              type: 'primary',
+              label: 'Confirm and delete',
+              icon: Icons.Bin,
+              onClick: onDelete,
+            },
+          ]}
+          buttonAlignment="right"
+        >
+          <Text>You cannot undo this action</Text>
+        </Modal>
+      )}
     </Styled.header>
   );
 };
