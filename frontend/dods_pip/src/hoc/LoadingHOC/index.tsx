@@ -1,3 +1,4 @@
+import NotificationContext from '@dods-ui/context/Notification';
 import classNames from 'classnames';
 import { getTime } from 'date-fns';
 import React from 'react';
@@ -14,7 +15,7 @@ export type LoadingHOCProps = {
 
 export interface PushNotificationProps extends Omit<NotificationProps, 'onClose'> {}
 
-interface PushNotification extends PushNotificationProps {
+export interface PushNotification extends PushNotificationProps {
   [key: string]: unknown;
   id: string;
 }
@@ -24,7 +25,7 @@ interface PushNotification extends PushNotificationProps {
 const LoadingHOC = (WrappedComponent: React.FC<any>): unknown => {
   function HOC(props: Record<string, unknown>) {
     const [isLoading, setIsLoading] = React.useState(false);
-    const [notifications, setNotifications] = React.useState<Array<PushNotification>>([]);
+    const { notifications, setNotifications } = React.useContext(NotificationContext);
     const notificationsRef = React.useRef(notifications);
     notificationsRef.current = notifications;
 
@@ -34,12 +35,13 @@ const LoadingHOC = (WrappedComponent: React.FC<any>): unknown => {
       const notification: PushNotification = { ...props, id: getTime(new Date()).toString() };
 
       current.push(notification);
+
       setNotifications(current);
     };
 
     const popNotification = (id: PushNotification['id']) => {
       const current = notificationsRef.current.slice();
-      const removeIndex = current.findIndex((item) => item.id === id);
+      const removeIndex = current.findIndex((item: PushNotification) => item.id === id);
 
       current.splice(removeIndex, 1);
 
@@ -52,7 +54,7 @@ const LoadingHOC = (WrappedComponent: React.FC<any>): unknown => {
           <Loader />
         </Styled.mask>
         <Styled.notifications>
-          {notifications.map((item) => (
+          {notifications.map((item: PushNotification) => (
             <Notification
               key={`notification-${item.id}`}
               {...item}

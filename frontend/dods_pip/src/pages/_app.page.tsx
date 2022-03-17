@@ -2,6 +2,8 @@ import '../styles/globals.css';
 
 import Footer from '@dods-ui/components/Footer';
 import Header from '@dods-ui/components/Header';
+import NotificationContext from '@dods-ui/context/Notification';
+import { PushNotification } from '@dods-ui/hoc/LoadingHOC';
 import { ucFirst } from '@dods-ui/utils/string';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -16,6 +18,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
     const pagePaths = pathname?.split('/').filter((path) => !!path) || [];
     return ucFirst(pagePaths[0]?.replace(/-/g, ' '));
   }, [pathname]);
+
+  const [notifications, setNotifications] = React.useState<Array<PushNotification>>([]);
 
   return (
     <div data-test={'page-app'}>
@@ -55,7 +59,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
       </Head>
       <Header title={rootPage} />
       <Styled.main>
-        <Component {...pageProps} />
+        <NotificationContext.Provider value={{ notifications, setNotifications }}>
+          <Component {...pageProps} />
+        </NotificationContext.Provider>
       </Styled.main>
       <Footer />
     </div>
