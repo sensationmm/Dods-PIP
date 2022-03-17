@@ -950,7 +950,7 @@ export class CollectionAlertsRepository implements CollectionAlertsPersister {
             'keywords',
             'people',
             'organisations',
-            'geographies'
+            'geography'
         ]
 
         let query: any = {
