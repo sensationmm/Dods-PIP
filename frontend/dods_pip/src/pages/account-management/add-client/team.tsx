@@ -219,7 +219,7 @@ const Team: React.FC<TeamProps> = ({
     } catch (e) {
       console.log(e);
     }
-  }, 150);
+  }, 500);
 
   const searchUsers = useMemo(() => debounceSearchUsers, []);
 

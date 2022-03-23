@@ -38,6 +38,14 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   const [search, setSearch] = React.useState<string>('');
   const [results, setResults] = React.useState<SelectProps['options']>([]);
 
+  const onSetResults = (val: string) => {
+    const res = values.filter(
+      (item) =>
+        item.label && val !== '' && item.label.toLowerCase().indexOf(val.toLowerCase()) > -1,
+    );
+    setResults(res);
+  };
+
   const searchHandler = (val: string) => {
     if (typeof onKeyPress === 'function') {
       if (onKeyPressHasSearch) {
@@ -48,11 +56,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
     }
 
     setSearch(val);
-    const res = values.filter(
-      (item) =>
-        item.label && val !== '' && item.label.toLowerCase().indexOf(val.toLowerCase()) > -1,
-    );
-    setResults(res);
+    onSetResults(val);
   };
 
   const handleChange = (val: string, item?: DropdownValue) => {
@@ -64,6 +68,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
     setSearch('');
     setResults([]);
   };
+
+  React.useEffect(() => {
+    onSetResults(search);
+  }, [values]);
 
   return (
     <Styled.wrapper
@@ -78,9 +86,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           value={search}
           onChange={searchHandler}
           placeholder={value ? '' : placeholder}
-          error={
-            search !== '' && results.length === 0 ? 'No results found!' : error ? error : undefined
-          }
+          error={error}
           isDisabled={isDisabled}
         >
           {isFilter && value && !search && (
