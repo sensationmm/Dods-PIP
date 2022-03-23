@@ -122,6 +122,7 @@ export type EditorialRecordResponse = {
   isArchived?: boolean;
   createdAt: Date;
   updatedAt: Date;
+  scheduleDate?: Date;
   assignedEditor?: {
     uuid: string;
     fullName: string;

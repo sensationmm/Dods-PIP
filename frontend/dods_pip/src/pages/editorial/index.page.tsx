@@ -109,11 +109,12 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
   useEffect(() => {
     if (editorialRecords?.data?.results?.length) {
       const data: RepositoryRowData[] = editorialRecords.data.results.map(
-        ({ uuid, documentName, status, updatedAt, assignedEditor }) => ({
+        ({ uuid, documentName, status, updatedAt, assignedEditor, scheduleDate }) => ({
           id: uuid,
           documentName,
           status: status?.status || 'draft',
           updated: updatedAt,
+          scheduled: scheduleDate,
           assignedEditor: assignedEditor?.fullName,
         }),
       );
