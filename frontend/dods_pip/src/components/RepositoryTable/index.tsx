@@ -17,6 +17,7 @@ export type RepositoryRowData = {
   documentName: string;
   status: RepositoryStatusTypes;
   updated: Date;
+  scheduled?: Date;
   assignedEditor?: string;
 };
 
@@ -45,7 +46,9 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
   const isMobileOrTablet = useMediaQuery({ query: breakpoints.mobileOrTablet });
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
 
-  const date = new Date(data.updated);
+  const date = new Date(
+    data.status.toLowerCase() === 'scheduled' && data.scheduled ? data.scheduled : data.updated,
+  );
 
   const rowIsLocked = data.assignedEditor !== undefined || false;
 
@@ -87,7 +90,9 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
                 ? 'Scheduled: '
                 : data.status.toLowerCase() === 'draft'
                 ? 'Last edited: '
-                : ''}
+                : data.status.toLowerCase() === 'ingested'
+                ? 'Ingested: '
+                : 'Created: '}
               {format(date, "dd MMM yyyy 'at' HH:mm")}
             </Text>
 
