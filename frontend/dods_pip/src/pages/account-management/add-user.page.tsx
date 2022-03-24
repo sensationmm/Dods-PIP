@@ -60,6 +60,7 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
     hasValue(formFields.firstName) &&
     hasValue(formFields.lastName) &&
     hasValue(formFields.emailAddress) &&
+    hasValue(formFields.telephoneNumber) &&
     (!isClientUser || hasValue(formFields.account)) &&
     Object.keys(errors).length === 0;
 
@@ -95,11 +96,22 @@ export const AddUser: React.FC<AddUserProps> = ({ addNotification, setLoading })
         },
       );
       if (result.success) {
+        addNotification({
+          type: 'confirm',
+          title: 'You have successfully created a new User',
+        });
         if (router.query?.referrer) {
-          await router.push(`${router.query?.referrer}?userAdded=true` as string);
+          await router.push(`${router.query?.referrer}` as string);
         } else {
-          router.push(`/account-management/users?userAdded=true` as string);
+          router.push(`/account-management/users` as string);
         }
+      } else {
+        setErrors({ ...errors, emailAddress: 'Email already exists' });
+        addNotification({
+          type: 'warn',
+          title: 'Could not create User',
+          text: result.message,
+        });
       }
     } catch (e) {
       addNotification({

@@ -115,15 +115,6 @@ export const Users: React.FC<UsersProps> = ({ setLoading, addNotification }) => 
     loadFilteredUsers();
   }, [debouncedValue, filters.aToZ, filters.isActive, filters.role, numPerPage, activePage]);
 
-  React.useEffect(() => {
-    if (router?.query?.userAdded) {
-      addNotification({
-        type: 'confirm',
-        title: 'You have successfully created a new User',
-      });
-    }
-  }, [router?.query]);
-
   return (
     <div data-testid="page-account-management-users">
       <Head>

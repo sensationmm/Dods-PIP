@@ -97,7 +97,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
       try {
         let url;
         if (accountSearch) {
-          url = `${BASE_URI}${Api.ClientAccount}?startsWith=${accountSearch}`;
+          url = `${BASE_URI}${Api.ClientAccount}?searchTerm=${accountSearch}`;
         } else {
           url = `${BASE_URI}${Api.ClientAccount}/${account}`;
         }
@@ -202,7 +202,13 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
         id="emailAddress"
         testId={'email-address'}
         value={fieldData.emailAddress}
-        onChange={(value) => setFieldValue('emailAddress', value)}
+        onChange={(value) => {
+          validateField('emailAddress', fieldData.emailAddress, [
+            ValidationType.Required,
+            ValidationType.Email,
+          ]);
+          setFieldValue('emailAddress', value);
+        }}
         required
         label="Email Address"
         placeholder="Type the email address"

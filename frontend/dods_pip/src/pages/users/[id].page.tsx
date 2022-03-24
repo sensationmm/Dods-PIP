@@ -115,8 +115,12 @@ export const Users: React.FC<UsersProps> = ({ addNotification, setLoading }) => 
 
       if (success) {
         setLoading(true);
+        addNotification({
+          title: 'User deleted',
+          type: 'confirm',
+        });
 
-        await router.push(`/accounts/${userData?.clientAccount?.uuid}?userDeleted=true`);
+        await router.push(`/accounts/${userData?.clientAccount?.uuid}`);
       }
     } catch (e) {
       // show server error
