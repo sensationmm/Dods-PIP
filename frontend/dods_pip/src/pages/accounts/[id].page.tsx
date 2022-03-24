@@ -25,15 +25,6 @@ export const ClientAccount: React.FC<ClientAccountProps> = ({ addNotification, s
   const [pageAccountName, setPageAccountName] = React.useState<string>('');
   const [refetchSeats, setRefetchSeats] = React.useState<boolean>(false);
 
-  React.useEffect(() => {
-    if (router?.query?.userDeleted) {
-      addNotification({
-        title: 'User deleted',
-        type: 'confirm',
-      });
-    }
-  }, [router]);
-
   const breadcrumbHistory = [{ href: '', label: pageAccountName }];
 
   if (user?.isDodsUser)

@@ -70,7 +70,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   };
 
   React.useEffect(() => {
-    onSetResults(search);
+    search && onSetResults(search);
   }, [values]);
 
   return (
