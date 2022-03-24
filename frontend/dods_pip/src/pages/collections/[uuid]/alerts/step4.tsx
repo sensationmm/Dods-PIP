@@ -235,7 +235,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({
               value="no"
               isChecked={hasKeywordHighlight === 'no'}
               onChange={setHasKeywordHighlight}
-              isDisabled={!isScheduled || disabled}
+              isDisabled={disabled}
             />
             <HightlightActive width="40px" height="40px" />
             <Radio
@@ -244,7 +244,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({
               value="yes"
               isChecked={hasKeywordHighlight === 'yes'}
               onChange={setHasKeywordHighlight}
-              isDisabled={!isScheduled || disabled}
+              isDisabled={disabled}
             />
           </Styled.highlightOptions>
 
@@ -259,7 +259,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({
                 value="full"
                 isChecked={alertTemplateId === 'full'}
                 onChange={setAlertTemplateId}
-                isDisabled={!isScheduled || disabled}
+                isDisabled={disabled}
               />
               <Spacer size={2} />
               <Text type="bodySmall" color={color.base.greyDark}>
@@ -274,7 +274,7 @@ const AlertStep4: React.FC<AlertStepProps> = ({
                 value="snippet"
                 isChecked={alertTemplateId === 'snippet'}
                 onChange={setAlertTemplateId}
-                isDisabled={!isScheduled || disabled}
+                isDisabled={disabled}
               />
               <Spacer size={2} />
               <Text type="bodySmall" color={color.base.greyDark}>
