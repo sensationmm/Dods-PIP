@@ -65,6 +65,7 @@ const Pagination = (
                 window.scrollTo(0, 0);
               }
             }}
+            tabIndex={0}
           >
             {i + 1}
           </Styled.button>,
@@ -106,6 +107,7 @@ const Pagination = (
           value={(activePage + 1).toString()}
           isFullWidth={false}
           isFilter
+          tabIndex={0}
         />
         <Text type="bodySmall" color={color.base.grey} data-test="item-text">
           of
@@ -158,6 +160,7 @@ const Pagination = (
             value={String(numPerPage)}
             isFullWidth={false}
             isFilter
+            tabIndex={0}
           />
         </Styled.perPage>
       </Styled.stats>
@@ -187,6 +190,7 @@ const Pagination = (
                 window.scrollTo(0, 0);
               }
             }}
+            tabIndex={0}
           >
             <Icon
               size={IconSize.medium}
@@ -206,6 +210,7 @@ const Pagination = (
                 window.scrollTo(0, 0);
               }
             }}
+            tabIndex={0}
           >
             <Icon
               size={IconSize.medium}

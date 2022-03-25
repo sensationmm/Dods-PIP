@@ -7,6 +7,7 @@ import { breakpoints } from '../../globals/media';
 import Button from '../Button';
 import Icon, { IconSize } from '../Icon';
 import { Icons } from '../Icon/assets';
+import Modal from '../Modal';
 import RepositoryStatus, { RepositoryStatusTypes } from '../RepositoryStatus';
 import Text from '../Text';
 import Tooltip from '../Tooltip';
@@ -34,6 +35,7 @@ export interface RepositoryRowProps {
   onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  focused: boolean;
 }
 
 export const RepositoryRow: React.FC<RepositoryRowProps> = ({
@@ -42,15 +44,21 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
   onView,
   onEdit,
   onDelete,
+  focused,
 }) => {
   const isMobileOrTablet = useMediaQuery({ query: breakpoints.mobileOrTablet });
-  const [isHovered, setIsHovered] = React.useState<boolean>(false);
+  const [isHovered, setIsHovered] = React.useState<boolean>(focused);
+  const [showDelete, setShowDelete] = React.useState<boolean>(false);
 
   const date = new Date(
     data.status.toLowerCase() === 'scheduled' && data.scheduled ? data.scheduled : data.updated,
   );
 
   const rowIsLocked = data.assignedEditor !== undefined || false;
+
+  React.useEffect(() => {
+    setIsHovered(focused);
+  }, [focused]);
 
   return (
     <>
@@ -104,7 +112,7 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
                   label="Delete"
                   icon={Icons.Bin}
                   isSmall
-                  onClick={onDelete}
+                  onClick={() => setShowDelete(true)}
                 />
                 <Button label="Edit" icon={Icons.Pencil} isSmall onClick={onEdit} />
               </>
@@ -118,18 +126,54 @@ export const RepositoryRow: React.FC<RepositoryRowProps> = ({
         </div>
         {isMobileOrTablet && !rowIsLocked && (
           <Styled.mobileActions>
-            <Button type="secondary" label="Delete" icon={Icons.Bin} onClick={onDelete} />
-            <Button label="Edit" icon={Icons.Pencil} onClick={onEdit} />
+            <Button
+              type="secondary"
+              label="Delete"
+              icon={Icons.Bin}
+              onClick={() => setShowDelete(true)}
+              tabIndex={0}
+            />
+            <Button label="Edit" icon={Icons.Pencil} onClick={onEdit} tabIndex={0} />
           </Styled.mobileActions>
         )}
       </Styled.tableRow>
+
+      {showDelete && (
+        <Modal
+          title="Do you wish to delete this record?"
+          titleIcon={Icons.Bin}
+          size="large"
+          onClose={() => {
+            setShowDelete(false);
+          }}
+          buttons={[
+            {
+              isSmall: true,
+              type: 'secondary',
+              label: 'Back',
+              onClick: () => setShowDelete(false),
+            },
+            {
+              isSmall: true,
+              type: 'primary',
+              label: 'Confirm and delete',
+              icon: Icons.Bin,
+              onClick: onDelete,
+            },
+          ]}
+          buttonAlignment="right"
+        >
+          <Text>This record will be permanently deleted from the database.</Text>
+        </Modal>
+      )}
     </>
   );
 };
 
 const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onView, onEdit, onDelete }) => {
+  const [focused, setFocused] = React.useState<boolean>(false);
   return (
-    <Styled.wrapper data-test="component-repository-table">
+    <Styled.wrapper data-test="component-repository-table" onFocus={() => setFocused(true)}>
       <Styled.header>
         <Styled.tableHeadingTitle>
           <Text bold>Title</Text>
@@ -144,6 +188,7 @@ const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onView, onEdit,
           </Text>
         </Styled.tableHeadingStatus>
       </Styled.header>
+      <div onFocus={() => setFocused(true)} tabIndex={0} />
       {data.map((item, count) => (
         <RepositoryRow
           key={`repository-row-${count}`}
@@ -153,6 +198,7 @@ const RepositoryTable: React.FC<RepositoryTableProps> = ({ data, onView, onEdit,
           onView={() => onView(item.id)}
           onEdit={() => onEdit(item.id)}
           onDelete={() => onDelete(item.id)}
+          focused={focused}
         />
       ))}
       {data.length === 0 && <Text center>No records to show</Text>}

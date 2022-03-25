@@ -98,7 +98,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
         onChange={() => false}
         icon={Icons.Calendar}
         onFocus={() => setIsOpen(true)}
-        tabIndex={1}
+        tabIndex={0}
         placeholder={placeholder}
       />
       {isOpen && (

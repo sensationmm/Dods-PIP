@@ -89,7 +89,7 @@ const Select: React.FC<SelectProps> = ({
             icon={isOpen && !isDisabled ? Icons.ChevronUpBold : Icons.ChevronDownBold}
             css={{ pointerEvents: 'none' }}
             onFocus={() => setIsOpen(true)}
-            tabIndex={1}
+            tabIndex={0}
             placeholder={placeholder}
             length={Math.max(...options.map((item) => item.label?.length))}
           />

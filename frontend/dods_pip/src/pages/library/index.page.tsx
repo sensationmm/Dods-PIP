@@ -172,6 +172,7 @@ export const Library: React.FC<ILibraryProps> = ({
             isActive={filtersVisible}
             labelOn={'Filters'}
             onChange={() => setFiltersVisible(!filtersVisible)}
+            tabIndex={0}
           />
         </aside>
       </Styled.librarySearchWrapper>
@@ -434,7 +435,6 @@ export const Library: React.FC<ILibraryProps> = ({
             />
           );
         })}
-        {renderBottomPagination}
       </Styled.resultsContent>
     );
   }, [results, renderBottomPagination]);
@@ -487,6 +487,7 @@ export const Library: React.FC<ILibraryProps> = ({
             {renderResults}
             {renderFacets}
           </Styled.contentWrapper>
+          <Styled.resultsContent>{renderTopPagination}</Styled.resultsContent>
         </Panel>
       </main>
     </Styled.pageLibrary>

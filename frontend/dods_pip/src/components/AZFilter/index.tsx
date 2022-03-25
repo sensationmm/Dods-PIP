@@ -53,17 +53,48 @@ const AZFilter: React.FC<AZFilterProps> = ({ selectedLetter, setSelectedLetter }
       data-test="component-AZFilter"
     >
       <Styled.wrapper>
-        <div data-test="button-all" onClick={() => selectLetter('')}>
+        <div
+          data-test="button-all"
+          onClick={() => selectLetter('')}
+          onKeyDown={(e) => e.which === 13 && selectLetter('')}
+          tabIndex={0}
+        >
           <Styled.viewAll>
-            <Icon src={Icons.AzFilter} size={IconSize.large} color={color.base.greyDark} />
-            <Text type="bodySmall" bold color={color.base.greyDark}>
+            <Icon
+              src={Icons.AzFilter}
+              size={IconSize.large}
+              color={
+                selectedLetter === ''
+                  ? color.theme.blue
+                  : hoveringAzFilter
+                  ? color.theme.blue
+                  : color.base.greyDark
+              }
+            />
+            <Text
+              type="bodySmall"
+              bold
+              color={
+                selectedLetter === ''
+                  ? color.theme.blue
+                  : hoveringAzFilter
+                  ? color.theme.blue
+                  : color.base.greyDark
+              }
+            >
               VIEW ALL
             </Text>
           </Styled.viewAll>
         </div>
         <Styled.letterSection>
           {alfabet.map((alf) => (
-            <div data-test={`button-${alf}`} key={alf} onClick={() => selectLetter(alf)}>
+            <div
+              data-test={`button-${alf}`}
+              key={alf}
+              onClick={() => selectLetter(alf)}
+              onKeyDown={(e) => e.keyCode === 13 && selectLetter(alf)}
+              tabIndex={0}
+            >
               <Styled.letter selected={selectedLetter === alf}>
                 <Text
                   type="bodyLarge"

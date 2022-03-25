@@ -81,20 +81,20 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
 
     return toQueryString(params);
   };
+  const getEditorialRecords = async () => {
+    const queryString = getFilterQueryString();
+    setLoading(true);
+    await getRecords(queryString)
+      .then((response) => {
+        setEditorialRecords(response);
+        setTotal(response?.data?.filteredRecords || 0);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
-    const getEditorialRecords = async () => {
-      const queryString = getFilterQueryString();
-      setLoading(true);
-      await getRecords(queryString)
-        .then((response) => {
-          setEditorialRecords(response);
-          setTotal(response?.data?.filteredRecords || 0);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
     getEditorialRecords();
   }, [
     debouncedValue,
@@ -134,13 +134,10 @@ export const Editorial: React.FC<EditorialProps> = ({ setLoading, addNotificatio
 
   const onDeleteDocument = useCallback(async (uuid) => {
     setLoading(true);
-    await deleteEditorialRecord(uuid)
-      .then(() => {
-        addNotification({ title: 'Record deleted', type: 'confirm' });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    await deleteEditorialRecord(uuid).then(() => {
+      addNotification({ title: 'Record deleted', type: 'confirm' });
+      getEditorialRecords();
+    });
   }, []);
 
   const addFilters = (newFilters: Filters) => setFilters({ ...filters, ...newFilters });

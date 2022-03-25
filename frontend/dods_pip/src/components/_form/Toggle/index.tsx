@@ -16,6 +16,7 @@ export interface ToggleProps {
   labelOff?: string;
   labelOn?: string;
   isSmall?: boolean;
+  tabIndex?: number;
 }
 
 const Toggle: React.FC<ToggleProps> = ({
@@ -27,6 +28,7 @@ const Toggle: React.FC<ToggleProps> = ({
   labelOff,
   labelOn,
   isSmall = false,
+  tabIndex = 0,
 }) => {
   const Component = isActive ? Styled.toggleActive : Styled.toggle;
 
@@ -70,6 +72,7 @@ const Toggle: React.FC<ToggleProps> = ({
           className={classNames({ disabled: isDisabled })}
           onClick={() => (isDisabled ? null : onChange(!isActive))}
           small={isSmall}
+          tabIndex={tabIndex}
         >
           <Styled.control small={isSmall} />
         </Component>

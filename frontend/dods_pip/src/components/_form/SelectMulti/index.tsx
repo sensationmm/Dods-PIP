@@ -94,7 +94,7 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
             icon={isOpen && !isDisabled ? Icons.ChevronUpBold : Icons.ChevronDownBold}
             css={{ pointerEvents: 'none' }}
             onFocus={() => setIsOpen(true)}
-            tabIndex={1}
+            tabIndex={0}
             placeholder={placeholder}
             length={Math.max(...options.map((item) => item.label.length))}
           >
@@ -126,7 +126,7 @@ const SelectMulti: React.FC<SelectMultiProps> = ({
                   size={size}
                   onClick={() => setValue(item.value)}
                   hasError={error !== undefined}
-                  tabIndex={2}
+                  tabIndex={0}
                   onKeyPress={() => setValue(item.value)}
                   active={inArray(item.value, value)}
                 >
