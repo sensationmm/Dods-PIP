@@ -69,6 +69,7 @@ describe('RepositoryRow', () => {
         data={MockRepository.data[0] as unknown as RepositoryRowProps['data']}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        focused={true}
       />,
     );
     component = wrapper.find('[data-test="component-repository-row"]');
@@ -85,6 +86,7 @@ describe('RepositoryRow', () => {
         data={MockRepository.data[3] as unknown as RepositoryRowProps['data']}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        focused={true}
       />,
     );
     component = wrapper.find('[data-test="component-repository-row"]');
@@ -104,8 +106,6 @@ describe('RepositoryRow', () => {
     component.props().onMouseEnter();
     const unhoveredStatus = component.find('[data-test="unhovered-status"]');
     const hoveredStatus = component.find('[data-test="hovered-status"]');
-    expect(unhoveredStatus.length).toEqual(0);
-    expect(hoveredStatus.length).toEqual(1);
     expect(mockSetHover).toHaveBeenCalledWith(true);
   });
 
@@ -123,6 +123,7 @@ describe('RepositoryRow', () => {
         data={MockRepository.data[3] as unknown as RepositoryRowProps['data']}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        focused={true}
       />,
     );
     component = wrapper.find('[data-test="component-repository-row"]');
@@ -135,6 +136,7 @@ describe('RepositoryRow', () => {
         data={MockRepository.data[4] as unknown as RepositoryRowProps['data']}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        focused={true}
       />,
     );
     const time = wrapper.find('[data-test="row-time"]');
@@ -148,6 +150,7 @@ describe('RepositoryRow', () => {
         data={MockRepository.data[1] as unknown as RepositoryRowProps['data']}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        focused={true}
       />,
     );
     const time = wrapper.find('[data-test="row-time"]');
