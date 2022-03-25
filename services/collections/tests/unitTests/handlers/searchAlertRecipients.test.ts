@@ -1,7 +1,7 @@
-import { v4 as uuid } from 'uuid';
-import { mocked } from 'jest-mock';
-import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 import { CollectionAlertRecipientRepository, SearchAlertRecipientsInput, SearchAlertRecipientsOutput, } from '@dodsgroup/dods-repositories';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+
+import { mocked } from 'jest-mock';
 import { searchAlertRecipients } from '../../../src/handlers/searchAlertRecipients/searchAlertRecipients';
 
 const FUNCTION_NAME = searchAlertRecipients.name;
@@ -16,8 +16,8 @@ describe(`${FUNCTION_NAME} handler`, () => {
     it('Valid input', async () => {
 
         const requestParams: SearchAlertRecipientsInput = {
-            collectionId: uuid(),
-            alertId: uuid(),
+            collectionId: 'uuid',
+            alertId: 'uuid',
             limit: 30,
             offset: 0,
         };

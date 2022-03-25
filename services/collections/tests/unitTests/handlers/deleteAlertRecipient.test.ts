@@ -1,8 +1,8 @@
-import { v4 as uuid } from 'uuid';
-import { mocked } from 'jest-mock';
-import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 import { CollectionAlertRecipientRepository, DeleteAlertRecipientInput, } from '@dodsgroup/dods-repositories';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+
 import { deleteAlertRecipient } from '../../../src/handlers/deleteAlertRecipient/deleteAlertRecipient';
+import { mocked } from 'jest-mock';
 
 const FUNCTION_NAME = deleteAlertRecipient.name;
 
@@ -16,9 +16,9 @@ describe(`${FUNCTION_NAME} handler`, () => {
     it('Valid input', async () => {
 
         const requestParams: DeleteAlertRecipientInput = {
-            collectionId: uuid(),
-            alertId: uuid(),
-            userId: uuid(),
+            collectionId: 'uuid',
+            alertId: 'uuid',
+            userId: 'uuid',
         };
 
 

@@ -10,13 +10,22 @@ const documentRepository = new DocumentRepository(apiGatewayBaseURL);
 export const deleteAlert: AsyncLambdaHandler<DeleteAlertParameters> = async (params) => {
     const { alertId } = params
     const alertResponse: any = await CollectionAlertsRepository.defaultInstance.getAlert(params);
-
     if (alertResponse.alert.isScheduled) {
         // delete schedule 
-        await documentRepository.deleteSchedule(alertId)
+        try {
+            await documentRepository.deleteSchedule(alertId)
+        } catch (error) {
+            console.log(error);
+        }
+
     }
     else {
-        await documentRepository.deletePercolator(alertId)
+        try {
+            await documentRepository.deletePercolator(alertId)
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
     await CollectionAlertsRepository.defaultInstance.deleteAlert(params)

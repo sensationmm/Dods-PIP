@@ -1,7 +1,7 @@
-import { v4 as uuid } from 'uuid';
-import { mocked } from 'jest-mock';
-import { createContext, HttpResponse, HttpStatusCode } from '@dodsgroup/dods-lambda';
 import { CollectionAlertRecipientRepository, SetAlertRecipientsInput, SetAlertRecipientsOutput } from '@dodsgroup/dods-repositories';
+import { HttpResponse, HttpStatusCode, createContext } from '@dodsgroup/dods-lambda';
+
+import { mocked } from 'jest-mock';
 import { setAlertRecipients } from '../../../src/handlers/setAlertRecipients/setAlertRecipients';
 
 const FUNCTION_NAME = setAlertRecipients.name;
@@ -16,16 +16,16 @@ describe(`${FUNCTION_NAME} handler`, () => {
     it('Valid input', async () => {
 
         const requestParams: SetAlertRecipientsInput = {
-            collectionId: uuid(),
-            alertId: uuid(),
-            updatedBy: uuid(),
+            collectionId: 'uuid',
+            alertId: 'uuid',
+            updatedBy: 'uuid',
             recipients: [
-                { userId: uuid() }
+                { userId: 'uuid' }
             ],
         };
 
         const defaultSetAlertRecipientsRepositoryResponse: SetAlertRecipientsOutput = {
-            uuid: uuid(),
+            uuid: 'uuid',
             title: '',
             description: '',
             collection: {
